@@ -1412,7 +1412,7 @@ class SGL_Task_InstallerCleanup extends SGL_Task
 #{$data['installPassword']}
 ?>
 PHP;
-        if (is_writable(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
+        if (is_writable(SGL_VAR_DIR)) {
             $ok = file_put_contents(SGL_VAR_DIR . '/INSTALL_COMPLETE.php', $newFile);
         } else {
             SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
