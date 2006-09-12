@@ -20,7 +20,7 @@ class Default_Block_Debug
     {
         $url = SGL_Output::makeUrl('', 'maintenance', 'default');
         $text = <<< HTML
-<form name="rebuildSeagull" method="post" action="$url" id="rebuildSeagull" flexy:ignore>
+<form name="rebuildSeagull" method="post" action="$url" id="rebuildSeagull">
     <p class="center">
         <input type="hidden" name="action" value="rebuildSeagull" />
         <input type="submit" class="sgl-button"name="submit" value="Rebuild Seagull" /><br />
