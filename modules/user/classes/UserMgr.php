@@ -433,6 +433,13 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (isset($this->conf['tuples']['demoMode'])
+                && $this->conf['tuples']['demoMode'] == true
+                && $input->userID == 1) {
+            SGL::raiseMsg('Admin password cannot be reset in demo mode',
+                false, SGL_MESSAGE_WARNING);
+            return false;
+        }
         $output->pageTitle = $this->pageTitle . ' :: Reset password';
         $output->template = 'userPasswordReset.html';
         $oUser = $this->da->getUserById($input->userID);
