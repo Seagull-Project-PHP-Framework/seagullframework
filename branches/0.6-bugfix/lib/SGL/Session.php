@@ -426,10 +426,12 @@ class SGL_Session
      */
     function get($sessVarName)
     {
-        if (isset($sessVarName)) {
+        if (isset($sessVarName) && isset($_SESSION)) {
             return is_array($_SESSION)
                 ? (array_key_exists($sessVarName, $_SESSION) ? $_SESSION[$sessVarName] : '')
                 : '';
+        } else {
+            return null;
         }
     }
 
