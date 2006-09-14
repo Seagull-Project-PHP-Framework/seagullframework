@@ -1062,11 +1062,11 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
 
         // remove original dbdo links file
         $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
-        $aOrigData = parse_ini_file($linksFile, true);
 
         //  only remove when not installing modules, ie for sgl-rebuild
         if (empty($data['moduleInstall'])) {
             if (is_file($linksFile) && is_writable($linksFile)) {
+                $aOrigData = parse_ini_file($linksFile, true);
                 unlink($linksFile);
             }
         }
@@ -1082,10 +1082,14 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
             //  first check to ensure key doesn't exist if a module is being installed
             if (!empty($data['moduleInstall'])) {
                 $aNewData = parse_ini_file($linksPath, true);
-                foreach ($aNewData as $key => $aValues) {
-                    if (array_key_exists($key, $aOrigData)) {
-                        //  key already exists, so return instead of adding it
-                        return;
+
+                //  compare with existing data if there is any
+                if (!empty($aOrigData)) {
+                    foreach ($aNewData as $key => $aValues) {
+                        if (array_key_exists($key, $aOrigData)) {
+                            //  key already exists, so return instead of adding it
+                            return;
+                        }
                     }
                 }
             }
