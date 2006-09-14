@@ -151,6 +151,14 @@ class ArticleViewMgr extends SGL_Manager
         if (SGL::moduleIsEnabled('comment') &&  !empty($this->conf['ArticleViewMgr']['commentsEnabled'])) {
             $output->aComments = $this->da->getCommentsByEntityId('articleview',
                 $input->articleID);
+
+            //  with captcha?
+            if ($this->conf['ArticleViewMgr']['useCaptcha']) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                $output->captcha = $captcha->generateCaptcha();
+                $output->useCaptcha = true;
+            }
         }
     }
 

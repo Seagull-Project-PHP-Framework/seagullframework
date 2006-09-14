@@ -102,6 +102,14 @@ class FaqMgr extends SGL_Manager
         //  display comments?
         if (SGL::moduleIsEnabled('comment') && !empty($this->conf['FaqMgr']['commentsEnabled'])) {
             $output->aComments = $this->da->getCommentsByEntityId('faq');
+
+            //  with captcha?
+            if ($this->conf['FaqMgr']['useCaptcha']) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                $output->captcha = $captcha->generateCaptcha();
+                $output->useCaptcha = true;
+            }
         }
     }
 }
