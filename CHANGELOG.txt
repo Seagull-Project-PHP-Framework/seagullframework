@@ -27,6 +27,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+14-09-06    Added config GUI switch for enabling the library cache
 11-09-06    Added ability to disable blocks on a per-page basis, simply have the
             block's init() method return false conditionally
 11-09-06    Added abilility to set a global Javascript onload expression

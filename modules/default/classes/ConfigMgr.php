@@ -91,14 +91,7 @@ class ConfigMgr extends SGL_Manager
             2 => 'word beginning',
             3 => 'word fragment',
             );
-        $this->aDbDoDebugLevels = array(
-            0 => 0,
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            4 => 4,
-            5 => 5,
-            );
+        $this->aDbDoDebugLevels = range(0, 5);
 
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $navDir = SGL_MOD_DIR . '/navigation/classes';
@@ -256,6 +249,21 @@ class ConfigMgr extends SGL_Manager
             SGL::raiseMsg('Config settings cannot be modified in demo mode',
                 false, SGL_MESSAGE_WARNING);
             return false;
+        }
+        //  lib cache is enabled by setting file flag in seagull/var
+        $cacheFileFlag = SGL_VAR_DIR . '/ENABLE_LIBCACHE.txt';
+        $cachedLibsFile = SGL_VAR_DIR . '/cachedLibs.php';
+        if ($input->conf['cache']['libCacheEnabled']) {
+            if (!is_file($cacheFileFlag)) {
+                $ok = touch($cacheFileFlag);
+            }
+        } else {
+            if (is_file($cacheFileFlag)) {
+                $ok = unlink($cacheFileFlag);
+            }
+            if (is_file($cachedLibsFile)) {
+                $ok = unlink($cachedLibsFile);
+            }
         }
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
