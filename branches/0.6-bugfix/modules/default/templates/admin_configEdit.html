@@ -344,7 +344,7 @@ function toggleTransElements() {
         <fieldset class="main options" id="cachingOptions">
             <h3>{translate(#Caching#)}</h3>
             <p>
-                <label class="tipOwner" for="conf[cache][enabled]">{translate(#Enable caching#)}
+                <label class="tipOwner" for="conf[cache][enabled]">{translate(#Enable global caching#)}
                 <span class="tipText">{translate(#It is recommended to disable this while developing#)}</span>
                 </label>
                 {generateRadioPair(#conf[cache][enabled]#,conf[cache][enabled]):h}
@@ -354,6 +354,12 @@ function toggleTransElements() {
                 <span class="tipText">{translate(#Default is 24 hours#)}</span>
                 </label>
                 <input type="text" name="conf[cache][lifetime]" id="conf[cache][lifetime]" value="{conf[cache][lifetime]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][libCacheEnabled]">{translate(#Enable library caching#)}
+                <span class="tipText">{translate(#It is recommended to disable this while developing#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][libCacheEnabled]#,conf[cache][libCacheEnabled]):h}
             </p>
         </fieldset>
 
