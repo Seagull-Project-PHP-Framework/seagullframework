@@ -69,6 +69,15 @@
                 E-mail notification
             </dd>-->
 
+            {if:useCaptcha}
+            <dt><label for="captcha"><span class="required">*&nbsp;</span>{translate(#Enter Captcha#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[captcha]">{translate(error[captcha])}</span>
+                <pre>{captcha}</pre>
+                <input type="text" id="captcha" name="frmCaptcha" size="30" />
+            </dd>
+            {end:}
+
             <dt>&nbsp;</dt>
             <dd>
                 <!--<input type="submit" name="submitted" value="preview" />-->

@@ -507,6 +507,8 @@ $defaultWords['Submit login'] = 'Submit login';
 $defaultWords['select all'] = 'select all';
 $defaultWords['templates'] = 'templates';
 $defaultWords['translations'] = 'translations';
+$defaultWords['Enter Captcha'] = 'Please enter the number shown below in the relevant field';
+$defaultWords['You must enter the number in this field'] = 'You must enter the number in this field';
 
 /* --- PEAR::Pager --- */
 $defaultWords['altPrev'] = 'Previous';

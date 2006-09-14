@@ -74,6 +74,7 @@ class CommentMgr extends SGL_Manager
         $input->callerMgr   = $req->get('frmCallerMgr');
         $input->callerId    = $req->get('frmCallerId');
         $input->callerTmpl  = $req->get('frmCallerTmpl');
+        $input->captcha     = $req->get('frmCaptcha');
 
         // if receiving post
         if ($input->submitted) {
@@ -88,6 +89,15 @@ class CommentMgr extends SGL_Manager
             }
             if (empty($input->comment->body)) {
                 $aErrors['body'] = 'You must fill in your comment';
+            }
+            if (isset($_POST['frmCaptcha'])) {
+                require_once SGL_CORE_DIR . '/Captcha.php';
+                $captcha = new SGL_Captcha();
+                if (!$captcha->validateCaptcha($input->captcha)) {
+                    $aErrors['captcha'] = 'You must enter the number in this field';
+                }
+                $input->captcha = $captcha->generateCaptcha();
+                $input->useCaptcha = true;
             }
         }
         //  if errors have occured
