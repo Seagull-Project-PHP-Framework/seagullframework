@@ -1,0 +1,96 @@
+<script type="text/javascript">
+    function updateFormInterface()
+    {
+        f = document.forms['frmSearch'];
+        v = f.elements['search[reg_date_mod]'].value == 0 ? true : false;
+        f.elements['search[reg_date1][year]'].disabled = v;
+        f.elements['search[reg_date1][month]'].disabled = v;
+        f.elements['search[reg_date1][day]'].disabled = v;
+        v = f.elements['search[reg_date_mod]'].value == 4 ? false : true;
+        f.elements['search[reg_date2][year]'].disabled = v;
+        f.elements['search[reg_date2][month]'].disabled = v;
+        f.elements['search[reg_date2][day]'].disabled = v;
+    }
+</script>
+
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span><a class="action validate" href="javascript:formSubmit('frmSearch','submitted',1,1);">{translate(#Search#)}</a><a class="action cancel" href="{makeUrl(##,#user#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmSearch" flexy:ignore id="frmSearch">
+        <h3>{translate(#Search Criteria#)}</h3>
+        <fieldset class="inside">
+            <input name="action" type="hidden" value="search" />
+            <p>
+                <label for="search[user_id]">{translate(#User ID#)}</label>
+                <span class="error" flexy:if="error[user_id]">{translate(error[user_id])}</span>
+                <input type="text" name="search[user_id]" id="search[user_id]" value="{search.user_id}" />
+            </p>
+            <p>
+                <label for="search[username]">{translate(#Username#)}</label>
+                <span class="error" flexy:if="error[username]">{translate(error[username])}</span>
+                <input type="text" name="search[username]" id="search[username]" value="{search.username}" />
+            </p>
+            <p>
+                <label for="search[first_name]">{translate(#First Name#)}</label>
+                <span class="error" flexy:if="error[first_name]">{translate(error[first_name])}</span>
+                <input type="text" name="search[first_name]" id="search[first_name]" value="{search.first_name}" />
+            </p>
+            <p>
+                <label for="search[last_name]">{translate(#Last Name#)}</label>
+                <span class="error" flexy:if="error[last_name]">{translate(error[last_name])}</span>
+                <input type="text" name="search[last_name]" id="search[last_name]" value="{search.last_name}" />
+            </p>
+            <p>
+                <label for="search[email]">{translate(#Email#)}</label>
+                <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+                <input type="text" class="longText" name="search[email]" id="search[email]" value="{search.email}" />
+            </p>
+            <p>
+                <label for="search[roles]">{translate(#Role#)}</label>
+                <span class="error" flexy:if="error[roles]">{translate(error[roles])}</span>
+                <select name="search[roles][]" id="search[roles]" multiple="multiple" size="3">
+                    {generateSelect(aRoles,user.role_id):h}
+                </select>
+            </p>
+            <p flexy:if="conf[OrgMgr][enabled]">
+                <label for="search[orgs]">{translate(#Organisation#)}</label>
+                <span class="error" flexy:if="error[orgs]">{translate(error[orgs])}</span>
+                <select name="search[orgs]" id="search[orgs]" multiple="multiple" size="3">
+                    {generateSelect(aOrgs,user.organisation_id):h}
+                </select>
+            </p>
+            <p>
+                <label for="search[reg_date_mod]">{translate(#Register Date#)}</label>
+                <div id="registerDateOptions">
+                    <p>
+                        <span class="error" flexy:if="error[reg_date_mod]">{translate(error[reg_date_mod])}</span>
+                        <select name="search[reg_date_mod]" id="search[reg_date_mod]" onchange="javascript:updateFormInterface(); return false;">
+                            {generateSelect(regDateMod,search[reg_date_mod]):h}
+                        </select>
+                    </p>
+                    <p>
+                    <span class="error" flexy:if="error[reg_date1]">{translate(error[reg_date1])}</span>
+                    {regDate1:h}
+                    </p>
+                    <p>
+                    <span class="error" flexy:if="error[reg_date2]">{translate(error[reg_date2])}</span>
+                    {regDate2:h}
+                    </p>
+                </div>
+            </p>
+            <p>
+                <label for="search[status]">{translate(#Status#)}</label>
+                <span class="error" flexy:if="error[status]">{translate(error[status])}</span>
+                <select name="search[status]" id="search[status]">
+                    {generateSelect(status,search[status]):h}
+                </select>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

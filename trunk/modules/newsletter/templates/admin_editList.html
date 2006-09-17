@@ -1,0 +1,42 @@
+<script type="text/javascript">
+function randomPassword(length)
+{
+  chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+  pass = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 36);
+    pass += chars.charAt(i);
+  }
+  return pass;
+}
+</script>
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('NewsletterMgr','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" onClick="javascript:document.location.href='{makeUrl(#listLists#,#list#,#newsletter#)}'">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action" value="updateList" />
+    <input type="hidden" name="oUser[newsletter_id]" value="{oUser[newsletter_id]}" />
+        <fieldset class="inside">
+            <h3>{translate(#Guestbook Information#)}</h3>
+		     <p>
+	               <label for="oUser[list]"><span class="required">*</span>{translate(#List Name#)}</label>
+	               <span class="error" flexy:if="error[list]">{translate(error[list])}</span>
+                 <input id ="oUser[list]" type="text" name="oUser[list]" size="80" maxlengthh="32" value="{oUser[list]}" />
+	         </p>
+	         <p>
+	               <label for="oUser[name]"><span class="required">*</span>{translate(#Description#)}</label>
+	               <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+	                <textarea name="oUser[name]" cols="60" maxlengthh="128">{oUser[name]}</textarea>
+	         </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

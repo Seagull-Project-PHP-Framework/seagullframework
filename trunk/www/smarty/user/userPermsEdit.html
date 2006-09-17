@@ -1,0 +1,47 @@
+<h1 class="$result->pageTitle">{$result->pageTitle}</h1>
+{if $result->msgGet()}<span>{$result->msgGet()}</span>{/if}
+
+<form name="frmFilterSwitcher" method="get">
+<table class="narrow">
+	<tr>
+    	<td>
+            filter by module 
+            <select name="frmModuleId" 
+                    onChange="javascript:document.location.href='{$result->makeUrl('editPerms','user','user')}frmUserID/{$result->userID}/frmModuleId/' + getSelectedValue(self.document.frmFilterSwitcher.frmModuleId) + '/';" />
+                <option value="" />all                       
+                {$result->generateSelect($result->aModules,$result->currentModule)}
+            </select>
+        </td>
+	</tr>
+</table>
+</form>
+
+<form method="post" name="updatePerms">
+<input type="hidden" name="action" value="updatePerms" />
+<input type="hidden" name="frmModuleId" value="{$result->moduleId}" />
+<input type="hidden" name="user[usr_id]" value="{$result->userID}" />
+<table class="narrow">
+	<tr>
+	    <th colspan="2">User permissions for user id {$result->userID}</th>
+	</tr>
+	<tr>
+	    <td align="right" valign="top"><strong>Permissions</strong></td>
+	    <td valign="top" align="left">
+            {$result->permCheckboxes}
+        </td>
+	</tr>
+	<tr>
+	    <td colspan="2">
+            <a href="'" onclick="setCheckboxes('updatePerms', 'frmPerms[]', true); return false;">Check All</a> / 
+            <a href="'" onclick="setCheckboxes('updatePerms', 'frmPerms[]', false); return false;">Uncheck All</a>
+	    </td>
+	</tr>
+    <tr>
+        <td width="100%" colspan="2" align="center" nowrap>
+            <input class="wideButton" type="submit" value="{$result->translate('Save')}" />
+    	    <input class="wideButton" type="button" value="{$result->translate('Cancel')}" 
+    	       onClick="javascript:document.location.href='{$result->makeUrl('','user','user')}'" />
+        </td>
+    </tr>
+</table>
+</form>

@@ -1,0 +1,33 @@
+<dl class="onSide" flexy:ignore>
+    <dt>
+        <label class="tipOwner" for="module_name">{translate(#Name#)}
+            <span class="tipText">{translate(#The name of the module must be the exact name of the folder containing files, beware of case sensitivity#)}</span>
+        </label>
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+        <input type="text" class="text" name="module[name]" id="module_name" value="{module.name}" />
+    </dd>
+    <dt>
+        <label class="tipOwner" for="module[title">{translate(#Title#)}
+            <span class="tipText">{translate(#Here you can write what you want#)}</span>
+        </label>
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[title]">{translate(error[title])}</div>
+        <input type="text" class="text" name="module[title]" id="module_title" value="{module.title}" />
+    </dd>
+    <dt>
+        <label for="module_description">{translate(#Description#)}</label>
+    </dt>
+    <dd>
+        <div class="error" flexy:if="error[description]">{translate(error[description])}</div>
+        <textarea class="longText" name="module[description]" id="module_description">{module.description}</textarea>
+    </dd>
+    <dt>
+        <label>{translate(#Icon#)}</label>
+    </dt>
+    <dd>
+        <span>{translate(#Simply provide an icon#)}</span>
+    </dd>
+</dl>

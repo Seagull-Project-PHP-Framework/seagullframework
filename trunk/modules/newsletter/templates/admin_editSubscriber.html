@@ -1,0 +1,74 @@
+<script type="text/javascript">
+function randomPassword(length)
+{
+  chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+  pass = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 36);
+    pass += chars.charAt(i);
+  }
+  return pass;
+}
+</script>
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('NewsletterEdit','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" onClick="javascript:document.location.href='{makeUrl(#listSubscribers#,#list#,#newsletter#)}'">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+	<form method="post" name="NewsletterEdit" flexy:ignore id="NewsletterEdit">
+	    <input type="hidden" name="oUser[newsletter_id]" value="{oUser[newsletter_id]}" />
+	    <input type="hidden" name="oUser[list]" value="{oUser[list]}" />
+	    <input type="hidden" name="action" value="{action}" />
+	    <input type="hidden" name="submitted" value="1" />
+		<fieldset class="inside">
+			<h3>{translate(#Subscriber Details#)}</h3>
+		     <p>
+	               <label for="oUser[name]"><span class="required">*</span>{translate(#Name#)}</label>
+	               <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+				   <input id="oUser[name] "type="text" name="oUser[name]" size="80" value="{oUser[name]}" />
+	         </p>
+		     <p>
+	             <label for="oUser[email]"><span class="required">*</span>{translate(#Email#)}</label>
+	             {oUser[email]}
+	         </p>
+		     <p>
+	         <p>
+	             <label for="frmListName"><span class="required"></span>{translate(#List#)}</label>
+	             {oUser[list]}
+	         </p>
+	         </p>
+		     <p>
+	               <label for="oUser[status]"><span class="required">*</span>{translate(#Status#)}</label>
+	               <span class="error" flexy:if="error[status]">{translate(error[status])}</span>
+				   <select name="oUser[status]">
+	               {this.plugin(#statusOpts#,oUser[status]):h}
+	               </select>
+	         </p>
+             <p>
+                   <label for="oUser[status]"><span class="required">*</span>{translate(#Action request#)}</label>
+                   <span class="error" flexy:if="error[action_request]">{translate(error[action_request])}</span>
+                   <select name="oUser[action_request]">
+                   {if:oUser[action_request]} 
+                   <option value=""> - - -</option>
+                   {else:}
+                   <option value="" selected> - - -</option>
+                   {end:}
+                   {this.plugin(#statusOpts#,oUser[action_request]):h}
+                   </select>
+             </p>
+		     <p>
+	               <label for="oUser[action_key]"><span class="required">*</span>{translate(#Key#)}</label>
+	               <span class="error" flexy:if="error[action_key]">{translate(error[action_key])}</span>
+				   <input type="text" id="oUser[action_key]" name="oUser[action_key]" size="50" value="{oUser[action_key]}" />
+				   <input class="SGL_Button" type="button" name="keygen" value="{translate(#Generate Key#)}" onClick="javascript:NewsletterEdit.elements['oUser[action_key]'].value=randomPassword(32)" />
+			 </p>
+		</fieldset>
+	</form>
+	<div class="clear"></div>
+</div>

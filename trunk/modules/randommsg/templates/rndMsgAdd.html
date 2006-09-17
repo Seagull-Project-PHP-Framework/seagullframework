@@ -1,0 +1,45 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form method="post" action="" enctype="multipart/form-data" flexy:ignore>
+    <input type="hidden" name="action" value="insert" /> 
+
+    <table class="narrow">
+        <tr>
+            <td>{translate(#add_message_intro#)}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="error" flexy:if="error[noMessage]">
+                    {translate(error[noMessage])}
+                </div>
+                <textarea cols="100" rows="5" name="addMsgsText"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <input type="submit" name="submitted" value="{translate(#Add messages#)}" /> 
+                <input type="button" onclick="javascript:document.location.href='{makeUrl(##,#rndmsg#)}'" value="{translate(#Cancel#)}" /></td>
+        </tr>
+
+        <tr>
+            <td>{translate(#add_from_file#)}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="error" flexy:if="error[noUpload]">
+                    {translate(error[noUpload])}
+                </div>
+
+                <div class="error" flexy:if="error[invalidType]">
+                    {translate(error[invalidType])}
+                </div>
+                <input type="file" name="msgFile" /> 
+                <input type="submit" name="upload" value="{translate(#Upload#)}" />
+            </td>
+        </tr>
+    </table>
+</form>
