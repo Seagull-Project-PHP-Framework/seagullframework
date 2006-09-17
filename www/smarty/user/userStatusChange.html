@@ -1,0 +1,32 @@
+<form method="post">
+    <input type="hidden" name="frmUserID" value="{$result->user.usr_id}" /> <input type="hidden" name="action" value="changeUserStatus" />
+    <h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+    {if $result->msgGet()}<span>{$result->msgGet()}</span>{/if}
+
+    <table class="narrow">
+        <tr>
+            <th>{$result->translate('Changing status for')}</th>
+            <td>{$result->user.username}</td>
+        </tr>
+        <tr>
+            <th>{$result->translate('Current status is')}</th>
+            <td>{if $result->user.is_acct_active} {$result->translate('active')} {else} {$result->translate('disabled')} {/if}</td>
+        </tr>
+        <tr>
+            <th>{$result->translate('Notify user')}</th>
+            <td><input type="checkbox" name="frmChangeStatusNotify" /></td>
+        </tr>
+
+        <tr>
+            <td width="100%" colspan="2" align="center" nowrap="nowrap">
+                {if $result->user.is_acct_active}
+                <input type="submit" value="{$result->translate('Disable Now')}" /> 
+                {else}
+                <input type="submit" value="{$result->translate('Enable Now')}" /> 
+                {/if}
+                <input class="wideButton" type="button" value="{$result->translate('Cancel')}" 
+                    onclick="document.location.href='{$result->makeUrl('list','user','user')}'" />
+            </td>
+        </tr>
+    </table>
+</form>

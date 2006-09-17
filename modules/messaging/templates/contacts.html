@@ -1,0 +1,37 @@
+<form name="contact" method="post" action="{makeUrl(##,#instantmessage#,#messaging#)}" id="contact" flexy:ignore>
+    <input type="hidden" name="action" value="compose" />
+
+    <h1 class="pageTitle">{translate(sectionTitle)}</h1>
+    <div class="message">{msgGet()}</div>
+    {if:pager}<flexy:include src="pager.html" />{end:}
+
+    <table class="wide">
+        <tr>
+            <td colspan="5">
+                <input type="submit" name="send" value="send message to selected user(s)" onclick="return confirmSend('contact')" />
+                <input type="button" value="go to inbox" onclick="javascript:document.location.href='{makeUrl(#inbox#,#instantmessage#,#messaging#)}';" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>{translate(#Select#)}</th>
+            <th>{translate(#Username#)}</th>
+            <th>{translate(#Full Name#)}</th>
+            <th>{translate(#View#)}</th>
+        </tr>
+    {if:aPagedData[data]}
+        <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+            <td align="center"><input class="noBorder" type="checkbox" name="frmRecipients[]" value="{aValue[usr_id]}" /></td>
+            <td>{aValue[username]}</td>
+            <td>{aValue[first_name]} {aValue[last_name]}</td>
+            <td align="center"><a href="{makeUrl(#view#,#profile#,#user#,aPagedData[data],#frmUserID|usr_id||frmFromContacts|1#,key)}">
+                <img src="{webRoot}/themes/{theme}/images/view.gif" alt="view" /></a>
+            </td>
+        </tr>
+    {else:}
+        <tr>
+            <td colspan="5" align="center">{translate(#no results found#)}</td>
+        </tr>
+    {end:}
+    </table>
+</form>

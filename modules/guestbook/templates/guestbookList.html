@@ -1,0 +1,18 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+{if:aPagedData[data]}
+    {foreach:aPagedData[data],key,aValue} 
+        <div class="guestBookEntry">
+            <p>{aValue[name]}</p>
+            <p>{aValue[date_created]}</p>
+            <p>{this.plugin(#emailObfuscator#,aValue[email]):h}</p>
+            <p>{aValue[message]:h}</p>
+            <hr />
+        </div>
+    {end:}
+{end:}
+    <p>
+        <a href="{makeUrl(#add#,#guestbook#)}">{translate(#add new entry#)}</a>
+    </p>

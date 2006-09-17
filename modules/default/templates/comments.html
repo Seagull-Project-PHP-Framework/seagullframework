@@ -1,0 +1,90 @@
+<a name="comments"></a>
+<h2>comments</h2>
+
+{if:aComments}
+
+<div id="comments" flexy:foreach="aComments,key,oComment">
+    <p>
+        <!--ANCHOR-->
+        <a name="comment{increment(key)}"></a>
+        <!--COMMENT PERMALINK-->
+        <a href="{getCurrentUrl()}#comment{increment(key)}">#{increment(key)}</a>
+        <!--AUTHOR-->
+        {if:oComment.url}
+        <a href="{oComment.url}">{oComment.full_name}</a>
+        {else:}
+        <strong>{oComment.full_name}</strong>
+        {end:}
+        <!--DATE-->
+        {formatDatePretty(oComment.date_created)}
+    </p>
+    <hr />
+    <!--COMMENT-->
+    <p>{oComment.body:h}</p>
+</div>
+
+{else:}
+<i>be the first to leave a comment</i>
+{end:}
+
+<div id="addComment">
+<form action="{makeUrl(#insert#,#comment#,#comment#)}" method="post" flexy:ignore>
+    <fieldset class="hide">
+        <input type="hidden" name="comment[entity_name]" value="{getCurrentManager()}" />
+        <input type="hidden" name="frmCallerMod"    value="{getCurrentModule()}" />
+        <input type="hidden" name="frmCallerMgr"    value="{getCurrentManager()}" />
+        <input type="hidden" name="frmCallerId"     value="{getCurrentId()}" />
+        <input type="hidden" name="frmCallerTmpl"   value="{getCurrentTemplate()}" />
+    </fieldset>
+
+    <fieldset>
+        <legend>Enter your comment</legend>
+        <dl class="onSide">
+            <dt><label for="comment[full_name]">Name:</label></dt>
+            <dd class="error" flexy:if="error[full_name]">{translate(error[full_name])}</dd>
+            <dd>
+                <input type="text" name="comment[full_name]" id="comment[full_name]" value="{comment.full_name}" />
+            </dd>
+
+            <dt><label for="comment[email]"><span class="required">*</span>Email:</label></dt>
+            <dd>
+                <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
+                <input type="text" name="comment[email]" id="comment[email]" value="{comment.email}" />
+            </dd>
+
+            <dt><label for="comment[url]">Homepage:</label></dt>
+            <dd>
+                <input type="text" name="comment[url]" id="comment[url]" value="{comment.url}" />
+            </dd>
+
+            <dt><label for="comment[body]"><span class="required">*</span>Comment:</label></dt>
+            <dd>
+                <div class="error" flexy:if="error[body]">{translate(error[body])}</div>
+                <textarea name="comment[body]" id="comment[body]" rows="10" cols="50"/>{comment.body}</textarea>
+            </dd>
+
+            <!--<dt><label for="comment[notify]">&nbsp;</label></dt>
+            <dd>
+                <input type="checkbox" name="comment[notify]" id="comment[notify]" value="{comment.notify}" />
+                E-mail notification
+            </dd>-->
+
+            {if:useCaptcha}
+            <dt><label for="captcha"><span class="required">*&nbsp;</span>{translate(#Enter Captcha#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[captcha]">{translate(error[captcha])}</span>
+                <pre>{captcha}</pre>
+                <input type="text" id="captcha" name="frmCaptcha" size="30" />
+            </dd>
+            {end:}
+
+            <dt>&nbsp;</dt>
+            <dd>
+                <!--<input type="submit" name="submitted" value="preview" />-->
+                <input class="wideButton" type="submit" name="submitted" value="post" />
+            </dd>
+        </dl>
+    </fieldset>
+
+</form>
+</div>

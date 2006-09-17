@@ -1,0 +1,105 @@
+<div id="module_header">
+	<h1>Manage Your Events > All Events</h1>
+    <div class="message">{msgGet()}</div>
+</div>
+
+<flexy:include src="eventModuleNav.html" />
+{if:results}
+<div id="events_table">
+    <form name="events">
+        <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th>{translate(#Title#)}</th>
+					<th>{translate(#Starts#)}</th>
+                    <th>{translate(#Ends#)}</th>
+					<th>{translate(#Type#)}</th>
+					<th>{translate(#Hidden#)}</th>
+					<th>{translate(#Location#)}</th>
+					<th>{translate(#Image#)}</th>
+					<th>{translate(#Files#)}</th>
+					<th scope="col"><span class="preview">{translate(#Preview#)}</span></th>
+					<th scope="col"><span class="edit">{translate(#Edit#)}</span></th>
+					<th scope="col"><span class="delete">{translate(#Delete#)}</span></th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+                <tr class="{switchRowClass()}" flexy:foreach="results,key,valueObj">
+					<td><span class="highlight">{valueObj.name}</span></td>
+					<td>{formatDate(valueObj.start_date)}</td>
+                    <td>{formatDate(valueObj.end_date)}</td>
+                    <td>{valueObj._type_id.name}</td>
+                    <!--HIDDEN OR NOT-->
+					<td class="icon_in_table">
+					{if:valueObj.status}
+                        <img src="{webRoot}/themes/{theme}/images/icons/locked.png" alt="{valueObj.status}" />
+                    {else:}
+                        <img src="{webRoot}/themes/{theme}/images/icons/unlocked.png" alt="{valueObj.status}" />
+                    {end:}
+					</td>
+					<!--LOCATION NAME-->
+					<td>
+                        {if:valueObj._location_id.name}
+                        <a href="{makeUrl(#edit#,#location#,#event#,results,#frmLocationID|location_id#,key)}"
+                            title="Edit this location">
+                            {valueObj._location_id.name}
+                        </a>
+                        {else:}
+                            <a href="{makeUrl(#list#,#location#,#event#)}">not set</a>
+                        {end:}
+                    </td>
+                    <!--THE EVENT IMAGE-->
+					<td>
+                        <a href="{makeUrl(#list#,#fileassoc#,#media#)}frmIsEventImage/1/frmFileTypeId/5/frmCallerMgr/event/frmCallerMod/event/frmEventId/{valueObj.event_id}/"
+                            title="Edit Event Image">
+                            {valueObj.isEventImg}
+                        </a>
+					</td>
+					<!--NUMBER OF ATTACHMENTS-->
+					<td>
+                        <a href="{makeUrl(#list#,#fileassoc#,#media#)}frmCallerMgr/event/frmCallerMod/event/frmEventId/{valueObj.event_id}/"
+                            title="Attach files to this event">
+                            {valueObj.attachmentCount}
+                        </a>
+                    </td>
+                    <!--PREVIEW-->
+					<td class="icon_in_table">
+						<a href="{makeUrl(#view#,#event#,#event#,results,#frmEventId|event_id#,key)}">
+							<img src="{webRoot}/themes/{theme}/images/icons/event_generic_sm.png" title="Preview this Event" alt="Preview" border="0" />
+						</a>
+					</td>
+                    <!--EDIT-->
+					<td class="icon_in_table">
+						<a href="{makeUrl(#edit#,#event#,#event#,results,#frmEventId|event_id#,key)}">
+							<img src="{webRoot}/themes/{theme}/images/icons/event_edit_sm.png" title="Edit this event." alt="Edit Event" border="0" />
+						</a>
+					</td>
+                    <!--DELETE-->
+					<td class="icon_in_table">
+						<a href="{makeUrl(#delete#,#event#,#event#,results,#frmEventId|event_id#,key)}"
+						   onclick="return confirmDelete('event', 'events')">
+							<img src="{webRoot}/themes/{theme}/images/icons/event_delete_sm.png" title="Delete this event. This can NOT be undone." alt="Delete" border="0" />
+						</a>
+					</td>
+
+                </tr>
+            </tbody>
+
+            <tfoot>
+                <tr class="infos">
+                    <td class="right" colspan="12">
+                        {if:pager}
+                        <flexy:include src="pearPager.html" />
+                        {end:}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+    <div class="spacer"></div>
+</div><!--end events_table-->
+{else:}
+<p>no events found</p>
+{end:}

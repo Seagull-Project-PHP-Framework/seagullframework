@@ -1,0 +1,377 @@
+<div id="module_header">
+	<h1>Manage Your Events > Day View</h1>
+</div>
+
+<flexy:include src="eventModuleNav.html" />
+
+<div id="calendar_area">
+	<div id="top_nav">
+
+		<a href="{makeUrl(#viewMonth#,#calendar#)}y/{prevDay.thisYear()}/m/{prevDay.thisMonth()}/d/{prevDay.thisDay()}" title="Previous Day">
+		  <img src="{webRoot}/themes/{theme}/images/icons/event_prev_date.png" title="Previous Month" alt="Previous" border="0" />
+		</a>
+
+		<span id="calendar_title"><span class="highlight">{dayName}</span></span>
+
+		<a href="{makeUrl(#viewMonth#,#calendar#)}y/{nextDay.thisYear()}/m/{nextDay.thisMonth()}/d/{nextDay.thisDay()}" title="Next Day">
+		  <img src="{webRoot}/themes/{theme}/images/icons/event_next_date.png" title="Next Month" alt="Next" border="0" />
+		</a>
+	</div>
+
+<!--<div id="dv_calendar">
+
+<table cellpadding="0" cellspacing="2">
+<caption></caption>
+<tr>
+	<th>08:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>08:30</th>
+	<td></td>
+	<td></td>
+	<td rowspan="3" class="dv_event_block">
+		<div class="event_drop_shadow">
+			<div class="eventDiv">
+				<a href="#" title="click here to view this event">Another Event</a>
+			</div>
+		</div>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<th>09:00</th>
+	<td></td>
+	<td></td>
+
+	<td></td>
+</tr>
+<tr>
+	<th>09:30</th>
+	<td></td>
+	<td></td>
+
+	<td></td>
+</tr>
+<tr>
+	<th>10:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>10:30</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th>11:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>11:30</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>12:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>12:30</th>
+	<td rowspan="16" class="dv_event_block">
+		<div class="event_drop_shadow">
+			<div class="eventDiv">
+				<a href="#" title="click here to view this event">An event with a longer title</a>
+			</div>
+		</div>
+	</td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>13:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th>13:30</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>14:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>14:30</th>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>15:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>15:30</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th>16:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>16:30</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>17:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>17:30</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>18:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th>18:30</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>19:00</th>
+
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>19:30</th>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>20:00</th>
+	<td rowspan="4" class="dv_event_block">
+		<div class="event_drop_shadow">
+			<div class="eventDiv">
+				<a href="#" title="click here to view this event">Short Title</a>
+			</div>
+		</div>
+	</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>20:30</th>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+<tr>
+	<th>21:00</th>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<th>21:30</td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+
+</table>
+</div>
+
+</div>--><!-- END DAY VIEW -->
+
+
+
+
+
+
+<div id="events_table">
+        <form name="events">
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>{translate(#Title#)}</th>
+						<th>{translate(#Starts#)}</th>
+                        <th>{translate(#Ends#)}</th>
+						<th>{translate(#Type#)}</th>
+						<th>{translate(#Hidden#)}</th>
+						<th>{translate(#Location#)}</th>
+						<th scope="col"><span class="preview">{translate(#Preview#)}</span></th>
+						<th scope="col"><span class="edit">{translate(#Edit#)}</span></th>
+						<th scope="col"><span class="delete">{translate(#Delete#)}</span></th>
+						<th scope="col"><span  class="email">{translate(#Email#)}</span></th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="events,key,valueObj">
+						<td><span class="highlight">{valueObj.name}</span></td>
+						<td>{formatDate(valueObj.start_date)}</td>
+                        <td>{formatDate(valueObj.end_date)}</td>
+                        <td>{valueObj._type_id.name}</td>
+						<td class="icon_in_table">
+						{if:valueObj.status}
+                            <img src="{webRoot}/themes/{theme}/images/icons/locked.png" alt="{valueObj.status}" />
+                        {else:}
+                            <img src="{webRoot}/themes/{theme}/images/icons/unlocked.png" alt="{valueObj.status}" />
+                        {end:}
+						</td>
+						<td>
+                            <a href="{makeUrl(#edit#,#location#,#event#,results,#frmLocationID|location_id#,key)}"
+                                title="Edit this location">
+                                {valueObj._location_id.name}
+                            </a>
+                        </td>
+
+						<td class="icon_in_table">
+							<a href="{makeUrl(#view#,#event#,#event#,results,#frmEventId|event_id#,key)}">
+								<img src="{webRoot}/themes/{theme}/images/icons/preview.png" title="Preview this Event" alt="Preview" border="0" />
+							</a>
+						</td>
+
+						<td class="icon_in_table">
+							<a href="{makeUrl(#edit#,#event#,#event#,results,#frmEventId|event_id#,key)}">
+								<img src="{webRoot}/themes/{theme}/images/icons/edit.gif" title="Edit this event." alt="Edit Event" border="0" />
+							</a>
+						</td>
+
+						<td class="icon_in_table">
+							<a href="{makeUrl(#delete#,#event#,#event#,results,#frmEventId|event_id#,key)}"
+							   onclick="return confirmDelete('event', 'events')">
+								<img src="{webRoot}/themes/{theme}/images/icons/delete.gif" title="Delete this event. This can NOT be undone." alt="Delete" border="0" />
+							</a>
+						</td>
+
+						<td class="icon_in_table">
+							<a href="#">
+								<img src="{webRoot}/themes/{theme}/images/icons/help.gif" title="Send this event by email." alt="Email" border="0" />
+							</a>
+						</td>
+
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr class="infos">
+                        <td class="right" colspan="12">
+                            {if:pager}
+                            <flexy:include src="pearPager.html" />
+                            {end:}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
+    <div class="spacer"></div>
+</div>
+
+
+
+
+<!-- ORIGINAL HTML HERE -->
+
+<!--<table class="tableBorder">
+  <tr class="tableDate">
+	    <td colspan="2"><span class="newDate"></span></td>
+  </tr>
+  <tr>
+    <td colspan="2"><strong>{translate(#Events#)}</strong></td>
+  </tr>
+    {if:events}
+        {foreach:events,k,event}
+           <tr>
+	           <td colspan="2" class="smallHeader">
+	               <a href="{makeUrl(#viewEvent#,#calendar#)}frmEventId/{event.event_id}">{event.event_name}</a>
+	           </td>
+	       </tr>
+           <tr>
+    	      	<td align="left">{translate(#Calendar group#)}: {event._event_group_id.group_name}</td>
+    	      	<td align="right">{translate(#Start Date#)}: {formatDatePretty(event.event_end)}</td>
+		   </tr>
+		   <tr>
+    	      	<td align="left">{translate(#Event group#)}: {event._event_calendar_id.calendar_group_name}</td>
+    	      	<td align="right">{translate(#Expiry Date#)}: {formatDatePretty(event.event_end)}</td>
+		   </tr>
+		   <tr>
+	           <td colspan="2"><span class="tableDescr">{event.event_desc:h}</span></td>
+	       </tr>
+	   {end:}
+   {else:}
+      <tr>
+          <td colspan="2">
+	      {translate(#No events#)}
+	      </td>
+      </tr>
+   {end:}
+   <tr>
+       <td colspan="2" flexy:ignore>
+	      <input class="wideButton" type="button" name="cancel" value="{translate(#Go to month view#)}"
+                 onclick="document.location.href='{makeUrl(#viewMonth#,#calendar#,#event#)}y/{day.thisYear()}/m/{day.thisMonth()}/d/{day.thisDay()}'" />
+	   </td>
+  </tr>
+</table>-->
+
+
+
+

@@ -1,0 +1,61 @@
+<div id="add_edit_form">
+
+
+<form method="post" name="editMedia" flexy:ignore id="editMedia">
+    <input type="hidden" name="action" value="update" />
+    <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
+    <input type="hidden" name="media[added_by]" value="{loggedOnUserID}" />
+    <input type="hidden" name="media[orig_name]" value="{media.name}" />
+
+
+
+                <h3>Editing Media '{media.name}'</h3>
+
+<div class="form_section">
+	<div class="label_div"><label>{translate(#Type#)}</label></div>
+	<span>{media.link_file_type_id.name}</span>
+</div>
+<div class="form_section">
+	<div class="label_div"><label>{translate(#Size#)}</label></div>
+	<span>{formatBytes(media.file_size)} Kb</span>
+</div>
+<div class="form_section">
+	<div class="label_div"><label>{translate(#Date Added#)}</label></div>
+	<span>{formatDate(media.date_created)}</span>
+</div>
+
+<div class="form_section">
+	<div class="label_div"><label>{translate(#Owner#)}</label></div>
+	<span>{media.link_added_by.username}</span>
+</div>
+
+
+<div class="form_section">
+	<div class="label_div"><label for="media[media_type_id]">Media Type</label></div>
+	<select name="media[media_type_id]">
+		{generateSelect(aMediaTypes,media.media_type_id):h}
+	</select>
+</div>
+
+
+
+<div class="form_section">
+	<div class="label_div"><label for="media[name]">Media Name</label></div>
+	<input type="text" name="media[name]" size="42" value="{media.name}" />
+</div>
+
+<div class="form_section">
+	<div class="label_div"><label for="media[description]">{translate(#Description#)}</label></div>
+	<textarea cols="40" rows="5" name="media[description]">{media.description}</textarea>
+</div>
+
+
+
+<br />
+<br />
+<input class="wideButton" type="submit" name="submit" value="{translate(#Save#)}" />
+<input class="wideButton" type="button" value="{translate(#Cancel#)}"
+	   onclick="javascript:document.location.href='{makeUrl(##,#media#,#cms#)}'" />
+
+</form>
+</div>

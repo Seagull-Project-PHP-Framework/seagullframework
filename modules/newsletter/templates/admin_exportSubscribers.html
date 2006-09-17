@@ -1,0 +1,32 @@
+<script type="text/javascript">
+<!--
+function selectAll(mode, i) {
+    if (i == 1) {
+        obj = document.forms['frmGuestbookList'].elements;
+    } else {
+        obj = document.forms['frmGuestbookList'].elements;
+    };
+    
+    for (i = 0; i < obj.length; i++)
+        if (obj[i].name == 'frmDelete[]') obj[i].checked = mode;
+    
+}
+
+function selchkAll(chk, i) {
+    if (chk.checked) {
+        selectAll(true, i);
+    }
+    else {
+        selectAll(false, i);
+    }
+}
+-->
+</script>
+<div id="content">
+	<fieldset class="inside">
+		{foreach:userList,key,aValue}
+		{aValue[email]}<br />
+		{end:}
+    </fieldset>
+    <div class="spacer"></div>
+</div>
