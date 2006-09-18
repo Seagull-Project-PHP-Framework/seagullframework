@@ -46,7 +46,7 @@ require_once 'PHP/CompatInfo/const_array.php';
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @copyright  Copyright 2003 Davey Shafik and Synaptic Media. All Rights Reserved.
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.3.1
+ * @version    Release: 1.3.2
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      Class available since Release 0.7.0
  */

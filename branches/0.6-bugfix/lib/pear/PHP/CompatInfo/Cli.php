@@ -15,7 +15,7 @@
  * @author     Davey Shafik <davey@php.net>
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @license    http://www.php.net/license/3_01.txt  PHP License 3.0
- * @version    CVS: $Id: Cli.php,v 1.15 2006/09/02 09:50:07 farell Exp $
+ * @version    CVS: $Id: Cli.php,v 1.16 2006/09/09 14:02:01 farell Exp $
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      File available since Release 0.8.0
  */
@@ -43,7 +43,7 @@ require_once 'Console/Table.php';
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @copyright  Copyright 2003 Davey Shafik and Synaptic Media. All Rights Reserved.
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.3.1
+ * @version    Release: 1.3.2
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      Class available since Release 0.8.0
  */
@@ -324,7 +324,11 @@ class PHP_CompatInfo_Cli extends PHP_CompatInfo
             $base = basename($data);
             $padding = $this->split - strlen($this->glue);
 
-            $dir = str_replace(array('\\', '/'), $sep, $this->dir);
+            if (isset($this->dir)) {
+                $dir = str_replace(array('\\', '/'), $sep, $this->dir);
+            } else {
+                $dir = str_replace(array('\\', '/'), $sep, dirname($data));
+            }
             $str = str_replace($dir, '[...]', dirname($data)) . $sep;
 
             if (strlen($str) + strlen($base) > $this->split) {
