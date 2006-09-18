@@ -220,15 +220,21 @@ class User_DoLogin extends SGL_Observable
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/SGL_Authenticator.php';
+        require_once SGL_CORE_DIR . '/Authenticator.php';
         #$driver = $this->conf['auth']['driver'];
         $driver = 'File';
-        $aOptions = array();
+        $aOptions = array('filename' => SGL_VAR_DIR .'/passwd.php');
         $a = new SGL_Authenticator($driver, $aOptions);
         if ($a->authenticate($username, $password) === true) {
+            $aResult['usr_id'] = SGL_ADMIN;
+            $aResult['role_id'] = SGL_ADMIN;
 
+            //  associate new session with authenticated user
+            new SGL_Session($aResult['usr_id']);
+
+            return $aResult;
         } else {
-            return $ok;
+            return false;
         }
 
         $query = "
