@@ -7,7 +7,6 @@
 </div>
 <div id="content">
     <div id="content-header">
-        <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
     {if:results}
@@ -49,12 +48,12 @@
                         <td class="left">{org[website]}</td>
                         <td class="left">{org[telephone]}</td>
                         <td>
-                            <a class="sgl-button" href="{makeUrl(#editAll#,#orgpreference#,#user#,results,#frmOrgId|organisation_id#,k)}">{translate(#change#)}</a>
+                            <a class="wideButton" href="{makeUrl(#editAll#,#orgpreference#,#user#,results,#frmOrgId|organisation_id#,k)}">{translate(#change#)}</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
+            <input type="submit" class="wideButton" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
         </fieldset>
     </form>
     {else:}

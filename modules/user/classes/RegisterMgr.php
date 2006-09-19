@@ -155,7 +155,7 @@ class RegisterMgr extends SGL_Manager
             }
 
             //  check for hacks - only admin user can set certain attributes
-            if ((SGL_Session::getUid() != SGL_ADMIN
+            if ((SGL_Session::getRoleId() != SGL_ADMIN
                     && count(array_filter(array_flip($req->get('user')), array($this, 'containsDisallowedKeys'))))) {
                 $msg = 'Hack attempted by ' .$_SERVER['REMOTE_ADDR'] . ', IP logged';
                 if (SGL_Session::getRoleId() > SGL_GUEST) {

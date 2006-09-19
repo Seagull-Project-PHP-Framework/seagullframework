@@ -4,7 +4,6 @@
 </div>
 <div id="content">
     <div id="content-header">
-        <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
     <form name="frmPrefManager" method="post" flexy:ignore id="frmPrefManager">
@@ -46,7 +45,7 @@
                     </tr>
                 </tbody>
             </table>
-            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}"
+            <input type="submit" class="wideButton" name="delete" value="{translate(#delete selected#)}"
                    onClick="return confirmSubmit('{translate(#preference#)}', 'frmPrefManager')" />
         </fieldset>
     </form>

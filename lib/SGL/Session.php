@@ -320,6 +320,33 @@ class SGL_Session
         return $ret;
     }
 
+    function hasCatPerm($catID)
+    {
+        if ($this->conf['permission']['driver'] == 'liveuser' && !empty($catID)) {
+            //  retrieve category right
+            require_once SGL_MOD_DIR .'/liveuser/classes/LUAdmin.php';
+            $admin              = & LUAdmin::singleton();
+            $catPermConstant    = 'CATEGORY_'. $catID;
+            $aParam['filters']  = array('right_define_name' => $catPermConstant);
+            $aRight             = $admin->perm->getRights($aParam);
+
+            if (!empty($aRight)) {
+                //  retrieve category perm above
+                require_once SGL_CORE_DIR .'/Perm/Perm.php';
+                $perm = &SGL_Perm::singleton('liveuser');
+                $aRightsPerms = $perm->getPermsByRights(array($aRight[0]));
+            }
+
+            // check if user has perm
+            if (!empty($aRightsPerms) && SGL_Session::hasPerms($aRightsPerms[0])) {
+               return true;
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
     function currentUserIsOwner($ownerId)
     {
         if (!isset($_SESSION)) {

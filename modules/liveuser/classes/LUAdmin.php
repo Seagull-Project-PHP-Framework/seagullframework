@@ -37,7 +37,7 @@ class LUAdmin
         if (!$ok) {
             return $admin->getErrors();  
         }
-        
+
         return $admin;
     }
     
@@ -256,20 +256,36 @@ class LUAdmin
         
         $query = "
                 SELECT      lgu.group_id, lt.name
-                FROM        {$this->conf['table']['liveuser_groupusers']} lgu,
-                            {$this->conf['table']['liveuser_groups']} lg 
+                FROM        {$this->conf['table']['liveuser_groups']} lg 
+                LEFT JOIN   {$this->conf['table']['liveuser_groupusers']} lgu ON lgu.group_id = lg.group_id 
                 LEFT JOIN   liveuser_translations lt ON lt.section_id = lg.group_id 
-                WHERE       lg.group_id = lgu.group_id
-                AND         lt.section_type = ".LIVEUSER_SECTION_GROUP."
+                WHERE       lt.section_type = ".LIVEUSER_SECTION_GROUP."
                 AND         lgu.perm_user_id = " . $userId . "
                 ORDER BY    lt.name";
         
         $dbh = &SGL_DB::singleton();
-        
-        
+
         $aGroups = $dbh->getAssoc($query);        
-              
+
         return $aGroups;
+    }
+
+    function getUsersByGroupId($id)
+    {
+        if (is_array($id) && !empty($id)) {
+            $groups = implode(',', $id);
+            $whereClause = " WHERE group_id IN ($groups)";
+        } else {
+            $whereClause = " WHERE group_id=$id";
+        }
+        $dbh = &SGL_DB::singleton();
+        $query = "
+            SELECT perm_user_id, group_id 
+            FROM liveuser_groupusers 
+            $whereClause";
+        $result = $dbh->getAssoc($query);
+
+        return $result;
     }
 
     /**

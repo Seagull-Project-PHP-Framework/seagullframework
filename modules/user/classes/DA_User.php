@@ -62,11 +62,6 @@ class DA_User extends SGL_Manager
     function DA_User()
     {
         parent::SGL_Manager();
-
-        if ($this->conf['permission']['driver'] == 'liveuser') {
-            require_once SGL_CORE_DIR .'/Perm/Perm.php';
-            $this->perm = &SGL_Perm::singleton('liveuser');
-        }
     }
 
     /**
@@ -221,6 +216,8 @@ class DA_User extends SGL_Manager
      */
     function getUserById($id = null)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         if (!is_null($id)) {
             $oUser->get($id);
@@ -327,8 +324,11 @@ class DA_User extends SGL_Manager
         
         //  in case of LU
         if ($this->conf['permission']['driver'] == 'liveuser') {
-            $rights = $this->perm->readRights($force = true, $userId);
-            $aRightsPerms = $this->perm->getPermsByRights($rights);
+            require_once SGL_CORE_DIR .'/Perm/Perm.php';
+            $perm = &SGL_Perm::singleton('liveuser');
+
+            $rights = $perm->readRights($force = true, $userId);
+            $aRightsPerms = $perm->getPermsByRights($rights);
             if(!empty($aRightsPerms)) {
                 $aUserPerms = array_merge($aUserPerms, $aRightsPerms);
             }
@@ -379,6 +379,19 @@ class DA_User extends SGL_Manager
             $aAllPerms = $this->dbh->getAssoc($query);
         }
         return $aAllPerms;
+    }
+
+    function getPermIdByName($name, $moduleId = null)
+    {
+        $moduleClause = (is_null($moduleId)) ? '' : ' AND module_id = '. $moduleId;
+        $query = "
+            SELECT permission_id 
+            FROM {$this->conf['table']['permission']}
+            WHERE name = ". $this->dbh->quote($name) ."
+            $moduleClause
+            ";
+        $result = $this->dbh->getOne($query);
+        return $result;
     }
 
     /**

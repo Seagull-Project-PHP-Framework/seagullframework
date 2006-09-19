@@ -6,7 +6,6 @@
 </div>
 <div id="content">
     <div id="content-header">
-        <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
     <form action="" method="post" id="frmOrgTypeEdit" flexy:ignore>
@@ -37,6 +36,10 @@
         </fieldset>
         <p class="helpRequire">
             <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
+        </p>
+        <p>
+            <input type="submit" class="wideButton" name="submitted" value="{translate(#Save#)}" accesskey="s" />
+            <input type="button" class="wideButton" onclick="javascript:document.location.href='{makeUrl(##,#orgtype#,#user#)}'" value="{translate(#Cancel#)}" accesskey="c" />
         </p>
     </form>
     <div class="spacer"></div>

@@ -64,8 +64,6 @@ class User_Block_Login
     {
         if ($this->uid == SGL_GUEST) {
             return $this->getLoginScreen($output);
-        } else {
-            return $this->getLogoutScreen();
         }
     }
 
@@ -79,26 +77,28 @@ class User_Block_Login
             $username = '';
             $password = '';
         }
-        $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="loginBlock">
+        $login = '<form method="post" action="'.SGL_Output::makeUrl("login","login","user").'" id="si_login">
                     <input name="action" value="login" type="hidden" />
                     <input name="redir" value="" type="hidden" />
-                    <span class="error">*&nbsp;</span>'.SGL_String::translate('Username').'
-                    <input name="frmUsername" size="15" value="'.$username.'" maxlength="36" type="text" />
-                    <span class="error">*&nbsp;</span>'.SGL_String::translate('Password').'
-                    <input name="frmPassword" value="'.$password.'" size="15" maxlength="24" type="password" />
-                    <p class="alignCenter"><input name="submitted" value="'.SGL_String::translate('Login').'" type="submit" /></p>
-                    <p><a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Not Registered').'</a><br />
-                    <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Forgot Password').'</a></p>
-                    <span class="small"><span class="error">*</span>'.SGL_String::translate('denotes required field').'</span></form>';
+                    '.SGL_String::translate('Username').'<br />
+                    <input name="frmUsername" size="15" value="'.$username.'" maxlength="36" type="text" /><br />
+                    '.SGL_String::translate('Password').'<br />
+                    <input name="frmPassword" value="'.$password.'" size="15" maxlength="24" type="password" /><br />
+                    <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td width="120">
+                                <a href="'.SGL_Url::makeLink('', 'register', 'user').'">'.SGL_String::translate('Register').'</a><br />
+    
+                                <a href="'.SGL_Url::makeLink('', 'password', 'user').'">'.SGL_String::translate('Password Help').'</a>                        
+                            </td>
+                            <td width="50">
+    
+                                <input class="si_login_button" name="submitted" value="Login" type="submit" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>';
         return $login;
-    }
-
-    function getLogoutScreen()
-    {
-        $logout  = SGL_String::translate('user').': '.$this->username.'<br />';
-        $logout .= SGL_String::translate('session started at').': '.$this->startTime.'<br />&nbsp;<br>';
-        $logout .= '<a href="'.SGL_Url::makeLink('logout', 'login', 'user').'">'.SGL_String::translate('logout').'</a>';
-        return $logout;
     }
 }
 ?>
