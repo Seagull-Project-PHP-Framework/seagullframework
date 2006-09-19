@@ -20,15 +20,14 @@
                 </tr>
                 <tr>
                     <td align="center" colspan="2"><b>Changing Permission
-                    Assignments for {right.name}</b></td>
+                    Assignments for {right.right_define_name}</b></td>
                 </tr>
                 <tr>
                     <td align="center" colspan="2">&nbsp;</td>
                 </tr>
                 <tr>
                     <th width="30%" nowrap>Right Name</TH>
-                    <td class="left" width="70%">{right.name}
-                    ({right.right_define_name})</TD>
+                    <td class="left" width="70%">({right.right_define_name})</td>
                 </tr>
                 <tr>
                     <th width="30%" nowrap>Permissions</TH>
@@ -37,7 +36,7 @@
                         <tr>
                             <td>others</td>
                             <td>&nbsp;</td>
-                            <td>selected '{right.name}' permissions</td>
+                            <td>selected '{right.right_define_name}' permissions</td>
                         </tr>
                         <tr>
                             <td><select name="frmRemainingPerms" size="10" multiple>
@@ -61,7 +60,7 @@
                         <input class="wideButton" name="submitted" value="Submit"
                             type="submit" onclick="lockChanges();" /> 
                         <input class="wideButton" type="button" value="{translate(#Cancel#)}"
-                            onClick="javascript:document.location.href='luRightsMgr.php?{sessID}'" />
+                            onClick="javascript:document.location.href='{makeUrl(##,#lurights#,#liveuser#)}'" />
                     </td>
                 </tr>
             </table>

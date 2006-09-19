@@ -90,11 +90,11 @@ class LURightsMgr extends SGL_Manager
         $admin = &LUAdmin::singleton();
         
         $data = $this->_cmd_buildRightData($input);
-        $rightId = $admin->perm->addRight($data);
-        if ($rightId === false) {
+        $output->rightId = $admin->perm->addRight($data);
+        if ($output->rightId === false) {
              LUAdmin::raiseError($admin);                     
         } else {
-            $translation = $this->_cmd_buildRightTranslationData($input,$rightId);
+            $translation = $this->_cmd_buildRightTranslationData($input,$output->rightId);
             $result = $admin->perm->addTranslation($translation);
             if ($result === false) {
                 LUAdmin::raiseError($admin);

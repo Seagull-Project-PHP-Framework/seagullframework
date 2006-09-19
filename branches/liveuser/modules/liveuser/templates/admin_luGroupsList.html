@@ -22,6 +22,7 @@
                     <tr>
                         <th>{translate(#Select#)}</th>
                         <th>{translate(#Group ID#)}</th>
+                        <th>{translate(#Name#)}</th>
                         <th>{translate(#Group Constant#)}</th>
                         <th>{translate(#Members#)}</th>
                         <th>{translate(#Rights#)}</th>
@@ -32,6 +33,7 @@
                     <tr class="{switchRowClass()}" flexy:foreach="groups,key,valueObj">
                         <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[group_id]}" flexy:raw="{valueObj.disabled}"></td>
                         <td align="center">{valueObj[group_id]}</td>
+                        <td>{valueObj[name]}</td>
                         <td>{valueObj[group_define_name]}</td>
                         <!--<td align="center">{substr(valueObj[description],0,100)}</td>-->
                         <td align="center">
@@ -40,6 +42,7 @@
                                 onClick="javascript:document.location.href='{makeUrl(#editMembers#,#lugroups#,#liveuser#,groups,#group_id|group_id#,key)}'" />
                         </td>
                         <td align="center">
+                            (<strong>{valueObj[rights_quantity]}</strong>)&nbsp;
                             <input type="button" name="frmReset" value="change"
                                 onClick="javascript:document.location.href='{makeUrl(#editRights#,#lugroups#,#liveuser#,groups,#group_id|group_id#,key)}'" />
                         </td>

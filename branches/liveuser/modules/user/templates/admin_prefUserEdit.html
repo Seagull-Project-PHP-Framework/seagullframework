@@ -5,7 +5,6 @@
 </div>
 <div id="content">
     <div id="content-header">
-        <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
     <form action="" method="post" name="frmUser" id="frmUser" flexy:ignore>
@@ -64,6 +63,10 @@
                 {generateRadioPair(#prefs[showExecutionTimes]#,prefs[showExecutionTimes]):h}
             </p>
         </fieldset>
+        <p>
+            <input type="submit" class="wideButton" name="submitted" value="{translate(#Save#)}" accesskey="s" />
+            <input type="button" class="wideButton" onclick="javascript:document.location.href='{makeUrl(##,#account#,#user#)}'" value="{translate(#Cancel#)}" accesskey="c" />
+        </p>
     </form>
     <div class="spacer"></div>
 </div>

@@ -1,5 +1,6 @@
 <?php
 require_once SGL_ENT_DIR . '/Liveuser_groupusers.php';
+require_once SGL_ENT_DIR . '/Liveuser_grouprights.php';
 require_once SGL_MOD_DIR . '/liveuser/classes/LUAdmin.php';
 
 define('SGL_LIVEUSER_RIGHT_ADD', 1);
@@ -105,11 +106,11 @@ class LUGroupsMgr extends SGL_Manager
         $admin = &LUAdmin::singleton();
         
         $data = $this->_cmd_buildFilterData($input);
-        $groupId = $admin->perm->addGroup($data);
-        if ($groupId === false) {
+        $output->groupId = $admin->perm->addGroup($data);
+        if ($output->groupId === false) {
              LUAdmin::raiseError($admin);  
         } else {
-            $translation = $this->_cmd_buildGroupTranslationData($input,$groupId);
+            $translation = $this->_cmd_buildGroupTranslationData($input, $output->groupId);
             $result = $admin->perm->addTranslation($translation);
             if ($result === false) {
                 LUAdmin::raiseError($admin);
@@ -196,11 +197,8 @@ class LUGroupsMgr extends SGL_Manager
         $output->template = 'luGroupsList.html';
         
         $admin = &LUAdmin::singleton();
-        if (!is_a($admin, 'liveuser_admin')) {
-            print '<pre>'; print_r($admin);die();
-        }
-//        $aParams['fields'] = array('name', 'description');
-        $groups = $admin->perm->getGroups();
+        $aParams['fields'] = array('group_id', 'group_define_name', 'name', 'description');
+        $groups = $admin->perm->getGroups($aParams);
 
         // get members quantity
         foreach ($groups as $key => $group) {
@@ -208,6 +206,14 @@ class LUGroupsMgr extends SGL_Manager
             $liveuserGroupUsers->group_id = $group['group_id'];
             $groups[$key]['members_quantity'] = $liveuserGroupUsers->find();
         }
+
+        // get members quantity
+        foreach ($groups as $key => $group) {
+            $liveuserGroupRights = & new DataObjects_Liveuser_grouprights; 
+            $liveuserGroupRights->group_id = $group['group_id'];
+            $groups[$key]['rights_quantity'] = $liveuserGroupRights->find();
+        }
+
         $output->groups = &$groups;
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').groups.disabled = true");
     }
@@ -266,12 +272,12 @@ class LUGroupsMgr extends SGL_Manager
         $output->group = (object)$group;
         
         //  get set of rights associated with group
-        $aGroupRights = $this->getRightsDetailsByGroupId($input->group_id);
+        $aGroupRights = (array) $this->getRightsDetailsByGroupId($input->group_id);
         asort($aGroupRights);
         $output->groupRightOptions = SGL_Output::generateSelect($aGroupRights);
 
         //  get remaining rights
-        $aRemainingRights = $this->retrieveAllOthersRights($aGroupRights);
+        $aRemainingRights = (array) $this->retrieveAllOthersRights($aGroupRights);
         asort($aRemainingRights);
         $output->remainingRightsOptions = SGL_Output::generateSelect($aRemainingRights);
     }
@@ -424,12 +430,12 @@ class LUGroupsMgr extends SGL_Manager
         $output->group = (object)$group;
         
         //  get set of members associated with group
-        $aGroupMembers = $this->getMembersDetailsByGroupId($input->group_id);
+        $aGroupMembers = (array) $this->getMembersDetailsByGroupId($input->group_id);
         asort($aGroupMembers);
         $output->groupMemberOptions = SGL_Output::generateSelect($aGroupMembers);
 
         //  get remaining members
-        $aRemainingMembers = $this->retrieveAllOthersMembers($aGroupMembers);
+        $aRemainingMembers = (array) $this->retrieveAllOthersMembers($aGroupMembers);
         asort($aRemainingMembers);
         $output->remainingMembersOptions = SGL_Output::generateSelect($aRemainingMembers);
     }
@@ -510,11 +516,11 @@ class LUGroupsMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $query = "
-            SELECT  gu.perm_user_id, CONCAT(u.last_name, ' ', u.first_name, ' (', u.username, ')') as name
+            SELECT  gu.perm_user_id, u.username
             FROM    liveuser_groupusers gu, usr u
             WHERE   gu.perm_user_id = u.usr_id
             AND     gu.group_id = $groupId
-            ORDER BY u.last_name, u.first_name";
+            ORDER BY u.username";
         
         $dbh = & SGL_DB::singleton();
         $aGroupMembers = $dbh->getAssoc($query);
@@ -542,12 +548,12 @@ class LUGroupsMgr extends SGL_Manager
             $whereClause = substr($whereClause, 0, -4);
         }
         $query = '
-            SELECT  u.usr_id, CONCAT(u.last_name, " ", u.first_name, " (", u.username, ")") as name
+            SELECT  u.usr_id, u.username 
             FROM    usr u';
         if (count($aGroupMembers) > 0) {
             $query .= " WHERE $whereClause";
         }
-        $query .= ' ORDER BY u.last_name, u.first_name';
+        $query .= ' ORDER BY u.username';
         
         $dbh = &SGL_DB::singleton();
         $aOthersMembers = $dbh->getAssoc($query);
@@ -619,7 +625,7 @@ class LUGroupsMgr extends SGL_Manager
     function _cmd_buildFilterData(&$input)
     {
         $data = array(
-            'group_define_name' => LUAdmin::convertToConstant($input->group['name']), //$input->group['group_define_name'],
+            'group_define_name' => LUAdmin::convertToConstant($input->group['group_define_name']),
         );
         return $data;
     }

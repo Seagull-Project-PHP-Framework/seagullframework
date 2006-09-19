@@ -52,7 +52,7 @@ class Perm_LiveUser
             'logout' => array(
                 'destroy'  => true,
              ),
-            'authContainers' => array( 'DB' =>
+            'authContainers' => array(
                 array(
                     'type'          => 'DB',
                     'loginTimeout'  => $options['sessionTimeout'],
@@ -149,7 +149,7 @@ class Perm_LiveUser
     function &readRights($forceReload = false, $userId = null)
     {
         static $rightIds;
-        
+
         if (isset($rightIds) && !$forceReload) {
             return $rightIds;
         }
@@ -164,16 +164,15 @@ class Perm_LiveUser
             $this->container->_perm->permUserId = $userId;
         }
 
-        $aRights = $this->container->getRights();
+        $param['fields'] = array('right_id');
+        $param['filters'] = array('perm_user_id' => $userId);
+        $param['by_group'] = true;
+        $aRights = $this->container->perm->getRights($param);
 
-        foreach ($aRights as $key => $aValue) {
-            $aRightIds[] = $aValue['right_id'];
-        }
-        
         // write into session
-        $_SESSION['liveuserRights'] = $aRightIds;
+        $_SESSION['liveuserRights'] = $aRights;
         
-        return $aRightIds;
+        return $aRights;
     }
       
     /**
@@ -215,21 +214,27 @@ class Perm_LiveUser
         if (empty($rights)) {
             return array();
         }
-        
-        $rightIn = implode(',', $rights);
-        
+
+        foreach ($rights as $key => $aValue) {
+            $aRight[] = $aValue['right_id'];   
+        }        
+
+        $rightIn = implode(',', $aRight);
+
         $whereInClause = ' right_id IN (' . $rightIn . ')';
         
         $query = '  SELECT  permission_id 
                     FROM    right_permission
                     WHERE   ' . $whereInClause;
-        
+
         $dbh = & SGL_DB::singleton();
         $aRightPerms = $dbh->getCol($query);
+
         if (is_a($aRightPerms, 'PEAR_Error')) {
            return SGL::raiseError('There was a problem retrieving perms', 
                 SGL_ERROR_NODATA);
 		}
+
         return $aRightPerms;
     }
     

@@ -158,8 +158,7 @@ create table liveuser_translations (
   language_id varchar(128) NOT NULL default '',
   name varchar(50) NOT NULL default '',
   description varchar(255) default NULL,
-  PRIMARY KEY  (section_id,section_type,language_id),
-  UNIQUE (translation_id)
+  PRIMARY KEY  (translation_id,section_id,section_type,language_id)
 );
 create index translation_id on liveuser_translations (translation_id);
 create sequence liveuser_translations_seq;

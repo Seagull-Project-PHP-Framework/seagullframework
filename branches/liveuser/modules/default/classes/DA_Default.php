@@ -187,6 +187,16 @@ class DA_Default extends SGL_Manager
         return $oModule;
     }
 
+    function getModuleIdByName($name)
+    {
+        $query = "
+            SELECT module_id 
+            FROM {$this->conf['table']['module']} 
+            WHERE name=". $this->dbh->quote($name);
+        $result = $this->dbh->getOne($query);
+        return $result;   
+    }
+
     function addModule($oModule)
     {
         SGL_DB::setConnection();

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'DB/DataObject.php';
+require_once SGL_MOD_DIR .'/user/classes/DA_User.php';
 
 /**
  * Class for user authentication and authorisation
@@ -10,6 +11,7 @@ require_once 'DB/DataObject.php';
  * @version $Revision: 1.10 $
  * @since   PHP 4.1
  */
+
 class SGL_Perm
 {
 
@@ -65,24 +67,20 @@ class SGL_Perm
 
         
         $user = &SGL_Perm::singletonUsr();
-
-        $conf = &$GLOBALS['_SGL']['CONF'];
-        /*
-        if (!isset($_SESSION['prefs'])) {
-            $_SESSION['prefs'] = PreferenceMgr::getPrefsByUid(Session::getUid());
-        }
-        */
+        $c      = & SGL_Config::singleton();
+        $conf = $c->getAll();
 
         // options for permission package   
-        $options['handle']              = $user->username;
-        $options['password']            = $user->passwd;
+        $options['handle']              = (!empty($user->username)) ? $user->username : '';
+        $options['password']            = (!empty($user->passwd)) ? $user->passwd : '';
         $options['sessionTimeout']      = $_SESSION['aPrefs']['sessionTimeout'];
-        $options['sessionMaxLifetime']  = $conf['site']['sessionMaxLifetime'];
+        $options['sessionMaxLifetime']  = $_SESSION['aPrefs']['sessionTimeout'];
         $options['authTable']           = $conf['table']['user'];
 
         // If class exists, return a new instance of it.
         if (class_exists($class)) {
-            return new $class($options);
+            $obj = & new $class($options);
+            return $obj;
         }
 
         return false;

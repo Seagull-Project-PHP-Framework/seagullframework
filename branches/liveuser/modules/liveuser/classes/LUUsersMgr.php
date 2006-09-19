@@ -110,26 +110,25 @@ class LUUsersMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         
         $dbh = & SGL_DB::singleton();
-        
+        $LUA = & LUAdmin::singleton();
+
         if ($action == SGL_LIVEUSER_REMOVE) {
             foreach ($aGroups as $groupId => $name) {
-                $dbh->query("   DELETE FROM liveuser_groupusers
-                                WHERE   perm_user_id = $userId
-                                AND     group_id = $groupId");                                
-                if (PEAR::isError($dbh)) {
-                    return false;
-                }                                
-            }
+                $filter = array(
+                    'perm_user_id' => $userId,
+                    'group_id' => $groupId
+                );
+                $removed = $LUA->perm->removeUserFromGroup($filter);
+            }    
             
         } else {
             //  add groups
             foreach ($aGroups as $groupId => $name) {
-                $dbh->query("   INSERT INTO liveuser_groupusers
-                                (perm_user_id, group_id)
-                                VALUES ($userId, $groupId)");
-                if (PEAR::isError($dbh)) {
-                    return false;
-                }                                                
+                $filter = array(
+                    'perm_user_id' => $userId,
+                    'group_id' => $groupId
+                );
+                $added = $LUA->perm->addUserToGroup($filter);
             }
         }
         return true;
@@ -149,13 +148,14 @@ class LUUsersMgr extends SGL_Manager
         
         $query = "
             SELECT  gu.group_id, lt.name
-            FROM    liveuser_groups g, liveuser_groupusers gu
+            FROM    liveuser_groupusers gu 
+            LEFT JOIN liveuser_groups g ON g.group_id = gu.group_id
             LEFT JOIN liveuser_translations lt ON lt.section_id = gu.group_id     
             WHERE   gu.group_id = g.group_id
-            AND     section_type = ".LIVEUSER_SECTION_GROUP."                    
+            AND     lt.section_type = ".LIVEUSER_SECTION_GROUP."                    
             AND     gu.perm_user_id = $userId
             ";
-        
+
         $dbh = & SGL_DB::singleton();
         $data = $dbh->getAssoc($query);
         return $data;
