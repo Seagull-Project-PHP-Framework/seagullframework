@@ -116,7 +116,7 @@ class AccountMgr extends RegisterMgr
         $oUser->last_updated = SGL_Date::getTime();
         $success = $oUser->update($original);
 
-        if ($success) {
+        if ($success !== false) {
             SGL::raiseMsg('profile successfully updated', true, SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('There was a problem inserting the record',

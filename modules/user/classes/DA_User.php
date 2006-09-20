@@ -151,7 +151,7 @@ class DA_User extends SGL_Manager
 
         $ok = $oUser->update();
 
-        if (!$ok) {
+        if ($ok === false) {
             return PEAR::raiseError('Problem inserting user DataObject');
         }
         //  change perms if role is modified
@@ -198,7 +198,7 @@ class DA_User extends SGL_Manager
             }
         }
 
-        if ($ok && !SGL_Error::count()) {
+        if ($ok !== false && !SGL_Error::count()) {
             $this->dbh->commit();
             return true;
         } else {
