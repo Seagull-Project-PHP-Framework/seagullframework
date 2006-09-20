@@ -3,11 +3,11 @@ include '../../../../../lib/SGL/FrontController.php';
 SGL_FrontController::init();
 session_start();
 
-$session = new SGL_Session();
-if (!SGL_Output::isAdmin()) {
-    die('No Perms');
-}
-
+//$session = new SGL_Session();
+//if (!SGL_Output::isAdmin()) {
+//    die('No Perms');
+//}
+//
 
 /*
  * FCKeditor - The text editor for internet
