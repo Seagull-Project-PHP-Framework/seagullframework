@@ -129,13 +129,13 @@ class SGL
             $logName = $conf['log']['name'];
         }
 
-        require_once 'Log.php';
+        include_once 'Log.php';
 
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton( $conf['log']['type'],
-                                    $logName,
-                                    $conf['log']['ident'],
-                                    array(  $conf['log']['paramsUsername'],
+        $logger = & Log::singleton($conf['log']['type'],
+                                   $logName,
+                                   $conf['log']['ident'],
+                                   array(  $conf['log']['paramsUsername'],
                                             $conf['log']['paramsPassword'],
                                             'dsn' => $dsn
                                     ));
@@ -147,7 +147,7 @@ class SGL
                 if (is_array($userinfo)) {
                     $userinfo = implode(', ', $userinfo);
                 }
-            $message .= ' : ' . $userinfo;
+                $message .= ' : ' . $userinfo;
             }
         }
         // Obtain backtrace information, if supported by PHP
@@ -336,31 +336,31 @@ class SGL
       *
       * @author  Philippe Lhoste <PhiLho(a)GMX.net>
       */
-     function loadRegionList($fileType)
-     {
-         SGL::logMessage(null, PEAR_LOG_DEBUG);
+    function loadRegionList($fileType)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-         if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
-             SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
-             return;
-         }
-         $lang = SGL::getCurrentLang();
-         $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
-         if (!file_exists($file)) {
-             $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
-         }
-         require_once $file;
+        if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
+            SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
+            return;
+        }
+        $lang = SGL::getCurrentLang();
+        $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+        if (!file_exists($file)) {
+            $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+        }
+        include_once $file;
 
-         $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
-         if (is_array($a)) {
+        $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+        if (is_array($a)) {
             asort($a);
-         }
-         return $a;
-     }
+        }
+        return $a;
+    }
 
-     function displayStaticPage($msg)
-     {
-        require_once SGL_CORE_DIR . '/Install/Common.php';
+    function displayStaticPage($msg)
+    {
+        include_once SGL_CORE_DIR . '/Install/Common.php';
         SGL_Install_Common::printHeader('An error has occurred');
         if (SGL::runningFromCli()) {
             print $msg;
@@ -372,7 +372,7 @@ class SGL
         }
         SGL_Install_Common::printFooter();
         exit();
-     }
+    }
 
      /**
       * Returns true if a minimal version of Seagull has been installed.
@@ -380,10 +380,10 @@ class SGL
       * @static
       * @return boolean
       */
-     function isMinimalInstall()
-     {
+    function isMinimalInstall()
+    {
         return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
-     }
+    }
 
      /**
       * Returns true if a module is installed, ie has a record in the module table.
@@ -392,8 +392,8 @@ class SGL
       * @param string $moduleName
       * @return boolean
       */
-     function moduleIsEnabled($moduleName)
-     {
+    function moduleIsEnabled($moduleName)
+    {
         static $aInstances;
         if (!isset($aInstances)) {
             $aInstances = array();
@@ -415,7 +415,7 @@ class SGL
             $aInstances[$moduleName] = $dbh->getOne($query);
         }
         return ! is_null($aInstances[$moduleName]);
-     }
+    }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {
