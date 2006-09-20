@@ -278,7 +278,10 @@ class SGL_Item
 
         for ($x=0; $x < count($itemID); $x++) {
             $id = $this->dbh->nextId($this->conf['table']['item_addition']);
-            $transID = $this->dbh->nextID($this->conf['table']['translation']);
+
+            $req        = & SGL_Request::singleton();
+            $moduleName = 'translation_' . $req->getModuleName();
+            $transID    = $this->dbh->nextID($moduleName);
 
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No other text entered');
