@@ -177,7 +177,7 @@ class User_UpdateUserPassword extends SGL_Observable
         //  make user object available to observers
         $this->oUser = $oUser;
 
-        if ($success) {
+        if ($success !== false) {
             //  invoke observers
             $this->notify();
             SGL::raiseMsg('Password updated successfully', true, SGL_MESSAGE_INFO);

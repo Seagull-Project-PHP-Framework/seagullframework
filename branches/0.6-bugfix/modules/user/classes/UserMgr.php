@@ -417,7 +417,7 @@ class UserMgr extends RegisterMgr
         $oUser = $this->da->getUserById($input->userID);
         $oUser->is_acct_active = ($oUser->is_acct_active) ? 0 : 1;
         $success = $oUser->update();
-        if ($input->changeStatusNotify && $success) {
+        if ($input->changeStatusNotify && $success !== false) {
             $success = $this->_sendStatusNotification($oUser, $oUser->is_acct_active);
         }
         if ($success) {
@@ -456,7 +456,7 @@ class UserMgr extends RegisterMgr
         $oUser = $this->da->getUserById($input->userID);
         $oUser->passwd = md5($passwd);
         $success = $oUser->update();
-        if ($input->passwdResetNotify && $success) {
+        if ($input->passwdResetNotify && $success !== false) {
             require_once SGL_MOD_DIR . '/user/classes/PasswordMgr.php';
             $success = PasswordMgr::sendPassword($oUser, $passwd);
         }
