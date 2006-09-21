@@ -22,7 +22,7 @@ require_once 'HTML/AJAX/Debug.php';
  * @author      Elizabeth Smith <auroraeosrose@gmail.com>
  * @copyright   2005 Joshua Eichorn, Arpad Ray, David Coallier, Elizabeth Smith
  * @license     http://www.opensource.org/licenses/lgpl-license.php   LGPL
- * @version     Release: 0.5.0
+ * @version     Release: 0.5.1
  * @link        http://pear.php.net/package/HTML_AJAX
  */
 class HTML_AJAX {
@@ -436,6 +436,16 @@ class HTML_AJAX {
         if(is_object($response) && is_a($response, 'HTML_AJAX_Response')) {
             $output = $response->getPayload();
             $content = $response->getContentType();
+        } else if(is_a($response, 'PEAR_Error')) {
+            $serializer = $this->_getSerializer('Error');
+            $output = $serializer->serialize(array(
+                'message'  => $response->getMessage(),
+                'userinfo' => $response->getUserInfo(),
+                'code'     => $response->getCode(),
+                'mode'     => $response->getMode()
+                )
+            );
+            $content = $this->contentTypeMap['Error'];
         } else {
             $serializer = $this->_getSerializer($this->serializer);
             $output = $serializer->serialize($response);
