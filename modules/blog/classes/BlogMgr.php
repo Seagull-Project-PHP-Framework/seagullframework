@@ -81,8 +81,21 @@ class BlogMgr extends SGL_Manager
         $phpSelfParts = split('\?', $_SERVER['PHP_SELF']);
         $s9yUri = SGL_BASE_URL . '/serendipity/index.php?'.@$phpSelfParts[1];
         $req = &new HTTP_Request($s9yUri);
+        if ($_POST) {
+            $req->setMethod(HTTP_REQUEST_METHOD_POST);
+            foreach ($_POST as $key => $value) {
+                $req->addPostData($key,$value);
+            }
+        }
         $req->sendRequest();
-        $output->blogData = $req->getResponseBody();
+        $header = $req->getResponseHeader('Content-type');
+        $header = explode(';',$header);
+        $header = current($header);
+        if ($header == 'text/html') {
+            $output->blogData = $req->getResponseBody();
+        } else {
+            header('Location: ' . $s9yUri);
+        }
     }
 }
 ?>
