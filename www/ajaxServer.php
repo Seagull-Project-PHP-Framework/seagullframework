@@ -31,12 +31,13 @@ class AjaxInit extends SGL_FrontController
         $output = &new SGL_Output();
 
         $process =  new SGL_Task_Init(
+                    new SGL_Task_SetupORM(
                     new SGL_Task_CreateSession(
                     new SGL_Void()
-                   ));
+                   )));
 
         $process->process($input, $output);
-    }    
+    }
 }
 
 AjaxInit::run();
