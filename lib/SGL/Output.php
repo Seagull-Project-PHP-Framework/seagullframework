@@ -441,6 +441,10 @@ class SGL_Output
     function switchTrueFalse($elementsToCount=2)
     {
         static $count;
+        if (empty($elementsToCount)) { // reset counter
+            $count = 0;
+            return;
+        }
         if ($count % $elementsToCount) {
             $switcher = false;
         } else {
