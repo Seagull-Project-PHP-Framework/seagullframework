@@ -1114,7 +1114,19 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
-                if (is_writable(SGL_WEB_ROOT)) {
+                if (strpos(PHP_OS, 'WIN') === true) {
+
+                    // if linkd binary is present
+                    if (file_exists(SGL_WEB_ROOT . "/$module")) {
+                        unlink(SGL_WEB_ROOT . "/$module");
+                    }
+                    $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                    //  otherwise just copy
+                    if (!$ok) {
+
+                    }
+
+                } elseif (is_writable(SGL_WEB_ROOT)) {
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
@@ -1454,6 +1466,12 @@ PHP;
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
         }
+    }
+}
+
+if ((strpos(PHP_OS, 'WIN') === true) && !function_exists('symlink')) {
+    function symlink($target, $link) {
+        exec("linkd ". $link . " " . $target);
     }
 }
 ?>
