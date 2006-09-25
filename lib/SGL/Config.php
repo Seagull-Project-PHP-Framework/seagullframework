@@ -136,6 +136,12 @@ class SGL_Config
         return $this->fileName;
     }
 
+    /**
+     * Reads in data from supplied $file.
+     *
+     * @param string $file
+     * @return mixed An array of data on success, PEAR error on failure.
+     */
     function load($file)
     {
         $ph = &SGL_ParamHandler::singleton($file);
@@ -163,6 +169,11 @@ class SGL_Config
         $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
     }
 
+    /**
+     * Returns true if the current config object contains no data keys.
+     *
+     * @return boolean
+     */
     function isEmpty()
     {
         return count($this->aProps) ? false : true;
