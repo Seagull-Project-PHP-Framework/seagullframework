@@ -1123,6 +1123,7 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                     $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                     //  otherwise just copy
                     if (!$ok) {
+                        require_once SGL_CORE_DIR . '/File.php';
                         $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
                     }
 
@@ -1154,6 +1155,10 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
                 }
+            //  if we're windows w/out linkd dir was copied
+            } elseif (is_dir(SGL_WEB_ROOT . "/$module")) {
+                require_once SGL_CORE_DIR . '/File.php';
+                SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
             }
         }
     }
