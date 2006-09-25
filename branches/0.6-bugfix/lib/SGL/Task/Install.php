@@ -1114,7 +1114,7 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
-                if (strpos(PHP_OS, 'WIN') === true) {
+                if (strpos(PHP_OS, 'WIN') !== true) {
 
                     // if linkd binary is present
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
@@ -1149,16 +1149,16 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
     {
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
-            if (file_exists($wwwDir)) {
+            //  if we're windows w/out linkd dir was copied
+            if (is_dir(SGL_WEB_ROOT . "/$module")) {
+                require_once SGL_CORE_DIR . '/File.php';
+                SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
+            } elseif (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
-                }
-            //  if we're windows w/out linkd dir was copied
-            } elseif (is_dir(SGL_WEB_ROOT . "/$module")) {
-                require_once SGL_CORE_DIR . '/File.php';
-                SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
+                }                
             }
         }
     }
@@ -1474,9 +1474,10 @@ PHP;
     }
 }
 
-if ((strpos(PHP_OS, 'WIN') === true) && !function_exists('symlink')) {
+if ((strpos(PHP_OS, 'WIN') !== false) && !function_exists('symlink')) {
     function symlink($target, $link) {
-        exec("linkd ". $link . " " . $target);
+        exec("linkd ". $link . " " . $target, $ret);
+        return $ret;
     }
 }
 ?>
