@@ -1123,7 +1123,7 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                     $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                     //  otherwise just copy
                     if (!$ok) {
-
+                        $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
                     }
 
                 } elseif (is_writable(SGL_WEB_ROOT)) {
