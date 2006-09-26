@@ -48,11 +48,11 @@ class AutoServer extends HTML_AJAX_Server
     // this flag must be set for your init methods to be used
     var $initMethods = true;
 
-    function initMediaDAO()
+    function initMediaAjaxProvider()
     {
-        require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
-        $da = & MediaDAO::singleton();
-        $this->registerClass($da);
+        require_once SGL_MOD_DIR . '/media/classes/MediaAjaxProvider.php';
+        $provider = & MediaAjaxProvider::singleton();
+        $this->registerClass($provider);
     }
 
     function initEcommAjaxProvider()

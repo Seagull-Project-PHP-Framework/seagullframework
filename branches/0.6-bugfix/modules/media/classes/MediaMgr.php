@@ -29,6 +29,7 @@
 
 require_once SGL_MOD_DIR . '/media/classes/FileMgr.php';
 require_once 'DB/DataObject.php';
+require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
 
 /**
  * For managing different media files.
@@ -55,6 +56,7 @@ class MediaMgr extends FileMgr
         $this->pageTitle    = 'Media Manager';
         $this->template     = 'mediaList.html';
 
+        $this->da = & MediaDAO::singleton();
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
             'insert'    => array('insert', 'redirectToDefault'),
@@ -82,6 +84,10 @@ class MediaMgr extends FileMgr
         $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
         $input->mediaId         = $req->get('frmMediaId');
         $input->aDelete         = $req->get('frmDelete');
+        
+        //  filter vars
+        $input->mediaTypeId     = $req->get('byTypeId');
+        $input->dateRange       = $req->get('byDateRange');
 
         //  Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems = $req->get('totalItems');
@@ -469,19 +475,14 @@ class MediaMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-//        $query = "
-//            SELECT    m.media_id,
-//                      m.name, file_size, mime_type,
-//                      m.date_created, description,
-//                      mt.name AS file_type_name,
-//                      u.username AS media_added_by
-//            FROM      {$this->conf['table']['media']} m
-//            JOIN      {$this->conf['table']['file_type']} mt ON mt.file_type_id = m.file_type_id
-//            LEFT JOIN {$this->conf['table']['user']} u ON u.usr_id = m.added_by
-//            ORDER BY  m.date_created DESC";
-//        $output->results = $this->dbh->getAll($query);
-        $output->addOnLoadEvent("new Effect.BlindUp($('view_type'),'blind')");
-        $output->addOnLoadEvent('remoteHW.getMediaByFileType()');
+        $options['byTypeId'] = $input->mediaTypeId;
+        $options['byDateRange'] = $input->dateRange;
+        $aMedia = $this->da->getMediaFiles($options);
+        $output->aMedia = $aMedia;
+        //echo'<pre>';die(print_r($aMedia));
+        
+//        $output->addOnLoadEvent("new Effect.BlindUp($('view_type'),'blind')");
+//        $output->addOnLoadEvent('remoteHW.getMediaByFileType()');
     }
 
     function _mime2FileType($mimeType)
