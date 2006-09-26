@@ -116,21 +116,21 @@ class FileMgr extends SGL_Manager
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $media->get($input->mediaId);
         $fileName = SGL_UPLOAD_DIR . '/' . $media->file_name;
-        return $this->_view($fileName);
+        $mimeType = $media->mime_type;
+        return $this->_view($fileName, $mimeType);
     }
 
-    function _view($filename)
+    function _view($fileName, $mimeType)
     {
         if (!@is_file($fileName)) {
             SGL::raiseError('The specified file does not appear to exist',
                 SGL_ERROR_NOFILE);
             return false;
         }
-        $mimeType = $media->mime_type;
         $dl = &new SGL_Download();
         $dl->setFile($fileName);
         $dl->setContentType($mimeType);
-        $dl->setContentDisposition(HTTP_DOWNLOAD_INLINE, $media->file_name);
+        $dl->setContentDisposition(HTTP_DOWNLOAD_INLINE, $fileName);
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {
