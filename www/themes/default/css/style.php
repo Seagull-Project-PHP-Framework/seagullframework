@@ -118,10 +118,14 @@
     $aPath = array_filter($aPath);
     array_pop($aPath);
     $baseUrl = join('/', $aPath);
+    array_pop($aPath);
+    array_pop($aPath);
+
+    $webRootUrl = join('/', $aPath);
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on')
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
-
+    $webRootUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $webRootUrl;
     require_once './vars.php';
     require_once './core.php';
     require_once './blockStyle.php';

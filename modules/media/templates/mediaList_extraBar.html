@@ -1,0 +1,45 @@
+<script type="text/javascript">
+function narrowResults(constraint) {
+    
+}
+</script>
+    <div class="extraBar" id="media-extraBar">
+        <h2 onclick="Effect.toggle('mediaFilter-combox', 'blind', {duration: 0.3})">Filter</h2>
+        <div id="mediaFilter-combox">
+            <dl>
+                <dt>By type:</dt>
+                <dd>
+                    <input type="radio" name="mediaByType" id="mediaTypeAll" onclick="Media.narrowResults({byTypeId:0})">
+                    <label for="mediaTypeAll">All</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeWord" onclick="Media.narrowResults({byTypeId:1})">
+                    <label for="mediaTypeWord">MS Word</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeExcel" onclick="Media.narrowResults({byTypeId:2})">
+                    <label for="mediaTypeExcel">MS Excel</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypePowerpoint" onclick="Media.narrowResults({byTypeId:3})">
+                    <label for="mediaTypePowerpoint">MS Powerpoint</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeImages" onclick="Media.narrowResults({byTypeId:5})">
+                    <label for="mediaTypeImages">Images</label>
+                </dd>
+            </dl>
+            <dl>
+                <dt>By date:</dt>
+                <dd>
+                    <input type="radio" name="mediaByDate" id="mediaDateAny" onclick="Media.narrowResults({byDateRange:0})">
+                    <label for="mediaDateAny">Any</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDate7Days" onclick="Media.narrowResults({byDateRange:'past7Days'})">
+                    <label for="mediaDate7Days">Past 7 days</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDateThisMonth" onclick="Media.narrowResults({byDateRange:'thisMonth'})">
+                    <label for="mediaDateThisMonth">This month</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDateBeforeThisMonth" onclick="Media.narrowResults({byDateRange:'beforeThisMonth'})">
+                    <label for="mediaDateBeforeThisMonth">Before this month</label>
+                </dd>
+            </dl>
+        </div>
+    </div>

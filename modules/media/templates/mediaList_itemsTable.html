@@ -1,0 +1,38 @@
+                {if:aMedia}
+                <!--  INCLUDED INSIDE A #mediaList-items TBODY -->
+                <tr class="{switchRowClass(##,##,#alternateRow#)}" flexy:foreach="aMedia,key,oMedia" flexy:ignore>
+                    <td scope="row">{oMedia.name}</td>
+                    <td>{oMedia.file_size}</td>
+                    <td>{oMedia.file_type_name}</td>
+                    <td>{oMedia.media_added_by}</td>
+                    <td class="sortedAsc">{formatDate(oMedia.date_created)}</td>
+
+                    <td>
+                        <a href="{makeUrl(#edit#,#media#,#media#)}frmMediaId/{oMedia.media_id}">
+                            <img src="{webRoot}/themes/{theme}/images/icons/document_edit.png" alt="edit" />
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="{makeUrl(#view#,#media#,#media#)}frmMediaId/{oMedia.media_id}">
+                            <img src="{webRoot}/themes/{theme}/images/icons/document_view.png" alt="view" />
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="{makeUrl(#setDownload#,#media#,#media#)}frmMediaId/{oMedia.media_id}">
+                            <img src="{webRoot}/themes/{theme}/images/icons/document_download.png" alt="download" />
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="{makeUrl(#delete#,#media#,#media#)}frmMediaId/{oMedia.media_id}"
+                            onclick="return confirmDelete(\'media\', \'mediaList\')">
+                            <img src="{webRoot}/themes/{theme}/images/icons/delete.gif" alt="delete" />
+                        </a>
+                    </td>
+                    
+                </tr>
+                {else:}
+                <tr><td colspan="99" class="center">{translate(#no results found#)}</td></tr>
+                {end:}
