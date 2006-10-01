@@ -185,7 +185,9 @@ function addFormValue(myElement, form)
             {end:}
             {if:uriAliasAllowed}
             <p id="uriAliasEnableBox">
-                <label for="section_uriAliasEnable">{translate(#Add an alias#)}?</label>
+                <label class="tipOwner" for="section_uriAliasEnable">{translate(#Add an alias#)}?
+                    <span class="tipText">{translate(#an alias is just a search-engine-friendly URL#)}</span>
+                </label>
                 <input type="checkbox" name="section[uri_alias_enable]" id="section_uriAliasEnable" flexy:raw="{uriAliasIsEnabled}" />
             </p>
             <p id="uriAliasAutoModeBox">

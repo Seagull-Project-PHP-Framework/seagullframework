@@ -48,6 +48,7 @@
         'You cannot activate unless you first activate.' => 'You cannot activate "%1" unless you first activate "%2"',
         'To access this section, a user must have access to the parent section.' => 'To access this section, a user must have access to the parent section. One or more of the roles you selected does not have access to "%s".',
         'You must select a valid article' => 'You must select a valid article. If none in the list, please first create a static article to link to',
+        'an alias is just a search-engine-friendly URL' => 'an alias is just a search-engine-friendly URL, ie my-article-name instead of /article/view/frmArticleId/23/',
 
 
 /*  MESSAGES    */
