@@ -586,6 +586,9 @@ class SGL_Output
         $this->masterTemplate = $this->template;
         $view = &new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
+
+        //  suppress error notices in templates
+        SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
     }
 
     /**
