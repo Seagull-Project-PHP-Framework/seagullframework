@@ -152,7 +152,7 @@ class SGL_Emailer
     }
 
     // PEAR Mail::factory wrapper
-    function factory()
+    function &factory()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
