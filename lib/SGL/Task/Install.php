@@ -1093,7 +1093,7 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                     }
                 }
             }
-            if (is_writable($linksFile)) {
+            if (is_writable($linksFile) || !file_exists($linksFile)) {
                 if (!$handle = fopen($linksFile, 'a+')) {
                     SGL_Install_Common::errorPush(
                         PEAR::raiseError('could not open links file for writing'));
