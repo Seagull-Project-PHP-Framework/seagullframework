@@ -1,4 +1,5 @@
 <?php
+$words['an alias is just a search-engine-friendly URL'] = 'per alias si indica un URL gestibile dai motori di ricerca';
 $words['You cannot activate unless you first activate.'] = 'You cannot activate unless you first activate.';
 $words['To access this section, a user must have access to the parent section.'] = 'Per accedere a questa sezione, uno user deve poter accedere alla sezione padre';
 $words['You must select a valid article'] = 'Si deve selezionare un articolo valido';

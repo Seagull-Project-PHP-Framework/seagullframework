@@ -1,4 +1,12 @@
 <?php
+$defaultWords['Enable debug block'] = 'Abilita blocco di debug';
+$defaultWords['Your database can be dropped if this block is enabled'] = 'Il tuo database può essere eliminato se questo blocco è abilitato';
+$defaultWords['Enable global caching'] = 'Abilita caching globale';
+$defaultWords['Enable library caching'] = 'Abilita caching libreria';
+$defaultWords['Global Javascript Onload'] = 'Script onLoad globale';
+$defaultWords['globalJavascript'] = 'globalJavascript';
+$defaultWords['Enter Captcha'] = 'Numero visualizzato';
+$defaultWords['You must enter the number in this field'] = 'Immettere il numero visualizzato nell\'immagine';
 $defaultWords['This is the manager class that will be loaded if none are specified'] = 'Questa è la classe Manager che verrà caricata se nulla viene specificato';
 $defaultWords['Broadcast message'] = 'Messaggio di broadcast';
 $defaultWords['Rebuild Seagull'] = 'Rebuild di Seagull';
@@ -447,7 +455,7 @@ $defaultWords['Language to use when the current language does not have a transla
 $defaultWords['If users have cookies disabled, this will allow them to use sessions with Seagull'] = 'Se gli utenti hanno i cookie disabilitati permette di avere delle sessioni con Seagull';
 $defaultWords['You have multiple sessions on this site!'] = 'Hai piu` di una sessione attiva in questo sito!';
 $defaultWords['You are allowed to connect from one computer at a time, other sessions were terminated!'] = 'Puoi connetterti da un computer alla volta, le altre sessioni saranno terminate!';
-$defaultWords['Words which system was unable to translate will be enclosed in "> <" marks'] = 'Le parole che il sistema non e` stato capace di tradurre sono state inserite tra i simboli \\\"> <\\\"';
+$defaultWords['Words which system was unable to translate will be enclosed in "> <" marks'] = 'Le parole che il sistema non e` stato capace di tradurre sono state inserite tra i simboli \\\\\"> <\\\\\"';
 $defaultWords['With selected record(s)'] = 'Con i record selezionati';
 $defaultWords['What format would you like your output URLs, Seagull Search Engine Friendly is the default'] = 'Il formato per le le URL di output: quello predefinito e` il Search Engine Friendly di Seagull';
 $defaultWords['This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8'] = 'Questa interrogazione e` usata per settare il set di caratteri di default per la connessione corrente (MySQL 4.1 o superiore). Per esempio: SET NAMES utf8';
