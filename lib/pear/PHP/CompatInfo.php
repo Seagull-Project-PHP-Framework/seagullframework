@@ -15,7 +15,7 @@
  * @author     Davey Shafik <davey@php.net>
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CompatInfo.php,v 1.32 2006/09/02 09:42:01 farell Exp $
+ * @version    CVS: $Id: CompatInfo.php,v 1.35 2006/09/19 21:59:14 farell Exp $
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      File available since Release 0.7.0
  */
@@ -46,7 +46,7 @@ require_once 'PHP/CompatInfo/const_array.php';
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @copyright  Copyright 2003 Davey Shafik and Synaptic Media. All Rights Reserved.
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.3.2
+ * @version    Release: 1.4.0
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      Class available since Release 0.7.0
  */
@@ -81,6 +81,10 @@ class PHP_CompatInfo
      *                       when calculating the version needed.
      *  - 'ignore_constants' Contains an array of constants to ignore
      *                       when calculating the version needed.
+     *  - 'ignore_extensions' Contains an array of php extensions to ignore
+     *                       when calculating the version needed.
+     *  - 'ignore_versions'  Contains an array of php versions to ignore
+     *                       when calculating the version needed.
      * @access public
      * @return Array
      * @since  0.7.0
@@ -105,6 +109,10 @@ class PHP_CompatInfo
      *  - 'ignore_functions' Contains an array of functions to ignore
      *                       when calculating the version needed.
      *  - 'ignore_constants' Contains an array of constants to ignore
+     *                       when calculating the version needed.
+     *  - 'ignore_extensions' Contains an array of php extensions to ignore
+     *                       when calculating the version needed.
+     *  - 'ignore_versions'  Contains an array of php versions to ignore
      *                       when calculating the version needed.
      * @access public
      * @return Array
@@ -139,6 +147,10 @@ class PHP_CompatInfo
      *                       File names are case insensitive.
      *  - 'ignore_dirs'      Contains an array of directories to ignore.
      *                       Directory names are case insensitive.
+     *  - 'ignore_extensions' Contains an array of php extensions to ignore
+     *                       when calculating the version needed.
+     *  - 'ignore_versions'  Contains an array of php versions to ignore
+     *                       when calculating the version needed.
      * @access public
      * @return array
      * @since  0.8.0
@@ -231,7 +243,9 @@ class PHP_CompatInfo
     /**
      * Alias of parseDir
      *
-     * @uses PHP_CompatInfo::parseDir()
+     * @param  string $folder  Path of folder to parse
+     * @param  array  $options An array of options
+     * @uses   PHP_CompatInfo::parseDir()
      * @access public
      * @since  0.7.0
      */
@@ -260,6 +274,10 @@ class PHP_CompatInfo
      *                       File names are case insensitive.
      *  - 'is_string'        Contains a boolean which says if the array values
      *                       are strings or file names.
+     *  - 'ignore_extensions' Contains an array of php extensions to ignore
+     *                       when calculating the version needed.
+     *  - 'ignore_versions'  Contains an array of php versions to ignore
+     *                       when calculating the version needed.
      * @access public
      * @return array|false
      * @since  0.7.0
@@ -399,6 +417,21 @@ class PHP_CompatInfo
         } else {
             $options['ignore_constants'] = array();
         }
+        if (isset($options['ignore_extensions'])) {
+            $options['ignore_extensions'] = array_map('strtolower', $options['ignore_extensions']);
+        } else {
+            $options['ignore_extensions'] = array();
+        }
+        if (isset($options['ignore_versions'][0])) {
+            $min_ver = $options['ignore_versions'][0];
+        } else {
+            $min_ver = false;
+        }
+        if (isset($options['ignore_versions'][1])) {
+            $max_ver = $options['ignore_versions'][1];
+        } else {
+            $max_ver = false;
+        }
 
         $token_count = sizeof($tokens);
         $i = 0;
@@ -433,8 +466,11 @@ class PHP_CompatInfo
                 $const = strtoupper($tokens[$i][1]);
                 $found = array_search($const, $akeys);
                 if ($found !== false && !in_array($const, $options['ignore_constants'])) {
-                    $constants[] = $const;
-                    $latest_version = $GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'];
+                    if (!PHP_CompatInfo::_ignore($GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'],
+                        $min_ver, $max_ver)) {
+                        $constants[] = $const;
+                        $latest_version = $GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'];
+                    }
                 }
             }
             $i += 1;
@@ -447,8 +483,34 @@ class PHP_CompatInfo
             $options['ignore_functions'] = array();
         }
         foreach ($functions as $name) {
-            if (isset($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]) && (!in_array($name, $udf) &&
-                (!in_array($name, $options['ignore_functions'])))) {
+            if (!isset($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name])) {
+                continue;  // skip this unknown function
+            }
+
+            // retrieve if available the extension name
+            if ((isset($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'])) &&
+                ($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'] != 'ext_standard') &&
+                ($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'] != 'zend')) {
+                $extension = substr($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'], 4);
+                if ($extension{0} == '_') {
+                    $extension = substr($extension, 1);
+                }
+            } else {
+                $extension = false;
+            }
+
+            if ((!in_array($name, $udf))
+                && (!in_array($name, $options['ignore_functions']))) {
+
+                if ($extension && in_array($extension, $options['ignore_extensions'])) {
+                    continue;  // skip this extension function
+                }
+
+                if (PHP_CompatInfo::_ignore($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['init'],
+                    $min_ver, $max_ver)) {
+                    continue;  // skip this function version
+                }
+
                 if ($options['debug'] == true) {
                     $functions_version[$GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['init']][] = array(
                         'function' => $name,
@@ -465,26 +527,20 @@ class PHP_CompatInfo
                         $earliest_version = $GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['end'];
                     }
                 }
-                if ((!empty($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'])) &&
-                    ($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'] != 'ext_standard') &&
-                    ($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'] != 'zend')) {
-                    $extension = substr($GLOBALS['_PHP_COMPATINFO_FUNCS'][$name]['ext'], 4);
-                    if ($extension{0} != '_') {
-                        if (!in_array($extension, $extensions)) {
-                            $extensions[] = $extension;
-                        }
-                    } else {
-                        $extension = substr($extension, 1);
-                        if (!in_array($extension, $extensions)) {
-                            $extensions[] = $extension;
-                        }
-                    }
+
+                if ($extension && !in_array($extension, $extensions)) {
+                    $extensions[] = $extension;
                 }
             }
         }
 
         $constants = array_unique($constants);
         foreach ($constants as $constant) {
+            if (PHP_CompatInfo::_ignore($GLOBALS['_PHP_COMPATINFO_CONST'][$constant]['init'],
+                $min_ver, $max_ver)) {
+                continue;  // skip this constant version
+            }
+
             $cmp = version_compare($latest_version, $GLOBALS['_PHP_COMPATINFO_CONST'][$constant]['init']);
             if ($cmp === -1) {
                 $latest_version = $GLOBALS['_PHP_COMPATINFO_CONST'][$constant]['init'];
@@ -508,6 +564,34 @@ class PHP_CompatInfo
         $functions_version['max_version'] = $earliest_version;
         $functions_version = array_reverse($functions_version);
         return $functions_version;
+    }
+
+    /**
+     * Checks if function which has $init version should be keep
+     * or ignore (version is between $min_ver and $max_ver).
+     *
+     * @param  string $init     version of current function
+     * @param  string $min_ver  minimum version of function to ignore
+     * @param  string $max_ver  maximum version of function to ignore
+     * @access private
+     * @return boolean True to ignore function/constant, false otherwise
+     * @since  1.4.0
+     * @static
+     */
+    function _ignore($init, $min_ver, $max_ver)
+    {
+        if ($min_ver) {
+            $cmp = version_compare($init, $min_ver);
+            if ($max_ver && $cmp >= 0) {
+                $cmp = version_compare($init, $max_ver);
+                if ($cmp < 1) {
+                    return true;
+                }
+            } elseif ($cmp === 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
