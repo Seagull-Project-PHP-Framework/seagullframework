@@ -74,6 +74,11 @@ class MediaAjaxProvider extends SGL_Manager
         return $instance;
     }
 
+    function getValidIds($options)
+    {
+        return $this->da->getValidIds($options);
+    }
+
     function getMediaFiles($options)
     {
        SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -86,7 +91,12 @@ class MediaAjaxProvider extends SGL_Manager
 
         $additions = array();
 
-        $output->masterTemplate = 'mediaList_itemsTable.html';
+        if ($options['viewType'] == 'thumb') {
+            $output->masterTemplate = 'mediaList_viewThumb.html';
+        } else {
+            $output->masterTemplate = 'mediaList_viewList.html';
+        }
+        
         $templ = & new SGL_HtmlSimpleView($output);
         $additions[] = $templ->render();
 

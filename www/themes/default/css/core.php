@@ -22,18 +22,14 @@ body {
     font-size: <?php echo $fontSize ?>;
     font-family: <?php echo $fontFamily ?>;
     margin: 0;
-    padding: 10px 0;
+    padding: 0 0 10px;
     color: <?php echo $greyDarkest ?>;
     background-color: <?php echo $grey ?>;
     text-align: center;
     background-image: url(../images/grey_bgnd.gif);
 }
-ul {
-    list-style: none;
-}
 dl {
-    margin: 0.5em 0;
-    line-height: 140%;
+    margin: 0 0 0.5em;
 }
 p {
     margin-bottom: 0.5em;
@@ -52,7 +48,6 @@ a:focus {
 img {
     border: none;
 }
-
 hr {
     border-top: 1px dotted #999;
     border-bottom: 0px;
@@ -63,14 +58,12 @@ hr {
 ======================Global layaout==========================*/
 #outer-wrapper {
     max-width: 1000px;
+    clear: both;
     width: 900px;
-    margin: 0 auto;
+    margin: 10px auto 0;
     text-align: left;
 }
 #header {
-    position: relative;
-}
-#top-nav {
     position: relative;
 }
 #inner-wrapper {
@@ -90,11 +83,6 @@ hr {
 }
 #middleCol .inner {
     padding: 5px 10px;
-}
-#ensureMinHeight {
-    float: left;
-    width: 1px;
-    height: <?php echo $contentMinHeight ?>;
 }
 #layout-3Cols #middleCol {
     width: <?php echo ($mainWrapperWidth - $leftColWidth - $rightColWidth - 6) . 'px' ?>;
@@ -201,55 +189,135 @@ a.breadcrumbs {
 
 /*
 ======================Main Content============================*/
-#content h1 {
+h1 {
     font-size: 1.2em;
-}
-#content h1.pageTitle {
     margin: 0em 0 1em;
     padding-bottom: 0.5em;
     border-bottom: 1px solid <?php echo $greyDark ?>;
     color: <?php echo $greyDark ?>;
 }
-#content ul {
+h2 {
+    margin-top: 0.5em;
+    font-size: 1.1em;
+}
+ul {
     margin: 0.5em 0 0.5em 1em;
     padding-left: 0.5em;
     list-style-position: inside;
     list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
 }
-#content li {
+li {
     padding-left: 0.5em;
-}
-#content a {
-    color: <?php echo $primaryDark ?>;
 }
 
 /*
 ==================Default Forms Styling=======================*/
-form {
 
-}
 fieldset {
     padding: 10px 0;
     border: none;
 }
+#content form ul {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 99%;
+    list-style-position: outside;
+    list-style-image: none;
+}
+
+#content form li {
+    display: inline-block;
+    margin: 0;
+    padding: 1px 4px 6px 9px;
+    line-height: 1.8em;
+    list-style-type: none;
+}
+form li.focused {
+    background: <?php echo $primaryLight ?>;
+}
+
+form li div {
+    float: left;
+    display: inline;
+    margin-right: 5px;
+    color: <?php echo $greyDark ?>;
+}
+form li:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+form li p {
+    clear: both;
+    font-size: 9px;
+    line-height: 13px;
+}
+
 
 /*
 ===================Form Elements Styling======================*/
 input, select, textarea {
-    font-size: 0.9em;
+    font-size: 100%;
 }
 textarea {
     font-family: <?php echo $fontFamily ?>;
-    font-size: 0.9em;
 }
 
-input[type="text"], input[type="password"]
-{
-    border-top: 1px solid #7c7c7c;
-    border-left: 1px solid #c3c3c3;
-    border-right: 1px solid #c3c3c3;
-    border-bottom: 1px solid #ddd;
+#content input.text, #content select.select, #content textarea.textarea {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #7c7c7c #c3c3c3 #ddd #c3c3c3;
     background: #fff url(../images/fieldbg.gif) repeat-x top;
+}
+
+input.text {
+    padding: 2px 0;
+}
+form label {
+    font-weight: bold;
+    color: <?php echo $greyDark ?>;
+}
+
+/* SIZES */
+.third {
+	width:32% !important;
+}
+.half {
+	width:48% !important;
+}
+.full {
+	width:100% !important;
+}
+input.small, select.small {
+	width:25%;
+}
+input.medium, select.medium {
+	width:50%;
+}
+input.large, select.large, textarea.textarea {
+	width:99%;
+}
+input.tags {
+	width:315px;
+}
+textarea.small {
+	height:5.5em;
+}
+textarea.medium {
+	height:10em;
+}
+textarea.large {
+	height:20em;
+}
+
+/* BUTTONS */
+.button {
+    font-size: 110%;
+    margin-right: 5px;
+    /*border: 1px solid #666;*/
 }
 
 /*
@@ -276,7 +344,62 @@ dd .error {
 
 /*
 ==================Default Tables Styling======================*/
+table {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-collapse: collapse;
+    font-size: 1.1em;
+    border: 1px solid #CCCCCC !important;
+}
+td, th {
+    padding: 2px 3px;
+}
 
+tr th {
+    padding-top: 4px;
+    padding-bottom: 5px;
+    border-left: 1px solid #CCC;
+    border-right: 1px solid #CCC;
+}
+tr th, tr th.action:hover {
+    /*background: #fff url('<?php echo $baseUrl ?>/images/th.gif') left bottom repeat-x;*/
+}
+tr th:hover {
+    background: #fff url('<?php echo $baseUrl ?>/images/th-hover.gif') left bottom repeat-x;
+}
+tr th, tr td, tr th a {
+    font-size: 0.9em;
+    color: #666 !important;
+}
+tr th a {
+    display: block;
+}
+tr th.sortedAsc a {
+    background: url('<?php echo $baseUrl ?>/images/th-sortAsc.gif') 95% 50% no-repeat;
+    color: <?php echo $primaryDark ?> !important;
+}
+tr th.sortedDesc a {
+    background: url('<?php echo $baseUrl ?>/images/th-sortDesc.gif') 95% 50% no-repeat;
+    color: <?php echo $primaryDark ?> !important;
+}
+tr th a:hover {
+    text-decoration: none;
+    color: <?php echo $primaryDark ?> !important;
+}
+tr td {
+    background: #FFF;
+    /*border: 1px solid #F6F5F2;*/
+}
+tr.alternateRow td {
+    background-color: #FBFFEF; /*F0FFD9*/
+}
+tr.selectedRow td {
+    background: #F6F5F2; /*D0DCE0*/
+}
+tr.rowHover td {
+  background: #F0FFD9; /*E0EFB8*/
+}
 
 /*
 =========================Footer===============================*/
@@ -363,6 +486,7 @@ a.langFlag {
 }
 .spacer {
     clear: both;
+    display: block;
     visibility: hidden;
     line-height: 1px;
 }
@@ -384,8 +508,8 @@ a.langFlag {
 .full {
     width: 100%;
 }
-.wideButton {
-    width: 8em;
+.button {
+    
 }
 .noBg {
     background: none;
@@ -445,3 +569,7 @@ pre.codeExample {
 /*
 TO REMOVE WHEN ALL TEMPLATES ARE CONSOLIDATED
 ======================Default Theme BC========================*/
+.wideButton {
+    /* use button instead */
+    width: 8em;
+}

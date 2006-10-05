@@ -8,6 +8,7 @@
         'Content Type' => 'Content Type',
         'Date Added' => 'Added',
         'Description' => 'Description',
+        'Tags' => 'Tags',
         'Category' => 'Category',
         'Locate' => 'Locate',
         'Upload' => 'Upload',
@@ -29,5 +30,11 @@
         'You must select a file to upload' => 'You must select a file to upload',
         'There was an error attempting to download the file' => 'There was an error attempting to download the file',
         'The specified file does not appear to exist' => 'The specified file does not appear to exist',
+//  File types
+        'unknown' => 'unknown',
+        'Image' => 'image',
+        
+//  Actions
+        'Edit media' => 'Edit media',
     );
 ?>
