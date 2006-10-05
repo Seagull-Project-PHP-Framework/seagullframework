@@ -32,7 +32,7 @@
  * @author     Pierre-Alain Joye <pajoye@php.net>
  * @copyright  1997-2005 Pierre-Alain Joye,Tomas V.V.Cox
  * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    CVS: $Id: Validate.php,v 1.94 2006/07/31 11:53:22 amir Exp $
+ * @version    CVS: $Id: Validate.php,v 1.99 2006/10/05 05:51:00 amir Exp $
  * @link       http://pear.php.net/package/Validate
  */
 
@@ -127,6 +127,7 @@ class Validate
      * @access  private
      */
     function __stringToUtf7($string) {
+        $return = '';
         $utf7 = array(
                         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
                         'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
@@ -155,7 +156,11 @@ class Validate
                 } elseif (($i == strlen($string) || 
                             !((ord($char) >= 0x7F)) || (ord($char) <= 0x1F))) {
                     if ($state != 1) {
-                        $return .= $utf7[ord($char)];
+                        if (ord($char) > 64) {
+                            $return .= '';
+                        } else {
+                            $return .= $utf7[ord($char)];
+                        }
                     }
                     $return .= '-';
                     $state = 0;
@@ -284,8 +289,8 @@ class Validate
          @(((\[)?                     #3 domain, 4 as IPv4, 5 optionally bracketed
          (?:(?:(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))\.){3}
                (?:(?:25[0-5])|(?:2[0-4][0-9])|(?:[0-1]?[0-9]?[0-9]))))(?(5)\])|
-         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?)  #6 domain as hostname
-         \.((?:([^-])[-a-z]*[-a-z])?)) #7 ICANN domain names 
+         ((?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\.)*[a-z0-9](?:[-a-z0-9]*[a-z0-9])?)  #6 domain as hostname
+         \.((?:([^- ])[-a-z]*[-a-z])?)) #7 TLD 
          $&xi';
 
         if ($use_rfc822? Validate::__emailRFC822($email, $options) :
@@ -495,7 +500,7 @@ class Validate
                         } else {
                             $hour = Validate::_substr($date, 2);
                         }
-                        if ($hour < 0 || $hour > 12) {
+                        if (!preg_match('/^\d+$/', $hour) || $hour < 0 || $hour > 12) {
                             return false;
                         }
                         break;
@@ -506,14 +511,14 @@ class Validate
                         } else {
                             $hour = Validate::_substr($date, 2);
                         }
-                        if ($hour < 0 || $hour > 24) {
+                        if (!preg_match('/^\d+$/', $hour) || $hour < 0 || $hour > 24) {
                             return false;
                         }
                         break;
                     case 's':
                     case 'i':
                         $t = Validate::_substr($date, 2);
-                        if ($t < 0 || $t > 59) {
+                        if (!preg_match('/^\d+$/', $t) || $t < 0 || $t > 59) {
                             return false;
                         }
                         break;
