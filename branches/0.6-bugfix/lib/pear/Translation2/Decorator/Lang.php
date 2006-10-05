@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Lang.php,v 1.10 2005/10/25 11:57:47 quipo Exp $
+ * @version    CVS: $Id: Lang.php,v 1.11 2006/03/08 15:01:08 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -49,7 +49,7 @@ require_once 'Translation2/Decorator.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Lang.php,v 1.10 2005/10/25 11:57:47 quipo Exp $
+ * @version    CVS: $Id: Lang.php,v 1.11 2006/03/08 15:01:08 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_Lang extends Translation2_Decorator
@@ -121,11 +121,15 @@ class Translation2_Decorator_Lang extends Translation2_Decorator
     {
         $data1 = $this->translation2->getPage($pageID, $langID);
         $data2 = $this->translation2->getPage($pageID, $this->fallbackLang);
-        $data1 = array_merge($data2, $data1);
         foreach ($data1 as $key => $val) {
             if (empty($val)) {
                 $data1[$key] = $data2[$key];
             }
+        }
+        // append keys when fallback lang contains more than current
+        $diff = array_diff(array_keys($data2), array_keys($data1));
+        foreach ($diff as $key) {
+        	$data1[$key] = $data2[$key];
         }
         return $data1;
     }

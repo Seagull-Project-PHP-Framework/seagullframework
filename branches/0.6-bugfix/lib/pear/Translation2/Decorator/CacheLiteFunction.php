@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: CacheLiteFunction.php,v 1.13 2005/09/08 22:29:10 quipo Exp $
+ * @version    CVS: $Id: CacheLiteFunction.php,v 1.14 2006/05/28 15:05:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -51,7 +51,7 @@ require_once 'Cache/Lite/Function.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: CacheLiteFunction.php,v 1.13 2005/09/08 22:29:10 quipo Exp $
+ * @version    CVS: $Id: CacheLiteFunction.php,v 1.14 2006/05/28 15:05:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
@@ -114,10 +114,10 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
      * @var boolean $caching
      */
     var $cleaningFrequency = 0;
-
+    
     /**
      * Name of default cache group.
-     * @var string  $defaultGroup
+     * @var	string	$defaultGroup
      */
      var $defaultGroup = 'Translation2';
 
@@ -134,11 +134,12 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     {
         if (is_null($this->cacheLiteFunction)) {
             $cache_options = array(
-                'caching'     => $this->caching,
-                'cacheDir'    => $this->cacheDir,
-                'lifeTime'    => $this->lifeTime,
-                'fileLocking' => $this->fileLocking,
+                'caching'      => $this->caching,
+                'cacheDir'     => $this->cacheDir,
+                'lifeTime'     => $this->lifeTime,
+                'fileLocking'  => $this->fileLocking,
                 'defaultGroup' => $this->defaultGroup,
+
             );
             $this->cacheLiteFunction = new Cache_Lite_Function($cache_options);
         }
@@ -316,7 +317,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     {
         if ($this->cleaningFrequency > 0) {
             if (mt_rand(1, $this->cleaningFrequency) == 1) {
-                $this->cacheLiteFunction->clean($this->defaultGroup);
+            	$this->cacheLiteFunction->clean($this->defaultGroup);
             }
         }
     }

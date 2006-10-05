@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Admin.php,v 1.18 2005/10/13 06:41:39 quipo Exp $
+ * @version    CVS: $Id: Admin.php,v 1.19 2006/05/28 15:05:09 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -130,7 +130,7 @@ class Translation2_Admin extends Translation2
     function _setDefaultOptions()
     {
         $this->options['autoCleanCache'] = false;
-        $this->options['cacheOptions']   = array('defaultGroup' => 'Translation2');
+        $this->options['cacheOptions']   = array();
         parent::_setDefaultOptions();
     }
 
@@ -328,7 +328,7 @@ class Translation2_Admin extends Translation2
             require_once 'Cache/Lite/Function.php';
             $cacheLiteFunction = new Cache_Lite_Function($this->options['cacheOptions']);
         }
-        $cacheLiteFunction->clean($this->options['cacheOptions']['defaultGroup']);
+        $cacheLiteFunction->clean();
     }
 
     // }}}

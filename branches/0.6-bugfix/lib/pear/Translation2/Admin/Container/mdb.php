@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.29 2006/02/22 16:17:37 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.31 2006/08/29 10:01:43 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -77,9 +77,10 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
 
         if (in_array($langData['table_name'], $tables)) {
             //table exists
-            $query = sprintf('ALTER TABLE %s ADD COLUMN %s TEXT',
-                            $langData['table_name'],
-                            $lang_col
+            $query = sprintf('ALTER TABLE %s ADD %s%s TEXT',
+                $this->db->quoteIdentifier($langData['table_name']),
+                $this->db->phptype == 'mssql' ? '' : 'COLUMN ',
+                $this->db->quoteIdentifier($lang_col)
             );
             ++$this->_queries;
             return $this->db->query($query);
@@ -91,33 +92,33 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
                              .'%s VARCHAR(50) default NULL, '
                              .'%s TEXT NOT NULL, '
                              .'%s TEXT )',
-                             $langData['table_name'],
-                             $this->options['string_page_id_col'],
-                             $this->options['string_id_col'],
-                             $lang_col
+            $this->db->quoteIdentifier($langData['table_name']),
+            $this->db->quoteIdentifier($this->options['string_page_id_col']),
+            $this->db->quoteIdentifier($this->options['string_id_col']),
+            $this->db->quoteIdentifier($lang_col)
         );
         $mysqlClause = ($this->db->phptype == 'mysql') ? '(255)' : '';
         $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_%s_index ON %s (%s, %s%s)',
-                             $langData['table_name'],
-                             $this->options['string_page_id_col'],
-                             $this->options['string_id_col'],
-                             $langData['table_name'],
-                             $this->options['string_page_id_col'],
-                             $this->options['string_id_col'],
-                             $mysqlClause
+            $langData['table_name'],
+            $this->options['string_page_id_col'],
+            $this->options['string_id_col'],
+            $this->db->quoteIdentifier($langData['table_name']),
+            $this->db->quoteIdentifier($this->options['string_page_id_col']),
+            $this->db->quoteIdentifier($this->options['string_id_col']),
+            $mysqlClause
         );
         $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
-                             $langData['table_name'],
-                             $this->options['string_page_id_col'],
-                             $langData['table_name'],
-                             $this->options['string_page_id_col']
+            $langData['table_name'],
+            $this->options['string_page_id_col'],
+            $this->db->quoteIdentifier($langData['table_name']),
+            $this->db->quoteIdentifier($this->options['string_page_id_col'])
         );
         $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s%s)',
-                             $langData['table_name'],
-                             $this->options['string_id_col'],
-                             $langData['table_name'],
-                             $this->options['string_id_col'],
-                             $mysqlClause
+            $langData['table_name'],
+            $this->options['string_id_col'],
+            $this->db->quoteIdentifier($langData['table_name']),
+            $this->db->quoteIdentifier($this->options['string_id_col']),
+            $mysqlClause
         );
         foreach($queries as $query) {
             ++$this->_queries;
@@ -159,18 +160,18 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
                                 .'%s TEXT, '
                                 .'%s VARCHAR(250), '
                                 .'%s VARCHAR(16) )',
-                                $this->options['langs_avail_table'],
-                                $this->options['lang_id_col'],
-                                $this->options['lang_name_col'],
-                                $this->options['lang_meta_col'],
-                                $this->options['lang_errmsg_col'],
-                                $this->options['lang_encoding_col']
+                $this->db->quoteIdentifier($this->options['langs_avail_table']),
+                $this->db->quoteIdentifier($this->options['lang_id_col']),
+                $this->db->quoteIdentifier($this->options['lang_name_col']),
+                $this->db->quoteIdentifier($this->options['lang_meta_col']),
+                $this->db->quoteIdentifier($this->options['lang_errmsg_col']),
+                $this->db->quoteIdentifier($this->options['lang_encoding_col'])
             );
             $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_index ON %s (%s)',
-                                $this->options['langs_avail_table'],
-                                $this->options['lang_id_col'],
-                                $this->options['langs_avail_table'],
-                                $this->options['lang_id_col']
+                $this->options['langs_avail_table'],
+                $this->options['lang_id_col'],
+                $this->db->quoteIdentifier($this->options['langs_avail_table']),
+                $this->db->quoteIdentifier($this->options['lang_id_col'])
             );
 
             foreach ($queries as $query) {
@@ -183,17 +184,17 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         }
 
         $query = sprintf('INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (%s, %s, %s, %s, %s)',
-                    $this->options['langs_avail_table'],
-                    $this->options['lang_id_col'],
-                    $this->options['lang_name_col'],
-                    $this->options['lang_meta_col'],
-                    $this->options['lang_errmsg_col'],
-                    $this->options['lang_encoding_col'],
-                    $this->db->getTextValue($langData['lang_id']),
-                    $this->db->getTextValue($langData['name']),
-                    $this->db->getTextValue($langData['meta']),
-                    $this->db->getTextValue($langData['error_text']),
-                    $this->db->getTextValue($langData['encoding'])
+            $this->db->quoteIdentifier($this->options['langs_avail_table']),
+            $this->db->quoteIdentifier($this->options['lang_id_col']),
+            $this->db->quoteIdentifier($this->options['lang_name_col']),
+            $this->db->quoteIdentifier($this->options['lang_meta_col']),
+            $this->db->quoteIdentifier($this->options['lang_errmsg_col']),
+            $this->db->quoteIdentifier($this->options['lang_encoding_col']),
+            $this->db->getTextValue($langData['lang_id']),
+            $this->db->getTextValue($langData['name']),
+            $this->db->getTextValue($langData['meta']),
+            $this->db->getTextValue($langData['error_text']),
+            $this->db->getTextValue($langData['encoding'])
         );
 
         ++$this->_queries;
@@ -219,8 +220,8 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
     {
         //remove from langsAvail
         $query = sprintf('DELETE FROM %s WHERE %s = %s',
-            $this->options['langs_avail_table'],
-            $this->options['lang_id_col'],
+            $this->db->quoteIdentifier($this->options['langs_avail_table']),
+            $this->db->quoteIdentifier($this->options['lang_id_col']),
             $this->db->getTextValue($langID)
         );
         ++$this->_queries;
@@ -233,13 +234,13 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         if ($force) {
             //remove the whole table
             ++$this->_queries;
-            return $this->db->query('DROP TABLE ' . $lang_table);
+            return $this->db->query('DROP TABLE ' . $this->db->quoteIdentifier($lang_table));
         }
 
         //drop only the column for this lang
         $query = sprintf('ALTER TABLE %s DROP COLUMN %s',
-            $lang_table,
-            $this->_getLangCol($langID)
+            $this->db->quoteIdentifier($lang_table),
+            $this->db->quoteIdentifier($this->_getLangCol($langID))
         );
         ++$this->_queries;
         return $this->db->query($query);
@@ -267,14 +268,14 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         $langSet = array();
         foreach ($allFields as $field => $col) {
             if (in_array($field, $updateFields)) {
-                $langSet[] = $this->options[$col] . ' = ' .
+                $langSet[] = $this->db->quoteIdentifier($this->options[$col]) . ' = ' .
                              $this->db->getTextValue($langData[$field]);
             }
         }
         $query = sprintf('UPDATE %s SET %s WHERE %s=%s',
-            $this->options['langs_avail_table'],
+            $this->db->quoteIdentifier($this->options['langs_avail_table']),
             implode(', ', $langSet),
-            $this->options['lang_id_col'],
+            $this->db->quoteIdentifier($this->options['lang_id_col']),
             $this->db->getTextValue($langData['lang_id'])
         );
 
@@ -367,11 +368,14 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         foreach ($tableLangs as $lang) {
             $langData[$lang] = $this->db->getTextValue($stringArray[$lang]);
         }
+        foreach (array_keys($tableCols) as $k) {
+            $tableCols[$k] = $this->db->quoteIdentifier($tableCols[$k]);
+        }
 
         return sprintf('INSERT INTO %s (%s, %s, %s) VALUES (%s, %s, %s)',
-            $table,
-            $this->options['string_id_col'],
-            $this->options['string_page_id_col'],
+            $this->db->quoteIdentifier($table),
+            $this->db->quoteIdentifier($this->options['string_id_col']),
+            $this->db->quoteIdentifier($this->options['string_page_id_col']),
             implode(', ', $tableCols),
             $stringID,
             $pageID,
@@ -393,16 +397,16 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         $tableCols = $this->_getLangCols($tableLangs);
         $langSet = array();
         foreach ($tableLangs as $lang) {
-            $langSet[] = $tableCols[$lang] . ' = ' .
+            $langSet[] = $this->db->quoteIdentifier($tableCols[$lang]) . ' = ' .
                          $this->db->getTextValue($stringArray[$lang]);
         }
 
         return sprintf('UPDATE %s SET %s WHERE %s = %s AND %s = %s',
-            $table,
+            $this->db->quoteIdentifier($table),
             implode(', ', $langSet),
-            $this->options['string_id_col'],
+            $this->db->quoteIdentifier($this->options['string_id_col']),
             $stringID,
-            $this->options['string_page_id_col'],
+            $this->db->quoteIdentifier($this->options['string_page_id_col']),
             $pageID
         );
     }
@@ -429,10 +433,10 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
                 continue;
             }
             $query = sprintf('DELETE FROM %s WHERE %s = %s AND %s',
-                             $table,
-                             $this->options['string_id_col'],
-                             $stringID,
-                             $this->options['string_page_id_col']
+                $this->db->quoteIdentifier($table),
+                $this->db->quoteIdentifier($this->options['string_id_col']),
+                $stringID,
+                $this->db->quoteIdentifier($this->options['string_page_id_col'])
             );
             if (is_null($pageID)) {
                 $query .= ' IS NULL';
@@ -463,8 +467,8 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         $pages = array();
         foreach ($this->_getLangTables() as $table) {
             $query = sprintf('SELECT DISTINCT %s FROM %s',
-                 $this->options['string_page_id_col'],
-                 $table
+                 $this->db->quoteIdentifier($this->options['string_page_id_col']),
+                 $this->db->quoteIdentifier($table)
             );
             ++$this->_queries;
             $res = $this->db->getCol($query);
@@ -568,11 +572,11 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         $stringID = $this->db->getTextValue($stringID);
         $pageID = is_null($pageID) ? ' IS NULL' : ' = ' . $this->db->getTextValue($pageID);
         $query = sprintf('SELECT COUNT(*) FROM %s WHERE %s=%s AND %s%s',
-                         $table,
-                         $this->options['string_id_col'],
-                         $stringID,
-                         $this->options['string_page_id_col'],
-                         $pageID
+            $this->db->quoteIdentifier($table),
+            $this->db->quoteIdentifier($this->options['string_id_col']),
+            $stringID,
+            $this->db->quoteIdentifier($this->options['string_page_id_col']),
+            $pageID
         );
         ++$this->_queries;
         $res = $this->db->getOne($query);
