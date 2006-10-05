@@ -392,10 +392,10 @@ class Translation2
         } else {
             if (strpos($strings, $this->options['ParameterPrefix']) !== false) {
                 foreach ($this->params as $name => $value) {
-                    $strings = str_replace($this->options['ParameterPrefix']
-                                           . $name . $this->options['ParameterPostfix'],
-                                           $value,
-                                           $strings);
+        		    $strings = str_replace($this->options['ParameterPrefix']
+        			            	       . $name . $this->options['ParameterPostfix'],
+        			                       $value,
+        			                       $strings);
                 }
                 if ($this->options['ParameterAutoFree']) {
                     $this->params = array();
