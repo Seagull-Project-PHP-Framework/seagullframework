@@ -1,53 +1,49 @@
 <script type="text/javascript" src="{webRoot}/js/scriptaculous/lib/prototype.js"></script>
-<script type="text/javascript" src="{webRoot}/js/scriptaculous/src/scriptaculous.js?load=effects"></script>
+<script type="text/javascript" src="{webRoot}/js/scriptaculous/src/scriptaculous.js?load=dragdrop"></script>
 <script type="text/javascript" src="{webRoot}/media/js/Widgets.js"></script>
 <script type="text/javascript" src="{webRoot}/media/js/Media.js"></script>
 <script type="text/javascript" src="{webRoot}/ajaxServer.php?client=all&amp;stub=MediaAjaxProvider"></script>
 
 <h1>{translate(pageTitle)}</h1>
-<div class="moduleContainer" id="mediaContainer">
-        <a href="{makeUrl(#add#,#media#,#media#)}">
-            <img src="{webRoot}/themes/{theme}/images/icons/document_add.png" alt="add" title="Add a file" /> Add a media
-        </a>
+<div class="moduleContainer" id="mediaContainer" flexy:ignore>
+    <div class="moduleToolbar">
+        <ul class="floatLeft">
+            <li>
+                <a href="{makeUrl(#add#,#media#,#media#)}">
+                    <img src="{webRoot}/themes/{theme}/images/icons/document_add.png" alt="add" title="Add a file" />
+                    <span>Add a media</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="Effect.toggle('mediaExtrabarInner', 'blind', {duration: 0.5}); return false;">
+                    <img src="{webRoot}/themes/{theme}/images/icons/document_search.png" alt="search" title="Search" />
+                    <span>Search</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="floatRight">
+            <li>
+                <a href="#" onclick="MediaList.switchViewType();">
+                    <img src="{webRoot}/themes/{theme}/images/icons/document_add.png" alt="add" title="Add a file" />
+                    <span>Change View</span>
+                </a>
+            </li>
+        </ul>
+    </div>
     <flexy:include src="mediaList_extraBar.html" />
     
-    <div class="mainContent">
+    <div class="moduleContent">
         <div class="message" id="ajaxMessage">{msgGet()}</div>
 
-        <table class="full boxAlt1" id="mediaListTable">
-            <!-- TABLE HEADER -->
-            <thead>
-                <tr>
-                    <th scope="col" onclick="return Table.sortTable(0, false);">
-                        <a href="#" title="Sort by name">File Name</a>
-                    </th>
-                    <th scope="col" onclick="return Table.sortTable(1, false);">
-                        <a href="#" title="Sort by size">Size</a>
-                    </th>
-                    <th scope="col" onclick="return Table.sortTable(2, false);">
-                        <a href="#" title="Sort by size">Type</a>
-                    </th>
-                    <th scope="col" onclick="return Table.sortTable(3, false);">
-                        <a href="#" title="Sort by size">Owner</a>
-                    </th>
-                    <th scope="col" class="sortedColumn sortedAsc" onclick="return Table.sortTable(4, false);">
-                        <a href="#" title="Sort by date">Date Created</a>
-                    </th>
-                    <th scope="col" colspan="4" class="action">&nbsp;</th>
-                </tr>
-            </thead>
-            <!--  CONTENT ITEMS -->
-            <tbody id="mediaList-items">
-                
-                <flexy:include src="mediaList_itemsTable.html" />
-                
-            </tbody>
-        </table>
-        <script type="text/javascript">
-        Table = new Table('mediaListTable', {
-          initialSortedCol: 4,
-          secondSortCol: 0
-        });
-        </script>
+        <div id="mediaItems">
+        {if:isEqual(viewType,#list#)}
+            <!-- Load list view -->
+            <flexy:include src="mediaList_viewList.html" />
+        {end:}
+        {if:isEqual(viewType,#thumb#)}
+            <!-- Load thumbnail view -->
+            <flexy:include src="mediaList_viewThumb.html" />
+        {end:}
+        </div>
     </div>
 </div>

@@ -1,11 +1,30 @@
-<script type="text/javascript">
-function narrowResults(constraint) {
-    
-}
-</script>
-    <div class="extraBar" id="media-extraBar">
-        <h2 onclick="Effect.toggle('mediaFilter-combox', 'blind', {duration: 0.3})">Filter</h2>
-        <div id="mediaFilter-combox">
+    <div class="extrabar" id="mediaExtrabar">
+        <div class="extrabarInner" id="mediaExtrabarInner" style="display:block;">
+            <h2>Narrow results</h2>
+            <fieldset>
+                <label>Type</label>
+                <select name="filterByType" id="filerByType"
+                        onchange="MediaList.narrowResults({byTypeId:this.options[selectedIndex].value});">
+                    <option value="0">All</option>
+                    <option value="1">MS WORD</option>
+                    <option value="2">MS EXCEL</option>
+                    <option value="3">MS POWERPOINT</option>
+                    <option value="5">IMAGE</option>
+                </select>
+                <label>Date</label>
+                <select name="filterByDate" id="filerByDate"
+                        onchange="MediaList.narrowResults({byDateRange:this.options[selectedIndex].value});">
+                    <option value="0">Any</option>
+                    <option value="past7Days">Past 7 days</option>
+                    <option value="thisMonth">This month</option>
+                    <option value="beforeThisMonth">Before this month</option>
+                </select>
+                <label>Keywords</label>
+                <input name="filterByKeywords" id="filterByKeywords" />
+                <div><a href="#" onclick="MediaList.narrowResults();">Show all</a></div>
+            </fieldset>
+            
+        <!--
             <dl>
                 <dt>By type:</dt>
                 <dd>
@@ -41,5 +60,6 @@ function narrowResults(constraint) {
                     <label for="mediaDateBeforeThisMonth">Before this month</label>
                 </dd>
             </dl>
+            -->
         </div>
     </div>

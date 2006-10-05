@@ -48,6 +48,35 @@ class MediaDAO extends SGL_Manager
      */
     function getMediaFiles($options = array())
     {
+        $constraint = $this->_buildConstraint($options);
+
+        $query = "
+            SELECT      media_id,
+                        m.name, file_name, file_size, mime_type,
+                        m.date_created, description,
+                        mt.name AS file_type_name,
+                        u.username AS media_added_by
+            FROM        {$this->conf['table']['media']} m
+            JOIN        {$this->conf['table']['file_type']} mt ON mt.file_type_id = m.file_type_id
+            LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
+            $constraint
+            ORDER BY    m.date_created DESC
+            ";
+        return $this->dbh->getAll($query);
+    }
+
+    function getValidIds($options = array())
+    {
+        $aMedia = $this->getMediaFiles($options);
+        $aRet = array();
+        foreach ($aMedia as $key => $oMedia) {
+            $aRet[] = $oMedia->media_id;
+        }
+        return $aRet;
+    }
+
+    function _buildConstraint($options)
+    {
         $constraint = $typeClause = $dateClause = '';
         if (!empty($options)) {
             //  build clause
@@ -130,19 +159,7 @@ class MediaDAO extends SGL_Manager
                 $constraint = "WHERE $dateClause";
             }
         }
-        $query = "
-            SELECT      media_id,
-                        m.name, file_name, file_size, mime_type,
-                        m.date_created, description,
-                        mt.name AS file_type_name,
-                        u.username AS media_added_by
-            FROM        {$this->conf['table']['media']} m
-            JOIN        {$this->conf['table']['file_type']} mt ON mt.file_type_id = m.file_type_id
-            LEFT JOIN   {$this->conf['table']['user']} u ON u.usr_id = m.added_by
-            $constraint
-            ORDER BY    m.date_created DESC
-            ";
-        return $this->dbh->getAll($query);
+        return $constraint;
     }
 }
 ?>

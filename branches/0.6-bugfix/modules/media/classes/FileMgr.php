@@ -49,6 +49,7 @@ class FileMgr extends SGL_Manager
             'download'          => array('download'),
             'downloadZipped'    => array('downloadZipped'),
             'view'              => array('view'),
+            'previewMedia'      => array('previewMedia'),
         );
     }
 
@@ -131,6 +132,64 @@ class FileMgr extends SGL_Manager
         $dl->setFile($fileName);
         $dl->setContentType($mimeType);
         $dl->setContentDisposition(HTTP_DOWNLOAD_INLINE, $fileName);
+        $dl->setAcceptRanges('none');
+        $error = $dl->send();
+        if (PEAR::isError($error)) {
+            SGL::raiseError('There was an error displaying the file',
+                SGL_ERROR_NOFILE);
+        }
+        exit;
+    }
+
+    //  Returns small thumb for images type or mime_type image for other media
+    function _cmd_previewMedia(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $c = &SGL_Config::singleton();
+        $ok = $c->set('FileMgr', array('setHeaders' => false));
+        $output->template = 'docBlank.html';
+        $media = DB_DataObject::factory($this->conf['table']['media']);
+        $fileType = DB_DataObject::factory($this->conf['table']['file_type']);
+        $media->joinAdd($fileType);
+        $media->selectAdd('media.name as name');
+        $media->selectAdd('file_type.name as file_type_name');
+        $media->get($input->mediaId);
+
+        //  Check if we want to preview an image
+        if ($media->file_type_name == 'Image') {
+            if (!empty($input->mediaSize)) {
+                $fileName = SGL_UPLOAD_DIR . '/thumbs/' . $input->mediaSize .'_'. $media->file_name;
+            } else {
+                $fileName = SGL_UPLOAD_DIR . '/' . $media->file_name;
+            }
+            //  if it's not in upload dir, check media module dir
+            if (!@is_file($fileName)) {
+                if (!empty($input->mediaSize)) {
+                    $fileName = SGL_MOD_DIR . '/media/www/images/thumbs/' . $input->mediaSize .'_'. $media->file_name;
+                } else {
+                    $fileName = SGL_MOD_DIR . '/media/www/images/' . $media->file_name;
+                }
+            }
+        } else {
+            //  Return a default preview image
+            //  Todo: make this flexible, not hardcoded
+            $fileName = SGL_WEB_ROOT . '/themes/default/images/icons/document_mediamanager.png';
+            $media->file_name = $fileName;
+            $media->mime_type = 'image/png';
+        }
+
+        //  return error if file not found
+        if (!@is_file($fileName)) {
+            SGL::raiseError('The specified file does not appear to exist',
+                SGL_ERROR_NOFILE);
+            return false;
+        }
+        $mimeType = $media->mime_type;
+        $dl = &new SGL_Download();
+        $dl->setFile($fileName);
+        $dl->setContentType($mimeType);
+        $dl->setContentDisposition(HTTP_DOWNLOAD_INLINE, $media->file_name);
         $dl->setAcceptRanges('none');
         $error = $dl->send();
         if (PEAR::isError($error)) {

@@ -66,6 +66,7 @@ class MediaMgr extends FileMgr
             'setDownload' => array('setDownload'),
             'list'      => array('list'),
             'view'      => array('view'),
+            'previewMedia'      => array('previewMedia'),
         );
     }
 
@@ -83,11 +84,15 @@ class MediaMgr extends FileMgr
         $input->submitted       = $req->get('submit');
         $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
         $input->mediaId         = $req->get('frmMediaId');
+        $input->mediaSize       = $req->get('frmSize');
         $input->aDelete         = $req->get('frmDelete');
         
         //  filter vars
         $input->mediaTypeId     = $req->get('byTypeId');
         $input->dateRange       = $req->get('byDateRange');
+        
+        //  view type
+        $input->viewType        = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
 
         //  Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems = $req->get('totalItems');
@@ -479,10 +484,10 @@ class MediaMgr extends FileMgr
         $options['byDateRange'] = $input->dateRange;
         $aMedia = $this->da->getMediaFiles($options);
         $output->aMedia = $aMedia;
-        //echo'<pre>';die(print_r($aMedia));
-        
-//        $output->addOnLoadEvent("new Effect.BlindUp($('view_type'),'blind')");
-//        $output->addOnLoadEvent('remoteHW.getMediaByFileType()');
+
+        $output->javascriptSrc = array(
+            'js/lightbox/lightbox.js');
+        $output->addOnLoadEvent("MediaList.init()");
     }
 
     function _mime2FileType($mimeType)
