@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.69 2006/03/02 18:14:13 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.71 2006/04/12 21:44:50 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -281,7 +281,7 @@ define('PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME', 52);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -858,6 +858,11 @@ class PEAR_PackageFile_v1
         return false;
     }
 
+    function getProvidesExtension()
+    {
+        return false;
+    }
+
     function addFile($dir, $file, $attrs)
     {
         $dir = preg_replace(array('!\\\\+!', '!/+!'), array('/', '/'), $dir);
@@ -1353,13 +1358,8 @@ class PEAR_PackageFile_v1
         if (!$fp = @fopen($file, "r")) {
             return false;
         }
-        if (function_exists('file_get_contents')) {
-            fclose($fp);
-            $contents = file_get_contents($file);
-        } else {
-            $contents = @fread($fp, filesize($file));
-            fclose($fp);
-        }
+        fclose($fp);
+        $contents = file_get_contents($file);
         $tokens = token_get_all($contents);
 /*
         for ($i = 0; $i < sizeof($tokens); $i++) {

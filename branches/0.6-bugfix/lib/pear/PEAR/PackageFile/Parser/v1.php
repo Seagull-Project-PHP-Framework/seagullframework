@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.21 2006/01/06 04:47:37 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.22 2006/03/27 05:25:48 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -71,7 +71,7 @@ class PEAR_PackageFile_Parser_v1
         if (!extension_loaded('xml')) {
             return PEAR::raiseError('Cannot create xml parser for parsing package.xml, no xml extension');
         }
-        $xp = @xml_parser_create();
+        $xp = xml_parser_create();
         if (!$xp) {
             return PEAR::raiseError('Cannot create xml parser for parsing package.xml');
         }

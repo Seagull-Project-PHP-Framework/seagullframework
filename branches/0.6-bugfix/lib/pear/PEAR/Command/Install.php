@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.115 2006/03/02 18:14:13 cellog Exp $
+ * @version    CVS: $Id: Install.php,v 1.119 2006/05/12 02:38:58 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -343,6 +343,180 @@ Run post-installation scripts in package <package>, if any exist.
         return $a;
     }
 
+    function enableExtension($binaries, $type)
+    {
+        if (!($phpini = $this->config->get('php_ini', null, 'pear.php.net'))) {
+            return PEAR::raiseError('configuration option "php_ini" is not set to php.ini location');
+        }
+        $ini = $this->_parseIni($phpini);
+        if (PEAR::isError($ini)) {
+            return $ini;
+        }
+        $fp = @fopen($phpini, 'wb');
+        if (!$fp) {
+            return PEAR::raiseError('cannot open php.ini "' . $phpini . '" for writing');
+        }
+        $line = 0;
+        if ($type == 'extsrc' || $type == 'extbin') {
+            $search = 'extensions';
+            $enable = 'extension';
+        } else {
+            $search = 'zend_extensions';
+            ob_start();
+            phpinfo(INFO_GENERAL);
+            $info = ob_get_contents();
+            ob_end_clean();
+            $debug = function_exists('leak') ? '_debug' : '';
+            $ts = preg_match('Thread Safety.+enabled', $info) ? '_ts' : '';
+            $enable = 'zend_extension' . $debug . $ts;
+        }
+        foreach ($ini[$search] as $line => $extension) {
+            if (in_array($extension, $binaries, true) || in_array(
+                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, true)) {
+                // already enabled - assume if one is, all are
+                return true;
+            }
+        }
+        if ($line) {
+            $newini = array_slice($ini['all'], 0, $line);
+        } else {
+            $newini = array();
+        }
+        foreach ($binaries as $binary) {
+            if ($ini['extension_dir']) {
+                $binary = basename($binary);
+            }
+            $newini[] = $enable . '="' . $binary . '"' . (OS_UNIX ? "\n" : "\r\n");
+        }
+        $newini = array_merge($newini, array_slice($ini['all'], $line));
+        foreach ($newini as $line) {
+            fwrite($fp, $line);
+        }
+        fclose($fp);
+        return true;
+    }
+
+    function disableExtension($binaries, $type)
+    {
+        if (!($phpini = $this->config->get('php_ini', null, 'pear.php.net'))) {
+            return PEAR::raiseError('configuration option "php_ini" is not set to php.ini location');
+        }
+        $ini = $this->_parseIni($phpini);
+        if (PEAR::isError($ini)) {
+            return $ini;
+        }
+        $line = 0;
+        if ($type == 'extsrc' || $type == 'extbin') {
+            $search = 'extensions';
+            $enable = 'extension';
+        } else {
+            $search = 'zend_extensions';
+            ob_start();
+            phpinfo(INFO_GENERAL);
+            $info = ob_get_contents();
+            ob_end_clean();
+            $debug = function_exists('leak') ? '_debug' : '';
+            $ts = preg_match('Thread Safety.+enabled', $info) ? '_ts' : '';
+            $enable = 'zend_extension' . $debug . $ts;
+        }
+        $found = false;
+        foreach ($ini[$search] as $line => $extension) {
+            if (in_array($extension, $binaries, true) || in_array(
+                  $ini['extension_dir'] . DIRECTORY_SEPARATOR . $extension, $binaries, true)) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            // not enabled
+            return true;
+        }
+        $fp = @fopen($phpini, 'wb');
+        if (!$fp) {
+            return PEAR::raiseError('cannot open php.ini "' . $phpini . '" for writing');
+        }
+        if ($line) {
+            $newini = array_slice($ini['all'], 0, $line);
+            // delete the enable line
+            $newini = array_merge($newini, array_slice($ini['all'], $line + 1));
+        } else {
+            $newini = array_slice($ini['all'], 1);
+        }
+        foreach ($newini as $line) {
+            fwrite($fp, $line);
+        }
+        fclose($fp);
+        return true;
+    }
+
+    function _parseIni($filename)
+    {
+        if (file_exists($filename)) {
+            if (filesize($filename) > 300000) {
+                return PEAR::raiseError('php.ini "' . $filename . '" is too large, aborting');
+            }
+            ob_start();
+            phpinfo(INFO_GENERAL);
+            $info = ob_get_contents();
+            ob_end_clean();
+            $debug = function_exists('leak') ? '_debug' : '';
+            $ts = preg_match('/Thread Safety.+enabled/', $info) ? '_ts' : '';
+            $zend_extension_line = 'zend_extension' . $debug . $ts;
+            $all = @file($filename);
+            if (!$all) {
+                return PEAR::raiseError('php.ini "' . $filename .'" could not be read');
+            }
+            $zend_extensions = $extensions = array();
+            // assume this is right, but pull from the php.ini if it is found
+            $extension_dir = ini_get('extension_dir');
+            foreach ($all as $linenum => $line) {
+                $line = trim($line);
+                if (!$line) {
+                    continue;
+                }
+                if ($line[0] == ';') {
+                    continue;
+                }
+                if (strtolower(substr($line, 0, 13)) == 'extension_dir') {
+                    $line = trim(substr($line, 13));
+                    if ($line[0] == '=') {
+                        $x = trim(substr($line, 1));
+                        $x = explode(';', $x);
+                        $extension_dir = str_replace('"', '', array_shift($x));
+                        continue;
+                    }
+                }
+                if (strtolower(substr($line, 0, 9)) == 'extension') {
+                    $line = trim(substr($line, 9));
+                    if ($line[0] == '=') {
+                        $x = trim(substr($line, 1));
+                        $x = explode(';', $x);
+                        $extensions[$linenum] = str_replace('"', '', array_shift($x));
+                        continue;
+                    }
+                }
+                if (strtolower(substr($line, 0, strlen($zend_extension_line))) ==
+                      $zend_extension_line) {
+                    $line = trim(substr($line, strlen($zend_extension_line)));
+                    if ($line[0] == '=') {
+                        $x = trim(substr($line, 1));
+                        $x = explode(';', $x);
+                        $zend_extensions[$linenum] = str_replace('"', '', array_shift($x));
+                        continue;
+                    }
+                }
+            }
+            return array(
+                'extensions' => $extensions,
+                'zend_extensions' => $zend_extensions,
+                'extension_dir' => $extension_dir,
+                'all' => $all,
+            );
+        } else {
+            return PEAR::raiseError('php.ini "' . $filename . '" does not exist');
+        }
+    }
+
     // {{{ doInstall()
 
     function doInstall($command, $options, $params)
@@ -421,6 +595,9 @@ Run post-installation scripts in package <package>, if any exist.
         $errors = array();
         $downloaded = array();
         $downloaded = &$this->downloader->download($params);
+        if (PEAR::isError($downloaded)) {
+            return $this->raiseError($downloaded);
+        }
         $errors = $this->downloader->getErrorMsgs();
         if (count($errors)) {
             foreach ($errors as $error) {
@@ -449,6 +626,14 @@ Run post-installation scripts in package <package>, if any exist.
             return true;
         }
         $extrainfo = array();
+        if (isset($options['packagingroot'])) {
+            $packrootphp_dir = $this->installer->_prependPath(
+                $this->config->get('php_dir', null, 'pear.php.net'),
+                $options['packagingroot']);
+            $instreg = new PEAR_Registry($packrootphp_dir);
+        } else {
+            $instreg = $reg;
+        }
         foreach ($downloaded as $param) {
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
             $info = $this->installer->install($param, $options);
@@ -469,12 +654,14 @@ Run post-installation scripts in package <package>, if any exist.
             }
             if (is_array($info)) {
                 if ($param->getPackageType() == 'extsrc' ||
-                      $param->getPackageType() == 'extbin') {
+                      $param->getPackageType() == 'extbin' ||
+                      $param->getPackageType() == 'zendextsrc' ||
+                      $param->getPackageType() == 'zendextbin') {
                     $pkg = &$param->getPackageFile();
                     if ($instbin = $pkg->getInstalledBinary()) {
-                        $instpkg = &$reg->getPackage($instbin, $pkg->getChannel());
+                        $instpkg = &$instreg->getPackage($instbin, $pkg->getChannel());
                     } else {
-                        $instpkg = &$reg->getPackage($pkg->getPackage(), $pkg->getChannel());
+                        $instpkg = &$instreg->getPackage($pkg->getPackage(), $pkg->getChannel());
                     }
                     foreach ($instpkg->getFilelist() as $name => $atts) {
                         $pinfo = pathinfo($atts['installed_as']);
@@ -488,9 +675,33 @@ Run post-installation scripts in package <package>, if any exist.
                               $pinfo['extension'] == 'so' ||
                               // hp-ux
                               $pinfo['extension'] == 'sl') {
-                            $extrainfo[] = 'You should add "extension=' . $pinfo['basename']
-                                . '" to php.ini';
+                            $binaries[] = array($atts['installed_as'], $pinfo);
                             break;
+                        }
+                    }
+                    foreach ($binaries as $pinfo) {
+                        PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+                        $ret = $this->enableExtension(array($pinfo[0]), $param->getPackageType());
+                        PEAR::staticPopErrorHandling();
+                        if (PEAR::isError($ret)) {
+                            $extrainfo[] = $ret->getMessage();
+                            if ($param->getPackageType() == 'extsrc' ||
+                                  $param->getPackageType() == 'extbin') {
+                                $exttype = 'extension';
+                            } else {
+                                ob_start();
+                                phpinfo(INFO_GENERAL);
+                                $info = ob_get_contents();
+                                ob_end_clean();
+                                $debug = function_exists('leak') ? '_debug' : '';
+                                $ts = preg_match('Thread Safety.+enabled', $info) ? '_ts' : '';
+                                $exttype = 'zend_extension' . $debug . $ts;
+                            }
+                            $extrainfo[] = 'You should add "' . $exttype . '=' .
+                                $pinfo[1]['basename'] . '" to php.ini';
+                        } else {
+                            $extrainfo[] = 'Extension ' . $instpkg->getProvidesExtension() .
+                                ' enabled in php.ini';
                         }
                     }
                 }
@@ -548,7 +759,12 @@ Run post-installation scripts in package <package>, if any exist.
                 if (isset($options['installroot'])) {
                     $reg = &$this->config->getRegistry();
                 }
-                $pkg = &$reg->getPackage($param->getPackage(), $param->getChannel());
+                if (isset($options['packagingroot'])) {
+                    $instreg = new PEAR_Registry($packrootphp_dir);
+                } else {
+                    $instreg = $reg;
+                }
+                $pkg = &$instreg->getPackage($param->getPackage(), $param->getChannel());
                 // $pkg may be NULL if install is a 'fake' install via --packagingroot
                 if (is_object($pkg)) {
                     $pkg->setConfig($this->config);
@@ -660,6 +876,55 @@ Run post-installation scripts in package <package>, if any exist.
                     $this->ui->outputData($err->getMessage(), $command);
                     continue;
                 }
+                if ($pkg->getPackageType() == 'extsrc' ||
+                      $pkg->getPackageType() == 'extbin' ||
+                      $pkg->getPackageType() == 'zendextsrc' ||
+                      $pkg->getPackageType() == 'zendextbin') {
+                    if ($instbin = $pkg->getInstalledBinary()) {
+                        continue; // this will be uninstalled later
+                    }
+                    foreach ($pkg->getFilelist() as $name => $atts) {
+                        $pinfo = pathinfo($atts['installed_as']);
+                        if (!isset($pinfo['extension']) ||
+                              in_array($pinfo['extension'], array('c', 'h'))) {
+                            continue; // make sure we don't match php_blah.h
+                        }
+                        if ((strpos($pinfo['basename'], 'php_') === 0 &&
+                              $pinfo['extension'] == 'dll') ||
+                              // most unices
+                              $pinfo['extension'] == 'so' ||
+                              // hp-ux
+                              $pinfo['extension'] == 'sl') {
+                            $binaries[] = array($atts['installed_as'], $pinfo);
+                            break;
+                        }
+                    }
+                    foreach ($binaries as $pinfo) {
+                        PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+                        $ret = $this->disableExtension(array($pinfo[0]), $pkg->getPackageType());
+                        PEAR::staticPopErrorHandling();
+                        if (PEAR::isError($ret)) {
+                            $extrainfo[] = $ret->getMessage();
+                            if ($pkg->getPackageType() == 'extsrc' ||
+                                  $pkg->getPackageType() == 'extbin') {
+                                $exttype = 'extension';
+                            } else {
+                                ob_start();
+                                phpinfo(INFO_GENERAL);
+                                $info = ob_get_contents();
+                                ob_end_clean();
+                                $debug = function_exists('leak') ? '_debug' : '';
+                                $ts = preg_match('Thread Safety.+enabled', $info) ? '_ts' : '';
+                                $exttype = 'zend_extension' . $debug . $ts;
+                            }
+                            $this->ui->outputData('Unable to remove "' . $exttype . '=' .
+                                $pinfo[1]['basename'] . '" from php.ini', $command);
+                        } else {
+                            $this->ui->outputData('Extension ' . $pkg->getProvidesExtension() .
+                                ' disabled in php.ini', $command);
+                        }
+                    }
+                }
                 $savepkg = $pkg;
                 if ($this->config->get('verbose') > 0) {
                     if (is_object($pkg)) {
@@ -738,7 +1003,7 @@ Run post-installation scripts in package <package>, if any exist.
         $orig = $pkgname . '-' . $pkgversion;
 
         $tar = &new Archive_Tar($pkgfile->getArchiveFile());
-        if (!@$tar->extractModify($dest, $orig)) {
+        if (!$tar->extractModify($dest, $orig)) {
             return $this->raiseError('unable to unpack ' . $pkgfile->getArchiveFile());
         }
         $this->ui->outputData("Package ready at '$dest'");

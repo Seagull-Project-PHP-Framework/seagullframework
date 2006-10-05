@@ -16,7 +16,7 @@
  * @author     Stephan Schmidt (original XML_Serializer code)
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.34 2006/03/02 20:50:59 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.35 2006/03/25 21:09:08 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -35,7 +35,7 @@ require_once 'System.php';
  * @author     Stephan Schmidt (original XML_Serializer code)
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -114,7 +114,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
      */
     function getPackagerVersion()
     {
-        return '1.4.11';
+        return '1.5.0a1';
     }
 
     /**
@@ -217,13 +217,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
                     unset($orig['attribs']);
                     if (count($orig)) { // file with tasks
                         // run any package-time tasks
-                        if (function_exists('file_get_contents')) {
-                            $contents = file_get_contents($file);
-                        } else {
-                            $fp = fopen($file, "r");
-                            $contents = @fread($fp, filesize($file));
-                            fclose($fp);
-                        }
+                        $contents = file_get_contents($file);
                         foreach ($orig as $tag => $raw) {
                             $tag = str_replace($this->_packagefile->getTasksNs() . ':', '', $tag);
                             $task = "PEAR_Task_$tag";
@@ -358,7 +352,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
             }
             $this->options['beautifyFilelist'] = true;
         }
-        $arr['attribs']['packagerversion'] = '1.4.11';
+        $arr['attribs']['packagerversion'] = '1.5.0a1';
         if ($this->serialize($arr, $options)) {
             return $this->_serializedData . "\n";
         }
@@ -877,7 +871,7 @@ http://pear.php.net/dtd/package-2.0.xsd',
 // | Authors: Stephan Schmidt <schst@php-tools.net>                       |
 // +----------------------------------------------------------------------+
 //
-//    $Id: v2.php,v 1.34 2006/03/02 20:50:59 cellog Exp $
+//    $Id: v2.php,v 1.35 2006/03/25 21:09:08 cellog Exp $
 
 /**
  * error code for invalid chars in XML name

@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 //
 // THIS FILE IS DEPRECATED IN FAVOR OF DEPENDENCY2.PHP, AND IS NOT USED IN THE INSTALLER
-// $Id: Dependency.php,v 1.41 2006/01/06 04:47:36 cellog Exp $
+// $Id: Dependency.php,v 1.42 2006/03/26 23:25:56 cellog Exp $
 
 require_once "PEAR.php";
 require_once "OS/Guess.php";
@@ -365,7 +365,7 @@ class PEAR_Dependency
         $path_elements = explode(PATH_SEPARATOR, getenv('PATH'));
         foreach ($path_elements as $dir) {
             $file = $dir . DIRECTORY_SEPARATOR . $program . $exe_suffix;
-            if (@file_exists($file) && @is_executable($file)) {
+            if (file_exists($file) && is_executable($file)) {
                 return false;
             }
         }

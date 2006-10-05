@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DependencyDB.php,v 1.30.2.1 2006/05/25 22:00:05 cellog Exp $
+ * @version    CVS: $Id: DependencyDB.php,v 1.33 2006/05/25 21:40:36 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Config.php';
  * @author     Tomas V.V.Cox <cox@idec.net.com>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -137,12 +137,12 @@ class PEAR_DependencyDB
 
     function hasWriteAccess()
     {
-        if (!@file_exists($this->_depdb)) {
+        if (!file_exists($this->_depdb)) {
             $dir = $this->_depdb;
             while ($dir && $dir != '.') {
                 $dir = dirname($dir); // cd ..
-                if ($dir != '.' && @file_exists($dir)) {
-                    if (@is_writeable($dir)) {
+                if ($dir != '.' && file_exists($dir)) {
+                    if (is_writeable($dir)) {
                         return true;
                     } else {
                         return false;
@@ -151,7 +151,7 @@ class PEAR_DependencyDB
             }
             return false;
         }
-        return @is_writeable($this->_depdb);
+        return is_writeable($this->_depdb);
     }
 
     // {{{ assertDepsDB()
@@ -444,8 +444,11 @@ class PEAR_DependencyDB
             $open_mode = 'w';
             // XXX People reported problems with LOCK_SH and 'w'
             if ($mode === LOCK_SH) {
-                if (@!is_file($this->_lockfile)) {
+                if (!file_exists($this->_lockfile)) {
                     touch($this->_lockfile);
+                } elseif (!is_file($this->_lockfile)) {
+                    return PEAR::raiseError('could not create Dependency lock file, ' .
+                        'it exists and is not a regular file');
                 }
                 $open_mode = 'r';
             }
@@ -504,13 +507,8 @@ class PEAR_DependencyDB
         $rt = get_magic_quotes_runtime();
         set_magic_quotes_runtime(0);
         clearstatcache();
-        if (function_exists('file_get_contents')) {
-            fclose($fp);
-            $data = unserialize(file_get_contents($this->_depdb));
-        } else {
-            $data = unserialize(fread($fp, filesize($this->_depdb)));
-            fclose($fp);
-        }
+        fclose($fp);
+        $data = unserialize(file_get_contents($this->_depdb));
         set_magic_quotes_runtime($rt);
         $this->_cache = $data;
         return $data;
