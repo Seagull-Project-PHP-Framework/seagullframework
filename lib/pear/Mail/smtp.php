@@ -42,7 +42,7 @@ define('PEAR_MAIL_SMTP_ERROR_DATA', 10006);
  * SMTP implementation of the PEAR Mail interface. Requires the Net_SMTP class.
  * @access public
  * @package Mail
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 class Mail_smtp extends Mail {
 
@@ -244,6 +244,7 @@ class Mail_smtp extends Mail {
             }
         }
 
+        $this->_sanitizeHeaders($headers);
         $headerElements = $this->prepareHeaders($headers);
         if (PEAR::isError($headerElements)) {
             $this->_smtp->rset();
