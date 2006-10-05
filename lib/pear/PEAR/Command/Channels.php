@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Channels.php,v 1.44.2.1 2006/07/17 18:24:10 pajoye Exp $
+ * @version    CVS: $Id: Channels.php,v 1.46 2006/07/17 18:19:25 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -345,13 +345,13 @@ Initialize a Channel from its server and creates the local channel.xml.
                     $contents = implode('', file($loc));
                 }
             } else {
-                $fp = @fopen($params[0], 'r');
-                if (!$fp) {
-                    if (@file_exists($params[0])) {
+                if (file_exists($params[0])) {
+                    $fp = fopen($params[0], 'r');
+                    if (!$fp) {
                         return $this->raiseError('Cannot open "' . $params[0] . '"');
-                    } else {
-                        return $this->raiseError('Unknown channel "' . $channel . '"');
                     }
+                } else {
+                    return $this->raiseError('Unknown channel "' . $channel . '"');
                 }
                 $contents = '';
                 while (!feof($fp)) {
@@ -542,8 +542,10 @@ Initialize a Channel from its server and creates the local channel.xml.
                 $contents = implode('', file($loc));
             }
         } else {
-            $lastmodified = false;
-            $fp = @fopen($params[0], 'r');
+            $lastmodified = $fp = false;
+            if (file_exists($params[0])) {
+                $fp = fopen($params[0], 'r');
+            }
             if (!$fp) {
                 return $this->raiseError('channel-add: cannot open "' . $params[0] . '"');
             }
@@ -660,7 +662,10 @@ Initialize a Channel from its server and creates the local channel.xml.
                     $contents = implode('', file($loc));
                 }
             } else {
-                $fp = @fopen($params[0], 'r');
+                $fp = false;
+                if (file_exists($params[0])) {
+                    $fp = fopen($params[0], 'r');
+                }
                 if (!$fp) {
                     return $this->raiseError("Cannot open " . $params[0]);
                 }

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Dependency2.php,v 1.50 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: Dependency2.php,v 1.51 2006/09/19 04:29:43 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/Validate.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -525,7 +525,7 @@ class PEAR_Dependency2
      */
     function getPEARVersion()
     {
-        return '1.4.11';
+        return '1.5.0a1';
     }
 
     function validatePearinstallerDependency($dep)
@@ -930,15 +930,15 @@ class PEAR_Dependency2
         if (!isset($dep['min']) && !isset($dep['max'])) {
             if ($required) {
                 if (!isset($this->_options['nodeps']) && !isset($this->_options['force'])) {
-                    return $this->raiseError('%s' . $extra . ' is required by installed package "' .
-                        $depname . '"');
+                    return $this->raiseError('"' . $depname . '" is required by ' .
+                        'installed package %s' . $extra);
                 } else {
-                    return $this->warning('warning: %s' . $extra .
-                        ' is required by installed package "' . $depname . '"');
+                    return $this->warning('warning: "' . $depname . '" is required by ' .
+                        'installed package %s' . $extra);
                 }
             } else {
-                return $this->warning('%s' . $extra .
-                    ' can be optionally used by installed package "' . $depname . '"');
+                return $this->warning('"' . $depname . '" can be optionally used by ' .
+                        'installed package %s' . $extra);
             }
         }
         $fail = false;

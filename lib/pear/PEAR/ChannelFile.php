@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ChannelFile.php,v 1.75 2006/03/02 18:14:12 cellog Exp $
+ * @version    CVS: $Id: ChannelFile.php,v 1.77 2006/03/25 21:09:08 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -152,7 +152,7 @@ $GLOBALS['_PEAR_CHANNELS_MIRROR_TYPES'] =  array('server');
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -391,21 +391,16 @@ class PEAR_ChannelFile {
      */
     function fromXmlFile($descfile)
     {
-        if (!@is_file($descfile) || !is_readable($descfile) ||
-             (!$fp = @fopen($descfile, 'r'))) {
+        if (!file_exists($descfile) || !is_file($descfile) || !is_readable($descfile) ||
+             (!$fp = fopen($descfile, 'r'))) {
             require_once 'PEAR.php';
             return PEAR::raiseError("Unable to open $descfile");
         }
 
         // read the whole thing so we only get one cdata callback
         // for each block of cdata
-        if (function_exists('file_get_contents')) {
-            fclose($fp);
-            $data = file_get_contents($descfile);
-        } else {
-            $data = fread($fp, filesize($descfile));
-            fclose($fp);
-        }
+        fclose($fp);
+        $data = file_get_contents($descfile);
         return $this->fromXmlString($data);
     }
 
@@ -678,8 +673,11 @@ class PEAR_ChannelFile {
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_NOVALIDATE_NAME);
             }
             if (!isset($info['validatepackage']['attribs']['version'])) {
+                $content = isset($info['validatepackage']['_content']) ?
+                    $info['validatepackage']['_content'] :
+                    null;
                 $this->_validateError(PEAR_CHANNELFILE_ERROR_NOVALIDATE_VERSION,
-                    array('package' => @$info['validatepackage']['_content']));
+                    array('package' => $content));
             }
         }
         if (isset($info['servers']['primary']['attribs']['port']) &&

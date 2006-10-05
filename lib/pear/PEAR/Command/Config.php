@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.51.2.1 2006/06/04 12:11:39 pajoye Exp $
+ * @version    CVS: $Id: Config.php,v 1.52 2006/03/05 21:32:47 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -248,7 +248,7 @@ and uninstall).
             $failmsg .= "config-set expects 2 or 3 parameters";
             return PEAR::raiseError($failmsg);
         }
-        if (isset($params[2]) && $error = $this->_checkLayer($params[2])) {
+        if (isset($params[2]) && ($error = $this->_checkLayer($params[2]))) {
             $failmsg .= $error;
             return PEAR::raiseError("config-set:$failmsg");
         }

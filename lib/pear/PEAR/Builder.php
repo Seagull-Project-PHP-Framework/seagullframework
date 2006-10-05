@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Builder.php,v 1.27 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: Builder.php,v 1.29 2006/03/05 21:09:18 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/PackageFile.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since PHP 4.0.2
  * @see        http://pear.php.net/manual/en/core.ppm.pear-builder.php
@@ -93,13 +93,13 @@ class PEAR_Builder extends PEAR_Common
         $dir = dirname($pkg->getArchiveFile());
         $old_cwd = getcwd();
 
-        if (!@chdir($dir)) {
+        if (!file_exists($dir) || !is_dir($dir) || !chdir($dir)) {
             return $this->raiseError("could not chdir to $dir");
         }
         $this->log(2, "building in $dir");
 
         $dsp = $pkg->getPackage().'.dsp';
-        if (!@is_file("$dir/$dsp")) {
+        if (!file_exists("$dir/$dsp")) {
             return $this->raiseError("The DSP $dsp does not exist.");
         }
         // XXX TODO: make release build type configurable
@@ -147,7 +147,8 @@ class PEAR_Builder extends PEAR_Common
         } else {
             return $this->raiseError("Could not retrieve output information from $dsp.");
         }
-        if (@copy($outfile, "$dir/$out")) {
+        // realpath returns false if the file doesn't exist
+        if ($outfile && copy($outfile, "$dir/$out")) {
             $outfile = "$dir/$out";
         }
 
@@ -259,7 +260,7 @@ class PEAR_Builder extends PEAR_Common
         }
         $dir = dirname($descfile);
         $old_cwd = getcwd();
-        if (!@chdir($dir)) {
+        if (!file_exists($dir) || !is_dir($dir) || !chdir($dir)) {
             return $this->raiseError("could not chdir to $dir");
         }
         $vdir = $pkg->getPackage() . '-' . $pkg->getVersion();
@@ -283,10 +284,11 @@ class PEAR_Builder extends PEAR_Common
         $configure_options = $pkg->getConfigureOptions();
         if ($configure_options) {
             foreach ($configure_options as $o) {
+                $default = array_key_exists($o['default']) ? $o['default'] : null;
                 list($r) = $this->ui->userDialog('build',
                                                  array($o['prompt']),
                                                  array('text'),
-                                                 array(@$o['default']));
+                                                 array($default));
                 if (substr($o['name'], 0, 5) == 'with-' &&
                     ($r == 'yes' || $r == 'autodetect')) {
                     $configure_command .= " --$o[name]";
@@ -328,10 +330,10 @@ class PEAR_Builder extends PEAR_Common
             "$make_command INSTALL_ROOT=\"$inst_dir\" install",
             "find \"$inst_dir\" -ls"
             );
-        if (!@chdir($build_dir)) {
+        if (!file_exists($build_dir) || !is_dir($build_dir) || !chdir($build_dir)) {
             return $this->raiseError("could not chdir to $build_dir");
         }
-        putenv('PHP_PEAR_VERSION=1.4.11');
+        putenv('PHP_PEAR_VERSION=1.5.0a1');
         foreach ($to_run as $cmd) {
             $err = $this->_runCommand($cmd, $callback);
             if (PEAR::isError($err)) {
@@ -412,7 +414,7 @@ class PEAR_Builder extends PEAR_Common
     function _runCommand($command, $callback = null)
     {
         $this->log(1, "running: $command");
-        $pp = @popen("$command 2>&1", "r");
+        $pp = popen("$command 2>&1", "r");
         if (!$pp) {
             return $this->raiseError("failed to run `$command'");
         }
@@ -431,7 +433,11 @@ class PEAR_Builder extends PEAR_Common
         if ($callback && isset($olddbg)) {
             $callback[0]->debug = $olddbg;
         }
-        $exitcode = @pclose($pp);
+        if (is_resource($pp)) {
+            $exitcode = pclose($pp);
+        } else {
+            $exitcode = -1;
+        }
         return ($exitcode == 0);
     }
 

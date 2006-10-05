@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Remote.php,v 1.90.2.3 2006/06/04 12:27:55 pajoye Exp $
+ * @version    CVS: $Id: Remote.php,v 1.96 2006/09/24 03:08:57 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -375,10 +375,10 @@ parameter.
             }
             $data['data'][$info['category']][] = array(
                 $reg->channelAlias($channel) . '/' . $name,
-                @$info['stable'],
-                @$installed['version'],
-                @$desc,
-                @$info['deps'],
+                isset($info['stable']) ? $info['stable'] : null,
+                isset($installed['version']) ? $installed['version'] : null,
+                isset($desc) ? $desc : null,
+                isset($info['deps']) ? $info['deps'] : null,
                 );
         }
 
@@ -495,8 +495,13 @@ parameter.
     {
         // make certain that dependencies are ignored
         $options['downloadonly'] = 1;
+
         // eliminate error messages for preferred_state-related errors
-        $options['ignorepreferred_state'] = 1;
+        /* TODO: Should be an option, but until now download does respect
+           prefered state */
+        /* $options['ignorepreferred_state'] = 1; */
+        // eliminate error messages for preferred_state-related errors
+
         $downloader = &$this->getDownloader($options);
         $downloader->setDownloadDir(getcwd());
         $errors = array();
@@ -634,6 +639,9 @@ parameter.
         $cache_dir = $this->config->get('cache_dir');
         $verbose = $this->config->get('verbose');
         $output = '';
+        if (!file_exists($cache_dir) || !is_dir($cache_dir)) {
+            return $this->raiseError("$cache_dir does not exist or is not a directory");
+        }
         if (!($dp = @opendir($cache_dir))) {
             return $this->raiseError("opendir($cache_dir) failed: $php_errormsg");
         }
@@ -645,14 +653,19 @@ parameter.
             if (preg_match('/^xmlrpc_cache_[a-z0-9]{32}$/', $ent) ||
                   preg_match('/rest.cache(file|id)$/', $ent)) {
                 $path = $cache_dir . DIRECTORY_SEPARATOR . $ent;
-                $ok = @unlink($path);
+                if (file_exists($path)) {
+                    $ok = @unlink($path);
+                } else {
+                    $ok = false;
+                    $php_errormsg = '';
+                }
                 if ($ok) {
                     if ($verbose >= 2) {
                         $output .= "deleted $path\n";
                     }
                     $num++;
                 } elseif ($verbose >= 1) {
-                    $output .= "failed to delete $path\n";
+                    $output .= "failed to delete $path $php_errormsg\n";
                 }
             }
         }

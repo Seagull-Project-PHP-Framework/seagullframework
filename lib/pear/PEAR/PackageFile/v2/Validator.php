@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.86.2.1 2006/05/10 02:55:06 cellog Exp $
+// $Id: Validator.php,v 1.93 2006/09/25 05:12:21 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -70,7 +70,8 @@ class PEAR_PackageFile_v2_Validator
             return false;
         }
         if (!isset($this->_packageInfo['attribs']['version']) ||
-              $this->_packageInfo['attribs']['version'] != '2.0') {
+              ($this->_packageInfo['attribs']['version'] != '2.0' &&
+               $this->_packageInfo['attribs']['version'] != '2.1')) {
             $this->_noPackageVersion();
         }
         $structure =
@@ -99,7 +100,8 @@ class PEAR_PackageFile_v2_Validator
                          // needs a certain package installed in order to implement a role or task
             '*providesextension',
             '*srcpackage|*srcuri',
-            '+phprelease|+extsrcrelease|+extbinrelease|bundle', //special validation needed
+            '+phprelease|+extsrcrelease|+extbinrelease|' .
+                '+zendextsrcrelease|+zendextbinrelease|bundle', //special validation needed
             '*changelog',
         );
         $test = $this->_packageInfo;
@@ -107,7 +109,7 @@ class PEAR_PackageFile_v2_Validator
               isset($test['dependencies']['required']) &&
               isset($test['dependencies']['required']['pearinstaller']) &&
               isset($test['dependencies']['required']['pearinstaller']['min']) &&
-              version_compare('1.4.11',
+              version_compare('1.5.0a1',
                 $test['dependencies']['required']['pearinstaller']['min'], '<')) {
             $this->_pearVersionTooLow($test['dependencies']['required']['pearinstaller']['min']);
             return false;
@@ -230,6 +232,11 @@ class PEAR_PackageFile_v2_Validator
         }
         if ($fail) {
             return false;
+        }
+        $list = $this->_packageInfo['contents'];
+        if (isset($list['dir']) && is_array($list['dir']) && isset($list['dir'][0])) {
+            $this->_multipleToplevelDirNotAllowed();
+            return $this->_isValid = 0;
         }
         $this->_validateFilelist();
         $this->_validateRelease();
@@ -519,6 +526,18 @@ class PEAR_PackageFile_v2_Validator
                 $this->_invalidVersion($type . '<max>', $dep['max']);
             }
         }
+        if (isset($dep['exclude'])) {
+            if (!is_array($dep['exclude'])) {
+                $dep['exclude'] = array($dep['exclude']);
+            }
+            foreach ($dep['exclude'] as $exclude) {
+                if (!preg_match(
+                     '/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?$/',
+                     $exclude)) {
+                    $this->_invalidVersion($type . '<exclude>', $exclude);
+                }
+            }
+        }
     }
 
     function _validatePearinstallerDep($dep)
@@ -654,10 +673,10 @@ class PEAR_PackageFile_v2_Validator
     {
         $this->_validatePackageDep($dep, $group, '<subpackage>');
         if (isset($dep['providesextension'])) {
-            $this->_subpackageCannotProvideExtension(@$dep['name']);
+            $this->_subpackageCannotProvideExtension(isset($dep['name']) ? $dep['name'] : '');
         }
         if (isset($dep['conflicts'])) {
-            $this->_subpackagesCannotConflict(@$dep['name']);
+            $this->_subpackagesCannotConflict(isset($dep['name']) ? $dep['name'] : '');
         }
     }
 
@@ -987,6 +1006,7 @@ class PEAR_PackageFile_v2_Validator
         }
         $res = $this->_stupidSchemaValidate($struc, $list, $dirname);
         if ($allowignore && $res) {
+            $ignored_or_installed = array();
             $this->_pf->getFilelist();
             $fcontents = $this->_pf->getContents();
             $filelist = array();
@@ -1003,7 +1023,12 @@ class PEAR_PackageFile_v2_Validator
                 foreach ($list['install'] as $file) {
                     if (!isset($filelist[$file['attribs']['name']])) {
                         $this->_notInContents($file['attribs']['name'], 'install');
+                        continue;
                     }
+                    if (array_key_exists($file['attribs']['name'], $ignored_or_installed)) {
+                        $this->_multipleInstallAs($file['attribs']['name']);
+                    }
+                    $ignored_or_installed[$file['attribs']['name']][] = 1;
                 }
             }
             if (isset($list['ignore'])) {
@@ -1013,6 +1038,10 @@ class PEAR_PackageFile_v2_Validator
                 foreach ($list['ignore'] as $file) {
                     if (!isset($filelist[$file['attribs']['name']])) {
                         $this->_notInContents($file['attribs']['name'], 'ignore');
+                        continue;
+                    }
+                    if (array_key_exists($file['attribs']['name'], $ignored_or_installed)) {
+                        $this->_ignoreAndInstallAs($file['attribs']['name']);
                     }
                 }
             }
@@ -1077,7 +1106,8 @@ class PEAR_PackageFile_v2_Validator
                                 $ret = call_user_func(array($tagClass, 'validateXml'),
                                     $this->_pf, $v, $this->_pf->_config, $save);
                                 if (is_array($ret)) {
-                                    $this->_invalidTask($task, $ret, @$save['name']);
+                                    $this->_invalidTask($task, $ret, isset($save['name']) ?
+                                        $save['name'] : '');
                                 }
                             }
                         } else {
@@ -1177,64 +1207,68 @@ class PEAR_PackageFile_v2_Validator
                 ), $rel, '<phprelease>');
             }
         }
-        if (isset($this->_packageInfo['extsrcrelease'])) {
-            $release = 'extsrcrelease';
-            if (!isset($this->_packageInfo['providesextension'])) {
-                $this->_mustProvideExtension($release);
-            }
-            if (isset($this->_packageInfo['srcpackage']) || isset($this->_packageInfo['srcuri'])) {
-                $this->_cannotHaveSrcpackage($release);
-            }
-            $releases = $this->_packageInfo['extsrcrelease'];
-            if (!is_array($releases)) {
-                return true;
-            }
-            if (!isset($releases[0])) {
-                $releases = array($releases);
-            }
-            foreach ($releases as $rel) {
-                $this->_stupidSchemaValidate(array(
-                    '*installconditions',
-                    '*configureoption->name->prompt->?default',
-                    '*binarypackage',
-                    '*filelist',
-                ), $rel, '<extsrcrelease>');
-                if (isset($rel['binarypackage'])) {
-                    if (!is_array($rel['binarypackage']) || !isset($rel['binarypackage'][0])) {
-                        $rel['binarypackage'] = array($rel['binarypackage']);
-                    }
-                    foreach ($rel['binarypackage'] as $bin) {
-                        if (!is_string($bin)) {
-                            $this->_binaryPackageMustBePackagename();
+        foreach (array('', 'zend') as $prefix) {
+            $releasetype = $prefix . 'extsrcrelease';
+            if (isset($this->_packageInfo[$releasetype])) {
+                $release = $releasetype;
+                if (!isset($this->_packageInfo['providesextension'])) {
+                    $this->_mustProvideExtension($release);
+                }
+                if (isset($this->_packageInfo['srcpackage']) || isset($this->_packageInfo['srcuri'])) {
+                    $this->_cannotHaveSrcpackage($release);
+                }
+                $releases = $this->_packageInfo[$releasetype];
+                if (!is_array($releases)) {
+                    return true;
+                }
+                if (!isset($releases[0])) {
+                    $releases = array($releases);
+                }
+                foreach ($releases as $rel) {
+                    $this->_stupidSchemaValidate(array(
+                        '*installconditions',
+                        '*configureoption->name->prompt->?default',
+                        '*binarypackage',
+                        '*filelist',
+                    ), $rel, '<' . $releasetype . '>');
+                    if (isset($rel['binarypackage'])) {
+                        if (!is_array($rel['binarypackage']) || !isset($rel['binarypackage'][0])) {
+                            $rel['binarypackage'] = array($rel['binarypackage']);
+                        }
+                        foreach ($rel['binarypackage'] as $bin) {
+                            if (!is_string($bin)) {
+                                $this->_binaryPackageMustBePackagename();
+                            }
                         }
                     }
                 }
             }
-        }
-        if (isset($this->_packageInfo['extbinrelease'])) {
-            $release = 'extbinrelease';
-            if (!isset($this->_packageInfo['providesextension'])) {
-                $this->_mustProvideExtension($release);
-            }
-            if (isset($this->_packageInfo['channel']) &&
-                  !isset($this->_packageInfo['srcpackage'])) {
-                $this->_mustSrcPackage($release);
-            }
-            if (isset($this->_packageInfo['uri']) && !isset($this->_packageInfo['srcuri'])) {
-                $this->_mustSrcuri($release);
-            }
-            $releases = $this->_packageInfo['extbinrelease'];
-            if (!is_array($releases)) {
-                return true;
-            }
-            if (!isset($releases[0])) {
-                $releases = array($releases);
-            }
-            foreach ($releases as $rel) {
-                $this->_stupidSchemaValidate(array(
-                    '*installconditions',
-                    '*filelist',
-                ), $rel, '<extbinrelease>');
+            $releasetype = 'extbinrelease';
+            if (isset($this->_packageInfo[$releasetype])) {
+                $release = $releasetype;
+                if (!isset($this->_packageInfo['providesextension'])) {
+                    $this->_mustProvideExtension($release);
+                }
+                if (isset($this->_packageInfo['channel']) &&
+                      !isset($this->_packageInfo['srcpackage'])) {
+                    $this->_mustSrcPackage($release);
+                }
+                if (isset($this->_packageInfo['uri']) && !isset($this->_packageInfo['srcuri'])) {
+                    $this->_mustSrcuri($release);
+                }
+                $releases = $this->_packageInfo[$releasetype];
+                if (!is_array($releases)) {
+                    return true;
+                }
+                if (!isset($releases[0])) {
+                    $releases = array($releases);
+                }
+                foreach ($releases as $rel) {
+                    $this->_stupidSchemaValidate(array(
+                        '*installconditions',
+                        '*filelist',
+                    ), $rel, '<' . $releasetype . '>');
+                }
             }
         }
         if (isset($this->_packageInfo['bundle'])) {
@@ -1284,7 +1318,7 @@ class PEAR_PackageFile_v2_Validator
         $this->_stack->push(__FUNCTION__, 'error',
             array('version' => $version),
             'This package.xml requires PEAR version %version% to parse properly, we are ' .
-            'version 1.4.11');
+            'version 1.5.0a1');
     }
 
     function _invalidTagOrder($oktags, $actual, $root)
@@ -1298,7 +1332,7 @@ class PEAR_PackageFile_v2_Validator
     {
         $this->_stack->push(__FUNCTION__, 'error', array('type' => $type),
             '<%type%> is not allowed inside global <contents>, only inside ' .
-            '<phprelease>/<extbinrelease>, use <dir> and <file> only');
+            '<phprelease>/<extbinrelease>/<zendextbinrelease>, use <dir> and <file> only');
     }
 
     function _fileNotAllowed($type)
@@ -1502,7 +1536,7 @@ class PEAR_PackageFile_v2_Validator
     function _cannotProvideExtension($release)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('release' => $release),
-            '<%release%> packages cannot use <providesextension>, only extbinrelease and extsrcrelease can provide a PHP extension');
+            '<%release%> packages cannot use <providesextension>, only extbinrelease, extsrcrelease, zendextsrcrelease, and zendextbinrelease can provide a PHP extension');
     }
 
     function _mustProvideExtension($release)
@@ -1520,13 +1554,13 @@ class PEAR_PackageFile_v2_Validator
     function _mustSrcPackage($release)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('release' => $release),
-            '<extbinrelease> packages must specify a source code package with <srcpackage>');
+            '<extbinrelease>/<zendextbinrelease> packages must specify a source code package with <srcpackage>');
     }
 
     function _mustSrcuri($release)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('release' => $release),
-            '<extbinrelease> packages must specify a source code package with <srcuri>');
+            '<extbinrelease>/<zendextbinrelease> packages must specify a source code package with <srcuri>');
     }
 
     function _uriDepsCannotHaveVersioning($type)
@@ -1560,7 +1594,7 @@ class PEAR_PackageFile_v2_Validator
     {
         $this->_stack->push(__FUNCTION__, 'error', array(),
             '<binarypackage> tags must contain the name of a package that is ' .
-            'a compiled version of this extsrc package');
+            'a compiled version of this extsrc/zendextsrc package');
     }
 
     function _fileNotFound($file)
@@ -1609,6 +1643,25 @@ class PEAR_PackageFile_v2_Validator
     {
         $this->_stack->push(__FUNCTION__, 'error', array('group' => $name),
             'Invalid dependency group name "%name%"');
+    }
+
+    function _multipleToplevelDirNotAllowed()
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(),
+            'Multiple top-level <dir> tags are not allowed.  Enclose them ' .
+                'in a <dir name="/">');
+    }
+
+    function _multipleInstallAs($file)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array('file' => $file),
+            'Only one <install> tag is allowed for file "%file%"');
+    }
+
+    function _ignoreAndInstallAs($file)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array('file' => $file),
+            'Cannot have both <ignore> and <install> tags for file "%file%"');
     }
 
     function _analyzeBundledPackages()
@@ -1749,13 +1802,8 @@ class PEAR_PackageFile_v2_Validator
             if (!$fp = @fopen($file, "r")) {
                 return false;
             }
-            if (function_exists('file_get_contents')) {
-                fclose($fp);
-                $contents = file_get_contents($file);
-            } else {
-                $contents = @fread($fp, filesize($file));
-                fclose($fp);
-            }
+            fclose($fp);
+            $contents = file_get_contents($file);
         }
         $tokens = token_get_all($contents);
 /*

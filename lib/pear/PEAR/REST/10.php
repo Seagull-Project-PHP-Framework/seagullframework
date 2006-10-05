@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.40 2006/01/06 04:47:37 cellog Exp $
+ * @version    CVS: $Id: 10.php,v 1.42 2006/04/03 01:07:19 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -48,6 +48,23 @@ class PEAR_REST_10
         $this->_rest = &new PEAR_REST($config, $options);
     }
 
+    /**
+     * Retrieve information about a remote package to be downloaded from a REST server
+     *
+     * @param string $base The uri to prepend to all REST calls
+     * @param array $packageinfo an array of format:
+     * <pre>
+     *  array(
+     *   'package' => 'packagename',
+     *   'channel' => 'channelname',
+     *  ['state' => 'alpha' (or valid state),]
+     *  -or-
+     *  ['version' => '1.whatever']
+     * </pre>
+     * @param string $prefstate Current preferred_state config variable value
+     * @param bool $installed the installed version of this package to compare against
+     * @return array|false|PEAR_Error see {@link _returnDownloadURL()}
+     */
     function getDownloadURL($base, $packageinfo, $prefstate, $installed)
     {
         $channel = $packageinfo['channel'];
@@ -82,7 +99,14 @@ class PEAR_REST_10
                 continue;
             }
             if (isset($state)) {
+                // try our preferred state first
                 if ($release['s'] == $state) {
+                    $found = true;
+                    break;
+                }
+                // see if there is something newer and more stable
+                // bug #7221
+                if (in_array($release['s'], $this->betterStates($state), true)) {
                     $found = true;
                     break;
                 }
@@ -227,10 +251,29 @@ class PEAR_REST_10
         return $this->_returnDownloadURL($base, $package, $release, $info, $found);
     }
 
+    /**
+     * Take raw data and return the array needed for processing a download URL
+     *
+     * @param string $base REST base uri
+     * @param string $package Package name
+     * @param array $release an array of format array('v' => version, 's' => state)
+     *                       describing the release to download
+     * @param array $info list of all releases as defined by allreleases.xml
+     * @param bool $found determines whether the release was found or this is the next
+     *                    best alternative
+     * @return array|PEAR_Error
+     * @access private
+     */
     function _returnDownloadURL($base, $package, $release, $info, $found)
     {
         if (!$found) {
             $release = $info['r'][0];
+        }
+        $pinfo = $this->_rest->retrieveCacheFirst($base . 'p/' . strtolower($package) . '/' . 
+            'info.xml');
+        if (PEAR::isError($pinfo)) {
+            return PEAR::raiseError('Package "' . $package .
+                '" does not have REST info xml available');
         }
         $releaseinfo = $this->_rest->retrieveCacheFirst($base . 'r/' . strtolower($package) . '/' . 
             $release['v'] . '.xml');
@@ -281,6 +324,12 @@ class PEAR_REST_10
             }
             break;
         }
+        if (isset($pinfo['dc']) && isset($pinfo['dp'])) {
+            $deprecated = array('channel' => (string) $pinfo['dc'],
+                                'package' => trim($pinfo['dp']['_content']));
+        } else {
+            $deprecated = false;
+        }
         if ($found) {
             return 
                 array('version' => $releaseinfo['v'],
@@ -288,14 +337,18 @@ class PEAR_REST_10
                       'package' => $releaseinfo['p']['_content'],
                       'stability' => $releaseinfo['st'],
                       'url' => $releaseinfo['g'],
-                      'compatible' => $compatible);
+                      'compatible' => $compatible,
+                      'deprecated' => $deprecated,
+                );
         } else {
             return
                 array('version' => $releaseinfo['v'],
                       'package' => $releaseinfo['p']['_content'],
                       'stability' => $releaseinfo['st'],
                       'info' => $packagexml,
-                      'compatible' => $compatible);
+                      'compatible' => $compatible,
+                      'deprecated' => $deprecated,
+                );
         }
     }
 
@@ -588,6 +641,12 @@ class PEAR_REST_10
             $latest = '';
         }
         PEAR::popErrorHandling();
+        if (isset($pinfo['dc']) && isset($pinfo['dp'])) {
+            $deprecated = array('channel' => (string) $pinfo['dc'],
+                                'package' => trim($pinfo['dp']['_content']));
+        } else {
+            $deprecated = false;
+        }
         return array(
             'name' => $pinfo['n'],
             'channel' => $pinfo['c'],
@@ -597,6 +656,7 @@ class PEAR_REST_10
             'summary' => $pinfo['s'],
             'description' => $pinfo['d'],
             'releases' => $releases,
+            'deprecated' => $deprecated,
             );
     }
 

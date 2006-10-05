@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.99.2.2 2006/06/16 12:35:12 pajoye Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.115 2006/09/24 22:50:44 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -132,7 +132,7 @@ class PEAR_Downloader extends PEAR_Common
      * @access private
      */
     var $_errorStack = array();
-
+    
     /**
      * @var boolean
      * @access private
@@ -182,7 +182,8 @@ class PEAR_Downloader extends PEAR_Common
                 if (!count($unused)) {
                     continue;
                 }
-                @array_walk($this->_installed[$key], 'strtolower');
+                $strtolower = create_function('$a','return strtolower($a);');
+                array_walk($this->_installed[$key], $strtolower);
             }
         }
     }
@@ -213,7 +214,7 @@ class PEAR_Downloader extends PEAR_Common
         }
         $b = new PEAR_ChannelFile;
         if ($b->fromXmlFile($a)) {
-            @unlink($a);
+            unlink($a);
             if ($this->config->get('auto_discover')) {
                 $this->_registry->addChannel($b, $lastmodified);
                 $alias = $b->getName();
@@ -225,7 +226,7 @@ class PEAR_Downloader extends PEAR_Common
             }
             return true;
         }
-        @unlink($a);
+        unlink($a);
         return false;
     }
 
@@ -311,13 +312,16 @@ class PEAR_Downloader extends PEAR_Common
                             PEAR::staticPopErrorHandling();
                             return $this->raiseError($curchannel);
                         }
+                        if (PEAR::isError($dir = $this->getDownloadDir())) {
+                            PEAR::staticPopErrorHandling();
+                            break;
+                        }
                         $a = $this->downloadHttp('http://' . $params[$i]->getChannel() .
-                            '/channel.xml', $this->ui,
-                            System::mktemp(array('-t' . $this->getDownloadDir())), null, $curchannel->lastModified());
+                            '/channel.xml', $this->ui, $dir, null, $curchannel->lastModified());
 
                         PEAR::staticPopErrorHandling();
                         if (PEAR::isError($a) || !$a) {
-                                break;
+                            break;
                         }
                         $this->log(0, 'WARNING: channel "' . $params[$i]->getChannel() . '" has ' .
                             'updated its protocols, use "channel-update ' . $params[$i]->getChannel() .
@@ -339,7 +343,7 @@ class PEAR_Downloader extends PEAR_Common
                     if ($checkdir == '.') {
                         $checkdir = '/';
                     }
-                    if (!@is_writeable($checkdir)) {
+                    if (!is_writeable($checkdir)) {
                         return PEAR::raiseError('Cannot install, php_dir for channel "' .
                             $params[$i]->getChannel() . '" is not writeable by the current user');
                     }
@@ -654,6 +658,13 @@ class PEAR_Downloader extends PEAR_Common
             }
             $this->log(3, '+ tmp dir created at ' . $downloaddir);
         }
+        if (!is_writable($downloaddir)) {
+            if (PEAR::isError(System::mkdir(array('-p', $downloaddir)))) {
+                return PEAR::raiseError('download directory "' . $downloaddir .
+                    '" is not writeable.  Change download_dir config variable to ' .
+                    'a writeable dir');
+            }
+        }
         return $this->_downloadDir = $downloaddir;
     }
 
@@ -760,6 +771,19 @@ class PEAR_Downloader extends PEAR_Common
                 return PEAR::raiseError('Invalid remote dependencies retrieved from REST - ' .
                     'this should never happen');
             }
+            PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+            $testversion = $this->_registry->packageInfo($url['package'], 'version',
+                $parr['channel']);
+            PEAR::staticPopErrorHandling();
+            if (!isset($this->_options['force']) &&
+                  !isset($this->_options['downloadonly']) &&
+                  !PEAR::isError($testversion)) {
+                if (version_compare($testversion, $url['version'], '>=')) {
+                    return PEAR::raiseError($this->_registry->parsedPackageNameToString(
+                        $parr, true) . ' is already installed and is newer than detected ' .
+                        'release version ' . $url['version'], -976);
+                }
+            }
             if (isset($url['info']['required']) || $url['compatible']) {
                 require_once 'PEAR/PackageFile/v2.php';
                 $pf = new PEAR_PackageFile_v2;
@@ -815,8 +839,13 @@ class PEAR_Downloader extends PEAR_Common
         if (isset($this->_options['downloadonly'])) {
             $pkg = &$this->getPackagefileObject($this->config, $this->debug);
         } else {
-            $pkg = &$this->getPackagefileObject($this->config, $this->debug,
-                $this->getDownloadDir());
+            PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+            if (PEAR::isError($dir = $this->getDownloadDir())) {
+                PEAR::staticPopErrorHandling();
+                return $dir;
+            }
+            PEAR::staticPopErrorHandling();
+            $pkg = &$this->getPackagefileObject($this->config, $this->debug, $dir);
         }
         PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
         $pinfo = &$pkg->fromXmlString($url['info'], PEAR_VALIDATE_DOWNLOADING, 'remote');
@@ -1062,7 +1091,12 @@ class PEAR_Downloader extends PEAR_Common
                 $bytes += $params;
                 break;
             case 'start':
-                $this->log(1, "Starting to download {$params[0]} (".number_format($params[1], 0, '', ',')." bytes)");
+                if($params[1] == -1) {
+                    $length = "Unknown size";
+                } else {
+                    $length = number_format($params[1], 0, '', ',')." bytes";
+                }
+                $this->log(1, "Starting to download {$params[0]} ($length)");
                 break;
         }
         if (method_exists($this->ui, '_downloadCallback'))
@@ -1121,7 +1155,7 @@ class PEAR_Downloader extends PEAR_Common
      */
     function sortPkgDeps(&$packages, $uninstall = false)
     {
-        $uninstall ?
+        $uninstall ? 
             $this->sortPackagesForUninstall($packages) :
             $this->sortPackagesForInstall($packages);
     }
@@ -1354,9 +1388,9 @@ class PEAR_Downloader extends PEAR_Common
         if (!isset($info['host'])) {
             return PEAR::raiseError('Cannot download from non-URL "' . $url . '"');
         } else {
-            $host = @$info['host'];
-            $port = @$info['port'];
-            $path = @$info['path'];
+            $host = isset($info['host']) ? $info['host'] : null;
+            $port = isset($info['port']) ? $info['port'] : null;
+            $path = isset($info['path']) ? $info['path'] : null;
         }
         if (isset($this)) {
             $config = &$this->config;
@@ -1364,19 +1398,16 @@ class PEAR_Downloader extends PEAR_Common
             $config = &PEAR_Config::singleton();
         }
         $proxy_host = $proxy_port = $proxy_user = $proxy_pass = '';
-        if ($config->get('http_proxy')&&
+        if ($config->get('http_proxy') && 
               $proxy = parse_url($config->get('http_proxy'))) {
-            $proxy_host = @$proxy['host'];
+            $proxy_host = isset($proxy['host']) ? $proxy['host'] : null;
             if (isset($proxy['scheme']) && $proxy['scheme'] == 'https') {
                 $proxy_host = 'ssl://' . $proxy_host;
             }
-            $proxy_port = @$proxy['port'];
-            $proxy_user = @$proxy['user'];
-            $proxy_pass = @$proxy['pass'];
+            $proxy_port = isset($proxy['port']) ? $proxy['port'] : 8080;
+            $proxy_user = isset($proxy['user']) ? urldecode($proxy['user']) : null;
+            $proxy_pass = isset($proxy['pass']) ? urldecode($proxy['pass']) : null;
 
-            if ($proxy_port == '') {
-                $proxy_port = 8080;
-            }
             if ($callback) {
                 call_user_func($callback, 'message', "Using HTTP proxy $host:$port");
             }
@@ -1416,8 +1447,10 @@ class PEAR_Downloader extends PEAR_Common
             }
             if ($lastmodified === false || $lastmodified) {
                 $request = "GET $path HTTP/1.1\r\n";
+                $request .= "Host: $host:$port\r\n";
             } else {
                 $request = "GET $path HTTP/1.0\r\n";
+                $request .= "Host: $host\r\n";
             }
         }
         $ifmodifiedsince = '';
@@ -1431,8 +1464,8 @@ class PEAR_Downloader extends PEAR_Common
         } else {
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
-        $request .= "Host: $host:$port\r\n" . $ifmodifiedsince .
-            "User-Agent: PEAR/1.4.11/PHP/" . PHP_VERSION . "\r\n";
+        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.5.0a1/PHP/" .
+            PHP_VERSION . "\r\n";
         if (isset($this)) { // only pass in authentication for non-static calls
             $username = $config->get('username');
             $password = $config->get('password');
@@ -1508,7 +1541,7 @@ class PEAR_Downloader extends PEAR_Common
         if ($callback) {
             call_user_func($callback, 'start', array(basename($dest_file), $length));
         }
-        while ($data = @fread($fp, 1024)) {
+        while ($data = fread($fp, 1024)) {
             $bytes += strlen($data);
             if ($callback) {
                 call_user_func($callback, 'bytesread', $bytes);

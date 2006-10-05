@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Packager.php,v 1.68 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: Packager.php,v 1.70 2006/09/25 05:12:21 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'System.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -93,14 +93,16 @@ class PEAR_Packager extends PEAR_Common
                     $this->log(1, 'Warning: ' . $warning['message']);
                 }
             }
-            if ($pf2->getPackagexmlVersion() == '2.0') {
+            if ($pf2->getPackagexmlVersion() == '2.0' ||
+                  $pf2->getPackagexmlVersion() == '2.1') {
                 $main = &$pf2;
                 $other = &$pf;
             } else {
                 $main = &$pf;
                 $other = &$pf2;
             }
-            if ($main->getPackagexmlVersion() != '2.0') {
+            if ($main->getPackagexmlVersion() != '2.0' &&
+                  $main->getPackagexmlVersion() != '2.1') {
                 return PEAR::raiseError('Error: cannot package two package.xml version 1.0, can ' .
                     'only package together a package.xml 1.0 and package.xml 2.0');
             }
@@ -187,13 +189,8 @@ if (!function_exists('md5_file')) {
         if (!$fd = @fopen($file, 'r')) {
             return false;
         }
-        if (function_exists('file_get_contents')) {
-            fclose($fd);
-            $md5 = md5(file_get_contents($file));
-        } else {
-            $md5 = md5(fread($fd, filesize($file)));
-            fclose($fd);
-        }
+        fclose($fd);
+        $md5 = md5(file_get_contents($file));
         return $md5;
     }
 }

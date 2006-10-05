@@ -16,7 +16,7 @@
  * @author     Stephan Schmidt (original XML_Unserializer code)
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: XMLParser.php,v 1.11 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: XMLParser.php,v 1.12 2006/03/27 04:39:03 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@
  * @author     Stephan Schmidt (original XML_Unserializer code)
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -91,12 +91,12 @@ class PEAR_XMLParser
             if (strpos($data, 'encoding="UTF-8"')) {
                 $data = utf8_decode($data);
             }
-            $xp = @xml_parser_create('ISO-8859-1');
+            $xp = xml_parser_create('ISO-8859-1');
         } else {
             if (strpos($data, 'encoding="UTF-8"')) {
-                $xp = @xml_parser_create('UTF-8');
+                $xp = xml_parser_create('UTF-8');
             } else {
-                $xp = @xml_parser_create('ISO-8859-1');
+                $xp = xml_parser_create('ISO-8859-1');
             }
         }
         xml_parser_set_option($xp, XML_OPTION_CASE_FOLDING, 0);

@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: RunTest.php,v 1.20 2006/02/03 02:08:11 cellog Exp $
+ * @version    CVS: $Id: RunTest.php,v 1.23 2006/03/28 05:33:42 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -44,7 +44,7 @@ putenv("PHP_PEAR_RUNTESTS=1");
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  */
@@ -139,15 +139,29 @@ class PEAR_RunTest
         $tmp_file   = ereg_replace('\.phpt$','.php',$file);
         $tmp_post   = $tmp . uniqid('/phpt.');
 
-        @unlink($tmp_skipif);
-        @unlink($tmp_file);
-        @unlink($tmp_post);
+        if (file_exists($tmp_skipif)) {
+            unlink($tmp_skipif);
+        }
+        if (file_exists($tmp_file)) {
+            unlink($tmp_file);
+        }
+        if (file_exists($tmp_post)) {
+            unlink($tmp_post);
+        }
 
         // unlink old test results
-        @unlink(ereg_replace('\.phpt$','.diff',$file));
-        @unlink(ereg_replace('\.phpt$','.log',$file));
-        @unlink(ereg_replace('\.phpt$','.exp',$file));
-        @unlink(ereg_replace('\.phpt$','.out',$file));
+        if (file_exists(ereg_replace('\.phpt$','.diff',$file))) {
+            unlink(ereg_replace('\.phpt$','.diff',$file));
+        }
+        if (file_exists(ereg_replace('\.phpt$','.log',$file))) {
+            unlink(ereg_replace('\.phpt$','.log',$file));
+        }
+        if (file_exists(ereg_replace('\.phpt$','.exp',$file))) {
+            unlink(ereg_replace('\.phpt$','.exp',$file));
+        }
+        if (file_exists(ereg_replace('\.phpt$','.out',$file))) {
+            unlink(ereg_replace('\.phpt$','.out',$file));
+        }
 
         // Check if test should be skipped.
         $info = '';
@@ -172,6 +186,9 @@ class PEAR_RunTest
                     }
                     if (isset($old_php)) {
                         $php = $old_php;
+                    }
+                    if (isset($this->_options['tapoutput'])) {
+                        return array('ok', ' # skip ' . $reason);
                     }
                     return 'SKIPPED';
                 }
@@ -207,7 +224,9 @@ class PEAR_RunTest
             system($cmd, $return_value);
             $out = ob_get_contents();
             ob_end_clean();
-            @unlink($tmp_post);
+            if (file_exists($tmp_post)) {
+                unlink($tmp_post);
+            }
             $section_text['RETURNS'] = (int) trim($section_text['RETURNS']);
             $returnfail = ($return_value != $section_text['RETURNS']);
         } else {
@@ -220,7 +239,9 @@ class PEAR_RunTest
             // perform test cleanup
             $this->save_text($clean = $tmp . uniqid('/phpt.'), $section_text['CLEAN']);
             `$php $clean`;
-            @unlink($clean);
+            if (file_exists($clean)) {
+                unlink($clean);
+            }
         }
         // Does the output match what is expected?
         $output = trim($out);
@@ -250,12 +271,17 @@ class PEAR_RunTest
             var_dump($output);
     */
             if (!$returnfail && preg_match("/^$wanted_re\$/s", $output)) {
-                @unlink($tmp_file);
+                if (file_exists($tmp_file)) {
+                    unlink($tmp_file);
+                }
                 if (!isset($this->_options['quiet'])) {
                     $this->_logger->log(0, "PASS $tested$info");
                 }
                 if (isset($old_php)) {
                     $php = $old_php;
+                }
+                if (isset($this->_options['tapoutput'])) {
+                    return array('ok', ' - ' . $tested);
                 }
                 return 'PASSED';
             }
@@ -266,12 +292,17 @@ class PEAR_RunTest
         // compare and leave on success
             $ok = (0 == strcmp($output,$wanted));
             if (!$returnfail && $ok) {
-                @unlink($tmp_file);
+                if (file_exists($tmp_file)) {
+                    unlink($tmp_file);
+                }
                 if (!isset($this->_options['quiet'])) {
                     $this->_logger->log(0, "PASS $tested$info");
                 }
                 if (isset($old_php)) {
                     $php = $old_php;
+                }
+                if (isset($this->_options['tapoutput'])) {
+                    return array('ok', ' - ' . $tested);
                 }
                 return 'PASSED';
             }
@@ -364,6 +395,13 @@ $return_value
             $php = $old_php;
         }
 
+        if (isset($this->_options['tapoutput'])) {
+            $wanted = explode("\n", $wanted);
+            $wanted = "# Expected output:\n#\n#" . implode("\n#", $wanted);
+            $output = explode("\n", $output);
+            $output = "#\n#\n# Actual output:\n#\n#" . implode("\n#", $output);
+            return array($wanted . $output . 'not ok', ' - ' . $tested);
+        }
         return $warn ? 'WARNED' : 'FAILED';
     }
 

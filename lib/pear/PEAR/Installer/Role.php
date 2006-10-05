@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Role.php,v 1.13 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: Role.php,v 1.15 2006/05/12 02:38:58 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -32,7 +32,7 @@ require_once 'PEAR/XMLParser.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -86,8 +86,7 @@ class PEAR_Installer_Role
     /**
      * Get a list of file roles that are valid for the particular release type.
      *
-     * For instance, src files serve no purpose in regular php releases.  php files
-     * serve no purpose in extsrc or extbin releases
+     * For instance, src files serve no purpose in regular php releases.
      * @param string
      * @param bool clear cache
      * @return array
@@ -216,6 +215,9 @@ class PEAR_Installer_Role
         if ($dir === null) {
             $dir = dirname(__FILE__) . '/Role';
         }
+        if (!file_exists($dir) || !is_dir($dir)) {
+            return PEAR::raiseError("registerRoles: opendir($dir) failed");
+        }
         $dp = @opendir($dir);
         if (empty($dp)) {
             return PEAR::raiseError("registerRoles: opendir($dir) failed");
@@ -236,7 +238,7 @@ class PEAR_Installer_Role
                 $GLOBALS['_PEAR_INSTALLER_ROLES'][$class] = $data;
             }
         }
-        @closedir($dp);
+        closedir($dp);
         ksort($GLOBALS['_PEAR_INSTALLER_ROLES']);
         PEAR_Installer_Role::getBaseinstallRoles(true);
         PEAR_Installer_Role::getInstallableRoles(true);

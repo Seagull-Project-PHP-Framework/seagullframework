@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.70 2006/01/06 04:47:36 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.73 2006/09/18 16:39:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -197,9 +197,12 @@ installed package.'
             return $this->raiseError('list-files expects 1 parameter');
         }
         $reg = &$this->config->getRegistry();
+        $fp = false;
         if (!is_dir($params[0]) && (file_exists($params[0]) || $fp = @fopen($params[0],
               'r'))) {
-            @fclose($fp);
+            if ($fp) {
+                fclose($fp);
+            }
             if (!class_exists('PEAR_PackageFile')) {
                 require_once 'PEAR/PackageFile.php';
             }
@@ -356,10 +359,12 @@ installed package.'
         if (count($params) != 1) {
             return $this->raiseError('pear info expects 1 parameter');
         }
-        $info = false;
+        $info = $fp = false;
         $reg = &$this->config->getRegistry();
-        if ((@is_file($params[0]) && !is_dir($params[0])) || $fp = @fopen($params[0], 'r')) {
-            @fclose($fp);
+        if ((file_exists($params[0]) && is_file($params[0]) && !is_dir($params[0])) || $fp = @fopen($params[0], 'r')) {
+            if ($fp) {
+                fclose($fp);
+            }
             if (!class_exists('PEAR_PackageFile')) {
                 require_once 'PEAR/PackageFile.php';
             }
@@ -524,7 +529,7 @@ installed package.'
                 unset($info[$key]);
                 $info['Last Modified'] = $hdate;
             } elseif ($key == '_lastversion') {
-                $info['Last Installed Version'] = $info[$key] ? $info[$key] : '- None -';
+                $info['Previous Installed Version'] = $info[$key] ? $info[$key] : '- None -';
                 unset($info[$key]);
             } else {
                 $info[$key] = trim($info[$key]);
@@ -566,8 +571,14 @@ installed package.'
             case 'extsrc' :
                 $release = 'PECL-style PHP extension (source code)';
             break;
+            case 'zendextsrc' :
+                $release = 'PECL-style Zend extension (source code)';
+            break;
             case 'extbin' :
                 $release = 'PECL-style PHP extension (binary)';
+            break;
+            case 'zendextbin' :
+                $release = 'PECL-style Zend extension (binary)';
             break;
             case 'bundle' :
                 $release = 'Package bundle (collection of packages)';
@@ -983,7 +994,7 @@ installed package.'
                 $info['Last Modified'] = date('Y-m-d H:i', $obj->getLastModified());
             }
             $v = $obj->getLastInstalledVersion();
-            $info['Last Installed Version'] = $v ? $v : '- None -';
+            $info['Previous Installed Version'] = $v ? $v : '- None -';
         }
         foreach ($info as $key => $value) {
             $data['data'][] = array($key, $value);

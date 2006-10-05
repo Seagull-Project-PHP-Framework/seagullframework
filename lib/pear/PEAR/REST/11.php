@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 11.php,v 1.4.2.3 2006/08/15 21:25:12 pajoye Exp $
+ * @version    CVS: $Id: 11.php,v 1.5 2006/04/01 16:59:56 pajoye Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.3
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.11
+ * @version    Release: 1.5.0a1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.3
  */
@@ -56,23 +56,28 @@ class PEAR_REST_11
             return $categorylist;
         }
         $ret = array();
-        if (!is_array($categorylist['c']) || !isset($categorylist['c'][0])) {
+        if (!is_array($categorylist['c'])) {
             $categorylist['c'] = array($categorylist['c']);
         }
         PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
+
         foreach ($categorylist['c'] as $progress => $category) {
             $category = $category['_content'];
             $packagesinfo = $this->_rest->retrieveData($base .
                 'c/' . urlencode($category) . '/packagesinfo.xml');
+
             if (PEAR::isError($packagesinfo)) {
                 continue;
             }
+
             if (!is_array($packagesinfo) || !isset($packagesinfo['pi'])) {
                 continue;
             }
+
             if (!is_array($packagesinfo['pi']) || !isset($packagesinfo['pi'][0])) {
                 $packagesinfo['pi'] = array($packagesinfo['pi']);
             }
+
             foreach ($packagesinfo['pi'] as $packageinfo) {
                 $info = $packageinfo['p'];
                 $package = $info['n'];
@@ -81,6 +86,7 @@ class PEAR_REST_11
                 unset($unstable);
                 unset($stable);
                 unset($state);
+
                 if ($releases) {
                     if (!isset($releases['r'][0])) {
                         $releases['r'] = array($releases['r']);
@@ -114,13 +120,23 @@ class PEAR_REST_11
                         }
                     }
                 }
+
                 if ($basic) { // remote-list command
                     if (!isset($latest)) {
                         $latest = false;
                     }
-                    $ret[$package] = array('stable' => $latest);
+                    if ($dostable) {
+                        if ($state == 'stable') {
+                            $ret[$package] = array('stable' => $latest);
+                        } else {
+                            $ret[$package] = array('stable' => '-n/a-');
+                        }
+                    } else {
+                            $ret[$package] = array('stable' => $latest);
+                    }
                     continue;
                 }
+
                 // list-all command
                 $deps = array();
                 if (!isset($unstable)) {
@@ -132,9 +148,11 @@ class PEAR_REST_11
                 } else {
                     $latest = $unstable;
                 }
+
                 if (!isset($latest)) {
                     $latest = false;
                 }
+
                 if ($latest) {
                     if (isset($packageinfo['deps'])) {
                         if (!is_array($packageinfo['deps']) ||
@@ -143,11 +161,9 @@ class PEAR_REST_11
                         }
                     }
                     $d = false;
-                    if (isset($packageinfo['deps']) && is_array($packageinfo['deps'])) {
-                        foreach ($packageinfo['deps'] as $dep) {
-                            if ($dep['v'] == $latest) {
-                                $d = unserialize($dep['d']);
-                            }
+                    foreach ($packageinfo['deps'] as $dep) {
+                        if ($dep['v'] == $latest) {
+                            $d = unserialize($dep['d']);
                         }
                     }
                     if ($d) {
@@ -171,9 +187,7 @@ class PEAR_REST_11
                         }
                     }
                 }
-                if (!isset($stable)) {
-                    $stable = '-n/a-';
-                }
+
                 $info = array('stable' => $latest, 'summary' => $info['s'],
                     'description' =>
                     $info['d'], 'deps' => $deps, 'category' => $info['ca']['_content'],
