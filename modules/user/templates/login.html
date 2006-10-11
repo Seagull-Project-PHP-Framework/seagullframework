@@ -1,11 +1,12 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <div class="message">{msgGet()}</div>
 
-<form name="frmLogin" method="post" action="" id="frmLogin" flexy:ignore>
-    <fieldset class="noBorder">
+<form id="frmLogin" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
         <input type="hidden" name="action" value="login" />
         <input type="hidden" name="redir" value="{redir}" />
-
+    </fieldset>
+    <fieldset>
         <dl class="onSide">
             <dt>
                 <label for="frm_username"><span class="required">*&nbsp;</span>{translate(#Username#)}</label>
@@ -26,7 +27,7 @@
                 <input type="password" name="frmPassword" id="frm_password" value="{password}" maxlength="24" />
             </dd>
             <dt>&nbsp;</dt>
-            <dd>    
+            <dd>
                 <input type="submit" class="wideButton" name="submitted" value="{translate(#Login#)}" />
             </dd>
             <dd flexy:if="conf[RegisterMgr][enabled]">
@@ -36,7 +37,7 @@
                 <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a>
             </dd>
         </dl>
-        <p><span class="required">*</span> {translate(#denotes required field#)}</span></span>
     </fieldset>
-    <div class="spacer" style="height:130px"></div>
+    <p><span class="required">*</span> {translate(#denotes required field#)}</p>
 </form>
+<div class="spacer" style="height:130px"></div>

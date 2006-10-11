@@ -32,10 +32,10 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | LoginBlock2.php                                                            |
+// | LoginBlock2.php                                                           |
 // +---------------------------------------------------------------------------+
-// | Authors: Andrey Podshivalov <planetaz@gmail.com>             |
-// |                Julien Casanova <julien_casanova@yahoo.fr>        |
+// | Authors: Andrey Podshivalov <planetaz@gmail.com>                          |
+// |          Julien Casanova <julien_casanova@yahoo.fr>                       |
 // +---------------------------------------------------------------------------+
 
 /**
@@ -65,8 +65,12 @@ class User_Block_Login2
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blockOutput        = new SGL_Output();
-        $blockOutput->theme = $_SESSION['aPrefs']['theme'];
+        $blockOutput            = new SGL_Output();
+        $blockOutput->theme     = $_SESSION['aPrefs']['theme'];
+        $blockOutput->imagesDir = $output->imagesDir;
+
+        $c = &SGL_Config::singleton();
+        $blockOutput->conf = $c->ensureModuleConfigLoaded('user');
 
         if ($this->uid == SGL_GUEST) {
             //  display login info
@@ -74,7 +78,7 @@ class User_Block_Login2
                 //  set block params
                 $this->template = $aParams['loginTemplate'];
             }
-            if (isset($output->conf['tuples']['demoMode']) && $output->conf['tuples']['demoMode'] == true) {
+            if (!empty($output->conf['tuples']['demoMode'])) {
                 $blockOutput->username = 'admin';
                 $blockOutput->password = 'admin';
             } else {
