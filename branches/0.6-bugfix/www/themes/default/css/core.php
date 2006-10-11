@@ -80,6 +80,12 @@ hr {
 #middleCol {
     float: left;
     background: <?php echo $greyLightest ?>;
+    height: 380px; /* Sets min height for IE */
+}
+html > body #middleCol {
+    /* Sets min height for gecko */
+    height: auto;
+    min-height: 380px;
 }
 #middleCol .inner {
     padding: 5px 10px;
