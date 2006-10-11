@@ -82,6 +82,19 @@ class StringTest extends UnitTestCase {
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
+
+    function testCamelise()
+    {
+        $aControl[] = 'Here is a string to camelise';
+        $aControl[] = ' here IS a StrIng tO CameLise';
+        $aControl[] = ' Here  is a  STRING To  CameliSE';
+        $expected   = 'hereIsAStringToCamelise';
+
+        foreach ($aControl as $k => $control) {
+            $ret = SGL_String::camelise($control);
+            $this->assertEqual($expected, $ret);
+        }
+    }
 }
 
 ?>
