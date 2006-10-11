@@ -980,18 +980,22 @@ class SGL_Task_CreateFileSystem extends SGL_Task
 
         //  pass paths as arrays to avoid widows space parsing prob
         //  create cache dir
-        $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
-        @chmod($cacheDir, 0777);
+        if (!is_dir(SGL_CACHE_DIR)) {
+            $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
+            @chmod($cacheDir, 0777);
 
-        if (!($cacheDir)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating cache dir'));
+            if (!($cacheDir)) {
+                SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating cache dir'));
+            }
         }
 
         //  create entities dir
-        $entDir = System::mkDir(array(SGL_ENT_DIR));
-        @chmod($entDir, 0777);
-        if (!($entDir)) {
-            SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating entity dir'));
+        if (!is_dir(SGL_ENT_DIR)) {
+            $entDir = System::mkDir(array(SGL_ENT_DIR));
+            @chmod($entDir, 0777);
+            if (!($entDir)) {
+                SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating entity dir'));
+            }
         }
 
         //  create tmp dir, mostly for sessions
@@ -1158,7 +1162,7 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
-                }                
+                }
             }
         }
     }
