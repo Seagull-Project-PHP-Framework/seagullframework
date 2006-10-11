@@ -79,7 +79,7 @@ class SGL_Output
 
         foreach ($aLangs as $k => $v) {
             if (in_array($k, $aInstalledLangs)
-                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
+                    && file_exists(SGL_WEB_ROOT . "/themes/$theme/images/flags/$k.png")) {
                 $link = ($hasLangParam)
                     ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
                     : $currUrl . "?lang=$k";
