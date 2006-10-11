@@ -28,9 +28,7 @@ Date   : 2006/03/20
     padding: 0.4em;
     font-size: 0.9em;
 }
-#leftCol .content a {
-    color: <?php echo $primaryDark ?>;
-}
+
 /*
 =====================Lang Switcher Block======================*/
 #lang-switcher {
@@ -40,6 +38,7 @@ Date   : 2006/03/20
 /*
 ====================Top Navigation Block======================*/
 #top-nav {
+    position: relative;
     background: <?php echo $primaryLight ?>;
     border: 2px solid <?php echo $greyLightest ?>;
     border-top: none;
@@ -50,10 +49,13 @@ Date   : 2006/03/20
     border: 1px solid <?php echo $grey ?>;
 }
 #top-nav ul {
-
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 #top-nav li {
     float: left;
+    padding-left: 0;
 }
 #top-nav li a {
     display: block;
