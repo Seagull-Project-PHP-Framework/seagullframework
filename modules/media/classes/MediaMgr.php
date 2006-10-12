@@ -86,11 +86,11 @@ class MediaMgr extends FileMgr
         $input->mediaId         = $req->get('frmMediaId');
         $input->mediaSize       = $req->get('frmSize');
         $input->aDelete         = $req->get('frmDelete');
-        
+
         //  filter vars
         $input->mediaTypeId     = $req->get('byTypeId');
         $input->dateRange       = $req->get('byDateRange');
-        
+
         //  view type
         $input->viewType        = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
 
@@ -103,6 +103,16 @@ class MediaMgr extends FileMgr
         $input->mediaFileType       = $input->aMedia['type'];
         $input->mediaFileTmpName    = $input->aMedia['tmp_name'];
         $input->mediaFileSize       = $input->aMedia['size'];
+
+        $sessId = SGL_Session::getId();
+		$input->javascriptSrc = array(
+            'js/scriptaculous/lib/prototype.js',
+            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
+            'js/lightbox/lightbox.js',
+            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
+            'media/js/Widgets.js',
+            'media/js/media.js',
+            );
 
         //  request values for save upload
         $input->media = (object)$req->get('media');
@@ -257,7 +267,7 @@ class MediaMgr extends FileMgr
         } else {
             return true;
         }
-    }    
+    }
 
     function _cmd_add(&$input, &$output)
     {
@@ -269,14 +279,14 @@ class MediaMgr extends FileMgr
             if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
                 return false;
             }
-            
+
             //  test ability to create img tranform obj
             require_once 'Image/Transform.php';
             $imageDriver = $this->conf['MediaMgr']['imageDriver'];
             $im = Image_Transform::factory($imageDriver);
             if (PEAR::isError($im)) {
                 return false;
-            }             
+            }
 
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
             $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
@@ -484,9 +494,6 @@ class MediaMgr extends FileMgr
         $options['byDateRange'] = $input->dateRange;
         $aMedia = $this->da->getMediaFiles($options);
         $output->aMedia = $aMedia;
-
-        $output->javascriptSrc = array(
-            'js/lightbox/lightbox.js');
         $output->addOnLoadEvent("MediaList.init()");
     }
 
