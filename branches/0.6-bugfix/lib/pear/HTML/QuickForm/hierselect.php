@@ -18,7 +18,7 @@
 // |          Alexey Borzov <avb@php.net>
 // +----------------------------------------------------------------------+
 //
-// $Id: hierselect.php,v 1.17 2006/06/22 09:43:00 avb Exp $
+// $Id: hierselect.php,v 1.18 2006/10/07 15:07:48 avb Exp $
 
 require_once('HTML/QuickForm/group.php');
 require_once('HTML/QuickForm/select.php');
@@ -329,7 +329,7 @@ function _hs_replaceOptions(ctl, optionList)
     var j = 0;
     ctl.options.length = 0;
     for (i in optionList) {
-        var optionText = (-1 == optionList[i].indexOf('&'))? optionList[i]: _hs_unescapeEntities(optionList[i]);
+        var optionText = (-1 == String(optionList[i]).indexOf('&'))? optionList[i]: _hs_unescapeEntities(optionList[i]);
         ctl.options[j++] = new Option(optionText, i, false, false);
     }
 }
