@@ -17,7 +17,7 @@
 // |          Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: Controller.php,v 1.11 2006/05/31 08:58:44 avb Exp $
+// $Id: Controller.php,v 1.12 2006/10/08 10:03:32 avb Exp $
 
 require_once 'HTML/QuickForm/Page.php';
 
@@ -32,7 +32,7 @@ require_once 'HTML/QuickForm/Page.php';
  *
  * @author  Alexey Borzov <avb@php.net>
  * @package HTML_QuickForm_Controller
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 class HTML_QuickForm_Controller
 {
@@ -242,6 +242,11 @@ class HTML_QuickForm_Controller
                 // seen a page of a non-modal multipage form
                 if (!$this->isModal() && null === $data['valid'][$key]) {
                     $page =& $this->_pages[$key];
+                    // Fix for bug #8687: the unseen page was considered
+                    // submitted, so defaults for checkboxes and multiselects
+                    // were not used. Shouldn't break anything since this flag
+                    // will be reset right below in loadValues(). 
+                    $page->_flagSubmitted = false;
                     // Use controller's defaults and constants, if present
                     $this->applyDefaults($key);
                     $page->isFormBuilt() or $page->BuildForm();
