@@ -18,7 +18,7 @@
 // |          Thomas Schulz <ths@4bconsult.de>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: ArraySmarty.php,v 1.10 2005/04/26 07:58:55 ths Exp $
+// $Id: ArraySmarty.php,v 1.11 2006/10/07 20:12:17 avb Exp $
 
 require_once 'HTML/QuickForm/Renderer/Array.php';
 
@@ -180,17 +180,22 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
         }
         // create keys for elements grouped by native group or name
         if (strstr($ret['name'], '[') or $this->_currentGroup) {
+            // Fix for bug #8123: escape backslashes and quotes to prevent errors 
+            // in eval(). The code below seems to handle the case where element
+            // name has unbalanced square brackets. Dunno whether we really
+            // need this after the fix for #8123, but I'm wary of making big
+            // changes to this code.  
             preg_match('/([^]]*)\\[([^]]*)\\]/', $ret['name'], $matches);
             if (isset($matches[1])) {
                 $sKeysSub = substr_replace($ret['name'], '', 0, strlen($matches[1]));
                 $sKeysSub = str_replace(
-                    array('['  ,   ']', '[\'\']'),
-                    array('[\'', '\']', '[]'    ),
+                    array('\\',   '\'',   '['  ,   ']', '[\'\']'),
+                    array('\\\\', '\\\'', '[\'', '\']', '[]'    ),
                     $sKeysSub
                 );
-                $sKeys = '[\'' . $matches[1]  . '\']' . $sKeysSub;
+                $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $matches[1]) . '\']' . $sKeysSub;
             } else {
-                $sKeys = '[\'' . $ret['name'] . '\']';
+                $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['name']) . '\']';
             }
             // special handling for elements in native groups
             if ($this->_currentGroup) {
@@ -209,11 +214,11 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
             $sKeys = '[\'element_' . $this->_elementIdx . '\']';
         // other elements
         } else {
-            $sKeys = '[\'' . $ret['name'] . '\']';
+            $sKeys = '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['name']) . '\']';
         }
         // for radios: add extra key from value
         if ('radio' == $ret['type'] and substr($sKeys, -2) != '[]') {
-            $sKeys .= '[\'' . $ret['value'] . '\']';
+            $sKeys .= '[\'' . str_replace(array('\\', '\''), array('\\\\', '\\\''), $ret['value']) . '\']';
         }
         $this->_elementIdx++;
         $ret['keys'] = $sKeys;
@@ -305,8 +310,8 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
    /**
     * Process an template sourced in a string with Smarty
     *
-    * Smarty has no core function to render a template given as a string.
-    * So we use the smarty eval plugin function to do this.
+    * Smarty has no core function to render	a template given as a string.
+    * So we use the smarty eval plugin function	to do this.
     *
     * @param    string      The template source
     * @access   private
@@ -325,7 +330,7 @@ class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array
     *
     * You can use {$label} or {$html} placeholders to let the renderer know where
     * where the element label or the element html are positionned according to the
-    * required tag. They will be replaced accordingly with the right value. You
+    * required tag. They will be replaced accordingly with the right value.	You
     * can use the full smarty syntax here, especially a custom modifier for I18N.
     * For example:
     * {if $required}<span style="color: red;">*</span>{/if}{$label|translate}
