@@ -280,67 +280,63 @@ class MediaMgr extends FileMgr
                 return false;
             }
 
-            //  test ability to create img tranform obj
-            require_once 'Image/Transform.php';
-            $imageDriver = $this->conf['MediaMgr']['imageDriver'];
-            $im = Image_Transform::factory($imageDriver);
-            if (PEAR::isError($im)) {
-                return false;
-            }
-
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
             $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
-            list($filename, $ext) = explode('.', $input->mediaFileName);
-            if ($this->isImage($input->mediaFileType)) {
-                //  ensure default image is not larger than max size allowed
-                $newWidth = $this->conf['MediaMgr']['imageMaxWidth'];
-                $newHeight = $this->conf['MediaMgr']['imageMaxHeight'];
+
+            if (!$this->isImage($input->mediaFileType)) { // non-image file
+                copy($input->mediaFileTmpName, $targetLocation);
+                $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
+                $output->fileTypeName    = $this->_getType($output->fileTypeID);
+                $output->mediaUniqueName = $uniqueName;
+            } else { // image
+
+                // test ability to create img tranform obj
+                require_once 'Image/Transform.php';
+                $imageDriver = $this->conf['MediaMgr']['imageDriver'];
+                $im = Image_Transform::factory($imageDriver);
+                if (PEAR::isError($im)) {
+                    return false;
+                }
+
+                list($filename, $ext) = explode('.', $input->mediaFileName);
+
+                // ensure default image is not larger than max size allowed
+                $newWidth       = $this->conf['MediaMgr']['imageMaxWidth'];
+                $newHeight      = $this->conf['MediaMgr']['imageMaxHeight'];
                 $srcImgLocation = $input->mediaFileTmpName;
                 $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName . '.jpg';
 
-                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
+                $ok = $this->resizeImageAndSave($im, $srcImgLocation,
+                    $targetLocation, $newWidth, $newHeight);
 
-                //  hard-code to jpeg as all images are converted to jpegs
-                $output->fileTypeID = 5;
-                $output->mediaFileType = 'image/jpeg';
-                $output->mediaFileName = $filename . '.jpg';
+                // hard-code to jpeg as all images are converted to jpegs
+                $output->fileTypeID      = 5;
+                $output->fileTypeName    = $this->_getType($output->fileTypeID);
                 $output->mediaUniqueName = $uniqueName . '.jpg';
-                $output->fileTypeName = $this->_getType($output->fileTypeID);
-            } else {
-                copy($input->mediaFileTmpName, $targetLocation);
-                $output->fileTypeID = $this->_mime2FileType($input->mediaFileType);
-                $output->fileTypeName = $this->_getType($output->fileTypeID);
-                $output->mediaUniqueName = $uniqueName;
+                $output->mediaFileType   = 'image/jpeg';
+                $output->mediaFileName   = $filename . '.jpg';
+
+                if (!empty($this->conf['MediaMgr']['createThumbnails'])) {
+                    $aThumbs = explode(',', $this->conf['MediaMgr']['createThumbnails']);
+                    $thumbsDir = SGL_UPLOAD_DIR . '/' . $this->conf['MediaMgr']['thumbsDir'];
+                    if (!$this->ensureUploadDirWritable($thumbsDir)) {
+                        return false;
+                    }
+                    foreach ($aThumbs as $thumbName) {
+                        $thumbName   = strtolower($thumbName);
+                        $thumbWidth  = SGL_String::camelise("thumb $thumbName width");
+                        $thumbHeight = SGL_String::camelise("thumb $thumbName height");
+
+                        //  create thumbnail
+                        $newWidth       = $this->conf['MediaMgr'][$thumbWidth];
+                        $newHeight      = $this->conf['MediaMgr'][$thumbHeight];
+                        $srcImgLocation = $input->mediaFileTmpName;
+                        $targetLocation = $thumbsDir . '/' . $thumbName . '_' . $uniqueName . '.jpg';
+                        $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
+                    }
+                }
             }
             $output->save = true;
-
-            //  create small thumbnail
-            if ($this->isImage($input->mediaFileType) && $this->conf['MediaMgr']['createSmallThumbnail']) {
-                $thumbsDir = SGL_UPLOAD_DIR . '/' . $this->conf['MediaMgr']['thumbsDir'];
-                if (!$this->ensureUploadDirWritable($thumbsDir)) {
-                    return false;
-                }
-                $newWidth = $this->conf['MediaMgr']['thumbSmallWidth'];
-                $newHeight = $this->conf['MediaMgr']['thumbSmallHeight'];
-                $srcImgLocation = $input->mediaFileTmpName;
-                $targetLocation = $thumbsDir . '/small_' . $uniqueName . '.jpg';
-
-                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
-            }
-
-            //  create large thumbnail
-            if ($this->isImage($input->mediaFileType) && $this->conf['MediaMgr']['createLargeThumbnail']) {
-                $thumbsDir = SGL_UPLOAD_DIR . '/' . $this->conf['MediaMgr']['thumbsDir'];
-                if (!$this->ensureUploadDirWritable($thumbsDir)) {
-                    return false;
-                }
-                $newWidth = $this->conf['MediaMgr']['thumbLargeWidth'];
-                $newHeight = $this->conf['MediaMgr']['thumbLargeHeight'];
-                $srcImgLocation = $input->mediaFileTmpName;
-                $targetLocation = $thumbsDir . '/large_' . $uniqueName . '.jpg';
-
-                $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
-            }
         } else { // display upload screen
             $output->save = false;
             $output->fileTypeID = 0;
@@ -364,29 +360,10 @@ class MediaMgr extends FileMgr
         if (PEAR::isError($ret)) {
             return false;
         }
-        //  get img size
-        $size = $im->getImageSize();
-        if (isset($size[0]) && isset($size[1])) {
-            $width = $size[0];
-            $height = $size[1];
-        } else {
-            return SGL::raiseError('Unable to get image size');
-        }
-        // make sure to keep the image aspect ratio
-        if ($width >= $height && $newHeight <= $height){
-            $newHeight = $height / ($width / $newWidth);
-        } elseif ($width < $height && $newWidth < $width) {
-            $newWidth = $width / ($height / $newHeight);
-        } else {
-            $newWidth = $width;
-            $newHeight = $height;
-        }
-
-        $ret = $im->resize($newWidth, $newHeight);
+        $ret = $im->fit($newWidth, $newHeight);
         if (PEAR::isError($ret)) {
             return false;
         }
-
         $ret = $im->save($targetLocation, 'jpeg');
         if (PEAR::isError($ret)) {
             return false;
