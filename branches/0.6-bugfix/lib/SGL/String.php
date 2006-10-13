@@ -575,7 +575,7 @@ class SGL_String
         $ret = '';
         $i = 0;
 
-        $s = preg_replace('!\s{2,}!', ' ', $s);
+        $s = preg_replace('!\s+!', ' ', $s);
         $s = trim($s);
         $aString = explode(' ', $s);
         foreach ($aString as $value) {
