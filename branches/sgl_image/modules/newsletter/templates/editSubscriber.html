@@ -1,0 +1,81 @@
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+<script type="text/javascript">
+function randomPassword(length)
+{
+  chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+  pass = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 36);
+    pass += chars.charAt(i);
+  }
+  return pass;
+}
+</script>
+
+
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action" value="updateSubscriber" />
+    <input type="hidden" name="oUser[newsletter_id]" value="{oUser[newsletter_id]}" />
+    <input type="hidden" name="oUser[list]" value="{oUser[list]}" />
+    <table>
+        <tr>
+            <td><strong>{translate(#Name#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[name]">
+                    {translate(error[name])}
+                </div>
+                 <input type="text" name="oUser[name]" size="80" value="{oUser[name]}" />
+             </td>
+        </tr>
+        <tr>
+            <td><strong>{translate(#Email#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                 <input type="text" name="oUser[email]" size="80" value="{oUser[email]}" />
+             </td>
+         </tr>
+         <tr>
+            <td valign="top">
+                <strong>{translate(#List#)}:</strong>
+            </td>
+            <td>{oUser[list]}</td>
+         </tr>
+         <tr>
+            <td valign="top">
+                <strong>{translate(#Status#)}:</strong>
+            </td>
+            <td> <select name="oUser[status]">
+                    {this.plugin(#statusOpts#,oUser[status]):h}
+                 </select>
+            </td>
+         </tr>
+         <tr>
+            <td valign="top">
+                <strong>{translate(#Action#)}:</strong>
+            </td>
+            <td> <select name="oUser[action_request]">
+                    {this.plugin(#actionOpts#,oUser[action_request]):h}
+                 </select>
+            </td>
+         </tr>
+         <tr>
+            <td valign="top">
+                <strong>{translate(#Key#)}:</strong>
+            </td>
+            <td><input type="text" name="oUser[action_key]" size="50" value="{oUser[action_key]}" />
+                <input class="wideButton"  type="button" name="keygen" value="{translate(#Generate Key#)}" onClick="javascript:NewsletterMgr.elements['oUser[action_key]'].value=randomPassword(32)" />
+            </td>
+         </tr>
+        <tr>
+        <td align="center" colspan="2">
+          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />
+          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listSubscribers#,#list#,#newsletter#)}'" />
+        </td>
+        </tr>
+    </table>
+</form>

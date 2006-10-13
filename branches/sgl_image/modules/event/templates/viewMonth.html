@@ -1,0 +1,83 @@
+<div id="module_header">
+	<h1>Manage Your Events > Month View</h1>
+</div>
+
+
+<flexy:include src="eventModuleNav.html" />
+
+
+<div id="calendar_area">
+
+	<div id="top_nav">
+	   <!--PREVIOUS MONTH-->
+		<a href="{makeUrl(#viewMonth#,#calendar#)}y/{prevMonthDay.thisYear()}/m/{prevMonthDay.thisMonth()}/d/{prevMonthDay.thisDay()}" title="Previous Month">
+		  <img src="{webRoot}/themes/{theme}/images/icons/event_prev_date.png" title="Previous Month" alt="Previous" border="0" />
+		</a>
+
+		<span id="calendar_title"><span class="highlight">{monthName}</span></span>
+
+        <!--NEXT MONTH-->
+		<a href="{makeUrl(#viewMonth#,#calendar#)}y/{nextMonthDay.thisYear()}/m/{nextMonthDay.thisMonth()}/d/{nextMonthDay.thisDay()}" title="Next Month">
+		  <img src="{webRoot}/themes/{theme}/images/icons/event_next_date.png" title="Next Month" alt="Next" border="0" />
+		</a>
+	</div>
+
+
+<div id="all_calendars">
+<div class="a_calendar">
+<table>
+        <tr>
+            <th class="dayNames">{translate(#monday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#tuesday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#wednesday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#thursday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#friday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#saturday#,#ucfirst#)}</th>
+            <th class="dayNames">{translate(#sunday#,#ucfirst#)}</th>
+        </tr>
+
+        {foreach:month,k,day}
+            {if:day.isFirst()}
+                <tr>
+            {end:}
+
+            {if:day.isEmpty()}
+                <td class="other_month">&nbsp;</td>
+            {else:}
+                  {if:day.isSelected()}
+                    {if:day.daySelected}
+                    <td class="selected">
+                        {day.thisDay()}
+                    {else:}
+                    <td class="event">
+                        <a href="{makeUrl(#viewDay#,#calendar#,#event#)}y/{day.thisYear()}/m/{day.thisMonth()}/d/{day.thisDay()}">{day.thisDay()}</a>
+                    {end:}
+                    {if:day.aEvents}
+						<div class="event_drop_shadow" flexy:foreach="day.aEvents,k,event">
+							<div class="eventDiv">
+								<a href="{makeUrl(#view#,#event#,#event#)}frmEventId/{event.event_id}" title="click here to view this event">{event.name}</a>
+							</div>
+						</div>
+                    {end:}
+                    </td>
+
+                  {else:}
+                   <td class="day">
+                    <a href="{makeUrl(#viewDay#,#calendar#,#event#)}y/{day.thisYear()}/m/{day.thisMonth()}/d/{day.thisDay()}" title="{day.thisDay()} {monthName}">
+                        {day.thisDay()}</a>
+                   </td>
+                  {end:}
+            {end:}
+
+            {if:day.isLast()}
+                </tr>
+            {end:}
+        {end:}
+		   </td>
+      </tr>
+</table>
+</div>
+
+</div> <!-- end all_calendars -->
+
+</div> <!-- end calendar_area -->

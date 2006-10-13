@@ -1,0 +1,33 @@
+<?php
+$words['Inbox'] = 'Inbox';
+$words['In order to send an instant message, you must select recipients from the contacts tab'] = 'Per spedire il messaggio, devi indicare un elenco di destinatari dal finestra dei contatti';
+$words['Sender'] = 'Mittente';
+$words['Date'] = 'Data';
+$words['No messages in inbox'] = 'Nessun messaggio nella inbox';
+$words['check for new messages'] = 'controlla nuovi messaggi';
+$words['go to outbox'] = 'vai alla outbox';
+$words['contacts'] = 'contatti';
+$words['Full Name'] = 'Nome completo';
+$words['Contacts'] = 'Contatti';
+$words['Contact Manager'] = 'Gestione Contatti';
+$words['send message to selected user(s)'] = 'spedisci il messaggio ai contatti selezionati';
+$words['go to inbox'] = 'vai alla inbox';
+$words['Sent Messages'] = 'Messaggi spediti';
+$words['No messages in outbox'] = 'Nessun messaggio nella outbox';
+$words['To'] = 'A';
+$words['From'] = 'Da';
+$words['cancel'] = 'cancella';
+$words['Read'] = 'Leggi';
+$words['Messages'] = 'Messaggi';
+$words['Group'] = 'Gruppo';
+$words['Subject'] = 'Soggetto';
+$words['Message'] = 'Messaggio';
+$words['contacts successfully deleted'] = 'I contatti selezionati sono stati cancellati';
+$words['contacts successfully added'] = 'Il contatto è stato aggiunto';
+$words['admin cannot save contacts'] = 'Admin non è autorizzato a salvare i contatti';
+$words['Message sent successfully'] = 'Messaggio spedito';
+$words['message deleted successfully'] = 'Messaggio cancellato';
+$words['Messages did not reach all recipients'] = ' Il messaggio non ha raggiunto tutti i destinatari';
+$words['Reply'] = 'Risposta';
+$words['Compose Message'] = 'Componi il messaggio';
+?>

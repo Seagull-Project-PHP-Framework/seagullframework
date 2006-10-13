@@ -1,0 +1,47 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <table>
+	    <tr><td colspan="2">{translate(#Please enter your name and e-mail address and select the newsletters that you want to subscribe.#)}<br /></td></tr>
+        <tr>
+            <td><strong>{translate(#Name#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[name]">
+                    {translate(error[name])}
+                </div>
+                 <input type="text" name="frmName" size="40" value="{name}" />
+             </td>
+        </tr>
+        <tr>
+            <td><strong>{translate(#E-mail#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                 <input type="text" name="frmEmail" size="40" value="{email}" />
+             </td>
+         </tr>
+         <tr flexy:if="error[listName]"><td colspan="2">
+                <div class="error">
+                    {translate(error[listName])}
+                </div>
+         </td></tr>
+         <tr><td valign="top"><strong>{translate(#List#)}:</strong></td>
+         <td>{this.plugin(#generateCheckboxNewsList#,validNewsList,listName,#frmListName[]#):h}
+         </td></tr>		 
+        <tr>
+        <td colspan="2"><strong>{translate(#Action#)}:</strong> 
+          <input type="radio" name="action" value="subscribe" checked="checked">
+          {translate(#Subscribe#)} 
+          <input type="radio" name="action" value="unsubscribe">
+          {translate(#Unsubscribe#)}<br />
+        </td>
+        </tr>
+        <tr>
+        <td align="center" colspan="2">
+          <input class="wideButton" type="submit" name="submitted" value="{translate(#Send#)}" />
+        </td>
+        </tr>
+    </table>
+</form>

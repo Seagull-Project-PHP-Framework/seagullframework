@@ -1,0 +1,49 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form method="post" flexy:ignore>
+    <input type="hidden" name="action" value="insert" />
+    <table class="wide"><tr>
+    <td align="center">
+        <table>
+            <tr>
+                <th align="left">{translate(#Name#)}:</th>
+                <td>
+                    <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+                    <input class="full" type="text" name="guestbook[name]" value="{guestbook.name}" />
+                </td>
+            </tr>
+            <tr>
+                <th align="left">{translate(#Email#)}:</th>
+                <td>
+                    <div class="error" flexy:if="error[email]">{translate(error[email])}</div>
+                    <input class="full" type="text" name="guestbook[email]" value="{guestbook.email}" />
+                </td>
+            </tr>
+            <tr>
+                <th align="left">{translate(#Message#)}:</th>
+                <td>
+                    <div class="error" flexy:if="error[message]">{translate(error[message])}</div>
+                    <textarea cols="40" rows="7" name="guestbook[message]">{guestbook.message}</textarea>
+                </td>
+            </tr>
+            <tr flexy:if="useCaptcha">
+                <th align="left">{translate(#Verify#)}:</th>
+                <td>
+                   {translate(#Enter Captcha#)}<br />
+                   <font style="font-size: 4pt; font-weight: bold"><pre>{captcha}</pre></font>
+                   <div class="error" flexy:if="error[captcha]">{translate(error[captcha])}</div>
+                   <input class="full" type="text" name="guestbook[captcha]" size="30" />
+               </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <input class="wideButton" type="submit" name="submitted" value="{translate(#Add#)}" />
+                    <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                        onClick="document.location.href='{makeUrl(##,#guestbook#)}'" />
+                </td>
+            </tr>
+        </table>
+    </td>
+    </tr></table>
+</form>

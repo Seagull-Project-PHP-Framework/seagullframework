@@ -1,0 +1,64 @@
+<flexy:include src="moduleSubNav.html" />
+
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="event" method="post" flexy:ignore id="event">
+        <input type="hidden" name="action" value="delete" />
+        <fieldset class="inside">
+            <table class="full">
+                <thead>
+                    <tr class="infos">
+                        <td class="left" colspan="9">
+                            <input type="button" class="sgl-button" value="{translate(#new event#)}" onclick="javascript:document.location.href='{makeUrl(#add#,#event#,#event#)}'" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{translate(#Select#)}</th>
+                        <th>{translate(#id#)}</th>
+                        <th>{translate(#Event name#)}</th>
+                        <th>{translate(#Init datetime#)}</th>
+                        <th>{translate(#End datetime#)}</th>
+                        <th>{translate(#Event hide#)}</th>
+                        <th>{translate(#Edit#)}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="results,key,valueObj">
+                        <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj.event_id}" /></td>
+                        <td>{valueObj.event_id}</td>
+                        <td>{valueObj.name}</td>
+                        <td align="center">{valueObj.start_date}</td>
+                        <td align="center">{valueObj.end_date}</td>
+                        <td align="center">{valueObj.status}</td>
+                        <td align="center">
+                            <a href="{makeUrl(#edit#,#event#,#event#,results,#frmEventId|event_id#,key)}">
+                                <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr class="infos">
+                        <td class="right" colspan="7">
+                            {if:pager}
+                            <flexy:include src="pearPager.html" />
+                            {end:}
+                        </td>
+                    </tr>
+                </tfoot>
+
+                <tr>
+                    <td colspan="9">{translate(#With events selected#)}:
+                    <input type="submit" class="sgl-button" name="delete" value="{translate(#delete#)}"
+                           onclick="return confirmSubmit('event', 'event')" /></td>
+                </tr>
+            </table>
+       </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

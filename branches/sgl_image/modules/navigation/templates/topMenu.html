@@ -1,0 +1,15 @@
+<ul>
+{foreach:aSections,section}
+    {if:section.is_enabled}
+        <li flexy:raw="{renderer.getAttributes(section,#li#):h}">
+            <a flexy:if="section.uriEmpty" href="javascript:void(0)" class="level{level}"
+                flexy:raw="{renderer.getAttributes(section,#a#):h}">{section.title}</a>
+            <a flexy:if="!section.uriEmpty" href="{renderer.makeUrl(section):h}" class="level{level}"
+                flexy:raw="{renderer.getAttributes(section,#a#):h}">{section.title}</a>
+        {if:section.children}
+            {renderer.toHtml(section.children,level,section.section_id):h}
+        {end:}
+        </li>
+    {end:}
+{end:}
+</ul>

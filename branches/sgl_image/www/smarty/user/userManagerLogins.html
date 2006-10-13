@@ -1,0 +1,52 @@
+<script type="text/javascript">
+<!--
+function selectAll(mode, i) {$result->
+    if (i == 1) {$result->
+        obj = document.forms['truncateLoginTbl'].elements;
+    } else {$result->
+        obj = document.forms['truncateLoginTbl'].elements;
+    };
+
+    for (i = 0; i < obj.length; i++)
+        if (obj[i].name == 'frmDelete[]') obj[i].checked = mode;
+
+}
+
+function selchkAll(chk, i) {$result->
+    if (chk.checked) {$result->
+        selectAll(true, i);
+    }
+    else {$result->
+        selectAll(false, i);
+    }
+}
+-->
+</script>
+    <h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+    {if $result->msgGet()}{$result->msgGet()}</span>{/if}
+    {if $result->pager}{include file="user/pager.html"}{/if}
+
+<form action="" method="post" name="truncateLoginTbl" id="truncateLoginTbl">
+  <input type="hidden" name="action" value="truncateLoginTbl" />
+    <table class="narrow">
+        <tr>
+	    <th><input type="checkbox" name="selAll" value="checkbox" onclick="selchkAll(this, 1);"></th>
+            <th><a class="header" href="{$result->makeUrl('viewLogin','user','user','','frmSortBy|date_time||frmSortOrder|sortOrder||frmUserID|userID')}">{$result->translate('Login Time')}</a></th>
+            <th><a class="header" href="{$result->makeUrl('viewLogin','user','user','','frmSortBy|remote_ip||frmSortOrder|sortOrder||frmUserID|userID')}">{$result->translate('Remote IP')}</a></th>
+        </tr>
+        {foreach from=$result->aPagedData.data key=key item=aValue}
+        <tr class="{$result->switchRowClass()}">
+            <td><input class="noBorder" type="checkbox" name="frmDelete[]" value="{$aValue.login_id}" /></td>
+            <td>{$aValue.date_time}</td>
+            <td>{$aValue.remote_ip}</td>
+        </tr>
+        {/foreach}
+        <tr>
+            <td valign="top" align="left" colspan="3">
+                {$result->translate('With selected permission(s)')}:
+                <input class="wideButton" type="submit" name="truncateLoginTbl" value="{$result->translate('delete')}" onclick="return confirm('{$result->translate('Are you sure?')}')" />
+       		<input class="wideButton" type="button" value="{$result->translate('Cancel')}" onclick="javascript:document.location.href='{$result->makeUrl('','','user')}'" />
+            </td>
+        </tr>
+    </table>
+</form>

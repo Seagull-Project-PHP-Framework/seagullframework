@@ -1,0 +1,77 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action edit" href="{makeUrl(#edit#,#account#,#user#)}">{translate(#Edit#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" id="frmUserAdd" flexy:ignore>
+
+        <fieldset class="inside" id="userDetails">
+            <h3>{translate(#Personal Details#)}</h3>
+            <p>
+                <label>{translate(#Username#)}</label>
+                <span>{user.username}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#First Name#)}</label>
+                <span>{user.first_name}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Last Name#)}</label>
+                <span>{user.last_name}&nbsp;</span>
+            </p>
+        </fieldset>
+
+        <fieldset class="inside" id="userContact">
+            <h3>{translate(#Contact#)}</h3>
+            <p>
+                <label>{translate(#Email#)}</label>
+                <span>{user.email}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Telephone#)}</label>
+                <span>{user.telephone}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Mobile#)}</label>
+                <span>{user.mobile}&nbsp;</span>
+            </p>
+        </fieldset>
+
+        <fieldset class="inside">
+            <h3>{translate(#Location#)}</h3>
+            <p>
+                <label>{translate(#Address 1#)}</label>
+                <span>{user.addr_1}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Address 2#)}</label>
+                <span>{user.addr_2}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Address 3#)}</label>
+                <span>{user.addr_3}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#City#)}</label>
+                <span>{user.city}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#County/State/Province#)}</label>
+                <span>{user.region}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#ZIP/Postal Code#)}</label>
+                <span>{user.post_code}&nbsp;</span>
+            </p>
+            <p>
+                <label>{translate(#Country#)}</label>
+                <span>{user.country}&nbsp;</span>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

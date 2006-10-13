@@ -1,0 +1,91 @@
+<div id="module_header">
+	<h1>Manage Your Events > Search Events</h1>
+</div>
+
+<flexy:include src="eventModuleNav.html" />
+
+<div id="event_search" >
+<form method="get" action="{makeUrl(#searchResults#,#event#,#event#)}" flexy:ignore>
+
+	<!-- FREE TYPE -->
+	<div class="form_section">
+		<div class="label_div"><label for="search[query]">{translate(#Keyword Search#)}</label></div>
+		<input type="text" name="search[query]" value="" size="63">
+		<p class="errorMessage" flexy:if="error[query]">{translate(error[query])}</p>
+	</div>
+
+	<!-- DATE SELECTION -->
+	<div class="form_section">
+	<div id="select_dates">
+		<div class="a_column">
+
+			<label for="frmStartDate">{translate(#Start Date#)}</label>
+			<input type="hidden" name="search[start_date]" id="search[start_date]" value="{search.start_date}" />
+			<input type="checkbox" name="search[start_date_enabled]" value="1" />
+			<span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(search.start_date)}</span>
+			<img id="startDateTrigger" src="{webRoot}/themes/{theme}/images/icons/event_select_date.png" alt="click to select start date" />
+			<p class="errorMessage" flexy:if="error[start_date]">{translate(error[start_date])}</p>
+		</div>
+		<div class="a_column">
+
+			<label>{translate(#End Date#)}</label>
+			<input type="hidden" name="search[end_date]" id="search[end_date]" value="{search.end_date}" />
+			<input type="checkbox" name="search[end_date_enabled]" value="1" />
+			<span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(event.end_date)}</span>
+			<img id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/icons/event_select_date.png" alt="click to select start date" />
+			<p class="errorMessage" flexy:if="error[end_date]">{translate(error[end_date])}</p>
+
+		</div>
+	</div>
+	</div>
+
+
+
+	<!-- EVENT TYPE -->
+	<div class="form_section">
+		<div class="label_div"><label for="event[type_id]">Event Type</label></div>
+		<select name="search[type_id]">
+			<option value="" selected="selected">All</option>
+			{generateSelect(aEventTypes,event.type_id):h}
+		</select>
+	</div>
+
+	<!-- EVENT LOCATIONS -->
+	<div class="form_section">
+		<div class="label_div"><label for="event[location_id]">Event Venue</label></div>
+		<select name="search[location_id]">
+		<option value="" selected="selected">All</option>
+			{generateSelect(aMyLocations,event.location_id):h}
+		</select>
+	</div>
+
+	<div class="form_section">
+		<input type="submit" name="submitted" value="Search" />
+	</div>
+</form>
+</div>
+
+
+<style type="text/css">
+@import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+</style>
+<script type="text/javascript">
+Calendar.setup(
+    {
+        inputField  : "search[start_date]",         // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmStartDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "startDateTrigger"      // ID of the button
+    }
+);
+Calendar.setup(
+    {
+        inputField  : "search[end_date]",        // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmExpiryDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "expiryDateTrigger"     // ID of the button
+    }
+);
+</script>

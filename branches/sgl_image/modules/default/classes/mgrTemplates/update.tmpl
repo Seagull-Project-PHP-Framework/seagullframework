@@ -1,0 +1,12 @@
+        $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+        $%mgrName%->%mgrName%_id = $input->%mgrName%Id;
+        $%mgrName%->find(true);
+        $%mgrName%->setFrom($input->%mgrName%);
+        $success = $%mgrName%->update();
+
+        if ($success !== false) {
+            SGL::raiseMsg('%mgrName% update successfull', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('%mgrName% update NOT successfull',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
