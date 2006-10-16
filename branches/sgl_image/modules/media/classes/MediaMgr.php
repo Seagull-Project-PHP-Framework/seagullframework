@@ -97,7 +97,7 @@ class MediaMgr extends FileMgr
         // form vars
         $input->action    = ($req->get('action')) ? $req->get('action') : 'list';
         $input->submitted = $req->get('submit');
-        $input->from      = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
+        $input->from      = ($req->get('frmFrom')) ? $req->get('frmFrom') : 0;
         $input->mediaId   = $req->get('frmMediaId');
         $input->mediaSize = $req->get('frmSize');
         $input->aDelete   = $req->get('frmDelete');
@@ -197,10 +197,8 @@ class MediaMgr extends FileMgr
             // image file is uploaded
             } else {
 
-                die('images are not supported yet...');
-
                 // for images we add extension
-                $uniqueName .= $this->getMimeExtension($this->mediaFileType);
+                $uniqueName .= $this->getMimeExtension($input->mediaFileType);
 
                 require_once SGL_CORE_DIR . '/Image.php';
                 // image params form module's conf.ini
@@ -209,7 +207,7 @@ class MediaMgr extends FileMgr
 
                 // uploading image with all thumbnails etc
                 $image = & new SGL_Image($uniqueName, $aImageParams, $this->module);
-                $image->insert($input->mediaFileTmpName);
+                $success = $image->upload($input->mediaFileTmpName, $applyParams = false);
 
                 // hard-code to jpeg as all images are converted to jpegs
                 //$output->mediaUniqueName = $uniqueName . '.jpg';
@@ -456,7 +454,7 @@ class MediaMgr extends FileMgr
         case 'image/gif':                       $fileTypeId = 5; break;
         case 'image/png':                       $fileTypeId = 5; break;
         case 'image/jpeg':                      $fileTypeId = 5; break;
-        // uncomment when more MediaMgr::_aIdents will be updated;
+        // uncomment when more MediaMgr::_aIdents will be added;
         // currently MediaMgr::validate() will not allow upload files
         // with following mime types (except images)
         //case 'application/rtf':                 $fileTypeId = 8; break;
