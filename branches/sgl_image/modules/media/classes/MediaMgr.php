@@ -28,24 +28,36 @@
 // +---------------------------------------------------------------------------+
 
 require_once SGL_MOD_DIR . '/media/classes/FileMgr.php';
-require_once 'DB/DataObject.php';
 require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
+require_once 'DB/DataObject.php';
 
 /**
  * For managing different media files.
  *
- * @package seagull
+ * @package    seagull
  * @subpackage media
- * @author  Demian Turner <demian@phpkitchen.com>
+ * @author     Demian Turner <demian@phpkitchen.com>
  */
 class MediaMgr extends FileMgr
 {
     // add more of these from http://filext.com/
     var $_aIdents = array(
-        'application/pdf' => '25 50 44 46 2D 31 2E',
+        'application/pdf'    => '25 50 44 46 2D 31 2E',
         'application/msword' => 'D0 CF 11 E0 A1 B1 1A E1',
-        'application/zip' => '50 4B 03 04',
-        'video/mpeg' => '00 00 01 BA 21 00 01'
+        'application/zip'    => '50 4B 03 04',
+        'video/mpeg'         => '00 00 01 BA 21 00 01'
+    );
+
+    var $_aExtensions = array(
+        'application/pdf'    => '.pdf', // extensions for MediaMgr::_aIdents
+        'application/msword' => '.doc',
+        'application/zip'    => '.zip',
+        'video/mpeg'         => '.mpg',
+        'text/plain'         => '.txt', // plain text
+        'image/gif'          => '.gif', // images
+        'image/jpeg'         => '.jpg',
+        'image/png'          => '.png',
+        // basically, should add all that getimagesize() function can recognize
     );
 
     function MediaMgr()
@@ -53,68 +65,61 @@ class MediaMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::FileMgr();
 
-        $this->pageTitle    = 'Media Manager';
-        $this->template     = 'mediaList.html';
+        $this->module    = 'media';
+        $this->template  = 'mediaList.html';
+        $this->pageTitle = 'Media Manager';
 
         $this->da = & MediaDAO::singleton();
-        $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
-            'setDownload' => array('setDownload'),
-            'list'      => array('list'),
-            'view'      => array('view'),
-            'previewMedia'      => array('previewMedia'),
+        $this->_aActionsMapping = array(
+            'add'          => array('add'),
+            'insert'       => array('insert', 'redirectToDefault'),
+            'edit'         => array('edit'),
+            'update'       => array('update', 'redirectToDefault'),
+            'delete'       => array('delete', 'redirectToDefault'),
+            'setDownload'  => array('setDownload'),
+            'list'         => array('list'),
+            'view'         => array('view'),
+            'previewMedia' => array('previewMedia'),
         );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated        = true;
-        $input->error           = array();
-        $input->pageTitle       = $this->pageTitle;
-        $input->template        = $this->template;
+
+        $this->validated       = true;
+        $input->error          = array();
+        $input->module         = $this->module;
+        $input->template       = $this->template;
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = 'masterLeftCol.html';
 
-        //  form vars
-        $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submitted       = $req->get('submit');
-        $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
-        $input->mediaId         = $req->get('frmMediaId');
-        $input->mediaSize       = $req->get('frmSize');
-        $input->aDelete         = $req->get('frmDelete');
+        // form vars
+        $input->action    = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->submitted = $req->get('submit');
+        $input->from      = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
+        $input->mediaId   = $req->get('frmMediaId');
+        $input->mediaSize = $req->get('frmSize');
+        $input->aDelete   = $req->get('frmDelete');
 
-        //  filter vars
-        $input->mediaTypeId     = $req->get('byTypeId');
-        $input->dateRange       = $req->get('byDateRange');
+        // filter vars
+        $input->mediaTypeId = $req->get('byTypeId');
+        $input->dateRange   = $req->get('byDateRange');
 
-        //  view type
-        $input->viewType        = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
+        // view type
+        $input->viewType = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
 
-        //  Pager's total items value (maintaining it saves a count(*) on each request)
+        // Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems = $req->get('totalItems');
 
-        //  request values for upload
-        $input->aMedia              = $req->get('mediaFile');
-        $input->mediaFileName       = $input->aMedia['name'];
-        $input->mediaFileType       = $input->aMedia['type'];
-        $input->mediaFileTmpName    = $input->aMedia['tmp_name'];
-        $input->mediaFileSize       = $input->aMedia['size'];
+        // request values for upload
+        $input->aMedia           = $req->get('mediaFile');
+        $input->mediaFileName    = $input->aMedia['name'];
+        $input->mediaFileType    = $input->aMedia['type'];
+        $input->mediaFileTmpName = $input->aMedia['tmp_name'];
+        $input->mediaFileSize    = $input->aMedia['size'];
 
-        $sessId = SGL_Session::getId();
-		$input->javascriptSrc = array(
-            'js/scriptaculous/lib/prototype.js',
-            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
-            'js/lightbox/lightbox.js',
-            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
-            'media/js/Widgets.js',
-            'media/js/media.js',
-            );
-
-        //  request values for save upload
+        // request values for save upload
         $input->media = (object)$req->get('media');
         $input->media->orig_name = (isset($input->media->orig_name))
             ? $input->media->orig_name
@@ -123,150 +128,48 @@ class MediaMgr extends FileMgr
             ? $input->media->name
             : $input->media->orig_name;
 
-        //  if media has been uploaded
+        // if media has been uploaded
         if (!empty($input->mediaFileName)) {
-            if ($mimeType = $this->getMimeType($input->mediaFileTmpName)) {
+            // use only mime type we discovered,
+            // currently we do not trust $_FILES['mediaFile']['type']
+            if ($input->mediaFileType = $this->getMimeType($input->mediaFileTmpName)) {
                 $input->mediaFileName = $this->toValidFileName($input->mediaFileName,
-                    $mimeType);
+                    $input->mediaFileType);
             } else {
                 $aErrors['unrecognised_type'] = 'Not a recognised file type';
             }
-            //  ... and does not exist in uploads dir
-            if (is_readable(SGL_UPLOAD_DIR . '/' . $input->mediaFileName)) {
-                $aErrors['already_exists'] = 'A file with this name already exists';
-            }
+            // REMOVEME
+            // weird check - every file has a unique name
+            //if (is_readable(SGL_UPLOAD_DIR . '/' . $input->mediaFileName)) {
+            //    $aErrors['already_exists'] = 'A file with this name already exists';
+            //}
         }
         //  if form submitted and errors exist
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please correct the following errors:', false);
-            $input->template = 'mediaAdd.html';
-            $input->error = $aErrors;
+            $input->template   = 'mediaAdd.html';
+            $input->error      = $aErrors;
 
-            //  FIXME
-            $input->save = '';
+            // FIXME
+            $input->save       = '';
             $input->fileTypeID = '';
-            $this->validated = false;
+            $this->validated   = false;
         }
-    }
-
-    function toValidFileName($string, $mimeType)
-    {
-        // remove the current extenion
-        $chopTo = strlen(strrchr($string, '.'));
-        $string = substr($string, 0, (strlen($string) - $chopTo));
-
-        // remove non-alpha characters
-        $newString = ereg_replace("[^A-Za-z0-9]", '_', $string);
-        $finalString = ereg_replace("[_]+","_", $newString);
-
-        // get the correct extension type for the file
-        $extension = $this->getMimeExtension($mimeType);
-
-        return $finalString . $extension;
-    }
-
-    function getMimeExtension($mimeType)
-    {
-        $mime = array(
-            'application/msword'=>'.doc',
-            'image/gif'=>'.gif',
-            'image/jpeg'=>'.jpg',
-            'application/pdf'=>'.pdf',
-            'image/png'=>'.png',
-            'application/zip'=>'.zip',
-            'text/plain'=>'.txt'
-        );
-
-        return $mime[$mimeType];
-    }
-
-    function condense($value)
-    {
-        return pack('H*', str_replace(' ', '', $value));
-    }
-
-    function getIdent($filename, $aHexIdents)
-    {
-        // open the file for reading (binary)
-        $fp = fopen($filename, 'rb');
-        if (!$fp) {
-            return false;
-        }
-        // get the (converted to bin) hex identifier length to extract that amount
-        // of bytes from our uploaded file
-        $aBinIdents = array_map(array($this, 'condense'), $aHexIdents);
-        $aSizes = array_map('strlen', $aBinIdents);
-        $read = max($aSizes);
-
-        // store the read data
-        $data = fread($fp, $read);
-        fclose($fp);
-
-        // check our data against the array of catalogued file types $this->_aIdents
-        foreach ($aBinIdents as $type => $signature) {
-            $found = (substr($data, 0, strlen($signature)) === $signature);
-            if ($found) {
-                break;
-            }
-        }
-        return ($found ? $type : false);
-    }
-
-    function isTextFile($filename)
-    {
-        if (!is_readable($filename)) {
-            return false;
-        }
-        $data = file_get_contents($filename);
-        $bad = false;
-        for ($x = 0 , $y = strlen($data); !$bad && $x < $y; $x++) {
-            $bad = (ord($data{$x}) > 127);
-        }
-        return !$bad;
-    }
-
-    function getMimeType($filename)
-    {
-        // is the file an image file
-        if ($fileInfo = getimagesize($filename)){
-            $ret = $fileInfo['mime'];
-
-        // is the file type listed in our catalogued types $this->_aIdents
-        } elseif ($mimeType = $this->getIdent($filename, $this->_aIdents)){
-            $ret = $mimeType;
-
-        // is the uploaded file a text file
-        } elseif ($this->isTextFile($filename)){
-            $ret = 'text/plain';
-
-        // not a recognised file type by this class
-        } else {
-            $ret = false;
-        }
-        return $ret;
     }
 
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-    }
 
-    function ensureUploadDirWritable($targetDir)
-    {
-        //  check if uploads dir exists, create if not
-        if (!is_writable($targetDir)) {
-            require_once 'System.php';
-            $success = System::mkDir(array($targetDir));
-            if (!$success) {
-                SGL::raiseError('The upload directory does not appear to be writable, please give the
-                webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
+        $sessId = SGL_Session::getId();
+        $output->javascriptSrc = array(
+            'js/scriptaculous/lib/prototype.js',
+            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
+            'js/lightbox/lightbox.js',
+            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
+            'media/js/Widgets.js',
+            'media/js/media.js',
+        );
     }
 
     function _cmd_add(&$input, &$output)
@@ -276,99 +179,54 @@ class MediaMgr extends FileMgr
         $output->template = 'mediaAdd.html';
         if ($input->submitted) { // if file uploaded
 
-            if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
-                return false;
-            }
+            // generating unique name for each uploaded file
+            $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() .
+                SGL_Date::getTime());
 
-            $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
-            $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
+            // non-image file is uploaded
+            if (!$this->isImage($input->mediaFileType)) {
 
-            if (!$this->isImage($input->mediaFileType)) { // non-image file
-                copy($input->mediaFileTmpName, $targetLocation);
-                $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
-                $output->fileTypeName    = $this->_getType($output->fileTypeID);
-                $output->mediaUniqueName = $uniqueName;
-            } else { // image
-
-                // test ability to create img tranform obj
-                require_once 'Image/Transform.php';
-                $imageDriver = $this->conf['MediaMgr']['imageDriver'];
-                $im = Image_Transform::factory($imageDriver);
-                if (PEAR::isError($im)) {
+                // non-image files are placed in default upload dir
+                if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
                     return false;
                 }
 
-                list($filename, $ext) = explode('.', $input->mediaFileName);
+                $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
+                move_uploaded_file($input->mediaFileTmpName, $targetLocation);
 
-                // ensure default image is not larger than max size allowed
-                $newWidth       = $this->conf['MediaMgr']['imageMaxWidth'];
-                $newHeight      = $this->conf['MediaMgr']['imageMaxHeight'];
-                $srcImgLocation = $input->mediaFileTmpName;
-                $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName . '.jpg';
+            // image file is uploaded
+            } else {
 
-                $ok = $this->resizeImageAndSave($im, $srcImgLocation,
-                    $targetLocation, $newWidth, $newHeight);
+                die('images are not supported yet...');
+
+                // for images we add extension
+                $uniqueName .= $this->getMimeExtension($this->mediaFileType);
+
+                require_once SGL_CORE_DIR . '/Image.php';
+                // image params form module's conf.ini
+                $imageContainer = 'defaultMedia';
+                $aImageParams   = SGL_Image::extractParamsFromConfig('MediaMgr', $imageContainer);
+
+                // uploading image with all thumbnails etc
+                $image = & new SGL_Image($uniqueName, $aImageParams, $this->module);
+                $image->insert($input->mediaFileTmpName);
 
                 // hard-code to jpeg as all images are converted to jpegs
-                $output->fileTypeID      = 5;
-                $output->fileTypeName    = $this->_getType($output->fileTypeID);
-                $output->mediaUniqueName = $uniqueName . '.jpg';
-                $output->mediaFileType   = 'image/jpeg';
-                $output->mediaFileName   = $filename . '.jpg';
-
-                if (!empty($this->conf['MediaMgr']['createThumbnails'])) {
-                    $aThumbs = explode(',', $this->conf['MediaMgr']['createThumbnails']);
-                    $thumbsDir = SGL_UPLOAD_DIR . '/' . $this->conf['MediaMgr']['thumbsDir'];
-                    if (!$this->ensureUploadDirWritable($thumbsDir)) {
-                        return false;
-                    }
-                    foreach ($aThumbs as $thumbName) {
-                        $thumbName   = strtolower($thumbName);
-                        $thumbWidth  = SGL_String::camelise("thumb $thumbName width");
-                        $thumbHeight = SGL_String::camelise("thumb $thumbName height");
-
-                        //  create thumbnail
-                        $newWidth       = $this->conf['MediaMgr'][$thumbWidth];
-                        $newHeight      = $this->conf['MediaMgr'][$thumbHeight];
-                        $srcImgLocation = $input->mediaFileTmpName;
-                        $targetLocation = $thumbsDir . '/' . $thumbName . '_' . $uniqueName . '.jpg';
-                        $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
-                    }
-                }
+                //$output->mediaUniqueName = $uniqueName . '.jpg';
+                //$output->mediaFileType   = 'image/jpeg';
+                //$output->mediaFileName   = $filename . '.jpg';
             }
-            $output->save = true;
-        } else { // display upload screen
-            $output->save = false;
+
+            $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
+            $output->fileTypeName    = $this->_getType($output->fileTypeID);
+            $output->mediaUniqueName = $uniqueName;
+            $output->save            = true;
+
+        // display upload screen
+        } else {
+            $output->save       = false;
             $output->fileTypeID = 0;
         }
-    }
-
-    /**
-     * Resizes image and saves to the target location.
-     *
-     * @param Image_Transform $im
-     * @param string $srcImgLocation Path to src image location
-     * @param string $targetLocation Path to target image location
-     * @param integer $newWidth
-     * @param integer $newHeight
-     * @return boolean Returns true on success
-     */
-    function resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight)
-    {
-        // load image
-        $ret = $im->load($srcImgLocation);
-        if (PEAR::isError($ret)) {
-            return false;
-        }
-        $ret = $im->fit($newWidth, $newHeight);
-        if (PEAR::isError($ret)) {
-            return false;
-        }
-        $ret = $im->save($targetLocation, 'jpeg');
-        if (PEAR::isError($ret)) {
-            return false;
-        }
-        return true;
     }
 
     function _cmd_insert(&$input, &$output)
@@ -474,36 +332,144 @@ class MediaMgr extends FileMgr
         $output->addOnLoadEvent("MediaList.init()");
     }
 
-    function _mime2FileType($mimeType)
+
+    function ensureUploadDirWritable($targetDir)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        switch ($mimeType) {
-
-        case 'text/plain':                      $fileTypeId = 8; break;
-        case 'application/msword':              $fileTypeId = 1; break;
-        case 'application/rtf':                 $fileTypeId = 8; break;
-        case 'application/vnd.ms-excel':        $fileTypeId = 2; break;
-        case 'application/vnd.ms-powerpoint':   $fileTypeId = 3; break;
-        case 'text/html':                       $fileTypeId = 4; break;
-        //  jpgs on windows
-        case 'image/pjpeg':                     $fileTypeId = 5; break;
-        //  jpgs on linux
-        case 'image/jpeg':                      $fileTypeId = 5; break;
-        case 'image/x-png':                     $fileTypeId = 5; break;
-        case 'image/png':                       $fileTypeId = 5; break;
-        case 'image/gif':                       $fileTypeId = 5; break;
-        case 'application/pdf':                 $fileTypeId = 6; break;
-        case 'application/zip':                 $fileTypeId = 9; break;
-        default:
-            $fileTypeId = 7;   //  unknown
+        //  check if uploads dir exists, create if not
+        if (!is_writable($targetDir)) {
+            require_once 'System.php';
+            $success = System::mkDir(array($targetDir));
+            if (!$success) {
+                SGL::raiseError('The upload directory does not appear to be writable, please give the
+                    webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
         }
-        return $fileTypeId;
+    }
+
+    function getMimeType($filename)
+    {
+        // is the file an image file
+        if ($fileInfo = getimagesize($filename)) {
+            $ret = $fileInfo['mime'];
+
+        // is the file type listed in our catalogued types $this->_aIdents
+        } elseif ($mimeType = $this->getIdent($filename, $this->_aIdents)) {
+            $ret = $mimeType;
+
+        // is the uploaded file a text file
+        } elseif ($this->isTextFile($filename)) {
+            $ret = 'text/plain';
+
+        // not a recognised file type by this class
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    function getIdent($filename, $aHexIdents)
+    {
+        // open the file for reading (binary)
+        $fp = fopen($filename, 'rb');
+        if (!$fp) {
+            return false;
+        }
+        // get the (converted to bin) hex identifier length to extract that amount
+        // of bytes from our uploaded file
+        $aBinIdents = array_map(array($this, 'condense'), $aHexIdents);
+        $aSizes = array_map('strlen', $aBinIdents);
+        $read = max($aSizes);
+
+        // store the read data
+        $data = fread($fp, $read);
+        fclose($fp);
+
+        // check our data against the array of catalogued file types $this->_aIdents
+        foreach ($aBinIdents as $type => $signature) {
+            $found = (substr($data, 0, strlen($signature)) === $signature);
+            if ($found) {
+                break;
+            }
+        }
+        return ($found ? $type : false);
+    }
+
+    function condense($value)
+    {
+        return pack('H*', str_replace(' ', '', $value));
+    }
+
+    function isTextFile($filename)
+    {
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $data = file_get_contents($filename);
+        $bad = false;
+        for ($x = 0 , $y = strlen($data); !$bad && $x < $y; $x++) {
+            $bad = (ord($data{$x}) > 127);
+        }
+        return !$bad;
+    }
+
+    function toValidFileName($string, $mimeType)
+    {
+        // remove the current extension
+        $chopTo = strlen(strrchr($string, '.'));
+        $string = substr($string, 0, (strlen($string) - $chopTo));
+
+        // remove non-alpha characters
+        $newString = ereg_replace("[^A-Za-z0-9]", '_', $string);
+        $finalString = ereg_replace("[_]+", "_", $newString);
+
+        // get the correct extension type for the file
+        $extension = $this->getMimeExtension($mimeType);
+
+        return $finalString . $extension;
+    }
+
+    function getMimeExtension($mimeType)
+    {
+        return $this->_aExtensions[$mimeType];
     }
 
     function isImage($mimeType)
     {
         return preg_match("/^image/", $mimeType);
+    }
+
+    function _mime2FileType($mimeType)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        switch ($mimeType) {
+        case 'application/pdf':                 $fileTypeId = 6; break;
+        case 'application/msword':              $fileTypeId = 1; break;
+        case 'application/zip':                 $fileTypeId = 9; break;
+        // video/mpeg
+        case 'text/plain':                      $fileTypeId = 8; break;
+        case 'image/gif':                       $fileTypeId = 5; break;
+        case 'image/png':                       $fileTypeId = 5; break;
+        case 'image/jpeg':                      $fileTypeId = 5; break;
+        // uncomment when more MediaMgr::_aIdents will be updated;
+        // currently MediaMgr::validate() will not allow upload files
+        // with following mime types (except images)
+        //case 'application/rtf':                 $fileTypeId = 8; break;
+        //case 'application/vnd.ms-excel':        $fileTypeId = 2; break;
+        //case 'application/vnd.ms-powerpoint':   $fileTypeId = 3; break;
+        //case 'text/html':                       $fileTypeId = 4; break;
+        //  jpgs on windows
+        //case 'image/pjpeg':                     $fileTypeId = 5; break;
+        //case 'image/x-png':                     $fileTypeId = 5; break;
+        //default:
+        //    $fileTypeId = 7;   //  unknown
+        }
+        return $fileTypeId;
     }
 
     function _getType($fileTypeId)
