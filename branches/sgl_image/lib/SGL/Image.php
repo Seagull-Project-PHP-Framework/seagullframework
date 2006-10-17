@@ -38,11 +38,6 @@
 // +---------------------------------------------------------------------------+
 
 /**
- * @var string
- */
-define('SGL_IMAGE_DEFAULT_DRIVER', 'GD_SGL');
-
-/**
  * Base image class.
  *
  * @package    seagull
@@ -362,9 +357,6 @@ class SGL_Image
         return $image->delete();
     }
 
-
-
-
     /**
      * Applies transformation for image and it's thumbnails.
      *
@@ -379,42 +371,40 @@ class SGL_Image
         if ($withThumbnails) {
             $aAllParams = array_merge($aAllParams, $this->_aThumbnails);
         }
-        //require_once 'Image/Transform.php';
+
+        require_once 'Image/Transform.php';
         foreach ($aAllParams as $paramBlock => $aParams) {
             foreach ($aParams as $paramKey => $paramValue) {
+
                 $stratName = ucfirst($paramKey) . 'Strategy';
                 $stratFile = SGL_CORE_DIR . '/ImageTransform/' . $stratName . '.php';
-                if (!file_exists($stratFile) || empty($paramValue)) {
+                if (empty($paramValue) || !file_exists($stratFile)) {
                     //SGL::raiseError('The specified image transformation strategy ' .
                     //    'file does not appear to exist', SGL_ERROR_NOFILE);
                     //return false;
                     continue;
                 }
-                $stratClass = 'SGL_ImageTransform_' . $stratName;
 
                 // base filename to operate with
-                $fileName = $this->getPath() . (empty($paramBlock) ? '' : $paramBlock . '/') .
-                            $this->fileName;
+                $fileName = $this->getPath($includeFile = true, $paramBlock);
 
                 // load driver
-                $aParams['driver'] = isset($aParams['driver'])
-                    ? $aParams['driver']
-                    : SGL_IMAGE_DEFAULT_DRIVER;
-                if (!isset($aTransform[$aParams['driver']])) {
-                    // we can avoid direct instance creation just placing transfrom drivers
-                    // in SGL_PEAR_DIR/Image/Transform/Driver/DriverName.php and
-                    // using supplied Image_Transform factory method
-                    include_once SGL_MOD_DIR . '/image/classes/' . $aParams['driver'] . '.php';
-                    $driver = 'Image_Transform_Driver_' . $aParams['driver'];
-                    $aTransform[$aParams['driver']] = & new $driver;
-                    //$aTransform[$aParams['driver']] = &Image_Transform::factory($aParams['driver']);
+                $signature = md5($aParams['driver']);
+                if (!isset($aDrivers[$signature])) {
+                    $aDrivers[$signature] = &Image_Transform::factory($aParams['driver']);
                 }
 
+                // load and apply transformation
                 include_once $stratFile;
-                $stratObj = & new $stratClass($aTransform[$aParams['driver']], $fileName,
-                    $this->_extractParams($paramValue), $aParams);
-                $stratObj->transform();
-                $stratObj->save();
+                $stratClass = 'SGL_ImageTransform_' . $stratName;
+                $oStrat = & new $stratClass(
+                    $aDrivers[$signature],              // driver
+                    $fileName,                          // filename to operate with
+                    $this->_extractParams($paramValue), // transformation params
+                    $aParams                            // config params for current block
+                );
+                $oStrat->transform();
+                $oStrat->save();
             }
         }
         return true;
@@ -654,9 +644,9 @@ class SGL_Image
 /**
  * Abstract image transform strategy.
  *
- * @package  SGL
- * @author   Dmitri Lakachauskis <dmitri@telenet.lv>
- * @access   public
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  * @abstract
  */
 class SGL_ImageTransformStrategy
