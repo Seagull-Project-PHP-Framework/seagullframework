@@ -146,7 +146,7 @@ class SGL_Image
     /**
      * Check if method is called in static way.
      *
-     * @access provate
+     * @access private
      * @return boolean
      */
     function _isStaticCall()
@@ -157,7 +157,7 @@ class SGL_Image
     /**
      * Check if method is called in dynamic way.
      *
-     * @access provate
+     * @access private
      * @return boolean
      */
     function _isMethodCall()
