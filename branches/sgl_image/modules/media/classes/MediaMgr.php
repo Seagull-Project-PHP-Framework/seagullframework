@@ -207,7 +207,7 @@ class MediaMgr extends FileMgr
 
                 // uploading image with all thumbnails etc
                 $image = & new SGL_Image($uniqueName, $aImageParams, $this->module);
-                $success = $image->upload($input->mediaFileTmpName, $applyParams = false);
+                $success = $image->upload($input->mediaFileTmpName);
 
                 // hard-code to jpeg as all images are converted to jpegs
                 //$output->mediaUniqueName = $uniqueName . '.jpg';

@@ -389,9 +389,9 @@ class SGL_Image
                 $fileName = $this->getPath($includeFile = true, $paramBlock);
 
                 // load driver
-                $signature = md5($aParams['driver']);
+                $signature = md5($aParams['Driver']);
                 if (!isset($aDrivers[$signature])) {
-                    $aDrivers[$signature] = &Image_Transform::factory($aParams['driver']);
+                    $aDrivers[$signature] = &Image_Transform::factory($aParams['Driver']);
                 }
 
                 // load and apply transformation
