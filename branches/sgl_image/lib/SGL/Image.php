@@ -117,7 +117,7 @@ class SGL_Image
      * Init image.
      *
      * @access private
-     * @var    string  $fileName
+     * @param  string  $fileName
      * @return void
      */
     function _init($fileName)
@@ -129,7 +129,7 @@ class SGL_Image
      * Set modification params.
      *
      * @access public
-     * @var    array  $aParams
+     * @param  array  $aParams
      * @return void
      */
     function setParams($aParams)
@@ -143,16 +143,39 @@ class SGL_Image
         $this->_aParams = $aParams;
     }
 
+    /**
+     * Check if method is called in static way.
+     *
+     * @access provate
+     * @return boolean
+     */
     function _isStaticCall()
     {
         return !SGL_Image::_isMethodCall();
     }
 
+    /**
+     * Check if method is called in dynamic way.
+     *
+     * @access provate
+     * @return boolean
+     */
     function _isMethodCall()
     {
         return isset($this) && is_a($this, 'SGL_Image');
     }
 
+    /**
+     * Return realpath to current image.
+     *
+     * @access public
+     * If called statically first parameter is $module
+     * @param  string  $module        module name for static calls
+     * otherwise only 2 params exist
+     * @param  boolean $includeFile   include filename, e.g. [path-to-upload-dir]/filename
+     * @param  string  $thumb         include thumb, e.g. [path-to-upload-dir]/$thumb
+     * @return string
+     */
     function getPath()
     {
         $aArgs = func_get_args();
@@ -162,6 +185,17 @@ class SGL_Image
             : call_user_func_array(array($this, '_getImagePath'), $aArgs);
     }
 
+    /**
+     * Return URL to current image.
+     *
+     * @access public
+     * If called statically first parameter is $module
+     * @param  string  $module        module name for static calls
+     * otherwise only 2 params exist
+     * @param  boolean $includeFile   include filename, e.g. SGL_BASE_URL/$module/images/filename
+     * @param  string  $thumb         include thumb, e.g. SGL_BASE_URL/$module/images/$thumb
+     * @return string
+     */
     function getUrl()
     {
         $aArgs = func_get_args();
@@ -171,6 +205,24 @@ class SGL_Image
             : call_user_func_array(array($this, '_getImagePath'), $aArgs);
     }
 
+    /**
+     * This method checks if we have a static call. If so it can handle 4 params,
+     * otherwise only 3. The first param is always a path type (url or path).
+     *
+     * Possible results are:
+     *  - SGL_UPLOAD_DIR
+     *  - SGL_UPLOAD_DIR/filaname
+     *  - SGL_UPLOAD_DIR/small
+     *  - SGL_UPLOAD_DIR/small/filaname
+     *  - SGL_APP_ROOT/$module/www/images
+     *  - SGL_APP_ROOT/$module/www/images/filaname
+     *  - SGL_BASE_URL/$module/images/filename
+     *  - SGL_BASE_URL/$module/images/small
+     *  - SGL_BASE_URL/$module/images/small/filename
+     *
+     * @access private
+     * @return string
+     */
     function _getImagePath()
     {
         $aArgs = func_get_args();
@@ -186,14 +238,17 @@ class SGL_Image
         $thumb       = false;
 
         if (SGL_Image::_isMethodCall()) {
+            // we know module's name if class initialised
             $moduleName = $this->module;
             if (!empty($aArgs)) {
+                // first param: include image file?
                 $includeFile = array_shift($aArgs);
                 if ($includeFile) {
                     $includeFile = $this->fileName;
                 }
             }
             if (!empty($aArgs)) {
+                // second param: thumb name
                 $thumb = array_shift($aArgs);
             }
         } else {
@@ -209,6 +264,9 @@ class SGL_Image
         }
 
         if ('url' == $pathType) {
+            // if we try to get a URL, module must be specified,
+            // otherwise it is not possible to have direct access to file,
+            // which exists in SGL_UPLOAD_DIR
             if (empty($moduleName)) {
                 return false; // FIXME: raiseError or what?
             }
@@ -231,10 +289,10 @@ class SGL_Image
      * Upload image and create it's copies i.e. thumbnails.
      *
      * @access public
-     * @var    string   $srcLocation  image temporary location
-     * @var    boolean  $applyParams  apply or not transformation on images
-     * @var    string   $function     which method to use to create new image from temporary one
-     * @return boolean
+     * @param  string   $srcLocation  image temporary location
+     * @param  boolean  $applyParams  apply or not transformation on images
+     * @param  string   $function     which method to use to create new image from temporary one
+     * @return mixed
      */
     function upload($srcLocation, $applyParams = true, $func = 'move_uploaded_file')
     {
@@ -243,7 +301,7 @@ class SGL_Image
             return false;
         }
         if (is_null($this->fileName)) {
-            $fileName = md5(SGL::getTime()); // FIXME
+            $fileName = md5($srcLocation . SGL_Session::getUid() . SGL::getTime()); // FIXME
             $this->_init($fileName);
         }
         $newFile = $this->getPath($includeFile = true);
@@ -259,16 +317,16 @@ class SGL_Image
             $this->applyParams($withThumbnails = true);
         }
 
-        return true;
+        return $this->fileName;
     }
 
     /**
      * Update image and all it's copies i.e. thumbnails.
      *
      * @access public
-     * @var    string   $srcLocation  image temporary location
-     * @var    boolean  $applyParams  apply or not transformation on image
-     * @var    string   $function     which method to use to create new image from temporary one
+     * @param  string   $srcLocation  image temporary location
+     * @param  boolean  $applyParams  apply or not transformation on image
+     * @param  string   $function     which method to use to create new image from temporary one
      * @return boolean
      */
     function replace($srcLocation, $applyParams = true, $function = 'move_uploaded_file')
@@ -318,7 +376,7 @@ class SGL_Image
      * Copy, move or delete thumbnails, using original image.
      *
      * @access private
-     * @var    string   $function  operation to perform on original image
+     * @param  string   $function  operation to perform on original image
      * @return boolean
      */
     function _toThumbnails($function = 'copy')
@@ -359,9 +417,9 @@ class SGL_Image
      *
      * @static
      * @access public
-     * @var    string   $fileName
-     * @var    array    $aParams
-     * @var    string   $module
+     * @param  string   $fileName
+     * @param  array    $aParams
+     * @param  string   $module
      * @return boolean
      */
     function staticDelete($fileName, $aParams = null, $module = '')
@@ -374,7 +432,7 @@ class SGL_Image
      * Applies transformation for image and it's thumbnails.
      *
      * @access public
-     * @var    boolean  $withThumbnails
+     * @param  boolean  $withThumbnails
      * @return boolean
      */
     function applyParams($withThumbnails = false)
@@ -427,7 +485,7 @@ class SGL_Image
      * Extracts params from config string.
      *
      * @access private
-     * @var    string   $str
+     * @param  string   $str
      * @return array
      */
     function _extractParams($str)
@@ -452,9 +510,9 @@ class SGL_Image
      * In case an allowed types map is missing, built-in one will be used.
      *
      * @access public
-     * @var    string   $manager  manager name, which config values will be evaluated
-     * @var    string   $type     image mime type to check
-     * @var    string   $name     image type name to check first
+     * @param  string   $manager  manager name, which config values will be evaluated
+     * @param  string   $type     image mime type to check
+     * @param  string   $name     image type name to check first
      * @return boolean
      */
     function isAllowedType($manager, $type, $name = '')
@@ -502,8 +560,8 @@ class SGL_Image
      * Builds image params map, using config "inheritance model".
      *
      * @access public
-     * @var    string  $manager  manager name, which config values will be used to build a map
-     * @var    string  $name     image type name (only config map for this type will be returned)
+     * @param  string  $manager  manager name, which config values will be used to build a map
+     * @param  string  $name     image type name (only config map for this type will be returned)
      */
     function extractParamsFromConfig($manager, $name = '')
     {
@@ -578,8 +636,8 @@ class SGL_Image
      * Extracts params from specified manager.
      *
      * @access private
-     * @var    string   $managerName  manager name, which config values will be parsed
-     * @var    string   $prefixName   only configs with $prefixName will be evaluated
+     * @param  string   $managerName  manager name, which config values will be parsed
+     * @param  string   $prefixName   only configs with $prefixName will be evaluated
      * @return array
      */
     function _extractParamsFromManager($managerName, $prefixName = '')
@@ -698,10 +756,10 @@ class SGL_ImageTransformStrategy
      * Constructor.
      *
      * @access public
-     * @var    PEAR Image_Transfrom  $transform
-     * @var    string                $fileName
-     * @var    array                 $aParams
-     * @var    array                 $aConfigParams
+     * @param  PEAR Image_Transfrom  $transform
+     * @param  string                $fileName
+     * @param  array                 $aParams
+     * @param  array                 $aConfigParams
      */
     function SGL_ImageTransformStrategy(&$transform, $fileName, $aParams = array(), $aConfigParams = array())
     {

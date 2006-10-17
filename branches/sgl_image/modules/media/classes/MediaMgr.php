@@ -201,7 +201,7 @@ class MediaMgr extends FileMgr
                 $uniqueName .= $this->getMimeExtension($input->mediaFileType);
 
                 require_once SGL_CORE_DIR . '/Image.php';
-                // image params form module's conf.ini
+                // image params from module's conf.ini
                 $imageContainer = 'defaultMedia';
                 $aImageParams   = SGL_Image::extractParamsFromConfig('MediaMgr', $imageContainer);
 
