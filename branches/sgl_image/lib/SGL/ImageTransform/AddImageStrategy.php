@@ -54,7 +54,7 @@ class SGL_ImageTransform_AddImageStrategy extends SGL_ImageTransformStrategy
         if (!isset($this->aParams['file'])) {
             return false;
         }
-        $this->aParams['file'] = SGL_MOD_DIR . '/image/src/' . $this->aParams['file'];
+        $this->aParams['file'] = SGL_APP_ROOT . '/' . $this->aParams['file'];
         if (!file_exists($this->aParams['file'])) {
             return false;
         }
@@ -70,5 +70,5 @@ class SGL_ImageTransform_AddImageStrategy extends SGL_ImageTransformStrategy
         return $this->transform->addImage($aDefaultParams);
     }
 }
- 
+
 ?>
