@@ -243,7 +243,7 @@ class SGL_Image
             return false;
         }
         if (is_null($this->fileName)) {
-            $fileName = ''; // FINISHME: generate filename here
+            $fileName = md5(SGL::getTime()); // FIXME
             $this->_init($fileName);
         }
         $newFile = $this->getPath($includeFile = true);
