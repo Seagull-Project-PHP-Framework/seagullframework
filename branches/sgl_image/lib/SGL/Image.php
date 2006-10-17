@@ -326,6 +326,14 @@ class SGL_Image
         if (empty($this->_aThumbnails)) {
             return true;
         }
+
+        // FIXME
+        $thumbDir = $this->getPath() . '/thumbs';
+        if (!is_writable($thumbDir)) {
+            require_once 'System.php';
+            System::mkDir(array($thumbDir));
+        }
+
         $aThumbs  = array_keys($this->_aThumbnails); // available thumbnails
         $origFile = $this->getPath($includeFile = true);
         foreach ($aThumbs as $thumbName) {
