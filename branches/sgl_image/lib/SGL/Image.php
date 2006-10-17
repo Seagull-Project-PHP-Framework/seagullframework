@@ -389,7 +389,8 @@ class SGL_Image
         $thumbDir = $this->getPath() . '/thumbs';
         if (!is_writable($thumbDir)) {
             require_once 'System.php';
-            System::mkDir(array($thumbDir));
+            System::mkDir(array('-p', $thumbDir));
+            @chmod($directory, 0777);
         }
 
         $aThumbs  = array_keys($this->_aThumbnails); // available thumbnails
