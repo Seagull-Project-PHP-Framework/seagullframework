@@ -183,13 +183,13 @@ class MediaMgr extends FileMgr
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() .
                 SGL_Date::getTime());
 
+            // non-image files are placed in default upload dir
+            if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
+                return false;
+            }
+
             // non-image file is uploaded
             if (!$this->isImage($input->mediaFileType)) {
-
-                // non-image files are placed in default upload dir
-                if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
-                    return false;
-                }
 
                 $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
                 move_uploaded_file($input->mediaFileTmpName, $targetLocation);
