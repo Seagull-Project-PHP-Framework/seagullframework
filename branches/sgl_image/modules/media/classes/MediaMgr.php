@@ -131,7 +131,7 @@ class MediaMgr extends FileMgr
         // if media has been uploaded
         if (!empty($input->mediaFileName)) {
             // use only mime type we discovered,
-            // currently we do not trust $_FILES['mediaFile']['type']
+            // currently we do not use $_FILES['mediaFile']['type']
             if ($input->mediaFileType = $this->getMimeType($input->mediaFileTmpName)) {
                 $input->mediaFileName = $this->toValidFileName($input->mediaFileName,
                     $input->mediaFileType);
@@ -206,7 +206,7 @@ class MediaMgr extends FileMgr
                 $aImageParams   = SGL_Image::extractParamsFromConfig('MediaMgr', $imageContainer);
 
                 // uploading image with all thumbnails etc
-                $image = & new SGL_Image($uniqueName, $aImageParams, $this->module);
+                $image = & new SGL_Image($uniqueName, $aImageParams);
                 $success = $image->upload($input->mediaFileTmpName);
 
                 // hard-code to jpeg as all images are converted to jpegs
