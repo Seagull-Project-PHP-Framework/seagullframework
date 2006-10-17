@@ -38,6 +38,11 @@
 // +---------------------------------------------------------------------------+
 
 /**
+ * @todo improve config parsing
+ *   - move image config to separate file, ???
+ *   - specify path to config during SGL_Image initialization (in constructor),
+ *   - improve mime type check.
+ *
  * Base image class.
  *
  * @package    seagull
@@ -433,6 +438,8 @@ class SGL_Image
     }
 
     /**
+     * @todo remove it or improve it
+     *
      * Checks mime type of image. Driven by "config inheritance" model.
      * In case an allowed types map is missing, built-in one will be used.
      *
