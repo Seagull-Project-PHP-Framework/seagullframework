@@ -39,9 +39,7 @@
 
 /**
  * @todo improve config parsing
- *   - move image config to separate file, ???
- *   - specify path to config during SGL_Image initialization (in constructor),
- *   - improve mime type check.
+ *   - move image config to separate file,
  *
  * Base image class.
  *
@@ -82,12 +80,9 @@ class SGL_Image
     /**
      * Constructor
      *
-     * @access  public
-     * @param   string  $fileName   image file name e.g. xxx.jpg
-     * @param   array   $aParams    image transformation params
-     * @param   string  $module     module name
-     * @param   string  $imageName  image type name (useless for now)
-     * @return  void
+     * @access public
+     * @param  string $fileName  image file name e.g. xxx.jpg
+     * @param  string $module    module name
      */
     function SGL_Image($fileName = null, $module = '')
     {
@@ -100,17 +95,24 @@ class SGL_Image
         $this->module   = $module;
     }
 
+    /**
+     * Initialize configuration.
+     *
+     * @access public
+     * @param  mixed $config  path to file or array
+     * @return void
+     */
     function init($config = null)
     {
         // FIXME
-        if (is_string($config)) {
-            $manager   = 'MediaMgr';
-            $container = 'defaultMedia';
-            $config = SGL_Image::extractParamsFromFile($manager, $container);
-        }
-        if (isset($config)) {
-            $this->setParams($config);
-        }
+        $manager   = 'MediaMgr';
+        $container = 'defaultMedia';
+        $aParams   = SGL_Image::extractParamsFromFile($manager, $container);
+        $this->setParams($aParams);
+        //if (is_string($config)) {
+        //}
+        //if (isset($config)) {
+        //}
     }
 
     /**
@@ -149,6 +151,8 @@ class SGL_Image
      *
      * @access private
      * @return boolean
+     *
+     * @see _isClassMethod()
      */
     function _isInstanceMethod()
     {
@@ -185,8 +189,8 @@ class SGL_Image
      *
      * @access public
      * @param  string  $module       module name
-     * @param  boolean $includeFile  include filename in path
-     * @param  string  $thumb        include specified thumbnail in path
+     * @param  boolean $includeFile  include filename in URL
+     * @param  string  $thumb        include specified thumbnail in URL
      * @return string
      *
      * @see _getImagePath()
@@ -202,19 +206,11 @@ class SGL_Image
     }
 
     /**
-     * This method checks if we have a static call. If so it can handle 4 params,
-     * otherwise only 3. The first param is always a path type (url or path).
+     * This method checks if we have a static call. If so it can handle
+     * 4 params, otherwise only 3. The first param is always a path
+     * type: 'url' or 'path'.
      *
-     * Possible results are:
-     *  - SGL_UPLOAD_DIR
-     *  - SGL_UPLOAD_DIR/filaname
-     *  - SGL_UPLOAD_DIR/small
-     *  - SGL_UPLOAD_DIR/small/filaname
-     *  - SGL_APP_ROOT/$module/www/images
-     *  - SGL_APP_ROOT/$module/www/images/filaname
-     *  - SGL_BASE_URL/$module/images/filename
-     *  - SGL_BASE_URL/$module/images/small
-     *  - SGL_BASE_URL/$module/images/small/filename
+     * fixme - write examples
      *
      * @access private
      * @return string
@@ -223,7 +219,8 @@ class SGL_Image
     {
         $aArgs = func_get_args();
         if (empty($aArgs)) { // at least $pathType must be specified
-            return false; // raiseError?
+            return SGL::raiseError('Path type is not specified',
+                SGL_ERROR_INVALIDARGS);
         }
 
         // get URL or PATH
@@ -234,10 +231,10 @@ class SGL_Image
         $thumb       = false;
 
         if (SGL_Image::_isInstanceMethod()) {
-            // we know module's name if class initialised
+            // we know module's name if we have an instance
             $moduleName = $this->module;
             if (!empty($aArgs)) {
-                // first param: include image file?
+                // first param: include image file or not
                 $includeFile = array_shift($aArgs);
                 if ($includeFile) {
                     $includeFile = $this->fileName;
@@ -261,10 +258,10 @@ class SGL_Image
 
         if ('url' == $pathType) {
             // if we try to get a URL, module must be specified,
-            // otherwise it is not possible to have direct access to file,
-            // which exists in SGL_UPLOAD_DIR
+            // otherwise it is not possible to have direct access to file
             if (empty($moduleName)) {
-                return false; // FIXME: raiseError or what?
+                return SGL::raiseError('Module is not specified',
+                    SGL_ERROR_INVALIDARGS);
             }
             $path = SGL_BASE_URL . '/' . $moduleName;
         } else {
@@ -276,11 +273,22 @@ class SGL_Image
         }
         if ($thumb) {
             //$path .= '/' . $thumb;
-            $path .= '/thumbs';
+            $path .= '/thumbs'; // fixme
         }
-        return !empty($includeFile) ? $path . '/' . ($thumb ? $thumb . '_' . $includeFile : $includeFile) : $path;
+        return !empty($includeFile)
+            ? $path . '/' . ($thumb
+                                ? $thumb . '_' . $includeFile
+                                : $includeFile)
+            : $path;
     }
 
+    /**
+     * Genereate filename.
+     *
+     * @access public
+     * @param  string $prefix
+     * @return string
+     */
     function generateFileName($prefix = '')
     {
         return md5($prefix . SGL_Session::getUid() . SGL::getTime());
@@ -290,60 +298,68 @@ class SGL_Image
      * Upload image and create it's copies i.e. thumbnails.
      *
      * @access public
-     * @param  string   $srcLocation  image temporary location
-     * @param  boolean  $applyParams  apply or not transformation on images
-     * @param  string   $function     which method to use to create new image from temporary one
-     * @return mixed
+     * @param  string $srcLocation  image temporary location
+     * @param  string $function     which method to use to create new image
+     *                              from temporary one
+     * @return string
      */
-    function upload($srcLocation, $applyParams = true, $func = 'move_uploaded_file')
+    function upload($srcLocation, $function = 'move_uploaded_file')
     {
-        if (!function_exists($func)) {
-            $error = 'Specified image creation method does not exist';
+        if (!function_exists($function)) {
+            $error = "Function '$function' does not exist";
             return SGL::raiseError($error, SGL_ERROR_INVALIDARGS);
         }
         if (is_null($this->fileName)) {
             $this->fileName = $this->generateFileName($srcLocation);
         }
         $newFile = $this->getPath($includeFile = true);
-        if (!@$func($srcLocation, $newFile)) {
-            $error = 'There is a problem while moving uploaded file';
+        if (!$function($srcLocation, $newFile)) {
+            $error = "Function '$function' failed";
             return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
         }
-
-        // create thumbnails
-        $this->_toThumbnails();
-
-        if ($applyParams) { // transform image according to params
-            $this->applyParams($withThumbnails = true);
+        $result = $this->_toThumbnails(); // create thumbnails
+        if (PEAR::isError($result)) {
+            return $result;
         }
-
+        $result = $this->applyParams(); // apply transformations
+        if (PEAR::isError($result)) {
+            return $result;
+        }
         return $this->fileName;
     }
 
     /**
-     * Update image and all it's copies i.e. thumbnails.
+     * Replace image and all it's copies i.e. thumbnails.
      *
      * @access public
-     * @param  string   $srcLocation  image temporary location
-     * @param  boolean  $applyParams  apply or not transformation on image
-     * @param  string   $function     which method to use to create new image from temporary one
+     * @param  string  $srcLocation  image temporary location
+     * @param  string  $function     which method to use to create new image
+     *                               from temporary one
      * @return boolean
      */
-    function replace($srcLocation, $applyParams = true, $function = 'move_uploaded_file')
+    function replace($srcLocation, $function = 'move_uploaded_file')
     {
         if (!function_exists($function)) {
-            SGL::raiseError('Specified image creation method does not exist', SGL_ERROR_INVALIDARGS);
-            return false;
+            $error = "Function '$function' does not exist";
+            return SGL::raiseError($error, SGL_ERROR_INVALIDARGS);
         }
         $mainFile = $this->getPath($includeFile = true);
-        @unlink($mainFile);
-        if (!@$function($srcLocation, $mainFile)) {
-            SGL::raiseError('There is a problem while moving uploaded file', SGL_ERROR_INVALIDFILEPERMS);
-            return false;
+        if (!is_writable($mainFile)) {
+            $error = "File $mainFile is not writable";
+            return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
         }
-        $this->_toThumbnails(); // replace thumbnails
-        if ($applyParams) { // transform image according to params
-            $this->applyParams($withThumbnails = true);
+        unlink($mainFile);
+        if (!$function($srcLocation, $mainFile)) {
+            $error = "Function '$function' failed";
+            return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
+        }
+        $result = $this->_toThumbnails(); // replace thumbnails
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        $result = $this->applyParams(); // apply transformations
+        if (PEAR::isError($result)) {
+            return $result;
         }
         return true;
     }
@@ -357,18 +373,19 @@ class SGL_Image
     function delete()
     {
         if (is_null($this->fileName)) {
-            SGL::raiseError('Image is not initialized', SGL_ERROR_NODATA);
-            return false;
+            return SGL::raiseError('File name is not specified',
+                SGL_ERROR_NODATA);
         }
         $mainFile = $this->getPath($includeFile = true);
-        if (!is_file($mainFile)) {
-            SGL::raiseError('The specified file does not appear to exist', SGL_ERROR_NOFILE);
-            return false;
+        if (!is_writable($mainFile)) {
+            $error = "File $mainFile is not writable";
+            return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
         }
         unlink($mainFile);
-        $this->_toThumbnails('unlink'); // drop thumbnails
-
-        // success
+        $result = $this->_toThumbnails('unlink'); // unlink thumbnails
+        if (PEAR::isError($result)) {
+            return $result;
+        }
         return true;
     }
 
@@ -376,7 +393,7 @@ class SGL_Image
      * Copy, move or delete thumbnails, using original image.
      *
      * @access private
-     * @param  string   $function  operation to perform on original image
+     * @param  string  $function  operation to perform on original image
      * @return boolean
      */
     function _toThumbnails($function = 'copy')
@@ -385,12 +402,11 @@ class SGL_Image
             return true;
         }
 
-        // FIXME
-        $thumbDir = $this->getPath() . '/thumbs';
+        $thumbDir = $this->getPath() . '/thumbs'; // fixme
         if (!is_writable($thumbDir)) {
             require_once 'System.php';
-            System::mkDir(array('-p', $thumbDir));
-            @chmod($directory, 0777);
+            System::mkDir(array('-p', $thumbDir)); // fixme
+            @chmod($thumbDir, 0777);
         }
 
         $aThumbs  = array_keys($this->_aThumbnails); // available thumbnails
@@ -403,31 +419,25 @@ class SGL_Image
             //}
             $thumbFile = $this->getPath($includeFile = true, $thumbName);
             if (file_exists($thumbFile)) {
+                if (!is_writable($thumbFile)) {
+                    $error = "File '$thumbFile' is not writable";
+                    return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
+                }
                 unlink($thumbFile);
             }
-            if (function_exists($function) && 'unlink' != $function) {
-                // copy or move
-                $function($origFile, $thumbFile);
+            if ($function != 'unlink') {
+                if (!function_exists($function)) {
+                    $error = "Function '$function' does not exist";
+                    return SGL::raiseError($error, SGL_ERROR_INVALIDARGS);
+                }
+                if (!$function($origFile, $thumbFile)) {
+                    $error = "Function '$function' failed";
+                    return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
+                }
             }
         }
-        return true;
-    }
 
-    /**
-     * Delete image and all it's copies i.e. thumbnails.
-     *
-     * @static
-     * @access public
-     * @param  string   $fileName
-     * @param  array    $aParams
-     * @param  string   $module
-     * @return boolean
-     */
-    function staticDelete($fileName, $aParams = null, $module = '')
-    {
-        $image = & new SGL_Image($fileName, $module);
-        $image->init($aParams);
-        return $image->delete();
+        return true;
     }
 
     /**
@@ -437,13 +447,9 @@ class SGL_Image
      * @param  boolean  $withThumbnails
      * @return boolean
      */
-    function applyParams($withThumbnails = false)
+    function applyParams()
     {
-        $aAllParams = array();
-        $aAllParams[] = $this->_aParams;
-        if ($withThumbnails) {
-            $aAllParams = array_merge($aAllParams, $this->_aThumbnails);
-        }
+        $aAllParams = array_merge(array($this->_aParams), $this->_aThumbnails);
 
         require_once 'Image/Transform.php';
         foreach ($aAllParams as $paramBlock => $aParams) {
@@ -524,6 +530,23 @@ class SGL_Image
 
 
 
+
+    /**
+     * Delete image and all it's copies i.e. thumbnails.
+     *
+     * @static
+     * @access public
+     * @param  string   $fileName
+     * @param  array    $aParams
+     * @param  string   $module
+     * @return boolean
+     */
+    function staticDelete($fileName, $aParams = null, $module = '')
+    {
+        $image = & new SGL_Image($fileName, $module);
+        $image->init($aParams);
+        return $image->delete();
+    }
 
     /**
      * @todo remove it or improve it
