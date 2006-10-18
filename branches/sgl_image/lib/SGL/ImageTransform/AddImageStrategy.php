@@ -48,15 +48,16 @@ class SGL_ImageTransform_AddImageStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        if (1 == count($this->aParams) && is_int(key($this->aParams))) {
+        if (count($this->aParams) == 1 && is_int(key($this->aParams))) {
             $this->aParams = array('file' => reset($this->aParams));
         }
         if (!isset($this->aParams['file'])) {
-            return false;
+            return SGL::raiseError('file param not specified',
+                SGL_ERROR_INVALIDARGS);
         }
         $this->aParams['file'] = SGL_APP_ROOT . '/' . $this->aParams['file'];
         if (!file_exists($this->aParams['file'])) {
-            return false;
+            return SGL::raiseError('file not found', SGL_ERROR_NOFILE);
         }
         $aDefaultParams = array(
             'trans'    => 0,
@@ -67,7 +68,7 @@ class SGL_ImageTransform_AddImageStrategy extends SGL_ImageTransformStrategy
         );
         $aDefaultParams = array_merge($aDefaultParams, $this->aParams);
         $aDefaultParams['trans'] = 100 - $aDefaultParams['trans'];
-        return $this->transform->addImage($aDefaultParams);
+        return $this->driver->addImage($aDefaultParams);
     }
 }
 

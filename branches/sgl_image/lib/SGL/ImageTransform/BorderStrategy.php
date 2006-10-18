@@ -40,25 +40,28 @@
 /**
  * Strategy for drawing borders.
  *
- * @package SGL
- * @author  Dmitri Lakachauskis <dmitri@telenet.lv>
- * @access  public
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_BorderStrategy extends SGL_ImageTransformStrategy
 {
     /**
-     * Adds border to image.
+     * Add border to image.
      *
      * @access public
      * @return void
      */
     function transform()
     {
-        $paramCnt = count($this->aParams);
-        for ($i = 0; $i < $paramCnt; $i++) {
-            $this->transform->addBorder(1, $this->aParams[$i]);
+        foreach ($this->aParams as $color) {
+            $result = $this->driver->addBorder(1, $color);
+            if (PEAR::isError($result)) {
+                return $result;
+            }
         }
+        return true;
     }
 }
- 
+
 ?>

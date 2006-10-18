@@ -51,19 +51,20 @@ class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy
         $aDefaultParams = array(
             'align'         => 'bottom',
             'size'          => 10,
-            'color'         => '#FF0000',
+            'color'         => 'white',
             'trans'         => 0,
             'paddingTop'    => 0,
             'paddingRight'  => 0,
             'paddingBottom' => 0,
             'paddingLeft'   => 0
         );
-        $aDefaultParams = array_merge($aDefaultParams, $this->aParams);
-        $aDefaultParams = array_merge($aDefaultParams, $this->calculateValues($aDefaultParams));
-        $aDefaultParams['trans'] = 100 - $aDefaultParams['trans'];
-        return $this->transform->colorOverlay($aDefaultParams);
+        $aParams          = array_merge($aDefaultParams, $this->aParams);
+        $aPositionParams  = $this->calculateValues($aParams);
+        $aParams          = array_merge($aParams, $aPositionParams);
+        $aParams['trans'] = 100 - $aParams['trans'];
+        return $this->driver->colorOverlay($aParams);
     }
-    
+
     function calculateValues($aParams)
     {
         // calculate values
@@ -72,21 +73,22 @@ class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy
             if ($aParams['paddingLeft']) {
                 $overlayFromX = $aParams['paddingLeft'];
             }
-            $overlayX = $this->transform->img_x;
+            $overlayX = $this->driver->img_x;
             if ($aParams['paddingRight']) {
                 $overlayX -= $aParams['paddingRight'] + $overlayFromX;
             }
-            $overlayY = $aParams['size'] > $this->transform->img_y
-                ? $this->transform->img_y : $aParams['size'];
+            $overlayY = $aParams['size'] > $this->driver->img_y
+                ? $this->driver->img_y : $aParams['size'];
             if ('top' == $aParams['align']) {
                 $overlayFromY = $aParams['paddingTop'];
                 if ($overlayFromY > $overlayY) {
                     $overlayFromY = 0;
                 }
             } else {
-                $overlayFromY = $this->transform->img_y - ($aParams['paddingBottom'] + $aParams['size']);
+                $overlayFromY = $this->driver->img_y -
+                    ($aParams['paddingBottom'] + $aParams['size']);
                 if ($overlayFromY < 0) {
-                    $overlayFromY = $this->transform->img_y - $aParams['size'];
+                    $overlayFromY = $this->driver->img_y - $aParams['size'];
                 }
             }
         } elseif ('left' == $aParams['align'] || 'right' == $aParams['align']) {
@@ -94,21 +96,22 @@ class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy
             if ($aParams['paddingTop']) {
                 $overlayFromY = $aParams['paddingTop'];
             }
-            $overlayY = $this->transform->img_y;
+            $overlayY = $this->driver->img_y;
             if ($aParams['paddingBottom']) {
                 $overlayY -= $aParams['paddingBottom'] + $overlayFromY;
             }
-            $overlayX = $aParams['size'] > $this->transform->img_x
-                ? $this->transform->img_x : $aParams['size'];
+            $overlayX = $aParams['size'] > $this->driver->img_x
+                ? $this->driver->img_x : $aParams['size'];
             if ('left' == $aParams['align']) {
                 $overlayFromX = $aParams['paddingLeft'];
                 if ($overlayFromX > $overlayX) {
                     $overlayFromX = 0;
                 }
             } else {
-                $overlayFromX = $this->transform->img_x - ($aParams['paddingRight'] + $aParams['size']);
+                $overlayFromX = $this->driver->img_x -
+                    ($aParams['paddingRight'] + $aParams['size']);
                 if ($overlayFromX < 0) {
-                    $overlayFromX = $this->transform->img_x - $aParams['size'];
+                    $overlayFromX = $this->driver->img_x - $aParams['size'];
                 }
             }
         }
@@ -118,5 +121,5 @@ class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy
         );
     }
 }
- 
+
 ?>

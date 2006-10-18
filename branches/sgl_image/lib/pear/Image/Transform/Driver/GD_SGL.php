@@ -40,6 +40,10 @@
 require_once 'Image/Transform/Driver/GD.php';
 
 /**
+ * @todo addBorder(), canvasResize(), colorOverlay() should be consolidated
+ *       into one method, thus appropriate strategy could call it with
+ *       needed set of params.
+ *
  * Extends some functionality of original Image_Transform GD driver.
  *
  * @package    seagull
@@ -49,29 +53,30 @@ require_once 'Image/Transform/Driver/GD.php';
 class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
 {
     /**
-     * Adds border to image handle.
+     * Add border to image handle.
      *
      * @access public
      * @param  int     $borderWidth  width of border in pixels
-     * @param  mixed   $color        color in hex or as array
+     * @param  mixed   $color        color as name, hex or rgb array
      * @return boolean
      */
     function addBorder($borderWidth, $color = array(0, 0, 0))
     {
-        // creates image for temporary processing
         $this->new_x = $this->img_x + 2 * $borderWidth;
         $this->new_y = $this->img_y + 2 * $borderWidth;
-        $this->true_color = true; // force true color image
-        $newImg = $this->_createImage($this->new_x, $this->new_y, $this->true_color);
+        $trueColor = true;
+        // creates image for temporary processing
+        $newImg = $this->_createImage($this->new_x, $this->new_y, $trueColor);
 
         $options = array('pencilColor' => $color);
-        $color = $this->_getColor('pencilColor', $options);
+        $color   = $this->_getColor('pencilColor', $options);
 
         // apply background color
         $c = imagecolorresolve($newImg, $color[0], $color[1], $color[2]);
         imagefill($newImg, 0, 0, $c);
 
-        ImageCopy($newImg, $this->imageHandle, $borderWidth, $borderWidth, 0, 0, $this->img_x, $this->img_y);
+        ImageCopy($newImg, $this->imageHandle, $borderWidth, $borderWidth,
+            0, 0, $this->img_x, $this->img_y);
         $this->imageHandle = $newImg;
         $this->resized = true;
 
@@ -83,29 +88,33 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
     }
 
     /**
-     * Creates new image size of $x X $y and places imageHandle at $position.
+     * Create new image size of $x on $y with background color of $color
+     * and place loaded image at $position.
      *
      * @access public
      * @param  int     $x         canvas width
      * @param  int     $y         canvas height
-     * @param  string  $position  where to place original image on canvas (only "center" supported for now)
-     * @param  mixed   $color     color in hex or as array
+     * @param  string  $position  where to place original image on canvas,
+     *                            only "center" position is supported for now
+     * @param  mixed   $color     color as name, hex or rgb array
      * @return boolean
      */
-    function canvasResize($x, $y, $position = 'center', $color = array(255, 255, 255))
+    function canvasResize($x, $y, $position = 'center',
+        $color = array(255, 255, 255))
     {
         $this->new_x = $x;
         $this->new_y = $y;
+        $trueColor = true;
+        // creates image for temporary processing
+        $newImg = $this->_createImage($this->new_x, $this->new_y, $trueColor);
 
         // resolve canvas color
         $options = array('canvasColor' => $color);
-        $color = $this->_getColor('canvasColor', $options);
-
-        // creates image for temporary processing
-        $newImg = $this->_createImage($this->new_x, $this->new_y, $trueColor = true);
+        $color   = $this->_getColor('canvasColor', $options);
 
         // get color index (closest one if none)
-        //$c = imagecolorresolve($this->imageHandle, $color[0], $color[1], $color[2]);
+        //$c = imagecolorresolve($this->imageHandle, $color[0],
+        //    $color[1], $color[2]);
         $c = imagecolorallocate($newImg, $color[0], $color[1], $color[2]);
         imagefill($newImg, 0, 0, $c);
 
@@ -116,7 +125,8 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
             $startY = round(($this->new_y - $this->img_y) / 2);
         }
 
-        ImageCopy($newImg, $this->imageHandle, $startX, $startY, 0, 0, $this->img_x, $this->img_y);
+        ImageCopy($newImg, $this->imageHandle, $startX, $startY,
+            0, 0, $this->img_x, $this->img_y);
         $this->imageHandle = $newImg;
         $this->resized = true;
 
@@ -128,11 +138,41 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
     }
 
     /**
-     * Loads custom image file and returns it's properties.
+     * Overlay color accross original image.
+     *
+     * @access public
+     * @param  array   $aParams  keys: startX, startY, width, height,
+     *                                 trans, color
+     * @return boolean
+     */
+    function colorOverlay($aParams)
+    {
+        // creates truecolor image for temporary processing
+        $overlayImg = $this->_createImage($aParams['width'],
+            $aParams['height'], $trueColor = true);
+
+        // resolve color
+        $options = array('canvasColor' => $aParams['color']);
+        $color   = $this->_getColor('canvasColor', $options);
+
+        $c = imagecolorresolve($overlayImg, $color[0], $color[1], $color[2]);
+        imagefill($overlayImg, 0, 0, $c);
+
+        // copy overlayed image over
+        imagecopymerge($this->imageHandle, $overlayImg,
+            $aParams['startX'], $aParams['startY'], 0, 0,
+            $aParams['width'], $aParams['height'], $aParams['trans']);
+        $this->resized = true;
+
+        return true;
+    }
+
+    /**
+     * Load custom image file and return it's properties.
      *
      * @access public
      * @param  string $image  filename
-     * @return mixed          array of loaded image params or PEAR_Error
+     * @return array          image params
      */
     function loadFile($image)
     {
@@ -156,11 +196,10 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
     }
 
     /**
-     * Adds image accross original resource.
+     * Add image accross original image.
      *
      * @access public
-     * @param  array   $aParams  parameters (possible keys are: int alignX,
-     *                           int alignY, int paddingX, int paddingY, string file)
+     * @param  array   $aParams  keys: alignX, alignY, paddingX, paddingY, file
      * @return boolean
      */
     function addImage($aParams)
@@ -184,38 +223,10 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
         }
 
         // copy image over
-        imagecopyresampled($this->imageHandle, $imgHandler, $imageFromX, $imageFromY,
-            0, 0, $imgX, $imgY, $imgX, $imgY);
-        //imagecopymerge($this->imageHandle, $imageHandler, $imageFromX, $imageFromY,
-        //    0, 0, $imageX, $imageY, $trans);
-        $this->resized = true;
-
-        return true;
-    }
-
-    /**
-     * Overlays color accross original resource.
-     *
-     * @access public
-     * @param  array   $aParams  parameters (possible keys are: int startX,
-     *                           int startY, int width, int height, int trans, mixed color)
-     * @return boolean
-     */
-    function colorOverlay($aParams)
-    {
-        // creates truecolor image for temporary processing
-        $overlayImg = $this->_createImage($aParams['width'], $aParams['height'], $trueColor = true);
-
-        // resolve color
-        $options = array('canvasColor' => $aParams['color']);
-        $color = $this->_getColor('canvasColor', $options);
-
-        $c = imagecolorresolve($overlayImg, $color[0], $color[1], $color[2]);
-        imagefill($overlayImg, 0, 0, $c);
-
-        // copy overlayed image over
-        imagecopymerge($this->imageHandle, $overlayImg, $aParams['startX'], $aParams['startY'],
-            0, 0, $aParams['width'], $aParams['height'], $aParams['trans']);
+        imagecopyresampled($this->imageHandle, $imgHandler,
+            $imageFromX, $imageFromY, 0, 0, $imgX, $imgY, $imgX, $imgY);
+        //imagecopymerge($this->imageHandle, $imageHandler,
+        //    $imageFromX, $imageFromY, 0, 0, $imageX, $imageY, $trans);
         $this->resized = true;
 
         return true;

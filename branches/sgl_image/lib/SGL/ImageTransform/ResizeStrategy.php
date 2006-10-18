@@ -40,25 +40,35 @@
 /**
  * Strategy for resizing images.
  *
- * @package SGL
- * @author  Dmitri Lakachauskis <dmitri@telenet.lv>
- * @access  public
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_ResizeStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        $aSize = $this->transform->getImageSize();
-        if (isset($this->aParams['width']) && isset($this->aParams['height'])
-            && ($aSize[0] > $this->aParams['width'] || $aSize[1] > $this->aParams['height']))
-        {
-            return $this->transform->fit($this->aParams['width'], $this->aParams['height']);
-        } elseif (isset($this->aParams['width']) && $aSize[0] > $this->aParams['width']) {
-            return $this->transform->scaleByX($this->aParams['width']);
-        } elseif (isset($this->aParams['height']) && $aSize[1] > $this->aParams['height']) {
-            return $this->transform->scaleByY($this->aParams['height']);
+        $width  = null;
+        $height = null;
+        if (isset($this->aParams['width'])) {
+            $width = $this->aParams['width'];
         }
+        if (isset($this->aParams['height'])) {
+            $height = $this->aParams['height'];
+        }
+        $aSize = $this->driver->getImageSize();
+        if (isset($width) && isset($height)) {
+            if ($aSize[0] > $width || $aSize[1] > $height) {
+                return $this->driver->fit($width, $height);
+            }
+        } elseif (isset($width) && $aSize[0] > $width) {
+            return $this->driver->scaleByX($width);
+        } elseif (isset($height) && $aSize[1] > $height) {
+            return $this->driver->scaleByY($height);
+        }
+        return SGL::raiseError('Invalid resizing params',
+            SGL_ERROR_INVALIDCONFIG);
     }
 }
- 
+
 ?>

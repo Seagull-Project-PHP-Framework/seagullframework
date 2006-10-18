@@ -44,28 +44,41 @@
  * @author  Dmitri Lakachauskis <dmitri@telenet.lv>
  * @access  public
  */
-class SGL_ImageTransform_CanvasResizeStrategy extends SGL_ImageTransformStrategy 
+class SGL_ImageTransform_CanvasResizeStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        $aSize = $this->transform->getImageSize();
-        $resultX = $aSize[0];
-        if (isset($this->aParams['width']) && $this->aParams['width'] > $aSize[0]) {
-            $resultX = $this->aParams['width'];
+        $width  = null;
+        $height = null;
+        if (isset($this->aParams['width'])) {
+            $width = $this->aParams['width'];
         }
+        if (isset($this->aParams['height'])) {
+            $height = $this->aParams['height'];
+        }
+
+        $aSize   = $this->driver->getImageSize();
+        $resultX = $aSize[0];
         $resultY = $aSize[1];
-        if (isset($this->aParams['height']) && $this->aParams['height'] > $aSize[1]) {
-            $resultY = $this->aParams['height'];
+        if (isset($width) && $width > $aSize[0]) {
+            $resultX = $width;
+        }
+        if (isset($height) && $height > $aSize[1]) {
+            $resultY = $height;
         }
         if ($aSize[0] == $resultX && $aSize[1] == $resultY) {
-            // canvas size must be wider
-            return;
+            // canvas size must be wider, do not apply resizing
+            return false;
         }
-        $resultPos   = isset($this->aParams['position']) ? $this->aParams['position'] : 'center';
-        $resultColor = isset($this->aParams['color'])    ? $this->aParams['color']    : '#FFFFFF';
-        
-        return $this->transform->canvasResize($resultX, $resultY, $resultPos, $resultColor);
+        $aDefaultParams = array(
+            'position' => 'center',
+            'color'    => 'white'
+        );
+        $aParams = array_merge($aDefaultParams, $this->aParams);
+
+        return $this->driver->canvasResize($resultX, $resultY,
+            $aParams['position'], $aParams['color']);
     }
 }
- 
+
 ?>
