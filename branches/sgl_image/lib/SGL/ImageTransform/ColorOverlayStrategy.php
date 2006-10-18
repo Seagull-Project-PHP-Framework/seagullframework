@@ -40,9 +40,9 @@
 /**
  * Strategy for overlaying color across image.
  *
- * @package SGL
- * @author  Dmitri Lakachauskis <dmitri@telenet.lv>
- * @access  public
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy
 {

@@ -40,9 +40,9 @@
 /**
  * Strategy for resizing canvas.
  *
- * @package SGL
- * @author  Dmitri Lakachauskis <dmitri@telenet.lv>
- * @access  public
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_CanvasResizeStrategy extends SGL_ImageTransformStrategy
 {
