@@ -183,7 +183,7 @@ class MediaMgr extends FileMgr
             $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() .
                 SGL_Date::getTime());
 
-            // non-image files are placed in default upload dir
+            // default upload directory for all media files
             if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
                 return false;
             }
@@ -199,20 +199,20 @@ class MediaMgr extends FileMgr
 
                 // for images we add extension
                 $uniqueName .= $this->getMimeExtension($input->mediaFileType);
+                $imageConfig = SGL_MOD_DIR . '/media/image.ini';
 
                 require_once SGL_CORE_DIR . '/Image.php';
-                // image params from module's conf.ini
-                $imageContainer = 'defaultMedia';
-                $aImageParams   = SGL_Image::extractParamsFromConfig('MediaMgr', $imageContainer);
-
-                // uploading image with all thumbnails etc
-                $image = & new SGL_Image($uniqueName, $aImageParams);
-                $success = $image->upload($input->mediaFileTmpName);
-
-                // hard-code to jpeg as all images are converted to jpegs
-                //$output->mediaUniqueName = $uniqueName . '.jpg';
-                //$output->mediaFileType   = 'image/jpeg';
-                //$output->mediaFileName   = $filename . '.jpg';
+                $image = & new SGL_Image($uniqueName);
+                $result = $image->init($imageConfig);
+                if (PEAR::isError($result)) {
+                    echo $result->getMessage();
+                    return false;
+                }
+                $result = $image->upload($input->mediaFileTmpName);
+                if (PEAR::isError($result)) {
+                    echo $result->getMessage();
+                    return false;
+                }
             }
 
             $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
