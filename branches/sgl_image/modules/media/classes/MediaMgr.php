@@ -205,12 +205,10 @@ class MediaMgr extends FileMgr
                 $image = & new SGL_Image($uniqueName);
                 $result = $image->init($imageConfig);
                 if (PEAR::isError($result)) {
-                    echo $result->getMessage();
                     return false;
                 }
                 $result = $image->upload($input->mediaFileTmpName);
                 if (PEAR::isError($result)) {
-                    echo $result->getMessage();
                     return false;
                 }
             }
