@@ -24,7 +24,7 @@ $aSections = array(
       'actionMapping'   => '',
       'add_params'      => '',
       'is_enabled'      => 1,
-      'perms'           => SGL_MEMBER,
+      'perms'           => SGL_ADMIN,
         ),
     );
 ?>
