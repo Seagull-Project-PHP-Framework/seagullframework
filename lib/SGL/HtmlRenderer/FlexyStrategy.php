@@ -58,6 +58,9 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
     {
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        if (!isset($data->theme)) {
+            $data->theme = 'default';
+        }
         $options = array(
                                    // the current module's templates dir from the custom theme
             'templateDir'       => SGL_THEME_DIR . '/' . $data->theme . '/' . $data->moduleName . PATH_SEPARATOR .
