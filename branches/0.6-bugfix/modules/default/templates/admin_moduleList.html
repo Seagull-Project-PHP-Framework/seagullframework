@@ -19,32 +19,30 @@ function setDisplayType()
     </div>
     <div class="fieldsetlike" id="moduleList">
         <h3>{translate(#Module list#)}</h3>
-        <p>Below is a list of modules registered in the 'module' table.  Some modules may be present in
-        your [install-dir]/seagull/modules directory, but will not show up in the list unless
-        you tick the box below.</p>
+        <p>{translate(#Below is a list#)}</p>
 
         <div>
             <input flexy:ignore type="checkbox" name="frmSwitcher" id="frmSwitcher"
                    onclick="javascript:setDisplayType()" flexy:raw="{deRegisteredModulesChecked}" />
             <label for="frmSwitcher">
-                show uninstalled modules
+                {translate(#show uninstalled modules#)}
             </label>
         </div>
 
         <table class="full">
             <thead>
                 <tr class="infos">
-                    <td class="right" colspan="7">
-                    &nbsp;
+                    <td class="right" colspan="7">&nbsp;
+                    
                     </td>
                 </tr>
                 <tr>
                     <th width="5%">&nbsp;</th><!--IMAGE-->
                     <th width="10%" class="left">{translate(#Title#)}</th>
                     <th width="55%" class="left">{translate(#Description#)}</th>
-                    <th width="5%">Maintainer</th>
-                    <th width="5%">License</th>
-                    <th width="5%">State</th>
+                    <th width="5%">{translate(#Maintainer#)}</th>
+                    <th width="5%">{translate(#License#)}</th>
+                    <th width="5%">{translate(#State#)}</th>
                     <th width="15%">{translate(#action#,#ucfirst#)}</th>
                 </tr>
             </thead>

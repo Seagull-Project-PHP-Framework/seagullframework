@@ -19,15 +19,20 @@
         'Module Manager' => 'Menad¿er Modu³u',
         'Module Manager :: Add' => 'Menad¿er Modu³u :: Dodaj',
         'Module Manager :: Edit' => 'Manad¿er Modu³u :: Edytuj',
-        'Detect New Modules' => 'Wykryj nowe modu³y',
+         'Refresh Module Listing' => 'Od¶wie¿ listê',
         'WARNING: This will drop your database' => 'UWAGA: Opcja ta spowoduje usuniêcie danych z bazy i stworzenie od nowa baz Seagulla. Zostanie ona wykonana poprawnie, tylko wtedy, je¿eli obecny u¿ytkownik ma pe³ne uprawnienia do kasowania i tworzenia bazy danych.',
         'with sample data' => 'z przyk³adowymi danymi',
+         'Maintainer' => 'Autor',
+         'License' => 'Licencja',
+         'State' => 'Status',
 
 /*  CONFIG MGR  */
         'Config Manager' => 'Menad¿er konfiguracji',
         'config info successfully updated' => 'Informacje zosta³y zapisane',
         'Deny list' => 'Lista zablokowanych IP',
         'Allow list' => 'Lista dostêpnych IP',
+         'Enable debug block' => 'W³±cz blok debugowania',
+        'Your database can be dropped if this block is enabled'=>'Baza danych mo¿e zostaæ usuniêta, je¿eli w³±czysz i u¿yjesz t± opcjê',
 
 /*  FOOTER  */
         'Execution Time' => 'Czas wykonania',
@@ -53,10 +58,13 @@
         'Please fill in the indicated fields' => 'Proszê wype³niæ wszystkie wymagane pola i spróbowaæ ponownie',
         'Your alert has been sent successfully' => 'Twoje ostrze¿enie zosta³o przes³ane',
         'Are you sure you want to delete this' => 'Czy jeste¶ pewny, ¿e chcesz usun±æ ten element',
+         'show uninstalled modules' => 'poka¿ niezainstalowane modu³y',
+         'Below is a list' => 'Poni¿ej znajduje siê lista zarejestrowanych modu³ów. Kilka z nich mo¿e znajdowaæ siê w katalogu
+        [install-dir]/seagull/modules, ale nie bêdzie widoczna, aby je pokazaæ nale¿y zaznaczyæ poni¿sze pole.',
 
 /*  MODULE MGR */
         'Module' => 'Modu³',
-        'Module list' => 'Lista modu³u',
+        'Module list' => 'Lista modu³ów',
         'Active' => 'Aktywny',
         'module successfully updated' => 'Informacja zosta³a zmieniona',
         'module successfully removed' => 'Modu³ zosta³ usuniêty',
@@ -112,7 +120,7 @@
         'Status' => 'Status',
         'ID' => 'ID',
         'Name' => 'Nazwa',
-        'check to activate' => 'odznacz, aby aktywowaæ',
+        'check to activate' => 'zaznacz do publikacji',
         'Password' => 'Has³o',
         'Login' => 'Login',
         'Forgot Password' => 'Przypomnij has³o',
@@ -121,7 +129,7 @@
 
 /* Bug Reporter */
         'Bug Report' => 'Raport o b³êdzie',
-        'send bug report' => 'wy¶lij raport o b³êdzie',
+        'send bug report' => 'wy¶lij raport o b³êdach',
         'First Name' => 'Imiê',
         'Last Name' => 'Nazwisko',
         'You must fill in your description' => 'Musisz wpisaæ opis',
@@ -234,7 +242,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Email admin threshold'=>'Email administratora',
         'Mark words which were not translated' => 'Zaznacz s³owa, które nie maj± t³umaczenia',
         'Caching Options'=>'Opcje przechowywania w pamiêci podrêcznej',
-        'Enable caching'=>'W³±cz pamiêæ podrêczn±',
+        'Enable global caching'=>'W³±cz pamiêæ podrêczn±',
+        'Enable library caching'=>'W³±cz pamiêæ podrêczn± dla bibliotek',
         'Cache lifetime (secs)'=>'Czas istnienia pamiêci podrêcznej (sek.)',
         'Database Options'=>'Opcje bazy danych',
         'Type'=>'Typ',
@@ -282,7 +291,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'You can turn the blocks off globally'=>'Mo¿esz wy³±czyæ bloki globalnie',
         'This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)'=>'Ta opcja pozwala zmieniæ standardowy typ wy¶wietlanego artyku³u. Standardowy typ artyku³u: Artyku³y Html (2)',
         'The name of your Seagull index file'=>'Nazwa pliku startowego Seagulla',
-        'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Obs³ugiwane edytory to \'xinha\', \'fck\' i \'htmlarea\'. Pamiêtaj, ¿e musisz mieæ odpowiednie biblioteki w katalogu libs',
+        'Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir' => 'Obs³ugiwane edytory to \'xinha\', \'fck\', \'tinyfck\' i \'htmlarea\'. Pamiêtaj, ¿e musisz mieæ odpowiednie biblioteki w katalogu libs',
         'This is the module that will be loaded if none are specified, ie, when you call index.php'=>'Ten modu³ zostanie za³adowany, je¶li ¿aden nie zostanie wybrany, tzn. kiedy wywo³asz index.php',
         'This is the manager class that will be loaded if none are specified'=>'To jest klasa, która zostanie wywo³ana, je¶li ¿adna nie zostanie wybrana',
         'Disable navigation altogether with this switch'=>'Za pomoc± tego prze³±cznika mo¿na wy³±czyæ ca³kowicie nawigacje',
@@ -310,7 +319,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'file'=>'plik',
         'database'=>'baza danych',
         'never' => 'nigdy',
-        'Show debug reporting link' => 'Link do wys³ania raportu o b³êdzie',
+        'Show debug reporting link' => 'Wy¶lij raport o b³êdach',
         'Send feedback to project for bugs' => 'Wy¶lij raport o b³êdach',
         'Words which system was unable to translate will be enclosed in "> <" marks' => 'Nie przet³umaczone s³owa zostan± wy¶wietlone ze znakami "> <"',
         'Output URL handler' => 'Wyj¶ciowy wska¼nik URL',
@@ -320,6 +329,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Seagull allows you to use the template engine of your choice' => 'Seagull pozwala u¿ywaæ ró¿ne systemy szablonów',
         'The Smarty template hooks have not been implemented yet' => 'Wska¼niki dla szablonów Smarty nie zosta³ jeszcze w³±czone',
         'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8' => 'To zapytanie jest u¿yte do ustawienia domy¶lnego zestawu znaków dla bie¿±cego po³±cznia z baz± danych (MySQL 4.1 lub lepszej). Na przyk³ad: SET NAMES utf8',
+         'Global Javascript Onload' => 'Globalny javascipt',
+         'globalJavascript' => 'Je¿eli chcesz, aby dodatek javascipt by³ wywo³ywany na ka¿dej stronie, wpisz jego nazwê',
 
 /*
  ConfigMgr: MTA options
@@ -357,7 +368,7 @@ $defaultWords['Data Objects rebuilt successfully'] = 'Data Objects zosta³y od¶wi
 $defaultWords['Cache files successfully deleted'] = 'Pliki tymczasowe zosta³y usuniête';
 $defaultWords['Manage Translations'] = 'Menad¿er T³umaczeñ';
 $defaultWords['Check all modules for'] = 'Sprawd¼ modu³y';
-$defaultWords['check all modules'] = 'sprawd¼ modu³y';
+$defaultWords['check all modules'] = 'sprawd¼ wszystkie modu³y';
 $defaultWords['update'] = 'aktualizuj';
 $defaultWords['Module Name'] = 'Nazwa modu³u';
 $defaultWords['ok'] = 'ok';
@@ -368,8 +379,8 @@ $defaultWords['File not writeable'] = 'Plik nie ma atrybutu do zapisu';
 $defaultWords['Sequences rebuilt successfully'] = 'Sekwencja zosta³a odbudowana';
 $defaultWords['Rebuild DB Sequences'] = 'Od¶wie¿ sekwencjê DB';
 $defaultWords['Rebuild Sequences Now'] = 'Od¶wie¿ sekwencjê';
-$defaultWords['validate'] = 'sprawd¼';
-$defaultWords['Process'] = 'Proces';
+$defaultWords['validate'] = 'sprawd¼ wybrany';
+$defaultWords['Process'] = 'Wykonaj';
 $defaultWords['Manage Caches'] = 'Menad¿er pamiêci tymczasowej';
 $defaultWords['Templates'] = 'Szablony';
 $defaultWords['navigation'] = 'nawigacja';
@@ -467,7 +478,7 @@ $defaultWords['Local'] = 'Lokalizacja';
 $defaultWords['Latest'] = 'Ostatni';
 $defaultWords['Install'] = 'Zainstaluj';
 $defaultWords['Uninstall'] = 'Odinstaluj';
-$defaultWords['edit'] = 'Edycja';
+$defaultWords['edit'] = 'edycja';
 $defaultWords['Translation Maintenance'] = 'Kontrola t³umaczenia';
 $defaultWords['Coming Soon - The ability to switch between translation storage containers.'] = 'Wkrótce - umo¿liwia prze³±czanie pomiêdzy zbiorami t³umaczeñ.';
 $defaultWords['Language to use when the current language does not have a translation.'] = 'U¿yj ten jêzyk, je¿eli wybrany nie posiada t³umaczeñ.';

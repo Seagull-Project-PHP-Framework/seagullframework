@@ -28,6 +28,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+19-10-06    Polish, Italian and Russian translation updates
 26-09-06    Enhanced module installer adding symlink support for windows users
 22-09-06    Added ability to support s9y comments in BlogMgr (ajmixto)
 20-09-06    Better testing of dbdo return values (Steven Stremciuc)

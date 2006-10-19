@@ -29,8 +29,8 @@
         'Position' => 'Pozycja',
         'Block Details' => 'Szczegó³y',
         'Block Parameters' => 'Parametry',
-        'Cache status' => 'Status pamiêci ulotnej',
-        'check to cache block content' => 'sprawd¼ zawarto¶æ w pamiêci ulotnej',
+        'Cache status' => 'Status pamiêci tymczasowej',
+        'check to cache block content' => 'sprawd¼ zawarto¶æ w pamiêci tymczasowej',
 
         // Messages
         'Block successfully added' => 'Dodano blok',

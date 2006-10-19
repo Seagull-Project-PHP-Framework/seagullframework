@@ -97,4 +97,9 @@ $words['Guestbook Information'] = 'Nowa wiadomo¶æ';
 $words['Delete Selected'] = 'usuñ zaznaczone';
 $words['Newsletter List'] = 'Lista biuletynów';
 $words['Export Subscriber'] = 'Eksport subskrybentów';
+
+$words['Subscriber Details'] = 'Informacje o subskrybencie';
+$words['Action request'] = 'Wywo³ana akcja';
+$words['Select newsletter where you want to subscribe'] = 'Wybierz grupê biuletynu';
+
 ?>

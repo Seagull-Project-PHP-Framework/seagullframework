@@ -13,7 +13,7 @@
         'Type of enquiry' => 'Rodzaj zapytania',
         'Comment' => 'Tre¶æ',
         'Contact Enquiry from' => 'Zapytanie z',
-        'Enter Captcha' => 'Proszê podaæ numer widoczny w polu poni¿ej po prawej',
+        'Enter Captcha' => 'Proszê podaæ numer widoczny w polu obok',
         'aContactType' => array(
             'General enquiry' => 'Ogólne zapytanie',
             'Get a quote' => 'Pytanie',
