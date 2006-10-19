@@ -794,7 +794,7 @@ class SGL_DataGrid {
         $dataGrigSetName = $this->dataGridName;
 
         //put the data into specified dataGrid fields and then send them to given output
-        foreach ($this->filters as $k=>$v) {
+        foreach ($this->filters as $k => $v) {
             $this->filters[$k] = str_replace('\%', '%', $this->filters[$k]);
         }
         $output->dataGridData->$dataGrigSetName->id             = $this->dataGridID;
@@ -837,7 +837,7 @@ class SGL_DataGrid {
                 SGL_string::translate('Do you want to delete: ');
         }
         $emptyFilters = true;
-        foreach ($this->filters as $key=>$value) {
+        foreach ($this->filters as $key => $value) {
             if ($value !== '') {
                 $emptyFilters = false;
             }

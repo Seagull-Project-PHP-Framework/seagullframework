@@ -297,7 +297,6 @@ class SGL_URL
                                 //  this is an install and index.php was omitted
                                 $this->path = $urlinfo['path'];
                                 $this->querystring = @$urlinfo['query'];
-                                $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
                                 $this->querystring = substr($value, $frontScriptEndIndex);

@@ -416,9 +416,6 @@ class SGL_DataGridDataSource {
                 $dataToExport = array();
             }
         }
-        $wordSize = 14; //for equal columns in document
-        $titleSep = str_repeat("=", 15);
-        $wordSep  = 0;
 
         //send HTML headers
         header("MIME-Version: 1.0");

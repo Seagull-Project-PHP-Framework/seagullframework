@@ -190,7 +190,7 @@ EOL;
 
                 //  get extra info
                 $dbh = & SGL_DB::singleton();
-                $lastQuery = $dbh->last_query;
+
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
                 $aExtraInfo['lastSQL'] = isset($dbh->last_query) ?
                     $dbh->last_query : null;

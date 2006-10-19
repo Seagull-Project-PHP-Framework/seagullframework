@@ -171,7 +171,6 @@ class SGL_Translation
     function clearGuiTranslationsCache()
     {
         $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
 
         $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
 

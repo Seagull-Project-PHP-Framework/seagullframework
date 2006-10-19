@@ -289,7 +289,7 @@ class SGL_Manager
     function getTemplate(&$input)
     {
         $req = $input->getRequest();
-        $mgr = $req->get('managerName');
+        $mgrName = $req->get('managerName');
         $userRid = SGL_Session::getRoleId();
 
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])

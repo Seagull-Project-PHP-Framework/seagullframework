@@ -228,22 +228,22 @@ class SGL
         return $error;
     }
 
-    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_MESSAGE_ERROR)
+    function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
     {
         //  must not log message here
-        if (is_string($msg) && !empty($msg)) {
+        if (is_string($messageKey) && !empty($messageKey)) {
 
-            $message = SGL_String::translate($msg);
+            $message = SGL_String::translate($messageKey);
 
             //  catch error message that results for 'logout' where trans file is not loaded
             if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                         && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
                         || (!$getTranslation)) {
-                SGL_Session::set('message', $msg);
+                SGL_Session::set('message', $messageKey);
             } else {
                 SGL_Session::set('message', $message);
             }
-            SGL_Session::set('messageType', $msgType);
+            SGL_Session::set('messageType', $messageType);
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
         }
