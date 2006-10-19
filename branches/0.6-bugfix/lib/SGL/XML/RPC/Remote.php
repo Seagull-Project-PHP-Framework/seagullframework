@@ -21,7 +21,7 @@ class SGL_XML_RPC_Remote
 
     function call($method)
     {
-        $_args = $args = func_get_args();
+        $args = func_get_args();
         $server_host = $this->conf['server_host'];
 
         if (!@require_once 'XML/RPC.php') {
@@ -32,7 +32,7 @@ class SGL_XML_RPC_Remote
         $username = $this->conf['username'];
         $password = $this->conf['password'];
         $eargs = array();
-        foreach($args as $arg) {
+        foreach ($args as $arg) {
             $eargs[] = $this->_encode($arg);
         }
         $f = new XML_RPC_Message($method, $eargs);

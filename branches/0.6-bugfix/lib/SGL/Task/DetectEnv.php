@@ -125,7 +125,6 @@ class SGL_EnvSummaryTask extends SGL_Task
 
             //  exception for php version check
             if (preg_match("/>.*/", $depValue)) {
-                $comparator = $depValue{0};
                 $value = substr($depValue, 1);
                 if (version_compare($actual, $value, 'g')) {
                     $status = 'green';

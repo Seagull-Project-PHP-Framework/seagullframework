@@ -233,7 +233,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
 
         $req  = $input->getRequest();
         $mgr  = $input->get('manager');
-        $conf = $mgr->conf;
+
         $mgr->validate($req, $input);
 
         $input->aggregate($output);
