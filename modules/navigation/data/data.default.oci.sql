@@ -29,7 +29,7 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', (SELECT
 -- sequence must start on the first free record id
 --
 
-INSERT INTO section VALUES (1, 'root', 'uriEmpty:', '1', 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '');
+INSERT INTO section VALUES (1, 'root', 'uriEmpty:', '1', 1, 0, 0, 0, 0, 0, 0, 0, 0, '', '');
 INSERT INTO section VALUES (2, 'User menu', 'uriEmpty:', '-2', 2, 0, 2, 1, 2, 1, 1, 1, 0, '', '');
 INSERT INTO section VALUES (4, 'Admin menu', 'uriEmpty:', '1', 4, 0, 4, 1, 2, 2, 1, 1, 0, '', '');
 

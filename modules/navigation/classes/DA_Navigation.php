@@ -540,7 +540,7 @@ class DA_Navigation extends SGL_Manager
             $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
         }
         //  fetch next id
-        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']);
+        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
 
         //  set translation id for nav title
         $section['trans_id'] = $sectionNextId;
