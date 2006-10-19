@@ -18,8 +18,8 @@
         'Refresh Module Listing' => 'Refresh Module Listing',
         'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
         'with sample data' => 'with sample data',
-         'Maintainer' => 'Autor',
-         'License' => 'Licencja',
+         'Maintainer' => 'Maintainer',
+         'License' => 'License',
          'State' => 'Status',
 
 /*  MODULE CONFIG MGR  */
@@ -31,7 +31,7 @@
         'config info successfully updated' => 'Config info successfully updated',
         'Deny list' => 'Deny list',
         'Allow list' => 'Allow list',
-		
+
 /*  FOOTER  */
         'Execution Time' => 'Execution Time',
         'seconds' => 'seconds',
@@ -56,11 +56,11 @@
         'Are you sure you want to delete this' => 'Are you sure you want to delete this',
         'module deregister msg' => 'An attempt will be made to drop this module\\\'s tables and data, are you sure you want to proceed?',
         'module deletion msg' => 'An attempt will be made to delete this module\\\'s files from your filesystem, are you sure you want to proceed?',
-         'show uninstalled modules' => 'poka¿ niezainstalowane modu³y',
-         'Below is a list' => 'Below is a list of modules registered in the \'module\' table.  Some modules may be present in
+        'show uninstalled modules' => 'show uninstalled modules',
+        'Below is a list' => 'Below is a list of modules registered in the \'module\' table.  Some modules may be present in
         your [install-dir]/seagull/modules directory, but will not show up in the list unless
         you tick the box below.',
-         
+
 /*  MODULE MGR */
         'Module' => 'Module',
         'Module list' => 'Module list',
