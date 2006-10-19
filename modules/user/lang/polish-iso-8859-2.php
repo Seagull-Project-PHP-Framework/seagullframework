@@ -17,7 +17,7 @@ $words = array(
     'Last Login'                   => 'Ostatnie logowanie',
     'first login in progress'      => 'pierwsza sesja',
     'Current IP Address'           => 'Adres IP',
-    'change password'              => 'Zmieñ has³o',
+    'change password'              => 'zmieñ has³o',
     // + user template
     'My Profile'                   => 'Mój Profil',
     'Preferences'                  => 'Konfiguracja',
@@ -40,7 +40,7 @@ $words = array(
     'Country'                 => 'Pañstwo',
     'Telephone'               => 'Telefon',
     'Mobile'                  => 'Tel. komórkowy',
-    'County/State/Province'   => 'Pañstwo/Województwo',
+    'County/State/Province'   => 'Województwo',
     'ZIP/Postal Code'         => 'Kod pocztowy',
     // + user template
     'Company'                 => 'Nazwa Firmy',
@@ -79,6 +79,7 @@ $words = array(
 
     'Please enter a company name'           => 'Proszê podaæ nazwê firmy',
     'You must enter your ZIP/Postal Code'   => 'Musisz podaæ kod pocztowy',
+    'You must enter your province'          => 'Musisz podaæ województwo',
     'You must enter your country'           => 'Musisz podaæ pañstwo',
     'Your email is not correctly formatted' => 'Z³y format emaila',
     'You must enter your email'             => 'Musisz podaæ email',
@@ -125,7 +126,7 @@ $words = array(
     'Original password'  => 'Aktualne has³o',
     'New password'       => 'Nowe has³o',
     'Confirm'            => 'Potwierd¼',
-    'Notify me by email' => 'Powiadom mnie na email',
+    'Notify me by email' => 'Prze¶lij na email',
 
     // messages
     'Password updated successfully' => 'Has³o zosta³o zmienione',
@@ -171,7 +172,7 @@ $words = array(
     'General'                                      => 'Ogólne',
 
     // messages
-    'details successfully updated' => 'Konfiguracja zosta³a zapisana',
+    'details successfully updated' => 'Dane zosta³y zapisane',
 
 
 /* Profile MGR */
@@ -454,7 +455,7 @@ $words = array(
     'Current status is'    => 'Obecny status to',
     'Enable user'          => 'Uaktywnij u¿ytkownika',
     'Disable user'         => 'Wy³±cz u¿ytkownika',
-    'Notify user'          => 'Powiadom u¿ytkownika',
+    'Notify user'          => 'Powiadom u¿ytkownika emailem',
 
     // reset
     'Reset password now'                   => 'Resetuj has³o teraz',

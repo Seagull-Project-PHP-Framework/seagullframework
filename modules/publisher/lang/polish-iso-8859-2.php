@@ -126,6 +126,8 @@
 
 /* WIKISCRAPE MGR */
         'WikiScrape Manager' => 'Menad¿er WikiScrape',
+         
+         'Header' => 'Nag³ówek',
 
     );
 ?>

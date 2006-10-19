@@ -21,6 +21,7 @@
         'No FAQs found' => 'No FAQs found',
 /*  admin list */
         'new faq'  => 'new faq',
+        'add faq'  => 'add faq',
         'edit faq' => 'edit faq',
         'reorder'  => 'reorder',
         'FAQ'      => 'FAQ',
