@@ -17,6 +17,9 @@ class SGL_File
     function copyDir($source, $dest, $overwrite = false)
     {
         if (!is_dir($dest)) {
+            if (!is_writable($dest)) {
+                return SGL::raiseError('filesystem not writable', SGL_ERROR_INVALIDFILEPERMS);
+            }
             mkdir($dest);
         }
         // if the folder exploration is successful, continue
@@ -34,6 +37,10 @@ class SGL_File
                         }
                     } elseif (is_dir($path)) {
                         if (!is_dir($dest . '/' . $file)) {
+                            if (!is_writable($dest . '/' . $file)) {
+                                return SGL::raiseError('filesystem not writable',
+                                    SGL_ERROR_INVALIDFILEPERMS);
+                            }
                             mkdir($dest . '/' . $file); // make subdirectory before subdirectory is copied
                         }
                         SGL_File::copyDir($path, $dest . '/' . $file, $overwrite); //recurse
