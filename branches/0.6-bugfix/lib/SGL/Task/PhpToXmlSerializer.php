@@ -20,6 +20,7 @@ class SGL_Task_PhpToXmlSerializer extends SGL_DecorateProcess
         $this->processRequest->process($input, $output);
 
         $options = array(
+            'encoding'       => 'UTF-8',
             "indent"         => "    ",
             "linebreak"      => "\n",
             "classAsTagName" => true,
