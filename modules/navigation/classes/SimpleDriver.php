@@ -209,15 +209,15 @@ class SimpleDriver
      */
     var $_template = '';
 
-    function SimpleDriver(&$outputData)
+    function SimpleDriver(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
         $this->da        = &DA_Navigation::singleton();
-        $this->req       = $outputData->request;
-        $this->output    = &$outputData;
+        $this->req       = $output->request;
+        $this->output    = &$output;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
         $this->querystring = $this->req->getUri();
