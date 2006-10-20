@@ -42,13 +42,13 @@ require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 
-
 /**
- * Display user account account info.
+ * Display user account info.
  *
- * @package User
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.17 $
+ * @package     seagull
+ * @subpackage  user
+ * @author      Demian Turner <demian@phpkitchen.com>
+ * @version     $Revision: 1.17 $
  */
 class ProfileMgr extends SGL_Manager
 {
@@ -57,68 +57,80 @@ class ProfileMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'User Profile';
-        $this->template     = 'profile.html';
+        $this->module    = 'user';
+        $this->pageTitle = 'User Profile';
+        $this->template  = 'profile.html';
+
         $daUser    = &DA_User::singleton();
         $daDefault = &DA_Default::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daDefault);
 
-        $this->_aActionsMapping =  array(
-            'view'   => array('view'),
+        $this->_aActionsMapping = array(
+            'view' => array('view'),
         );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated        = true;
-        $input->masterTemplate  = $this->masterTemplate;
-        $input->template        = $this->template;
-        $input->pageTitle       = $this->pageTitle;
-        $input->action          = ($req->get('action')) ? $req->get('action') : 'view';
-        $input->userId          = $req->get('frmUserID');
-        $input->fromContacts    = $req->get('frmFromContacts');
+
+        $this->validated       = true;
+        $input->module         = $this->module;
+        $input->masterTemplate = $this->masterTemplate;
+        $input->template       = $this->template;
+        $input->pageTitle      = $this->pageTitle;
+
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'view';
+        $input->userId         = $req->get('frmUserID');
+        $input->fromContacts   = $req->get('frmFromContacts');
     }
 
     function _cmd_view(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!is_numeric($input->userId)) {
+            SGL::raiseError('wrong user id supplied', SGL_ERROR_INVALIDARGS);
+            return false;
+        }
+
         require_once 'DB/DataObject.php';
         $user = DB_DataObject::factory($this->conf['table']['user']);
-
-        if (is_null($input->userId)) {
-            return SGL::raiseError('user id cannot be null', SGL_ERROR_INVALIDARGS);
-        }
         $user->get($input->userId);
+        if (empty($user->role_id)) {
+            SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
+            return false;
+        }
         $output->profile = $user;
 
+        // get country
         $countries = SGL::loadRegionList('countries');
         $output->profile->country = $countries[$user->country];
 
-        //  get last login
-        $output->login = $this->da->getLastLogin();
-        if ($output->login === false) {
-            return SGL::raiseError('no user found with that id', SGL_ERROR_INVALIDARGS);
+        // get last login
+        if (!empty($this->conf['LoginMgr']['recordLogin'])) {
+            $output->login = $this->da->getLastLogin($input->userId);
         }
-        //  total articles
+
+        // total articles
         if ($this->da->moduleIsRegistered('publisher')) {
             $items = DB_DataObject::factory($this->conf['table']['item']);
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();
         }
 
-        //  set conditional 'back' button
+        // set conditional 'back' button
         $output->backButton = (isset($input->fromContacts)) ? $input->fromContacts : false;
 
-        //  if current user is viewing his/her own profile,
-        //  disable 'add to contacts' & 'send message'
+        // if current user is viewing his/her own profile,
+        // disable 'add to contacts' & 'send message'
         $output->allowContact = ($input->userId == SGL_Session::getUid()
                 || SGL_Session::getRoleId() == SGL_GUEST)
             ? false
             : true;
     }
 }
+
 ?>
