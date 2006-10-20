@@ -4,7 +4,7 @@ require_once 'XML/Unserializer.php';
 /**
  * Unserializes XML data into PHP objects.
  *
- * Used when the REST server receives and XML post
+ * Used when the REST server receives an XML post
  *
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -32,10 +32,14 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
             $data = $unserializer->getUnserializedData();
             $input->$entityName = $data;
         }
-
         $this->processRequest->process($input, $output);
     }
 
+    /**
+     * Builds an array of keys from the configuration to ignore.
+     *
+     * @return array
+     */
     function getKeysToIgnore()
     {
         $keys = $this->conf['REST']['keysToIgnore'];
@@ -43,11 +47,22 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
         return $aKeys;
     }
 
+    /**
+     * Builds a hash  from the configuration of complex type names and their type.
+     *
+     * Type = 'object' by default
+     *
+     * @return array
+     */
     function getComplexTypes()
     {
         $keys = $this->conf['REST']['complexType'];
         $aKeys = explode(',', $keys);
-        return $aKeys;
+        $aRet = array();
+        foreach ($aKeys as $key) {
+            $aRet[$key] = 'object';
+        }
+        return $aRet;
     }
 }
 ?>
