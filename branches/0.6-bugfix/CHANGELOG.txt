@@ -28,6 +28,11 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+20-10-06    Added example REST client and server implementations (
+            http://trac.seagullproject.org/browser/branches/0.6-bugfix/lib/SGL/Services/REST/Client.php
+            and
+
+            respectively, including custom filter chain for server.
 19-10-06    Polish, Italian and Russian translation updates
 26-09-06    Enhanced module installer adding symlink support for windows users
 22-09-06    Added ability to support s9y comments in BlogMgr (ajmixto)
