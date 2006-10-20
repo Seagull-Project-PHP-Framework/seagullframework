@@ -30,7 +30,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
             	return $result;
             }
             $data = $unserializer->getUnserializedData();
-            $input->asset = $data;
+            $input->$entityName = $data;
         }
 
         $this->processRequest->process($input, $output);

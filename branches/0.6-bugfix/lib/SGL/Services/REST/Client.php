@@ -60,6 +60,10 @@ class SGL_Services_REST_Client
 
     var $_clientName = 'SGL_Services_REST_Client';
 
+    var $_aOptions = array();
+
+    var $_entityName = '';
+
     /**
      * Constructor.
      *
@@ -67,12 +71,31 @@ class SGL_Services_REST_Client
      * @param string $passwd
      * @return SGL_Services_REST_Client
      */
-    function SGL_Services_REST_Client($user = null, $passwd = null)
+    function SGL_Services_REST_Client($aOptions = array(), $user = null, $passwd = null)
     {
+        $this->setOptions($aOptions);
         if (!is_null($user) && !is_null($passwd)) {
             $this->_user   = $user;
             $this->_passwd = $passwd;
         }
+    }
+
+    function setOptions($aOptions)
+    {
+        foreach ($aOptions as $k => $option) {
+            $this->_aOptions[$k] = $option;
+        }
+    }
+
+    function getOption($optionName)
+    {
+        if (isset($this->_aOptions[$optionName])) {
+            return $this->_aOptions[$optionName];
+            $ret = true;
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
    /**
@@ -94,7 +117,9 @@ class SGL_Services_REST_Client
         }
 
         $request = &new HTTP_Request($url);
-        $request->setBasicAuth($this->_user, $this->_passwd);
+        if (!empty($this->_user) && !empty($this->_passwd)) {
+            $request->setBasicAuth($this->_user, $this->_passwd);
+        }
         $request->addHeader('User-Agent', $this->_clientName);
 
         $request->sendRequest();
@@ -165,19 +190,23 @@ class SGL_Services_REST_Client
 
     function getKeysToIgnore()
     {
-        $keys = $this->conf['REST']['keysToIgnore'];
-        $aKeys = explode(',', $keys);
+        $aKeys = $this->getOption('ignoreKeys');
         return $aKeys;
     }
 
     function getComplexTypes()
     {
-        $keys = $this->conf['REST']['complexType'];
-        $aKeys = explode(',', $keys);
+        $aKeys = $this->getOption('complexType');
         return $aKeys;
     }
 
-    function getEntityName() {}
+    function getEntityName()
+    {
+        return $this->_entityName;
+    }
 
-    function setEntityName() {}
+    function setEntityName($name)
+    {
+        $this->_entityName = $name;
+    }
 }
