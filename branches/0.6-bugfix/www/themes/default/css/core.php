@@ -223,6 +223,10 @@ fieldset {
     padding: 10px 0;
     border: none;
 }
+fieldset h3 {
+    font-size: 1em;
+    color: <?php echo $greyDark ?>;
+}
 #content form ul {
     position: relative;
     margin: 0;
@@ -346,6 +350,19 @@ dl.onTop dd {
 }
 dd .error {
     display: block;
+}
+
+/*
+======================No forms layout=========================*/
+div.fieldsetlike { /*
+--------------------- as some pages don't use forms/fieldsets
+- e.g. user/profile, we have to put data in a fieldset like
+- div to have same render ------------------------------------*/
+    padding: 10px 0;
+}
+div.fieldsetlike h3 {
+    font-size: 1em;
+    color: <?php echo $greyDark ?>;
 }
 
 /*
@@ -515,7 +532,7 @@ a.langFlag {
     width: 100%;
 }
 .button {
-    
+
 }
 .noBg {
     background: none;
