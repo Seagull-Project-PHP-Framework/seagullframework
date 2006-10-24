@@ -51,7 +51,7 @@ class SGL_Config
     var $aProps = array();
     var $fileName;
 
-    function SGL_Config($autoLoad = true)
+    function SGL_Config($autoLoad = false)
     {
         if ($this->isEmpty() && $autoLoad) {
             $configFile = SGL_VAR_DIR  . '/'
