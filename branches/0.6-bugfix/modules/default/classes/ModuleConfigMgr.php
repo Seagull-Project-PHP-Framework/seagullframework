@@ -162,7 +162,7 @@ class ModuleConfigMgr extends SGL_Manager
                 SGL_ERROR_NOAFFECTEDROWS);
         }
         // Then update module config parameters
-        $c = new SGL_Config($autoLoad = false);
+        $c = new SGL_Config();
         $config = $c->load($input->moduleConfigFile);
 
         $aConfig = array();

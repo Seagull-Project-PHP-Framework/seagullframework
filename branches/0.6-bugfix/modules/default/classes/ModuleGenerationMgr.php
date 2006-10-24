@@ -456,7 +456,7 @@ EOD;
         //  update conf.ini
         require_once SGL_CORE_DIR . '/Config.php';
         $configFile = $aDirectories['module'] . '/conf.ini';
-        $c = new SGL_Config($autoLoad = false);
+        $c = new SGL_Config();
         $conf = $c->load($configFile);
         $c->replace($conf);
         $c->set($mgrLongName, array('requiresAuth' => false));
