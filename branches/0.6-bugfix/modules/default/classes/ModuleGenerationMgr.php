@@ -90,7 +90,7 @@ class ModuleGenerationMgr extends SGL_Manager
                     $aManagers = SGL_Util::getAllManagersPerModule(SGL_MOD_DIR .'/'.
                         $input->createModule->moduleName);
                     if (in_array($input->createModule->managerName, $aManagers)) {
-                        $aErrors['managerName'] = 'manager already exists. Please choose another manager name';
+                        $aErrors['managerName'] = 'Manager already exists - please choose another manager name';
                     }
                 }
                 //  check if writable
@@ -118,20 +118,6 @@ class ModuleGenerationMgr extends SGL_Manager
         $modName = strtolower($input->createModule->moduleName);
         $mgrName = ucfirst($input->createModule->managerName);
 
-        // rebuild dataobject so that a DO class exists for new table
-        if (isset($input->createModule->createCRUD)) {
-            require_once SGL_CORE_DIR . '/Task/Install.php';
-            $res = SGL_Task_CreateDataObjectEntities::run();
-
-            // check if table exists
-            $res = file_exists(SGL_ENT_DIR . '/' . ucfirst($mgrName) . '.php');
-            if (!$res) {
-                $msg =  'Please generate a table (with the same name as your manager entity, eg, "pizza") '.
-                        'in the database first.';
-                SGL::raiseMsg($msg, false);
-                return false;
-            }
-        }
         //  strip final 'mgr' if necessary
         if (preg_match('/mgr$/i', $mgrName)) {
             $origMgrName = $mgrName;
@@ -147,39 +133,49 @@ class ModuleGenerationMgr extends SGL_Manager
            : ucfirst($input->createModule->managerName) . 'Mgr';
         $output->managerLongName = $mgrLongName;
 
+        // rebuild dataobject so that a DO class exists for new table
+        if (isset($input->createModule->createCRUD)) {
+            require_once SGL_CORE_DIR . '/Task/Install.php';
+            $res = SGL_Task_CreateDataObjectEntities::run();
+
+            // check if table exists
+            $res = file_exists(SGL_ENT_DIR . '/' . ucfirst($mgrName) . '.php');
+            if (!$res) {
+                $msg =  'Please generate a table (with the same name as your manager entity, eg, "pizza") '.
+                        'in the database first.';
+                SGL::raiseMsg($msg, false);
+                return false;
+            }
+        }
         //  build template name
         $firstLetter    = $mgrLongName{0};
         $restOfWord     = substr($mgrLongName, 1);
         $templatePrefix = strtolower($firstLetter).$restOfWord;
         $output->templatePrefix = $templatePrefix;
 
-        if (!$this->da->moduleIsRegistered($modName)) {
-            //  set author details
-            require_once 'DB/DataObject.php';
-            $user = DB_DataObject::factory($this->conf['table']['user']);
-            $user->get(SGL_Session::getUid());
-            $output->authorName = $user->first_name . ' ' . $user->last_name;
-            $output->authorEmail = $user->email;
+        //  set author details
+        require_once 'DB/DataObject.php';
+        $user = DB_DataObject::factory($this->conf['table']['user']);
+        $user->get(SGL_Session::getUid());
+        $output->authorName = $user->first_name . ' ' . $user->last_name;
+        $output->authorEmail = $user->email;
 
+        if (!$this->da->moduleIsRegistered($modName)) {
             //  insert module in module table if it's not there
             $ok = $this->_addModule($modName, $mgrLongName);
-
-            //  get details of class to generate, at least field list for now.
-            if (isset($input->createModule->createCRUD)) {
-                $model = DB_DataObject::factory($mgrName);
-                $modelFields = $model->table();
-                $output->modelFields = $modelFields;
-            } else {
-                $output->modelFields = array('foo', 'bar');
-            }
+        }
+        //  get details of class to generate, at least field list for now.
+        if (isset($input->createModule->createCRUD)) {
+            $model = DB_DataObject::factory($mgrName);
+            $modelFields = $model->table();
+            $output->modelFields = $modelFields;
+        } else {
+            $output->modelFields = array('foo', 'bar');
         }
 
-        // add table to conf.php if it doesn't exist
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-        $c = &SGL_Config::singleton($autoLoad = false);
-        $conf = $c->load($configFile);
-        if (!isset($conf['table'][$output->managerName])) {
-            $c->replace($conf);
+        // add table to <servername>.conf.php if it doesn't exist
+        $c = &SGL_Config::singleton();
+        if (!isset($this->conf['table'][$output->managerName])) {
             $c->set('table', array($output->managerName => $output->managerName));
             $ok = $c->save($configFile);
         }
@@ -216,12 +212,26 @@ class ModuleGenerationMgr extends SGL_Manager
         if (isset($input->createModule->createIniFile)) {
             if (!is_file(SGL_MOD_DIR . '/' . $output->moduleName .'/conf.ini')) {
                 $ok = $this->_createModuleConfig($aDirectories, $mgrLongName);
+            }  else {
+                if (is_writable(SGL_MOD_DIR . '/' . $output->moduleName .'/conf.ini')) {
+                    $ok = $this->_updateModuleConfig($aDirectories, $mgrLongName);
+                } else {
+                    return SGL::raiseError('module\'s conf.ini file is not writable');
+                }
             }
         }
         //  create language files
         if (isset($input->createModule->createLangFiles)) {
-            if (!is_file(SGL_MOD_DIR . '/' . $output->moduleName .'/lang/english-iso-8859-15.php')) {
-                $ok = $this->_createLangFiles($aDirectories, $output);
+            if (is_dir($aDirectories['lang'])) {
+                if (is_writable($aDirectories['lang'])) {
+                    if (!is_file(SGL_MOD_DIR . '/' . $output->moduleName .'/lang/english-iso-8859-15.php')) {
+                        $ok = $this->_createLangFiles($aDirectories, $output);
+                    }
+                } else {
+                    return SGL::raiseError('module\'s lang directory not writable');
+                }
+            } else {
+                return SGL::raiseError('module\'s lang directory does not appear to exist');
             }
         }
         //  create default data
@@ -231,7 +241,15 @@ class ModuleGenerationMgr extends SGL_Manager
         }
         //  create templates
         if (isset($input->createModule->createTemplates)) {
-            $ok = $this->_createTemplates($aDirectories, $aTemplates, $output);
+            if (is_dir($aDirectories['templates'])) {
+                if (is_writable($aDirectories['templates'])) {
+                    $ok = $this->_createTemplates($aDirectories, $aTemplates, $output);
+                } else {
+                    return SGL::raiseError('module\'s templates directory not writable');
+                }
+            } else {
+                return SGL::raiseError('module\'s templates directory does not appear to exist');
+            }
         }
         // add to tableAliases
         $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->moduleName  . '/data/tableAliases.ini';
@@ -247,10 +265,18 @@ class ModuleGenerationMgr extends SGL_Manager
         }
         if ($addTable) {
             //  append new entry
-            $h = fopen($tableAliasIniPath, 'w+');
-            fwrite($h, $output->managerName . ' = ' . $output->managerName);
-            fclose($h);
-            @chmod($tableAliasIniPath, 0666);
+            if (is_file($tableAliasIniPath)) {
+                if (is_writable($tableAliasIniPath)) {
+                    $h = fopen($tableAliasIniPath, 'w+');
+                    fwrite($h, $output->managerName . ' = ' . $output->managerName);
+                    fclose($h);
+                    @chmod($tableAliasIniPath, 0666);
+                } else {
+                    return SGL::raiseError('tableAlias.ini file not writable');
+                }
+            } else {
+                return SGL::raiseError('tableAlias.ini file does not appear to exist');
+            }
         }
 
         $shortTags = ini_get('short_open_tag');
@@ -311,7 +337,7 @@ EOD;
            '%MgrName%'    => $output->ManagerName,
         );
         // loop through all possible templates and see if they need to be generated
-        foreach ($aTemplates as $template){
+        foreach ($aTemplates as $template) {
             $fileName = $aDirectories['templates'] . '/' . $template;
             $html = '';
 
@@ -380,9 +406,13 @@ EOD;
             }
             if (!is_file($fileName)) {
                 $success = file_put_contents($fileName, $fileTemplate);
+                if (!$success) {
+                    return false;
+                }
                 @chmod($fileName, 0666);
             }
         }
+        return true;
     }
 
     function _createLangFiles($aDirectories, $output)
@@ -418,6 +448,22 @@ EOD;
         $confTemplate   .= 'showUntranslated = false';
         $success        = file_put_contents($confIniName, $confTemplate);
         @chmod($confIniName, 0666);
+        return $success;
+    }
+
+    function _updateModuleConfig($aDirectories, $mgrLongName)
+    {
+        //  update conf.ini
+        require_once SGL_CORE_DIR . '/Config.php';
+        $configFile = $aDirectories['module'] . '/conf.ini';
+        $c = new SGL_Config($autoLoad = false);
+        $conf = $c->load($configFile);
+        $c->replace($conf);
+        $c->set($mgrLongName, array('requiresAuth' => false));
+        $c->set($mgrLongName, array('showUntranslated' => false));
+
+        //  write configuration to file
+        $success = $c->save($configFile);
         return $success;
     }
 
