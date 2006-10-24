@@ -400,14 +400,14 @@ class SGL_Translation
 
         if (isset($format)) {
             $langID = ($format == SGL_LANG_ID_SGL)
-                        ? str_replace('_', '-', $langID)
-                        : str_replace('-', '_', $langID);
+                ? str_replace('_', '-', $langID)
+                : str_replace('-', '_', $langID);
 
             return $langID;
         } else {
             $langID = (strstr($langID, '-'))
-                        ? str_replace('-', '_', $langID)
-                        : str_replace('_', '-', $langID);
+                ? str_replace('-', '_', $langID)
+                : str_replace('_', '-', $langID);
             return $langID;
         }
     }
