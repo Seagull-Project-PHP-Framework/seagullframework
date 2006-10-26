@@ -101,7 +101,25 @@ class FaqMgr extends SGL_Manager
         $output->results = $aFaqs;
         //  display comments?
         if (SGL::moduleIsEnabled('comment') && !empty($this->conf['FaqMgr']['commentsEnabled'])) {
-            $output->aComments = $this->da->getCommentsByEntityId('faq');
+            $aComments = (SGL_Session::getUid() == 1) ?
+                $this->da->getCommentsByEntityId('faq', null, -1) :
+                $this->da->getCommentsByEntityId('faq');
+            foreach ($aComments as $key => $oComment) {
+                $oComment->isApproved = ($oComment->status_id == SGL_COMMENT_APPROVED)
+                    ? true
+                    : false;
+                $oComment->isSpam = ($oComment->status_id == SGL_COMMENT_AKISMET_FAILED)
+                    ? true
+                    : false;
+                $aComments[$key] = $oComment;
+            }
+            $output->aComments = $aComments;
+            $output->frmRefererUrl = $_SERVER['HTTP_REFERER'];
+
+            //  with akismet
+            if ($this->conf['FaqMgr']['useAkismet']) {
+                $output->useAkismet = true;
+            }
 
             //  with captcha?
             if ($this->conf['FaqMgr']['useCaptcha']) {
@@ -109,6 +127,11 @@ class FaqMgr extends SGL_Manager
                 $captcha = new SGL_Captcha();
                 $output->captcha = $captcha->generateCaptcha();
                 $output->useCaptcha = true;
+            }
+
+            //  comments require approval?
+            if ($this->conf['FaqMgr']['moderationEnabled']) {
+                $output->moderationEnabled = true;
             }
         }
     }

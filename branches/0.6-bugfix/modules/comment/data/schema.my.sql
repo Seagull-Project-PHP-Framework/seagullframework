@@ -7,10 +7,13 @@ CREATE TABLE `comment` (
   `email` varchar(255) NOT NULL,
   `url` varchar(255) default NULL,
   `ip` varchar(16) default NULL,
+  `user_agent` varchar(255) default NULL,
+  `referrer` varchar(255) default NULL,
   `type` varchar(16) NOT NULL,
   `is_subscribed` smallint(6) default '0',
   `status_id` smallint(6) NOT NULL default '0',
   `body` text NOT NULL,
   `date_created` datetime NOT NULL,
-  PRIMARY KEY  (`comment_id`)
+  PRIMARY KEY  (`comment_id`),
+  KEY status_id (`status_id`)
 );

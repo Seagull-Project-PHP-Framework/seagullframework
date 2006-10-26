@@ -200,6 +200,12 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_STATUS_PUBLISHED',          4);
         define('SGL_STATUS_ARCHIVED',           5);
 
+        //  comment status types
+        define('SGL_COMMENT_FOR_APPROVAL',      0);
+        define('SGL_COMMENT_APPROVED',          1);
+        define('SGL_COMMENT_AKISMET_PASSED',    2);
+        define('SGL_COMMENT_AKISMET_FAILED',    3);
+
         //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
         define('SGL_RET_ID_VALUE',              2);

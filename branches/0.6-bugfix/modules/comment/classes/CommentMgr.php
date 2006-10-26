@@ -74,6 +74,7 @@ class CommentMgr extends SGL_Manager
         $input->callerMgr   = $req->get('frmCallerMgr');
         $input->callerId    = $req->get('frmCallerId');
         $input->callerTmpl  = $req->get('frmCallerTmpl');
+        $input->refererUrl  = $req->get('frmRefererUrl');
         $input->captcha     = $req->get('frmCaptcha');
 
         // if receiving post
@@ -110,6 +111,19 @@ class CommentMgr extends SGL_Manager
             $c = &SGL_Config::singleton();
             $c->set($mgrName, array('commentsEnabled' => true));
             $this->validated = false;
+        } else {
+            //  verify comment with akismet if enabled
+            $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($input->callerMgr);
+            $c = & SGL_Config::singleton();
+            $conf = $c->ensureModuleConfigLoaded($input->callerMod);
+            if ($conf[$mgrName]['useAkismet']) {
+                require_once SGL_MOD_DIR . '/comment/classes/Akismet.php';
+                $akismet = new Akismet();
+                $result = $akismet->isSpam($input->comment, $this->conf['AkismetMgr']['akismetAPIKey']);
+                $input->comment->status_id = ($result)
+                    ? SGL_COMMENT_AKISMET_FAILED
+                    : SGL_COMMENT_AKISMET_PASSED;
+            }
         }
     }
 
@@ -122,11 +136,31 @@ class CommentMgr extends SGL_Manager
         $oComment->setFrom($input->comment);
         $oComment->comment_id = $this->dbh->nextId('comment');
         $oComment->date_created = SGL_Date::getTime(true);
+        $oComment->user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $oComment->referrer = $input->refererUrl;
         if (!empty($input->callerId)) {
             $oComment->entity_id = $input->callerId;
         }
         $oComment->type = 'comment';
-        $oComment->ip = $_SERVER['REMOTE_ADDR'];;
+        $oComment->ip = $_SERVER['REMOTE_ADDR'];
+        $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($input->callerMgr);
+        $c = & SGL_Config::singleton();
+        $conf = $c->ensureModuleConfigLoaded($input->callerMod);
+        if ($conf[$mgrName]['useAkismet']) {
+            if ($conf[$mgrName]['moderationEnabled']) {
+                $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
+                    ? SGL_COMMENT_FOR_APPROVAL
+                    : $oComment->status_id;
+            } else {
+                $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
+                    ? SGL_COMMENT_APPROVED
+                    : $oComment->status_id;
+            }
+        } else {
+            $oComment->status_id = ($conf[$mgrName]['moderationEnabled'])
+                ? SGL_COMMENT_FOR_APPROVAL
+                : SGL_COMMENT_APPROVED;
+        }
         $success = $oComment->insert();
 
         if ($success) {

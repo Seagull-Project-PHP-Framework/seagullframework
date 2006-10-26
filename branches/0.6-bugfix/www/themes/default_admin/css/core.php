@@ -396,19 +396,23 @@ input.mediumText, textarea.mediumText, select.mediumText {
 input.longText, textarea.longText {
     width: 450px;
 }
+textarea.largeText {
+    width: 450px;
+    height: 200px;
+}
 /* --
 Definition lists (<dl>) will progressively replace "p label" to display fields labels and values
 -----*/
 dl.onSide dt {
     float: left;
-    width: 120px;
+    width: 140px;
     text-align: right;
 }
 dl.onSide dt label {
     padding-right: 15px;
 }
 dl.onSide dd{
-    margin-left: 140px;
+    margin-left: 160px;
     margin-bottom: 0.5em;
 }
 dl.onTop dd {
@@ -436,6 +440,10 @@ html>body #container table {
     border-spacing: 0px;
 }
 #container table.noBorder {
+    border: none;
+}
+#container table.transparent {
+    background-color: transparent;
     border: none;
 }
 #container tr {
