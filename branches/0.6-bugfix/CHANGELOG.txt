@@ -29,6 +29,8 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+26-10-06    Some very nice functionality added to the comment module including
+            Akismet integration (Steven Stremciuc)
 20-10-06    Added example REST client and server implementations (
               http://trac.seagullproject.org/browser/branches/0.6-bugfix/lib/SGL/Services/REST/Client.php
             and
