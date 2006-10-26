@@ -192,6 +192,10 @@ class ModuleConfigMgr extends SGL_Manager
                 case 'adminGuiAllowed':
                 case 'setHeaders':
                 case 'enabled':
+                case 'commentsEnabled':
+                case 'useAkismet':
+                case 'useCaptcha':
+                case 'moderationEnabled':
                     $oParam->type = 'bool';
                     break;
                 default:

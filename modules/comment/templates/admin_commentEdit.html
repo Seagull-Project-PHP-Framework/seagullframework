@@ -1,0 +1,29 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmCommentEdit','submitted',1,1)">{translate(#Save#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmCommentEdit" flexy:ignore id="frmCommentEdit">
+        <h3>{translate(#edit comment#,#ucfirst#)} "{comment.comment_id}"</h3>
+
+        <fieldset class="inside">
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="commentId" value="{commentId}" />
+            <p>
+                <label for="comment[body]">{translate(#Comment#)}</label>
+                <textarea name="comment[body]" id="comment[body]" class="largeText">{comment.body}</textarea>
+            </p>
+            <p>
+                <label for="comment[status_id]">{translate(#Status#)}</label>
+                <select name="comment[status_id]" id="comment[status_id]">
+                    {generateSelect(aStatus,comment.status_id):h}
+                </select>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

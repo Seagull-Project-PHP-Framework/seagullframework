@@ -32,107 +32,125 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | AdminCommentMgr.php                                                       |
+// | AkismetAPIKeyMgr.php                                                      |
 // +---------------------------------------------------------------------------+
 // | Author: Steven Stremciuc  <steve@freeslacker.net>                         |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_MOD_DIR . '/comment/classes/CommentDAO.php';
+require_once 'DB/DataObject.php';
+require_once SGL_MOD_DIR . '/comment/classes/Akismet.php';
 
-class AdminCommentMgr extends SGL_Manager
+class AkismetMgr extends SGL_Manager
 {
-    function AdminCommentMgr()
+    function AkismetMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->da           = & CommentDAO::singleton();
-        $this->pageTitle    = 'Comment Manager';
+        $this->pageTitle    = 'Akismet Manager';
 
         $this->_aActionsMapping =  array(
-            'edit'          => array('edit'),
-            'update'        => array('update', 'redirectToCaller'),
-            'changeStatus'  => array('changeStatus', 'redirectToCaller'),
-            'delete'        => array('delete', 'redirectToCaller'),
+            'list'                      => array('list'),
+            'reportHam'                 => array('reportHam', 'redirectToCaller'),
+            'reportSpam'                => array('reportSpam', 'redirectToCaller'),
+            'testAkismetAPIKey'         => array('testAkismetAPIKey'),
         );
     }
 
     function validate($req, &$input)
     {
         $this->validated    = true;
+        $input->template    = 'akismetManager.html';
+        $input->pageTitle   = $this->pageTitle;
+        $input->submitted   = (bool) $req->get('submitted');
+        $input->akismetKey  = $req->get('akismetKey');
         $input->commentId   = $req->get('commentId');
-        $input->statusId    = $req->get('statusId');
-        $input->comment     = (object) $req->get('comment');
 
-        $input->action = ($req->get('action')) ? $req->get('action') : 'edit';
+        if ($input->submitted) {
+            if (empty($input->akismetKey)) {
+                $aErrors['akismetKey'] = 'Please fill in a Akismet API Key';
+            }
+        }
+        //  if errors have occured
+        if (isset($aErrors) && count($aErrors)) {
+            SGL::raiseMsg('Please fill in the indicated fields');
+            $input->error    = $aErrors;
+            $this->validated = false;
+        }
+
+        $input->action = ($req->get('action')) ? $req->get('action') : 'list';
     }
 
-    function display(&$output)
+    function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->aStatus = array(
-                            SGL_COMMENT_FOR_APPROVAL    => 'Awaiting Approval',
-                            SGL_COMMENT_APPROVED        => 'Approved',
-                            SGL_COMMENT_AKISMET_FAILED  => 'Spam',
-                            );
     }
 
-    function _cmd_edit(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $output->comment = $this->da->getCommentById($input->commentId);
-        $output->pageTitle = 'Edit Comment';
-        $output->template = 'commentEdit.html';
-    }
-
-    function _cmd_update(&$input, &$output)
+    function _cmd_reportHam(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (isset($_SERVER['HTTP_REFERER'])) {
             SGL_Session::set('caller', $_SERVER['HTTP_REFERER']);
         }
-        $comment = DB_DataObject::factory($this->conf['table']['comment']);
-        $comment->get($input->commentId);
-        $comment->setFrom($input->comment);
-        $comment->update();
 
-        SGL::raiseMsg('The comment has successfully been updated', true, SGL_MESSAGE_INFO);
-    }
-
-    function _cmd_changeStatus(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            SGL_Session::set('caller', $_SERVER['HTTP_REFERER']);
-        }
-        $oComment = DB_Dataobject::factory($this->conf['table']['comment']);
-        $oComment->get($input->commentId);
-        $original = clone($oComment);
-        $oComment->status_id = $input->statusId;
-        $oComment->update($original);
-
-        if ($result === false) {
-            SGL::raiseError('problem changing the comment status');
-        } else {
-            SGL::raiseMsg('comment status changed successfully', false, SGL_MESSAGE_INFO);
-        }
-    }
-
-    function _cmd_delete(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            SGL_Session::set('caller', $_SERVER['HTTP_REFERER']);
-        }
         $oComment = DB_DataObject::factory($this->conf['table']['comment']);
         $oComment->get($input->commentId);
-        $result = $oComment->delete();
+        if ($oComment) {
+            //  get API key
+            $key = $this->conf['AkismetMgr']['akismetAPIKey'];
+            $akismet = new Akismet();
+            $akismet->reportHam($oComment, $key);
+        }
 
-        if ($result === false) {
-            SGL::raiseError('There was a problem deleting the record');
+        //  change comment status to approved
+        $original = clone($oComment);
+        $oComment->status_id = SGL_COMMENT_APPROVED;
+        $result = $oComment->update($original);
+
+        if ($result) {
+            SGL::raiseMsg('The comment has successfully been updated', true, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseMsg('comment deleted successfully', false, SGL_MESSAGE_INFO);
+            SGL::raiseMsg('There was an error updating the comment', true, SGL_MESSAGE_WARNING);
+        }
+    }
+
+    function _cmd_reportSpam(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            SGL_Session::set('caller', $_SERVER['HTTP_REFERER']);
+        }
+
+        $oComment = DB_DataObject::factory($this->conf['table']['comment']);
+        $oComment->get($input->commentId);
+        if ($oComment) {
+            //  get API key
+            $key = $this->conf['AkismetMgr']['akismetAPIKey'];
+            $akismet = new Akismet();
+            $akismet->reportSpam($oComment, $key);
+        }
+
+        //  change comment status to spam
+        $original = clone($oComment);
+        $oComment->status_id = SGL_COMMENT_AKISMET_FAILED;
+        $result = $oComment->update($original);
+
+        if ($result) {
+            SGL::raiseMsg('The comment has successfully been updated', true, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseMsg('There was an error updating the comment', true, SGL_MESSAGE_WARNING);
+        }
+    }
+
+    function _cmd_testAkismetAPIKey(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $akismet = new Akismet();
+        $result = $akismet->verifyKey($input->akismetKey);
+        if ($result) {
+            SGL::raiseMsg('Valid Akismet API Key', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseMsg('Invalid Akismet API key entered', false);
         }
     }
 

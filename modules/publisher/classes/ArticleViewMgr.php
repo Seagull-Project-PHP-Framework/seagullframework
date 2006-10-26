@@ -148,16 +148,42 @@ class ArticleViewMgr extends SGL_Manager
             $output->staticArticle = true;
         }
         //  display comments?
-        if (SGL::moduleIsEnabled('comment') &&  !empty($this->conf['ArticleViewMgr']['commentsEnabled'])) {
-            $output->aComments = $this->da->getCommentsByEntityId('articleview',
-                $input->articleID);
+        if (SGL::moduleIsEnabled('comment') && !empty($this->conf['ArticleViewMgr']['commentsEnabled'])) {
+            $aComments = (SGL_Session::getUid() == 1) ?
+                $this->da->getCommentsByEntityId('articleView', $input->articleID, -1) :
+                $this->da->getCommentsByEntityId('articleView', $input->articleID);
+            foreach ($aComments as $key => $oComment) {
+                $oComment->isApproved = ($oComment->status_id == SGL_COMMENT_APPROVED)
+                    ? true
+                    : false;
+                $oComment->isSpam = ($oComment->status_id == SGL_COMMENT_AKISMET_FAILED)
+                    ? true
+                    : false;
+                $aComments[$key] = $oComment;
+            }
+            $output->aComments = $aComments;
+            $output->frmRefererUrl = $_SERVER['HTTP_REFERER'];
+
+            //  with akismet
+            if ($this->conf['ArticleViewMgr']['useAkismet']) {
+                $output->useAkismet = true;
+            }
 
             //  with captcha?
             if ($this->conf['ArticleViewMgr']['useCaptcha']) {
-                require_once SGL_CORE_DIR . '/Captcha.php';
-                $captcha = new SGL_Captcha();
-                $output->captcha = $captcha->generateCaptcha();
-                $output->useCaptcha = true;
+                //  check days before using Captcha
+                $daysBeforeUsingCaptcha = (int) $this->conf['ArticleViewMgr']['daysBeforeUsingCaptcha'];
+                if ((strtotime($output->leadArticle['startDate']) + ($daysBeforeUsingCaptcha * 86400)) <= strtotime(SGL_Date::getTime())) {
+                    require_once SGL_CORE_DIR . '/Captcha.php';
+                    $captcha = new SGL_Captcha();
+                    $output->captcha = $captcha->generateCaptcha();
+                    $output->useCaptcha = true;
+                }
+            }
+
+            //  comments require approval?
+            if ($this->conf['ArticleViewMgr']['moderationEnabled']) {
+                $output->moderationEnabled = true;
             }
         }
     }

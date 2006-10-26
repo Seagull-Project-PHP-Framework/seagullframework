@@ -68,35 +68,80 @@ class CommentDAO extends SGL_Manager
     }
 
     /**
-     * For retrieving comments associated with entites,
+     * For retrieving comments associated with entities,
      * ie articles = 'articleview', faqs = 'faq'
+     *
+     * for $status, 0 = awaiting approval, 1 = approved, -1 = all
      *
      * @param string $entity
      * @param integer $id
+     * @param integer $status
      */
-    function getCommentsByEntityId($entity, $id = null)
+    function getCommentsByEntityId($entity, $id = null, $status = 1)
     {
         $constraint = (is_null($id))
             ? ''
-            : "AND entity_id = $id";
+            : " AND entity_id = $id ";
+        if ($status === 1) {
+            $constraint .= " AND status_id = 1 ";
+        } elseif ($status === 0) {
+            $constraint .= " AND status_id = 0 ";
+        } else {
+            $constraint .= '';
+        }
         $query = "
-            SELECT *
-            FROM {$this->conf['table']['comment']}
-            WHERE entity_name = '$entity'
+            SELECT  *
+            FROM    {$this->conf['table']['comment']}
+            WHERE   entity_name = '$entity'
             $constraint
             ";
         $aComments = $this->dbh->getAll($query);
         return $aComments;
     }
 
-    function getAllComments()
+    function getEntityNames()
     {
         $query = "
-            SELECT *
-            FROM {$this->conf['table']['comment']}
+            SELECT      distinct(entity_name)
+            FROM        {$this->conf['table']['comment']}
+            ORDER BY    entity_name ASC
+            ";
+        $aEntityNames = $this->dbh->getCol($query);
+        return $aEntityNames;
+    }
+
+    /**
+     * For retrieving all comments
+     *
+     * for $status, 0 = awaiting approval, 1 = approved, -1 = all
+     *
+     * @param integer $status
+     */
+    function getAllComments($status = 1)
+    {
+        if ($status === 1) {
+            $constraint = " WHERE status_id = 1 ";
+        } elseif ($status === 0) {
+            $constraint = " WHERE status_id = 0 ";
+        } else {
+            $constraint = '';
+        }
+        $query = "
+            SELECT  *
+            FROM    {$this->conf['table']['comment']}
+            $constraint
             ";
         $aComments = $this->dbh->getAll($query);
         return $aComments;
+    }
+
+    function getCommentById($id = null)
+    {
+        $oComment = DB_DataObject::factory($this->conf['table']['comment']);
+        if (!is_null($id)) {
+            $oComment->get($id);
+        }
+        return $oComment;
     }
 }
 ?>

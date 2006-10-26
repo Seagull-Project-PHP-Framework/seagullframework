@@ -75,6 +75,12 @@
         'Here you can write what you want' => 'Here you can write what you want',
         'Simply provide an icon' => 'Simply provide an icon named "module_$moduleName.gif" in "www/themes/default_admin/images/16"',
 
+/*  COMMENT MGR */
+        'Are you sure you want to report that this comment IS spam?' => 'Are you sure you want to report that this comment IS spam?',
+        'Are you sure you want to report that this comment IS NOT spam?' => 'Are you sure you want to report that this comment IS NOT spam?',
+        'Are you sure you want to approve the comment?' => 'Are you sure you want to approve the comment?',
+        'comments must be approved' => 'Note: Comments must be approved before being displayed.',
+
 /*  NEWSLETTER BLOCK */
         'E-mail' => 'E-mail',
         'Lists' => 'Lists',
