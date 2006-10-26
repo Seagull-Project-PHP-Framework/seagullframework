@@ -530,10 +530,14 @@ class DA_Navigation extends SGL_Manager
         $actionPair = (!(empty($section['actionMapping'])) && ($section['actionMapping'] != 'none'))
             ? 'action' . $separator . $section['actionMapping'] . $separator
             : '';
+        $addParams = (!empty($section['add_params']))
+            ? $section['add_params']
+            : '';
         $section['resource_uri'] =
             $section['module'] . $separator .
             $simplifiedMgrName . $separator .
-            $actionPair;
+            $actionPair .
+            $addParams;
 
         //  remove trailing slash/ampersand if one is present
         if (substr($section['resource_uri'], -1) == $separator) {

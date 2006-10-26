@@ -24,6 +24,8 @@ body {
     margin: 0;
     padding: 0 0 10px;
     color: <?php echo $greyDarkest ?>;
+}
+body.sgl {
     background-color: <?php echo $grey ?>;
     text-align: center;
     background-image: url(../images/grey_bgnd.gif);
