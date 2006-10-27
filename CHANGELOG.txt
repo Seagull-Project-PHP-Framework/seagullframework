@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+27-10-06    Fixed safe delete problem (Dmitry Lakachauskis)
 24-10-06    Cleaned up ModuleGenerationMgr, added more error checking
 14-09-06    Fixed potential security hole with tinyFCK (Andreas Singer)
 10-09-06    Added missing dbdo include that caused error with caching enabled

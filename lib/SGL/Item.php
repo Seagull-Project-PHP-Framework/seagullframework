@@ -417,10 +417,6 @@ class SGL_Item
         //  else delete the bugger
         } else {
             foreach ($aItems as $row) {
-                $sql = "DELETE FROM {$this->conf['table']['item']} WHERE item_id = " . $row;
-                $this->dbh->query($sql);
-            }
-            foreach ($aItems as $row) {
 
                 //  fetch item translation ids
                 if ($this->conf['translation']['container'] == 'db') {
@@ -433,6 +429,10 @@ class SGL_Item
                 }
 
                 $sql = "DELETE FROM {$this->conf['table']['item_addition']} WHERE item_id=$row";
+                $this->dbh->query($sql);
+            }
+            foreach ($aItems as $row) {
+                $sql = "DELETE FROM {$this->conf['table']['item']} WHERE item_id = " . $row;
                 $this->dbh->query($sql);
             }
         }
@@ -687,7 +687,7 @@ class SGL_Item
             if (!$this->id) {
                 return false;
             }
-            
+
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id, i.category_id
