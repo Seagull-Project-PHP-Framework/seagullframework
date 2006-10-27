@@ -714,5 +714,31 @@ class SGL_Output
         }
         return $ret;
     }
+
+    /**
+     * @return current ms since script start
+     */
+    function getExecutionTime()
+    {
+        return getSystemTime() - @SGL_START_TIME;
+    }
+    /**
+     * @return query count
+     */
+    function getQueryCount()
+    {
+        return $GLOBALS['_SGL']['QUERY_COUNT'];
+    }
+    /**
+     * @return memory usage
+     */
+    function getMemoryUsage()
+    {
+        if (function_exists('memory_get_usage')) {
+            return number_format(memory_get_usage());
+        } else {
+            return 'unknown';
+        }
+    }
 }
 ?>
