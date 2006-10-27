@@ -1121,18 +1121,21 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
-                    if (strpos(PHP_OS, 'WIN') !== true) {
-                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
 
-                    //  windows
-                    } else {
+                    // windows
+                    if (strpos(PHP_OS, 'WIN') !== false) {
+
                         // if linkd binary is present
                         $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+
                         //  otherwise just copy
                         if (!$ok) {
                             require_once SGL_CORE_DIR . '/File.php';
                             $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
                         }
+
+                    } else {
+                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                     }
                 } else {
                     PEAR::raiseError('A www directory was detected in one of the modules '.
@@ -1151,10 +1154,14 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
     {
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
-            //  if we're windows w/out linkd dir was copied
+            // if we're windows
             if (is_dir(SGL_WEB_ROOT . "/$module")) {
                 require_once SGL_CORE_DIR . '/File.php';
-                SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
+                if (readlink(SGL_WEB_ROOT . "/$module")) {
+                    SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
+                } else {
+                    SGL_File::rmDir(SGL_WEB_ROOT . "/$module", '-r');
+                }
             } elseif (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
@@ -1476,10 +1483,19 @@ PHP;
     }
 }
 
-if ((strpos(PHP_OS, 'WIN') !== false) && !function_exists('symlink')) {
-    function symlink($target, $link) {
-        exec("linkd ". $link . " " . $target, $ret);
-        return $ret;
+if (strpos(PHP_OS, 'WIN') !== false) {
+    if (!function_exists('symlink')) {
+        function symlink($target, $link) {
+            exec("linkd " . $link . " " . $target, $ret);
+            return $ret;
+        }
+    }
+    if (!function_exists('readlink')) {
+        function readlink($link) {
+            exec('linkd ' . $link, $ret);
+            return $ret;
+        }
     }
 }
+
 ?>
