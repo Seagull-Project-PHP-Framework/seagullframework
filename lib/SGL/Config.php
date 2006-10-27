@@ -158,8 +158,15 @@ class SGL_Config
         }
     }
 
-    function save($file)
+    function save($file = null)
     {
+        if (is_null($file)) {
+            if (empty($this->fileName)) {
+                return SGL::raiseError('No filename specified',
+                    SGL_ERROR_NOFILE);
+            }
+            $file = $this->fileName;
+        }
         $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }

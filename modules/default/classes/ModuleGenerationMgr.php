@@ -177,7 +177,7 @@ class ModuleGenerationMgr extends SGL_Manager
         $c = &SGL_Config::singleton();
         if (!isset($this->conf['table'][$output->managerName])) {
             $c->set('table', array($output->managerName => $output->managerName));
-            $ok = $c->save($configFile);
+            $ok = $c->save();
         }
         //  build methods
         list($methods, $aActions, $aTemplates) = $this->_buildMethods($input, $output);
@@ -251,10 +251,12 @@ class ModuleGenerationMgr extends SGL_Manager
                 return SGL::raiseError('module\'s templates directory does not appear to exist');
             }
         }
-        // add to tableAliases
+
+        //  add to tableAliases
         $tableAliasIniPath = SGL_MOD_DIR . '/' . $output->moduleName  . '/data/tableAliases.ini';
         $addTable = true;
 
+        //  test existing data
         if (file_exists($tableAliasIniPath)) {
             $aData = parse_ini_file($tableAliasIniPath);
             foreach ($aData as $k => $v) {
@@ -263,19 +265,13 @@ class ModuleGenerationMgr extends SGL_Manager
                 }
             }
         }
+
         if ($addTable) {
             //  append new entry
-            if (is_file($tableAliasIniPath)) {
-                if (is_writable($tableAliasIniPath)) {
-                    $h = fopen($tableAliasIniPath, 'w+');
-                    fwrite($h, $output->managerName . ' = ' . $output->managerName);
-                    fclose($h);
-                    @chmod($tableAliasIniPath, 0666);
-                } else {
-                    return SGL::raiseError('tableAlias.ini file not writable');
-                }
+            if (is_file($tableAliasIniPath) && !is_writable($tableAliasIniPath)) {
+                return SGL::raiseError('tableAlias.ini file not writable');
             } else {
-                return SGL::raiseError('tableAlias.ini file does not appear to exist');
+                $this->_createTableAliasFile($tableAliasIniPath, $output->managerName);
             }
         }
 
@@ -465,6 +461,14 @@ EOD;
         //  write configuration to file
         $success = $c->save($configFile);
         return $success;
+    }
+
+    function _createTableAliasFile($tableAliasIniPath, $managerName)
+    {
+        $h = fopen($tableAliasIniPath, 'w+');
+        fwrite($h, $managerName . ' = ' . $managerName);
+        fclose($h);
+        @chmod($tableAliasIniPath, 0666);
     }
 
     function _createDirectories($aDirectories)
