@@ -13,6 +13,7 @@ class SGL_File
      * @param string $dest
      * @param boolean $overwrite
      * @return boolean
+     * @todo chmod is needed
      */
     function copyDir($source, $dest, $overwrite = false)
     {
