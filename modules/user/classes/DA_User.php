@@ -38,8 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
-require_once 'DB/DataObject.php';
-
 //  role sync constants
 define('SGL_ROLESYNC_ADD',              1);
 define('SGL_ROLESYNC_REMOVE',           2);
@@ -216,6 +214,7 @@ class DA_User extends SGL_Manager
      */
     function getUserById($id = null)
     {
+        require_once 'DB/DataObject.php';
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         if (!is_null($id)) {
             $oUser->get($id);
@@ -1032,9 +1031,10 @@ class DA_User extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "  SELECT  *
-                    FROM    {$this->conf['table']['organisation']}
-                    WHERE   organisation_id = " . $orgId;
+        $query = "
+            SELECT  *
+            FROM    {$this->conf['table']['organisation']}
+            WHERE   organisation_id = " . $orgId;
 
         $aOrg = $this->dbh->getRow($query);
         return $aOrg;
@@ -1057,7 +1057,8 @@ class DA_User extends SGL_Manager
         $aRoleOrgs = $this->dbh->getCol($query);
         return $aRoleOrgs;
     }
-/**
+
+    /**
      * Returns an organisation name by org id.
      *
      * @param integer $orgId
@@ -1067,9 +1068,10 @@ class DA_User extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $query = "  SELECT  name
-                    FROM    {$this->conf['table']['organisation']}
-                    WHERE   organisation_id = " . $orgId;
+        $query = "
+            SELECT  name
+            FROM    {$this->conf['table']['organisation']}
+            WHERE   organisation_id = " . $orgId;
 
         $orgName = $this->dbh->getOne($query);
         return $orgName;
@@ -1107,13 +1109,17 @@ class DA_User extends SGL_Manager
     function isUniqueUsername($username)
     {
         if (isset($username)) {
-            $oUser = DB_DataObject::factory($this->conf['table']['user']);
-            $oUser->whereAdd("username = '$username'");
-            $numRows = $oUser->find();
+            $numRows = $this->dbh->getOne("
+                SELECT COUNT(usr_id)
+                FROM {$this->conf['table']['user']}
+                WHERE username = '$username'");
 
             //  return false if any rows found
-            return (boolean)$numRows == 0;
+            $ret = (boolean)$numRows == 0;
+        } else {
+            $ret = false;
         }
+        return $ret;
     }
 
     /**
@@ -1126,13 +1132,17 @@ class DA_User extends SGL_Manager
     function isUniqueEmail($email)
     {
         if (isset($email)) {
-            $oUser = DB_DataObject::factory($this->conf['table']['user']);
-            $oUser->whereAdd("email = '$email'");
-            $numRows = $oUser->find();
+            $numRows = $this->dbh->getOne("
+                SELECT COUNT(usr_id)
+                FROM {$this->conf['table']['user']}
+                WHERE email = '$email'");
 
             //  return false if any rows found
-            return (boolean)$numRows == 0;
+            $ret = (boolean)$numRows == 0;
+        } else {
+            $ret = false;
         }
+        return $ret;
     }
 
     /**
