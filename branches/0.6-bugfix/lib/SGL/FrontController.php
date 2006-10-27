@@ -93,13 +93,12 @@ class SGL_FrontController
                 new SGL_Task_SetupBlocks(
                 new SGL_Task_SetupNavigation(
                 new SGL_Task_SetupGui(
-                new SGL_Task_GetPerformanceInfo(
                 new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
 
                 //  target
                 new SGL_MainProcess()
-                )))))))))))))))))));
+                ))))))))))))))))));
             $process->process($input, $output);
 
         } else {

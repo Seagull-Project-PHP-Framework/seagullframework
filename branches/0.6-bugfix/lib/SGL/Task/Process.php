@@ -710,6 +710,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptClose      = "\n//--> </script>\n";
         $output->isMinimalInstall = SGL::isMinimalInstall();
         $output->conf             = $this->c->getAll();
+        $output->showExecutionTimes = ($_SESSION['aPrefs']['showExecutionTimes'] == 1 ) ? true : false;
     }
 }
 
@@ -755,38 +756,6 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
                 // note: tinymce doesn't need an onLoad event to initialise
                 break;
             }
-        }
-    }
-}
-
-/**
- * Collects performance data.
- *
- * @package Task
- * @author  Demian Turner <demian@phpkitchen.com>
- */
-class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
-{
-    function process(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $this->processRequest->process($input, $output);
-        //  get performance info
-        if (!empty($_SESSION['aPrefs']['showExecutionTimes'])
-                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
-
-            //  prepare query count
-            $output->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
-
-            //  and execution time
-            $output->executionTime = getSystemTime() - @SGL_START_TIME;
-        } else {
-            $output->executionTime = 0;
-        }
-        //  send memory consumption to output
-        if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
-            $output->memoryUsage = number_format(memory_get_usage());
         }
     }
 }
