@@ -30,6 +30,15 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+27-10-06    Cleaup of SGL_Config behaviour:
+                - to load global config: $c = &SGL_Config::singleton();
+                - to save global config: $c->save();
+                - to load any secondary config: $c = new SGL_Config();
+                                                $config = $c->load('/path/to/file');
+                                                $c->replace($config);
+                - to save any secondary config: $c->save('/path/to/file');
+            Replace method takes into accout you may want to load many config files
+            but manipulate the data before passing it back to Config object for saving
 26-10-06    Some very nice functionality added to the comment module including
             Akismet integration (Steven Stremciuc)
 20-10-06    Added example REST client and server implementations (
