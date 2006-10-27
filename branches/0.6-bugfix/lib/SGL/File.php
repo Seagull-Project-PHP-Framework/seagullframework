@@ -58,10 +58,13 @@ class SGL_File
      *
      * @param string $dir  path to directory
      */
-    function rmDir($dir)
+    function rmDir($dir, $args = '')
     {
         require_once 'System.php';
-        System::rm("-rf $dir");
+        if ($args && $args[0] == '-') {
+            $args = substr($args, 1);
+        }
+        System::rm("-{$args}f $dir");
     }
 }
 ?>
