@@ -17,7 +17,7 @@ class SGL_File
     function copyDir($source, $dest, $overwrite = false)
     {
         if (!is_dir($dest)) {
-            if (!is_writable($dest)) {
+            if (!is_writable(dirname($dest))) {
                 return SGL::raiseError('filesystem not writable', SGL_ERROR_INVALIDFILEPERMS);
             }
             mkdir($dest);
@@ -37,7 +37,7 @@ class SGL_File
                         }
                     } elseif (is_dir($path)) {
                         if (!is_dir($dest . '/' . $file)) {
-                            if (!is_writable($dest . '/' . $file)) {
+                            if (!is_writable(dirname($dest . '/' . $file))) {
                                 return SGL::raiseError('filesystem not writable',
                                     SGL_ERROR_INVALIDFILEPERMS);
                             }
