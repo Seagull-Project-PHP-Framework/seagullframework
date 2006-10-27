@@ -475,8 +475,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                             $c->remove(array('table', $tableName));
                         }
                         //  save
-                        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-                        $ok = $c->save($configFile);
+                        $ok = $c->save();
 
                         if (PEAR::isError($ok)) {
                             SGL_Install_Common::errorPush($ok);
@@ -810,7 +809,6 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $c = &SGL_Config::singleton();
         $aLangOptions = SGL_Util::getLangsDescriptionMap();
 
@@ -831,7 +829,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 ? implode(',', str_replace('-', '_', $data['installLangs']))
                 : '';
             $c->set('translation', array('installedLanguages' => $langString));
-            $ok = $c->save($configFile);
+            $ok = $c->save();
             if (PEAR::isError($ok)) {
                 SGL_Install_Common::errorPush($ok);
             }
@@ -894,7 +892,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 : '';
 
             $c->set('translation', array('installedLanguages' => $installedLangs));
-            $ok = $c->save($configFile);
+            $ok = $c->save();
         }
     }
 }
