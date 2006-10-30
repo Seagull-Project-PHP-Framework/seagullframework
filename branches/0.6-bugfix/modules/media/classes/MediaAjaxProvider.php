@@ -96,14 +96,15 @@ class MediaAjaxProvider extends SGL_Manager
         } else {
             $output->masterTemplate = 'mediaList_viewList.html';
         }
-        
+
         $templ = & new SGL_HtmlSimpleView($output);
         $additions[] = $templ->render();
 
         return $additions;
     }
 
-    function deleteMediaById($mediaId) {
+    function deleteMediaById($mediaId)
+    {
         $ok = $this->da->deleteMediaById($mediaId);
         $ret = (!is_a($ok, 'PEAR_Error'))
             ? array('messageType' => 'info', 'message' => 'Media deleted successfully')
