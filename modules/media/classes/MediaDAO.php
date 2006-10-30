@@ -162,7 +162,8 @@ class MediaDAO extends SGL_Manager
         return $constraint;
     }
 
-    function deleteMediaById($mediaId) {
+    function deleteMediaById($mediaId)
+    {
         $uploadDir = SGL_UPLOAD_DIR;
         require_once 'DB/DataObject.php';
 
