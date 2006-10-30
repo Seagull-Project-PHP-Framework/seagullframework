@@ -1,68 +1,35 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <div class="message">{msgGet()}</div>
 
-<form name="account" method="post" flexy:ignore id="account">
-    {if:user} <!-- /////////////////////    SUMMARY     ////////////////////// -->
+<div class="fieldsetlike">
+    <h3>{translate(#Status#)}</h3>
+    <dl class="onSide">
+        <dt>{translate(#Role#)}</dt>
+        <dd>{user.role_name}</dd>
+        <dt>{translate(#Date Registered#)}</dt>
+        <dd>{formatDatePretty(user.date_created)}</dd>
+        {if:conf[LoginMgr][recordLogin]}
+            <dt>{translate(#Last Login#)}</dt>
+            <dd>{if:login.last_login}{formatDatePretty(login.last_login)}{else:}{translate(#first login in progress#)}{end:}</dd>
+        {end:}
+        <dt>{translate(#Current IP Address#)}</dt>
+        <dd>{remote_ip}</dd>
+    </dl>
+</div>
 
-    <table class="narrow">
-        <tr>
-            <th colspan="2">{translate(#Status#)}</th>
-        </tr>
-        <tr>
-            <td class="fieldName" width="35%">{translate(#Role#)}</td>
-            <td class="fieldvalue" width="65%">{user.role_name}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Date Registered#)}</td>
-            <td class="fieldvalue">{formatDatePretty(user.date_created)}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Last Login#)}</td>
-            <td class="fieldvalue">{if:login.last_login} {formatDatePretty(login.last_login)} {else:}{translate(#first login in progress#)}{end:}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Current IP Address#)}</td>
-            <td class="fieldvalue">{remote_ip}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#My Profile#)}</td>
-            <td align="center">
-                <input type="button" name="edit" class="wideButton" value="{translate(#view profile#)}"
-                    onclick="document.location.href='{makeUrl(#viewProfile#,#account#,#user#)}'" />
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Preferences#)}</td>
-            <td align="center">
-                <input type="button" name="edit" class="wideButton" value="{translate(#edit preferences#)}"
-                    onclick="document.location.href='{makeUrl(##,#userpreference#,#user#)}'" />
-            </td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Password#)}</td>
-            <td align="center">
-                <input type="button" name="edit" class="wideButton" value="{translate(#change password#)}"
-                   onclick="javascript:document.location.href='{makeUrl(#edit#,#userpassword#,#user#)}'" />
-            </td>
-        </tr>
-    </table>
-    {else:} <!-- end if results loop -->
-
-    <table class="wide">
-        <tr>
-            <td align="center">
-                <h3>{translate(#No results found#)}</h3>
-            </td>
-        </tr>
-
-        <tr>
-            <td>{translate(#No results found for that ID#)}.</td>
-        </tr>
-    </table>{end:}
-</form>
+<div class="fieldsetlike">
+    <dl class="onSide">
+        <dt>{translate(#My Profile#)}</dt>
+        <dd>
+            <a href="{makeUrl(#viewProfile#,#account#,#user#)}">{translate(#view profile#)}</a>
+        </dd>
+        <dt>{translate(#Preferences#)}</dt>
+        <dd>
+            <a href="{makeUrl(##,#userpreference#,#user#)}">{translate(#edit preferences#)}</a>
+        </dd>
+        <dt>{translate(#Password#)}</dt>
+        <dd>
+            <a href="{makeUrl(#edit#,#userpassword#,#user#)}">{translate(#change password#)}</a>
+        </dd>
+    </dl>
+</div>
