@@ -2,7 +2,7 @@
     $words = array(
 
 /*  MEDIA MGR    */
-        'Document Manager' => 'Document Manager',
+        'Media Manager' => 'Media Manager',
         'Document list' => 'Document list',
         'Document filter' => 'Document filter',
         'Content Type' => 'Content Type',
@@ -18,6 +18,8 @@
         'Kb' => 'kB',
         'Owner' => 'Owner',
         'Type' => 'Type',
+        'Date' => 'Date',
+        'Keywords' => 'Keywords',
         'Document type' => 'Document type',
         'no results found' => 'no results found',
         'Download' => 'D\'load',
@@ -36,5 +38,9 @@
         
 //  Actions
         'Edit media' => 'Edit media',
+        'Add a media' => 'Add a media',
+        'Search' => 'Search',
+        'Narrow results' => 'Narrow results',
+        'Show all' => 'Show all',
     );
 ?>

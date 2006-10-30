@@ -103,6 +103,13 @@ class MediaAjaxProvider extends SGL_Manager
         return $additions;
     }
 
+    function deleteMediaById($mediaId) {
+        $ok = $this->da->deleteMediaById($mediaId);
+        $ret = (!is_a($ok, 'PEAR_Error'))
+            ? array('messageType' => 'info', 'message' => 'Media deleted successfully')
+            : array('messageType' => 'error', 'message' => 'Sorry, couldn\'t delete this media');
+        return $ret;
+    }
 }
 
 ?>

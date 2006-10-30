@@ -161,5 +161,37 @@ class MediaDAO extends SGL_Manager
         }
         return $constraint;
     }
+
+    function deleteMediaById($mediaId) {
+        $uploadDir = SGL_UPLOAD_DIR;
+        require_once 'DB/DataObject.php';
+
+        $media = DB_DataObject::factory($this->conf['table']['media']);
+        $media->get($mediaId);
+
+        //  delete physical file
+        if (is_file($uploadDir . '/' . $media->file_name)) {
+            @unlink($uploadDir . '/' . $media->file_name);
+        } else {
+            //  this is requested to remove sample files & for testing
+            $uploadDir = SGL_MOD_DIR . '/media/www/images';
+            @unlink($uploadDir . '/' . $media->file_name);
+        }
+
+        //  delete thumbnails if media is of type image
+        if ($media->file_type_id == 5) {
+            //  should do this check with CONSTANTS e.g. SGL_FILETYPE_IMAGE
+            $c = new SGL_Config();
+            $configFile = SGL_MOD_DIR . '/media/conf.ini';
+            $config = $c->load($configFile);
+            $thumbnails = explode(',', $config['MediaMgr']['createThumbnails']);
+            foreach ($thumbnails as $thumbSize) {
+                if (is_file($uploadDir . '/thumbs/' .$thumbSize . '_' . $media->file_name)) {
+                    @unlink($uploadDir . '/thumbs/' .$thumbSize . '_' . $media->file_name);
+                }
+            }
+        }
+        return $media->delete();
+    }
 }
 ?>
