@@ -1,8 +1,8 @@
     <div class="extrabar" id="mediaExtrabar">
-        <div class="extrabarInner" id="mediaExtrabarInner" style="display:block;">
-            <h2>Narrow results</h2>
+        <div class="extrabarInner" id="mediaExtrabarInner" style="display:none;">
+            <h2>{translate(#Narrow results#)}</h2>
             <fieldset>
-                <label>Type</label>
+                <label>{translate(#Type#)}</label>
                 <select name="filterByType" id="filerByType"
                         onchange="MediaList.narrowResults({byTypeId:this.options[selectedIndex].value});">
                     <option value="0">All</option>
@@ -11,7 +11,7 @@
                     <option value="3">MS POWERPOINT</option>
                     <option value="5">IMAGE</option>
                 </select>
-                <label>Date</label>
+                <label>{translate(#Date#)}</label>
                 <select name="filterByDate" id="filerByDate"
                         onchange="MediaList.narrowResults({byDateRange:this.options[selectedIndex].value});">
                     <option value="0">Any</option>
@@ -19,9 +19,9 @@
                     <option value="thisMonth">This month</option>
                     <option value="beforeThisMonth">Before this month</option>
                 </select>
-                <label>Keywords</label>
-                <input name="filterByKeywords" id="filterByKeywords" />
-                <div><a href="#" onclick="MediaList.narrowResults();">Show all</a></div>
+                <label>{translate(#Keywords#)}</label>
+                <input type="text" name="filterByKeywords" id="filterByKeywords" value="Coming shortly..." readonly="readonly" />
+                <a href="#" onclick="MediaList.narrowResults();">{translate(#Show all#)}</a>
             </fieldset>
             
         <!--

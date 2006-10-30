@@ -1,6 +1,7 @@
 
 var MediaList = {
     debug: 0,
+    provider: new MediaAjaxProvider(),
     
     options: {
         byTypeId: '',
@@ -114,6 +115,18 @@ var MediaList = {
         MediaList.refreshScreen(aToHide, aToShow);
     },
     
+    deleteMediaById: function(mediaId) {
+        if (confirmDelete('media')) {
+            var ok = this.provider.deleteMediaById(mediaId);
+            if(ok.messageType == "info") {
+                // and remove it from screen
+                this.hideItem(mediaId);
+            }
+            Element.update('ajaxMessage', '<div class="' +ok.messageType +'Message">' +ok.message +'</div>');
+        }
+        return false;
+    },
+    
     refreshScreen: function(aToHide, aToShow) {
         aToHide.each(function(mediaId) {
              MediaList.hideItem(mediaId);
@@ -125,11 +138,13 @@ var MediaList = {
     },
     
     hideItem: function(itemId) {
-        Effect.Shrink($('media' +itemId));
+        //Effect.Shrink($('media' +itemId));
+        Element.hide($('media' +itemId));
     },
     
     showItem: function(itemId) {
-        Effect.Grow($('media' +itemId));
+        //Effect.Grow($('media' +itemId));
+        Element.show($('media' +itemId));
     },
     
     _debug: function() {

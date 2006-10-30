@@ -5,24 +5,24 @@
             <li>
                 <a href="{makeUrl(#add#,#media#,#media#)}">
                     <img src="{webRoot}/themes/{theme}/images/icons/document_add.png" alt="add" title="Add a file" />
-                    <span>Add a media</span>
+                    <span>{translate(#Add a media#)}</span>
                 </a>
             </li>
             <li>
                 <a href="#" onclick="Effect.toggle('mediaExtrabarInner', 'blind', {duration: 0.5}); return false;">
                     <img src="{webRoot}/themes/{theme}/images/icons/document_search.png" alt="search" title="Search" />
-                    <span>Search</span>
+                    <span>{translate(#Search#)}</span>
                 </a>
             </li>
         </ul>
-        <ul class="floatRight">
+        <!--<ul class="floatRight">
             <li>
                 <a href="#" onclick="MediaList.switchViewType();">
                     <img src="{webRoot}/themes/{theme}/images/icons/document_add.png" alt="add" title="Add a file" />
                     <span>Change View</span>
                 </a>
             </li>
-        </ul>
+        </ul>-->
     </div>
     <flexy:include src="mediaList_extraBar.html" />
 

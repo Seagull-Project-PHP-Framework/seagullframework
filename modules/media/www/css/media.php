@@ -55,9 +55,11 @@ div.thumb {
 
 div.thumbBox {
     position: relative;
+    /* TODO This should be more flexible */
+    /* and not depend on a 70px maxsize */
     width: 128px;
     height: 118px;
-    border: 2px solid <?php echo $greyLight ?>;
+    border: 1px solid <?php echo $greyLight ?>;
     -moz-border-radius: 0.5em;
 }
 div.thumbMedia {
@@ -66,11 +68,11 @@ div.thumbMedia {
     width: 90px;
     height: 70px;
 }
-div.thumbMedia:hover {
+div.thumbBox:hover {
     background: <?php echo $greyLight ?>;
 }
-.thumbBox img {
-    
+.thumbMedia img {
+    border: 2px solid <?php echo $greyLightest ?>;
 }
 
 div.thumbToolbar {

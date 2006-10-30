@@ -13,7 +13,7 @@ var fileBottomNavCloseImage = SGL_JS_WEBROOT +'/js/lightbox/images/closelabel.gi
                             <span class="thumbToolbarInner">
                                 <a rel="lightbox[media]" href="{makeUrl(#previewMedia#,#media#,##)}frmMediaId/{oMedia.media_id}">view</a>
                                 <a href="{makeUrl(#edit#,#media#,#media#)}frmMediaId/{oMedia.media_id}">edit</a>
-                                <a href="#" onclick="return confirmDelete('media')">
+                                <a href="#" onclick="MediaList.deleteMediaById({oMedia.media_id});">
                                     <img src="{webRoot}/media/images/trash.gif" alt="trash" />
                                 </a>
                             </span>
@@ -29,8 +29,4 @@ var fileBottomNavCloseImage = SGL_JS_WEBROOT +'/js/lightbox/images/closelabel.gi
                         </div>
                         <h3>{oMedia.name}</h3>
                     </div>
-                    
-                    {scriptOpen:h}
-                        new Draggable('media{oMedia.media_id}',{revert: true});
-                    {scriptClose:h}
                 </div>
