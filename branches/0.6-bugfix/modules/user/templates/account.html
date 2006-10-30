@@ -1,130 +1,54 @@
 <h1 class="pageTitle">{translate(pageTitle)}</h1>
 <div class="message">{msgGet()}</div>
 
-<form name="account" method="post" flexy:ignore id="account">
+<div class="fieldsetlike">
+    <h3>{translate(#Personal Details#)}</h3>
+    <dl class="onSide">
+        <dt>{translate(#Username#)}</dt>
+        <dd>{user.username}&nbsp;</dd>
+        <dt>{translate(#First Name#)}</dt>
+        <dd>{user.first_name}&nbsp;</dd>
+        <dt>{translate(#Last Name#)}</dt>
+        <dd>{user.last_name}&nbsp;</dd>
+        <!--dt>{translate(#Company#)}</dt>
+        <dd>{user.company_name}&nbsp;</dd-->
+    </dl>
+</div>
 
-    {if:user} <!-- /////////////////////    STATUS     ////////////////////// -->
+<div class="fieldsetlike">
+    <h3>{translate(#Contact#)}</h3>
+    <dl class="onSide">
+        <dt>{translate(#Email#)}</dt>
+        <dd>{user.email}&nbsp;</dd>
+        <dt>{translate(#Telephone#)}</dt>
+        <dd>{user.telephone}&nbsp;</dd>
+        <dt>{translate(#Mobile#)}</dt>
+        <dd>{user.mobile}&nbsp;</dd>
+    </dl>
+</div>
 
-    <table class="narrow">
-        <tr>
-            <th colspan="2">{translate(#Personal Details#)}</th>
-        </tr>
+<div class="fieldsetlike">
+    <h3>{translate(#Location#)}</h3>
+    <dl class="onSide">
+        <dt>{translate(#Address 1#)}</dt>
+        <dd>{user.addr_1}&nbsp;</dd>
+        <dt>{translate(#Address 2#)}</dt>
+        <dd>{user.addr_2}&nbsp;</dd>
+        <dt>{translate(#Address 3#)}</dt>
+        <dd>{user.addr_3}&nbsp;</dd>
+        <dt>{translate(#City#)}</dt>
+        <dd>{user.city}&nbsp;</dd>
+        <dt>{translate(#County/State/Province#)}</dt>
+        <dd>{user.region}&nbsp;</dd>
+        <dt>{translate(#ZIP/Postal Code#)}</dt>
+        <dd>{user.post_code}&nbsp;</dd>
+        <dt>{translate(#Country#)}</dt>
+        <dd>{user.country}&nbsp;</dd>
+    </dl>
+</div>
 
-        <tr>
-            <td class="fieldName" width="50%">{translate(#Username#)}</td>
-            <td class="fieldvalue" width="50%">{user.username}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#First Name#)}</td>
-            <td class="fieldvalue">{user.first_name}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Last Name#)}</td>
-            <td class="fieldvalue">{user.last_name}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Company#)}</td>
-            <td class="fieldvalue">{user.company_name}</td>
-        </tr>
-    </table><!-- /////////////////////    TABLE 2:      ////////////////////// -->
-
-    <table class="narrow">
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-
-        <tr>
-            <th colspan="2">{translate(#Location#)}</th>
-        </tr>
-
-        <tr>
-            <td class="fieldName" width="50%">{translate(#Address 1#)}</td>
-            <td class="fieldvalue" width="50%">{user.addr_1}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Address 2#)}</td>
-            <td class="fieldvalue">{if:user.addr_2} {user.addr_2} {else:}&nbsp;{end:}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Address 3#)}</td>
-            <td class="fieldvalue">{if:user.addr_3} {user.addr_3} {else:}&nbsp;{end:}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#City#)}</td>
-            <td class="fieldvalue">{user.city}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#County/State/Province#)}</td>
-            <td class="fieldvalue">{user.region}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#ZIP/Postal Code#)}</td>
-            <td class="fieldvalue">{user.post_code}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName" width="35%">{translate(#Country#)}</td>
-            <td class="fieldvalue" width="65%">{user.country}</td>
-        </tr>
-    </table><!-- /////////////////////    TABLE 3:       ////////////////////// -->
-
-    <table class="narrow">
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-
-        <tr>
-            <th colspan="2">{translate(#Contact#)}</th>
-        </tr>
-
-        <tr>
-            <td class="fieldName" width="35%">{translate(#Email#)}</td>
-            <td class="fieldvalue" width="65%">{user.email}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName" width="50%">{translate(#Telephone#)}</td>
-            <td class="fieldvalue" width="50%">{user.telephone}</td>
-        </tr>
-
-        <tr>
-            <td class="fieldName">{translate(#Mobile#)}</td>
-            <td class="fieldvalue">{user.mobile}</td>
-        </tr>
-
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-    </table>
-
-    <table class="wide">
-        <tr>
-            <td colspan="2" align="center">
-                <input type="button" name="edit" value="{translate(#edit these values#)}" onclick="document.location.href='{makeUrl(#edit#,#account#,#user#)}'" />
-                <input type="button" name="edit" class="wideButton" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
-            </td>
-        </tr>
-    </table>
-    {else:} <!-- end if results loop -->
-
-    <table class="wide">
-        <tr>
-            <td align="center">
-                <h3>{translate(#No results found#)}</h3>
-            </td>
-        </tr>
-
-        <tr>
-            <td>{translate(#No results found for that ID#)}.</td>
-        </tr>
-    </table>
-    {end:}
-</form>
+<p>
+    <a href="{makeUrl(#edit#,#account#,#user#)}">{translate(#edit these values#)}</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="{makeUrl(#summary#,#account#,#user#)}">{translate(#back#,#ucfirst#)}</a>
+</p>

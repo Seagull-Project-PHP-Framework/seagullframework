@@ -217,11 +217,11 @@ class SGL_Output
         }
         $radioString = '';
         if ($checked) {
-            $yesChecked = ' checked';
+            $yesChecked = ' checked="checked"';
             $noChecked = '';
         } else {
             $yesChecked = '';
-            $noChecked = ' checked';
+            $noChecked = ' checked="checked"';
         }
         $optionsString = '';
         if (isset($options)) {
@@ -229,8 +229,8 @@ class SGL_Output
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
-        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked>".SGL_String::translate('no')."\n";
-        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked>".SGL_String::translate('yes')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked />".SGL_String::translate('no')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked />".SGL_String::translate('yes')."\n";
         return $radioString;
     }
 
