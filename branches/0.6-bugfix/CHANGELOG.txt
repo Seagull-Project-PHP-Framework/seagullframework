@@ -30,6 +30,9 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+29-10-06    Tables removed from all templates in user module, replaced with xhtml
+            compliant markup (Dmitry Lakachauskis)
+
 27-10-06    Cleaup of SGL_Config behaviour:
                 - to load global config: $c = &SGL_Config::singleton();
                 - to save global config: $c->save();
