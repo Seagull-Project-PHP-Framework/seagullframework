@@ -116,13 +116,15 @@ class CommentMgr extends SGL_Manager
             $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($input->callerMgr);
             $c = & SGL_Config::singleton();
             $conf = $c->ensureModuleConfigLoaded($input->callerMod);
-            if ($conf[$mgrName]['useAkismet']) {
-                require_once SGL_MOD_DIR . '/comment/classes/Akismet.php';
-                $akismet = new Akismet();
-                $result = $akismet->isSpam($input->comment, $this->conf['AkismetMgr']['akismetAPIKey']);
-                $input->comment->status_id = ($result)
-                    ? SGL_COMMENT_AKISMET_FAILED
-                    : SGL_COMMENT_AKISMET_PASSED;
+            if (!PEAR::isError($conf)) {
+                if ($conf[$mgrName]['useAkismet']) {
+                    require_once SGL_MOD_DIR . '/comment/classes/Akismet.php';
+                    $akismet = new Akismet();
+                    $result = $akismet->isSpam($input->comment, $this->conf['AkismetMgr']['akismetAPIKey']);
+                    $input->comment->status_id = ($result)
+                        ? SGL_COMMENT_AKISMET_FAILED
+                        : SGL_COMMENT_AKISMET_PASSED;
+                }
             }
         }
     }
@@ -146,20 +148,22 @@ class CommentMgr extends SGL_Manager
         $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($input->callerMgr);
         $c = & SGL_Config::singleton();
         $conf = $c->ensureModuleConfigLoaded($input->callerMod);
-        if ($conf[$mgrName]['useAkismet']) {
-            if ($conf[$mgrName]['moderationEnabled']) {
-                $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
-                    ? SGL_COMMENT_FOR_APPROVAL
-                    : $oComment->status_id;
+        if (!PEAR::isError($conf)) {
+            if ($conf[$mgrName]['useAkismet']) {
+                if ($conf[$mgrName]['moderationEnabled']) {
+                    $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
+                        ? SGL_COMMENT_FOR_APPROVAL
+                        : $oComment->status_id;
+                } else {
+                    $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
+                        ? SGL_COMMENT_APPROVED
+                        : $oComment->status_id;
+                }
             } else {
-                $oComment->status_id = ($oComment->status_id == SGL_COMMENT_AKISMET_PASSED)
-                    ? SGL_COMMENT_APPROVED
-                    : $oComment->status_id;
+                $oComment->status_id = ($conf[$mgrName]['moderationEnabled'])
+                    ? SGL_COMMENT_FOR_APPROVAL
+                    : SGL_COMMENT_APPROVED;
             }
-        } else {
-            $oComment->status_id = ($conf[$mgrName]['moderationEnabled'])
-                ? SGL_COMMENT_FOR_APPROVAL
-                : SGL_COMMENT_APPROVED;
         }
         $success = $oComment->insert();
 
