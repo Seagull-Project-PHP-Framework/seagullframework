@@ -37,6 +37,7 @@
 // | Author: Steven Stremciuc  <steve@freeslacker.net>                         |
 // +---------------------------------------------------------------------------+
 
+require_once 'DB/DataObject.php';
 require_once SGL_MOD_DIR . '/comment/classes/CommentDAO.php';
 
 class AdminCommentMgr extends SGL_Manager
