@@ -162,7 +162,9 @@ class ArticleViewMgr extends SGL_Manager
                 $aComments[$key] = $oComment;
             }
             $output->aComments = $aComments;
-            $output->frmRefererUrl = $_SERVER['HTTP_REFERER'];
+            $output->frmRefererUrl = isset($_SERVER['HTTP_REFERER'])
+                ? $_SERVER['HTTP_REFERER']
+                : null;
 
             //  with akismet
             if ($this->conf['ArticleViewMgr']['useAkismet']) {
