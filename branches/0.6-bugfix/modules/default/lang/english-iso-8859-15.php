@@ -345,6 +345,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8' => 'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8',
         'Global Javascript Onload' => 'Global Javascript Onload',
         'globalJavascript' => 'If you want a Javascript onload expression called on every page of your site, put it here',
+        'Custom Config File' => 'Custom Config File',
 
 /*
  ConfigMgr: MTA options

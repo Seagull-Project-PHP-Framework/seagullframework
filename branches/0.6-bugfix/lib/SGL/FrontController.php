@@ -41,7 +41,6 @@
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
 
-
 /**
  * Application controller.
  *
@@ -151,6 +150,7 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_LoadCustomConfig());
         $init->main();
         define('SGL_INITIALISED', true);
     }

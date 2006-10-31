@@ -197,6 +197,11 @@ function toggleTransElements() {
                 <span class="tipText">provide path from sgl root, including initial slash and omitting final slash, eg: "/path/to/dir"</span></label>
                 <input type="text" class="longText" name="conf[path][uploadDirOverride]" id="conf[path][uploadDirOverride]" value="{conf[path][uploadDirOverride]}" />
             </p>
+            <p>
+                <label class="tipOwner" for="conf[path][pathToCustomConfigFile]">{translate(#Custom Config File#)}
+                <span class="tipText">If you want to include a custom config file for constants, etc, do it here</span></label>
+                <input type="text" class="longText" name="conf[path][pathToCustomConfigFile]" id="conf[path][pathToCustomConfigFile]" value="{conf[path][pathToCustomConfigFile]}" />
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="sessionOptions">

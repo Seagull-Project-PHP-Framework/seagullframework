@@ -30,6 +30,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+31-10-06    Added ability to load custom config file as specified in global config
 29-10-06    Tables removed from all templates in user module, replaced with xhtml
             compliant markup (Dmitry Lakachauskis)
 
