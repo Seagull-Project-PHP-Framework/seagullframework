@@ -715,6 +715,12 @@ class SGL_Output
         return $ret;
     }
 
+    function humanize($lowerCaseAndUnderscoredWord)
+    {
+        require_once SGL_CORE_DIR . '/Inflector.php';
+        return SGL_Inflector::humanize($lowerCaseAndUnderscoredWord);
+    }
+
     /**
      * @return current ms since script start
      */
