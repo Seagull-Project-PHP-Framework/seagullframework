@@ -21,6 +21,20 @@ class InflectorTest extends UnitTestCase {
         $this->assertEqual($ret, 'This Is Another Camel Word');
     }
 
+    function testCamelise()
+    {
+        $aControl[] = 'Here is a string to camelise';
+        $aControl[] = ' here IS a StrIng tO CameLise';
+        $aControl[] = ' Here  is a  STRING To  CameliSE';
+        $aControl[] = "Here is\na string\n\nto camelise";
+        $expected   = 'hereIsAStringToCamelise';
+
+        foreach ($aControl as $k => $control) {
+            $ret = SGL_Inflector::camelise($control);
+            $this->assertEqual($expected, $ret);
+        }
+    }
+
     function testIsCamelCase()
     {
         $str = 'thisIsCamel';

@@ -154,6 +154,34 @@ class SGL_Inflector
         return strtolower($name);
     }
 
+   /**
+    * Converts "string with spaces" to "camelCase" string.
+    *
+    * @access  public
+    * @param   string $s
+    * @return  string
+    *
+    * @author Julien Casanova <julien_casanova AT yahoo DOT fr>
+    */
+    function camelise($s)
+    {
+        $ret = '';
+        $i = 0;
+
+        $s = preg_replace('!\s+!', ' ', $s);
+        $s = trim($s);
+        $aString = explode(' ', $s);
+        foreach ($aString as $value) {
+            if ($i == 0) {
+                $ret .= strtolower($value);
+            } else {
+                $ret .= ucfirst(strtolower($value));
+            }
+            $i++;
+        }
+        return $ret;
+    }
+
     function getTitleFromCamelCase($camelCaseWord)
     {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {

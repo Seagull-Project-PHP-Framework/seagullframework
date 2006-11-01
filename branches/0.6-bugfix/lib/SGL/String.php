@@ -561,34 +561,6 @@ class SGL_String
          return $s;
     }
 
-   /**
-    * Converts "string with spaces" to "camelCase" string.
-    *
-    * @access  public
-    * @param   string $s
-    * @return  string
-    *
-    * @author Julien Casanova <julien_casanova AT yahoo DOT fr>
-    */
-    function camelise($s)
-    {
-        $ret = '';
-        $i = 0;
-
-        $s = preg_replace('!\s+!', ' ', $s);
-        $s = trim($s);
-        $aString = explode(' ', $s);
-        foreach ($aString as $value) {
-            if ($i == 0) {
-                $ret .= strtolower($value);
-            } else {
-                $ret .= ucfirst(strtolower($value));
-            }
-            $i++;
-        }
-        return $ret;
-    }
-
     function convertHighAscii($s)
     {
         // Seems to be for Latin-1 (ISO-8859-1) and quite limited (no ae/oe, no y:/Y:, etc.)
