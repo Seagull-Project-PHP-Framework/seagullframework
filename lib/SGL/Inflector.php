@@ -212,6 +212,19 @@ class SGL_Inflector
     }
 
     /**
+     * Returns a human-readable string from $lower_case_and_underscored_word,
+     * by replacing underscores with a space, and by upper-casing the initial characters.
+     *
+     * @param string $lower_case_and_underscored_word String to be made more readable
+     * @return string Human-readable string
+     */
+	function humanize($lowerCaseAndUnderscoredWord)
+	{
+		$replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+		return $replace;
+	}
+
+    /**
      * Makes up for case insensitive classnames in php4 with get_class().
      *
      * @access   public
