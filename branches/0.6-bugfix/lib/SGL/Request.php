@@ -125,6 +125,7 @@ class SGL_Request
             SGL::logMessage('URI parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
+
         if (PEAR::isError($aQueryData)) {
             return $aQueryData;
         }
@@ -256,7 +257,6 @@ class SGL_Request
                     : $key . '/' . $value . '/';
             }
         }
-
         // remove trailing slash
         $uri = preg_replace('/\/$/','',$uri);
 
