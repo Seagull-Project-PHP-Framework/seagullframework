@@ -109,13 +109,20 @@ class SGL_Services_REST_Client
     function _getRequest($verb, $params = array())
     {
         $url = sprintf('%s/action/%s', $this->_apiUrl, $verb);
+        $string = '';
         foreach ($params as $key => $value) {
             if (is_array($value)) {
-            	$value = implode(' ', $value);
+                foreach ($value as $k => $v) {
+            	   $string .= $key . '['.$k.']/' .urlencode($v) .'/';
+                }
+                $value = $string;
             }
-        	$url = $url . '/' . $key . '/' . urlencode($value);
+            $append = (strlen($string))
+                ? $value
+                : $key . '/' . urlencode($value);
+            $string = '';
+        	$url = $url . '/' . $append;
         }
-
         $request = &new HTTP_Request($url);
         if (!empty($this->_user) && !empty($this->_passwd)) {
             $request->setBasicAuth($this->_user, $this->_passwd);

@@ -110,7 +110,7 @@ class SGL_String
 
         if (defined(PHP_EOL)) {
             $crlf = PHP_EOL;
-        } else {
+        } elseif (defined('SGL_CLIENT_OS')) {
             // Win case
             if (SGL_CLIENT_OS == 'Win') {
                 $crlf = "\r\n";
@@ -121,6 +121,8 @@ class SGL_String
             } else {
                 $crlf = "\n";
             }
+        } else {
+            $crlf = "\n";
         }
         return $crlf;
     }
