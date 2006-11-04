@@ -64,6 +64,10 @@ class SGL_Services_REST_Client
 
     var $_entityName = '';
 
+    var $_responseXml = '';
+
+    var $_getRequest = '';
+
     /**
      * Constructor.
      *
@@ -123,6 +127,7 @@ class SGL_Services_REST_Client
             $string = '';
         	$url = $url . '/' . $append;
         }
+        $this->_getRequest = $url;
         $request = &new HTTP_Request($url);
         if (!empty($this->_user) && !empty($this->_passwd)) {
             $request->setBasicAuth($this->_user, $this->_passwd);
@@ -178,7 +183,7 @@ class SGL_Services_REST_Client
 
     function _processResponse($request)
     {
-        $xml = $request->getResponseBody();
+        $xml = $this->_responseXml = $request->getResponseBody();
 
         if (!is_object($this->_us)) {
         	$this->_us = &new XML_Unserializer();
@@ -193,6 +198,16 @@ class SGL_Services_REST_Client
         }
         $data = $this->_us->getUnserializedData();
         return $data;
+    }
+
+    function getResponseXml()
+    {
+        return $this->_responseXml;
+    }
+
+    function getRawRequest()
+    {
+        return $this->_getRequest;
     }
 
     function getKeysToIgnore()
