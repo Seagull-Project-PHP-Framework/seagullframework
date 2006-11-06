@@ -121,6 +121,10 @@ class SGL_Services_REST_Client
                 }
                 $value = $string;
             }
+            //  remove extra slash if exists
+            if (substr($value, -1, 1) == '/') {
+                $value = substr($value, 0, (strlen($value) -1));
+            }
             $append = (strlen($string))
                 ? $value
                 : $key . '/' . urlencode($value);
