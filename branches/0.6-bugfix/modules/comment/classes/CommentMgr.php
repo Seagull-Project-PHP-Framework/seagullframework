@@ -39,6 +39,7 @@
 // $Id: ManagerTemplate.html,v 1.2 2005/04/17 02:15:02 demian Exp $
 
 require_once 'Validate.php';
+require_once 'DB/DataObject.php';
 
 /**
  * Associate comments with any content type.
