@@ -219,6 +219,22 @@ li {
 }
 
 /*
+===============Generic columns presentation===================*/
+.two-cols {
+    height: 100%;
+    overflow: hidden;
+}
+.two-cols .col {
+    float : left;
+	width : 49%;
+	margin-left : 1%;
+}
+.two-cols .first {
+	width : 50%;
+	margin-left : 0;
+}
+
+/*
 ==================Default Forms Styling=======================*/
 
 fieldset {
@@ -239,7 +255,7 @@ fieldset h3 {
 }
 
 #content form li {
-    display: inline-block;
+    display: block;
     margin: 0;
     padding: 1px 4px 6px 9px;
     line-height: 1.8em;
@@ -369,60 +385,63 @@ div.fieldsetlike h3 {
 
 /*
 ==================Default Tables Styling======================*/
+/*  In a transition period, we'll use a sglTable class to style tables
+    Everyone is encouraged not to use tables for layout purposes
+    TODO: remove this when all layout tables have been replaced */
+.wide {
+    width: 60%;
+}
+.large {
+    width: 85%;
+}
 table {
-    margin: 0;
-    padding: 0;
-    border: 0;
+    margin: 0 0 1em;
     border-collapse: collapse;
-    font-size: 1.1em;
-    border: 1px solid #CCCCCC !important;
+    font-size: 1em;
 }
-td, th {
-    padding: 2px 3px;
+table .nowrap {
+    white-space: nowrap;
 }
-
-tr th {
-    padding-top: 4px;
-    padding-bottom: 5px;
-    border-left: 1px solid #CCC;
-    border-right: 1px solid #CCC;
+.sglTable td, .sglTable th {
+    border-width : 0 0 1px 0;
+	border-style : solid;
+	border-color : <?php echo $grey ?>;
+	padding : 2px 5px;
+	vertical-align : top;
 }
-tr th, tr th.action:hover {
-    /*background: #fff url('<?php echo $baseUrl ?>/images/th.gif') left bottom repeat-x;*/
+.sglTable th {
+    text-align: left;
+    border-bottom-color: <?php echo $greyDark ?>;
 }
-tr th:hover {
-    background: #fff url('<?php echo $baseUrl ?>/images/th-hover.gif') left bottom repeat-x;
-}
-tr th, tr td, tr th a {
-    font-size: 0.9em;
+th a {
+    display: block;
     color: #666 !important;
 }
-tr th a {
-    display: block;
+tr.expand td {
+    border-bottom: none;
 }
-tr th.sortedAsc a {
+td.expand {
+    padding: 1em 5px;
+}
+th.sortedAsc a {
     background: url('<?php echo $baseUrl ?>/images/th-sortAsc.gif') 95% 50% no-repeat;
     color: <?php echo $primaryDark ?> !important;
 }
-tr th.sortedDesc a {
+th.sortedDesc a {
     background: url('<?php echo $baseUrl ?>/images/th-sortDesc.gif') 95% 50% no-repeat;
     color: <?php echo $primaryDark ?> !important;
 }
-tr th a:hover {
+th a:hover {
     text-decoration: none;
     color: <?php echo $primaryDark ?> !important;
 }
-tr td {
-    background: #FFF;
-    /*border: 1px solid #F6F5F2;*/
-}
-tr.alternateRow td {
+tr.alternateRow td, tr.backDark {
     background-color: #FBFFEF; /*F0FFD9*/
 }
 tr.selectedRow td {
     background: #F6F5F2; /*D0DCE0*/
 }
-tr.rowHover td {
+tr.rowHover td, tr:hover td {
   background: #F0FFD9; /*E0EFB8*/
 }
 
