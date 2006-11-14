@@ -32,7 +32,7 @@
 // | Author: Richard Heyes <richard@phpguru.org>                           |
 // +-----------------------------------------------------------------------+
 //
-// $Id: Request.php,v 1.43 2005/11/06 18:29:14 avb Exp $
+// $Id: Request.php,v 1.51 2006/10/25 16:23:31 avb Exp $
 //
 // HTTP_Request Class
 //
@@ -237,7 +237,6 @@ class HTTP_Request {
     */
     function HTTP_Request($url = '', $params = array())
     {
-        $this->_sock           = &new Net_Socket();
         $this->_method         =  HTTP_REQUEST_METHOD_GET;
         $this->_http           =  HTTP_REQUEST_HTTP_VER_1_1;
         $this->_requestHeaders = array();
@@ -270,12 +269,17 @@ class HTTP_Request {
         // Default useragent
         $this->addHeader('User-Agent', 'PEAR HTTP_Request class ( http://pear.php.net/ )');
 
-        // Make sure keepalives dont knobble us
+        // We don't do keep-alives by default
         $this->addHeader('Connection', 'close');
 
         // Basic authentication
         if (!empty($this->_user)) {
             $this->addHeader('Authorization', 'Basic ' . base64_encode($this->_user . ':' . $this->_pass));
+        }
+
+        // Proxy authentication (see bug #5913)
+        if (!empty($this->_proxy_user)) {
+            $this->addHeader('Proxy-Authorization', 'Basic ' . base64_encode($this->_proxy_user . ':' . $this->_proxy_pass));
         }
 
         // Use gzip encoding if possible
@@ -343,8 +347,24 @@ class HTTP_Request {
         if (HTTP_REQUEST_HTTP_VER_1_1 == $this->_http) {
             $this->addHeader('Host', $this->_generateHostHeader());
         }
+
+        // set '/' instead of empty path rather than check later (see bug #8662)
+        if (empty($this->_url->path)) {
+            $this->_url->path = '/';
+        } 
     }
     
+   /**
+    * Returns the current request URL  
+    *
+    * @return   string  Current request URL
+    * @access   public
+    */
+    function getUrl($url)
+    {
+        return empty($this->_url)? '': $this->_url->getUrl();
+    }
+
     /**
     * Sets a proxy to be used
     *
@@ -527,7 +547,7 @@ class HTTP_Request {
     * @param string     The data
     * @param bool       Whether data is preencoded or not, default = already encoded
     * @access public
-    * @deprecated       deprecated since 1.3.0, method addBody() should be used instead
+    * @deprecated       deprecated since 1.3.0, method setBody() should be used instead
     */
     function addRawPostData($postdata, $preencoded = true)
     {
@@ -614,9 +634,31 @@ class HTTP_Request {
         $magicQuotes = ini_get('magic_quotes_runtime');
         ini_set('magic_quotes_runtime', false);
 
-        // If this is a second request, we may get away without
-        // re-connecting if they're on the same server
-        $err = $this->_sock->connect($host, $port, null, $this->_timeout, $this->_socketOptions);
+        // RFC 2068, section 19.7.1: A client MUST NOT send the Keep-Alive 
+        // connection token to a proxy server...
+        if (isset($this->_proxy_host) && !empty($this->_requestHeaders['connection']) &&
+            'Keep-Alive' == $this->_requestHeaders['connection'])
+        {
+            $this->removeHeader('connection');
+        }
+
+        $keepAlive = (HTTP_REQUEST_HTTP_VER_1_1 == $this->_http && empty($this->_requestHeaders['connection'])) ||
+                     (!empty($this->_requestHeaders['connection']) && 'Keep-Alive' == $this->_requestHeaders['connection']);
+        $sockets   = &PEAR::getStaticProperty('HTTP_Request', 'sockets');
+        $sockKey   = $host . ':' . $port;
+        unset($this->_sock);
+
+        // There is a connected socket in the "static" property?
+        if ($keepAlive && !empty($sockets[$sockKey]) &&
+            !empty($sockets[$sockKey]->fp)) 
+        {
+            $this->_sock =& $sockets[$sockKey];
+            $err = null;
+        } else {
+            $this->_notify('connect');
+            $this->_sock =& new Net_Socket();
+            $err = $this->_sock->connect($host, $port, null, $this->_timeout, $this->_socketOptions);
+        }
         PEAR::isError($err) or $err = $this->_sock->write($this->_buildRequest());
 
         if (!PEAR::isError($err)) {
@@ -628,7 +670,23 @@ class HTTP_Request {
 
             // Read the response
             $this->_response = &new HTTP_Response($this->_sock, $this->_listeners);
-            $err = $this->_response->process($this->_saveBody && $saveBody);
+            $err = $this->_response->process(
+                $this->_saveBody && $saveBody,
+                HTTP_REQUEST_METHOD_HEAD != $this->_method
+            );
+
+            if ($keepAlive) {
+                $keepAlive = (isset($this->_response->_headers['content-length'])
+                              || (isset($this->_response->_headers['transfer-encoding'])
+                                  && strtolower($this->_response->_headers['transfer-encoding']) == 'chunked'));
+                if ($keepAlive) {
+                    if (isset($this->_response->_headers['connection'])) {
+                        $keepAlive = strtolower($this->_response->_headers['connection']) == 'keep-alive';
+                    } else {
+                        $keepAlive = 'HTTP/'.HTTP_REQUEST_HTTP_VER_1_1 == $this->_response->_protocol;
+                    }
+                }
+            }
         }
 
         ini_set('magic_quotes_runtime', $magicQuotes);
@@ -637,6 +695,12 @@ class HTTP_Request {
             return $err;
         }
 
+        if (!$keepAlive) {
+            $this->disconnect();
+        // Store the connected socket in "static" property
+        } elseif (empty($sockets[$sockKey]) || empty($sockets[$sockKey]->fp)) {
+            $sockets[$sockKey] =& $this->_sock;
+        }
 
         // Check for redirection
         if (    $this->_allowRedirects
@@ -684,9 +748,20 @@ class HTTP_Request {
             return PEAR::raiseError('Too many redirects');
         }
 
-        $this->_sock->disconnect();
-
         return true;
+    }
+
+    /**
+     * Disconnect the socket, if connected. Only useful if using Keep-Alive.
+     *
+     * @access public
+     */
+    function disconnect()
+    {
+        if (!empty($this->_sock) && !empty($this->_sock->fp)) {
+            $this->_notify('disconnect');
+            $this->_sock->disconnect();
+        }
     }
 
     /**
@@ -755,15 +830,15 @@ class HTTP_Request {
 
         $host = isset($this->_proxy_host) ? $this->_url->protocol . '://' . $this->_url->host : '';
         $port = (isset($this->_proxy_host) AND $this->_url->port != 80) ? ':' . $this->_url->port : '';
-        $path = (empty($this->_url->path)? '/': $this->_url->path) . $querystring;
+        $path = $this->_url->path . $querystring;
         $url  = $host . $port . $path;
 
         $request = $this->_method . ' ' . $url . ' HTTP/' . $this->_http . "\r\n";
 
         if (in_array($this->_method, $this->_bodyDisallowed) ||
-            (HTTP_REQUEST_METHOD_POST != $this->_method && empty($this->_body)) ||
-            (HTTP_REQUEST_METHOD_POST != $this->_method && empty($this->_postData) && empty($this->_postFiles))) {
-
+            (empty($this->_body) && (HTTP_REQUEST_METHOD_POST != $this->_method ||
+             (empty($this->_postData) && empty($this->_postFiles)))))
+        {
             $this->removeHeader('Content-Type');
         } else {
             if (empty($this->_requestHeaders['content-type'])) {
@@ -915,12 +990,15 @@ class HTTP_Request {
     * Notifies all registered listeners of an event.
     * 
     * Events sent by HTTP_Request object
-    * 'sentRequest': after the request was sent
+    * - 'connect': on connection to server
+    * - 'sentRequest': after the request was sent
+    * - 'disconnect': on disconnection from server
+    * 
     * Events sent by HTTP_Response object
-    * 'gotHeaders': after receiving response headers (headers are passed in $data)
-    * 'tick': on receiving a part of response body (the part is passed in $data)
-    * 'gzTick': on receiving a gzip-encoded part of response body (ditto)
-    * 'gotBody': after receiving the response body (passes the decoded body in $data if it was gzipped)
+    * - 'gotHeaders': after receiving response headers (headers are passed in $data)
+    * - 'tick': on receiving a part of response body (the part is passed in $data)
+    * - 'gzTick': on receiving a gzip-encoded part of response body (ditto)
+    * - 'gotBody': after receiving the response body (passes the decoded body in $data if it was gzipped)
     * 
     * @param    string  Event name
     * @param    mixed   Additional data
@@ -988,6 +1066,12 @@ class HTTP_Response
     */
     var $_listeners = array();
 
+   /**
+    * Bytes left to read from message-body
+    * @var null|int
+    */
+    var $_toRead;
+
     /**
     * Constructor
     *
@@ -1012,10 +1096,12 @@ class HTTP_Response
     * @param  bool      Whether to store response body in object property, set
     *                   this to false if downloading a LARGE file and using a Listener.
     *                   This is assumed to be true if body is gzip-encoded.
+    * @param  bool      Whether the response can actually have a message-body.
+    *                   Will be set to false for HEAD requests.
     * @throws PEAR_Error
     * @return mixed     true on success, PEAR_Error in case of malformed response
     */
-    function process($saveBody = true)
+    function process($saveBody = true, $canHaveBody = true)
     {
         do {
             $line = $this->_sock->readLine();
@@ -1032,16 +1118,35 @@ class HTTP_Response
 
         $this->_notify('gotHeaders', $this->_headers);
 
+        // RFC 2616, section 4.4:
+        // 1. Any response message which "MUST NOT" include a message-body ... 
+        // is always terminated by the first empty line after the header fields 
+        // 3. ... If a message is received with both a
+        // Transfer-Encoding header field and a Content-Length header field,
+        // the latter MUST be ignored.
+        $canHaveBody = $canHaveBody && $this->_code >= 200 && 
+                       $this->_code != 204 && $this->_code != 304;
+
         // If response body is present, read it and decode
         $chunked = isset($this->_headers['transfer-encoding']) && ('chunked' == $this->_headers['transfer-encoding']);
         $gzipped = isset($this->_headers['content-encoding']) && ('gzip' == $this->_headers['content-encoding']);
         $hasBody = false;
-        if (!isset($this->_headers['content-length']) || 0 != $this->_headers['content-length']) {
-            while (!$this->_sock->eof()) {
+        if ($canHaveBody && ($chunked || !isset($this->_headers['content-length']) || 
+                0 != $this->_headers['content-length']))
+        {
+            if ($chunked || !isset($this->_headers['content-length'])) {
+                $this->_toRead = null;
+            } else {
+                $this->_toRead = $this->_headers['content-length'];
+            }
+            while (!$this->_sock->eof() && (is_null($this->_toRead) || 0 < $this->_toRead)) {
                 if ($chunked) {
                     $data = $this->_readChunked();
-                } else {
+                } elseif (is_null($this->_toRead)) {
                     $data = $this->_sock->read(4096);
+                } else {
+                    $data = $this->_sock->read(min(4096, $this->_toRead));
+                    $this->_toRead -= strlen($data);
                 }
                 if ('' == $data) {
                     break;
@@ -1054,10 +1159,15 @@ class HTTP_Response
                 }
             }
         }
+
         if ($hasBody) {
             // Uncompress the body if needed
             if ($gzipped) {
-                $this->_body = gzinflate(substr($this->_body, 10));
+                $body = $this->_decodeGzip($this->_body);
+                if (PEAR::isError($body)) {
+                    return $body;
+                }
+                $this->_body = $body;
                 $this->_notify('gotBody', $this->_body);
             } else {
                 $this->_notify('gotBody');
@@ -1075,6 +1185,9 @@ class HTTP_Response
     */
     function _processHeader($header)
     {
+        if (false === strpos($header, ':')) {
+            return;
+        }
         list($headername, $headervalue) = explode(':', $header, 2);
         $headername  = strtolower($headername);
         $headervalue = ltrim($headervalue);
@@ -1186,6 +1299,98 @@ class HTTP_Response
         foreach (array_keys($this->_listeners) as $id) {
             $this->_listeners[$id]->update($this, $event, $data);
         }
+    }
+
+
+   /**
+    * Decodes the message-body encoded by gzip
+    *
+    * The real decoding work is done by gzinflate() built-in function, this
+    * method only parses the header and checks data for compliance with
+    * RFC 1952  
+    *
+    * @access   private
+    * @param    string  gzip-encoded data
+    * @return   string  decoded data
+    */
+    function _decodeGzip($data)
+    {
+        $length = strlen($data);
+        // If it doesn't look like gzip-encoded data, don't bother
+        if (18 > $length || strcmp(substr($data, 0, 2), "\x1f\x8b")) {
+            return $data;
+        }
+        $method = ord(substr($data, 2, 1));
+        if (8 != $method) {
+            return PEAR::raiseError('_decodeGzip(): unknown compression method');
+        }
+        $flags = ord(substr($data, 3, 1));
+        if ($flags & 224) {
+            return PEAR::raiseError('_decodeGzip(): reserved bits are set');
+        }
+
+        // header is 10 bytes minimum. may be longer, though.
+        $headerLength = 10;
+        // extra fields, need to skip 'em
+        if ($flags & 4) {
+            if ($length - $headerLength - 2 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $extraLength = unpack('v', substr($data, 10, 2));
+            if ($length - $headerLength - 2 - $extraLength[1] < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $headerLength += $extraLength[1] + 2;
+        }
+        // file name, need to skip that
+        if ($flags & 8) {
+            if ($length - $headerLength - 1 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $filenameLength = strpos(substr($data, $headerLength), chr(0));
+            if (false === $filenameLength || $length - $headerLength - $filenameLength - 1 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $headerLength += $filenameLength + 1;
+        }
+        // comment, need to skip that also
+        if ($flags & 16) {
+            if ($length - $headerLength - 1 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $commentLength = strpos(substr($data, $headerLength), chr(0));
+            if (false === $commentLength || $length - $headerLength - $commentLength - 1 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $headerLength += $commentLength + 1;
+        }
+        // have a CRC for header. let's check
+        if ($flags & 1) {
+            if ($length - $headerLength - 2 < 8) {
+                return PEAR::raiseError('_decodeGzip(): data too short');
+            }
+            $crcReal   = 0xffff & crc32(substr($data, 0, $headerLength));
+            $crcStored = unpack('v', substr($data, $headerLength, 2));
+            if ($crcReal != $crcStored[1]) {
+                return PEAR::raiseError('_decodeGzip(): header CRC check failed');
+            }
+            $headerLength += 2;
+        }
+        // unpacked data CRC and size at the end of encoded data
+        $tmp = unpack('V2', substr($data, -8));
+        $dataCrc  = $tmp[1];
+        $dataSize = $tmp[2];
+
+        // finally, call the gzinflate() function
+        $unpacked = @gzinflate(substr($data, $headerLength, -8), $dataSize);
+        if (false === $unpacked) {
+            return PEAR::raiseError('_decodeGzip(): gzinflate() call failed');
+        } elseif ($dataSize != strlen($unpacked)) {
+            return PEAR::raiseError('_decodeGzip(): data size check failed');
+        } elseif ($dataCrc != crc32($unpacked)) {
+            return PEAR::raiseError('_decodeGzip(): data CRC check failed');
+        }
+        return $unpacked;
     }
 } // End class HTTP_Response
 ?>
