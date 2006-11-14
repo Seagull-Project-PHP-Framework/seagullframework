@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: PHPArray.php,v 1.28 2006/05/30 06:37:28 aashley Exp $
+// $Id: PHPArray.php,v 1.29 2006/10/20 03:13:35 aashley Exp $
 
 /**
 * Config parser for common PHP configuration array
@@ -211,19 +211,18 @@ class Config_Container_PHPArray {
     {
         $string = '';
         if (!$obj->isRoot()) {
-            if (!$obj->parent->isRoot()) {
-                $string = is_int($obj->name) ? "[".$obj->name."]" : "['".$obj->name."']";
-            } else {
-                if (empty($this->options['name'])) {
-                    $string .= '$'.$obj->name;
-                } else {
-                    $string .= '$'.$this->options['name']."['".$obj->name."']";
-                }
-            }
+            $string = is_int($obj->name) ? "[".$obj->name."]" : "['".$obj->name."']";
             $string = $this->_getParentString($obj->parent).$string;
             $count = $obj->parent->countChildren(null, $obj->name);
             if ($count > 1) {
                 $string .= '['.$obj->getItemPosition(false).']';
+            }
+        }
+        else {
+            if (empty($this->options['name'])) {
+                $string .= '$'.$obj->name;
+            } else {
+                $string .= '$'.$this->options['name'];
             }
         }
         return $string;
