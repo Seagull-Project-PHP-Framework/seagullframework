@@ -63,7 +63,8 @@ class FileMgr extends SGL_Manager
         //  form vars
         $input->action          = $req->get('action');
         $input->submit          = $req->get('submit');
-        $input->assetID         = $req->get('frmAssetID');
+        $input->mediaId         = $req->get('frmMediaId');
+        $input->mediaSize       = $req->get('frmSize');
     }
 
     function _cmd_download(&$input, &$output)
