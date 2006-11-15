@@ -39,6 +39,8 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
+require_once STR_PATH . '/lib/SGL.php';
+
 /**
  * A class for locating test files in different ways.
  *
@@ -76,7 +78,7 @@ class STR_FileScanner
         $dh = @opendir($folder . '/' . constant($type . '_TEST_STORE'));
         if ($dh) {
             while (($file = readdir($dh)) !== false) {
-                
+
                 // Does the filename match?
                 if (preg_match("/[^.]+\.$code\.php/", $file)) {
                     // Strip the STR_PATH from the folder before storing
@@ -89,9 +91,20 @@ class STR_FileScanner
                 asort($files[$storeFolder]);
             }
         }
+        //  filter out disabled modules
+        if (count($files)) {
+            foreach ($files as $key => $tests) {
+                if (stristr($key, 'modules')) {
+                    $moduleName = substr($key, 8);
+                    if (!SGL::moduleIsEnabled($moduleName)) {
+                        unset($files[$key]);
+                    }
+                }
+            }
+        }
         return $files;
     }
-    
+
     /**
      * A method to get all test files in the Max project for a specified layer.
      *
@@ -107,23 +120,23 @@ class STR_FileScanner
             if (empty($tests[$layer])) {
                 $tests[$layer] = array();
             }
-            $tests[$layer] = array_merge($tests[$layer], 
+            $tests[$layer] = array_merge($tests[$layer],
                 STR_FileScanner::getTestFiles($type, $layer, STR_PATH.'/'.$path));
         }
         return $tests;
     }
-    
-    
+
+
 //    function getTestFiles($type, $code, $folder)
 //    {
 //        require_once 'File/Util.php';
 //        //  match all folders except SVN
-//        $ret = STR_FileScanner::listDir($folder, FILE_LIST_DIRS, $sort = FILE_SORT_NONE, 
+//        $ret = STR_FileScanner::listDir($folder, FILE_LIST_DIRS, $sort = FILE_SORT_NONE,
 //                create_function('$a', 'return preg_match("/[^\.svn]/", $a);'));
 //        return $ret;
 //    }
-    
-    
+
+
     /**
      * A method to get all test files in the Max project.
      *
@@ -139,24 +152,24 @@ class STR_FileScanner
                 if (empty($tests[$layer])) {
                     $tests[$layer] = array();
                 }
-                $tests[$layer] = array_merge($tests[$layer], 
+                $tests[$layer] = array_merge($tests[$layer],
                     STR_FileScanner::getTestFiles($type, $layer, STR_PATH.'/'.$path.''));
             }
         }
         return $tests;
     }
-    
+
     /**
      * Wrapper for the File_Util::listDir method.
-     * 
+     *
      * Instead of returning an array of objects, it returns an array of
      * strings (filenames).
-     * 
+     *
      * The final argument, $cb, is a callback that either evaluates to true or
-     * false and performs a filter operation, or it can also modify the 
-     * directory/file names returned.  To achieve the latter effect use as 
+     * false and performs a filter operation, or it can also modify the
+     * directory/file names returned.  To achieve the latter effect use as
      * follows:
-     * 
+     *
      * <code>
      * function uc(&$filename) {
      *     $filename = strtoupper($filename);
@@ -167,7 +180,7 @@ class STR_FileScanner
      *     echo $e->name, "\n";
      * }
      * </code>
-     * 
+     *
      * @static
      * @access  public
      * @return  array
