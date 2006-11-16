@@ -851,8 +851,8 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['adminGuiAllowed']) {
                 $adminGuiRequested = true;
 
-                //  check for adminGUI override in action
-                if (isset($output->adminGuiAllowed) && !$output->adminGuiAllowed) {
+                // 1. allows to preview articles with default theme
+                if ($mgrName == 'ArticleMgr' && $output->action == 'view') {
                     $adminGuiRequested = false;
                 }
             }

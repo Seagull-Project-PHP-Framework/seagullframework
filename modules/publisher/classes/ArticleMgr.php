@@ -398,7 +398,6 @@ class ArticleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->masterTemplate = 'masterBlank.html';
         $output->template = 'preview.html';
-        $output->adminGuiAllowed = false;
         $output->leadArticle = SGL_Item::getItemDetail($input->articleID);
     }
 
