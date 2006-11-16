@@ -583,7 +583,7 @@ pre.codeExample {
 .tipOwner {
     position: relative;
     cursor: help;
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE7', '<')) { ?>
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
     <?php } ?>
 }
@@ -599,9 +599,9 @@ pre.codeExample {
     text-align: center;
     width: 15em;
     padding: 2px 5px;
-    <?php if ($browserFamily == 'Gecko') {?>
+    <?php if (isBrowserFamily('Gecko')) { ?>
     -moz-opacity: 0.85;
-    <?php } else if ($browserFamily == 'MSIE') {?>
+    <?php } else if (isBrowserFamily('MSIE')) { ?>
     filter: alpha(opacity=85);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=85);
     <?php } ?>
