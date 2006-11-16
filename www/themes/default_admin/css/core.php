@@ -78,6 +78,9 @@ a.narrow, input.narrow {
     max-width: 1280px;
     margin: 0 auto;
     text-align: left;
+<?php if (isBrowserFamily('MSIE7', '<')) { ?>
+    width: expression((documentElement.clientWidth || document.body.clientWidth) > 740 ? "auto" : "740px");
+<?php } ?>
 }
 #header {
     position: relative;
@@ -515,7 +518,7 @@ span.tipOwner span.tipText, label.tipOwner span.tipText, input.tipOwner span.tip
     padding: 2px 5px;
     -moz-opacity: 1;
     z-index: 100;
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE')) { ?>
     filter: alpha(opacity=100);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=100);
     <?php } ?>
@@ -523,7 +526,7 @@ span.tipOwner span.tipText, label.tipOwner span.tipText, input.tipOwner span.tip
 span.tipOwner:hover span.tipText, label.tipOwner:hover span.tipText, input.tipOwner:hover span.tipText {
     display: block;
 }
-<?php if ($browserFamily == 'MSIE') {?>
+<?php if (isBrowserFamily('MSIE7', '<')) { ?>
 /* IE javascript workaround */
 span.tipOwner, label.tipOwner, input.tipOwner {
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
@@ -633,7 +636,7 @@ div#categoryNav {
     border-color: <?php echo $primary ?>;
     border-width: 1px 2px 2px 1px;
     z-index: 100;
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE')) { ?>
     filter: alpha(opacity=90);
     <?php } else { ?>
     -moz-opacity: 0.9;

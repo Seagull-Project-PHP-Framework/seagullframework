@@ -50,7 +50,7 @@
      * http://www.svendtofte.com/code/max_width_in_ie/, using the IE5.0+ dynamic
      * properties syntax, see
      * http://msdn.microsoft.com/workshop/author/dhtml/overview/recalc.asp */
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE')) { ?>
     width: expression(document.body.clientWidth);
     <?php } ?>
     padding: 0;

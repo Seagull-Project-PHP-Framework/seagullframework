@@ -43,6 +43,8 @@
 
     ////////////////////////////   DO NOT MODIFY   /////////////////////////////
 
+    require_once '../../helpers.php';
+
     // send default cacheing headers and content type
     header('Pragma: cache');
     header('Cache-Control: public');
@@ -97,20 +99,6 @@
      */
     $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
-
-    // get browser family
-    $browserFamily = 'None';
-    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-
-    if (!empty($ua)) {
-        if (strstr($ua, 'Opera')) {
-            $browserFamily = 'Opera';
-        } elseif (strstr($ua, 'MSIE')) {
-            $browserFamily = 'MSIE';
-        } else {
-            $browserFamily = 'Gecko';
-        }
-    }
 
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);
