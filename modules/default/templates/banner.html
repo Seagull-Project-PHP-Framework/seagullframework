@@ -35,10 +35,8 @@
                     {valueObj.content:h}
                 {end:}
                 </div>
-                {if:!isMinimalInstall}
-                <div id="lang-switcher">
-                    {getLangSwitcher(currUrl,webRoot,theme):h}
-                </div>
+                {foreach:blocksBodyTop,key,valueObj}
+                    {valueObj.content:h}
                 {end:}
                 <div class="spacer">&nbsp;</div>
             </div>
