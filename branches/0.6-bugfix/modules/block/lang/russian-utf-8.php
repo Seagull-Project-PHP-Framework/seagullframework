@@ -112,6 +112,9 @@ $words = array(
 
     // html block
     'Html text' => 'HTML текст',
+
+    // LangSwitcher2 block
+    'Image extension for flags' => 'Расширение картинок для флагов',
 );
 
 ?>
