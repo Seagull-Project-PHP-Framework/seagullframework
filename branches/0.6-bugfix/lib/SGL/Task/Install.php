@@ -475,7 +475,8 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                             $c->remove(array('table', $tableName));
                         }
                         //  save
-                        $ok = $c->save();
+                        $fileName = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+                        $ok = $c->save($fileName);
 
                         if (PEAR::isError($ok)) {
                             SGL_Install_Common::errorPush($ok);
@@ -829,10 +830,6 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 ? implode(',', str_replace('-', '_', $data['installLangs']))
                 : '';
             $c->set('translation', array('installedLanguages' => $langString));
-            $ok = $c->save();
-            if (PEAR::isError($ok)) {
-                SGL_Install_Common::errorPush($ok);
-            }
 
             //  iterate through languages adding to langs table
             foreach ($data['installLangs'] as $aLang) {
@@ -888,11 +885,15 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         } else {
             //  set installed languages
             $installedLangs = (is_array($aLangOptions))
-                ? implode(',', str_replace('-', '_', array_keys($aLangOptions)))
+                ? str_replace('-', '_', implode(',', array_keys($aLangOptions)))
                 : '';
 
             $c->set('translation', array('installedLanguages' => $installedLangs));
-            $ok = $c->save();
+        }
+        $fileName = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $ok = $c->save($fileName);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush($ok);
         }
     }
 }
