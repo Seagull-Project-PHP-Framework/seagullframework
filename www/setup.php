@@ -199,8 +199,15 @@ class ActionProcess extends HTML_QuickForm_Action
             $res = $dbh->getOne($query);
         }
 
-        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
+        if (!PEAR::isError($res) && $res > 1) { // it's a re-install
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
+            if (count($data['aModuleList'])) {
+                foreach ($data['aModuleList'] as $key => $moduleName) {
+                    if (!SGL::moduleIsEnabled($moduleName)) {
+                        unset($data['aModuleList'][$key]);
+                    }
+                }
+            }
         } elseif (PEAR::isError($dbh)) { // a new install
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
             SGL_Error::pop();
