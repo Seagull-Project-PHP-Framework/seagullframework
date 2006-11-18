@@ -482,29 +482,22 @@ class DA_Navigation extends SGL_Manager
             }
         }
 
-        //  add translation
-        if ($this->conf['translation']['container'] == 'db') {
-            //  fetch translation id
-            $req        = & SGL_Request::singleton();
-            $moduleName = 'translation_' . $req->getModuleName();
-            $transId    = $this->dbh->nextID($moduleName);
-
-            //  fetch fallback lang
-            $lang = SGL_Translation::getFallbackLangID();
-
-            //  insert translation
-            $ok   = $this->trans->add($transId, 'nav', array($lang => $section['title']));
-
-            //  set translation id for nav title
-            $section['trans_id'] = $transId;
-        }
-
         if ($section['parent_id'] == 0) {    //  they want a root node
             $nodeId = $this->nestedSet->createRootNode($section);
         } elseif ((int)$section['parent_id'] > 0) { //    they want a sub node
             $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
         } else { //  error
             return false;
+        }
+
+        //  add translation
+        if ($this->conf['translation']['container'] == 'db') {
+            //  fetch fallback lang
+            $lang = SGL_Translation::getFallbackLangID();
+            //  insert translation
+            $ok = $this->trans->add($nodeId, 'nav', array($lang => $section['title']));
+            //  update trans_id
+            $this->nestedSet->updateNode($nodeId, array('trans_id' => $nodeId));
         }
 
         //  deal with potential alias to add
