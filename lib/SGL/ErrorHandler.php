@@ -198,9 +198,15 @@ EOL;
                 $aExtraInfo['clientData']['HTTP_REFERER'] = isset($_SERVER['HTTP_REFERER'])
                     ? $_SERVER['HTTP_REFERER']
                     : null;
-                $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
-                $aExtraInfo['clientData']['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-                $aExtraInfo['clientData']['SERVER_PORT'] = $_SERVER['SERVER_PORT'];
+                $aExtraInfo['clientData']['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT'])
+                    ? $_SERVER['HTTP_USER_AGENT']
+                    : null;
+                $aExtraInfo['clientData']['REMOTE_ADDR'] = isset($_SERVER['REMOTE_ADDR'])
+                    ? $_SERVER['REMOTE_ADDR']
+                    : null; 
+                $aExtraInfo['clientData']['SERVER_PORT'] = isset($_SERVER['SERVER_PORT'])
+                    ? $_SERVER['SERVER_PORT']
+                    : null;
 
                 //  store formatted output
                 ob_start();
