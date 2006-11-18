@@ -277,11 +277,7 @@ class SGL_Item
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         for ($x=0; $x < count($itemID); $x++) {
-            $id = $this->dbh->nextId($this->conf['table']['item_addition']);
-
-            $req        = & SGL_Request::singleton();
-            $moduleName = 'translation_' . $req->getModuleName();
-            $transID    = $this->dbh->nextID($moduleName);
+            $id = $transID = $this->dbh->nextId($this->conf['table']['item_addition']);
 
             if ($itemValue[$x] == '') {
                 $itemValue[$x] = SGL_String::translate('No other text entered');
