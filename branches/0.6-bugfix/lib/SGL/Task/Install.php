@@ -91,8 +91,10 @@ class SGL_Task_CreateConfig extends SGL_Task
     function run($data)
     {
         $c = &SGL_Config::singleton($autoLoad = false);
+        $oldConf = $c->getAll(); // save old config on re-install
         $conf = $c->load(SGL_ETC_DIR . '/default.conf.dist.ini');
         $c->replace($conf);
+        $c->merge($oldConf); // overwrite with old values
 
         //  admin emails
         $c->set('email', array('admin' => $data['adminEmail']));
@@ -487,6 +489,43 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                     $this->updateHtml($module . '_drop', $this->noFile);
                 }
             }
+            // remove translation tables and lang table
+            if (!array_key_exists('moduleInstall', $data)) {
+                $c = &SGL_Config::singleton();
+                $conf = $c->getAll();
+                if ($conf['translation']['container'] == 'db') {
+                    $statusText = 'dropping translation tables';
+                    $this->updateHtml('status', $statusText);
+                    $trans = &SGL_Translation::singleton('admin');
+                    $aLangs = $trans->getLangs('ids');
+                    if (!PEAR::isError($aLangs)) {
+                        // removeme
+                        if (empty($aLangs)) {
+                            // basically $aLangs should be a PEAR_Error instance
+                            // in that case, but calling method doesn't
+                            // return it
+                            SGL_Error::pop();
+                        }
+                        // dropping language tables
+                        foreach ($aLangs as $langId) {
+                            // force to drop translation table
+                            $ok = $trans->removeLang($langId, $force = true);
+                            if (PEAR::isError($ok, DB_ERROR_NOSUCHTABLE)) {
+                                SGL_Error::pop();
+                            }
+                        }
+                    } elseif (PEAR::isError($aLangs, DB_ERROR_NOSUCHTABLE)) {
+                        SGL_Error::pop();
+                    }
+                    // drop language table
+                    $langTable = $trans->storage->options['langs_avail_table'];
+                    $query = 'DROP TABLE ' . $dbh->quoteIdentifier($langTable);
+                    $ok = $dbh->query($query);
+                    if (PEAR::isError($ok, DB_ERROR_NOSUCHTABLE)) {
+                        SGL_Error::pop();
+                    }
+                }
+            }
         }
     }
 }
@@ -838,7 +877,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                 $encoding = substr($aLang, strpos('-', $aLang));
                 $langData  = array(
                     'lang_id' => $langID,
-                    'table_name' => $this->conf['table']['translation'] .'_'. $langID,
+                    'table_name' => $this->conf['translation']['tablePrefix'] .'_'. $langID,
                     'meta' => '',
                     'name' => $aLangOptions[$aLang],
                     'error_text' => 'not available',

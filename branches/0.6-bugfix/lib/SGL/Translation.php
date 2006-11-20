@@ -99,9 +99,9 @@ class SGL_Translation
         $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
 
         //  create translation storage tables
-        if ($conf['translation']['container'] == 'db' && $conf['table']['translation']) {
+        if ($conf['translation']['container'] == 'db') {
 
-            $prefix = $conf['table']['translation'] .'_';
+            $prefix = $conf['translation']['tablePrefix'] . '_';
             $aLangs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params
@@ -347,7 +347,7 @@ class SGL_Translation
                 return array();
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+            return SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
                 SGL_ERROR_INVALIDARGS);
         }
     }
