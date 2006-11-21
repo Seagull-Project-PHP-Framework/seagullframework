@@ -324,8 +324,8 @@ class MediaMgr extends FileMgr
                     }
                     foreach ($aThumbs as $thumbName) {
                         $thumbName   = strtolower($thumbName);
-                        $thumbWidth  = SGL_String::camelise("thumb $thumbName width");
-                        $thumbHeight = SGL_String::camelise("thumb $thumbName height");
+                        $thumbWidth  = SGL_Inflector::camelise("thumb $thumbName width");
+                        $thumbHeight = SGL_Inflector::camelise("thumb $thumbName height");
 
                         //  create thumbnail
                         $newWidth       = $this->conf['MediaMgr'][$thumbWidth];
