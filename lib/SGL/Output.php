@@ -117,7 +117,7 @@ class SGL_Output
      * @access  public
      * @param   array   $hElements  hash of checkbox values
      * @param   array   $aChecked   array of checked elements
-     * @param   string  $groupName  usually an array name that will contain all elements
+     * @param   string  $groupName  name of element group
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html        list of checkboxes
      */
@@ -691,10 +691,16 @@ class SGL_Output
         return $ret;
     }
 
-    function humanize($lowerCaseAndUnderscoredWord)
+    function humanise($lowerCaseAndUnderscoredWord)
     {
         require_once SGL_CORE_DIR . '/Inflector.php';
-        return SGL_Inflector::humanize($lowerCaseAndUnderscoredWord);
+        return SGL_Inflector::humanise($lowerCaseAndUnderscoredWord);
+    }
+
+    function camelise($lowerCaseWithSpacesWordsString)
+    {
+        require_once SGL_CORE_DIR . '/Inflector.php';
+        return SGL_Inflector::camelise($lowerCaseWithSpacesWordsString);
     }
 
     /**

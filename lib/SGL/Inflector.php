@@ -218,7 +218,7 @@ class SGL_Inflector
      * @param string $lower_case_and_underscored_word String to be made more readable
      * @return string Human-readable string
      */
-	function humanize($lowerCaseAndUnderscoredWord)
+	function humanise($lowerCaseAndUnderscoredWord)
 	{
 		$replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
 		return $replace;
