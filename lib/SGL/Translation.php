@@ -411,5 +411,40 @@ class SGL_Translation
             return $langID;
         }
     }
+
+    /**
+     * Remove all translations for all languages for specified module.
+     *
+     * @static
+     * @param  string  $moduleName  module/page name
+     * @return boolean
+     */
+    function removeTranslations($moduleName)
+    {
+        $trans  = &SGL_Translation::singleton('admin');
+        $aPages = $trans->getPageNames();
+        if (PEAR::isError($aPages)) {
+            return $aPages;
+        }
+        if (!in_array($moduleName, $aPages)) {
+            return false; // no translations
+        }
+        $aLangs = $trans->getLangs('ids');
+        if (PEAR::isError($aLangs)) {
+            return $aLangs;
+        }
+        $aStrings = array();
+        foreach ($aLangs as $langId) {
+            $ret = SGL_Translation::getTranslations($moduleName, $langId);
+            $aStrings = array_merge($aStrings, array_keys($ret));
+        }
+        foreach ($aStrings as $stringId) {
+            $ret = $trans->remove($stringId, $moduleName);
+            if (PEAR::isError($ret)) {
+                return $ret;
+            }
+        }
+        return true;
+    }
 }
 ?>
