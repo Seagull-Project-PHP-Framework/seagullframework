@@ -303,6 +303,11 @@ class ModuleMgr extends SGL_Manager
             $rm->get($input->moduleId);
             $ok = $rm->delete();
 
+            // remove translations
+            if ($this->conf['translation']['container'] == 'db') {
+                $ok = SGL_Translation::removeTranslations($oModule->name);
+            }
+
             SGL::raiseMsg('The ' . $oModule->name . ' module was successfully uninstalled',
                 false, SGL_MESSAGE_INFO);
         }
