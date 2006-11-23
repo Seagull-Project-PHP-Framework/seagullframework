@@ -1161,25 +1161,25 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
-                    //  remove existing symlinked dir if exists
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
-                        unlink(SGL_WEB_ROOT . "/$module");
-                    }
-
-                    // windows
-                    if (strpos(PHP_OS, 'WIN') !== false) {
-
-                        // if linkd binary is present
-                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
-
-                        //  otherwise just copy
-                        if (!$ok) {
-                            require_once SGL_CORE_DIR . '/File.php';
-                            $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
-                        }
-
+                        PEAR::raiseError('An attempt to remove an existing symlink '.
+                        ' failed, please remove manuall and rebuild again');
                     } else {
-                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+
+                        // windows
+                        if (strpos(PHP_OS, 'WIN') !== false) {
+
+                            // if linkd binary is present
+                            $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+
+                            //  otherwise just copy
+                            if (!$ok) {
+                                require_once SGL_CORE_DIR . '/File.php';
+                                $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
+                            }
+                        } else {
+                            $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                        }
                     }
                 } else {
                     PEAR::raiseError('A www directory was detected in one of the modules '.
