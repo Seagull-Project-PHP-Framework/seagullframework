@@ -193,14 +193,20 @@ class TranslationMgr extends SGL_Manager
         //  get hash of all modules;
         $output->aModules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
 
-        //  load available languages
-        $output->aLangs = ($this->conf['translation']['container'] == 'file')
-            ? SGL_Util::getLangsDescriptionMap()
-            : $this->trans->getLangs();
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
-        $output->currentLang = SGL_Translation::transformLangID($output->currentLang);
-        $output->currentLangName = $output->aLangs[$output->currentLang];
+
+        if ($this->conf['translation']['container'] == 'file') {
+            $aLangs      = SGL_Util::getLangsDescriptionMap();
+            $currentLang = $output->currentLang;
+        } else {
+            $aLangs      = $this->trans->getLangs();
+            $currentLang = SGL_Translation::transformLangID($output->currentLang,
+                SGL_LANG_ID_TRANS2);
+        }
+        $output->aLangs          = $aLangs;
+        $output->currentLang     = $currentLang;
+        $output->currentLangName = $aLangs[$currentLang];
     }
 
     function _cmd_list(&$input, &$output)
