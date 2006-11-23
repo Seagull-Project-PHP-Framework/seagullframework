@@ -199,7 +199,7 @@ class TranslationMgr extends SGL_Manager
             : $this->trans->getLangs();
         $output->isValidate = ($output->action == 'validate')? 'checked' : '';
         $output->isEdit = ($output->action == 'edit')? 'checked' : '';
-
+        $output->currentLang = SGL_Translation::transformLangID($output->currentLang);
         $output->currentLangName = $output->aLangs[$output->currentLang];
     }
 
