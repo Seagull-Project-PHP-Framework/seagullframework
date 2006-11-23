@@ -1162,8 +1162,11 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
             if (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
-                        PEAR::raiseError('An attempt to remove an existing symlink '.
-                        ' failed, please remove manuall and rebuild again');
+                        PEAR::raiseError('A www directory was detected in ' .
+                            ' one of the modules therefore an attempt to create ' .
+                            ' a corresponding symlink was made ' .
+                            ' but the symlink already exists ' .
+                            ' in seagull/www');
                     } else {
 
                         // windows
@@ -1211,6 +1214,10 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
                     if (file_exists(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
+                } else {
+                    PEAR::raiseError('An attempt to remove an existing ' .
+                        ' symlink failed, the webserver no longer has ' .
+                        ' required write perms on seagull/www dir');
                 }
             }
         }
