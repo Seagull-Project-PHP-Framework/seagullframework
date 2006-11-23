@@ -224,12 +224,21 @@ class ModuleMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        // retrieve translation settings
+        $transContainer = ($this->conf['translation']['container'] == 'db')
+            ? 1 : 0;
+        $transLanguage = str_replace('_', '-',
+            explode(',', $this->conf['translation']['installedLanguages']));
+
         $data = array(
-            'createTables' => 1,
-            'insertSampleData' => 1,
-            'aModuleList' => array($input->moduleName),
-            'moduleInstall' => true,
-            );
+            'createTables'           => 1,
+            'insertSampleData'       => 1,
+            'aModuleList'            => array($input->moduleName),
+            'moduleInstall'          => true,
+            'storeTranslationsInDB'  => $transContainer,
+            'installLangs'           => $transLanguage,
+            'skipLangTablesCreation' => true
+        );
         define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
         require_once SGL_CORE_DIR . '/Task/Install.php';
         $runner = new SGL_TaskRunner();
@@ -242,6 +251,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences()); // only needed for section table
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());

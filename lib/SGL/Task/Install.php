@@ -874,16 +874,20 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
             foreach ($data['installLangs'] as $aLang) {
                 $globalLangFile = $availableLanguages[$aLang][1] .'.php';
                 $langID = str_replace('-', '_', $aLang);
-                $encoding = substr($aLang, strpos('-', $aLang));
-                $langData  = array(
-                    'lang_id' => $langID,
-                    'table_name' => $this->conf['translation']['tablePrefix'] .'_'. $langID,
-                    'meta' => '',
-                    'name' => $aLangOptions[$aLang],
-                    'error_text' => 'not available',
-                    'encoding' => $encoding
-                     );
-                $result = $trans->addLang($langData);
+
+                // skip language creation during module install
+                if (empty($data['skipLangTablesCreation'])) {
+                    $encoding = substr($aLang, strpos('-', $aLang));
+                    $langData  = array(
+                        'lang_id' => $langID,
+                        'table_name' => $this->conf['translation']['tablePrefix'] .'_'. $langID,
+                        'meta' => '',
+                        'name' => $aLangOptions[$aLang],
+                        'error_text' => 'not available',
+                        'encoding' => $encoding
+                    );
+                    $result = $trans->addLang($langData);
+                }
 
                 //  iterate through modules
                 foreach ($data['aModuleList'] as $module) {
