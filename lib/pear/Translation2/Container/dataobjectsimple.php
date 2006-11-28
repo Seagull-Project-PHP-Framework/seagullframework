@@ -32,7 +32,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  2004-2005 Alan Knowles
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: dataobjectsimple.php,v 1.13 2006/07/06 09:21:09 quipo Exp $
+ * @version    CVS: $Id: dataobjectsimple.php,v 1.14 2006/11/07 12:35:40 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -71,7 +71,7 @@ require_once 'DB/DataObject.php';
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  2004-2005 Alan Knowles
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: dataobjectsimple.php,v 1.13 2006/07/06 09:21:09 quipo Exp $
+ * @version    CVS: $Id: dataobjectsimple.php,v 1.14 2006/11/07 12:35:40 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_dataobjectsimple extends Translation2_Container
@@ -149,14 +149,33 @@ class Translation2_Container_dataobjectsimple extends Translation2_Container
         if (PEAR::isError($langID)) {
             return $langID;
         }
+        
+        // First get the array of string IDs
         $do = DB_DataObject::factory($this->options['table']);
-        $do->lang = $langID;
+        $do->lang = '-';
         $do->page = $pageID;
+        $do->find();
+        
+        $stringIDs = array();
+        while ($do->fetch()) {
+            $stringIDs[$do->string_id] = $do->translation;
+        }
+
+        // Now get the array of strings
+        $do = DB_DataObject::factory($this->options['table']);
+        $do->page = $pageID;
+        $do->lang = $langID;
 
         $do->find();
-        $strings = array();
+        $translations = array();
         while ($do->fetch()) {
-            $strings[$do->string_id] = $do->translation;
+            $translations[$do->string_id] = $do->translation;
+        }
+        
+        // Construct an associative array of stringIDs and translations
+        $strings = array();
+        foreach ($translations as $key => $value) {
+            $strings[$stringIDs[$key]] = $value;
         }
 
         return $strings;

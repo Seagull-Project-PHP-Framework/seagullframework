@@ -32,7 +32,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  2004-2005 Alan Knowles
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: dataobjectsimple.php,v 1.7 2005/09/08 17:27:36 quipo Exp $
+ * @version    CVS: $Id: dataobjectsimple.php,v 1.8 2006/09/27 10:15:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -82,9 +82,10 @@ class Translation2_Admin_Container_dataobjectsimple extends Translation2_Contain
      *                              'name'       => 'english',
      *                              'meta'       => 'some meta info',
      *                              'error_text' => 'not available');
+     * @param array $options
      * @return true|PEAR_Error
      */
-    function addLang($langData)
+    function addLang($langData, $options = array())
     {
         $do = DB_DataObject::factory($this->options['table']);
         $do->lang = $langData['lang_id'];

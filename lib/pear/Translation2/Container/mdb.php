@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.25 2006/08/29 10:01:44 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.26 2006/10/09 15:23:48 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -52,7 +52,7 @@ require_once 'Translation2/Container.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.25 2006/08/29 10:01:44 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.26 2006/10/09 15:23:48 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_mdb extends Translation2_Container
@@ -172,6 +172,7 @@ class Translation2_Container_mdb extends Translation2_Container
             return $res;
         }
         foreach ($res as $row) {
+            $row = array_change_key_case($row, CASE_LOWER);
             $this->langs[$row['id']] = $row;
         }
     }

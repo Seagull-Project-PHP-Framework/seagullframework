@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Decorator.php,v 1.17 2005/09/08 21:11:51 quipo Exp $
+ * @version    CVS: $Id: Decorator.php,v 1.18 2006/11/14 18:01:03 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -168,6 +168,18 @@ class Translation2_Decorator extends Translation2
             $new_decorator =& $this->translation2->getDecorator($decorator, $this);
         }
         return $new_decorator;
+    }
+
+    // }}}
+    // {{{ setCharset()
+
+    /**
+     * Set charset used to read/store the translations
+     * @param string $charset
+     */
+    function setCharset($charset)
+    {
+        return $this->translation2->setCharset($format);
     }
 
     // }}}

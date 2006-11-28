@@ -33,7 +33,7 @@
  * @author     Olivier Guilyardi <olivier at samalyse dot com>
  * @copyright  2004-2005 Lorenzo Alberton, Olivier Guilyardi
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: xml.php,v 1.13 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: xml.php,v 1.14 2006/09/27 10:15:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -72,9 +72,10 @@ class Translation2_Admin_Container_xml extends Translation2_Container_xml
      * Does nothing (here for compatibility with the container interface)
      *
      * @param array $langData
+     * @param array $options
      * @return true|PEAR_Error
      */
-    function addLang($langData)
+    function addLang($langData, $options = array())
     {
         return true;
     }

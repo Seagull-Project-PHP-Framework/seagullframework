@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.22 2006/08/29 10:01:44 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.25 2006/11/14 18:01:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -52,7 +52,7 @@ require_once 'Translation2/Container.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.22 2006/08/29 10:01:44 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.25 2006/11/14 18:01:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Container_mdb2 extends Translation2_Container
@@ -149,6 +149,19 @@ class Translation2_Container_mdb2 extends Translation2_Container
     }
 
     // }}}
+    // {{{ setCharset()
+
+    /**
+     * Set charset used to read/store the translations
+     *
+     * @param string $charset
+     */
+    function setCharset($charset)
+    {
+        return $this->db->setCharset($charset);
+    }
+
+    // }}}
     // {{{ fetchLangs()
 
     /**
@@ -171,6 +184,7 @@ class Translation2_Container_mdb2 extends Translation2_Container
             return $res;
         }
         foreach ($res as $row) {
+            $row = array_change_key_case($row, CASE_LOWER);
             $this->langs[$row['id']] = $row;
         }
     }
@@ -214,7 +228,7 @@ class Translation2_Container_mdb2 extends Translation2_Container
         }
 
         $strings = array();
-        while (list($key, $value) = $res->fetchRow()) {
+        while (list($key, $value) = $res->fetchRow(MDB2_FETCHMODE_ORDERED)) {
             $strings[$key] = $value;
         }
         $res->free();

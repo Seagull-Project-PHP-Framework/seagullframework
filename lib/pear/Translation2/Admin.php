@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Admin.php,v 1.19 2006/05/28 15:05:09 quipo Exp $
+ * @version    CVS: $Id: Admin.php,v 1.20 2006/09/27 10:08:06 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -130,7 +130,7 @@ class Translation2_Admin extends Translation2
     function _setDefaultOptions()
     {
         $this->options['autoCleanCache'] = false;
-        $this->options['cacheOptions']   = array();
+        $this->options['cacheOptions']   = array('defaultGroup' => 'Translation2');
         parent::_setDefaultOptions();
     }
 
@@ -172,11 +172,13 @@ class Translation2_Admin extends Translation2
      *                              'name'       => 'english',
      *                              'meta'       => 'some meta info',
      *                              'error_text' => 'not available');
+     * @param array $options array('charset'   => 'utf8',
+     *                             'collation' => 'utf8_general_ci');
      * @return mixed true on success, PEAR_Error on failure
      */
-    function addLang($langData)
+    function addLang($langData, $options = array())
     {
-        $res = $this->storage->addLang($langData);
+        $res = $this->storage->addLang($langData, $options);
         if (PEAR::isError($res)) {
             return $res;
         }
@@ -328,7 +330,7 @@ class Translation2_Admin extends Translation2
             require_once 'Cache/Lite/Function.php';
             $cacheLiteFunction = new Cache_Lite_Function($this->options['cacheOptions']);
         }
-        $cacheLiteFunction->clean();
+        $cacheLiteFunction->clean($this->options['cacheOptions']['defaultGroup']);
     }
 
     // }}}
