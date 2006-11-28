@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Container.php,v 1.16 2006/02/11 18:26:36 quipo Exp $
+ * @version    CVS: $Id: Container.php,v 1.17 2006/11/14 18:01:03 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -123,6 +123,23 @@ class Translation2_Container
         }
         $msg = 'No valid language set. Use Translation2::setLang().';
         return $this->raiseError($msg, TRANSLATION2_ERROR_UNKNOWN_LANG);
+    }
+
+    // }}}
+    // {{{ setCharset()
+
+    /**
+     * Set charset used to read/store the translations
+     *
+     * @param string $charset
+     */
+    function setCharset($charset)
+    {
+        if (method_exists($this->storage, 'setCharset')) {
+            return $this->storage->setCharset($charset);
+        }
+        return $this->raiseError(TRANSLATION2_ERROR_UNSUPPORTED, null, null,
+            'method not implemented', __FUNCTION__);
     }
 
     // }}}

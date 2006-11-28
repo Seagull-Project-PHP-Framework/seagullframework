@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb.php,v 1.31 2006/08/29 10:01:43 quipo Exp $
+ * @version    CVS: $Id: mdb.php,v 1.33 2006/10/31 14:01:01 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -64,9 +64,10 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
      * hold strings in this lang too.
      *
      * @param array $langData
+     * @param array $options
      * @return true|PEAR_Error
      */
-    function addLang($langData)
+    function addLang($langData, $options = array())
     {
         $tables = $this->db->listTables();
         if (PEAR::isError($tables)) {
@@ -98,28 +99,41 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
             $this->db->quoteIdentifier($lang_col)
         );
         $mysqlClause = ($this->db->phptype == 'mysql') ? '(255)' : '';
-        $queries[] = sprintf('CREATE UNIQUE INDEX %s_%s_%s_index ON %s (%s, %s%s)',
+
+        $index_name = sprintf('%s_%s_%s_index',
             $langData['table_name'],
             $this->options['string_page_id_col'],
-            $this->options['string_id_col'],
-            $this->db->quoteIdentifier($langData['table_name']),
-            $this->db->quoteIdentifier($this->options['string_page_id_col']),
-            $this->db->quoteIdentifier($this->options['string_id_col']),
-            $mysqlClause
+            $this->options['string_id_col']
         );
-        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s)',
+        $queries[] = sprintf('CREATE UNIQUE INDEX %s ON %s (%s, %s%s)',
+             $this->db->quoteIdentifier($index_name),
+             $this->db->quoteIdentifier($langData['table_name']),
+             $this->db->quoteIdentifier($this->options['string_page_id_col']),
+             $this->db->quoteIdentifier($this->options['string_id_col']),
+             $mysqlClause
+        );
+
+        $index_name = sprintf('%s_%s_index',
             $langData['table_name'],
-            $this->options['string_page_id_col'],
-            $this->db->quoteIdentifier($langData['table_name']),
-            $this->db->quoteIdentifier($this->options['string_page_id_col'])
+            $this->options['string_page_id_col']
         );
-        $queries[] = sprintf('CREATE INDEX %s_%s_index ON %s (%s%s)',
+        $queries[] = sprintf('CREATE INDEX %s ON %s (%s)',
+             $this->db->quoteIdentifier($index_name),
+             $this->db->quoteIdentifier($langData['table_name']),
+             $this->db->quoteIdentifier($this->options['string_page_id_col'])
+        );
+
+        $index_name = sprintf('%s_%s_index',
             $langData['table_name'],
-            $this->options['string_id_col'],
-            $this->db->quoteIdentifier($langData['table_name']),
-            $this->db->quoteIdentifier($this->options['string_id_col']),
-            $mysqlClause
+            $this->options['string_id_col']
         );
+        $queries[] = sprintf('CREATE INDEX %s ON %s (%s%s)',
+             $this->db->quoteIdentifier($index_name),
+             $this->db->quoteIdentifier($langData['table_name']),
+             $this->db->quoteIdentifier($this->options['string_id_col']),
+             $mysqlClause
+        );
+
         foreach($queries as $query) {
             ++$this->_queries;
             $res = $this->db->query($query);

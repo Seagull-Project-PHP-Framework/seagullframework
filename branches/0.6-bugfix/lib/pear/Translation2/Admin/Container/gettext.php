@@ -33,7 +33,7 @@
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.25 2006/01/07 16:44:28 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.26 2006/09/27 10:15:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -53,7 +53,7 @@ require_once 'Translation2/Container/gettext.php';
  * @author     Michael Wallner <mike at php dot net>
  * @copyright  2004-2005 Lorenzo Alberton, Michael Wallner
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: gettext.php,v 1.25 2006/01/07 16:44:28 quipo Exp $
+ * @version    CVS: $Id: gettext.php,v 1.26 2006/09/27 10:15:04 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Admin_Container_gettext extends Translation2_Container_gettext
@@ -71,6 +71,7 @@ class Translation2_Admin_Container_gettext extends Translation2_Container_gettex
      * Creates a new entry in the langs_avail .ini file.
      *
      * @param   array   $langData
+     * @param   string  $path
      * @return  mixed   Returns true on success or PEAR_Error on failure.
      */
     function addLang($langData, $path = null)
