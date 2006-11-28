@@ -76,9 +76,16 @@ class Publisher_Block_Article
             $this->template = $aParams['template'];
         }
 
+        // get current URL
+        $input = &SGL_Registry::singleton();
+        $url = $input->getCurrentUrl();
+        $currentUrl = $url->toString();
+
         //  get article
         $blockOutput->leadArticle = SGL_Item::getItemDetail($articleId);
         $blockOutput->articleID   = $articleId;
+        $blockOutput->theme       = $_SESSION['aPrefs']['theme'];
+        $blockOutput->redir       = urlencode(urlencode($currentUrl));
 
         return $this->process($blockOutput);
     }
