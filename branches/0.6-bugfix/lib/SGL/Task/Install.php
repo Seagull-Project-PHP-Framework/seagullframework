@@ -101,6 +101,12 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('email', array('info' => $data['adminEmail']));
         $c->set('email', array('support' => $data['adminEmail']));
 
+        // correct db prefix
+        if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
+            // enforce underscore in prefix
+            $data['prefix'] .= '_';
+        }
+
         //  db details
         $c->set('db', array('prefix' => $data['prefix']));
         $c->set('db', array('host' => $data['host']));
@@ -166,6 +172,12 @@ class SGL_Task_CreateConfig extends SGL_Task
 
         //  and tz
         $_SESSION['install_timezone'] = $data['serverTimeOffset'];
+
+        //  store old prefix for tables drop
+        if (isset($oldConf['db']['prefix'])
+                && $oldConf['db']['prefix'] != $data['prefix']) {
+            $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
+        }
     }
 }
 
@@ -252,12 +264,15 @@ class SGL_Task_DefineTableAliases extends SGL_Task
     function run($data)
     {
         $c = &SGL_Config::singleton();
+
+        // get table prefix
+        $prefix = $c->get(array('db' => 'prefix'));
         foreach ($data['aModuleList'] as $module) {
             $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/data/tableAliases.ini';
             if (file_exists($tableAliasIniPath)) {
                 $aData = parse_ini_file($tableAliasIniPath);
                 foreach ($aData as $k => $v) {
-                    $c->set('table', array($k => $v));
+                    $c->set('table', array($k => $prefix . $v));
                 }
             }
         }
@@ -428,7 +443,14 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             $statusText = 'dropping existing tables';
             $this->updateHtml('status', $statusText);
 
+            $c   = &SGL_Config::singleton();
             $dbh = & SGL_DB::singleton();
+
+            // set old db prefix if any
+            if (isset($_SESSION['install_dbPrefix'])) {
+                $currentPrefix = $c->get(array('db' => 'prefix'));
+                $c->set('db', array('prefix' => $_SESSION['install_dbPrefix']));
+            }
 
             //  drop 'sequence' table unless we're installing a module
             if ($this->conf['db']['type'] == 'mysql_SGL' && !array_key_exists('moduleInstall', $data)) {
@@ -472,7 +494,6 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
 
                     //  remove tablename in Config
                     if (isset($data['moduleInstall'])) {
-                        $c = &SGL_Config::singleton();
                         foreach ($aTableNames as $tableName) {
                             $c->remove(array('table', $tableName));
                         }
@@ -491,7 +512,6 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             }
             // remove translation tables and lang table
             if (!array_key_exists('moduleInstall', $data)) {
-                $c = &SGL_Config::singleton();
                 $conf = $c->getAll();
                 if ($conf['translation']['container'] == 'db') {
                     $statusText = 'dropping translation tables';
@@ -518,13 +538,26 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                         SGL_Error::pop();
                     }
                     // drop language table
-                    $langTable = $trans->storage->options['langs_avail_table'];
+                    $langTable = &$trans->storage->options['langs_avail_table'];
                     $query = 'DROP TABLE ' . $dbh->quoteIdentifier($langTable);
                     $ok = $dbh->query($query);
                     if (PEAR::isError($ok, DB_ERROR_NOSUCHTABLE)) {
                         SGL_Error::pop();
                     }
+
+                    // removeme: it looks like a hack
+                    if (isset($currentPrefix)) {
+                        $pattern   = "/^{$conf['db']['prefix']}/";
+                        $langTable = preg_replace($pattern, '', $langTable);
+                        $langTable = $currentPrefix . $langTable;
+                    }
                 }
+            }
+
+            // restore db prefix
+            if (isset($currentPrefix)) {
+                $c->set('db', array('prefix' => $currentPrefix));
+                unset($_SESSION['install_dbPrefix']);
             }
         }
     }
@@ -877,10 +910,12 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
 
                 // skip language creation during module install
                 if (empty($data['skipLangTablesCreation'])) {
+                    $prefix = $this->conf['db']['prefix'] .
+                        $this->conf['translation']['tablePrefix'] . '_';
                     $encoding = substr($aLang, strpos('-', $aLang));
-                    $langData  = array(
+                    $langData = array(
                         'lang_id' => $langID,
-                        'table_name' => $this->conf['translation']['tablePrefix'] .'_'. $langID,
+                        'table_name' => $prefix . $langID,
                         'meta' => '',
                         'name' => $aLangOptions[$aLang],
                         'error_text' => 'not available',
@@ -1084,6 +1119,19 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
             $ok = unlink($keysFile);
         }
 
+        // delete php files i.e. old dbdo entities
+        if (is_writable(SGL_ENT_DIR)) {
+            if ($dh = opendir(SGL_ENT_DIR)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file == '.' || $file == '..'
+                            || substr($file, -3) != 'php') {
+                        continue;
+                    }
+                    $ok = unlink(SGL_ENT_DIR . '/' . $file);
+                }
+            }
+        }
+
         $generator = new DB_DataObject_Generator();
         $generator->start();
         $out = ob_get_contents();
@@ -1138,6 +1186,15 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                         }
                     }
                 }
+            }
+            // we don't forget about prefixes
+            if (!empty($conf['db']['prefix'])) {
+                // prefix containers
+                $linkData = preg_replace('/\[(\w+)\]/i',
+                    '[' . SGL_Sql::addTablePrefix('$1') . ']',  $linkData);
+                // prefix references
+                $linkData = preg_replace('/(\w+):/i',
+                    SGL_Sql::addTablePrefix('$1') . ':' , $linkData);
             }
             if (is_writable($linksFile) || !file_exists($linksFile)) {
                 if (!$handle = fopen($linksFile, 'a+')) {

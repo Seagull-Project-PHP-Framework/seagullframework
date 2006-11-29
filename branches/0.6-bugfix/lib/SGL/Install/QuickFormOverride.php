@@ -39,12 +39,6 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 
         function init()
         {
-            //  temp measure
-            var prefix = document.getElementById('prefix');
-            if (prefix != null) {
-                prefix.disabled = true;
-            }
-
             //  disable 'use existing data' by default
             var useExistingData = document.getElementById('useExistingData');
             if (useExistingData != null) {

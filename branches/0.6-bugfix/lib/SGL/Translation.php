@@ -81,7 +81,7 @@ class SGL_Translation
 
         //  set translation table parameters
         $params = array(
-            'langs_avail_table' => 'langs',
+            'langs_avail_table' => $conf['db']['prefix'] . 'langs',
             'lang_id_col'       => 'lang_id',
             'lang_name_col'     => 'name',
             'lang_meta_col'     => 'meta',
@@ -101,7 +101,8 @@ class SGL_Translation
         //  create translation storage tables
         if ($conf['translation']['container'] == 'db') {
 
-            $prefix = $conf['translation']['tablePrefix'] . '_';
+            $prefix = $conf['db']['prefix'] .
+                $conf['translation']['tablePrefix'] . '_';
             $aLangs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params

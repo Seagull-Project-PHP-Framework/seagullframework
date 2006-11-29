@@ -195,7 +195,9 @@ class ActionProcess extends HTML_QuickForm_Action
         $dbh = & SGL_DB::singleton();
         $res = false;
         if (!PEAR::isError($dbh)) {
-            $query = 'SELECT COUNT(*) FROM module';
+            require_once SGL_CORE_DIR . '/Sql.php';
+            $table = SGL_Sql::addTablePrefix('module');
+            $query = 'SELECT COUNT(*) FROM ' . $table;
             $res = $dbh->getOne($query);
         }
 

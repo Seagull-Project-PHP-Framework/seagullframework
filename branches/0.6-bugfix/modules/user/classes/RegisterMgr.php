@@ -38,7 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: RegisterMgr.php,v 1.38 2005/06/05 23:14:43 demian Exp $
 
-require_once SGL_ENT_DIR . '/Usr.php';
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_CORE_DIR . '/Observer.php';

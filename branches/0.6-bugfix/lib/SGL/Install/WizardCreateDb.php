@@ -127,7 +127,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         $this->setDefaults(array(
             'name' => 'seagull',
-            'prefix' => 'not implemented yet',
+            'prefix' => 'sgl',
             'insertSampleData' => false,
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
@@ -152,7 +152,10 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addRule('name', 'Please specify the name of the database', 'required');
 
         //  db prefix
-        $this->addElement('text', 'prefix', 'Table prefix: ', 'id=prefix');
+        $this->addElement('text', 'prefix', 'Table prefix: ');
+        $this->addRule('prefix', 'Only letters and digits are allowed, first ' .
+            'symbol must be a letter, last symbol can be an underscore',
+            'regex', '/^[a-zA-Z]([a-zA-Z0-9]+)?_?$/');
 
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');

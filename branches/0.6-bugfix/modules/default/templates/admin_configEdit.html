@@ -407,6 +407,13 @@ function toggleTransElements() {
                 <input type="text" name="conf[db][name]" value="{conf[db][name]}" />
             </p>
             <p>
+                <label class="tipOwner" for="conf_db_prefix">{translate(#Table prefix#)}
+                    <span class="tipText">{translate(#This is used to prefix all tables in database, change with caution#)}</span>
+                </label>
+                <span class="error" flexy:if="error[db][prefix]">{translate(error[db][prefix])}</span>
+                <input id="conf_db_prefix" type="text" name="conf[db][prefix]" value="{conf[db][prefix]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[db][postConnect]">{translate(#Post-connection query#)}
                 <span class="tipText">{translate(#This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8#)}</span>
                 </label>
