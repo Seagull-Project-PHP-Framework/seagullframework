@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Package.php,v 1.102 2006/09/25 05:27:23 cellog Exp $
+ * @version    CVS: $Id: Package.php,v 1.103 2006/10/12 21:23:59 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -49,7 +49,7 @@ define('PEAR_DOWNLOADER_PACKAGE_STATE', -1003);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -966,7 +966,11 @@ class PEAR_Downloader_Package
         if (isset($this->_packagefile)) {
             return $this->_packagefile->isExtension($name);
         } elseif (isset($this->_downloadURL['info'])) {
-            return $this->_downloadURL['info']->getProvidesExtension() == $name;
+			if ($this->_downloadURL['info']->getPackagexmlVersion() == '2.0') {
+				return $this->_downloadURL['info']->getProvidesExtension() == $name;
+			} else {
+				return false;
+			}
         } else {
             return false;
         }

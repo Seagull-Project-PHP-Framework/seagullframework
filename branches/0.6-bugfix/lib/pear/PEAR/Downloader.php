@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.115 2006/09/24 22:50:44 cellog Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.116 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -1163,6 +1163,15 @@ class PEAR_Downloader extends PEAR_Common
     function _getDepTreeDP($package, $packages, &$deps, &$checked)
     {
         $pf = $package->getPackageFile();
+        if (!is_array($checked)) {
+            $checked = array();
+        }
+        if (!isset($checked[strtolower($package->getChannel())])) {
+            $checked[strtolower($package->getChannel())] = array();
+        }
+        if (!isset($checked[strtolower($package->getChannel())][strtolower($package->getPackage())])) {
+            $checked[strtolower($package->getChannel())][strtolower($package->getPackage())] = array();
+        }
         $checked[strtolower($package->getChannel())][strtolower($package->getPackage())]
             = true;
         $pdeps = $pf->getDeps(true);
@@ -1244,6 +1253,12 @@ class PEAR_Downloader extends PEAR_Common
                 } else {
                     $depchannel = $dep['channel'];
                 }
+                if (!is_array($deps)) {
+                    $deps = array();
+                }
+                if (!isset($deps[$depchannel])) {
+                    $deps[$depchannel] = array();
+                }
                 $deps[$depchannel][strtolower($dep['name'])] = true;
                 foreach ($packages as $p) {
                     $dep['channel'] = $depchannel;
@@ -1272,6 +1287,12 @@ class PEAR_Downloader extends PEAR_Common
         foreach ($packages as $i => $package) {
             $checked = $deps = array();
             $this->_getDepTreeDP($packages[$i], $packages, $deps, $checked);
+            if (!isset($this->_depTree)) {
+                $this->_depTree = array();
+            }
+            if (!isset($this->_depTree[$package->getChannel()])) {
+                $this->_depTree[$package->getChannel()] = array();
+            }
             $this->_depTree[$package->getChannel()][$package->getPackage()] = $deps;
         }
         usort($packages, array(&$this, '_sortInstall'));
@@ -1464,7 +1485,7 @@ class PEAR_Downloader extends PEAR_Common
         } else {
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
-        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.5.0a1/PHP/" .
+        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.5.0RC1/PHP/" .
             PHP_VERSION . "\r\n";
         if (isset($this)) { // only pass in authentication for non-static calls
             $username = $config->get('username');

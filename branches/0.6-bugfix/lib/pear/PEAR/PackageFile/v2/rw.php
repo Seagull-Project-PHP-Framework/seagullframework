@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: rw.php,v 1.18 2006/09/25 05:12:21 cellog Exp $
+ * @version    CVS: $Id: rw.php,v 1.19 2006/10/30 04:12:02 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a8
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/PackageFile/v2.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a8
  */
@@ -786,19 +786,16 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string package name
      * @param string package channel
      * @param string extension this package provides, if any
+     * @param string|false minimum version required
+     * @param string|false maximum version allowed
+     * @param array|false versions to exclude from installation
      */
-    function addConflictingPackageDepWithChannel($name, $channel, $providesextension = false)
+    function addConflictingPackageDepWithChannel($name, $channel,
+                $providesextension = false, $min = false, $max = false, $exclude = false)
     {
         $this->_isValid = 0;
-        $dep =
-            array(
-                'name' => $name,
-                'channel' => $channel,
-                'conflicts' => '',
-            );
-        if ($providesextension) {
-            $dep['providesextension'] = $providesextension;
-        }
+        $dep = $this->_constructDep($name, $channel, false, $min, $max, false,
+            $exclude, $providesextension, false, true);
         $this->_packageInfo = $this->_mergeTag($this->_packageInfo, $dep,
             array(
                 'dependencies' => array('providesextension', 'usesrole', 'usestask',
@@ -861,11 +858,13 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
      * @param string extension this package provides, if any
      * @param bool if true, tells the installer to ignore the default optional dependency group
      *             when installing this package
+     * @param bool if true, tells the installer to negate this dependency (conflicts)
      * @return array
      * @access private
      */
     function _constructDep($name, $channel, $uri, $min, $max, $recommended, $exclude,
-                           $providesextension = false, $nodefault = false)
+                           $providesextension = false, $nodefault = false,
+                           $conflicts = false)
     {
         $dep =
             array(
@@ -890,6 +889,9 @@ class PEAR_PackageFile_v2_rw extends PEAR_PackageFile_v2
                 $exclude = $exclude[0];
             }
             $dep['exclude'] = $exclude;
+        }
+        if ($conflicts) {
+            $dep['conflicts'] = '';
         }
         if ($nodefault) {
             $dep['nodefault'] = '';

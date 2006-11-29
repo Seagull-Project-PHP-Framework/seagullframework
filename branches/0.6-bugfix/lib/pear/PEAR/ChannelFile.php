@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ChannelFile.php,v 1.77 2006/03/25 21:09:08 cellog Exp $
+ * @version    CVS: $Id: ChannelFile.php,v 1.78 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -152,7 +152,7 @@ $GLOBALS['_PEAR_CHANNELS_MIRROR_TYPES'] =  array('server');
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -1388,6 +1388,12 @@ class PEAR_ChannelFile {
         }
         $set = array('attribs' => array('version' => $version), '_content' => $name);
         if (!isset($this->_channelInfo['servers']['primary'][$type]['function'])) {
+            if (!isset($this->_channelInfo['servers'])) {
+                $this->_channelInfo['servers'] = array('primary' =>
+                    array($type => array()));
+            } elseif (!isset($this->_channelInfo['servers']['primary'])) {
+                $this->_channelInfo['servers']['primary'] = array($type => array());
+            }
             $this->_channelInfo['servers']['primary'][$type]['function'] = $set;
             $this->_isValid = false;
             return true;
@@ -1475,6 +1481,9 @@ class PEAR_ChannelFile {
             $setmirror = &$this->_channelInfo['servers']['primary'];
         }
         $set = array('attribs' => array('type' => $resourceType), '_content' => $url);
+        if (!isset($setmirror['rest'])) {
+            $setmirror['rest'] = array();
+        }
         if (!isset($setmirror['rest']['baseurl'])) {
             $setmirror['rest']['baseurl'] = $set;
             $this->_isValid = false;

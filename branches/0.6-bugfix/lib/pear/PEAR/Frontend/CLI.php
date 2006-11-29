@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CLI.php,v 1.64 2006/04/25 02:57:57 cellog Exp $
+ * @version    CVS: $Id: CLI.php,v 1.66 2006/11/19 23:56:32 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Frontend.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -352,6 +352,32 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
         } else {
             $fp = STDIN;
         }
+        reset($prompts);
+        if (count($prompts) == 1 && $types[key($prompts)] == 'yesno') {
+            foreach ($prompts as $key => $prompt) {
+                $type = $types[$key];
+                $default = @$defaults[$key];
+                print "$prompt ";
+                if ($default) {
+                    print "[$default] ";
+                }
+                print ": ";
+                if (version_compare(phpversion(), '5.0.0', '<')) {
+                    $line = fgets($fp, 2048);
+                } else {
+                    if (!defined('STDIN')) {
+                        define('STDIN', fopen('php://stdin', 'r'));
+                    }
+                    $line = fgets(STDIN, 2048);
+                }
+                if ($default && trim($line) == "") {
+                    $result[$key] = $default;
+                } else {
+                    $result[$key] = trim($line);
+                }
+            }
+            return $result;
+        }
         while (true) {
             $descLength = max(array_map('strlen', $prompts));
             $descFormat = "%-{$descLength}s";
@@ -374,7 +400,7 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
             if (isset($testprompts[(int)$tmp - 1])) {
                 $var = $testprompts[(int)$tmp - 1];
                 $desc = $prompts[$var];
-                $current = $result[$var];
+                $current = @$result[$var];
                 print "$desc [$current] : ";
                 $tmp = trim(fgets($fp, 1024));
                 if (trim($tmp) !== '') {

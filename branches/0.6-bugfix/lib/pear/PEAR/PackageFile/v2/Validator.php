@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.93 2006/09/25 05:12:21 cellog Exp $
+// $Id: Validator.php,v 1.96 2006/11/21 03:17:17 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -109,7 +109,7 @@ class PEAR_PackageFile_v2_Validator
               isset($test['dependencies']['required']) &&
               isset($test['dependencies']['required']['pearinstaller']) &&
               isset($test['dependencies']['required']['pearinstaller']['min']) &&
-              version_compare('1.5.0a1',
+              version_compare('1.5.0RC1',
                 $test['dependencies']['required']['pearinstaller']['min'], '<')) {
             $this->_pearVersionTooLow($test['dependencies']['required']['pearinstaller']['min']);
             return false;
@@ -174,6 +174,9 @@ class PEAR_PackageFile_v2_Validator
             $this->_validateCompatible();
         }
         if (!isset($this->_packageInfo['bundle'])) {
+            if (empty($this->_packageInfo['contents'])) {
+                $this->_tagCannotBeEmpty('contents');
+            }
             if (!isset($this->_packageInfo['contents']['dir'])) {
                 $this->_filelistMustContainDir('contents');
                 return false;
@@ -437,6 +440,7 @@ class PEAR_PackageFile_v2_Validator
     {
         $ret = array();
         if (count($pieces = explode('|', $key)) > 1) {
+            $ret['choices'] = array();
             foreach ($pieces as $piece) {
                 $ret['choices'][] = $this->_processStructure($piece);
             }
@@ -1028,6 +1032,9 @@ class PEAR_PackageFile_v2_Validator
                     if (array_key_exists($file['attribs']['name'], $ignored_or_installed)) {
                         $this->_multipleInstallAs($file['attribs']['name']);
                     }
+                    if (!isset($ignored_or_installed[$file['attribs']['name']])) {
+                        $ignored_or_installed[$file['attribs']['name']] = array();
+                    }
                     $ignored_or_installed[$file['attribs']['name']][] = 1;
                 }
             }
@@ -1318,7 +1325,7 @@ class PEAR_PackageFile_v2_Validator
         $this->_stack->push(__FUNCTION__, 'error',
             array('version' => $version),
             'This package.xml requires PEAR version %version% to parse properly, we are ' .
-            'version 1.5.0a1');
+            'version 1.5.0RC1');
     }
 
     function _invalidTagOrder($oktags, $actual, $root)
@@ -1724,6 +1731,10 @@ class PEAR_PackageFile_v2_Validator
         $log = isset($this->_pf->_logger) ? array(&$this->_pf->_logger, 'log') :
             array(&$common, 'log');
         $info = $this->_pf->getContents();
+        if (!$info || !isset($info['dir']['file'])) {
+            $this->_tagCannotBeEmpty('contents><dir');
+            return false;
+        }
         $info = $info['dir']['file'];
         if (isset($info['attribs'])) {
             $info = array($info);

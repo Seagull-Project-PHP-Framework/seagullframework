@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.237 2006/09/25 23:01:05 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.238 2006/11/12 17:21:10 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -1063,6 +1063,11 @@ class PEAR_Installer extends PEAR_Downloader
             $this->_registry = &$this->config->getRegistry();
             if (isset($this->_options['packagingroot'])) {
                 $installregistry = &new PEAR_Registry($regdir);
+                if (!$installregistry->channelExists($channel, true)) {
+                    // we need to fake a channel-discover of this channel
+                    $chanobj = $this->_registry->getChannel($channel, true);
+                    $installregistry->addChannel($chanobj);
+                }
                 $php_dir = $packrootphp_dir;
             } else {
                 $installregistry = &$this->_registry;

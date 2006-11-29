@@ -23,7 +23,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  2004-2006 Greg Beaver
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ErrorStack.php,v 1.25 2006/09/22 03:13:17 cellog Exp $
+ * @version    CVS: $Id: ErrorStack.php,v 1.26 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR_ErrorStack
  */
 
@@ -132,12 +132,12 @@ define('PEAR_ERRORSTACK_ERR_OBJTOSTRING', 2);
  * $local_stack = new PEAR_ErrorStack('MyPackage');
  * </code>
  * @author     Greg Beaver <cellog@php.net>
- * @version    1.5.0a1
+ * @version    1.5.0RC1
  * @package    PEAR_ErrorStack
  * @category   Debugging
  * @copyright  2004-2006 Greg Beaver
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: ErrorStack.php,v 1.25 2006/09/22 03:13:17 cellog Exp $
+ * @version    CVS: $Id: ErrorStack.php,v 1.26 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR_ErrorStack
  */
 class PEAR_ErrorStack {
@@ -568,6 +568,9 @@ class PEAR_ErrorStack {
         }
         if ($push) {
             array_unshift($this->_errors, $err);
+            if (!isset($this->_errorsByLevel[$err['level']])) {
+                $this->_errorsByLevel[$err['level']] = array();
+            }
             $this->_errorsByLevel[$err['level']][] = &$this->_errors[0];
         }
         if ($log) {

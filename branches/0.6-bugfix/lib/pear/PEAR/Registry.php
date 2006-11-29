@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.157 2006/09/22 02:48:43 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.158 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -43,7 +43,7 @@ define('PEAR_REGISTRY_ERROR_CHANNEL_FILE', -6);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -696,6 +696,12 @@ class PEAR_Registry extends PEAR
                         $files[$attrs['role']][$file] = array(strtolower($channel),
                             strtolower($package));
                     } else {
+                        if (!is_array($files)) {
+                            $file = array();
+                        }
+                        if (!isset($files[$attrs['role']])) {
+                            $files[$attrs['role']] = array();
+                        }
                         $files[$attrs['role']][$file] = strtolower($package);
                     }
                 }

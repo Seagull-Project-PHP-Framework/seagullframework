@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.134 2006/09/25 05:12:21 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.135 2006/10/31 02:54:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/ErrorStack.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -1395,6 +1395,9 @@ class PEAR_PackageFile_v2
 
     function setDirtree($path)
     {
+        if (!isset($this->_packageInfo['dirtree'])) {
+            $this->_packageInfo['dirtree'] = array();
+        }
         $this->_packageInfo['dirtree'][$path] = true;
     }
 
