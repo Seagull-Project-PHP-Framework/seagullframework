@@ -32,6 +32,7 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+29-11-06    $this->da->moduleIsRegistered() is deprecated in favour of SGL::moduleIsEnabled()
 29-11-06    Renamed DA_Default to DefaultDAO for consistency (Julien Casanova)
 29-11-06    Implemented DB table prefix support (Dmitri Lakachauskis)
 22-11-06    Added ability to remove translations (Dmitri Lakachauskis)

@@ -115,7 +115,7 @@ class ProfileMgr extends SGL_Manager
         }
 
         // total articles
-        if ($this->da->moduleIsRegistered('publisher')) {
+        if (SGL::moduleIsEnabled('publisher')) {
             $items = DB_DataObject::factory($this->conf['table']['item']);
             $items->created_by_id = $input->userId;
             $output->totalArticles = $items->count();

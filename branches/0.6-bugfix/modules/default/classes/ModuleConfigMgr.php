@@ -84,7 +84,7 @@ class ModuleConfigMgr extends SGL_Manager
         if (empty($input->moduleNameId)) {
             $aErrors[] = 'You must select a module to edit';
         } else {
-            if (!$this->da->moduleIsRegistered($input->moduleNameId)) {
+            if (!SGL::moduleIsEnabled($input->moduleNameId)) {
                 $aErrors[] = 'This module is not registered or does not exist';
             } else {
                 $input->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->moduleNameId . '/conf.ini');

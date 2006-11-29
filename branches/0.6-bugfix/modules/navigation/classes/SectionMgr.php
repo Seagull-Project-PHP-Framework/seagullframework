@@ -435,7 +435,7 @@ class SectionMgr extends SGL_Manager
             $output->staticSelected = 'selected';
 
             //  build static article list
-            if ($this->da->moduleIsRegistered('publisher')) {
+            if (SGL::moduleIsEnabled('publisher')) {
                 $articles = $this->_getStaticArticles();
                 if ($articles && $this->conf['translation']['container'] == 'db') {
                     foreach ($articles as $key => $value) {
