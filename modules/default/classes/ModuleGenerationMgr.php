@@ -86,7 +86,7 @@ class ModuleGenerationMgr extends SGL_Manager
                     $aErrors['managerName'] = 'please enter manager name';
                 }
                 //  if module exists, check if manager exists
-                if ($this->da->moduleIsRegistered($input->createModule->moduleName)) {
+                if (SGL::moduleIsEnabled($input->createModule->moduleName)) {
                     $aManagers = SGL_Util::getAllManagersPerModule(SGL_MOD_DIR .'/'.
                         $input->createModule->moduleName);
                     if (in_array($input->createModule->managerName, $aManagers)) {
@@ -161,7 +161,7 @@ class ModuleGenerationMgr extends SGL_Manager
         $output->authorName = $user->first_name . ' ' . $user->last_name;
         $output->authorEmail = $user->email;
 
-        if (!$this->da->moduleIsRegistered($modName)) {
+        if (!SGL::moduleIsEnabled($modName)) {
             //  insert module in module table if it's not there
             $ok = $this->_addModule($modName, $mgrLongName);
         }
