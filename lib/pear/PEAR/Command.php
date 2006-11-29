@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Command.php,v 1.37 2006/06/09 00:17:50 pajoye Exp $
+ * @version    CVS: $Id: Command.php,v 1.38 2006/10/31 02:54:40 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -33,6 +33,12 @@ require_once 'PEAR/XMLParser.php';
  * @var array command => implementing class
  */
 $GLOBALS['_PEAR_Command_commandlist'] = array();
+
+/**
+ * List of commands and their descriptions
+ * @var array command => description
+ */
+$GLOBALS['_PEAR_Command_commanddesc'] = array();
 
 /**
  * List of shortcuts to common commands.
@@ -94,7 +100,7 @@ $GLOBALS['_PEAR_Command_objects'] = array();
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */

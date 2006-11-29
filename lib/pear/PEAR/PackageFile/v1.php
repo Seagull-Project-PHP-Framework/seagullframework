@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.71 2006/04/12 21:44:50 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.72 2006/10/31 02:54:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -281,7 +281,7 @@ define('PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME', 52);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -457,6 +457,9 @@ class PEAR_PackageFile_v1
 
     function setDirtree($path)
     {
+        if (!isset($this->_packageInfo['dirtree'])) {
+            $this->_packageInfo['dirtree'] = array();
+        }
         $this->_packageInfo['dirtree'][$path] = true;
     }
 

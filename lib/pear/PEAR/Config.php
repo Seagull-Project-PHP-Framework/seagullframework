@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.135 2006/09/24 05:45:26 cellog Exp $
+ * @version    CVS: $Id: Config.php,v 1.137 2006/11/19 21:33:00 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -235,7 +235,7 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -781,7 +781,7 @@ class PEAR_Config extends PEAR
                     return true;
                 }
             } else {
-                return PEAR::raiseError('Net_FTP must be installed to use remote config');
+                return PEAR::raiseError('PEAR_RemoteInstaller must be installed to use remote config');
             }
         } while (false); // poor man's catch
         unset($this->files['ftp']);
@@ -798,7 +798,7 @@ class PEAR_Config extends PEAR
         $set = array_flip(array_values($this->_channels));
         foreach ($this->configuration as $layer => $data) {
             $i = 1000;
-            if (isset($data['__channels'])) {
+            if (isset($data['__channels']) && is_array($data['__channels'])) {
                 foreach ($data['__channels'] as $channel => $info) {
                     $set[$channel] = $i++;
                 }
@@ -1568,6 +1568,9 @@ class PEAR_Config extends PEAR
                 continue;
             }
             foreach ($this->layers as $layer) {
+                if (!isset($this->configuration[$layer]['__channels'])) {
+                    $this->configuration[$layer]['__channels'] = array();
+                }
                 if (!isset($this->configuration[$layer]['__channels'][$channel])
                       || !is_array($this->configuration[$layer]['__channels'][$channel])) {
                     $this->configuration[$layer]['__channels'][$channel] = array();

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Role.php,v 1.15 2006/05/12 02:38:58 cellog Exp $
+ * @version    CVS: $Id: Role.php,v 1.16 2006/10/31 02:54:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -25,14 +25,13 @@
  */
 require_once 'PEAR/Installer/Role/Common.php';
 require_once 'PEAR/XMLParser.php';
-//$GLOBALS['_PEAR_INSTALLER_ROLES'] = array();
 /**
  * @category   pear
  * @package    PEAR
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -133,6 +132,7 @@ class PEAR_Installer_Role
             unset($ret);
         }
         if (!isset($ret)) {
+            $ret = array();
             foreach ($GLOBALS['_PEAR_INSTALLER_ROLES'] as $role => $okreleases) {
                 if ($okreleases['installable']) {
                     $ret[] = strtolower(str_replace('PEAR_Installer_Role_', '', $role));
@@ -162,6 +162,7 @@ class PEAR_Installer_Role
             unset($ret);
         }
         if (!isset($ret)) {
+            $ret = array();
             foreach ($GLOBALS['_PEAR_INSTALLER_ROLES'] as $role => $okreleases) {
                 if ($okreleases['honorsbaseinstall']) {
                     $ret[] = strtolower(str_replace('PEAR_Installer_Role_', '', $role));
@@ -188,6 +189,7 @@ class PEAR_Installer_Role
             unset($ret);
         }
         if (!isset($ret)) {
+            $ret = array();
             foreach ($GLOBALS['_PEAR_INSTALLER_ROLES'] as $role => $okreleases) {
                 if ($okreleases['phpfile']) {
                     $ret[] = strtolower(str_replace('PEAR_Installer_Role_', '', $role));
@@ -211,6 +213,7 @@ class PEAR_Installer_Role
      */
     function registerRoles($dir = null)
     {
+        $GLOBALS['_PEAR_INSTALLER_ROLES'] = array();
         $parser = new PEAR_XMLParser;
         if ($dir === null) {
             $dir = dirname(__FILE__) . '/Role';
@@ -228,7 +231,7 @@ class PEAR_Installer_Role
             }
             $class = "PEAR_Installer_Role_".substr($entry, 0, -4);
             // List of roles
-            if (empty($GLOBALS['_PEAR_INSTALLER_ROLES'][$class])) {
+            if (!isset($GLOBALS['_PEAR_INSTALLER_ROLES'][$class])) {
                 $file = "$dir/$entry";
                 $parser->parse(file_get_contents($file));
                 $data = $parser->getData();

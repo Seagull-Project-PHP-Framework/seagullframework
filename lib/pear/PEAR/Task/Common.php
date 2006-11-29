@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Common.php,v 1.15 2006/01/06 04:47:37 cellog Exp $
+ * @version    CVS: $Id: Common.php,v 1.16 2006/11/12 05:02:41 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -53,7 +53,7 @@ define('PEAR_TASK_PACKAGEANDINSTALL', 3);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  * @abstract
@@ -121,7 +121,7 @@ class PEAR_Task_Common
      * @static
      * @abstract
      */
-    function validXml($pkg, $xml, &$config, $fileXml)
+    function validateXml($pkg, $xml, &$config, $fileXml)
     {
     }
 

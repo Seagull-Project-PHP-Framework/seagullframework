@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Install.php,v 1.119 2006/05/12 02:38:58 cellog Exp $
+ * @version    CVS: $Id: Install.php,v 1.120 2006/10/22 18:20:58 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -36,7 +36,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -970,7 +970,7 @@ Run post-installation scripts in package <package>, if any exist.
     function doBundle($command, $options, $params)
     {
         $downloader = &$this->getDownloader($this->ui, array('force' => true, 'nodeps' => true,
-            'soft' => true), $this->config);
+            'soft' => true, 'downloadonly' => true), $this->config);
         $reg = &$this->config->getRegistry();
         if (sizeof($params) < 1) {
             return $this->raiseError("Please supply the package you want to bundle");

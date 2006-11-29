@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.73 2006/09/18 16:39:40 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.75 2006/11/19 23:50:09 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -312,7 +312,10 @@ installed package.'
 
     function doShellTest($command, $options, $params)
     {
-        $this->pushErrorHandling(PEAR_ERROR_RETURN);
+        if (count($params) < 1) {
+            return PEAR::raiseError('ERROR, usage: pear shell-test packagename [[relation] version]');
+        }
+        PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
         $reg = &$this->config->getRegistry();
         $info = $reg->parsePackageName($params[0], $this->config->get('default_channel'));
         if (PEAR::isError($info)) {
@@ -345,7 +348,7 @@ installed package.'
                 exit(1);
             }
         } else {
-            $this->popErrorHandling();
+            PEAR::staticPopErrorHandling();
             $this->raiseError("$command: expects 1 to 3 parameters");
             exit(1);
         }

@@ -19,7 +19,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Exception.php,v 1.25 2006/09/25 14:14:40 cellog Exp $
+ * @version    CVS: $Id: Exception.php,v 1.26 2006/10/30 03:47:48 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.3
  */
@@ -95,7 +95,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0a1
+ * @version    Release: 1.5.0RC1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.3
  *
@@ -254,10 +254,10 @@ class PEAR_Exception extends Exception
         if ($this->cause instanceof PEAR_Exception) {
             $this->cause->getCauseMessage($causes);
         } elseif ($this->cause instanceof Exception) {
-            $causes[] = array('class'   => get_class($cause),
-                              'message' => $cause->getMessage(),
-                              'file' => $cause->getFile(),
-                              'line' => $cause->getLine());
+            $causes[] = array('class'   => get_class($this->cause),
+                              'message' => $this->cause->getMessage(),
+                              'file' => $this->cause->getFile(),
+                              'line' => $this->cause->getLine());
         } elseif (class_exists('PEAR_Error') && $this->cause instanceof PEAR_Error) {
             $causes[] = array('class' => get_class($this->cause),
                               'message' => $this->cause->getMessage());
