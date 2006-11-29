@@ -301,6 +301,23 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
+{
+    function run($conf)
+    {
+        // for 0.6.x versions
+        if (!empty($conf['db']['prefix'])
+                && $conf['db']['prefix'] == 'not implemented yet') {
+            $config = &SGL_Config::singleton();
+            $config->set('db', array('prefix' => ''));
+            $config->save($confFile);
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_SetGlobals extends SGL_Task
 {
     function run($data)
@@ -494,19 +511,6 @@ class SGL_Task_EnsureBC extends SGL_Task
                 $resultTime += floor($time['usec'] / 1000);
                 return $resultTime;
             }
-        }
-
-        // for 0.6.x versions
-        require_once SGL_CORE_DIR . '/Config.php';
-        require_once SGL_CORE_DIR . '/ParamHandler.php';
-        $config   = & new SGL_Config();
-        $confFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
-        $conf     = $config->load($confFile);
-        if (!empty($conf['db']['prefix'])
-                && $conf['db']['prefix'] == 'not implemented yet') {
-            $config->replace($conf);
-            $config->set('db', array('prefix' => ''));
-            $config->save($confFile);
         }
     }
 }
