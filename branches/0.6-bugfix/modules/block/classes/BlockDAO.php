@@ -13,7 +13,7 @@ class BlockDAO extends SGL_Manager
     /**
      * Constructor - set default resources.
      *
-     * @return DA_Default
+     * @return BlockDAO
      */
     function BlockDAO()
     {

@@ -41,7 +41,7 @@
 // $Id: TranslationMgr. v 1.0 2005/04/17 02:15:02 demian Exp $
 
 require_once 'Config.php';
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 
 /**
  * Provides tools preform translation maintenance.
@@ -62,7 +62,7 @@ class TranslationMgr extends SGL_Manager
         $this->pageTitle    = 'Translation Maintenance';
         $this->template     = 'translationMgr.html';
         $this->redirect     = true;
-        $this->da           = & DA_Default::singleton();
+        $this->da           = & DefaultDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'verify'    => array('verify', 'redirectToDefault'),

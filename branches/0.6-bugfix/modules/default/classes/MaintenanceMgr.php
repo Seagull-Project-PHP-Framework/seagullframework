@@ -57,7 +57,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'maintenance.html';
         $this->redirect     = true;
-        $this->da           = & DA_Default::singleton();
+        $this->da           = & DefaultDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'dbgen'     => array('dbgen'),

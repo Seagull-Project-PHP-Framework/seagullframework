@@ -100,7 +100,7 @@ class SimpleDriver
     /**
      * A reference to the Data Access layer from the default module.
      *
-     * @var DA_Default
+     * @var DefaultDAO
      */
     var $da = null;
 
