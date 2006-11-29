@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleGenerationMgr.php,v 1.56 2005/05/31 23:34:23 demian Exp $
 
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 
 /**
  * Provides tools to manage translations and mtce tasks.
@@ -56,7 +56,7 @@ class ModuleGenerationMgr extends SGL_Manager
 
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'moduleGenerator.html';
-        $this->da = &DA_Default::singleton();
+        $this->da = &DefaultDAO::singleton();
         $this->_aActionsMapping =  array(
             'createModule' => array('createModule', 'redirectToDefault'),
             'list'         => array('list'),

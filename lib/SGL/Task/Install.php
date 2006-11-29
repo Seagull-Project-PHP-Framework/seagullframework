@@ -678,8 +678,8 @@ class SGL_Task_RemoveDefaultData extends SGL_Task
 {
     function run($data)
     {
-        require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
-        $da = & DA_Default::singleton();
+        require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
+        $da = & DefaultDAO::singleton();
 
         //  get perms associated with module
         $aPermNames = $da->getPermNamesByModuleId($data['moduleId']);

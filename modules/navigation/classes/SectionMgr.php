@@ -39,7 +39,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: SectionMgr.php,v 1.60 2005/05/29 21:32:17 demian Exp $
 
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR  . '/navigation/classes/DA_Navigation.php';
 require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
 require_once SGL_MOD_DIR  . '/default/classes/ModuleMgr.php';
@@ -62,7 +62,7 @@ class SectionMgr extends SGL_Manager
         $this->masterTemplate = 'masterMinimal.html';
         $this->template       = 'sectionList.html';
 
-        $daDefault = &DA_Default::singleton();
+        $daDefault = &DefaultDAO::singleton();
         $daUser    = &DA_User::singleton();
         $daNav     = &DA_Navigation::singleton();
         $this->da  = new SGL_Delegator();

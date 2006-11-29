@@ -39,7 +39,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
 require_once 'DB/DataObject.php';
 
 define('SGL_ICONS_PER_ROW', 3);
@@ -59,7 +59,7 @@ class ModuleMgr extends SGL_Manager
 
         $this->pageTitle = 'Module Manager';
         $this->template  = 'moduleOverview.html';
-        $this->da        = &DA_Default::singleton();
+        $this->da        = &DefaultDAO::singleton();
 
         $this->_aActionsMapping = array(
             'add'        => array('add'),

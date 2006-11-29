@@ -39,7 +39,7 @@
 // $Id: PermissionMgr.php,v 1.58 2005/05/28 13:46:30 demian Exp $
 
 require_once SGL_CORE_DIR . '/Delegator.php';
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once 'DB/DataObject.php';
 
@@ -63,7 +63,7 @@ class PermissionMgr extends SGL_Manager
         $this->pageTitle    = 'Permission Manager';
 
         $daUser    = &DA_User::singleton();
-        $daDefault = &DA_Default::singleton();
+        $daDefault = &DefaultDAO::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daDefault);

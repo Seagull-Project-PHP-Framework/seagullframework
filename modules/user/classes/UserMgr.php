@@ -39,7 +39,7 @@
 // $Id: UserMgr.php,v 1.80 2005/06/05 22:59:48 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
-require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 
@@ -65,7 +65,7 @@ class UserMgr extends RegisterMgr
         $this->sortBy = 'usr_id';
 
         $daUser    = &DA_User::singleton();
-        $daDefault = &DA_Default::singleton();
+        $daDefault = &DefaultDAO::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daDefault);

@@ -207,8 +207,8 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
-        require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
-        $da = & DA_Default::singleton();
+        require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
+        $da = & DefaultDAO::singleton();
 
         //  match all folders except CVS
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,

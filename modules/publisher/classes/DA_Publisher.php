@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
-// $Id: DA_Default.php,v 1.14 2005/06/21 23:26:24 demian Exp $
+// $Id: DA_Publisher.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 /**
  * Data access methods for the publisher module.
@@ -51,7 +51,7 @@ class DA_Publisher
     /**
      * Constructor - set default resources.
      *
-     * @return DA_Default
+     * @return DA_Publisher
      */
     function DA_Publisher()
     {
@@ -72,17 +72,17 @@ class DA_Publisher
     }
 
     /**
-     * Returns a singleton DA_Default instance.
+     * Returns a singleton DA_Publisher instance.
      *
      * example usage:
-     * $da = & DA_Default::singleton();
+     * $da = & DA_Publisher::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference
      *
      * @access  public
      * @static
-     * @return  DA_Default reference to DA_Default object
+     * @return  DA_Publisher reference to DA_Publisher object
      */
     function &singleton()
     {

@@ -32,11 +32,11 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | DA_Default.php                                                            |
+// | DefaultDAO.php                                                            |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
-// $Id: DA_Default.php,v 1.14 2005/06/21 23:26:24 demian Exp $
+// $Id: DefaultDAO.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 /**
  * Data access methods for the default module.
@@ -45,30 +45,30 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @copyright Demian Turner 2005
  */
-class DA_Default extends SGL_Manager
+class DefaultDAO extends SGL_Manager
 {
     /**
      * Constructor - set default resources.
      *
-     * @return DA_Default
+     * @return DefaultDAO
      */
-    function DA_Default()
+    function DefaultDAO()
     {
         parent::SGL_Manager();
     }
 
     /**
-     * Returns a singleton DA_Default instance.
+     * Returns a singleton DefaultDAO instance.
      *
      * example usage:
-     * $da = & DA_Default::singleton();
+     * $da = & DefaultDAO::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference
      *
      * @access  public
      * @static
-     * @return  DA_Default reference to DA_Default object
+     * @return  DefaultDAO reference to DefaultDAO object
      */
     function &singleton()
     {
@@ -76,7 +76,7 @@ class DA_Default extends SGL_Manager
 
         // If the instance is not there, create one
         if (!isset($instance)) {
-            $instance = new DA_Default();
+            $instance = new DefaultDAO();
         }
         return $instance;
     }
