@@ -207,10 +207,16 @@ class PearMgr extends SGL_Manager
             SGL::logMessage('made it to list-all', PEAR_LOG_DEBUG);
             if ($serialized = $cache->get($cacheId, 'pear')) {
                 $data = unserialize($serialized);
+                if (PEAR::isError($data)) {
+                    return $data;
+                }
                 SGL::logMessage('pear data from cache', PEAR_LOG_DEBUG);
             } else {
                 $cmd = PEAR_Command::factory($input->command, $config);
                 $data = $cmd->run($input->command, $opts, $params);
+                if (PEAR::isError($data)) {
+                    return $data;
+                }
                 $serialized = serialize($data);
                 $cache->save($serialized, $cacheId, 'pear');
                 SGL::logMessage('pear data from db', PEAR_LOG_DEBUG);
