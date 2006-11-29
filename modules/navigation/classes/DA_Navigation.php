@@ -77,7 +77,7 @@ class DA_Navigation extends SGL_Manager
                 'rel'           => 'rel'
             ),
             'tableName'      => $this->conf['table']['section'],
-            'lockTableName'  => 'table_lock',
+            'lockTableName'  => $this->conf['db']['prefix'] . 'table_lock',
             'sequenceName'   => $this->conf['table']['section']);
 
         $this->nestedSet = &new SGL_NestedSet($this->_params);

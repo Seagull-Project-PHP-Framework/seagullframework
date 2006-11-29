@@ -30,6 +30,10 @@ class TestUserMgr extends UnitTestCase {
 
     function testInsertingAUserIncrementsTotalCount()
     {
+        $conf      = $this->da->conf;
+        $countUsr  = 'SELECT COUNT(*) FROM ' . $conf['table']['user'];
+        $countPerm = 'SELECT COUNT(*) FROM ' . $conf['table']['user_permission'];
+
         //  users inherit their role from the default roles of orgs they belong to
         //  go through a range of orgs that cover all roles in the system
         //      2 - traffic manager
@@ -41,10 +45,10 @@ class TestUserMgr extends UnitTestCase {
             $oOutput = new stdClass();
 
             // get initial count of usr records
-            $initialCountUser = $this->dbh->getOne('SELECT COUNT(*) FROM usr');
+            $initialCountUser = $this->dbh->getOne($countUsr);
 
             // get initial count of user_permission records
-            $initialCountPerms = $this->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+            $initialCountPerms = $this->dbh->getOne($countPerm);
 
             //  build user object
             $oUser = new stdClass();
@@ -66,14 +70,14 @@ class TestUserMgr extends UnitTestCase {
             // get final count of user records
             unset($oInput, $oOutput, $userMgr);
 
-            $finalCountUser = $this->dbh->getOne('SELECT COUNT(*) FROM usr');
+            $finalCountUser = $this->dbh->getOne($countUsr);
 
             //  test user record inserted
             $this->assertEqual($initialCountUser + 1, $finalCountUser);
 
             //  test perms inserted
             //  get final count of user_permission records added
-            $finalCountPerms = $this->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+            $finalCountPerms = $this->dbh->getOne($countPerm);
             $permsAdded = $finalCountPerms - $initialCountPerms;
 
             //  determine user's role inherited from parent

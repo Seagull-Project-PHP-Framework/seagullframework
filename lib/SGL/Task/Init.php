@@ -495,6 +495,19 @@ class SGL_Task_EnsureBC extends SGL_Task
                 return $resultTime;
             }
         }
+
+        // for 0.6.x versions
+        require_once SGL_CORE_DIR . '/Config.php';
+        require_once SGL_CORE_DIR . '/ParamHandler.php';
+        $config   = & new SGL_Config();
+        $confFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
+        $conf     = $config->load($confFile);
+        if (!empty($conf['db']['prefix'])
+                && $conf['db']['prefix'] == 'not implemented yet') {
+            $config->replace($conf);
+            $config->set('db', array('prefix' => ''));
+            $config->save($confFile);
+        }
     }
 }
 

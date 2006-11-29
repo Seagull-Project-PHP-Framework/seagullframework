@@ -139,7 +139,8 @@ class ModuleGenerationMgr extends SGL_Manager
             $res = SGL_Task_CreateDataObjectEntities::run();
 
             // check if table exists
-            $res = file_exists(SGL_ENT_DIR . '/' . ucfirst($mgrName) . '.php');
+            $entity = ucfirst($this->conf['db']['prefix'] . $mgrName);
+            $res = file_exists(SGL_ENT_DIR . '/' . $entity . '.php');
             if (!$res) {
                 $msg =  'Please generate a table (with the same name as your manager entity, eg, "pizza") '.
                         'in the database first.';

@@ -192,6 +192,17 @@ class ConfigMgr extends SGL_Manager
                     $aErrors['extendedSession'] = 'Extended session requires database session handling';
                     $input->displayTab = 'sessionOptions';
             }
+
+            // table prefix
+            if (!empty($input->conf['db']['prefix'])) {
+                $pattern = '/^[a-zA-Z]([a-zA-Z0-9]+)?_?$/';
+                if (!preg_match($pattern, $input->conf['db']['prefix'])) {
+                    $aErrors['db']['prefix'] = 'Only letters and digits are ' .
+                        'allowed, first symbol must be a letter, last symbol ' .
+                        'can be an underscore';
+                    $input->displayTab = 'databaseOptions';
+                }
+            }
         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {

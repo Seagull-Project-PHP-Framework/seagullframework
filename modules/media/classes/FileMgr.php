@@ -153,8 +153,8 @@ class FileMgr extends SGL_Manager
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $fileType = DB_DataObject::factory($this->conf['table']['file_type']);
         $media->joinAdd($fileType);
-        $media->selectAdd('media.name as name');
-        $media->selectAdd('file_type.name as file_type_name');
+        $media->selectAdd($this->conf['table']['media'] . '.name as name');
+        $media->selectAdd($this->conf['table']['file_type'] . '.name as file_type_name');
         $media->get($input->mediaId);
 
         //  Check if we want to preview an image

@@ -102,6 +102,7 @@ class MaintenanceMgr extends SGL_Manager
     function _cmd_dbgen(&$input, &$output)
     {
         require_once SGL_CORE_DIR . '/Task/Install.php';
+        require_once SGL_CORE_DIR . '/Sql.php';
 
         //  First regenerate entities files
         $resEntities = SGL_Task_CreateDataObjectEntities::run();

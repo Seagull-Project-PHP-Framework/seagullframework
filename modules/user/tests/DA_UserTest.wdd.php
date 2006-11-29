@@ -30,6 +30,7 @@ class DA_UserTest extends UnitTestCase {
 
     function testAddMasterPerms()
     {
+        $conf     = $this->da->conf;
         $moduleId = 33;
 
         require_once 'Text/Password.php';
@@ -37,41 +38,52 @@ class DA_UserTest extends UnitTestCase {
         $aPerms = array(
             $oPassword->create() => 'first description',
             $oPassword->create() => 'second description');
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['permission'];
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->addMasterPerms($aPerms, $moduleId);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre + 2, $countPost);
     }
 
     function testDeleteOrphanedPerms()
     {
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['permission'];
+
         $ret = $this->da->addMasterPerms(array('perm_name' => 'desc'), 87);
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->deleteOrphanedPerms(array(1 => 'perm_name^87'));
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre - 1, $countPost);
 
     }
 
     function testDeleteMasterPerms()
     {
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
-        $permName = $this->da->dbh->getOne('SELECT MAX(name) FROM permission');
+        $conf       = $this->da->conf;
+        $countQuery = 'SELECT COUNT(*) FROM ' . $conf['table']['permission'];
+        $maxQuery   = 'SELECT MAX(name) FROM ' . $conf['table']['permission'];
+
+        $countPre = $this->da->dbh->getOne($countQuery);
+        $permName = $this->da->dbh->getOne($maxQuery);
         $ret = $this->da->deleteMasterPerms(array($permName));
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM permission');
+        $countPost = $this->da->dbh->getOne($countQuery);
         $this->assertEqual($countPre - 1, $countPost);
     }
 
     function testAddPermsByUserId()
     {
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['user_permission'];
+
+        $countPre = $this->da->dbh->getOne($query);
         $aPerms = range(0, 42);
         $ret = $this->da->addPermsByUserId($aPerms, 2);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre + 43, $countPost);
     }
 
@@ -223,19 +235,25 @@ class DA_UserTest extends UnitTestCase {
 
     function testDeletePermByUserIdAndPermId()
     {
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['user_permission'];
+
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->deletePermByUserIdAndPermId(2, 42);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre - 1, $countPost);
     }
 
     function testDeletePermsByUserId()
     {
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['user_permission'];
+
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->deletePermsByUserId(2);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM user_permission');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre - 42, $countPost);
     }
 
@@ -252,21 +270,27 @@ class DA_UserTest extends UnitTestCase {
 
     function testAddMasterPrefs()
     {
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['preference'];
+
         $aPrefs = array('foo' => 'bar', 'baz' => 'fluux');
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->addMasterPrefs($aPrefs);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre + 2, $countPost);
     }
 
     function testDeleteMasterPrefs()
     {
+        $conf  = $this->da->conf;
+        $query = 'SELECT COUNT(*) FROM ' . $conf['table']['preference'];
+
         $aPrefs = array('foo', 'baz');
-        $countPre = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
+        $countPre = $this->da->dbh->getOne($query);
         $ret = $this->da->deleteMasterPrefs($aPrefs);
         $this->assertTrue($ret);
-        $countPost = $this->da->dbh->getOne('SELECT COUNT(*) FROM preference');
+        $countPost = $this->da->dbh->getOne($query);
         $this->assertEqual($countPre - 2, $countPost);
     }
 
