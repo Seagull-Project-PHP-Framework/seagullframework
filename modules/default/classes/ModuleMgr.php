@@ -57,22 +57,22 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'Module Manager';
-        $this->template     = 'moduleOverview.html';
-        $this->da           = &DA_Default::singleton();
+        $this->pageTitle = 'Module Manager';
+        $this->template  = 'moduleOverview.html';
+        $this->da        = &DA_Default::singleton();
 
-        $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'detect'    => array('detect'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'install'   => array('install', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
-            'uninstall' => array('uninstall', 'redirectToDefault'),
-            'deregister'=> array('deregister', 'redirectToDefault'),
-            'list'      => array('list'),
-            'overview'  => array('overview'),
+        $this->_aActionsMapping = array(
+            'add'        => array('add'),
+            'detect'     => array('detect'),
+            'insert'     => array('insert', 'redirectToDefault'),
+            'install'    => array('install', 'redirectToDefault'),
+            'edit'       => array('edit'),
+            'update'     => array('update', 'redirectToDefault'),
+            'delete'     => array('delete', 'redirectToDefault'),
+            'uninstall'  => array('uninstall', 'redirectToDefault'),
+            'deregister' => array('deregister', 'redirectToDefault'),
+            'list'       => array('list'),
+            'overview'   => array('overview'),
         );
     }
 
@@ -99,7 +99,7 @@ class ModuleMgr extends SGL_Manager
         $input->moduleId        = $req->get('frmModuleId');
         $input->moduleName      = $req->get('frmModuleName');
         $aModules               = $req->get('module');
-        $input->displayDeRegisteredModules = ($req->get('displayDeRegisteredModules') != null )
+        $input->displayDeRegisteredModules = (!is_null($req->get('displayDeRegisteredModules')))
             ? $req->get('displayDeRegisteredModules')
             : SGL_Session::get('displayDeRegisteredModules');
 
@@ -428,8 +428,8 @@ class ModuleMgr extends SGL_Manager
         }
         //  gets all tables defined in this module's schema
         $dataDir = SGL_MOD_DIR . '/' . $moduleName . '/data';
-        $schemaFile = $dataDir . '/schema.'.$dbShortname.'.sql';
-        $dataFile = $dataDir . '/data.default.'.$dbShortname.'.sql';
+        $schemaFile = $dataDir . '/schema.' . $dbShortname . '.sql';
+        $dataFile = $dataDir . '/data.default.' . $dbShortname . '.sql';
         //  Some modules, like export, don't have schema and don't need installing.
         //  is_file($dataDir) is for cases, on delete, where some web-writable files
         //  are deleted, but not all
