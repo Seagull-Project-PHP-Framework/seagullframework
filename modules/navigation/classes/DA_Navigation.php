@@ -536,12 +536,21 @@ class DA_Navigation extends SGL_Manager
         if (substr($section['resource_uri'], -1) == $separator) {
             $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
         }
-        //  fetch next id
-        $sectionNextId = $this->dbh->nextID($this->conf['table']['section']) + 1;
 
-        //  set translation id for nav title
-        $section['trans_id'] = $sectionNextId;
         $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
+        // update trans_id
+        $this->nestedSet->updateNode($nodeId, array('trans_id' => $nodeId));
+
+        // add translation
+        if ($this->conf['translation']['container'] == 'db') {
+            // fetch fallback lang
+            $lang = SGL_Translation::getFallbackLangID();
+            // insert translation
+            $ok = $this->trans->add($nodeId, 'nav', array($lang => $section['title']));
+        }
+
+        // sync with sequence table
+        $this->dbh->nextID($this->conf['table']['section']);
 
         return $nodeId;
     }
