@@ -1154,16 +1154,18 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        // remove original dbdo links file
+        // original dbdo links file
         $linksFile = SGL_ENT_DIR . '/' . $conf['db']['name'] . '.links.ini';
 
-        //  only remove when not installing modules, ie for sgl-rebuild
-        if (empty($data['moduleInstall'])) {
-            if (is_file($linksFile) && is_writable($linksFile)) {
-                $aOrigData = parse_ini_file($linksFile, true);
+        // read existing data if any
+        if (is_readable($linksFile)) {
+            $aOrigData = parse_ini_file($linksFile, true);
+            // only remove when not installing modules, ie for sgl-rebuild
+            if (empty($data['moduleInstall']) && is_writable($linksFile)) {
                 unlink($linksFile);
             }
         }
+
         $linkData = '';
         foreach ($data['aModuleList'] as $module) {
             $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
@@ -1180,7 +1182,8 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                 //  compare with existing data if there is any
                 if (!empty($aOrigData)) {
                     foreach ($aNewData as $key => $aValues) {
-                        if (array_key_exists($key, $aOrigData)) {
+                        $tableName = $conf['db']['prefix'] . $key;
+                        if (array_key_exists($tableName, $aOrigData)) {
                             //  key already exists, so return instead of adding it
                             return;
                         }
