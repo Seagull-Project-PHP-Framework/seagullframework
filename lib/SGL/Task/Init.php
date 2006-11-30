@@ -310,7 +310,7 @@ class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
                 && $conf['db']['prefix'] == 'not implemented yet') {
             $config = &SGL_Config::singleton();
             $config->set('db', array('prefix' => ''));
-            $config->save($confFile);
+            $config->save();
         }
     }
 }
