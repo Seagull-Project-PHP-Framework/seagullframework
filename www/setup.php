@@ -139,8 +139,12 @@ if (isset($_GET['start'])) {
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 
-    header('Location: '.SGL_BASE_URL.'/index.php/default/welcome/1');
-    exit;
+    $aUrl = array(
+        'managerName' => 'default',
+        'moduleName'  => 'default',
+        'welcome'     => 1
+    );
+    SGL_HTTP::redirect($aUrl);
 }
 
 //  check authorization
