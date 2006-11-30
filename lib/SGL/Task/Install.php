@@ -557,7 +557,6 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             // restore db prefix
             if (isset($currentPrefix)) {
                 $c->set('db', array('prefix' => $currentPrefix));
-                unset($_SESSION['install_dbPrefix']);
             }
         }
     }
@@ -1119,15 +1118,18 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
             $ok = unlink($keysFile);
         }
 
-        // delete php files i.e. old dbdo entities
-        if (is_writable(SGL_ENT_DIR)) {
-            if ($dh = opendir(SGL_ENT_DIR)) {
-                while (($file = readdir($dh)) !== false) {
-                    if ($file == '.' || $file == '..'
-                            || substr($file, -3) != 'php') {
-                        continue;
+        // drop old entities on re-install
+        if (isset($_SESSION['install_dbPrefix'])) {
+            if (is_writable(SGL_ENT_DIR)) {
+                if ($dh = opendir(SGL_ENT_DIR)) {
+                    $prefix = $_SESSION['install_dbPrefix'];
+                    while (($file = readdir($dh)) !== false) {
+                        if ($file != '.' && $file != '..'
+                                && substr($file, -3) == 'php'
+                                && substr($file, 0, strlen($prefix)) == ucfirst($prefix)) {
+                            $ok = unlink(SGL_ENT_DIR . '/' . $file);
+                        }
                     }
-                    $ok = unlink(SGL_ENT_DIR . '/' . $file);
                 }
             }
         }
