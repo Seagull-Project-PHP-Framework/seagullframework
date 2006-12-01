@@ -446,8 +446,6 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
-        $da = & DefaultDAO::singleton();
         $req = $input->getRequest();
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
@@ -461,7 +459,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             $homePageRequest = true;
 
         } else {
-            if (!$da->moduleIsRegistered($moduleName)) {
+            if (!SGL::moduleIsEnabled($moduleName)) {
                 SGL::logMessage('module "'.$moduleName.'"does not appear to be registered');
                 $getDefaultMgr = true;
             } else {

@@ -207,15 +207,13 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
-        require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
-        $da = & DefaultDAO::singleton();
 
         //  match all folders except CVS
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
             create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
         foreach ($ret as $module) {
-            if ($onlyRegistered && !$da->moduleIsRegistered($module)) {
+            if ($onlyRegistered && !SGL::moduleIsEnabled($module)) {
                 unset($ret[$module]);
             }
         }
