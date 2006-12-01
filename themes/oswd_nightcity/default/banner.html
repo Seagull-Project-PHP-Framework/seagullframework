@@ -1,0 +1,44 @@
+        <!-- Logo and header -->
+        <div id="header">
+            <div id="left">
+                <h1 id="logo">
+                    <a href="{webRoot}" title="{translate(#Home#)}">
+                        {if:conf[site][showLogo]}
+                        <img src="{webRoot}/themes/{theme}/images/{conf[site][showLogo]}" alt="{conf[site][name]} Logo" />
+                        {else:}
+                        {conf[site][name]}
+                        {end:}
+                    </a>
+                </h1>
+            </div> <!-- left -->
+            <div id="right">
+                <div id="bigArrow"><a href="{makeUrl(#logout#,#login#,#user#)}">&gt;</a></div>
+                <div id="top-nav">
+                    <div class="inner">
+                        {foreach:blocksMainNav,key,valueObj}
+                            {valueObj.content:h}
+                        {end:}
+                    </div> <!-- inner -->
+                </div> <!-- top-nav -->
+            </div> <!-- right -->
+
+            <div id="banner2">
+                <div id="lang-switcher">
+                    {getLangSwitcher(currUrl,webRoot,theme):h}
+                </div>
+                <div id="breadcrumbs">
+                    <div class="inner"> 
+                        <div id="breadcrumb">
+                            {foreach:blocksMainBreadcrumb,key,valueObj}
+                                {valueObj.content:h}
+                            {end:}
+                        </div> <!-- breadcrumb -->
+                        <div class="spacer">&nbsp;</div>
+                    </div>
+                </div> <!-- breadcrumbs -->
+            </div> <!-- banner2 -->
+        </div> <!-- header -->
+        
+        
+        <!-- Main layout -->
+        <div id="inner-wrapper">

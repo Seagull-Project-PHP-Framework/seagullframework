@@ -1,0 +1,47 @@
+        </div> <!-- close inner-wrapper -->
+
+
+        <div id="footer">
+            <div class="wrap">
+                <div id="bottom-nav">
+                    <div class="inner">
+                    {foreach:blocksMainNav,key,valueObj}
+                        {valueObj.content:h}
+                    {end:}
+                    </div>
+                </div> <!-- close bottom-nav -->
+                <div style="float: left; width:48%;">
+                        <p>
+                        {translate(#Powered by#)} <a href="http://seagullproject.org/" title="{translate(#Seagull PHP Framework#)}">
+                        {translate(#Seagull PHP Framework#)}</a>
+                        {if:isAdmin()}
+                            v{versionAPI}
+                        {end:}
+                         - &copy;
+                        <a href="http://seagullsystems.com/" title="Seagull Systems">Seagull Systems</a> 2003-2006
+                        {if:conf[debug][showBugReporterLink]}
+                        <a id="bugReporter" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}">
+                            <img src="{webRoot}/themes/{theme}/images/bug.gif" alt="{translate(#send bug report#)}" />
+                        </a>
+                        {end:}
+                        </p>
+                        {if:executionTime}
+                        <p>
+                        {translate(#Execution Time#)} = {executionTime} {translate(#ms#)}{if:queryCount}, {queryCount} {translate(#queries#)} {end:}
+                        </p>
+                        {end:}
+
+                        {if:conf[debug][profiling]}
+                        <p>{memoryUsage} kb {translate(#allocated#)}</p>
+                        {end:}
+                </div> <!-- left -->
+                <div style="text-align: right; float: right;width:48%;">
+                    <p>theme designed by <a href="http://www.gettemplate.com">GetTemplate</a></p>
+                    <p>SGL-fied by <a href="http://noodlemaps.net">ngmather</a></p>
+                </div> <!-- right -->
+            </div>
+
+    </div> <!-- close outer-wrapper -->
+</body>
+</html>
+
