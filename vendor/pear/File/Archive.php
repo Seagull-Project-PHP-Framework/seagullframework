@@ -571,7 +571,8 @@ class File_Archive
                 preg_match($cacheCondition, $source)) {
                 return File_Archive::cache(File_Archive::read($source));
             } else {
-                return File_Archive::read($source);
+                $obj = File_Archive::read($source);
+                return $obj;
             }
         } else if (is_array($source)) {
             return File_Archive::readMulti($source);
@@ -587,7 +588,7 @@ class File_Archive
      *
      * @access private
      */
-    function &_convertToWriter(&$dest)
+    function _convertToWriter(&$dest)
     {
         if (is_string($dest)) {
             return File_Archive::appender($dest);

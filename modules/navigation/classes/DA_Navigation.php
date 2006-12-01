@@ -187,7 +187,7 @@ class DA_Navigation extends SGL_Manager
                 $section = array_merge($section, $parsed);
 
                 //  adjust friendly mgr name to class filename
-                if (DefaultDAO::moduleIsRegistered($parsed['module'])) {
+                if (SGL::moduleIsEnabled($parsed['module'])) {
                     $c = &SGL_Config::singleton();
                     $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
                     $c->merge($moduleConf);
@@ -209,7 +209,7 @@ class DA_Navigation extends SGL_Manager
                     $section['add_params'] = null;
                 }
                 //  deal with static articles
-                if ($section['is_static'] && DefaultDAO::moduleIsRegistered('publisher')) {
+                if ($section['is_static'] && SGL::moduleIsEnabled('publisher')) {
                     if (isset($parsed['parsed_params'])) {
                         $section['staticArticleId'] = $parsed['parsed_params']['frmArticleID'];
                     }
