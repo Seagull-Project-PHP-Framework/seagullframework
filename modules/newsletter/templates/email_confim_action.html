@@ -1,0 +1,19 @@
+<h3>{translate(#Newsletter action confirmation from#)} {emailSiteName}</h3>
+{translate(#Dear#)} {emailName},<br />
+<br />
+{translate(#You receive this message because we got an#)} <strong>{emailAction}</strong> 
+{translate(#request with your e-mail address, to the newsletter#)} <strong>{emailList}</strong>.<br />
+<br />
+<strong>{translate(#List name#)}:</strong> {emailList}<br />
+<strong>{translate(#E-mail#)}:</strong> {emailAddress}<br />
+<strong>{translate(#Authorization code#)}:</strong> {emailKey}<br />
+<br />
+{translate(#To confirm this action you can#)} <a href="{makeUrl(#authorize#,#newsletter#,##)}frmEmail/{emailAddress}/frmKey/{emailKey}">{translate(#click here#)}</a> 
+{translate(#or go to#)} 
+<a href="{makeUrl(#authorize#,#newsletter#,##)}">{makeUrl(#authorize#,#newsletter#,##)}</a> 
+{translate(#and fill in the form with your e-mail and authorization code#)}.<br />
+<br />
+{translate(#If this is an unrequested action just delete this e-mail#)}.<br />
+<br />
+{translate(#Best regards#)},<br />
+{emailSiteName}

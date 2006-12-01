@@ -1,0 +1,43 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmOrgTypeEdit','submitted',1,1);">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('frmOrgTypeEdit');">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#orgtype#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" id="frmOrgTypeEdit" flexy:ignore>
+        <fieldset class="hide">
+            {if:isEdit}
+            <input name="action" type="hidden" value="update" />
+            {else:}
+            <input name="action" type="hidden" value="insert" />
+            {end:}
+            <input type="hidden" name="submitted" value="1" />
+            <input type="hidden" name="orgTypes[organisation_type_id]" value="{orgTypes.organisation_type_id}" />
+        </fieldset>
+
+        <h3 flexy:if="isEdit">{translate(#Edit organisation#)}</h3>
+        <h3 flexy:if="!isEdit">{translate(#New organisation#)}</h3>
+        <fieldset class="inside">
+            {if:isEdit}
+            <p>
+                <label>{translate(#ID#)}</label>
+                <span>{orgTypes.organisation_type_id}&nbsp;</span>
+            </p>
+            {end:}
+            <p>
+                <label for="orgTypes[name]"><span class="required">* </span>{translate(#Name#)}</label>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+                <input type="text" class="longText" name="orgTypes[name]" id="orgTypes[name]" value="{orgTypes.name}" />
+            </p>
+        </fieldset>
+        <p class="helpRequire">
+            <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
+        </p>
+    </form>
+    <div class="spacer"></div>
+</div>

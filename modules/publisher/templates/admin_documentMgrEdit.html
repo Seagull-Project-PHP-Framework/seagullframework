@@ -1,0 +1,58 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('editAsset','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" name="editAsset" flexy:ignore id="editAsset">
+        <h3>{translate(#Editing Asset#)} '{asset.name}'</h3>
+        <fieldset class="inside">
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
+            <input type="hidden" name="document[added_by]" value="{loggedOnUserID}" />
+            <input type="hidden" name="document[orig_name]" value="{asset.name}" />
+
+            <p>
+                <label>{translate(#Type#)}</label>
+                <span>{asset.link_document_type_id.name}</span>
+            </p>
+            <p>
+                <label>{translate(#Date Added#)}</label>
+                <span>{formatDate(asset.date_created)}</span>
+            </p>
+            {if:isAdmin()}
+            <p>
+                <label>{translate(#Category#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label for="frmCategoryChangeToID">{translate(#Change Category#)}</label>
+                <select name="frmCategoryChangeToID" id="frmCategoryChangeToID">
+                    {generateSelect(aCategories,currentCat):h}
+                </select>
+            </p>
+            <p>
+                <label>{translate(#Owner#)}</label>
+                <span>{asset.link_added_by.username}</span>
+            </p>
+            <p>
+                <label for="document[name]">{translate(#Asset Name#)}</label>
+                <input class="longText" type="text" name="document[name]" id="document[name]" value="{asset.name}" />
+            </p>
+            <p>
+                <label for="document[description]">{translate(#Description#)}</label>
+                <textarea class="longText" name="document[description]" id="document[description]">{asset.description}</textarea>
+            </p>
+            {end:}
+            <p>
+                <label>{translate(#Size#)}</label>
+                <span>{formatBytes(asset.file_size)}</span>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

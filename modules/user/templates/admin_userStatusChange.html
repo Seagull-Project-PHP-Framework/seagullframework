@@ -1,0 +1,33 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmUserStatusChange','submitted',1,1)" flexy:if="user.is_acct_active">{translate(#Disable Now#)}</a>
+    <a class="action save" href="javascript:formSubmit('frmUserStatusChange','submitted',1,1)" flexy:if="!user.is_acct_active">{translate(#Enable Now#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#user#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" action="" name="frmUserStatusChange" id="frmUserStatusChange" flexy:ignore>
+        <fieldset class="inside">
+            <input type="hidden" name="frmUserID" value="{user.usr_id}" />
+            <input type="hidden" name="action" value="changeUserStatus" />
+            <h3 flexy:if="user.is_acct_active">{translate(#Disable user#)} "{user.username}"</h3>
+            <h3 flexy:if="!user.is_acct_active">{translate(#Enable user#)} "{user.username}"</h3>
+            <p>
+                <label>{translate(#Changing status for#)}</label>
+                <span>{user.username}</span>
+            </p>
+            <p>
+                <label>{translate(#Current status is#)}</label>
+                <span>{if:user.is_acct_active} {translate(#active#)} {else:} {translate(#disabled#)} {end:}</span>
+            </p>
+            <p>
+                <label for="frmChangeStatusNotify">{translate(#Notify user#)}</label>
+                <input type="checkbox" name="frmChangeStatusNotify" id="frmChangeStatusNotify" />
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

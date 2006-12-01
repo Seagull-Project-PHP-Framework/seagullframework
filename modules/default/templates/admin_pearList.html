@@ -1,0 +1,62 @@
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="pearPackages" action="" method="post" flexy:ignore id="pearPackages">
+        <fieldset class="inside">
+        <input type="hidden" name="action" value="delete" />
+        <p>
+            <label for="frmChannelName">{translate(#Choose channel#)}</label>
+            <select name="frmChannelName" id="frmChannelName">
+                {generateSelect(aChannels,channel):h}
+            </select>
+        </p>
+        <p>
+            <label>{translate(#Action#)}</label>
+            <input type="button" class="sgl-button" value="{translate(#List remote packages#)}"
+                onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-list-all/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+            <input type="button" class="sgl-button" value="{translate(#List installed packages#)}"
+                onclick="javascript:document.location.href='{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-list-all/mode/installed/channel/'+getSelectedValue(document.getElementById('frmChannelName')) + '/'" />
+<!--            <input type="button" class="sgl-button" value="{translate(#Search package#)}" />-->
+        </p>
+        </fieldset>
+
+    {if:result}
+        {foreach:result,category,packages}
+        <fieldset class="noBorder">
+            <h3>{category}</h3>
+            <table class="full">
+                <thead>
+                    <tr>
+                        <th width="5%">&nbsp;</th>
+                        <th width="25%" class="left">{translate(#Package Name#)}</th>
+                        <th width="7%" class="left">{translate(#Local#)}</th>
+                        <th width="7%" class="left">{translate(#Latest#)}</th>
+                        <th width="8%">{translate(#Install#)}</th>
+                        <th width="8%">{translate(#Uninstall#)}</th>
+                        <th width="40%" class="left">{translate(#Description#)}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="packages,k2,package">
+                        <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj.faq_id}" /></td>
+                        <td class="left">{package[0]}</td><!--name-->
+                        <td class="left">{package[1]}</td><!--local-->
+                        <td class="left">{package[2]}</td><!--remote-->
+                        <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-install/pkg/{this.plugin(#replaceSlashes#,package[0])}/">install</a></td><!--remote-->
+                        <td><a href="{makeUrl(#doRequest#,#pear#,#default#)}command/sgl-uninstall/pkg/{this.plugin(#replaceSlashes#,package[0])}/mode/installed">uninstall</a></td><!--remote-->
+                        <td class="left">{package[3]}</td><!--desc-->
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+        {end:}
+    {else:}
+    <fieldset class="inside">
+        <p>{translate(#Pear Manager Notice#)}</p>
+    </fieldset>
+    {end:}
+    </form>
+    <div class="spacer"></div>
+</div>

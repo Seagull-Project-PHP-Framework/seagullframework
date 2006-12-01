@@ -1,0 +1,15 @@
+{if:isEqual(column.name,#name#)}
+    {if:isEqual(valueObj[name],#Jan#)}
+        <td bgcolor="#FF0080">
+    {else:}
+        <td bgcolor="#00FFFF">
+    {end:}
+{else:}
+    {if:isEqual(valueObj[surname],#Nowak#)}
+        <td bgcolor="#FFFF00">
+    {else:}
+        <td bgcolor="#00FF00">
+    {end:}
+{end:}
+    <B>{this.plugin(#getArrayValue#,valueObj,column.dbName):h}</B>
+        </td>

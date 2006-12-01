@@ -1,0 +1,66 @@
+<div id="event_navigation">
+	<ul>
+<!--
+		<li>
+			<a href="{makeUrl(#viewDay#,#calendar#,#event#)}y/{day.thisYear()}/m/{day.thisMonth()}/d/{day.thisDay()}" title="Today">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_today.png" alt="Today" border="0" />
+				<span>Today</span>
+			</a>
+		</li>
+-->
+		{if:isEqual(action,#view#)}
+		{else:}
+		<li>
+			<a href="{makeUrl(#add#,#event#,#event#)}" title="Add New Event">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_add.png" alt="Add New Event" border="0" />
+				<span>Add Event</span>
+			</a>
+		</li>
+		{end:}
+		<li>
+			<a href="{makeUrl(##,#event#,#event#)}" title="List All My Events">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_list.png" alt="List All My Events" border="0" />
+				<span>List Events</span>
+			</a>
+		</li>
+		<li>
+			<a href="{makeUrl(#viewMonth#,#calendar#,#event#)}y/{day.thisYear()}/m/{day.thisMonth()}/d/{day.thisDay()}" title="Month View">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_month_view.png" alt="Month View" border="0" />
+				<span>Month View</span>
+			</a>
+		</li>
+
+		<li>
+			<a href="{makeUrl(#search#,#event#,#event#)}" title="Search Events">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_search.png" alt="Search Events" border="0" />
+				<span>Search Events</span>
+			</a>
+		</li>
+
+
+
+		{if:isEqual(action,#view#)}
+
+		<li>
+			<a href="{makeUrl(#edit#,#event#,#event#,##,#frmEventId|eventId#)}" title="Edit Event">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_plain.png" alt="Edit Event" border="0" />
+				<span>Edit Event</span>
+			</a>
+		</li>
+		<li>
+			<a href="{makeUrl(#changeStatus#,#event#,#event#,##,#frmEventId|eventId#)}" title="Toggle Show/Hide Event">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_locked.png" alt="Toggle Show/Hide Event" border="0" />
+				<span>Show/Hide Event</span>
+			</a>
+		</li>
+		<li>
+            <a href="{makeUrl(#delete#,#event#,#event#,##,#frmEventId|eventId#)}"
+			   onclick="return confirmDelete('event', 'events')" title="Delete Event - This can NOT be undone">
+				<img src="{webRoot}/themes/{theme}/images/icons/event_delete.png" alt="Delete Event - This can NOT be undone" border="0" />
+				<span>Delete Event</span>
+			</a>
+		</li>
+		{end:}
+	</ul>
+	<div style="clear:both ">&nbsp;</div>
+</div>

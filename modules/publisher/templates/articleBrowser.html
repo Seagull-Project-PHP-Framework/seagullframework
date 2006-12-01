@@ -1,0 +1,32 @@
+<div class="message">{msgGet()}</div>
+
+<h2 class="sectionHeader">{translate(#Current Category#)}: {currentCat:h}</h2>
+<h3 class="colHeader">{translate(#You are here#)}: {path:h}</h3>
+
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+{if:articleList}
+    {foreach:articleList,key,aValue}
+        <h2><strong>{aValue[title]}</strong></h2>
+        <div><em>{formatDatePretty(aValue[startDate])}, {translate(#contributed by#)}: <a href="{makeUrl(#view#,#profile#,#user#,articleList,#frmUserID|createdByID#,key)}">{aValue[creatorName]}</a></em></div>
+        {if:aValue[bodyHtml]}
+            <p>{aValue[bodyHtml]:h}</p>
+        {end:}
+        {if:aValue[newsHtml]}
+            <p>{aValue[newsHtml]:h}</p>
+        {end:}
+        <p>&nbsp;</p>
+        <p>[<a href="{makeUrl(#view#,#articleview#,#publisher#,articleList,#frmArticleID|item_id#,key)}" title="{aValue[title]}">{translate(#full story#)} "{aValue[title]}"</a>]
+        {if:isAdmin()}
+            <a href="{makeUrl(#edit#,#article#,#publisher#,articleList,#frmArticleID|item_id#,key)}" />
+                [{translate(#Edit#)}]
+            </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#Edit#)}" />
+        {end:}</p>
+        <hr />
+    {end:}
+    </ul>
+{else:}
+    {translate(#No articles found#)}
+{end:}
+
+{if:pager}<flexy:include src="pager.html" />{end:}

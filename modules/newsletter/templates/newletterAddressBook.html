@@ -1,0 +1,32 @@
+<script type="text/javascript">
+function copyEmailAddresses(value)
+{ 
+     window.opener.document.NewsletterMgr.frmEmail.value += value += ';';        
+}
+</script>
+
+<table class="wide">
+    <tr>
+        <td>
+            <h3>{translate(#Address Book#)}</h3>
+        </td>
+    </tr>
+
+    <tr>
+        <td>{translate(#address book blurb#)}</td>
+    </tr>
+
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+<table class="wide">
+    <tr flexy:foreach="groupList,key,value">
+        <td><a href="javascript:copyEmailAddresses('{value}')">{key}</a></td>
+    </tr>
+
+    <tr>
+        <td align="center"><input type="button" value="{translate(#Done#)}" onclick="self.window.close();" /></td>
+    </tr>
+</table>

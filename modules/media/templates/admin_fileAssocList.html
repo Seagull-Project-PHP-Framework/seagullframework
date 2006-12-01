@@ -1,0 +1,134 @@
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/prototype.js"></script>
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/scriptaculous.js?load=effects"></script>
+<script type="text/javascript">
+<!--
+function toggleHighlight(element){
+	this.element = $(element);
+
+	if (this.element.checked){
+		new Effect.Highlight(this.element.parentNode, {startcolor:'#FFE400', endcolor:'#FAF4C3', restorecolor:'#FAF4C3'});
+	} else {
+		new Effect.Highlight(this.element.parentNode, {startcolor:'#FFE400', endcolor:'#F6F5F2', restorecolor:'#F6F5F2'});
+	}
+}
+-->
+</script>
+<style type="text/css">
+<!--
+	@import url("{webRoot}/themes/{theme}/css/lightbox.css");
+-->
+</style>
+
+<div id="module_header">
+	<h1>Available Files (select to attach)</h1>
+</div>
+
+<flexy:include src="mediaModuleNav.html" />
+
+<flexy:include src="narrowResultsForm.html" />
+
+<div id="collection_form">
+<form name="associateFiles" id="associateFiles" method="post" flexy:ignore>
+    <input type="hidden" name="action" value="{nextAction}" />
+    <input type="hidden" name="frmCallerMgr" value="{callerMgr}" />
+    <input type="hidden" name="frmCallerMod" value="{callerMod}" />
+    <input type="hidden" name="frmMediaTypeId" value="{mediaTypeId}" />
+    <input type="hidden" name="frmIsEventImage" value="{isEventImage}" />
+    <input type="hidden" name="frmEventId" value="{eventId}" />
+    <input type="hidden" name="frmUserId" value="{userId}" />
+
+	{foreach:aMedia,k,media}
+	   {if:this.plugin(#rowStart#,k,#image#)}
+	       <!--start row-->
+            <div class="gallery_row">
+       {end:}
+
+		<div class="complete_thumb_highlighted">
+
+		{if:this.plugin(#isImage#,media.file_type_id)}
+			<!-- IF IT'S AN IMAGE DISPLAY THIS -->
+			{if:isEqual(callerMgr,#account#)}
+                {if:media.isDefaultImg}
+                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                       value="{media.media_id}" checked="checked" flexy:ignore /> select
+                {else:}
+                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                       value="{media.media_id}" flexy:ignore /> select
+                {end:}
+            {else:}
+			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
+                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+			{end:}
+
+			<!-- DISPLAY RADIO TO SELECT DEFAULT IMG -->
+			{if:isEqual(callerMgr,#artwork#)}
+                {if:media.isDefaultImg}
+                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                       value="{media.media_id}" checked="checked" flexy:ignore /> is default
+                {else:}
+                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                       value="{media.media_id}" flexy:ignore /> is default
+                {end:}
+			{end:}
+
+			<div class="thumb">
+				<a href="#" title="Click to enlarge">
+				    {this.plugin(#id2MediaIcon#,media.file_type_id):h}
+				</a>
+			</div>
+		{else:}
+			<!-- IF IT'S A FILE DISPLAY THIS -->
+			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
+                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+			<div class="thumb_icon">
+				 {this.plugin(#id2MediaIcon#,media.file_type_id):h}
+			</div>
+        {end:}
+
+
+			<div class="thumb_title">
+				<h1>
+					<label for="frmAssociateIds[]">{media.name}</label>
+				</h1>
+				<a href="#" class="more_info" onclick="new Effect.toggle($('extra_into_{media.media_id}'),'blind')">
+					<img src="{webRoot}/themes/{theme}/images/more_info.png" title="Click here for more info about this file" alt="Delete" border="0" />
+				</a>
+				<div class="file_info" id="extra_into_{media.media_id}" style="display:none;">
+					<p>{media.description}</p>
+					<p>{media.date_created}</p>
+					<p>{media.file_size} Bytes</p>
+					<p>{media.mime_type}</p>
+				</div>
+
+			</div>
+		</div>
+
+	   {if:this.plugin(#isLastElement#,k,aMedia)}
+	        <!--last element-->
+	        <!--end row-->
+            </div>
+            <div class="cb"></div>
+       {end:}
+	   {if:this.plugin(#rowEnd#,k,#image#)}
+	        <!--end row-->
+            </div>
+            <div class="cb"></div>
+       {end:}
+    {end:}
+
+    <div>
+		<div class="form_section">
+			<input class="wideButton" type="submit" name="submitted" value="Associate" />
+		</div>
+    </div>
+
+</form>
+</div>
+
+
+
+
+
+
+
+

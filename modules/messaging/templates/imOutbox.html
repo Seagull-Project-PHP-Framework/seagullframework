@@ -1,0 +1,45 @@
+<form name="messages" method="post" flexy:ignore id="messages">
+    <input type="hidden" name="action" value="delete" />
+
+    <h1 class="pageTitle">{translate(sectionTitle)}</h1>
+    <div class="message">{msgGet()}</div>
+
+    <table class="wide">
+        <tr>
+            <td colspan="4">
+                <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('message', 'messages')" />
+                <input type="button" value="go to inbox" onclick="javascript:document.location.href='{makeUrl(#inbox#,#instantmessage#,#messaging#)}';" />
+                <input type="button" value="contacts" onclick="javascript:document.location.href='{makeUrl(##,#contact#,#messaging#)}';" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>{translate(#Select#)}</th>
+            <th>{translate(#To#)}</th>
+            <th>{translate(#Subject#)}</th>
+            <th>{translate(#Date#)}</th>
+        </tr>
+    {if:aPagedData[data]}
+        {foreach:aPagedData[data],key,valueObj}
+        <tr class="{switchRowClass(valueObj[read_status])}">
+            <td align="center">
+                <input class="noBorder" type="checkbox" name="frmDelete[]" value="{valueObj[instant_message_id]}" />
+            </td>
+            <td class="fieldName2">
+                {if:valueObj[first_name]}
+                {valueObj[first_name]} {valueObj[last_name]}
+                {else:}
+                {valueObj[username]}
+                {end:}
+            </td>
+            <td><a href="{makeUrl(#read#,#instantmessage#,#messaging#,aPagedData[data],#frmMessageID|instant_message_id#,key)}{urlParams}">{valueObj[subject]}</a></td>
+            <td align="center" nowrap="nowrap">{formatDatePretty(valueObj[msg_time])}</td>
+        </tr>
+        {end:}
+    {else:}
+        <tr>
+            <td colspan="4" align="center">{translate(#No messages in outbox#)}</td>
+        </tr>
+    {end:}
+    </table>
+</form>

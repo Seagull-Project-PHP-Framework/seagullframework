@@ -1,0 +1,35 @@
+<h2 align="left">{translate(#%name Docs#,#vprintf#,conf[site])}</h2>
+{translate(#by#)} &lt;<a href="mailto:{conf[email][admin]}">{conf[email][admin]}</a>&gt;
+
+<hr />
+<table class="wide">
+    <tr>
+        <td>
+            <h4>{translate(#Table of Contents#)}</h4>
+            {bulletList:h}
+        </td>
+    </tr>
+</table>
+
+<hr /> 
+<table class="wide">
+{if:preview}
+    {foreach:preview,key,valueObj}
+        <tr>
+            <td>{valueObj.title:h}</td>
+        </tr>
+
+        <tr>
+            <td>{valueObj.bodyHtml:h}</td>
+        </tr>
+
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+    {end:} 
+{else:}
+    <tr>
+        <td align="center">{translate(#no results found#)}</td>
+    </tr>
+{end:}
+</table>

@@ -1,0 +1,13 @@
+<form id="loginBlock" method="post" action="{makeUrl(#login#,#login#,#user#)}" flexy:ignore>
+    <dl class="onTop">
+        <dt><label for="frm_username_block">{translate(#Username#)}</label></dt>
+        <dd><input type="text" name="frmUsername" id="frm_username_block" size="15" value="{username}" maxlength="20" /></dd>
+        <dt><label for="frm_password_block">{translate(#Password#)}</label></dt>
+        <dd><input type="password" name="frmPassword" id="frm_password_block" size="15" value="{password}" maxlength="10" /></dd>
+    </dl>
+    <p><input type="submit" class="button" name="submitted" value="{translate(#Submit login#)}" /></p>
+    {if:conf[RegisterMgr][enabled]}
+    <p><a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a></p>
+    {end:}
+    <p><a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
+</form>
