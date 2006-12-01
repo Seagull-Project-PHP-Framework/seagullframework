@@ -467,7 +467,7 @@ class PermissionMgr extends SGL_Manager
     * @access  public
     * @return  array          array of arrays (perm name, module id, module name)
     */
-    function retrievePermsFromFiles()
+    function retrievePermsFromFiles($dir = SGL_MOD_DIR)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -482,14 +482,21 @@ class PermissionMgr extends SGL_Manager
 
         //  scan
         require_once 'System.php';
+        if ($dir == SGL_MOD_DIR) {
+            $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
+        } else {
 
-        $aRegisteredModules = SGL_Util::getAllModuleDirs(true);
+            require_once 'File/Util.php';
+            //  match all folders except CVS
+            $aRegisteredModules = SGL_Util::listDir($dir, FILE_LIST_DIRS, FILE_SORT_NAME,
+                create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
+        }
         $aFiles = array();
 
         //only scan in registered modules for *Mgr.php
         foreach ($aRegisteredModules as $module) {
             $aFindArgs = array(
-                SGL_MOD_DIR . "/$module/classes",
+                $dir . "/$module/classes",
                 '-name', '*Mgr.php');
             $aFilesFound = System::find($aFindArgs);
             $aFiles = array_merge($aFiles, $aFilesFound);

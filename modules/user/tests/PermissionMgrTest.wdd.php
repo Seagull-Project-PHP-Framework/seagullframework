@@ -12,6 +12,7 @@ class TestPermissionMgr extends UnitTestCase {
     {
         // copy fake files to default module
         require_once 'Text/Password.php';
+        require_once 'System.php';
         $randomizer =& new Text_Password();
 
         // create classname prefix to prevent possible overwriting
@@ -19,10 +20,18 @@ class TestPermissionMgr extends UnitTestCase {
         $classPrefix = ucfirst($classPrefix);
 
         // copy fake files to user module
-        copy(SGL_MOD_DIR . "/user/tests/files/TestFake.php",
-            SGL_MOD_DIR . "/user/classes/{$classPrefix}TestFake.php");
-        copy(SGL_MOD_DIR . "/user/tests/files/TestFakeMgr.php",
-            SGL_MOD_DIR . "/user/classes/{$classPrefix}TestFakeMgr.php");
+        $tmpDir = session_save_path();
+        $testDir = $tmpDir . '/testRetrievePermsFromFile';
+        $ok = mkdir($testDir);
+        $testModuleDir = $tmpDir . '/testRetrievePermsFromFile/user';
+        $ok = mkdir($testModuleDir);
+        $testClassDir = $tmpDir . '/testRetrievePermsFromFile/user/classes';
+        $ok = mkdir($testClassDir);
+
+        $ok = copy(SGL_MOD_DIR . "/user/tests/files/TestFake.php",
+            "$testClassDir/{$classPrefix}TestFake.php");
+        $ok = copy(SGL_MOD_DIR . "/user/tests/files/TestFakeMgr.php",
+            "$testClassDir/{$classPrefix}TestFakeMgr.php");
 
         $permMgr = new PermissionMgr();
 
@@ -34,7 +43,7 @@ class TestPermissionMgr extends UnitTestCase {
         $moduleId = $permMgr->dbh->getOne($query);
 
         // get array of file perms
-        $aFilePerms = $permMgr->retrievePermsFromFiles();
+        $aFilePerms = $permMgr->retrievePermsFromFiles($testDir);
 
         // check if class perm of TestFakeMgr exists
         $reqClassName = strtolower($classPrefix . 'TestFakeMgr');
@@ -78,9 +87,8 @@ class TestPermissionMgr extends UnitTestCase {
             'module_name' => 'user');
         $this->assertFalse(in_array($aForbFakeMethodPerm, $aFilePerms));
 
-        // delete fake files
-        unlink(SGL_MOD_DIR . "/user/classes/{$classPrefix}TestFake.php");
-        unlink(SGL_MOD_DIR . "/user/classes/{$classPrefix}TestFakeMgr.php");
+        // delete tmp module folder
+        System::rm("-rf $testDir");
     }
 }
 
