@@ -53,6 +53,7 @@ class SGL_Config
 
     function SGL_Config($autoLoad = false)
     {
+        $this->aProps = array();
         if ($this->isEmpty() && $autoLoad) {
             $configFile = SGL_VAR_DIR  . '/'
                 . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
