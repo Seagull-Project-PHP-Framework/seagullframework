@@ -14,6 +14,10 @@ class TranslationTest extends UnitTestCase
     {
         $this->UnitTestCase('Translation Test');
 
+        // enforce t2 usage
+        $c = &SGL_Config::singleton();
+        $c->set('translation', array('container' => 'db'));
+
         // common data for all case
         $this->trans = &SGL_Translation::singleton('admin');
 
