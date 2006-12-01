@@ -149,10 +149,8 @@ class SGL_Request
         array_shift($arguments);
 
         // catch arbitrary arguments
-        for ($i=0; $i < count($arguments); $i++) {
-            if (3 <= $i) {
-                array_push($longOptions, substr($arguments[$i], 2, strpos($arguments[$i], "=") -1));
-            }
+        for ($i = 3; $i < count($arguments); $i++) {
+            array_push($longOptions, substr($arguments[$i], 2, strpos($arguments[$i], "=") - 1));
         }
         $options = $console->getopt2($arguments, $shortOptions, $longOptions);
 
