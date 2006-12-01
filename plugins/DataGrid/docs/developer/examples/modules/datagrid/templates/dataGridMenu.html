@@ -1,0 +1,20 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+<form name="dataGrid" id="dataGrid" method="POST">
+<input type=submit style="visibility:hidden" value="Filtruj">
+<!--<br><br><a href="{makeUrl(#create#,#DataGrid#,#tools#)}">make database and copy files</a>-->
+<style>
+A:link, A:active, A:visited { text-decoration: none; color: #3399ff; }
+A:hover { color:navy; }
+
+</style>
+<ul>
+<li><a href="{makeUrl(#create#,#DataGrid#,#tools#)}">add example data to DB</a></li>
+<li><a href="{makeUrl(#dataGrid1#,#DataGrid#,#tools#)}">easy dataGrid filled manually</a></li>
+<li><a href="{makeUrl(#dataGrid2#,#DataGrid#,#tools#)}">dataGrid from database with files, images and sums</a></li>
+<li><a href="{makeUrl(#dataGrid3#,#DataGrid#,#tools#)}">dataGrid from database with links and colours for columns and rows</a></li>
+<li><a href="{makeUrl(#dataGrid4#,#DataGrid#,#tools#)}">two dataGrids from different data sources on one data page with different filter types</a></li>
+<li><a href="{makeUrl(#dataGrid5#,#DataGrid#,#tools#)}">two dataGrids on one page with actions</a></li>
+</ul>
+<BR>
+<flexy:include src="dataGrid.html" />
+</form>
