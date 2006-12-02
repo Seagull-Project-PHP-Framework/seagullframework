@@ -87,16 +87,6 @@ class ArticleMgr extends SGL_Manager
         $input->pageTitle       = $this->pageTitle;
         $input->template        = $this->template;
 
-        //  select appropriate jscalendar lang file depending on prefs defined language
-        $lang = SGL::getCurrentLang();
-        $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
-            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
-            : 'js/jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc   = array(
-            'js/jscalendar/calendar.js',
-            $jscalendarLangFile,
-            'js/jscalendar/calendar-setup.js');
-
         //  form vars
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->from            = ($req->get('frmFrom')) ? $req->get('frmFrom'):0;
@@ -150,6 +140,16 @@ class ArticleMgr extends SGL_Manager
         //  returns an assoc array: typeID => typeName
         $output->aArticleTypes = $this->getTemplateTypes();
         $output->aArticleSelect = $this->getTemplateTypes('selector');
+
+        //  select appropriate jscalendar lang file depending on prefs defined language
+        $lang = SGL::getCurrentLang();
+        $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
+            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
+            : 'js/jscalendar/lang/calendar-en.js';
+        $output->addJavascriptFile(array(
+            'js/jscalendar/calendar.js',
+            $jscalendarLangFile,
+            'js/jscalendar/calendar-setup.js'));
     }
 
     function _cmd_add(&$input, &$output)

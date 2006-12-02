@@ -104,16 +104,6 @@ class MediaMgr extends FileMgr
         $input->mediaFileTmpName    = $input->aMedia['tmp_name'];
         $input->mediaFileSize       = $input->aMedia['size'];
 
-        $sessId = SGL_Session::getId();
-		$input->javascriptSrc = array(
-            'js/scriptaculous/lib/prototype.js',
-            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
-            'js/lightbox/lightbox.js',
-            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
-            'media/js/Widgets.js',
-            'media/js/media.js',
-            );
-
         //  request values for save upload
         $input->media = (object)$req->get('media');
         $input->media->orig_name = (isset($input->media->orig_name))
@@ -249,6 +239,16 @@ class MediaMgr extends FileMgr
     function display(&$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $sessId = SGL_Session::getId();
+		$output->addJavascriptFile(array(
+            'js/scriptaculous/lib/prototype.js',
+            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
+            'js/lightbox/lightbox.js',
+            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
+            'media/js/Widgets.js',
+            'media/js/media.js',
+            ));
     }
 
     function ensureUploadDirWritable($targetDir)

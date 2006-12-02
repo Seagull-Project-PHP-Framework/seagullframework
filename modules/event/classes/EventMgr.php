@@ -78,16 +78,6 @@ class EventMgr extends SGL_Manager
         $input->event->description = $req->get('frmEventDesc', $allowTags = true);
         $input->search      = (object)$req->get('search');
 
-        //  select appropriate jscalendar lang file depending on prefs defined language
-        $lang = SGL::getCurrentLang();
-        $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
-            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
-            : 'js/jscalendar/lang/calendar-en.js';
-        $input->javascriptSrc = array(
-            'js/jscalendar/calendar.js',
-            $jscalendarLangFile,
-            'js/jscalendar/calendar-setup.js');
-
         if ($input->submitted) {
             if ($input->action == 'searchResults') {
                 if (!empty($input->search->query) && strlen($input->search->query) < 3) {
@@ -143,6 +133,16 @@ class EventMgr extends SGL_Manager
             date('Y'),
             date('m'),
             date('d'));
+
+        //  select appropriate jscalendar lang file depending on prefs defined language
+        $lang = SGL::getCurrentLang();
+        $jscalendarLangFile = (is_file(SGL_WEB_ROOT . '/js/jscalendar/lang/calendar-'. $lang . '.js'))
+            ? 'js/jscalendar/lang/calendar-'. $lang . '.js'
+            : 'js/jscalendar/lang/calendar-en.js';
+        $output->addJavascriptFile(array(
+            'js/jscalendar/calendar.js',
+            $jscalendarLangFile,
+            'js/jscalendar/calendar-setup.js'));
     }
 
     function _cmd_add(&$input, &$output)
