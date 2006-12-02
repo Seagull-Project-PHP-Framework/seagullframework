@@ -321,10 +321,9 @@ class MediaMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $options['byTypeId'] = $input->mediaTypeId;
+        $options['byTypeId']    = $input->mediaTypeId;
         $options['byDateRange'] = $input->dateRange;
-        $aMedia = $this->da->getMediaFiles($options);
-        $output->aMedia = $aMedia;
+        $output->aMedia = $this->da->getMediaFiles($options);
         $output->addOnLoadEvent("MediaList.init()");
     }
 

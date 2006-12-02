@@ -37,10 +37,27 @@
 // | Author: Dmitri Lakachauskis <dmitri@telenet.lv>                           |
 // +---------------------------------------------------------------------------+
 
+define('SGL_IMAGE_DEFAULT_SECTION', 'default');
+
+class SGL_Image_Test
+{
+    function init()
+    {
 /**
- * @todo improve config parsing
- *   - move image config to separate file,
- *
+ * @staticvar array
+ */
+$aProp = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
+$aProp = array('driver', 'saveQuality', 'thumbDir');
+
+/**
+ * @staticvar array
+ */
+$aProp = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
+$aProp = array('inherit', 'thumbnails', 'inheritThumbnails');
+    }
+}
+
+/**
  * Base image class.
  *
  * @package    seagull
@@ -50,23 +67,23 @@
 class SGL_Image
 {
     /**
-     * Image file name (e.g. 201083.gif).
+     * Image file name e.g. my-image-name.jpg.
      *
      * @var string
      */
-    var $fileName = null;
+    var $fileName;
 
     /**
      * Name of module, which uses this class.
      *
      * @var string
      */
-    var $module = '';
+    var $moduleName;
 
     /**
      * Used for image modification.
      *
-     * @var array  params of image
+     * @var array
      */
     var $_aParams = array();
 
@@ -78,41 +95,103 @@ class SGL_Image
     var $_aThumbnails = array();
 
     /**
+     * Loaded strategies.
+     *
+     * @var array
+     */
+    var $_aStrats = array();
+
+    /**
      * Constructor
      *
      * @access public
-     * @param  string $fileName  image file name e.g. xxx.jpg
-     * @param  string $module    module name
+     * @param  string $fileName
+     * @param  string $moduleName
      */
-    function SGL_Image($fileName = null, $module = '')
+    function SGL_Image($fileName = null, $moduleName = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $this->fileName = $fileName;
-        $this->module   = $module;
+        $this->fileName   = $fileName;
+        $this->moduleName = $moduleName;
     }
 
     /**
-     * Initialize configuration.
-     *
      * @access public
-     * @param  mixed $config  path to file or array
-     * @return void
      */
-    function init($config = null)
+    function getAvailableParams()
     {
-        // FIXME
-        $manager   = 'MediaMgr';
-        $container = 'defaultMedia';
-        $aParams   = SGL_Image::extractParamsFromFile($manager, $container);
-        $this->setParams($aParams);
-        //if (is_string($config)) {
-        //}
-        //if (isset($config)) {
-        //}
+        $aAddParams  = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
+        $aMainParams = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
+        return array_merge($aAddParams, $aMainParams);
+    }
+
+    /**
+     * @access public
+     */
+    function getParamsFromFile($fileName)
+    {
+        if (!is_readable($fileName)) {
+            return SGL::raiseError("SGL_Image: '$filename' is not readable");
+        }
+        $aRet = parse_ini_file($fileName, true);
+        if (!isset($aRet[SGL_IMAGE_DEFAULT_SECTION])) {
+            return SGL::raiseError('SGL_Image: default container not found');
+        }
+        $aSections = SGL_Image::_getUniqueSectionNames($aRet);
+
+        ksort($aRet);
+        $aResult = array();
+        $default = array();
+        foreach ($aSections as $sectionName) {
+            $ret = SGL_Image::_getSectionData($aRet, $sectionName, $default);
+            if (PEAR::isError($ret)) {
+                return $ret;
+            }
+            if ($sectionName == SGL_IMAGE_DEFAULT_SECTION) {
+                $default = $ret;
+            } else {
+                $aResult[$sectionName] = $ret;
+            }
+        }
+
+        $aDefault = array(SGL_IMAGE_DEFAULT_SECTION => $default);
+        return array_merge($aDefault, $aResult);
+    }
+
+    /**
+     * @access public
+     */
+    function init($params, $container = SGL_IMAGE_DEFAULT_SECTION)
+    {
+        // filename is specified
+        if (is_string($params)) {
+            if (file_exists($params)) {
+                $params = SGL_Image::getParamsFromFile($params);
+                if (PEAR::isError($params)) {
+                    return $params;
+                }
+                $params = $params[SGL_IMAGE_DEFAULT_SECTION];
+            } else {
+                return SGL::raiseError("SGL_Image: file '$params' not found");
+            }
+        // wrong parameters' type
+        } elseif (!is_array($params)) {
+            return SGL::raiseError("SGL_Image: you should specify an array
+                or path to configuration file");
+        }
+        $ok = $this->setParams($params);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        $ok = $this->_loadStrategies();
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        return true;
     }
 
     /**
@@ -120,44 +199,50 @@ class SGL_Image
      *
      * @access public
      * @param  array  $aParams
-     * @return void
      */
     function setParams($aParams)
     {
-        if (isset($aParams['thumbs'])) {
-            if (is_array($aParams['thumbs']) && count($aParams['thumbs'])) {
-                $this->_aThumbnails = $aParams['thumbs'];
+        $ok = SGL_Image::_mainParamsCheckInArray($aParams);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        SGL_Image::_configParamCleanup($aParams);
+        if (isset($aParams['thumbnails'])) {
+            foreach ($aParams['thumbnails'] as $thumbName => $thumbParams) {
+                $ok = SGL_Image::_mainParamsCheckInArray($thumbParams, $thumbName);
+                if (PEAR::isError($ok)) {
+                    return $ok;
+                }
             }
-            unset($aParams['thumbs']);
+            SGL_Image::_configParamCleanup($aParams['thumbnails']);
+            $this->_aThumbnails = $aParams['thumbnails'];
+            unset($aParams['thumbnails']);
         }
         $this->_aParams = $aParams;
     }
 
     /**
-     * Check if method is called statically.
+     * Genereate filename.
      *
-     * @access private
-     * @return boolean
-     *
-     * @see _isInstanceMethod()
+     * @access public
+     * @param  string $salt
+     * @return string
      */
-    function _isClassMethod()
+    function generateUniqueFileName($salt = '')
     {
-        return !SGL_Image::_isInstanceMethod();
+        return md5($salt . SGL_Session::getUid() . SGL::getTime());
     }
 
-    /**
-     * Check if SGL_Image instance is initialized.
-     *
-     * @access private
-     * @return boolean
-     *
-     * @see _isClassMethod()
-     */
-    function _isInstanceMethod()
-    {
-        return isset($this) && is_a($this, 'SGL_Image');
-    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Return realpath to current image.
@@ -219,8 +304,7 @@ class SGL_Image
     {
         $aArgs = func_get_args();
         if (empty($aArgs)) { // at least $pathType must be specified
-            return SGL::raiseError('Path type is not specified',
-                SGL_ERROR_INVALIDARGS);
+            return SGL::raiseError('SGL_Image: path type is not specified');
         }
 
         // get URL or PATH
@@ -232,7 +316,7 @@ class SGL_Image
 
         if (SGL_Image::_isInstanceMethod()) {
             // we know module's name if we have an instance
-            $moduleName = $this->module;
+            $moduleName = $this->moduleName;
             if (!empty($aArgs)) {
                 // first param: include image file or not
                 $includeFile = array_shift($aArgs);
@@ -283,18 +367,6 @@ class SGL_Image
     }
 
     /**
-     * Genereate filename.
-     *
-     * @access public
-     * @param  string $prefix
-     * @return string
-     */
-    function generateFileName($prefix = '')
-    {
-        return md5($prefix . SGL_Session::getUid() . SGL::getTime());
-    }
-
-    /**
      * Upload image and create it's copies i.e. thumbnails.
      *
      * @access public
@@ -303,24 +375,27 @@ class SGL_Image
      *                              from temporary one
      * @return string
      */
-    function upload($srcLocation, $function = 'move_uploaded_file')
+    function upload($srcLocation, $callback = 'move_uploaded_file')
     {
         if (!function_exists($function)) {
-            $error = "Function '$function' does not exist";
-            return SGL::raiseError($error, SGL_ERROR_INVALIDARGS);
+            return SGL_image::raiseError("function '$function' does not exist");
         }
         if (is_null($this->fileName)) {
             $this->fileName = $this->generateFileName($srcLocation);
         }
         $newFile = $this->getPath($includeFile = true);
+
+
+
         if (!$function($srcLocation, $newFile)) {
-            $error = "Function '$function' failed";
-            return SGL::raiseError($error, SGL_ERROR_INVALIDFILEPERMS);
+            return SGL::raiseError("Function '$function' failed");
         }
         $result = $this->_toThumbnails(); // create thumbnails
         if (PEAR::isError($result)) {
             return $result;
         }
+
+
         $result = $this->applyParams(); // apply transformations
         if (PEAR::isError($result)) {
             return $result;
@@ -402,11 +477,13 @@ class SGL_Image
             return true;
         }
 
-        $thumbDir = $this->getPath() . '/thumbs'; // fixme
+        $thumbDir = $this->getPath() . '/' . $this->_aParams['thumbDir'];
         if (!is_writable($thumbDir)) {
             require_once 'System.php';
-            System::mkDir(array('-p', $thumbDir)); // fixme
+            System::mkDir(array('-p', $thumbDir));
+            $old = umask(0);
             @chmod($thumbDir, 0777);
+            umask($old);
         }
 
         $aThumbs  = array_keys($this->_aThumbnails); // available thumbnails
@@ -440,94 +517,11 @@ class SGL_Image
         return true;
     }
 
-    /**
-     * Apply transformation on image and it's thumbnails.
-     *
-     * @access public
-     * @param  boolean  $withThumbnails
-     * @return boolean
-     */
-    function applyParams()
+
+
+    function transform()
     {
-        $aAllParams = array_merge(array($this->_aParams), $this->_aThumbnails);
-
-        require_once 'Image/Transform.php';
-        foreach ($aAllParams as $paramBlock => $aParams) {
-            foreach ($aParams as $paramKey => $paramValue) {
-
-                $stratName = ucfirst($paramKey) . 'Strategy';
-                $stratFile = SGL_CORE_DIR . "/ImageTransform/$stratName.php";
-                if (empty($paramValue) || !file_exists($stratFile)) {
-                    // skip if no params or if file is missing
-                    continue;
-                }
-
-                // base filename to operate with
-                $fileName = $this->getPath($includeFile = true, $paramBlock);
-
-                // load driver
-                $signature = md5($aParams['Driver']);
-                if (!isset($aDrivers[$signature])) {
-                    $driver = &Image_Transform::factory($aParams['Driver']);
-                    if (PEAR::isError($driver)) {
-                        return $driver;
-                    }
-                    $aDrivers[$signature] = &$driver;
-                }
-
-                // load and apply transformation
-                include_once $stratFile;
-                $stratClass = 'SGL_ImageTransform_' . $stratName;
-                if (!class_exists($stratClass)) {
-                    $error = "$stratClass class does not exist";
-                    return SGL::raiseError($error, SGL_ERROR_NOCLASS);
-                }
-                $oStrat = & new $stratClass(
-                    $aDrivers[$signature],              // driver
-                    $fileName,                          // filename to operate
-                    $this->_extractParams($paramValue), // transformation params
-                    $aParams                            // config params for
-                                                        // current block
-                );
-                $result = $oStrat->init();
-                if (PEAR::isError($result)) {
-                    return $result;
-                }
-                $result = $oStrat->transform();
-                if (PEAR::isError($result)) {
-                    return $result;
-                }
-                $result = $oStrat->save();
-                if (PEAR::isError($result)) {
-                    return $result;
-                }
-            }
-        }
-        return true;
     }
-
-    /**
-     * Extract params from config string.
-     *
-     * @access private
-     * @param  string   $str
-     * @return array
-     */
-    function _extractParams($str)
-    {
-        $aParams = array_map('trim', explode(',', $str));
-        $aRes = array();
-        foreach ($aParams as $param) {
-            if (false !== strpos($param, ':')) {
-                $arr = explode(':', $param);
-                $aRes[$arr[0]] = $arr[1];
-            } else {
-                $aRes[] = $param;
-            }
-        }
-        return $aRes;
-    }
-
 
 
 
@@ -601,161 +595,231 @@ class SGL_Image
         return in_array($type, $aAllowedTypes);
     }
 
+
+
+
+
+
+
+
     /**
-     * Builds image params map, using config "inheritance model".
-     *
-     * @access public
-     * @param  string  $manager  manager name, which config values will be used to build a map
-     * @param  string  $name     image type name (only config map for this type will be returned)
+     * @access private
      */
-    function extractParamsFromFile($manager, $name = '')
+    function _loadStrategies()
     {
-        // parsed params from manager
-        $aManagerParams = SGL_Image::_extractParamsFromManager($manager, 'image');
-        // default params for manager
-        $aDefaultBlock = array_shift($aManagerParams);
-        if (
-             // check if we should inherit params from base manager for images
-             isset($aDefaultBlock['Inherit']) && $aDefaultBlock['Inherit']) {
+        // transformation: main container + thumbnails
+        $aConfiguration = array_merge(
+            array($this->_aParams),
+            $this->_aThumbnails
+        );
+        $aAvailParams = SGL_Image::getAvailableParams();
+        $aDrivers     = array();
+        foreach ($aConfiguration as $container => $aParams) {
 
-            // parsed params from default manager for images
-            $aDefaultParams = SGL_Image::_extractParamsFromManager('ImageMgr', 'default');
-            if (isset($aDefaultParams['defaultBlock'])) {
-                // global default params
-                $aDefaultParams = $aDefaultParams['defaultBlock'];
-                // merge default manager with current manager
-                $aDefaultBlock = SGL_Array::mergeReplace($aDefaultParams, $aDefaultBlock);
-            }
-        }
-        // default thumbnails params
-        $aDefaultBlockThumbs = array();
-        if (isset($aDefaultBlock['thumbs'])
-            && is_array($aDefaultBlock['thumbs'])
-            && count($aDefaultBlock['thumbs'])) {
-            $aDefaultBlockThumbs = $aDefaultBlock['thumbs'];
-            unset($aDefaultBlock['thumbs']);
-        }
+            // available strategies for current container
+            $aStrats = array_diff(array_keys($aParams), $aAvailParams);
 
-        // list parsed blocks
-        foreach ($aManagerParams as $blockName => $aBlockParams) {
-            // thumbnails for current block
-            $currThumbs = null;
-            if (isset($aBlockParams['Inherit']) && $aBlockParams['Inherit']) {
-                if (isset($aBlockParams['thumbs'])) {
-                    //&& is_array($aBlockParams['thumbs'])
-                    //&& count($aBlockParams['thumbs'])) {
-                    // save current thumbnails
-                    $currThumbs = $aBlockParams['thumbs'];
-                    unset($aBlockParams['thumbs']);
+            // load driver
+            $driverSignature = md5($aParams['driver']);
+            if (!isset($aDrivers[$driverSignature])) {
+                require_once 'Image/Transform.php';
+                $oDriver = &Image_Transform::factory($aParams['driver']);
+                if (PEAR::isError($oDriver)) {
+                    return $oDriver;
                 }
-                if (!isset($currThumbs)) {
-                    $currThumbs = $aDefaultBlockThumbs;
+                $aDrivers[$driverSignature] = &$oDriver;
+            }
+
+            // load strategies
+            foreach ($aStrats as $strategyName) {
+                // skip strategy without params or switched off strategies
+                if (empty($aParams[$strategyName])) {
+                    continue;
                 }
-                // inherit default params
-                $aBlockParams = SGL_Array::mergeReplace($aDefaultBlock, $aBlockParams);
-            }
-            if (isset($aBlockParams['Inherit'])) {
-                unset($aBlockParams['Inherit']);
-            }
-            if (is_array($currThumbs) && count($currThumbs)) {
-                // list thumbnails
-                foreach ($currThumbs as $thumbName => $aThumbParams) {
-                    if (isset($aThumbParams['Inherit']) && $aThumbParams['Inherit']) {
-                        unset($aThumbParams['Inherit']);
-                        // inherit parent block's params
-                        $currThumbs[$thumbName] = SGL_Array::mergeReplace($aBlockParams, $aThumbParams);
-                    }
+                $stratName = ucfirst($strategyName) . 'Strategy';
+                $stratFile = SGL_CORE_DIR . "/ImageTransform/$stratName.php";
+                if (!file_exists($stratFile)) {
+                    return SGL::raiseError("SGL_Image: file '$stratFile' does not exist");
                 }
-                $aBlockParams['thumbs'] = $currThumbs;
+                include_once $stratFile;
+                $stratClass = 'SGL_ImageTransform_' . $stratName;
+                if (!class_exists($stratClass)) {
+                    return SGL::raiseError("SGL_Image: class '$stratClass' does not exist");
+                }
+                $this->_aStrats[$container][$strategyName] = & new $stratClass(
+                    $aDrivers[$driverSignature]);
             }
-            $aManagerParams[$blockName] = $aBlockParams;
         }
-        return empty($name)
-            ? $aManagerParams // all blocks
-            : (array_key_exists($name, $aManagerParams)
-                   ? $aManagerParams[$name] // specified block
-                   : array()); // empty set
+        return true;
     }
 
     /**
-     * Extracts params from specified manager.
+     * Check if method is called statically.
      *
      * @access private
-     * @param  string   $managerName  manager name, which config values will be parsed
-     * @param  string   $prefixName   only configs with $prefixName will be evaluated
-     * @return array
+     * @return boolean
+     *
+     * @see _isInstanceMethod()
      */
-    function _extractParamsFromManager($managerName, $prefixName = '')
+    function _isClassMethod()
     {
-        if (isset($this->conf)) {
-            $conf = $this->conf;
-        } else {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-        }
-        if (!isset($conf[$managerName])) {
-            return array();
-        }
-        $aResultParams = array('defaultBlock' => array());
-        foreach ($this->conf[$managerName] as $paramKey => $paramValue) {
+        return !SGL_Image::_isInstanceMethod();
+    }
 
-            // skip non-image params
-            if ($prefixName && ($prefixName != substr($paramKey, 0, strlen($prefixName)))) {
+    /**
+     * Check if SGL_Image instance is initialized.
+     *
+     * @access private
+     * @return boolean
+     *
+     * @see _isClassMethod()
+     */
+    function _isInstanceMethod()
+    {
+        return isset($this) && is_a($this, 'SGL_Image');
+    }
+
+    /**
+     * @access private
+     */
+    function _configParamCleanup(&$aParams)
+    {
+        if (empty($aParams)) {
+            return;
+        }
+        reset($aParams);
+        $firstkey = key($aParams);
+        if (is_array($aParams[$firstkey])) {
+            foreach ($aParams as $key => $value) {
+                SGL_Image::_configParamCleanup($aParams[$key]);
+            }
+            return;
+        }
+        reset($aParams);
+        $aAddParams = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
+        foreach ($aAddParams as $param) {
+            if (isset($aParams[$param]) && is_scalar($aParams[$param])) {
+                unset($aParams[$param]);
+            }
+        }
+    }
+
+    /**
+     * @access private
+     */
+    function _mainParamsCheckInArray($aParams, $sectionName = '')
+    {
+        $aMainParams = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
+        $aRet = array_diff($aMainParams, array_keys($aParams));
+        if (!empty($aRet)) {
+            $error = "SGL_Image: missing parameters";
+            if (!empty($sectionName)) {
+                $error .= ' for [' . $sectionName . ']';
+            }
+            $error .= ': ' . implode(', ', $aRet);
+            return SGL::raiseError($error);
+        }
+        return true;
+    }
+
+    /**
+     * @access private
+     */
+    function _getUniqueSectionNames($aSections)
+    {
+        $aResult   = array();
+        $aSections = array_keys($aSections);
+        sort($aSections);
+        foreach ($aSections as $sectionName) {
+            $aNameParts = explode('_', $sectionName);
+            if (in_array($aNameParts[0], $aResult)) {
                 continue;
             }
-            $paramKey = substr($paramKey, strlen($prefixName)); // clean prefix
+            $aResult[] = $sectionName;
+        }
+        // place default section at beginning
+        $index = array_search(SGL_IMAGE_DEFAULT_SECTION, $aResult);
+        unset($aResult[$index]);
+        array_unshift($aResult, SGL_IMAGE_DEFAULT_SECTION);
+        return $aResult;
+    }
 
-            // check for new name
-            if ('name' == strtolower(substr($paramKey, 0, 4))) {
-                // create new block
-                $aResultParams[$paramValue] = array();
-                // new name found, go to the next option
-                continue;
+    /**
+     * @access private
+     */
+    function _getSectionData($aData, $sectionName, $override)
+    {
+        if (!empty($override['thumbnails'])) {
+            $overrideThumbs = $override['thumbnails'];
+            unset($override['thumbnails']);
+        }
+
+        // save parent section's data
+        $aResult = !empty($aData[$sectionName]['inherit'])
+            ? array_merge($override, $aData[$sectionName]) // inherit from default
+            : $aData[$sectionName];
+
+        // check for obligatory params
+        $ok = SGL_Image::_mainParamsCheckInArray($aResult, $sectionName);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+
+        // process thumbnails
+        if (!empty($aResult['thumbnails']) || !empty($aResult['inheritThumbnails'])) {
+            $aTotalThumbs = array();
+            if (!empty($aResult['inheritThumbnails'])
+                    && isset($overrideThumbs)
+                    && is_array($overrideThumbs)) {
+                $aTotalThumbs = array_keys($overrideThumbs);
+            }
+            if (!empty($aResult['thumbnails'])) {
+                $aThumbs = explode(',', $aResult['thumbnails']);
+                $aTotalThumbs = array_merge($aTotalThumbs, $aThumbs);
             }
 
-            // found image names so far
-            $patternNames  = implode('|', array_keys($aResultParams));
-            $currImageName = 'defaultBlock';
+            $aThumbs = array();
+            foreach ($aTotalThumbs as $thumbName) {
+                // e.g. media_small
+                $thumbSectionName = $sectionName . '_' . $thumbName;
+                if (isset($aData[$thumbSectionName])) {
+                    $aThumbs[$thumbName] = (isset($aData[$thumbSectionName]['inherit'])
+                            && !$aData[$thumbSectionName]['inherit'])
+                        // do inherit parent container
+                        ? $aData[$thumbSectionName]
+                        // do inherit by default
+                        : array_merge($aResult, $aData[$thumbSectionName]);
 
-            // get image name
-            if (!empty($patternNames) && preg_match("/^($patternNames)/i", $paramKey, $aMatches)) {
-                $aMatches[1]{0} = strtolower($aMatches[1]{0});
-                $currImageName = $aMatches[1];
-                //$currImageName = strtolower($aMatches[1]); // current block
-                $paramKey = substr($paramKey, strlen($currImageName)); // clean param name
-            }
-
-            // check for thumbnails
-            if ('thumbs' == strtolower($paramKey)) {
-                if (empty($paramValue)) {
-                    $aResultParams[$currImageName]['thumbs'] = $paramValue;
-                } else {
-                    $aThumbs = array_map('trim', explode(',', $paramValue));
-                    foreach ($aThumbs as $thumbName) {
-                        // create new thumbs' blocks
-                        $aResultParams[$currImageName]['thumbs'][$thumbName] = array();
+                // default thumbnail exists
+                } elseif (isset($overrideThumbs[$thumbName])
+                        // and it can be inherited
+                        && !empty($aResult['inheritThumbnails'])) {
+                    $defaultThumbSectionName = SGL_IMAGE_DEFAULT_SECTION .
+                        '_' . $thumbName;
+                    if (isset($aData[$defaultThumbSectionName]['inherit'])
+                            && !$aData[$defaultThumbSectionName]['inherit']) {
+                        // do not inherit parent section's data
+                        $aThumbs[$thumbName] = $overrideThumbs[$thumbName];
+                    } else {
+                        // inherit parent section's data
+                        $aThumbs[$thumbName] = array_merge($aResult,
+                            $overrideThumbs[$thumbName]);
                     }
                 }
-                // thumbs found, go to the next option
-                continue;
-            }
 
-            // current block
-            $placeToWrite = &$aResultParams[$currImageName];
-            if (!empty($aResultParams[$currImageName]['thumbs'])) {
-                $patternThumbs = implode('|', array_keys($aResultParams[$currImageName]['thumbs']));
-                if (preg_match("/^($patternThumbs)/i", $paramKey, $aMatches)) {
-                    $currThumbName = strtolower($aMatches[1]); // current thumb
-                    $paramKey = substr($paramKey, strlen($currThumbName)); // trim thumb name
-                    $placeToWrite = &$aResultParams[$currImageName]['thumbs'][$currThumbName];
+                $ok = SGL_Image::_mainParamsCheckInArray($aThumbs[$thumbName],
+                    $thumbSectionName);
+                if (PEAR::isError($ok)) {
+                    return $ok;
                 }
             }
-
-            // assign new param
-            //$paramKey{0} = strtolower($paramKey{0});
-            $placeToWrite[$paramKey] = $paramValue;
+            if (!empty($aThumbs)) {
+                SGL_Image::_configParamCleanup($aThumbs); // cleanup thumbnails
+                $aResult['thumbnails'] = $aThumbs;
+            }
         }
-        return $aResultParams;
+        SGL_Image::_configParamCleanup($aResult); // cleanup parent container
+        return $aResult;
     }
 }
 
@@ -784,77 +848,107 @@ class SGL_ImageTransformStrategy
     var $fileName;
 
     /**
-     * Transformation params.
-     *
-     * @var array
-     */
-    var $aParams;
-
-    /**
-     * Configuration params.
-     *
-     * @var array
-     */
-    var $aConfigParams;
-
-    /**
      * Constructor.
      *
      * @access public
-     * @param  PEAR Image_Transfrom  $transform
-     * @param  string                $fileName
-     * @param  array                 $aParams
-     * @param  array                 $aConfigParams
+     * @param  PEAR Image_Transfrom  $driver
      */
-    function SGL_ImageTransformStrategy(&$driver, $fileName,
-        $aParams = array(), $aConfigParams = array())
+    function SGL_ImageTransformStrategy(&$driver)
     {
-        $this->driver        = &$driver;
-        $this->fileName      = $fileName;
-        $this->aParams       = $aParams;
-        $this->aConfigParams = $aConfigParams;
+        $this->driver = &$driver;
+    }
+
+    /**
+     * Extract params from config string.
+     *
+     * @access public
+     * @param  string $configString
+     * @return array
+     */
+    function getParamsFromString($configString)
+    {
+        $aParams = array_map('trim', explode(',', $configString));
+        $aRet = array();
+        foreach ($aParams as $param) {
+            if (false !== strpos($param, ':')) {
+                $arr = explode(':', $param);
+                $aRet[$arr[0]] = $arr[1];
+            } else {
+                // when only one parameter exists
+                $aRet['config'] = $param;
+            }
+        }
+        return $aRet;
+    }
+
+    /**
+     * Init strategy i.e. load image file and parse params.
+     *
+     * @access public
+     * @param  string $fileName
+     * @param  string $configString
+     */
+    function init($fileName, $configString = '')
+    {
+        $ok = $this->load($fileName);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        if (!empty($configString)) {
+            $aParams = $this->getParamsFromString($configString);
+            $this->setParams($aParams);
+        }
+    }
+
+    /**
+     * @access public
+     * @param  array $aParams
+     */
+    function setParams($aParams)
+    {
+        foreach ($aParams as $k => $v) {
+            $this->$k = $v;
+        }
     }
 
     /**
      * Load file.
      *
      * @access public
-     * @return mixed
+     * @param  string $fileName
      */
-    function init()
+    function load($fileName)
     {
-        return $this->driver->load($this->fileName);
+        if (!is_readable($fileName)) {
+            return SGL::raiseError("SGL_Image: file '$fileName' is not readable");
+        }
+        $this->fileName = $fileName;
+        return $this->driver->load($fileName);
     }
 
     /**
      * Save file, free memory.
      *
      * @access public
-     * @return mixed
+     * @param  $saveQuality
+     * @param  $saveFormat   jpg, gif or png (not support by SGL_Image yet)
      */
-    function save()
+    function save($saveQuality, $saveFormat = '')
     {
-        $quality = !empty($this->aConfigParams['SaveQuality'])
-            ? $this->aConfigParams['SaveQuality'] : null;
-        $type = !empty($this->aConfigParams['SaveType'])
-            ? $this->aConfigParams['SaveType'] : '';
-
-        $result = $this->driver->save($this->fileName, $type, $quality);
-        if (PEAR::isError($result)) {
-            return $result;
+        $ok = $this->driver->save($this->fileName, $saveFormat, $saveQuality);
+        if (PEAR::isError($ok)) {
+            return $ok;
         }
         return $this->driver->free();
     }
 
     /**
-     * Apply transformation for loaded image.
+     * Tranform image.
      *
      * @access   public
      * @abstract
      */
-    function transform()
-    {
-    }
+    function transform() {}
 }
 
 ?>
