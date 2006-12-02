@@ -188,7 +188,7 @@ class SGL_Image
                 if (PEAR::isError($params)) {
                     return $params;
                 }
-                $params = $params[SGL_IMAGE_DEFAULT_SECTION];
+                $params = $params[$container];
             } else {
                 return SGL::raiseError("SGL_Image: file '$params' not found");
             }
@@ -247,7 +247,7 @@ class SGL_Image
      */
     function generateUniqueFileName($salt = '')
     {
-        return md5($salt . SGL_Session::getUid() . SGL::getTime());
+        return md5($salt . SGL_Session::getUid() . SGL_Date::getTime());
     }
 
     /**
@@ -307,7 +307,7 @@ class SGL_Image
         }
         // initialize filename if one is not set
         if (!$replace && is_null($this->fileName)) {
-            $this->fileName = $this->generateFileName($srcLocation);
+            $this->fileName = $this->generateUniqueFileName($srcLocation);
         }
         $destPath = $this->getPath();
         $ok = SGL_Image::_ensureDirIsWritable($destPath);
@@ -317,6 +317,9 @@ class SGL_Image
         $destLocation = $destPath . '/' . $this->fileName;
         if ($replace && file_exists($destLocation)) {
             unlink($destLocation);
+        // purely for testing
+        } elseif (file_exists($destLocation)) {
+            return SGL::raiseError("SGL_Image: file '$destLocation' exists");
         }
         if (!$callback($srcLocation, $destLocation)) {
             return SGL::raiseError("SGL_Image: function '$callback' failed");
@@ -467,8 +470,8 @@ class SGL_Image
             if (file_exists($destLocation)) {
                 unlink($destLocation);
             }
-            if ($function != 'unlink') {
-                if (!$function($origFile, $thumbFile)) {
+            if ($callback != 'unlink') {
+                if (!$callback($origFile, $destLocation)) {
                     return SGL::raiseError("SGL_Image: function
                         '$callback' failed");
                 }
