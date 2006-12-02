@@ -274,6 +274,71 @@ class ImageTest extends UnitTestCase
             }
         }
     }
+
+    function testEnsureDirIsWritable()
+    {
+        require_once 'System.php';
+        $tmpdir = session_save_path();
+
+        // create dir
+        $dir = '/thumbs/small';
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+        // remove dir
+        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
+        $this->assertTrue($ok);
+
+        // create dir
+        $dir = '/thumbs/large';
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+
+        // try to re-create dir
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+        // remove dir
+        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
+        $this->assertTrue($ok);
+    }
+
+    function testGetImagePath()
+    {
+        // direct call without the params
+        $ok = SGL_Image::_getImagePath();
+        // you should not call SGL_Image::_getImagePath() directly,
+        // use wrappers instead:
+        //  - SGL_Image::getPath() or
+        //  - SGL_Image::getUrl()
+        $this->assertIsA($ok, 'PEAR_Error');
+
+        // static call without specified module result in default uploadir
+        $path = SGL_Image::getPath();
+        $this->assertEqual(SGL_UPLOAD_DIR, $path);
+
+        // static call with specified module
+        $path = SGL_Image::getPath('media');
+        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
+
+        // we can't get URL for static call if module is not specified
+        $url = SGL_Image::getUrl();
+        $this->assertIsA($url, 'PEAR_Error');
+
+        // static call for an URL with specified module name
+        $url = SGL_Image::getUrl('media');
+        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
+
+        // init SGL_Image instance with module name supplied
+        $image = & new SGL_Image(null, $moduleName = 'media');
+
+        // with instance call we know a module name
+        $url = $image->getUrl();
+        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
+
+        // instance call for a path gives save results
+        // as SGL_Image::getPath('media');
+        $path = $image->getPath();
+        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
+    }
 }
 
 ?>
