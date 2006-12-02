@@ -39,10 +39,6 @@
 
 define('SGL_IMAGE_DEFAULT_SECTION', 'default');
 
-class SGL_Image_Test
-{
-    function init()
-    {
 /**
  * @staticvar array
  */
@@ -54,8 +50,6 @@ $aProp = array('driver', 'saveQuality', 'thumbDir');
  */
 $aProp = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
 $aProp = array('inherit', 'thumbnails', 'inheritThumbnails');
-    }
-}
 
 /**
  * Base image class.

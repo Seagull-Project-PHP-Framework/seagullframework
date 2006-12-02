@@ -17,9 +17,6 @@ class ImageTest extends UnitTestCase
     function ImageTest()
     {
         $this->UnitTestCase('Image Test');
-
-        // removeme
-        SGL_Image_Test::init();
     }
 
     function setUp()
