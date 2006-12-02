@@ -51,6 +51,7 @@ class SGL_Output
 {
     var $onLoad = '';
     var $aOnLoadEvents = array();
+    var $aJavascriptFiles = array();
 
     /**
      * Translates source text into target language.
@@ -512,7 +513,28 @@ class SGL_Output
         $this->aOnLoadEvents[] = $event;
     }
 
-    function getAllOnLoadEvents()
+    /**
+     * For adding JavaScript files to include.
+     *
+     * @param  mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js
+     * @return void
+     */
+    function addJavascriptFile($file)
+    {
+        if (is_array($file)) {
+            foreach ($file as $jsFile) {
+                if (!in_array($jsFile,$this->aJavascriptFiles)) {
+                    $this->aJavascriptFiles[] = $jsFile;
+                }
+            }
+        } else {
+            if (!in_array($file,$this->aJavascriptFiles)) {
+                $this->aJavascriptFiles[] = $file;
+            }
+        }
+    }
+
+    function getOnLoadEvents()
     {
         $c = & SGL_Config::singleton();
         $conf = $c->getAll();
@@ -524,6 +546,17 @@ class SGL_Output
             return implode(';', $this->aOnLoadEvents);
         }
     }
+
+    function getJavascriptFiles()
+    {
+        if (isset($this->javascriptSrc)) {
+            $aFiles = array_merge($this->javascriptSrc, $this->aJavascriptFiles);
+        } else {
+            $aFiles = $this->aJavascriptFiles;
+        }
+        return $aFiles;
+    }
+
     /**
      * Wrapper for SGL_Url::makeLink,
      * Generates URL for easy access to modules and actions.
@@ -710,6 +743,7 @@ class SGL_Output
     {
         return getSystemTime() - @SGL_START_TIME;
     }
+
     /**
      * @return query count
      */
@@ -717,6 +751,7 @@ class SGL_Output
     {
         return $GLOBALS['_SGL']['QUERY_COUNT'];
     }
+
     /**
      * @return memory usage
      */

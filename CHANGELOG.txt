@@ -32,6 +32,15 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+02-12-06    Added SGL_Output::addJavascriptFile() which accepts either a single path
+            or an array of paths of js files.  The preferred way of adding javascript
+            files to page has changed
+                FROM (in validate() method)
+            $this->javascriptSrc = array('/path/to/file1.js', 'path/to/file2.js');
+                TO (in display() method)
+            $output->addJavascriptFile('/path/to/file1.js', 'path/to/file2.js');
+            The old method is still supported
+02-12-06    Added instructions for event module http://trac.seagullproject.org/wiki/Modules/Event
 30-11-06    Added possibility of passing arbitrary args to CLI requests (Mike Wattier)
 29-11-06    $this->da->moduleIsRegistered() is deprecated in favour of SGL::moduleIsEnabled()
 29-11-06    Renamed DA_Default to DefaultDAO for consistency (Julien Casanova)
