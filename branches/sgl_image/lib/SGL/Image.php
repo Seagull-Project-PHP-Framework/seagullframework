@@ -389,7 +389,44 @@ class SGL_Image
      */
     function transform($section = null)
     {
-        return is_null($section);
+        // do nothing if no strats were loaded or there is no strategy for
+        // specified section (thumbnail)
+        if (empty($this->_aStrats) || (!is_null($section)
+                && !isset($this->_aStrats[$section]))) {
+            return true;
+        }
+        reset($this->_aStrats);
+        if (is_null($section)) {
+            $section = key($this->_aStrats);
+            // no strategy loaded for parent section
+            if (!is_numeric($section)) {
+                return true;
+            }
+            $fileName = $this->getPath() . '/' . $this->fileName;
+            $params   = &$this->_aParams;
+        } else {
+            $thumbDir = !empty($this->_aParams['thumbDir'])
+                ? '/' . $this->_aParams['thumbDir']
+                : '';
+            $fileName = $this->getPath() . $thumbDir . '/' .
+                $section . '/' . $this->fileName;
+            $params = &$this->_aThumbnails[$section];
+        }
+        foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
+            $ok = $stratObj->init($fileName, $params[$stratName]);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            $ok = $stratObj->transform();
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            $ok = $stratObj->save($params[$stratName]['saveQuality']);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+        }
+        return true;
     }
 
     /**
@@ -767,6 +804,7 @@ class SGL_Image
  * @package    seagull
  * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
+ *
  * @abstract
  */
 class SGL_ImageTransformStrategy
@@ -789,7 +827,8 @@ class SGL_ImageTransformStrategy
      * Constructor.
      *
      * @access public
-     * @param  PEAR Image_Transfrom  $driver
+     *
+     * @param PEAR Image_Transfrom $driver
      */
     function SGL_ImageTransformStrategy(&$driver)
     {
@@ -800,7 +839,9 @@ class SGL_ImageTransformStrategy
      * Extract params from config string.
      *
      * @access public
-     * @param  string $configString
+     *
+     * @param string $configString
+     *
      * @return array
      */
     function getParamsFromString($configString)
@@ -812,8 +853,7 @@ class SGL_ImageTransformStrategy
                 $arr = explode(':', $param);
                 $aRet[$arr[0]] = $arr[1];
             } else {
-                // when only one parameter exists
-                $aRet['config'] = $param;
+                $aRet[] = $param; // when only one parameter exists
             }
         }
         return $aRet;
@@ -823,8 +863,10 @@ class SGL_ImageTransformStrategy
      * Init strategy i.e. load image file and parse params.
      *
      * @access public
-     * @param  string $fileName
-     * @param  string $configString
+     *
+     * @param string $fileName
+     * @param string $configString
+     *
      * @return boolean
      */
     function init($fileName, $configString = '')
@@ -834,28 +876,29 @@ class SGL_ImageTransformStrategy
             return $ok;
         }
         if (!empty($configString)) {
-            $aParams = $this->getParamsFromString($configString);
-            $this->setParams($aParams);
+            $this->setParams($this->getParamsFromString($configString));
         }
         return true;
     }
 
     /**
      * @access public
-     * @param  array $aParams
+     *
+     * @param array $aParams
      */
     function setParams($aParams)
     {
-        foreach ($aParams as $k => $v) {
-            $this->$k = $v;
-        }
+        $this->aParams = $aParams;
     }
 
     /**
      * Load file.
      *
      * @access public
-     * @param  string $fileName
+     *
+     * @param string $fileName
+     *
+     * @return boolean
      */
     function load($fileName)
     {
@@ -870,8 +913,11 @@ class SGL_ImageTransformStrategy
      * Save file, free memory.
      *
      * @access public
-     * @param  $saveQuality
-     * @param  $saveFormat   jpg, gif or png (not support by SGL_Image yet)
+     *
+     * @param $saveQuality
+     * @param $saveFormat   jpg, gif or png (not support by SGL_Image yet)
+     *
+     * @return boolean
      */
     function save($saveQuality, $saveFormat = '')
     {
