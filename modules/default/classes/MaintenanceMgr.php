@@ -47,6 +47,8 @@
  * @since   PHP 4.1
  */
 
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
+
 class MaintenanceMgr extends SGL_Manager
 {
     function MaintenanceMgr()
