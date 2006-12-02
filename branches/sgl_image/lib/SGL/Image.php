@@ -144,7 +144,7 @@ class SGL_Image
     function getParamsFromFile($fileName)
     {
         if (!is_readable($fileName)) {
-            return SGL::raiseError("SGL_Image: '$filename' is not readable");
+            return SGL::raiseError("SGL_Image: '$fileName' is not readable");
         }
         $aRet = parse_ini_file($fileName, true);
         if (!isset($aRet[SGL_IMAGE_DEFAULT_SECTION])) {
@@ -192,8 +192,7 @@ class SGL_Image
             } else {
                 return SGL::raiseError("SGL_Image: file '$params' not found");
             }
-        // wrong parameters' type
-        } elseif (!is_array($params)) {
+        } elseif (!is_array($params)) { // wrong parameters' type
             return SGL::raiseError("SGL_Image: you should specify an array
                 or path to configuration file");
         }
@@ -214,6 +213,8 @@ class SGL_Image
      * @access public
      *
      * @param array  $aParams
+     *
+     * @return boolean
      */
     function setParams($aParams)
     {
@@ -234,6 +235,7 @@ class SGL_Image
             unset($aParams['thumbnails']);
         }
         $this->_aParams = $aParams;
+        return true;
     }
 
     /**
@@ -317,8 +319,7 @@ class SGL_Image
         $destLocation = $destPath . '/' . $this->fileName;
         if ($replace && file_exists($destLocation)) {
             unlink($destLocation);
-        // purely for testing
-        } elseif (file_exists($destLocation)) {
+        } elseif (file_exists($destLocation)) { // purely for testing
             return SGL::raiseError("SGL_Image: file '$destLocation' exists");
         }
         if (!$callback($srcLocation, $destLocation)) {
@@ -388,7 +389,7 @@ class SGL_Image
      */
     function transform($section = null)
     {
-        return true;
+        return is_null($section);
     }
 
     /**
@@ -505,7 +506,7 @@ class SGL_Image
                     '$dirName' writable");
             }
             $mask = umask(0);
-            $ok   = @chmod($thumbDir, 0777);
+            $ok   = @chmod($dirName, 0777);
             if (!$ok) {
                 return SGL::raiseError("SGL_Image: can not perform chmod on
                     directory '$dirName'");
@@ -523,10 +524,7 @@ class SGL_Image
     function _loadStrategies()
     {
         // transformation: main container + thumbnails
-        $aConfiguration = array_merge(
-            array($this->_aParams),
-            $this->_aThumbnails
-        );
+        $aConfiguration = array_merge(array($this->_aParams), $this->_aThumbnails);
         $aAvailParams = SGL_Image::getAvailableParams();
         $aDrivers     = array();
         foreach ($aConfiguration as $container => $aParams) {
@@ -730,7 +728,7 @@ class SGL_Image
                         // do inherit by default
                         : array_merge($aResult, $aData[$thumbSectionName]);
 
-                // default thumbnail exists
+                    // default thumbnail exists
                 } elseif (isset($overrideThumbs[$thumbName])
                         // and it can be inherited
                         && !empty($aResult['inheritThumbnails'])) {
@@ -827,6 +825,7 @@ class SGL_ImageTransformStrategy
      * @access public
      * @param  string $fileName
      * @param  string $configString
+     * @return boolean
      */
     function init($fileName, $configString = '')
     {
@@ -838,6 +837,7 @@ class SGL_ImageTransformStrategy
             $aParams = $this->getParamsFromString($configString);
             $this->setParams($aParams);
         }
+        return true;
     }
 
     /**
@@ -888,7 +888,9 @@ class SGL_ImageTransformStrategy
      * @access   public
      * @abstract
      */
-    function transform() {}
+    function transform()
+    {
+    }
 }
 
 ?>
