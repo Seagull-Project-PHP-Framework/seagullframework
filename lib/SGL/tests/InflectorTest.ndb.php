@@ -153,6 +153,20 @@ class InflectorTest extends UnitTestCase {
         $ret = SGL_Inflector::caseFix($incorrect);
         $this->assertEqual($ret, 'DefaultMgr');
     }
+
+    function testIsConstant()
+    {
+        $this->assertTrue(SGL_Inflector::isConstant('THIS_IS_A_CONSTANT'));
+        $this->assertTrue(SGL_Inflector::isConstant('CONSTANT'));
+        $this->assertTrue(SGL_Inflector::isConstant("'CONSTANT'"));
+        $this->assertFalse(SGL_Inflector::isConstant('CONSTANTa'));
+        $this->assertFalse(SGL_Inflector::isConstant('1'));
+        $this->assertFalse(SGL_Inflector::isConstant(''));
+        $this->assertFalse(SGL_Inflector::isConstant('127.0.0.1'));
+        $this->assertFalse(SGL_Inflector::isConstant('/'));
+        $this->assertFalse(SGL_Inflector::isConstant('SGLSESSID'));
+        $this->assertFalse(SGL_Inflector::isConstant('CUR ADM OUR NOR STA NID'));
+    }
 }
 
 ?>
