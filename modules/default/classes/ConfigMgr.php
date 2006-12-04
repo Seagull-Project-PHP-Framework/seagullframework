@@ -240,7 +240,6 @@ class ConfigMgr extends SGL_Manager
             $output->aInstalledLangs = SGL_Util::getLangsDescriptionMap(array(),
                 SGL_LANG_ID_TRANS2);
         }
-
         $output->addOnLoadEvent("showSelectedOptions('configuration','$output->displayTab')");
 
         //  disable translation options depending on the selected translation container.
