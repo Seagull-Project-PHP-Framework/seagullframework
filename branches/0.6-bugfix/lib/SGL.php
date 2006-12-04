@@ -109,10 +109,12 @@ class SGL
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
-            $priority =& $file;
+            $priority = $file;
         }
         // Priority is under logging threshold level
-        if ($priority > @constant($conf['log']['priority'])) {
+        $const = str_replace("'", "", $conf['log']['priority']);
+        $logLevel = constant($const);
+        if ($priority < $logLevel) {
             return;
         }
         // Grab DSN if we are logging to a database
@@ -128,7 +130,6 @@ class SGL
         } else {
             $logName = $conf['log']['name'];
         }
-
         include_once 'Log.php';
 
         // Instantiate a logger object based on logging options

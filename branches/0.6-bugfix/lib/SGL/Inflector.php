@@ -211,6 +211,21 @@ class SGL_Inflector
         }
     }
 
+    function isConstant($str)
+    {
+        if (empty($str)) {
+            return false;
+        }
+        if (preg_match('/sessid/i', $str)) {
+            return false;
+        }
+        $pattern = '@^[A-Z_\']*$@';
+        if (!preg_match($pattern, $str)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Returns a human-readable string from $lower_case_and_underscored_word,
      * by replacing underscores with a space, and by upper-casing the initial characters.
