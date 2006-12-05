@@ -179,8 +179,10 @@ class SGL_String
             } else {
                 $clean = array_map(array('SGL_String', 'clean'), $var);
             }
+            return SGL_String::trimWhitespace($clean);
+        } else {
+            return false;
         }
-        return SGL_String::trimWhitespace($clean);
     }
 
     function removeJs($var)
