@@ -1264,7 +1264,7 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             // if we're windows
-            if (is_dir(SGL_WEB_ROOT . "/$module")) {
+            if ((strpos(PHP_OS, 'WIN') !== false) && is_dir(SGL_WEB_ROOT . "/$module")) {
                 require_once SGL_CORE_DIR . '/File.php';
                 if (readlink(SGL_WEB_ROOT . "/$module")) {
                     SGL_File::rmDir(SGL_WEB_ROOT . "/$module");
