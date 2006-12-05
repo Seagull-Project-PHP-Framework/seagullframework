@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/../Image.php';
-
 /**
  * Test suite.
  *
@@ -17,6 +15,8 @@ class ImageTest extends UnitTestCase
     function ImageTest()
     {
         $this->UnitTestCase('Image Test');
+
+        require_once dirname(__FILE__) . '/../Image.php';
     }
 
     function setUp()
@@ -228,6 +228,72 @@ class ImageTest extends UnitTestCase
         $this->assertNotEqual($mediaThumbs, $defaultThumbs);
     }
 
+    function testEnsureDirIsWritable()
+    {
+        require_once 'System.php';
+        $tmpdir = session_save_path();
+
+        // create dir
+        $dir = '/thumbs/small';
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+        // remove dir
+        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
+        $this->assertTrue($ok);
+
+        // create dir
+        $dir = '/thumbs/large';
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+
+        // try to re-create dir
+        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
+        $this->assertTrue($ok);
+        // remove dir
+        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
+        $this->assertTrue($ok);
+    }
+
+    function testGetImagePath()
+    {
+        // direct call without the params
+        $ok = SGL_Image::_getImagePath();
+        // you should not call SGL_Image::_getImagePath() directly,
+        // use wrappers instead:
+        //  - SGL_Image::getPath() or
+        //  - SGL_Image::getUrl()
+        $this->assertIsA($ok, 'PEAR_Error');
+
+        // static call without specified module result in default uploadir
+        $path = SGL_Image::getPath();
+        $this->assertEqual(SGL_UPLOAD_DIR, $path);
+
+        // static call with specified module
+        $path = SGL_Image::getPath('media');
+        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
+
+        // we can't get URL for static call if module is not specified
+        $url = SGL_Image::getUrl();
+        $this->assertIsA($url, 'PEAR_Error');
+
+        // static call for an URL with specified module name
+        $url = SGL_Image::getUrl('media');
+        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
+
+        // init SGL_Image instance with module name supplied
+        $image = & new SGL_Image(null, $moduleName = 'media');
+
+        // with instance call we know a module name
+        $url = $image->getUrl();
+        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
+
+        // instance call for a path gives save results
+        // as SGL_Image::getPath('media');
+        $path = $image->getPath();
+        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
+    }
+
+    /*
     function testInit()
     {
         $image = & new SGL_Image();
@@ -304,72 +370,7 @@ class ImageTest extends UnitTestCase
         }
     }
 
-    function testEnsureDirIsWritable()
-    {
-        require_once 'System.php';
-        $tmpdir = session_save_path();
-
-        // create dir
-        $dir = '/thumbs/small';
-        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
-        $this->assertTrue($ok);
-        // remove dir
-        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
-        $this->assertTrue($ok);
-
-        // create dir
-        $dir = '/thumbs/large';
-        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
-        $this->assertTrue($ok);
-
-        // try to re-create dir
-        $ok = SGL_Image::_ensureDirIsWritable($tmpdir . $dir);
-        $this->assertTrue($ok);
-        // remove dir
-        $ok = System::rm(array('-r', dirname($tmpdir . $dir)));
-        $this->assertTrue($ok);
-    }
-
-    function testGetImagePath()
-    {
-        // direct call without the params
-        $ok = SGL_Image::_getImagePath();
-        // you should not call SGL_Image::_getImagePath() directly,
-        // use wrappers instead:
-        //  - SGL_Image::getPath() or
-        //  - SGL_Image::getUrl()
-        $this->assertIsA($ok, 'PEAR_Error');
-
-        // static call without specified module result in default uploadir
-        $path = SGL_Image::getPath();
-        $this->assertEqual(SGL_UPLOAD_DIR, $path);
-
-        // static call with specified module
-        $path = SGL_Image::getPath('media');
-        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
-
-        // we can't get URL for static call if module is not specified
-        $url = SGL_Image::getUrl();
-        $this->assertIsA($url, 'PEAR_Error');
-
-        // static call for an URL with specified module name
-        $url = SGL_Image::getUrl('media');
-        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
-
-        // init SGL_Image instance with module name supplied
-        $image = & new SGL_Image(null, $moduleName = 'media');
-
-        // with instance call we know a module name
-        $url = $image->getUrl();
-        $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
-
-        // instance call for a path gives save results
-        // as SGL_Image::getPath('media');
-        $path = $image->getPath();
-        $this->assertEqual(SGL_MOD_DIR . '/media/www/images', $path);
-    }
-
-    function testUpload()
+    function testCreate()
     {
         // we could simply call $image->init($this->imageConfFile),
         // but we need to correct options a bit before initializing
@@ -387,7 +388,7 @@ class ImageTest extends UnitTestCase
         $image->init($params);
 
         // copy image to keep sample file at place
-        $ok = $image->upload($this->imageSampleFile, $replace = false, 'copy');
+        $ok = $image->create($this->imageSampleFile, $replace = false, 'copy');
         // image copied and thumbnails created
         $this->assertTrue($ok);
 
@@ -398,7 +399,7 @@ class ImageTest extends UnitTestCase
         $image = & new SGL_Image('chicago_copy.jpg');
         $image->init($params);
 
-        $ok = $image->upload($this->imageSampleFile, $replace = false, 'copy');
+        $ok = $image->create($this->imageSampleFile, $replace = false, 'copy');
         $this->assertTrue($ok);
 
         // empty directory from created files
@@ -409,11 +410,11 @@ class ImageTest extends UnitTestCase
 
         // try to copy file, but failed, 'cos file allready exists and
         // we can't override it in 'upload' mode
-        $ok = $image->upload($this->imageSampleFile, $replace = false, 'copy');
+        $ok = $image->create($this->imageSampleFile, $replace = false, 'copy');
         $this->assertIsA($ok, 'PEAR_Error');
 
         // SGL_Image#replace($fileName, $callback) is an alias of
-        // SGL_Image#upload($fileName, $replace = true, $callback)
+        // SGL_Image#create($fileName, $replace = true, $callback)
         $ok = $image->replace($this->imageConfFile, 'copy');
         $this->assertTrue($ok);
 
@@ -428,7 +429,7 @@ class ImageTest extends UnitTestCase
         $image->_aParams['thumbDir'] = '';
 
         // success on upload
-        $ok = $image->upload($this->imageSampleFile, false, 'copy');
+        $ok = $image->create($this->imageSampleFile, false, 'copy');
         $this->assertTrue($ok);
 
         // we specified module name => upload dir is as follows
@@ -466,6 +467,7 @@ class ImageTest extends UnitTestCase
         // cleanup
         $this->_clearDir(SGL_MOD_DIR . '/' . $moduleName, $includeParent = true);
     }
+    */
 }
 
 ?>

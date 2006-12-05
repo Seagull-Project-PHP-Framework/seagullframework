@@ -190,7 +190,7 @@ class SGL_Image
             return SGL::raiseError("SGL_Image: you should specify an array
                 or path to configuration file");
         }
-        $ok = $this->setParams($params);
+        $ok = $this->_setParams($params);
         if (PEAR::isError($ok)) {
             return $ok;
         }
@@ -198,37 +198,6 @@ class SGL_Image
         if (PEAR::isError($ok)) {
             return $ok;
         }
-        return true;
-    }
-
-    /**
-     * Set modification params.
-     *
-     * @access public
-     *
-     * @param array  $aParams
-     *
-     * @return boolean
-     */
-    function setParams($aParams)
-    {
-        $ok = SGL_Image::_mainParamsCheckInArray($aParams);
-        if (PEAR::isError($ok)) {
-            return $ok;
-        }
-        SGL_Image::_configParamCleanup($aParams);
-        if (isset($aParams['thumbnails'])) {
-            foreach ($aParams['thumbnails'] as $thumbName => $thumbParams) {
-                $ok = SGL_Image::_mainParamsCheckInArray($thumbParams, $thumbName);
-                if (PEAR::isError($ok)) {
-                    return $ok;
-                }
-            }
-            SGL_Image::_configParamCleanup($aParams['thumbnails']);
-            $this->_aThumbnails = $aParams['thumbnails'];
-            unset($aParams['thumbnails']);
-        }
-        $this->_aParams = $aParams;
         return true;
     }
 
@@ -295,7 +264,7 @@ class SGL_Image
      *
      * @return mixed
      */
-    function upload($srcLocation, $replace = false, $callback = 'move_uploaded_file')
+    function create($srcLocation, $replace = false, $callback = 'move_uploaded_file')
     {
         if (!function_exists($callback)) {
             return SGL::raiseError("SGL_Image: function '$callback'
@@ -338,11 +307,11 @@ class SGL_Image
      *
      * @return boolean
      *
-     * @see upload()
+     * @see create()
      */
     function replace($srcLocation, $callback = 'move_uploaded_file')
     {
-        return $this->upload($srcLocation, true, $callback);
+        return $this->create($srcLocation, true, $callback);
     }
 
     /**
@@ -403,7 +372,7 @@ class SGL_Image
                 ? '/' . $this->_aParams['thumbDir']
                 : '';
             $fileName = $this->getPath() . $thumbDir . '/' .
-                $section . '/' . $this->fileName;
+                $section . '_' . $this->fileName;
             $params = &$this->_aThumbnails[$section];
         }
         foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
@@ -415,11 +384,42 @@ class SGL_Image
             if (PEAR::isError($ok)) {
                 return $ok;
             }
-            $ok = $stratObj->save($params[$stratName]['saveQuality']);
+            $ok = $stratObj->save($params['saveQuality']);
             if (PEAR::isError($ok)) {
                 return $ok;
             }
         }
+        return true;
+    }
+
+    /**
+     * Set modification params.
+     *
+     * @access private
+     *
+     * @param array  $aParams
+     *
+     * @return boolean
+     */
+    function _setParams($aParams)
+    {
+        $ok = SGL_Image::_mainParamsCheckInArray($aParams);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        SGL_Image::_configParamCleanup($aParams);
+        if (isset($aParams['thumbnails'])) {
+            foreach ($aParams['thumbnails'] as $thumbName => $thumbParams) {
+                $ok = SGL_Image::_mainParamsCheckInArray($thumbParams, $thumbName);
+                if (PEAR::isError($ok)) {
+                    return $ok;
+                }
+            }
+            SGL_Image::_configParamCleanup($aParams['thumbnails']);
+            $this->_aThumbnails = $aParams['thumbnails'];
+            unset($aParams['thumbnails']);
+        }
+        $this->_aParams = $aParams;
         return true;
     }
 
@@ -494,7 +494,7 @@ class SGL_Image
             ? '' : '/' . $this->_aParams['thumbDir'];
         foreach ($aThumbs as $thumbName) {
             $destLocation = $this->getPath() . $thumbDir . '/' . $thumbName
-                . '/' . $this->fileName;
+                . '_' . $this->fileName;
             $ok = SGL_Image::_ensureDirIsWritable(dirname($destLocation));
             if (PEAR::isError($ok)) {
                 return $ok;
@@ -728,12 +728,6 @@ class SGL_Image
             ? array_merge($override, $aData[$sectionName]) // inherit from default
             : $aData[$sectionName];
 
-        // check for obligatory params
-        $ok = SGL_Image::_mainParamsCheckInArray($aResult, $sectionName);
-        if (PEAR::isError($ok)) {
-            return $ok;
-        }
-
         // process thumbnails
         if (!empty($aResult['thumbnails']) || !empty($aResult['inheritThumbnails'])) {
             $aTotalThumbs = array();
@@ -775,19 +769,11 @@ class SGL_Image
                             $overrideThumbs[$thumbName]);
                     }
                 }
-
-                $ok = SGL_Image::_mainParamsCheckInArray($aThumbs[$thumbName],
-                    $thumbSectionName);
-                if (PEAR::isError($ok)) {
-                    return $ok;
-                }
             }
             if (!empty($aThumbs)) {
-                SGL_Image::_configParamCleanup($aThumbs); // cleanup thumbnails
                 $aResult['thumbnails'] = $aThumbs;
             }
         }
-        SGL_Image::_configParamCleanup($aResult); // cleanup parent container
         return $aResult;
     }
 }

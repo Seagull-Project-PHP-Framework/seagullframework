@@ -50,7 +50,8 @@ class SGL_ImageTransform_BorderStrategy extends SGL_ImageTransformStrategy
      * Add border to image.
      *
      * @access public
-     * @return void
+     *
+     * @return boolean
      */
     function transform()
     {

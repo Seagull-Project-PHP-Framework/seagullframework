@@ -203,12 +203,12 @@ class MediaMgr extends FileMgr
 
                 require_once SGL_CORE_DIR . '/Image.php';
                 $image = & new SGL_Image($uniqueName);
-                $result = $image->init($imageConfig);
-                if (PEAR::isError($result)) {
+                $ok = $image->init($imageConfig);
+                if (PEAR::isError($ok)) {
                     return false;
                 }
-                $result = $image->upload($input->mediaFileTmpName);
-                if (PEAR::isError($result)) {
+                $ok = $image->create($input->mediaFileTmpName);
+                if (PEAR::isError($ok)) {
                     return false;
                 }
             }
