@@ -100,6 +100,10 @@ class SGL_Image
     }
 
     /**
+     * Initialize SGL_Image instance. Can parse the specified ini file passed
+     * as $params or use the prepeared array directly.
+     * Load strategies taking into account extracted params.
+     *
      * @access public
      *
      * @param mixed  $params
@@ -150,6 +154,8 @@ class SGL_Image
     }
 
     /**
+     * Get path to image folder. Can be called statically or as instance call.
+     *
      * @access public
      *
      * @param string $moduleName
@@ -169,6 +175,11 @@ class SGL_Image
     }
 
     /**
+     * Get URL to image folder. Can be called statically or as instance call.
+     * It is only possible to get an URL to a folder if we place files at
+     * SGL_MOD_DIR/$moduleName/www/images. To achieve this we must specify a
+     * module name during image instantiation or as an argument here.
+     *
      * @access public
      *
      * @param string $moduleName
@@ -234,6 +245,8 @@ class SGL_Image
     }
 
     /**
+     * Alias for SGL_Image#create($srcLocation, $callback, $replace = true).
+     *
      * @access public
      *
      * @param string $srcLocation
@@ -278,6 +291,8 @@ class SGL_Image
     }
 
     /**
+     * Transform image.
+     *
      * @access public
      *
      * @param mixed $section
@@ -331,9 +346,13 @@ class SGL_Image
     }
 
     /**
+     * Transform main image and all it's thumbnails by loaded strategies.
+     *
      * @access public
      *
      * @return boolean
+     *
+     * @see transform()
      */
     function transformAll()
     {
@@ -630,6 +649,8 @@ $GLOBALS['_SGL']['ImageConfig']['aProps']['_aAdditionalParams'] =
 class SGL_ImageConfig
 {
     /**
+     * Remove processed params from config array to keep it clean.
+     *
      * @access public
      * @static
      *
@@ -658,6 +679,8 @@ class SGL_ImageConfig
     }
 
     /**
+     * Check if all params needed for SGL_Image initialization are specified.
+     *
      * @access public
      * @static
      *
@@ -682,6 +705,8 @@ class SGL_ImageConfig
     }
 
     /**
+     * Get all available config params. This does not include strategies.
+     *
      * @access public
      * @static
      *
@@ -695,6 +720,9 @@ class SGL_ImageConfig
     }
 
     /**
+     * Extract params from file. While extracting we take into account
+     * config sections' inheritance.
+     *
      * @access public
      * @static
      *
@@ -761,12 +789,16 @@ class SGL_ImageConfig
     }
 
     /**
+     * Helper method for SGL_ImageConfig::getParamsFromFile().
+     *
      * @access public
      * @static
      *
      * @param array $aSections
      *
      * @return array
+     *
+     * @see getParamsFromFile()
      */
     function getUniqueSectionNames($aSections)
     {
@@ -788,6 +820,9 @@ class SGL_ImageConfig
     }
 
     /**
+     * Helper method for SGL_ImageConfig::getParamsFromFile(), which does
+     * all the dirty work i.e. merging sections' options.
+     *
      * @access private
      * @static
      *
@@ -796,6 +831,8 @@ class SGL_ImageConfig
      * @param array  $override
      *
      * @return array
+     *
+     * @see getParamsFromFile()
      */
     function _getSectionData($aData, $sectionName, $override)
     {
