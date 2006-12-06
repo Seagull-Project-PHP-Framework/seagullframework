@@ -40,18 +40,6 @@
 define('SGL_IMAGE_DEFAULT_SECTION', 'default');
 
 /**
- * @staticvar array
- */
-$aProp = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
-$aProp = array('driver', 'saveQuality', 'thumbDir');
-
-/**
- * @staticvar array
- */
-$aProp = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
-$aProp = array('inherit', 'thumbnails', 'inheritThumbnails');
-
-/**
  * Base image class.
  *
  * @package    seagull
@@ -107,62 +95,8 @@ class SGL_Image
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-
         $this->fileName   = $fileName;
         $this->moduleName = $moduleName;
-    }
-
-    /**
-     * @access public
-     * @static
-     *
-     * @return array
-     */
-    function getAvailableParams()
-    {
-        $aAddParams  = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
-        $aMainParams = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
-        return array_merge($aAddParams, $aMainParams);
-    }
-
-    /**
-     * @access public
-     * @static
-     *
-     * @param string $fileName
-     *
-     * @return array
-     */
-    function getParamsFromFile($fileName)
-    {
-        if (!is_readable($fileName)) {
-            return SGL::raiseError("SGL_Image: '$fileName' is not readable");
-        }
-        $aRet = parse_ini_file($fileName, true);
-        if (!isset($aRet[SGL_IMAGE_DEFAULT_SECTION])) {
-            return SGL::raiseError('SGL_Image: default container not found');
-        }
-        $aSections = SGL_Image::_getUniqueSectionNames($aRet);
-
-        ksort($aRet);
-        $aResult = array();
-        $default = array();
-        foreach ($aSections as $sectionName) {
-            $ret = SGL_Image::_getSectionData($aRet, $sectionName, $default);
-            if (PEAR::isError($ret)) {
-                return $ret;
-            }
-            if ($sectionName == SGL_IMAGE_DEFAULT_SECTION) {
-                $default = $ret;
-            } else {
-                $aResult[$sectionName] = $ret;
-            }
-        }
-
-        $aDefault = array(SGL_IMAGE_DEFAULT_SECTION => $default);
-        return array_merge($aDefault, $aResult);
     }
 
     /**
@@ -178,7 +112,7 @@ class SGL_Image
         // filename is specified
         if (is_string($params)) {
             if (file_exists($params)) {
-                $params = SGL_Image::getParamsFromFile($params);
+                $params = SGL_ImageConfig::getParamsFromFile($params);
                 if (PEAR::isError($params)) {
                     return $params;
                 }
@@ -228,7 +162,7 @@ class SGL_Image
     {
         $args = func_get_args();
         $args = array_merge(array('path'), $args);
-        $callback = SGL_Image::_isClassMethod()
+        $callback = SGL_Image::_isStaticMethod()
             ? array('SGL_Image', '_getImagePath')
             : array($this, '_getImagePath');
         return call_user_func_array($callback, $args);
@@ -247,7 +181,7 @@ class SGL_Image
     {
         $args = func_get_args();
         $args = array_merge(array('url'), $args);
-        $callback = SGL_Image::_isClassMethod()
+        $callback = SGL_Image::_isStaticMethod()
             ? array('SGL_Image', '_getImagePath')
             : array($this, '_getImagePath');
         return call_user_func_array($callback, $args);
@@ -393,6 +327,34 @@ class SGL_Image
     }
 
     /**
+     * @access public
+     *
+     * @return boolean
+     */
+    function transformAll()
+    {
+        $parentSection = array(null);
+        $aSections = array_merge($parentSection, $this->getThumbnailNames());
+        foreach ($aSections as $sectionName) {
+            $ok = $this->transform($sectionName);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @access public
+     *
+     * @return array
+     */
+    function getThumbnailNames()
+    {
+        return array_keys($this->_aThumbnails);
+    }
+
+    /**
      * Set modification params.
      *
      * @access private
@@ -403,19 +365,19 @@ class SGL_Image
      */
     function _setParams($aParams)
     {
-        $ok = SGL_Image::_mainParamsCheckInArray($aParams);
+        $ok = SGL_ImageConfig::paramsCheck($aParams);
         if (PEAR::isError($ok)) {
             return $ok;
         }
-        SGL_Image::_configParamCleanup($aParams);
+        SGL_ImageConfig::cleanup($aParams);
         if (isset($aParams['thumbnails'])) {
             foreach ($aParams['thumbnails'] as $thumbName => $thumbParams) {
-                $ok = SGL_Image::_mainParamsCheckInArray($thumbParams, $thumbName);
+                $ok = SGL_ImageConfig::paramsCheck($thumbParams, $thumbName);
                 if (PEAR::isError($ok)) {
                     return $ok;
                 }
             }
-            SGL_Image::_configParamCleanup($aParams['thumbnails']);
+            SGL_ImageConfig::cleanup($aParams['thumbnails']);
             $this->_aThumbnails = $aParams['thumbnails'];
             unset($aParams['thumbnails']);
         }
@@ -607,7 +569,7 @@ class SGL_Image
      *
      * @see _isInstanceMethod()
      */
-    function _isClassMethod()
+    function _isStaticMethod()
     {
         return !SGL_Image::_isInstanceMethod();
     }
@@ -620,20 +582,46 @@ class SGL_Image
      *
      * @return boolean
      *
-     * @see _isClassMethod()
+     * @see _isStaticMethod()
      */
     function _isInstanceMethod()
     {
         return isset($this) && is_a($this, 'SGL_Image');
     }
+}
 
+/**
+ * @staticvar array
+ *
+ * @see SGL_ImageConfig::getProperty()
+ */
+$GLOBALS['_SGL']['ImageConfig']['aProps']['_aMainParams'] =
+    array('driver', 'saveQuality', 'thumbDir');
+
+/**
+ * @staticvar array
+ *
+ * @see SGL_ImageConfig::getProperty()
+ */
+$GLOBALS['_SGL']['ImageConfig']['aProps']['_aAdditionalParams'] =
+    array('inherit', 'thumbnails', 'inheritThumbnails');
+
+/**
+ * Manipulate with SGL_Image configuration.
+ *
+ * @package    seagull
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
+ */
+class SGL_ImageConfig
+{
     /**
-     * @access private
+     * @access public
      * @static
      *
      * @param array $aParams
      */
-    function _configParamCleanup(&$aParams)
+    function cleanup(&$aParams)
     {
         if (empty($aParams)) {
             return;
@@ -642,12 +630,12 @@ class SGL_Image
         $firstkey = key($aParams);
         if (is_array($aParams[$firstkey])) {
             foreach ($aParams as $key => $value) {
-                SGL_Image::_configParamCleanup($aParams[$key]);
+                SGL_ImageConfig::cleanup($aParams[$key]);
             }
             return;
         }
         reset($aParams);
-        $aAddParams = &PEAR::getStaticProperty('SGL_Image', '_aAdditionalParams');
+        $aAddParams = &SGL_ImageConfig::getProperty('_aAdditionalParams');
         foreach ($aAddParams as $param) {
             if (isset($aParams[$param]) && is_scalar($aParams[$param])) {
                 unset($aParams[$param]);
@@ -656,7 +644,7 @@ class SGL_Image
     }
 
     /**
-     * @access private
+     * @access public
      * @static
      *
      * @param array  $aParams
@@ -664,12 +652,12 @@ class SGL_Image
      *
      * @return boolean
      */
-    function _mainParamsCheckInArray($aParams, $sectionName = '')
+    function paramsCheck($aParams, $sectionName = '')
     {
-        $aMainParams = &PEAR::getStaticProperty('SGL_Image', '_aMainParams');
+        $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
         $aRet = array_diff($aMainParams, array_keys($aParams));
         if (!empty($aRet)) {
-            $error = "SGL_Image: missing parameters";
+            $error = "SGL_ImageConfig: missing parameters";
             if (!empty($sectionName)) {
                 $error .= ' for [' . $sectionName . ']';
             }
@@ -680,14 +668,93 @@ class SGL_Image
     }
 
     /**
-     * @access private
+     * @access public
+     * @static
+     *
+     * @return array
+     */
+    function getAvailableParams()
+    {
+        $aAddParams  = &SGL_ImageConfig::getProperty('_aAdditionalParams');
+        $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
+        return array_merge($aAddParams, $aMainParams);
+    }
+
+    /**
+     * @access public
+     * @static
+     *
+     * @param string $fileName
+     *
+     * @return array
+     */
+    function getParamsFromFile($fileName)
+    {
+        if (!is_readable($fileName)) {
+            return SGL::raiseError("SGL_ImageConfig: '$fileName' is not readable");
+        }
+        $aRet = parse_ini_file($fileName, true);
+        if (!isset($aRet[SGL_IMAGE_DEFAULT_SECTION])) {
+            return SGL::raiseError('SGL_ImageConfig: default container not found');
+        }
+        $aSections = SGL_ImageConfig::getUniqueSectionNames($aRet);
+
+        ksort($aRet);
+        $aResult = array();
+        $default = array();
+        foreach ($aSections as $sectionName) {
+            $ret = SGL_ImageConfig::_getSectionData($aRet, $sectionName, $default);
+            if (PEAR::isError($ret)) {
+                return $ret;
+            }
+            if ($sectionName == SGL_IMAGE_DEFAULT_SECTION) {
+                $default = $ret;
+            } else {
+                $aResult[$sectionName] = $ret;
+            }
+        }
+
+        $aDefault = array(SGL_IMAGE_DEFAULT_SECTION => $default);
+        return array_merge($aDefault, $aResult);
+    }
+
+    /**
+     * Extract params from config string.
+     *
+     * @access public
+     * @static
+     *
+     * @param string $configString
+     *
+     * @return array
+     */
+    function getParamsFromString($configString)
+    {
+        $aRet = array();
+        if (empty($configString)) {
+            return $aRet;
+        }
+        $aParams = array_map('trim', explode(',', $configString));
+        foreach ($aParams as $param) {
+            if (false !== strpos($param, ':')) {
+                $arr = explode(':', $param);
+                $aRet[$arr[0]] = $arr[1];
+            } else {
+                $aRet[] = $param; // when only one parameter exists
+            }
+        }
+        return $aRet;
+    }
+
+    /**
+     * @access public
      * @static
      *
      * @param array $aSections
      *
      * @return array
      */
-    function _getUniqueSectionNames($aSections)
+    function getUniqueSectionNames($aSections)
     {
         $aResult   = array();
         $aSections = array_keys($aSections);
@@ -776,6 +843,27 @@ class SGL_Image
         }
         return $aResult;
     }
+
+    /**
+     * Replacement for PEAR::getStaticProperty(). Vars are initialized
+     * by putting values directly in $GLOBALS array. In that case we can
+     * ignore annoying error for PHP 5.1.6.
+     *
+     * @access public
+     * @static
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
+    function &getProperty($name)
+    {
+        $aProps = &$GLOBALS['_SGL']['ImageConfig']['aProps'];
+        if (!isset($aProps[$name])) {
+            $aProps[$name] = null;
+        }
+        return $aProps[$name];
+    }
 }
 
 /**
@@ -816,30 +904,6 @@ class SGL_ImageTransformStrategy
     }
 
     /**
-     * Extract params from config string.
-     *
-     * @access public
-     *
-     * @param string $configString
-     *
-     * @return array
-     */
-    function getParamsFromString($configString)
-    {
-        $aParams = array_map('trim', explode(',', $configString));
-        $aRet = array();
-        foreach ($aParams as $param) {
-            if (false !== strpos($param, ':')) {
-                $arr = explode(':', $param);
-                $aRet[$arr[0]] = $arr[1];
-            } else {
-                $aRet[] = $param; // when only one parameter exists
-            }
-        }
-        return $aRet;
-    }
-
-    /**
      * Init strategy i.e. load image file and parse params.
      *
      * @access public
@@ -856,7 +920,8 @@ class SGL_ImageTransformStrategy
             return $ok;
         }
         if (!empty($configString)) {
-            $this->setParams($this->getParamsFromString($configString));
+            $aParsedParams = SGL_ImageConfig::getParamsFromString($configString);
+            $this->setParams($aParsedParams);
         }
         return true;
     }
