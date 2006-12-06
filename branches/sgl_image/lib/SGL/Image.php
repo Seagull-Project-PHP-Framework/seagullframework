@@ -193,12 +193,12 @@ class SGL_Image
      * @access public
      *
      * @param string  $srcLocation  image temporary location
-     * @param boolean $replace      replace existing image
      * @param string  $callback     which method to use to create new image
+     * @param boolean $replace      replace existing image
      *
      * @return mixed
      */
-    function create($srcLocation, $replace = false, $callback = 'move_uploaded_file')
+    function create($srcLocation, $callback = 'move_uploaded_file', $replace = false)
     {
         if (!function_exists($callback)) {
             return SGL::raiseError("SGL_Image: function '$callback'
@@ -245,7 +245,7 @@ class SGL_Image
      */
     function replace($srcLocation, $callback = 'move_uploaded_file')
     {
-        return $this->create($srcLocation, true, $callback);
+        return $this->create($srcLocation, $callback, true);
     }
 
     /**
@@ -310,7 +310,11 @@ class SGL_Image
             $params = &$this->_aThumbnails[$section];
         }
         foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
-            $ok = $stratObj->init($fileName, $params[$stratName]);
+            $configString = $params[$stratName];
+            if (is_object($configString)) {
+                $configString = '';
+            }
+            $ok = $stratObj->init($fileName, $configString);
             if (PEAR::isError($ok)) {
                 return $ok;
             }
@@ -518,22 +522,25 @@ class SGL_Image
     {
         // transformation: main container + thumbnails
         $aConfiguration = array_merge(array($this->_aParams), $this->_aThumbnails);
-        $aAvailParams = SGL_Image::getAvailableParams();
+        $aAvailParams = SGL_ImageConfig::getAvailableParams();
         $aDrivers     = array();
         foreach ($aConfiguration as $container => $aParams) {
 
             // available strategies for current container
             $aStrats = array_diff(array_keys($aParams), $aAvailParams);
 
-            // load driver
-            $driverSignature = md5($aParams['driver']);
-            if (!isset($aDrivers[$driverSignature])) {
-                require_once 'Image/Transform.php';
-                $oDriver = &Image_Transform::factory($aParams['driver']);
-                if (PEAR::isError($oDriver)) {
-                    return $oDriver;
+            // while testing mock object can be passed as a driver
+            if (!is_object($aParams['driver'])) {
+                // load driver
+                $driverSignature = md5($aParams['driver']);
+                if (!isset($aDrivers[$driverSignature])) {
+                    require_once 'Image/Transform.php';
+                    $oDriver = &Image_Transform::factory($aParams['driver']);
+                    if (PEAR::isError($oDriver)) {
+                        return $oDriver;
+                    }
+                    $aDrivers[$driverSignature] = &$oDriver;
                 }
-                $aDrivers[$driverSignature] = &$oDriver;
             }
 
             // load strategies
@@ -542,6 +549,13 @@ class SGL_Image
                 if (empty($aParams[$strategyName])) {
                     continue;
                 }
+
+                // while testing a mock obejct can be passed
+                if (is_object($aParams[$strategyName])) {
+                    $this->_aStrats[$container][$strategyName] = &$aParams[$strategyName];
+                    continue;
+                }
+
                 $stratName = ucfirst($strategyName) . 'Strategy';
                 $stratFile = SGL_CORE_DIR . "/ImageTransform/$stratName.php";
                 if (!file_exists($stratFile)) {
