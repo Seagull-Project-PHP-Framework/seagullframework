@@ -156,7 +156,7 @@ class SGL_ErrorHandler
                 //  PHP error code
                 $output = <<<EOF
 <hr />
-<div class="errorContent">
+<div id="errorWrapper" class="errorContent">
         <strong>MESSAGE</strong>: $errStr<br />
         <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
         <strong>FILE:</strong> $file<br />
@@ -203,7 +203,7 @@ EOL;
                     : null;
                 $aExtraInfo['clientData']['REMOTE_ADDR'] = isset($_SERVER['REMOTE_ADDR'])
                     ? $_SERVER['REMOTE_ADDR']
-                    : null; 
+                    : null;
                 $aExtraInfo['clientData']['SERVER_PORT'] = isset($_SERVER['SERVER_PORT'])
                     ? $_SERVER['SERVER_PORT']
                     : null;
