@@ -39,6 +39,7 @@
 // $Id$
 
 require_once 'DB/DataObject.php';
+require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
 
 /**
  * Module config manager.
