@@ -216,7 +216,7 @@ class SGL_Image
                 does not exist");
         }
         // initialize filename if one is not set
-        if (!$replace && is_null($this->fileName)) {
+        if (is_null($this->fileName)) {
             $this->fileName = $this->generateUniqueFileName($srcLocation);
         }
         $destPath = $this->getPath();

@@ -26,10 +26,42 @@ class ImageTest extends UnitTestCase
     {
         $this->imageConfFile   = dirname(__FILE__) . '/image.ini';
         $this->imageSampleFile = dirname(__FILE__) . '/chicago.jpg';
+
+        $driver   = & new MockImage_Transform_Driver_GD_SGL();
+        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
+
+        $conf = array();
+        $conf['driver']      = &$driver;
+        $conf['thumbDir']    = 'thumbs';
+        $conf['saveQuality'] = 100;
+        $conf['foo']         = &$strategy;
+
+        // add thumbs
+        $conf['thumbnails']['small'] = array();
+        $conf['thumbnails']['large'] = array();
+        $small = &$conf['thumbnails']['small'];
+        $large = &$conf['thumbnails']['large'];
+
+        $small['driver']      = &$driver;
+        $small['thumbDir']    = 'thumbs';
+        $small['saveQuality'] = 75;
+        $small['foo']         = &$strategy;
+        $small['foo2']        = &$strategy;
+        $large['driver']      = &$driver;
+        $large['thumbDir']    = 'thumbs';
+        $large['saveQuality'] = 90;
+        $large['foo3']        = &$strategy;
+
+        $this->conf   = $conf;
+        $this->driver = &$driver;
+        $this->strat  = &$strategy;
     }
 
     function tearDown()
     {
+        unset($this->conf);
+        unset($this->driver);
+        unset($this->strat);
     }
 
     function testIsStaticMethod()
@@ -134,36 +166,21 @@ class ImageTest extends UnitTestCase
 
     function testInit()
     {
-        $driver   = & new MockImage_Transform_Driver_GD_SGL();
-        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
+        $driver   = &$this->driver;
+        $conf     = &$this->conf;
+        $strategy = &$this->strat;
 
-        $conf = array();
-        $conf['driver']      = &$driver;
-        $conf['thumbDir']    = 'thumbs';
-        $conf['saveQuality'] = 100;
-        $conf['foo']         = &$strategy;
+        // init image without thumbs
+        $confcopy = $conf;
+        unset($confcopy['thumbnails']);
 
         $image = & new SGL_Image();
-        $ret = $image->init($conf);
+        $ret = $image->init($confcopy);
         $this->assertTrue($ret);
 
-        // add thumbs
-        $conf['thumbnails']['small'] = array();
-        $conf['thumbnails']['large'] = array();
-        $small = &$conf['thumbnails']['small'];
-        $large = &$conf['thumbnails']['large'];
-
-        $small['driver']      = &$driver;
-        $small['thumbDir']    = 'thumbs';
-        $small['saveQuality'] = 75;
-        $small['foo']         = &$strategy;
-        $small['foo2']        = &$strategy;
-        $large['driver']       = &$driver;
-        $large['thumbDir']    = 'thumbs';
-        $large['saveQuality'] = 90;
-        $large['foo3']        = &$strategy;
-
         unset($image);
+
+        // init image with thumbs
         $image = & new SGL_Image();
         $ret = $image->init($conf);
         $this->assertTrue($ret);
@@ -182,34 +199,12 @@ class ImageTest extends UnitTestCase
 
     function testTransform()
     {
-        $driver   = & new MockImage_Transform_Driver_GD_SGL();
-        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
-
-        $conf = array();
-        $conf['driver']      = &$driver;
-        $conf['thumbDir']    = 'thumbs';
-        $conf['saveQuality'] = 100;
-        $conf['foo']         = &$strategy;
-
-        // add thumbs
-        $conf['thumbnails']['small'] = array();
-        $conf['thumbnails']['large'] = array();
-        $small = &$conf['thumbnails']['small'];
-        $large = &$conf['thumbnails']['large'];
-
-        $small['driver']      = &$driver;
-        $small['thumbDir']    = 'thumbs';
-        $small['saveQuality'] = 75;
-        $small['foo']         = &$strategy;
-        $small['foo2']        = &$strategy;
-        $large['driver']      = &$driver;
-        $large['thumbDir']    = 'thumbs';
-        $large['saveQuality'] = 90;
-        $large['foo3']        = &$strategy;
+        $driver = &$this->driver;
+        $conf   = &$this->conf;
 
         // init instance
         $fileName = 'chicago.jpg';
-        $image = & new SGL_Image($fileName, 'testModule');
+        $image = & new SGL_Image($fileName);
         $ret = $image->init($conf);
 
         // make sure target dir is writable
@@ -234,30 +229,8 @@ class ImageTest extends UnitTestCase
 
     function testCreate()
     {
-        $driver   = & new MockImage_Transform_Driver_GD_SGL();
-        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
-
-        $conf = array();
-        $conf['driver']      = &$driver;
-        $conf['thumbDir']    = 'thumbs';
-        $conf['saveQuality'] = 100;
-        $conf['foo']         = &$strategy;
-
-        // add thumbs
-        $conf['thumbnails']['small'] = array();
-        $conf['thumbnails']['large'] = array();
-        $small = &$conf['thumbnails']['small'];
-        $large = &$conf['thumbnails']['large'];
-
-        $small['driver']      = &$driver;
-        $small['thumbDir']    = 'thumbs';
-        $small['saveQuality'] = 75;
-        $small['foo']         = &$strategy;
-        $small['foo2']        = &$strategy;
-        $large['driver']      = &$driver;
-        $large['thumbDir']    = 'thumbs';
-        $large['saveQuality'] = 90;
-        $large['foo3']        = &$strategy;
+        $driver = &$this->driver;
+        $conf   = &$this->conf;
 
         // initial data for image
         $fileName   = 'riga.jpg';
@@ -275,6 +248,7 @@ class ImageTest extends UnitTestCase
         $ret = $image->create($this->imageSampleFile, 'copy');
         $this->assertTrue($ret && (is_string($ret) || is_bool($ret)));
 
+        // can't create file, 'cos it already exists
         $ret = $image->create($this->imageSampleFile, 'copy');
         $this->assertIsA($ret, 'PEAR_Error');
 
@@ -291,6 +265,49 @@ class ImageTest extends UnitTestCase
 
     function testDelete()
     {
+        // libs to read dir data
+        require_once SGL_LIB_PEAR_DIR . '/File/Util.php';
+        require_once SGL_CORE_DIR . '/Util.php';
+
+        // image config
+        $conf = &$this->conf;
+
+        // files in upload dir
+        $aFiles = SGL_Util::listDir(SGL_UPLOAD_DIR, FILE_LIST_FILES);
+        $filesCntBefore = count($aFiles);
+
+        // files in thumbs dir
+        $thumbDir = SGL_UPLOAD_DIR . '/' . $conf['thumbDir'];
+        $aThumbFiles = SGL_Util::listDir($thumbDir , FILE_LIST_FILES);
+        $thumbCntBefore = count($aThumbFiles);
+
+        // create images in dirs
+        $image = & new SGL_Image();
+        $image->init($conf);
+        $ret = $image->create($this->imageSampleFile, 'copy', $replace = true);
+
+        $aFiles        = SGL_Util::listDir(SGL_UPLOAD_DIR, FILE_LIST_FILES);
+        $filesCntAfter = count($aFiles);
+        $aThumbFiles   = SGL_Util::listDir($thumbDir , FILE_LIST_FILES);
+        $thumbCntAfter = count($aThumbFiles);
+        $thumbCnt      = count($image->getThumbnailNames());
+
+        // ensure image was created
+        $this->assertEqual($filesCntBefore + 1, $filesCntAfter);
+        $this->assertEqual($thumbCntBefore + $thumbCnt, $thumbCntAfter);
+
+        // drop files
+        $ret = $image->delete();
+        $this->assertTrue($ret);
+
+        // how many left after deletion
+        $aFiles         = SGL_Util::listDir(SGL_UPLOAD_DIR, FILE_LIST_FILES);
+        $filesCntResult = count($aFiles);
+        $aThumbFiles    = SGL_Util::listDir($thumbDir , FILE_LIST_FILES);
+        $thumbCntResult = count($aThumbFiles);
+
+        $this->assertEqual($filesCntResult, $filesCntBefore);
+        $this->assertEqual($thumbCntResult, $thumbCntBefore);
     }
 }
 
