@@ -52,6 +52,7 @@ class SGL_Output
     var $onLoad = '';
     var $aOnLoadEvents = array();
     var $aJavascriptFiles = array();
+    var $aHeaders = array();
 
     /**
      * Translates source text into target language.
@@ -493,7 +494,6 @@ class SGL_Output
         }
     }
 
-    //  return true if role id  is admin (1)
     /**
      * Returns true if current user or passed role ID is that of an admin.
      *
@@ -507,7 +507,11 @@ class SGL_Output
         return ($rid && $rid == SGL_ADMIN) ? true : false;
     }
 
-    //  return true if $rid is 1 or -1
+    /**
+     * Returns true if $rid is 1 or -1.
+     *
+     * @return boolean
+     */
     function isAdminOrUnassigned($rid)
     {
         return (abs($rid) == SGL_ADMIN) ? true : false;
@@ -765,6 +769,18 @@ class SGL_Output
         } else {
             return 'unknown';
         }
+    }
+
+    function addHeader($header)
+    {
+        if (!in_array($header, $this->aHeaders)) {
+            $this->aHeaders[] = $header;
+        }
+    }
+
+    function getHeaders()
+    {
+        return $this->aHeaders;
     }
 }
 ?>

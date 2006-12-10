@@ -167,6 +167,34 @@ class InflectorTest extends UnitTestCase {
         $this->assertFalse(SGL_Inflector::isConstant('SGLSESSID'));
         $this->assertFalse(SGL_Inflector::isConstant('CUR ADM OUR NOR STA NID'));
     }
+
+    function test_isMgrNameOmitted()
+    {
+        $aParsedUri = array(
+            'moduleName' => 'default',
+            'managerName' => 'config',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        $aParsedUri = array(
+            'moduleName' => 'default',
+            'managerName' => 'foo',
+            );
+        $this->assertTrue(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        $aParsedUri = array(
+            'moduleName' => 'foo',
+            'managerName' => 'bar',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        //  a case where a module does not have a default mgr
+        $aParsedUri = array(
+            'moduleName' => 'navigation',
+            'managerName' => 'bar',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+    }
 }
 
 ?>

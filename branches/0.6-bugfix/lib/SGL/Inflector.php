@@ -114,7 +114,18 @@ class SGL_Inflector
         $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
 
         //  if the file exists, mgr name is valid and has not been omitted
-        return !is_file($path);
+        if (!is_file($path)) {
+            //  so before we can be sure of simplification, let's check for presence of simplified Manager,
+            //  ie, that has same name of module, so if module is foo, look for FooMgr
+            $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($aParsedUri['moduleName']);
+            $corrected = SGL_Inflector::caseFix($mgrName, true);
+            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+            //  if a default mgr can be loaded, then we assume that mgr name was omitted in request
+            $ret = is_file($pathToMgr);
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
     /**

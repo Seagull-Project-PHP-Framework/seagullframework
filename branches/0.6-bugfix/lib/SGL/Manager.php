@@ -169,6 +169,7 @@ class SGL_Manager
             $oLastError = SGL_Error::getLast();
             if ($oLastError->getCode() == SGL_ERROR_RESOURCENOTFOUND) {
                 $defaultMgrLoaded = true;
+                $output->addHeader('HTTP/1.1 404 Not Found');
             }
 
         //  determine if action param from $_GET is valid
