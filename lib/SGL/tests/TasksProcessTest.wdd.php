@@ -87,7 +87,6 @@ class TasksProcessTest extends UnitTestCase {
         $this->assertEqual(SGL_Error::count(), 1);
         $oError = SGL_Error::getLast();
         $this->assertEqual($oError->getCode(), SGL_ERROR_RESOURCENOTFOUND);
-print '<pre>';print_r($GLOBALS['_SGL']['ERRORS']);
     }
 }
 

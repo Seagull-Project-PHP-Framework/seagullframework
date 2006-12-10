@@ -232,6 +232,9 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
             header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
             header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
             header('X-Powered-By: Seagull http://seagullproject.org');
+            foreach ($output->getHeaders() as $header) {
+                header($header);
+            }
         }
     }
 }
@@ -450,13 +453,11 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
         $getDefaultMgr = false;
-        $homePageRequest = false;
 
         if (empty($moduleName) || empty($managerName)) {
 
             SGL::logMessage('Module and manager names could not be determined from request');
             $getDefaultMgr = true;
-            $homePageRequest = true;
 
         } else {
             if (!SGL::moduleIsEnabled($moduleName)) {
@@ -476,7 +477,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                     $retMgrName = $this->getManagerName($managerName, $mgrPath);
                     if ($retMgrName === false) {
                         SGL::raiseError("Specified manager '$managerName' could not be found, ".
-                            "default loaded, pls ensure full manager name is present in module's conf.ini",
+                            "defaults loaded, pls ensure full manager name is present in module's conf.ini",
                             SGL_ERROR_RESOURCENOTFOUND);
                     }
                     $managerName = ($retMgrName)
@@ -517,11 +518,12 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             }
         }
         if ($getDefaultMgr) {
-            $ok = $this->getDefaultManager($input);
+            $ok = $this->getConfiguredDefaultManager($input);
             if (!$ok) {
                 SGL::raiseError("The default manager could not be found",
                     SGL_ERROR_RESOURCENOTFOUND);
             }
+            $this->getDefaultManager($input);
         }
         $this->processRequest->process($input, $output);
     }
@@ -532,7 +534,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
      * @param SGL_Registry $input
      * @return boolean
      */
-    function getDefaultManager(&$input)
+    function getConfiguredDefaultManager(&$input)
     {
         $defaultModule = $this->conf['site']['defaultModule'];
         $defaultMgr = $this->conf['site']['defaultManager'];
@@ -576,6 +578,24 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             $req->add($aParams);
         }
         $input->setRequest($req); // this ought to take care of itself
+        return true;
+    }
+
+    function getDefaultManager(&$input)
+    {
+        $defaultModule = 'default';
+        $defaultMgr = 'default';
+        $mgrName = SGL_Inflector::caseFix(
+            SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
+        $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
+        require_once $path;
+        $mgr = new $mgrName();
+        $input->moduleName = $defaultModule;
+        $input->set('manager', $mgr);
+        $req = $input->getRequest();
+        $req->set('moduleName', $defaultModule);
+        $req->set('managerName', $defaultMgr);
+        $input->setRequest($req);
         return true;
     }
 
