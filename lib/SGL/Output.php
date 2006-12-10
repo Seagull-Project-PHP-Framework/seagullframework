@@ -447,6 +447,11 @@ class SGL_Output
          return SGL_String::summarise($str, $limit, $element, $appendString);
     }
 
+    /**
+     * Prints formatted error message to standard out.
+     *
+     * @return mixed
+     */
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -478,7 +483,7 @@ class SGL_Output
         } elseif (SGL_Error::count()) {
 
             //  for now get last message added to stack
-            $msg = SGL_Error::toString($GLOBALS['_SGL']['ERRORS'][0]);
+            $msg = SGL_Error::toString(SGL_Error::getLast());
             echo '  <div class="errorContainer">
                         <div class="errorHeader">Error</div>
                         <div class="errorContent">' . $msg . '</div>
