@@ -164,15 +164,12 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
         $language = substr($locale, 0,2);
 
         if ($this->conf['site']['extendedLocale'] == false) {
-
-            $cat = constant(str_replace("'", "", $this->conf['site']['localeCategory']));
-
             //  The default locale category is LC_ALL, but this will cause probs for
             //  european users who get their decimal points (.) changed to commas (,)
             //  and php numeric calculations will break.  The solution for these users
             //  is to select the LC_TIME category.  For a global effect change this in
             //  Config.
-            if (setlocale($cat, $locale) == false) {
+            if (setlocale(SGL_String::pseudoConstantToInt($this->conf['site']['localeCategory']), $locale) == false) {
                 setlocale(LC_TIME, $locale);
             }
             @putenv('TZ=' . $timezone);

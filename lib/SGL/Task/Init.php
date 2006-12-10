@@ -285,8 +285,8 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('SGL_SEAGULL_VERSION', $conf['tuples']['version']);
 
             //  which degree of error severity before emailing admin
-            $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
-            define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
+            define('SGL_EMAIL_ADMIN_THRESHOLD',
+                SGL_String::pseudoConstantToInt($conf['debug']['emailAdminThreshold']));
             define('SGL_BASE_URL', $conf['site']['baseUrl']);
 
             //  add additional search paths

@@ -188,7 +188,7 @@ class SGL_Manager
         {
             //  determine global manager perm, ie that is valid for all actions
             //  in the mgr
-            $mgrPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
+            $mgrPerm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
             $ok = $this->_authorise($mgrPerm, $mgrName, $input);
@@ -272,7 +272,7 @@ class SGL_Manager
                 $methodName = '_cmd_' . $methodName;
 
                 //  build relevant perms constant
-                $perm = @constant('SGL_PERMS_' . strtoupper($mgrName . $methodName));
+                $perm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName . $methodName));
 
                 //  return false if user doesn't have method specific or classwide perms
                 if (SGL_Session::hasPerms($perm) === false) {
