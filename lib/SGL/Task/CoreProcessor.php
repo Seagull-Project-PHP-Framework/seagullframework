@@ -11,17 +11,20 @@ class SGL_Task_CoreProcessor extends SGL_ProcessRequest
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $req = $input->getRequest();
-        $mgr = $input->get('manager');
+        $req  = $input->getRequest();
+        $mgr  = $input->get('manager');
 
         $mgr->validate($req, $input);
         $input->aggregate($output);
 
-        $ok = $mgr->process($input, $output);
-        if (PEAR::isError($ok)) {
-            //  stop with error page
-            SGL::displayStaticPage($ok->getMessage());
+        //  process data if valid
+        if ($mgr->isValid()) {
+            $ok = $mgr->process($input, $output);
+            if (SGL_Error::count()) {
+                $mgr->handleError(SGL_Error::getLast(), $output);
+            }
         }
+        $mgr->display($output);
     }
 }
 ?>
