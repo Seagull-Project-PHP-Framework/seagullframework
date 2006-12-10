@@ -111,7 +111,7 @@ class SGL
             $priority = $file;
         }
         // Priority is under logging threshold level
-        if ($priority < SGL_String::pseudoConstantToInt($conf['log']['priority'])) {
+        if ($priority > SGL_String::pseudoConstantToInt($conf['log']['priority'])) {
             return;
         }
         // Grab DSN if we are logging to a database
