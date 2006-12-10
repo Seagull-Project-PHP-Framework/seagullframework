@@ -33,7 +33,7 @@
  * @author     Richard Heyes <richard@phpguru.org>
  * @copyright  2003-2006 Lorenzo Alberton, Richard Heyes
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Common.php,v 1.55 2006/06/07 11:33:00 quipo Exp $
+ * @version    CVS: $Id: Common.php,v 1.57 2006/10/11 16:01:33 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -42,8 +42,9 @@
  * when the user doesn't set any other value
  */
 if (substr($_SERVER['PHP_SELF'], -1) == '/') {
+    $http = !empty($_SERVER['HTTPS']) ? 'https://' : 'http://';
     define('CURRENT_FILENAME', '');
-    define('CURRENT_PATHNAME', 'http://'.$_SERVER['HTTP_HOST'].str_replace('\\', '/', $_SERVER['PHP_SELF']));
+    define('CURRENT_PATHNAME', $http.$_SERVER['HTTP_HOST'].str_replace('\\', '/', $_SERVER['PHP_SELF']));
 } else {
     define('CURRENT_FILENAME', preg_replace('/(.*)\?.*/', '\\1', basename($_SERVER['PHP_SELF'])));
     define('CURRENT_PATHNAME', str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])));
@@ -615,28 +616,28 @@ class Pager_Common
 
     /**
      * Returns next page ID. If current page is last page
-     * this function returns FALSE
-     *
-     * @return mixed Next page ID
+	 * this function returns FALSE
+	 *
+	 * @return mixed Next page ID
      */
-    function getNextPageID()
-    {
-        return ($this->getCurrentPageID() == $this->numPages() ? false : $this->getCurrentPageID() + 1);
-    }
+	function getNextPageID()
+	{
+		return ($this->getCurrentPageID() == $this->numPages() ? false : $this->getCurrentPageID() + 1);
+	}
 
-    // }}}
+	// }}}
     // {{{ getPreviousPageID()
 
     /**
      * Returns previous page ID. If current page is first page
-     * this function returns FALSE
-     *
-     * @return mixed Previous pages' ID
+	 * this function returns FALSE
+	 *
+	 * @return mixed Previous pages' ID
      */
-    function getPreviousPageID()
-    {
-        return $this->isFirstPage() ? false : $this->getCurrentPageID() - 1;
-    }
+	function getPreviousPageID()
+	{
+		return $this->isFirstPage() ? false : $this->getCurrentPageID() - 1;
+	}
 
     // }}}
     // {{{ numItems()
@@ -894,14 +895,14 @@ class Pager_Common
                 $qs = $_GET;
             }
         }
-        if (count($this->_extraVars)){
-            $this->_recursive_urldecode($this->_extraVars);
-        }
-        $qs = array_merge($qs, $this->_extraVars);
         foreach ($this->_excludeVars as $exclude) {
             if (array_key_exists($exclude, $qs)) {
                 unset($qs[$exclude]);
             }
+        }
+        if (count($this->_extraVars)){
+            $this->_recursive_urldecode($this->_extraVars);
+            $qs = array_merge($qs, $this->_extraVars);
         }
         if (count($qs) && get_magic_quotes_gpc()){
             $this->_recursive_stripslashes($qs);
