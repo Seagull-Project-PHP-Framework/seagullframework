@@ -175,6 +175,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_ERROR_INVALIDREQUEST',      -121);
         define('SGL_ERROR_INVALIDTYPE',         -122);
         define('SGL_ERROR_RECURSION',           -123);
+        define('SGL_ERROR_RESOURCENOTFOUND',    -404);
 
         //  message types to use with SGL:raiseMsg($msg, $translation, $msgType)
         define('SGL_MESSAGE_ERROR',             0);  // by default
@@ -337,6 +338,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
     function run($conf)
     {
         //  set PEAR error handler
+        #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
     }
 

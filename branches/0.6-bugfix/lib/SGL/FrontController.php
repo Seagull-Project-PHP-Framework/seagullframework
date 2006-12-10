@@ -235,15 +235,13 @@ class SGL_MainProcess extends SGL_ProcessRequest
         $mgr  = $input->get('manager');
 
         $mgr->validate($req, $input);
-
         $input->aggregate($output);
 
         //  process data if valid
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
-            if (PEAR::isError($ok)) {
-                //  stop with error page
-                SGL::displayStaticPage($ok->getMessage());
+            if (SGL_Error::count()) {
+                $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
         $mgr->display($output);

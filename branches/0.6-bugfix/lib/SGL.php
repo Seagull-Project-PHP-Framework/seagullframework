@@ -410,7 +410,12 @@ class SGL
                 SELECT  module_id
                 FROM    {$conf['table']['module']}
                 WHERE   name = '$moduleName'";
-            $aInstances[$moduleName] = $dbh->getOne($query);
+            $ret = $dbh->getOne($query);
+            if (PEAR::isError($ret)) {
+                return false;
+            } else {
+                $aInstances[$moduleName] = $ret;
+            }
         }
         return ! is_null($aInstances[$moduleName]);
     }

@@ -167,7 +167,7 @@ class SGL_Manager
 
         if (SGL_Error::count()) {
             $oLastError = SGL_Error::getLast();
-            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+            if ($oLastError->getCode() == SGL_ERROR_RESOURCENOTFOUND) {
                 $defaultMgrLoaded = true;
             }
 
@@ -380,6 +380,13 @@ class SGL_Manager
         }
         $aMergedParams = array_merge($aParams, $aRet);
         return $aMergedParams;
+    }
+
+    function handleError($oError, &$output)
+    {
+        $output->template = 'error.html';
+        $output->masterTemplate = 'masterNoCols.html';
+        $output->errMsg = $oError->getMessage();
     }
 }
 ?>

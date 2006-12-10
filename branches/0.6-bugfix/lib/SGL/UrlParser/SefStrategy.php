@@ -131,14 +131,9 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                         $aParsedUri['managerName'] = $aParsedUri['moduleName'];
                     }
                 }
-            } else {
-                //   we end up here when parsing url resources that don't exist,
-                //  ie example.com/index.php/blah, so raise error silently
-                SGL::raiseError("module's ini file could not be found, expecting file $testPath",
-                    SGL_ERROR_NOFILE);
             }
         }
-        //  catch case where when manger + mod names are the same, and cookies
+        //  catch case where when manager + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
         if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
             @list(,$cookieValue) = split('=', $aParsedUri['managerName']);

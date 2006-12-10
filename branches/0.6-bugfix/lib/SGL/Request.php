@@ -223,6 +223,12 @@ class SGL_Request
     {
         $this->aProps = array_merge_recursive($this->aProps, $aParams);
     }
+
+    function reset()
+    {
+        unset($this->aProps);
+        $this->aProps = array();
+    }
     /**
      * Return an array of all Request properties.
      *
