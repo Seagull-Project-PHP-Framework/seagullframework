@@ -726,13 +726,11 @@ class SGL_Output
 
     function humanise($lowerCaseAndUnderscoredWord)
     {
-        require_once SGL_CORE_DIR . '/Inflector.php';
         return SGL_Inflector::humanise($lowerCaseAndUnderscoredWord);
     }
 
     function camelise($lowerCaseWithSpacesWordsString)
     {
-        require_once SGL_CORE_DIR . '/Inflector.php';
         return SGL_Inflector::camelise($lowerCaseWithSpacesWordsString);
     }
 

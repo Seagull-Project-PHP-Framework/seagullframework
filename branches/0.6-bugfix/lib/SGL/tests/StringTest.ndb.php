@@ -82,6 +82,33 @@ class StringTest extends UnitTestCase {
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
+
+    function test_pseudoConstantToInt()
+    {
+        define('TMP_CONSTANT', 23);
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'TMP_CONSTANT'")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('TMP_CONSTANT')));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("23")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt(23)));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'UNDEFINED_TEST_CONSTANT'")));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('UNDEFINED_TEST_CONSTANT')));
+
+//        $aControl[] = 'Here is a sentence-like string.';
+//        $aControl[] = ' Here is a sentence-like string.';
+//        $aControl[] = ' *Here is a sentence-like string.';
+//        $aExpected[] = 'here_is_a_sentence-like_string';
+//        $aExpected[] = '_here_is_a_sentence-like_string';
+//        $aExpected[] = '_here_is_a_sentence-like_string';
+//        foreach ($aControl as $k => $control) {
+//            $ret = SGL_String::pseudoConstantToInt($control);
+//            $this->assertEqual($aExpected[$k], $ret);
+//        }
+    }
+
+    function _isValidPseudoConstantToIntRetVal($val)
+    {
+        return is_int($val) && $val > 0;
+    }
 }
 
 ?>

@@ -105,16 +105,13 @@ class SGL
         if (empty($conf['log']['enabled']) || $conf['log']['enabled'] == false) {
             return;
         }
-
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
             $priority = $file;
         }
         // Priority is under logging threshold level
-        $const = str_replace("'", "", $conf['log']['priority']);
-        $logLevel = constant($const);
-        if ($priority < $logLevel) {
+        if ($priority < SGL_String::pseudoConstantToInt($conf['log']['priority'])) {
             return;
         }
         // Grab DSN if we are logging to a database
@@ -137,8 +134,8 @@ class SGL
                                    $logName,
                                    $conf['log']['ident'],
                                    array(  $conf['log']['paramsUsername'],
-                                            $conf['log']['paramsPassword'],
-                                            'dsn' => $dsn
+                                           $conf['log']['paramsPassword'],
+                                           'dsn' => $dsn
                                     ));
         // If log message is an error object, extract info
         if (is_a($message, 'PEAR_Error')) {
