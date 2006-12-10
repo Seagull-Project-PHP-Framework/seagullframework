@@ -281,6 +281,8 @@ $defaultWords = array(
     'Comment'          => 'Комментарий',
     'Your environment' => 'Ваше окружение',
 
+    'send bug report'  => 'послать отчет об ошибке',
+
     // validate
     'You must fill in your description'     => 'Пожалуйста, укажите описание',
     'You must fill in your comment'         => 'Пожалуйста, укажите комментарий',
