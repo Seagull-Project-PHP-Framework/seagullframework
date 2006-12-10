@@ -195,8 +195,6 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $aRequirements = array(
         'apc' => array(SGL_FORBIDDEN => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
-        'dom' => array(SGL_RECOMMENDED => 1),
-        'domxml' => array(SGL_RECOMMENDED => 1),
         'gd' => array(SGL_RECOMMENDED => 1),
         'iconv' => array(SGL_RECOMMENDED => 1),
         'mysql' => array(SGL_NEUTRAL => 0),
@@ -219,6 +217,11 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 
     function run()
     {
+        if (SGL::isPhp5()) {
+            $this->aRequirements['dom'] = array(SGL_RECOMMENDED => 1);
+        } else {
+            $this->aRequirements['domxml'] = array(SGL_RECOMMENDED => 1);
+        }
         foreach ($this->aRequirements as $m => $dep) {
             $this->aData[$m] = bool2int(extension_loaded($m));
         }
