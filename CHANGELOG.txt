@@ -32,6 +32,10 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+10-12-06    Errors handled more gracefully, all errors now sent to a generic error
+            template except in fatal situations (failed install, no global config file,
+            failed request init)
+10-12-06    Added addHeader($header) and getHeaders() to SGL_Output
 02-12-06    Added SGL_Output::addJavascriptFile() which accepts either a single path
             or an array of paths of js files.  The preferred way of adding javascript
             files to page has changed
