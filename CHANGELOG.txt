@@ -48,7 +48,7 @@ IMPROVEMENTS
 30-11-06    Added possibility of passing arbitrary args to CLI requests (Mike Wattier)
 29-11-06    $this->da->moduleIsRegistered() is deprecated in favour of SGL::moduleIsEnabled()
 29-11-06    Renamed DA_Default to DefaultDAO for consistency (Julien Casanova)
-29-11-06    Implemented DB table prefix support (Dmitri Lakachauskis)
+29-11-06    Implemented DB table prefix support - disabled by default (Dmitri Lakachauskis)
 22-11-06    Added ability to remove translations (Dmitri Lakachauskis)
 15-11-06    Tests for disabled modules suppressed
 01-11-06    Added SGL_Inflector::humanize()
