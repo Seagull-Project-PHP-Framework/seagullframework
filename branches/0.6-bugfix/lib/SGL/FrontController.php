@@ -240,7 +240,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         //  process data if valid
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
-            if (SGL_Error::count()) {
+            if (SGL_Error::count() && SGL_Session::getRoleId() != SGL_ADMIN) {
                 $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
