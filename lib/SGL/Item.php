@@ -136,7 +136,7 @@ class SGL_Item
      * @param   string  $language   Language
      * @return  void
      */
-    function SGL_Item($itemID = -1, $language = null)
+    function SGL_Item($itemID = -1, $language = null, $onlyPublished = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -153,7 +153,7 @@ class SGL_Item
         }
 
         if ($itemID >= 0) {
-            $this->_init($itemID, $language);
+            $this->_init($itemID, $language, $onlyPublished);
         }
     }
 
@@ -165,11 +165,15 @@ class SGL_Item
      * @param   string  $language   Language
      * @return  void
      */
-    function _init($itemID, $languageID = null)
+    function _init($itemID, $languageID = null, $onlyPublished)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $roleId = SGL_Session::get('rid');
+
+        $append = ($onlyPublished)
+            ? 'AND i.status = '.SGL_STATUS_PUBLISHED
+            : '';
 
         //  get default fields
         $query = "
@@ -190,9 +194,10 @@ class SGL_Item
             LEFT JOIN   {$this->conf['table']['category']} c ON i.category_id = c.category_id
             WHERE       i.item_id = $itemID
             AND         $roleId NOT IN (COALESCE(c.perms, '-1'))
+            $append
                 ";
         $result = $this->dbh->query($query);
-        if (!DB::isError($result)) {
+        if (!PEAR::isError($result)) {
             $itemObj = $result->fetchRow();
 
             //  catch null results
@@ -883,7 +888,7 @@ class SGL_Item
             $itemID = SGL_Session::get('articleID');
         }
         if ($itemID) {
-            $item = & new SGL_Item($itemID);
+            $item = & new SGL_Item($itemID, null, $onlyPublished = true);
             if (!isset($language) || empty($language) ) {
                 $language = SGL_Translation::getLangID();
             }
