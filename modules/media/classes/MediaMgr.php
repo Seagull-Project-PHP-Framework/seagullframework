@@ -116,6 +116,7 @@ class MediaMgr extends FileMgr
         //  if media has been uploaded
         if (!empty($input->mediaFileName)) {
             if ($mimeType = $this->getMimeType($input->mediaFileTmpName)) {
+                $input->mediaFileType = $mimeType;
                 $input->mediaFileName = $this->toValidFileName($input->mediaFileName,
                     $mimeType);
             } else {
