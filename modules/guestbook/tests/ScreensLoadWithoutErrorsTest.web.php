@@ -13,12 +13,12 @@ class GuestBookScreensLoadWithoutErrorsTest extends WebTestCase
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
-        $this->assertTitle('Seagull Framework :: Home');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         //  guestbook
         $this->get($this->conf['site']['baseUrl'] . '/index.php/guestbook/');
-        $this->assertTitle('Seagull Framework :: Welcome to our Guestbook');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Welcome to our Guestbook');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 
@@ -32,7 +32,7 @@ class GuestBookScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  guestbook
         $this->get($this->conf['site']['baseUrl'] . '/index.php/guestbook/');
-        $this->assertTitle('Seagull Framework :: Welcome to our Guestbook');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Welcome to our Guestbook');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

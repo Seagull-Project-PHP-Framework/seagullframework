@@ -13,15 +13,15 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
-        $this->assertTitle('Seagull Framework :: Home');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
 
 //        $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/frmArticleID/1/staticId/6/');
-//        $this->assertTitle('Seagull Framework :: Content Reshuffle');
+//        $this->assertTitle($this->conf['site']['name'] . ' :: Content Reshuffle');
 //        $this->assertWantedPattern("/No article found for that ID/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/articleview/action/summary/');
-        $this->assertTitle('Seagull Framework :: Article Browser');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Article Browser');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 
@@ -35,23 +35,23 @@ class PublisherScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  publisher
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: Article Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Article Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/article/');
-        $this->assertTitle('Seagull Framework :: Article Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Article Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/publisher/document/');
-        $this->assertTitle('Seagull Framework :: Document Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Document Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/frmCatID/1/');
-        $this->assertTitle('Seagull Framework :: Category Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Category Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/category/action/reorder/');
-        $this->assertTitle('Seagull Framework :: Category Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Category Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
 #        $this->showHeaders();
     }

@@ -19,11 +19,11 @@ class MessagingScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  messaging
         $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/instantmessage/');
-        $this->assertTitle('Seagull Framework :: Messages');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Messages');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/messaging/contact/');
-        $this->assertTitle('Seagull Framework :: Contact Manager');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Contact Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

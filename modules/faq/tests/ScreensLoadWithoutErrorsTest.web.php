@@ -14,11 +14,11 @@ class FaqScreensLoadWithoutErrorsTest extends WebTestCase
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
-        $this->assertTitle('Seagull Framework :: Home');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
-        $this->assertTitle('Seagull Framework :: FAQs');
+        $this->assertTitle($this->conf['site']['name'] . ' :: FAQs');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 
@@ -31,7 +31,7 @@ class FaqScreensLoadWithoutErrorsTest extends WebTestCase
         $this->clickSubmitByName('submitted');
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/faq/');
-        $this->assertTitle('Seagull Framework :: FAQs');
+        $this->assertTitle($this->conf['site']['name'] . ' :: FAQs');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

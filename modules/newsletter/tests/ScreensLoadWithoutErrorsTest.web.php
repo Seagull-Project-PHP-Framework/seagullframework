@@ -19,15 +19,15 @@ class NewsletterScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  newsletter
         $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Newsletter List Mgr');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/action/listSubscribers/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Newsletter List Mgr');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/newsletter/list/action/listLists/');
-        $this->assertTitle('Seagull Framework :: Newsletter List Mgr');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Newsletter List Mgr');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

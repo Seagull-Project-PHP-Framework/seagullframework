@@ -19,11 +19,11 @@ class RandomMsgScreensLoadWithoutErrorsTest extends WebTestCase
 
         //  random msg
         $this->get($this->conf['site']['baseUrl'] . '/index.php/randommsg/rndmsg/');
-        $this->assertTitle('Seagull Framework :: RndMsg Manager :: Browse');
+        $this->assertTitle($this->conf['site']['name'] . ' :: RndMsg Manager :: Browse');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/randommsg/rndmsg/action/add/');
-        $this->assertTitle('Seagull Framework :: RndMsg Manager :: Add');
+        $this->assertTitle($this->conf['site']['name'] . ' :: RndMsg Manager :: Add');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }

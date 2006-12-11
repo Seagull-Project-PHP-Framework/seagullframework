@@ -14,11 +14,11 @@ class ContactUsScreensLoadWithoutErrorsTest extends WebTestCase
     {
         $this->addHeader('User-agent: foo-bar');
         $this->get($this->conf['site']['baseUrl']);
-        $this->assertTitle('Seagull Framework :: Home');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Home');
         $this->assertNoUnwantedPattern("/errorContent/");
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/contactus/');
-        $this->assertTitle('Seagull Framework :: Contact Us');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Contact Us');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 
@@ -31,7 +31,7 @@ class ContactUsScreensLoadWithoutErrorsTest extends WebTestCase
         $this->clickSubmit('Login');
 
         $this->get($this->conf['site']['baseUrl'] . '/index.php/contactus/');
-        $this->assertTitle('Seagull Framework :: Contact Us');
+        $this->assertTitle($this->conf['site']['name'] . ' :: Contact Us');
         $this->assertNoUnwantedPattern("/errorContent/");
     }
 }
