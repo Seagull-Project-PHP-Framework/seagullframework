@@ -76,7 +76,6 @@ class ModuleGenerationMgr extends SGL_Manager
         $input->createModule = (object)$req->get('frmCreateModule');
 
         if ($input->submitted) {
-
             //  checks for creating modules
             if ($input->action == 'createModule') {
                 if (empty($input->createModule->moduleName)) {
@@ -99,8 +98,10 @@ class ModuleGenerationMgr extends SGL_Manager
                 }
             }
         }
-        //  if errors have occured
-        if (isset($aErrors) && count($aErrors)) {
+        if (!empty($this->conf['db']['prefix'])) {
+            SGL::raiseMsg('prefixes not supported');
+            $this->validated = false;
+        } elseif (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please correct the following errors', false);
             $input->error = $aErrors;
             $this->validated = false;
@@ -139,7 +140,8 @@ class ModuleGenerationMgr extends SGL_Manager
             $res = SGL_Task_CreateDataObjectEntities::run();
 
             // check if table exists
-            $entity = ucfirst($this->conf['db']['prefix'] . $mgrName);
+            $entity = ucfirst($mgrName);
+
             $res = file_exists(SGL_ENT_DIR . '/' . $entity . '.php');
             if (!$res) {
                 $msg =  'Please generate a table (with the same name as your manager entity, eg, "pizza") '.

@@ -527,6 +527,7 @@ $defaultWords['templates'] = 'templates';
 $defaultWords['translations'] = 'translations';
 $defaultWords['Enter Captcha'] = 'Please enter the number shown below in the relevant field';
 $defaultWords['You must enter the number in this field'] = 'You must enter the number in this field';
+$defaultWords['prefixes not supported'] = 'Currently the module generator only works when there are no prefixes set on the db tables';
 
 /* --- PEAR::Pager --- */
 $defaultWords['altPrev'] = 'Previous';
