@@ -127,7 +127,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         $this->setDefaults(array(
             'name' => 'seagull',
-            'prefix' => 'sgl',
+            'prefix' => '',
             'insertSampleData' => false,
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
