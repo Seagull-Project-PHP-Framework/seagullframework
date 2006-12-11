@@ -274,7 +274,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
     var $title = 'php.ini Settings';
     var $key = 'php.ini_settings';
     var $aRequirements = array(
-        'safe_mode' => array(SGL_RECOMMENDED => 0),
+        'safe_mode' => array(SGL_REQUIRED => 0),
         'register_globals' => array(SGL_RECOMMENDED => 0),
         'magic_quotes_gpc' => array(SGL_RECOMMENDED => 0),
         'magic_quotes_runtime' => array(SGL_RECOMMENDED => 0),
@@ -286,6 +286,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         );
 
     var $aErrors = array(
+        'safe_mode' => "This software will not work correctly if safe_mode is enabled",
         'memory_limit' => "Please set the option 'memory_limit' in your php.ini to a minimum of 16MB",
         );
 
