@@ -52,7 +52,7 @@ class {t.ManagerName}Mgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->pageTitle    = '{t.ManagerName} Manager';
-        $this->template     = '{t.templatePrefix}List.html';
+        $this->template     = '{t.managerName}List.html';
 
         $this->_aActionsMapping =  array({foreach:t.aActionMapping,action}
             {action:h}{end:}
