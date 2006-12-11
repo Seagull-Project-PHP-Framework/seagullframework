@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+11-12-06    Fixed many Translation2 bugs (Dmitri Lakachauskis)
 10-12-06    Improved functionality for CGI users (Dmitri Lakachauskis)
 18-11-06    Fixed problems where reinstall installed all modules (Dmitri
             Lakachauskis)
