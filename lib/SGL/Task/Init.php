@@ -152,29 +152,102 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
-        define('SGL_ERROR_INVALIDARGS',         -101);  // wrong args to function
-        define('SGL_ERROR_INVALIDCONFIG',       -102);  // something wrong with the config
-        define('SGL_ERROR_NODATA',              -103);  // no data available
-        define('SGL_ERROR_NOCLASS',             -104);  // no class exists
-        define('SGL_ERROR_NOMETHOD',            -105);  // no method exists
-        define('SGL_ERROR_NOAFFECTEDROWS',      -106);  // no rows where affected by update/insert/delete
-        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);  // limit queries on unsuppored databases
+
+        /**
+         * Wrong args to function.
+         */
+        define('SGL_ERROR_INVALIDARGS',         -101);
+        /**
+         * Something wrong with the config.
+         */
+        define('SGL_ERROR_INVALIDCONFIG',       -102);
+        /**
+         * No data available.
+         */
+        define('SGL_ERROR_NODATA',              -103);
+        /**
+         * No class exists.
+         */
+        define('SGL_ERROR_NOCLASS',             -104);
+        /**
+         * No method exists.
+         */
+        define('SGL_ERROR_NOMETHOD',            -105);
+        /**
+         * No rows were affected by query.
+         */
+        define('SGL_ERROR_NOAFFECTEDROWS',      -106);
+        /**
+         * Limit queries on unsuppored databases.
+         */
+        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);
+        /**
+         * Invalid call.
+         */
         define('SGL_ERROR_INVALIDCALL',         -108);
+        /**
+         * Authentication failure.
+         */
         define('SGL_ERROR_INVALIDAUTH',         -109);
+        /**
+         * Failed to send email.
+         */
         define('SGL_ERROR_EMAILFAILURE',        -110);
+        /**
+         * Failed to connect to DB.
+         */
         define('SGL_ERROR_DBFAILURE',           -111);
+        /**
+         * A DB transaction failed.
+         */
         define('SGL_ERROR_DBTRANSACTIONFAILURE',-112);
+        /**
+         * User not allow to access site.
+         */
         define('SGL_ERROR_BANNEDUSER',          -113);
+        /**
+         * File not found.
+         */
         define('SGL_ERROR_NOFILE',              -114);
+        /**
+         * Perms were invalid.
+         */
         define('SGL_ERROR_INVALIDFILEPERMS',    -115);
+        /**
+         * Session was invalild.
+         */
         define('SGL_ERROR_INVALIDSESSION',      -116);
+        /**
+         * Posted data was invalid.
+         */
         define('SGL_ERROR_INVALIDPOST',         -117);
+        /**
+         * Translation invalid.
+         */
         define('SGL_ERROR_INVALIDTRANSLATION',  -118);
+        /**
+         * Could not write to the file.
+         */
         define('SGL_ERROR_FILEUNWRITABLE',      -119);
+        /**
+         * Method perms were invalid.
+         */
         define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
+        /**
+         * Request was invalid.
+         */
         define('SGL_ERROR_INVALIDREQUEST',      -121);
+        /**
+         * Type invalid.
+         */
         define('SGL_ERROR_INVALIDTYPE',         -122);
+        /**
+         * Excessive recursion occured.
+         */
         define('SGL_ERROR_RECURSION',           -123);
+        /**
+         * Resource could not be found.
+         */
         define('SGL_ERROR_RESOURCENOTFOUND',    -404);
 
         //  message types to use with SGL:raiseMsg($msg, $translation, $msgType)
