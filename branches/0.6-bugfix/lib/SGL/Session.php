@@ -372,7 +372,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION) && isset($_SESSION['rid'])) {
+        if (isset($_SESSION) && count($_SESSION) && isset($_SESSION['rid'])) {
             return $_SESSION['rid'];
         } else {
             return false;
