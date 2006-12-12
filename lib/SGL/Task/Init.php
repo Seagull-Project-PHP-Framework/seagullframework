@@ -433,12 +433,10 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         $debugInfo = $oError->getDebugInfo();
         SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
 
-        //  if sesssion debug, send error info to screen
-        if (isset($conf['debug']['production']) && !$conf['debug']['production'] || SGL_Session::get('debug')) {
-            SGL_Error::push($oError);
-            if ($conf['debug']['showBacktrace']) {
-                echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
-            }
+        //  send error info to screen
+        SGL_Error::push($oError);
+        if ($conf['debug']['showBacktrace']) {
+            echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }
     }
 }

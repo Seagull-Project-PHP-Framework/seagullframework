@@ -387,7 +387,12 @@ class SGL_Manager
     {
         $output->template = 'error.html';
         $output->masterTemplate = 'masterNoCols.html';
-        $output->errMsg = $oError->getMessage();
+        $output->aError = array(
+            'message'   => $oError->getMessage(),
+            'debugInfo' => $oError->getDebugInfo(),
+            'level'     => $oError->getCode(),
+            'errorType' => SGL_Error::constantToString($oError->getCode())
+        );
     }
 }
 ?>
