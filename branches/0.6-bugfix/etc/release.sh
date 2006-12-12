@@ -46,7 +46,7 @@ function usage()
       echo "Usage: ./release.sh revision_num release_name [minimal_install]"
       echo "    where \"revision_num\" is the $PROJECT_NAME svn revision number (e.g. 226)"
       echo "    and \"release_name\" is the release name (e.g. 0.4.5) which gives the full name \"seagull-0.4.5\""
-      echo "    the optional 3 parameter, 'min', will create a minimal install"
+      echo "    the optional 3rd parameter, 'min', will create a minimal install"
 }
 
 ##############################
