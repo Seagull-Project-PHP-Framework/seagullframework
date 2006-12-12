@@ -483,12 +483,14 @@ class SGL_Output
             unset($GLOBALS['messageType']);
         } elseif (SGL_Error::count()) {
 
-            //  for now get last message added to stack
-            $msg = SGL_Error::toString(SGL_Error::getLast());
-            echo '  <div class="errorContainer">
-                        <div class="errorHeader">Error</div>
-                        <div class="errorContent">' . $msg . '</div>
-                    </div>';
+            // get all errors from stack
+            while ($msg = SGL_Error::pop()) {
+                $msg = SGL_Error::toString($msg);
+                echo '  <div class="errorContainer">
+                            <div class="errorHeader">Error</div>
+                            <div class="errorContent">' . $msg . '</div>
+                        </div>';
+            }
         } else {
             return false;
         }
