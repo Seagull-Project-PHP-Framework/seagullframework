@@ -46,7 +46,7 @@ function usage()
       echo "Usage: ./release.sh revision_num release_name [minimal_install]"
       echo "    where \"revision_num\" is the $PROJECT_NAME svn revision number (e.g. 226)"
       echo "    and \"release_name\" is the release name (e.g. 0.4.5) which gives the full name \"seagull-0.4.5\""
-      echo "    the optional 3 parameter, 'min', will create a minimal install"
+      echo "    the optional 3rd parameter, 'min', will create a minimal install"
 }
 
 ##############################
@@ -209,6 +209,7 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/lib/pear/Validate
     rm -rf $PROJECT_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME/modules/blog
+    rm -rf $PROJECT_NAME/modules/comment
     rm -rf $PROJECT_NAME/modules/contactus
     rm -rf $PROJECT_NAME/modules/documentor
     rm -rf $PROJECT_NAME/modules/export
@@ -340,7 +341,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/seagull_api/
 }
 
 ##############################
@@ -416,18 +417,18 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 createMinimalFlag
 
-#pruneDeveloper
+pruneDeveloper
 
 if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
@@ -437,11 +438,11 @@ createTarball
 
 #uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 

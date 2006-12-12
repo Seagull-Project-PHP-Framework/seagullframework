@@ -81,7 +81,7 @@ class SGL_Translation
 
         //  set translation table parameters
         $params = array(
-            'langs_avail_table' => 'langs',
+            'langs_avail_table' => $conf['db']['prefix'] . 'langs',
             'lang_id_col'       => 'lang_id',
             'lang_name_col'     => 'name',
             'lang_meta_col'     => 'meta',
@@ -99,9 +99,10 @@ class SGL_Translation
         $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
 
         //  create translation storage tables
-        if ($conf['translation']['container'] == 'db' && $conf['table']['translation']) {
+        if ($conf['translation']['container'] == 'db') {
 
-            $prefix = $conf['table']['translation'] .'_';
+            $prefix = $conf['db']['prefix'] .
+                $conf['translation']['tablePrefix'] . '_';
             $aLangs = explode(',', $conf['translation']['installedLanguages']);
 
             //  set params
@@ -171,7 +172,6 @@ class SGL_Translation
     function clearGuiTranslationsCache()
     {
         $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
 
         $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
 
@@ -348,7 +348,7 @@ class SGL_Translation
                 return array();
             }
         } else {
-            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+            return SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
                 SGL_ERROR_INVALIDARGS);
         }
     }
@@ -401,16 +401,51 @@ class SGL_Translation
 
         if (isset($format)) {
             $langID = ($format == SGL_LANG_ID_SGL)
-                        ? str_replace('_', '-', $langID)
-                        : str_replace('-', '_', $langID);
+                ? str_replace('_', '-', $langID)
+                : str_replace('-', '_', $langID);
 
             return $langID;
         } else {
             $langID = (strstr($langID, '-'))
-                        ? str_replace('-', '_', $langID)
-                        : str_replace('_', '-', $langID);
+                ? str_replace('-', '_', $langID)
+                : str_replace('_', '-', $langID);
             return $langID;
         }
+    }
+
+    /**
+     * Remove all translations for all languages for specified module.
+     *
+     * @static
+     * @param  string  $moduleName  module/page name
+     * @return boolean
+     */
+    function removeTranslations($moduleName)
+    {
+        $trans  = &SGL_Translation::singleton('admin');
+        $aPages = $trans->getPageNames();
+        if (PEAR::isError($aPages)) {
+            return $aPages;
+        }
+        if (!in_array($moduleName, $aPages)) {
+            return false; // no translations
+        }
+        $aLangs = $trans->getLangs('ids');
+        if (PEAR::isError($aLangs)) {
+            return $aLangs;
+        }
+        $aStrings = array();
+        foreach ($aLangs as $langId) {
+            $ret = SGL_Translation::getTranslations($moduleName, $langId);
+            $aStrings = array_merge($aStrings, array_keys($ret));
+        }
+        foreach ($aStrings as $stringId) {
+            $ret = $trans->remove($stringId, $moduleName);
+            if (PEAR::isError($ret)) {
+                return $ret;
+            }
+        }
+        return true;
     }
 }
 ?>

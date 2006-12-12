@@ -363,6 +363,16 @@ function confirmDelete(item, formName)
      return false;
 }
 
+function confirmAction(msg)
+{
+    var isConfirmed = confirm(msg);
+    if (isConfirmed != '') {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // used by confirmDelete(); sees if array already contains a value
 function contains(tmpVal, tmpArray)
 {

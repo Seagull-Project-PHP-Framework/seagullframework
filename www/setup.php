@@ -139,8 +139,12 @@ if (isset($_GET['start'])) {
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 
-    header('Location: '.SGL_BASE_URL.'/index.php/default/welcome/1');
-    exit;
+    $aUrl = array(
+        'managerName' => 'default',
+        'moduleName'  => 'default',
+        'welcome'     => 1
+    );
+    SGL_HTTP::redirect($aUrl);
 }
 
 //  check authorization
@@ -195,14 +199,24 @@ class ActionProcess extends HTML_QuickForm_Action
         $dbh = & SGL_DB::singleton();
         $res = false;
         if (!PEAR::isError($dbh)) {
-            $query = 'SELECT COUNT(*) FROM module';
+            require_once SGL_CORE_DIR . '/Sql.php';
+            $table = SGL_Sql::addTablePrefix('module');
+            $query = 'SELECT COUNT(*) FROM ' . $table;
             $res = $dbh->getOne($query);
         }
 
-        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
+        if (!PEAR::isError($res) && $res > 1) { // it's a re-install
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
+            if (count($data['aModuleList'])) {
+                foreach ($data['aModuleList'] as $key => $moduleName) {
+                    if (!SGL::moduleIsEnabled($moduleName)) {
+                        unset($data['aModuleList'][$key]);
+                    }
+                }
+            }
         } elseif (PEAR::isError($dbh)) { // a new install
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop(); // two errors produced
             SGL_Error::pop();
         } else {
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
@@ -218,12 +232,12 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
         $runner->addTask(new SGL_Task_DropTables());
         $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_BuildNavigation());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
-        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
@@ -231,6 +245,8 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_UnLinkWwwData());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 

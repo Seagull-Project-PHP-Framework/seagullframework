@@ -125,6 +125,7 @@ class SGL_Request
             SGL::logMessage('URI parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
         }
         $aQueryData = $url->getQueryData();
+
         if (PEAR::isError($aQueryData)) {
             return $aQueryData;
         }
@@ -146,6 +147,11 @@ class SGL_Request
         $console = new Console_Getopt();
         $arguments = $console->readPHPArgv();
         array_shift($arguments);
+
+        // catch arbitrary arguments
+        for ($i = 3; $i < count($arguments); $i++) {
+            array_push($longOptions, substr($arguments[$i], 2, strpos($arguments[$i], "=") - 1));
+        }
         $options = $console->getopt2($arguments, $shortOptions, $longOptions);
 
         if (!is_array($options) ) {
@@ -217,6 +223,12 @@ class SGL_Request
     {
         $this->aProps = array_merge_recursive($this->aProps, $aParams);
     }
+
+    function reset()
+    {
+        unset($this->aProps);
+        $this->aProps = array();
+    }
     /**
      * Return an array of all Request properties.
      *
@@ -256,7 +268,6 @@ class SGL_Request
                     : $key . '/' . $value . '/';
             }
         }
-
         // remove trailing slash
         $uri = preg_replace('/\/$/','',$uri);
 

@@ -97,6 +97,17 @@ class SGL_Install_Common
         return $version;
     }
 
+    function ensureWebrootSet()
+    {
+        if (!defined('SGL_BASE_URL')) {
+            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
+                define('SGL_BASE_URL', $aMatches[1]);
+            } else {
+                die('Could not set webroot');
+            }
+        }
+    }
+
     /**
      * Returns html head section of page, only used for 'enter passwd for
      * access setup' screen
@@ -110,7 +121,7 @@ class SGL_Install_Common
         if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
-        SGL_URL::ensureWebrootSet();
+        SGL_Install_Common::ensureWebrootSet();
         $baseUrl = SGL_BASE_URL;
         $html = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

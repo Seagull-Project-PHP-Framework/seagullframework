@@ -4,14 +4,20 @@ CHANGELOG
 | VERSION: 0.6.1        |
 +-----------------------+
 BUGFIXES
+11-12-06    Fixed many Translation2 bugs (Dmitri Lakachauskis)
+10-12-06    Improved functionality for CGI users (Dmitri Lakachauskis)
+18-11-06    Fixed problems where reinstall installed all modules (Dmitri
+            Lakachauskis)
+27-10-06    Fixed safe delete problem (Dmitri Lakachauskis)
+24-10-06    Cleaned up ModuleGenerationMgr, added more error checking
 14-09-06    Fixed potential security hole with tinyFCK (Andreas Singer)
 10-09-06    Added missing dbdo include that caused error with caching enabled
             (romain)
-10-09-06    Improvements to error handling for production environments (Dmitry
+10-09-06    Improvements to error handling for production environments (Dmitri
             Lakachauskis)
 10-09-06    Fixed problem where CategoryNav block didn't work correctly for php4
             users (Steven Stremciuc)
-10-09-06    Fixed horizontal scrolling in msie (Dmitry Lakachauskis)
+10-09-06    Fixed horizontal scrolling in msie (Dmitri Lakachauskis)
 10-09-06    Fixed redirect problem with articles (Julien Casanova)
 10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)
 03-09-06    Fixed documentation to correctly reflect minimum PHP version required
@@ -28,6 +34,50 @@ BUGFIXES
 19-08-06    Improved SQL parser regex to be able to catch tables like event-media
 
 IMPROVEMENTS
+10-12-06    Errors handled more gracefully, errors now sent to a generic error
+            template if [debug][production] key is set except in fatal situations
+            (failed install, no global config file, failed request init)
+10-12-06    Added addHeader($header) and getHeaders() to SGL_Output
+02-12-06    Added SGL_Output::addJavascriptFile() which accepts either a single path
+            or an array of paths of js files.  The preferred way of adding javascript
+            files to page has changed
+                FROM (in validate() method)
+            $this->javascriptSrc = array('/path/to/file1.js', 'path/to/file2.js');
+                TO (in display() method)
+            $output->addJavascriptFile('/path/to/file1.js', 'path/to/file2.js');
+            The old method is still supported
+02-12-06    Added instructions for event module http://trac.seagullproject.org/wiki/Modules/Event
+30-11-06    Added possibility of passing arbitrary args to CLI requests (Mike Wattier)
+29-11-06    $this->da->moduleIsRegistered() is deprecated in favour of SGL::moduleIsEnabled()
+29-11-06    Renamed DA_Default to DefaultDAO for consistency (Julien Casanova)
+29-11-06    Implemented DB table prefix support - disabled by default (Dmitri Lakachauskis)
+22-11-06    Added ability to remove translations (Dmitri Lakachauskis)
+15-11-06    Tests for disabled modules suppressed
+01-11-06    Added SGL_Inflector::humanize()
+31-10-06    Added ability to load custom config file as specified in global config
+29-10-06    Tables removed from all templates in user module, replaced with xhtml
+            compliant markup (Dmitri Lakachauskis)
+
+27-10-06    Cleaup of SGL_Config behaviour:
+                - to load global config: $c = &SGL_Config::singleton();
+                - to save global config: $c->save();
+                - to load any secondary config: $c = new SGL_Config();
+                                                $config = $c->load('/path/to/file');
+                                                $c->replace($config);
+                - to save any secondary config: $c->save('/path/to/file');
+            Replace method takes into accout you may want to load many config files
+            but manipulate the data before passing it back to Config object for saving
+26-10-06    Some very nice functionality added to the comment module including
+            Akismet integration (Steven Stremciuc)
+20-10-06    Added example REST client and server implementations (
+              http://trac.seagullproject.org/browser/branches/0.6-bugfix/lib/SGL/Services/REST/Client.php
+            and
+              http://trac.seagullproject.org/browser/branches/0.6-bugfix/docs/developer/examples/modules/REST_server
+            respectively, including custom filter chain for server (see conf.ini).
+19-10-06    Polish, Italian and Russian translation updates
+26-09-06    Enhanced module installer adding symlink support for windows users
+22-09-06    Added ability to support s9y comments in BlogMgr (ajmixto)
+20-09-06    Better testing of dbdo return values (Steven Stremciuc)
 14-09-06    Integrated captcha with comments
 14-09-06    Added config GUI switch for enabling the library cache
 11-09-06    Added ability to disable blocks on a per-page basis, simply have the
@@ -210,7 +260,7 @@ IMPROVEMENTS
 26-03-06    Added ability to load navigation data during the install, so devs can
             create navigation that corresponds with their custom modules
 20-03-06    Added Dutch translation (Peter Termaten)
-20-03-06    Russian translations updated and enhanced (Dmitry Lakachauskis)
+20-03-06    Russian translations updated and enhanced (Dmitri Lakachauskis)
 17-03-06    Improvements to module generator, CRUD added (Gerald Fischer)
 17-03-06    Guestbook, FAQ, Documentor and Export modules improved, updated Russian
             translations (lakiboy)

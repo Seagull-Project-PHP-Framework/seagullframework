@@ -78,6 +78,9 @@ a.narrow, input.narrow {
     max-width: 1280px;
     margin: 0 auto;
     text-align: left;
+<?php if (isBrowserFamily('MSIE7', '<')) { ?>
+    width: expression((documentElement.clientWidth || document.body.clientWidth) > 740 ? "auto" : "740px");
+<?php } ?>
 }
 #header {
     position: relative;
@@ -105,6 +108,7 @@ a.narrow, input.narrow {
     font-size: 1em;
     border: 1px solid <?php echo $borderDark ?>;
     -moz-border-radius: 0.4em;
+    margin-right: -1px; /* hides annoying horizontal scrolling in IE */
 }
 #content {
     clear: both;
@@ -113,7 +117,6 @@ a.narrow, input.narrow {
     -moz-border-radius: 0 0 0.4em 0.4em;
     border-top: 1px solid <?php echo $borderLight ?>;
     padding-bottom: 40px; /* TO REMOVE */
-    margin-right: -1px; /* hides annoying horizontal scrolling in IE */
 }
 #footer {
     text-align: center;
@@ -396,19 +399,23 @@ input.mediumText, textarea.mediumText, select.mediumText {
 input.longText, textarea.longText {
     width: 450px;
 }
+textarea.largeText {
+    width: 450px;
+    height: 200px;
+}
 /* --
 Definition lists (<dl>) will progressively replace "p label" to display fields labels and values
 -----*/
 dl.onSide dt {
     float: left;
-    width: 120px;
+    width: 140px;
     text-align: right;
 }
 dl.onSide dt label {
     padding-right: 15px;
 }
 dl.onSide dd{
-    margin-left: 140px;
+    margin-left: 160px;
     margin-bottom: 0.5em;
 }
 dl.onTop dd {
@@ -436,6 +443,10 @@ html>body #container table {
     border-spacing: 0px;
 }
 #container table.noBorder {
+    border: none;
+}
+#container table.transparent {
+    background-color: transparent;
     border: none;
 }
 #container tr {
@@ -507,7 +518,7 @@ span.tipOwner span.tipText, label.tipOwner span.tipText, input.tipOwner span.tip
     padding: 2px 5px;
     -moz-opacity: 1;
     z-index: 100;
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE')) { ?>
     filter: alpha(opacity=100);
     filter: progid: DXImageTransform.Microsoft.Alpha(opacity=100);
     <?php } ?>
@@ -515,7 +526,7 @@ span.tipOwner span.tipText, label.tipOwner span.tipText, input.tipOwner span.tip
 span.tipOwner:hover span.tipText, label.tipOwner:hover span.tipText, input.tipOwner:hover span.tipText {
     display: block;
 }
-<?php if ($browserFamily == 'MSIE') {?>
+<?php if (isBrowserFamily('MSIE7', '<')) { ?>
 /* IE javascript workaround */
 span.tipOwner, label.tipOwner, input.tipOwner {
     behavior: url(<?php echo $baseUrl ?>/css/tooltipHover.htc);
@@ -625,7 +636,7 @@ div#categoryNav {
     border-color: <?php echo $primary ?>;
     border-width: 1px 2px 2px 1px;
     z-index: 100;
-    <?php if ($browserFamily == 'MSIE') {?>
+    <?php if (isBrowserFamily('MSIE')) { ?>
     filter: alpha(opacity=90);
     <?php } else { ?>
     -moz-opacity: 0.9;

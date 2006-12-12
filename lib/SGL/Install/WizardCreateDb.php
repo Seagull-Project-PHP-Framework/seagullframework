@@ -127,7 +127,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
         $this->setDefaults(array(
             'name' => 'seagull',
-            'prefix' => 'not implemented yet',
+            'prefix' => '',
             'insertSampleData' => false,
             ));
         $this->setDefaults(overrideDefaultInstallSettings());
@@ -152,7 +152,10 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addRule('name', 'Please specify the name of the database', 'required');
 
         //  db prefix
-        $this->addElement('text', 'prefix', 'Table prefix: ', 'id=prefix');
+        $this->addElement('text', 'prefix', 'Table prefix: ');
+        $this->addRule('prefix', 'Only letters and digits are allowed, first ' .
+            'symbol must be a letter, last symbol can be an underscore',
+            'regex', '/^[a-zA-Z]([a-zA-Z0-9]+)?_?$/');
 
         //  sample data
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
@@ -170,8 +173,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
                 SGL_Util::getLangsDescriptionMap(), array('multiple' => 'multiple', 'id' => 'installLangs'));
 
             //  store translation in db
-            $this->addElement('checkbox', 'addMissingTranslationsToDB', 'EXPERIMENTAL - Add missing Translations to Database?',
-                'Yes', "id = addMissingTranslationsToDB");
+            $this->addElement('checkbox', 'addMissingTranslationsToDB', 'Add missing Translations to Database?',
+                'Yes (EXPERIMENTAL - use at your own risk)', "id = addMissingTranslationsToDB");
         } else {
             $this->addElement('hidden', 'a', 'aa', "id = storeTranslationsInDB");
             $this->addElement('hidden', 'b', 'bb', "id = installLangs");

@@ -41,7 +41,6 @@
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
 
-
 /**
  * Application controller.
  *
@@ -93,13 +92,12 @@ class SGL_FrontController
                 new SGL_Task_SetupBlocks(
                 new SGL_Task_SetupNavigation(
                 new SGL_Task_SetupGui(
-                new SGL_Task_GetPerformanceInfo(
                 new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
 
                 //  target
                 new SGL_MainProcess()
-                )))))))))))))))))));
+                ))))))))))))))))));
             $process->process($input, $output);
 
         } else {
@@ -146,12 +144,14 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
+        $init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetupPearErrorCallback());
         $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_LoadCustomConfig());
         $init->main();
         define('SGL_INITIALISED', true);
     }
@@ -233,17 +233,16 @@ class SGL_MainProcess extends SGL_ProcessRequest
 
         $req  = $input->getRequest();
         $mgr  = $input->get('manager');
-        $conf = $mgr->conf;
-        $mgr->validate($req, $input);
 
+        $mgr->validate($req, $input);
         $input->aggregate($output);
 
         //  process data if valid
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
-            if (PEAR::isError($ok)) {
-                //  stop with error page
-                SGL::displayStaticPage($ok->getMessage());
+            if (SGL_Error::count() && SGL_Session::getRoleId() != SGL_ADMIN
+                    && $mgr->conf['debug']['production']) {
+                $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
         $mgr->display($output);

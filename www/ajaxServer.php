@@ -31,12 +31,13 @@ class AjaxInit extends SGL_FrontController
         $output = &new SGL_Output();
 
         $process =  new SGL_Task_Init(
+                    new SGL_Task_SetupORM(
                     new SGL_Task_CreateSession(
                     new SGL_Void()
-                   ));
+                   )));
 
         $process->process($input, $output);
-    }    
+    }
 }
 
 AjaxInit::run();
@@ -47,11 +48,11 @@ class AutoServer extends HTML_AJAX_Server
     // this flag must be set for your init methods to be used
     var $initMethods = true;
 
-    function initMediaDAO()
+    function initMediaAjaxProvider()
     {
-        require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
-        $da = & MediaDAO::singleton();
-        $this->registerClass($da);
+        require_once SGL_MOD_DIR . '/media/classes/MediaAjaxProvider.php';
+        $provider = & MediaAjaxProvider::singleton();
+        $this->registerClass($provider);
     }
 
     function initEcommAjaxProvider()

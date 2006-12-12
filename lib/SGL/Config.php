@@ -51,8 +51,9 @@ class SGL_Config
     var $aProps = array();
     var $fileName;
 
-    function SGL_Config($autoLoad = true)
+    function SGL_Config($autoLoad = false)
     {
+        $this->aProps = array();
         if ($this->isEmpty() && $autoLoad) {
             $configFile = SGL_VAR_DIR  . '/'
                 . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
@@ -136,6 +137,12 @@ class SGL_Config
         return $this->fileName;
     }
 
+    /**
+     * Reads in data from supplied $file.
+     *
+     * @param string $file
+     * @return mixed An array of data on success, PEAR error on failure.
+     */
     function load($file)
     {
         $ph = &SGL_ParamHandler::singleton($file);
@@ -152,8 +159,15 @@ class SGL_Config
         }
     }
 
-    function save($file)
+    function save($file = null)
     {
+        if (is_null($file)) {
+            if (empty($this->fileName)) {
+                return SGL::raiseError('No filename specified',
+                    SGL_ERROR_NOFILE);
+            }
+            $file = $this->fileName;
+        }
         $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }
@@ -163,6 +177,11 @@ class SGL_Config
         $this->aProps = SGL_Array::mergeReplace($this->aProps, $aConf);
     }
 
+    /**
+     * Returns true if the current config object contains no data keys.
+     *
+     * @return boolean
+     */
     function isEmpty()
     {
         return count($this->aProps) ? false : true;

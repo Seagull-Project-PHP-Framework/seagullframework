@@ -49,7 +49,6 @@ define('SGL_CENSOR_WORD_FRAGMENT',  3);
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_String
 {
@@ -69,12 +68,13 @@ class SGL_String
         $conf = $c->getAll();
 
         $editedText = $text;
-        if ($conf['censor']['mode'] != SGL_CENSOR_DISABLE) {
+        $censorMode = SGL_String::pseudoConstantToInt($conf['censor']['mode']);
+        if ($censorMode != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
             if (is_array($aBadWords)) {
                 $replacement = $conf['censor']['replaceString'];
 
-                switch ($conf['censor']['mode']) {
+                switch ($censorMode) {
                 case SGL_CENSOR_EXACT_MATCH:
                     $regExPrefix = '(\s*)';
                     $regExSuffix = '(\W*)';
@@ -95,7 +95,7 @@ class SGL_String
                 }
             }
         }
-        return ($editedText);
+        return $editedText;
     }
 
     /**
@@ -110,7 +110,7 @@ class SGL_String
 
         if (defined(PHP_EOL)) {
             $crlf = PHP_EOL;
-        } else {
+        } elseif (defined('SGL_CLIENT_OS')) {
             // Win case
             if (SGL_CLIENT_OS == 'Win') {
                 $crlf = "\r\n";
@@ -121,6 +121,8 @@ class SGL_String
             } else {
                 $crlf = "\n";
             }
+        } else {
+            $crlf = "\n";
         }
         return $crlf;
     }
@@ -177,8 +179,10 @@ class SGL_String
             } else {
                 $clean = array_map(array('SGL_String', 'clean'), $var);
             }
+            return SGL_String::trimWhitespace($clean);
+        } else {
+            return false;
         }
-        return SGL_String::trimWhitespace($clean);
     }
 
     function removeJs($var)
@@ -632,6 +636,33 @@ class SGL_String
     function stripIniFileIllegalChars($string)
     {
         return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
+    }
+
+    /**
+     * Converts strings representing constants to int values.
+     *
+     * Used for when constants are stored as strings in config.
+     *
+     * @static
+     * @param string $string
+     * @return integer
+     */
+    function pseudoConstantToInt($string)
+    {
+        $ret = 0;
+        if (is_int($string)) {
+            $ret = $string;
+        }
+        if (is_numeric($string)) {
+            $ret = (int)$string;
+        }
+        if (SGL_Inflector::isConstant($string)) {
+            $const = str_replace("'", '', $string);
+            if (defined($const)) {
+                $ret = constant($const);
+            }
+        }
+        return $ret;
     }
 }
 

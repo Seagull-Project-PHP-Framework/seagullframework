@@ -51,6 +51,8 @@ class SGL_Output
 {
     var $onLoad = '';
     var $aOnLoadEvents = array();
+    var $aJavascriptFiles = array();
+    var $aHeaders = array();
 
     /**
      * Translates source text into target language.
@@ -65,30 +67,6 @@ class SGL_Output
     function translate($key, $filter = false, $aParams = array())
     {
         return SGL_String::translate($key, $filter, $aParams);
-    }
-
-    function getLangSwitcher($currUrl = '', $webRoot = '', $theme = '')
-    {
-        $c = & SGL_Config::singleton();
-        $conf = $c->getAll();
-        $aInstalledLangs = str_replace('_', '-', explode(',', $conf['translation']['installedLanguages']));
-        $imageDir = "$webRoot/themes/$theme/images/flags/";
-        $hasLangParam = preg_match('/lang=/', $currUrl);
-        $aLangs  = SGL_Util::getLangsDescriptionMap();
-        $langSwitcher  = '';
-
-        foreach ($aLangs as $k => $v) {
-            if (in_array($k, $aInstalledLangs)
-                    && file_exists(SGL_APP_ROOT . "/www/themes/$theme/images/flags/$k.png")) {
-                $link = ($hasLangParam)
-                    ? preg_replace('/(lang=)(.+)/', '$1'. $k, $currUrl)
-                    : $currUrl . "?lang=$k";
-                preg_match('/(.+) \(.+\)/', $v, $matches);
-                $langSwitcher .= "<a class='langFlag' id='$k' href='$link'><img src='$imageDir$k.png' alt='$matches[1]' title='speak $matches[1] please'/></a>";
-            }
-        }
-
-        return $langSwitcher;
     }
 
     /**
@@ -141,7 +119,7 @@ class SGL_Output
      * @access  public
      * @param   array   $hElements  hash of checkbox values
      * @param   array   $aChecked   array of checked elements
-     * @param   string  $groupName  usually an array name that will contain all elements
+     * @param   string  $groupName  name of element group
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html        list of checkboxes
      */
@@ -217,11 +195,11 @@ class SGL_Output
         }
         $radioString = '';
         if ($checked) {
-            $yesChecked = ' checked';
+            $yesChecked = ' checked="checked"';
             $noChecked = '';
         } else {
             $yesChecked = '';
-            $noChecked = ' checked';
+            $noChecked = ' checked="checked"';
         }
         $optionsString = '';
         if (isset($options)) {
@@ -229,8 +207,8 @@ class SGL_Output
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
-        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked>".SGL_String::translate('no')."\n";
-        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked>".SGL_String::translate('yes')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='0'" . $optionsString . " $noChecked />".SGL_String::translate('no')."\n";
+        $radioString .= "<input type='radio' name='$radioName' value='1'" . $optionsString . " $yesChecked />".SGL_String::translate('yes')."\n";
         return $radioString;
     }
 
@@ -441,6 +419,10 @@ class SGL_Output
     function switchTrueFalse($elementsToCount=2)
     {
         static $count;
+        if (empty($elementsToCount)) { // reset counter
+            $count = 0;
+            return;
+        }
         if ($count % $elementsToCount) {
             $switcher = false;
         } else {
@@ -466,6 +448,11 @@ class SGL_Output
          return SGL_String::summarise($str, $limit, $element, $appendString);
     }
 
+    /**
+     * Prints formatted error message to standard out.
+     *
+     * @return mixed
+     */
     function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -496,18 +483,19 @@ class SGL_Output
             unset($GLOBALS['messageType']);
         } elseif (SGL_Error::count()) {
 
-            //  for now get last message added to stack
-            $msg = SGL_Error::toString($GLOBALS['_SGL']['ERRORS'][0]);
-            echo '  <div class="errorContainer">
-                        <div class="errorHeader">Error</div>
-                        <div class="errorContent">' . $msg . '</div>
-                    </div>';
+            // get all errors from stack
+            while ($msg = SGL_Error::pop()) {
+                $msg = SGL_Error::toString($msg);
+                echo '  <div class="errorContainer">
+                            <div class="errorHeader">Error</div>
+                            <div class="errorContent">' . $msg . '</div>
+                        </div>';
+            }
         } else {
             return false;
         }
     }
 
-    //  return true if role id  is admin (1)
     /**
      * Returns true if current user or passed role ID is that of an admin.
      *
@@ -521,7 +509,11 @@ class SGL_Output
         return ($rid && $rid == SGL_ADMIN) ? true : false;
     }
 
-    //  return true if $rid is 1 or -1
+    /**
+     * Returns true if $rid is 1 or -1.
+     *
+     * @return boolean
+     */
     function isAdminOrUnassigned($rid)
     {
         return (abs($rid) == SGL_ADMIN) ? true : false;
@@ -532,7 +524,28 @@ class SGL_Output
         $this->aOnLoadEvents[] = $event;
     }
 
-    function getAllOnLoadEvents()
+    /**
+     * For adding JavaScript files to include.
+     *
+     * @param  mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js
+     * @return void
+     */
+    function addJavascriptFile($file)
+    {
+        if (is_array($file)) {
+            foreach ($file as $jsFile) {
+                if (!in_array($jsFile,$this->aJavascriptFiles)) {
+                    $this->aJavascriptFiles[] = $jsFile;
+                }
+            }
+        } else {
+            if (!in_array($file,$this->aJavascriptFiles)) {
+                $this->aJavascriptFiles[] = $file;
+            }
+        }
+    }
+
+    function getOnLoadEvents()
     {
         $c = & SGL_Config::singleton();
         $conf = $c->getAll();
@@ -544,6 +557,17 @@ class SGL_Output
             return implode(';', $this->aOnLoadEvents);
         }
     }
+
+    function getJavascriptFiles()
+    {
+        if (isset($this->javascriptSrc)) {
+            $aFiles = array_merge($this->javascriptSrc, $this->aJavascriptFiles);
+        } else {
+            $aFiles = $this->aJavascriptFiles;
+        }
+        return $aFiles;
+    }
+
     /**
      * Wrapper for SGL_Url::makeLink,
      * Generates URL for easy access to modules and actions.
@@ -582,6 +606,9 @@ class SGL_Output
         $this->masterTemplate = $this->template;
         $view = &new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
+
+        //  suppress error notices in templates
+        SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
     }
 
     /**
@@ -706,6 +733,56 @@ class SGL_Output
             $ret = SGL_BASE_URL . "/themes/$theme/css/style.php?navStylesheet=$navStylesheet&moduleName=$moduleName";
         }
         return $ret;
+    }
+
+    function humanise($lowerCaseAndUnderscoredWord)
+    {
+        return SGL_Inflector::humanise($lowerCaseAndUnderscoredWord);
+    }
+
+    function camelise($lowerCaseWithSpacesWordsString)
+    {
+        return SGL_Inflector::camelise($lowerCaseWithSpacesWordsString);
+    }
+
+    /**
+     * @return current ms since script start
+     */
+    function getExecutionTime()
+    {
+        return getSystemTime() - @SGL_START_TIME;
+    }
+
+    /**
+     * @return query count
+     */
+    function getQueryCount()
+    {
+        return $GLOBALS['_SGL']['QUERY_COUNT'];
+    }
+
+    /**
+     * @return memory usage
+     */
+    function getMemoryUsage()
+    {
+        if (function_exists('memory_get_usage')) {
+            return number_format(memory_get_usage());
+        } else {
+            return 'unknown';
+        }
+    }
+
+    function addHeader($header)
+    {
+        if (!in_array($header, $this->aHeaders)) {
+            $this->aHeaders[] = $header;
+        }
+    }
+
+    function getHeaders()
+    {
+        return $this->aHeaders;
     }
 }
 ?>

@@ -167,8 +167,9 @@ class SGL_Manager
 
         if (SGL_Error::count()) {
             $oLastError = SGL_Error::getLast();
-            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+            if ($oLastError->getCode() == SGL_ERROR_RESOURCENOTFOUND) {
                 $defaultMgrLoaded = true;
+                $output->addHeader('HTTP/1.1 404 Not Found');
             }
 
         //  determine if action param from $_GET is valid
@@ -188,7 +189,7 @@ class SGL_Manager
         {
             //  determine global manager perm, ie that is valid for all actions
             //  in the mgr
-            $mgrPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
+            $mgrPerm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
             $ok = $this->_authorise($mgrPerm, $mgrName, $input);
@@ -272,7 +273,7 @@ class SGL_Manager
                 $methodName = '_cmd_' . $methodName;
 
                 //  build relevant perms constant
-                $perm = @constant('SGL_PERMS_' . strtoupper($mgrName . $methodName));
+                $perm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName . $methodName));
 
                 //  return false if user doesn't have method specific or classwide perms
                 if (SGL_Session::hasPerms($perm) === false) {
@@ -289,7 +290,7 @@ class SGL_Manager
     function getTemplate(&$input)
     {
         $req = $input->getRequest();
-        $mgr = $req->get('managerName');
+        $mgrName = $req->get('managerName');
         $userRid = SGL_Session::getRoleId();
 
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
@@ -380,6 +381,18 @@ class SGL_Manager
         }
         $aMergedParams = array_merge($aParams, $aRet);
         return $aMergedParams;
+    }
+
+    function handleError($oError, &$output)
+    {
+        $output->template = 'error.html';
+        $output->masterTemplate = 'masterNoCols.html';
+        $output->aError = array(
+            'message'   => $oError->getMessage(),
+            'debugInfo' => $oError->getDebugInfo(),
+            'level'     => $oError->getCode(),
+            'errorType' => SGL_Error::constantToString($oError->getCode())
+        );
     }
 }
 ?>

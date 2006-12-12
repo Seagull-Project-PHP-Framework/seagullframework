@@ -1,4 +1,10 @@
 <?php
+/**
+ * Minimal output setup.
+ *
+ * @package Task
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_Task_CustomBuildOutputData extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
