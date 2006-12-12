@@ -161,7 +161,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
 
         if (SGL_MINIMAL_INSTALL == false) {
-            $this->addElement('header', null, 'Translation Setup (EXPERIMENTAL - use at your own risk)');
+            $this->addElement('header', null, 'Translation Setup');
 
             //  store translation in db
             $this->addElement('checkbox', 'storeTranslationsInDB', 'Store Translations in Database?',
@@ -174,7 +174,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
 
             //  store translation in db
             $this->addElement('checkbox', 'addMissingTranslationsToDB', 'Add missing Translations to Database?',
-                'Yes', "id = addMissingTranslationsToDB");
+                'Yes (EXPERIMENTAL - use at your own risk)', "id = addMissingTranslationsToDB");
         } else {
             $this->addElement('hidden', 'a', 'aa', "id = storeTranslationsInDB");
             $this->addElement('hidden', 'b', 'bb', "id = installLangs");
