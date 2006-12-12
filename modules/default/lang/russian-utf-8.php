@@ -624,6 +624,7 @@ $defaultWords = array(
     'please enter manager name'                                            => 'пожалуйста, укажите имя менеджера',
     'Manager already exists - please choose another manager name'          => 'Менеджер с таким именем уже существует, пожалуйста, выберите другое название',
     'Please give the webserver write permissions to the modules directory' => 'Пожалуйста, дайте веб-серверу права на запись в директорию модулей',
+    'prefixes not supported'                                               => 'На данный момент Генератор модулей не поддерживает работу с префиксами таблиц базы данных',
 
     // messages
     'Module files successfully created' => 'Файлы модуля успешно созданы',
