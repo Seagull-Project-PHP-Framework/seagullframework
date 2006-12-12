@@ -209,6 +209,7 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/lib/pear/Validate
     rm -rf $PROJECT_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME/modules/blog
+    rm -rf $PROJECT_NAME/modules/comment
     rm -rf $PROJECT_NAME/modules/contactus
     rm -rf $PROJECT_NAME/modules/documentor
     rm -rf $PROJECT_NAME/modules/export
@@ -340,7 +341,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/seagull_api/
 }
 
 ##############################
@@ -416,18 +417,18 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 createMinimalFlag
 
-#pruneDeveloper
+pruneDeveloper
 
 if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
@@ -437,11 +438,11 @@ createTarball
 
 #uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
