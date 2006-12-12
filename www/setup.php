@@ -216,6 +216,7 @@ class ActionProcess extends HTML_QuickForm_Action
             }
         } elseif (PEAR::isError($dbh)) { // a new install
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            SGL_Error::pop(); // two errors produced
             SGL_Error::pop();
         } else {
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
