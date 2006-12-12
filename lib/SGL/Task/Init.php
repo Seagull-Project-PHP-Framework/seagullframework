@@ -435,7 +435,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
 
         //  send error info to screen
         SGL_Error::push($oError);
-        if ($conf['debug']['showBacktrace']) {
+        if (!empty($conf['debug']['showBacktrace'])) {
             echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }
     }
