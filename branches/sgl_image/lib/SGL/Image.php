@@ -95,8 +95,22 @@ class SGL_Image
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (is_null($fileName)) {
+            $fileName = $this->generateUniqueFileName();
+        }
+
         $this->fileName   = $fileName;
         $this->moduleName = $moduleName;
+    }
+
+    /**
+     * Get filename.
+     *
+     * @return string
+     */
+    function getFileName()
+    {
+        return $this->fileName;
     }
 
     /**
@@ -144,13 +158,12 @@ class SGL_Image
      *
      * @access public
      *
-     * @param string $salt
-     *
      * @return string
      */
-    function generateUniqueFileName($salt = '')
+    function generateUniqueFileName()
     {
-        return md5($salt . SGL_Session::getUid() . SGL_Date::getTime());
+        return md5($_SERVER['REMOTE_ADDR'] . SGL_Session::getUid() .
+            SGL_Date::getTime());
     }
 
     /**
@@ -207,17 +220,13 @@ class SGL_Image
      * @param string  $callback     which method to use to create new image
      * @param boolean $replace      replace existing image
      *
-     * @return mixed
+     * @return boolean
      */
     function create($srcLocation, $callback = 'move_uploaded_file', $replace = false)
     {
         if (!function_exists($callback)) {
             return SGL::raiseError("SGL_Image: function '$callback'
                 does not exist");
-        }
-        // initialize filename if one is not set
-        if (is_null($this->fileName)) {
-            $this->fileName = $this->generateUniqueFileName($srcLocation);
         }
         $destPath = $this->getPath();
         $ok = SGL_Image::_ensureDirIsWritable($destPath);
@@ -241,7 +250,7 @@ class SGL_Image
         if (PEAR::isError($ok)) {
             return $ok;
         }
-        return $replace ? true : $this->fileName;
+        return true;
     }
 
     /**
