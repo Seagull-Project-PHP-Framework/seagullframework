@@ -827,7 +827,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 }
 
 /**
- * Setup which Graphical User Interface to use.
+ * Setup which admin Graphical User Interface to use.
  *
  * @package Task
  */
@@ -864,14 +864,13 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                     SGL::raiseError('could not locate module\'s config file',
                         SGL_ERROR_NOFILE);
                 }
-
                 //  set $this->conf to contain global and current module config.
                 $this->conf = $conf;
             }
 
             // then check if manager requires to switch to adminGUI
-            if (isset($this->conf[$mgrName]['adminGuiAllowed'])
-                && $this->conf[$mgrName]['adminGuiAllowed']) {
+            if (isset( $this->conf[$mgrName]['adminGuiAllowed'])
+                    && $this->conf[$mgrName]['adminGuiAllowed']) {
                 $adminGuiRequested = true;
 
                 //  check for adminGUI override in action
