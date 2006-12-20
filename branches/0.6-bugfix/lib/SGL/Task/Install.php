@@ -1286,6 +1286,48 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
     }
 }
 
+class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
+{
+    function run($data = null)
+    {
+        $this->setup();
+        print '<pre>'; print_r($data['aModuleList']);
+        foreach ($data['aModuleList'] as $module) {
+            $dataDir = SGL_MOD_DIR . '/' . $module  . '/data';
+            //  get available data files
+            $aFiles = array();
+            if (is_file($dataDir . $this->filename1)) {
+                $aFiles['schema'] = $dataDir . $this->filename1;
+            }
+            if (is_file($dataDir . $this->filename2)) {
+                $aFiles['data'] = $dataDir . $this->filename2;
+            }
+            //  load current test config
+            $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
+            //  and add schema/data files
+            if (isset($aFiles['schema'])) {
+                $nextId = $this->getNextKey($aTestData['schemaFiles']);
+                $aTestData['schemaFiles']['file'.$nextId] =  'modules/' . $module  . '/data/schema.my.sql';
+            }
+            if (isset($aFiles['data'])) {
+                $nextId = $this->getNextKey($aTestData['dataFiles']);
+                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.my.sql';
+            }
+        }
+    }
+
+    function getNextKey($aKeys)
+    {
+        $keys = array_keys($aKeys);
+        $out = array();
+        foreach ($keys as $k) {
+            preg_match("/[0-9].*/", $k, $matches);
+            $out[] = $matches[0];
+        }
+        return (max($out)) +1;
+    }
+}
+
 /**
  * @package Task
  */

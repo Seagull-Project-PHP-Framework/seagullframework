@@ -170,6 +170,30 @@ class VariousTest extends UnitTestCase {
         //  fails
         //$this->assertFalse($action == ('update' || 'insert'));
     }
+
+    function testObtainNextNumericKey()
+    {
+        $aFiles =
+          array (
+            'file1' => 'etc/sequence.my.sql',
+            'file2' => 'modules/default/data/schema.my.sql',
+            'file3' => 'modules/user/data/schema.my.sql',
+            'file4' => 'modules/navigation/data/schema.my.sql',
+            'file5' => 'modules/block/data/schema.my.sql',
+          );
+          $this->assertEqual(6, $this->getNextKey($aFiles));
+    }
+
+    function getNextKey($aKeys)
+    {
+        $keys = array_keys($aKeys);
+        $out = array();
+        foreach ($keys as $k) {
+            preg_match("/[0-9].*/", $k, $matches);
+            $out[] = $matches[0];
+        }
+        return (max($out)) +1;
+    }
 }
 
 class Foo1{}
