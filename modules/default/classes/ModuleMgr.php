@@ -258,6 +258,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_SymLinkWwwData());
+        #$runner->addTask(new SGL_Task_AddTestDataToConfig());
         $ok = $runner->main();
 
         //  check for errors
