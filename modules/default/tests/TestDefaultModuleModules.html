@@ -10,7 +10,7 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/seagull/branches/0.6-bugfix/www/index.php/default/</td>
+	<td>/seagull/branches/0.6-bugfix/www/index.php/user/login/action/logout/</td>
 	<td></td>
 </tr>
 <tr>
@@ -140,90 +140,21 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>link=Configuration</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Config Manager</td>
-	<td></td>
-</tr>
-<tr>
 	<td>assertElementNotPresent</td>
 	<td>document.getElementById('errorWrapper')</td>
 	<td></td>
 </tr>
-<!-- TEST ENABLING OUTPUT BUFFERING AND CONFIG SAVING -->
-<tr>
-	<td>click</td>
-	<td>document.configuration.elements['conf[site][outputBuffering]'][1]</td>
-	<td></td>
-</tr>
+<!-- LOGOUT AT END OF TEST -->
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Save</td>
+	<td>link=logout</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Config info successfully updated</td>
+	<td>You have been successfully logged out</td>
 	<td></td>
 </tr>
-<tr>
-	<td>assertElementNotPresent</td>
-	<td>document.getElementById('errorWrapper')</td>
-	<td></td>
-</tr>
-<!-- TEST SELECTING MTCE SCREEN -->
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Maintenance</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Maintenance</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementNotPresent</td>
-	<td>document.getElementById('errorWrapper')</td>
-	<td></td>
-</tr>
-<!-- TEST LATEST VERSION CHECK -->
-<tr>
-	<td>clickAndWait</td>
-	<td>document.checkLatestVersion.checkLatestVersion</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Your current version</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementNotPresent</td>
-	<td>document.getElementById('errorWrapper')</td>
-	<td></td>
-</tr>
-<!-- TEST DATAOBJECT GENERATION -->
-<tr>
-	<td>clickAndWait</td>
-	<td>dbgen</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Data Objects rebuilt successfully</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertElementNotPresent</td>
-	<td>document.getElementById('errorWrapper')</td>
-	<td></td>
-</tr>
-
 </tbody></table>
 </body>
 </html>
