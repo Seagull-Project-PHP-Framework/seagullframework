@@ -111,7 +111,7 @@ class AdminCommentMgr extends SGL_Manager
         $oComment->get($input->commentId);
         $original = clone($oComment);
         $oComment->status_id = $input->statusId;
-        $oComment->update($original);
+        $result = $oComment->update($original);
 
         if ($result === false) {
             SGL::raiseError('problem changing the comment status');
