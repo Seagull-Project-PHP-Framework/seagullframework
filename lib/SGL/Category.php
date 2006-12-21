@@ -88,7 +88,7 @@ class SGL_Category
             ),
             'tableName'     => $this->conf['table']['category'],
             /** @todo Use $this->conf['table']['table_lock'] */
-            'lockTableName' => 'table_lock',
+            'lockTableName' => $this->conf['db']['prefix'] . 'table_lock',
             'sequenceName'  => $this->conf['table']['category']);
     }
 
