@@ -76,8 +76,9 @@ class SGL_Translation
             return $instance[$type];
         }
 
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $c      = &SGL_Config::singleton();
+        $conf   = $c->getAll();
+        $dbh    = SGL_DB::singleton();
 
         //  set translation table parameters
         $params = array(
@@ -94,9 +95,6 @@ class SGL_Translation
 
         //  set translation driver
         $driver = 'DB';
-
-        //  retreive DSN
-        $dsn = SGL_DB::getDsn('SGL_DSN_ARRAY');
 
         //  create translation storage tables
         if ($conf['translation']['container'] == 'db') {
@@ -119,17 +117,17 @@ class SGL_Translation
 
         case 'admin':
             require_once 'Translation2/Admin.php';
-            $instance[$type] = &Translation2_Admin::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2_Admin::factory($driver, $dbh, $params);
             break;
 
         case 'translation':
         default:
             require_once 'Translation2.php';
-            $instance[$type] = &Translation2::factory($driver, $dsn, $params);
+            $instance[$type] = &Translation2::factory($driver, $dbh, $params);
         }
         //  switch phptype to mysql when using mysql_SGL otherwise the langs table
         //  and index's will not be created.
-        if ($dsn['phptype'] == 'mysql_SGL') {
+        if ($dbh->dsn['phptype'] == 'mysql_SGL') {
             $instance[$type]->storage->db->phptype = 'mysql';
         }
 
