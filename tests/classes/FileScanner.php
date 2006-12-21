@@ -95,7 +95,7 @@ class STR_FileScanner
         $c = SGL_Config::singleton();
         $moduleDir = ($c->get(array('path' => 'moduleDirOverride')))
             ? $c->get(array('path' => 'moduleDirOverride'))
-            : 'module';
+            : 'modules';
         if (count($files)) {
             foreach ($files as $key => $tests) {
                 if (stristr($key, $moduleDir)) {
