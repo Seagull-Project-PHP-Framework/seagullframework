@@ -258,7 +258,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_SymLinkWwwData());
-        #$runner->addTask(new SGL_Task_AddTestDataToConfig());
+        $runner->addTask(new SGL_Task_AddTestDataToConfig());
         $ok = $runner->main();
 
         //  check for errors
@@ -307,6 +307,7 @@ class ModuleMgr extends SGL_Manager
             $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
             $runner->addTask(new SGL_Task_SyncSequences());
             $runner->addTask(new SGL_Task_UnLinkWwwData());
+            $runner->addTask(new SGL_Task_RemoveTestDataToConfig());
             $ok = $runner->main();
 
             //  de-register module

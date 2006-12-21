@@ -134,7 +134,7 @@ class ModuleConfigMgr extends SGL_Manager
         $output->module = $this->da->getModuleByName($input->moduleNameId);
 
         // then get its config file
-        $c = &SGL_Config::singleton();
+        $c = new SGL_Config();
         $config = $c->load($input->moduleConfigFile);
 
         // Try to identify type of parameters
