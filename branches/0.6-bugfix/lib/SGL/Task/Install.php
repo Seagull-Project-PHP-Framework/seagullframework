@@ -1312,6 +1312,13 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
     function run($data = null)
     {
         $this->setup();
+
+        //  get relevant module directory
+        $globalConf = SGL_Config::singleton();
+        $moduleDir = ($globalConf->get(array('path' => 'moduleDirOverride')))
+            ? $globalConf->get(array('path' => 'moduleDirOverride'))
+            : 'modules';
+
         $c = new SGL_Config();
         foreach ($data['aModuleList'] as $module) {
             $dataDir = SGL_MOD_DIR . '/' . $module  . '/data';
@@ -1332,17 +1339,17 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
             $update = false;
             if (isset($aFiles['schema'])) {
                 $nextId = $this->getNextKey($aTestData['schemaFiles']);
-                $aTestData['schemaFiles']['file'.$nextId] =  'modules/' . $module  . '/data/schema.my.sql';
+                $aTestData['schemaFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/schema.my.sql';
                 $update = true;
             }
             if (isset($aFiles['dataDefault'])) {
                 $nextId = $this->getNextKey($aTestData['dataFiles']);
-                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.default.my.sql';
+                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.default.my.sql';
                 $update = true;
             }
             if (isset($aFiles['dataSample'])) {
                 $nextId = $this->getNextKey($aTestData['dataFiles']);
-                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.sample.my.sql';
+                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.sample.my.sql';
                 $update = true;
             }
             if ($update) {
