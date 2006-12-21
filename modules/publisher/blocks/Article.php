@@ -66,6 +66,9 @@ class Publisher_Block_Article
         $blockOutput->imagesDir = $output->imagesDir;
         $blockOutput->redir     = isset($output->redir) ? $output->redir : '';
 
+        // default parameters
+        $allowUnpublished = false;
+
         //  set block params
         if (array_key_exists('articleId', $aParams)) {
             $articleId = (int)$aParams['articleId'];
@@ -75,6 +78,9 @@ class Publisher_Block_Article
         if (array_key_exists('template', $aParams)) {
             $this->template = $aParams['template'];
         }
+        if (array_key_exists('allowUnpublished', $aParams)) {
+            $allowUnpublished = $aParams['allowUnpublished'];
+        }
 
         // get current URL
         $input = &SGL_Registry::singleton();
@@ -82,7 +88,7 @@ class Publisher_Block_Article
         $currentUrl = $url->toString();
 
         //  get article
-        $blockOutput->leadArticle = SGL_Item::getItemDetail($articleId);
+        $blockOutput->leadArticle = SGL_Item::getItemDetail($articleId, !$allowUnpublished);
         $blockOutput->articleID   = $articleId;
         $blockOutput->theme       = $_SESSION['aPrefs']['theme'];
         $blockOutput->redir       = urlencode(urlencode($currentUrl));
