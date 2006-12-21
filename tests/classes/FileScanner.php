@@ -92,10 +92,14 @@ class STR_FileScanner
             }
         }
         //  filter out disabled modules
+        $c = SGL_Config::singleton();
+        $moduleDir = ($c->get(array('path' => 'moduleDirOverride')))
+            ? $c->get(array('path' => 'moduleDirOverride'))
+            : 'module';
         if (count($files)) {
             foreach ($files as $key => $tests) {
-                if (stristr($key, 'modules')) {
-                    $moduleName = substr($key, 8);
+                if (stristr($key, $moduleDir)) {
+                    $moduleName = substr($key, strlen($moduleDir) +1);
                     if (!SGL::moduleIsEnabled($moduleName)) {
                         unset($files[$key]);
                     }
