@@ -457,12 +457,25 @@ class SGL_Category
         $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
 
-        //  build url for current page
+        
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink(   $req->get('action'),
-                                    $req->get('managerName'),
-                                    $req->get('moduleName')
-                                    );
+
+        //  logical case for publisher->articleview->view
+        $managerName = $req->get('managerName');
+        $action = $req->get('action');
+
+        //  Make sure the articleview->view page shows the right breadcrumbs
+        if (strtolower($managerName) == 'articleview' &&
+            strtolower($action) == 'view') {
+            // summary is the correct action when browsing categories
+            $action = "summary";    
+        }
+
+        //  build url for current page
+        $url = SGL_Url::makeLink(  $action,
+                                   $managerName,
+                                   $req->get('moduleName')
+                                   );
         $url .= 'frmCatID/';
 
         foreach ($crumbs as $crumb) {
