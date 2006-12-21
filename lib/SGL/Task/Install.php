@@ -1215,6 +1215,9 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_SymLinkWwwData extends SGL_Task
 {
     function run($data = null)
@@ -1257,6 +1260,9 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_UnLinkWwwData extends SGL_Task
 {
     function run($data = null)
@@ -1286,32 +1292,63 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
 {
+    /**
+     * Updates test config file.
+     *
+     * 1. Reads ini file with php extension (used for security)
+     * 2. Updates keys in file
+     * 3. Saves file as ini
+     * 4. Modifies file adding security
+     * 5. Changes extension to php
+     * 6. Removes saved ini file
+     *
+     * @param unknown_type $data
+     */
     function run($data = null)
     {
         $this->setup();
-        print '<pre>'; print_r($data['aModuleList']);
+        $c = new SGL_Config();
         foreach ($data['aModuleList'] as $module) {
             $dataDir = SGL_MOD_DIR . '/' . $module  . '/data';
             //  get available data files
             $aFiles = array();
             if (is_file($dataDir . $this->filename1)) {
-                $aFiles['schema'] = $dataDir . $this->filename1;
+                $aFiles['schema'] = 1;
             }
             if (is_file($dataDir . $this->filename2)) {
-                $aFiles['data'] = $dataDir . $this->filename2;
+                $aFiles['dataDefault'] = 1;
+            }
+            if (is_file($dataDir . $this->filename3)) {
+                $aFiles['dataSample'] = 1;
             }
             //  load current test config
             $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
             //  and add schema/data files
+            $update = false;
             if (isset($aFiles['schema'])) {
                 $nextId = $this->getNextKey($aTestData['schemaFiles']);
                 $aTestData['schemaFiles']['file'.$nextId] =  'modules/' . $module  . '/data/schema.my.sql';
+                $update = true;
             }
-            if (isset($aFiles['data'])) {
+            if (isset($aFiles['dataDefault'])) {
                 $nextId = $this->getNextKey($aTestData['dataFiles']);
-                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.my.sql';
+                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.default.my.sql';
+                $update = true;
+            }
+            if (isset($aFiles['dataSample'])) {
+                $nextId = $this->getNextKey($aTestData['dataFiles']);
+                $aTestData['dataFiles']['file'.$nextId] =  'modules/' . $module  . '/data/data.sample.my.sql';
+                $update = true;
+            }
+            if ($update) {
+                $c->replace($aTestData);
+                $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
+                SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
             }
         }
     }
@@ -1325,6 +1362,41 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
             $out[] = $matches[0];
         }
         return (max($out)) +1;
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_RemoveTestDataToConfig extends SGL_UpdateHtmlTask
+{
+    function run($data = null)
+    {
+        $this->setup();
+        $c = new SGL_Config();
+        foreach ($data['aModuleList'] as $module) {
+            //  load current test config
+            $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
+            //  and add schema/data files
+            $update = false;
+            foreach ($aTestData['schemaFiles'] as $k => $line) {
+                if (preg_match("/$module/", $line)) {
+                    unset($aTestData['schemaFiles'][$k]);
+                    $update = true;
+                }
+            }
+            foreach ($aTestData['dataFiles'] as $k => $line) {
+                if (preg_match("/$module/", $line)) {
+                    unset($aTestData['dataFiles'][$k]);
+                    $update = true;
+                }
+            }
+            if ($update) {
+                $c->replace($aTestData);
+                $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
+                SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
+            }
+        }
     }
 }
 
@@ -1557,6 +1629,9 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     }
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_CreateMemberUser extends SGL_Task
 {
     function run($data)

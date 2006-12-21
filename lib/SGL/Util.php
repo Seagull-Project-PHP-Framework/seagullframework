@@ -346,14 +346,16 @@ class SGL_Util
      * we can improve security in situations where browsers might be able to
      * read them.  Thanks to Georg Gell for the idea.
      *
-     * @param string $file
+     * @param string $file  Path to ini file
      */
     function makeIniUnreadable($file)
     {
         $iniFle = file($file);
         $string = ';<?php die("Eat dust"); ?>' . "\n";
         array_unshift($iniFle, $string);
-        file_put_contents($file, implode("", $iniFle));
+        file_put_contents($file . '.php', implode('', $iniFle));
+        //  remove original ini file
+        unlink($file);
     }
     /**
      * Returns a hash of the form array('en-iso-8859-15' => 'English (en-iso-8859-15),) etc.
