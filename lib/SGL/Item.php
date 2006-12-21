@@ -888,7 +888,7 @@ class SGL_Item
             $itemID = SGL_Session::get('articleID');
         }
         if ($itemID) {
-            $item = & new SGL_Item($itemID, null, $onlyPublished = true);
+            $item = & new SGL_Item($itemID, null, $bPublished);
             if (!isset($language) || empty($language) ) {
                 $language = SGL_Translation::getLangID();
             }
