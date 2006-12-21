@@ -54,7 +54,7 @@ class Menu_SelectBox extends SGL_Category
         $this->_separator   = ($options['separator'])
                                 ? $options['separator']
                                 :'&nbsp;&nbsp;&nbsp;&nbsp;';
-        $this->_excludeCatID = ($options['exclude']) ? $options['exclude']:'';
+        $this->_excludeCatID = (isset($options['exclude'])) ? $options['exclude']:'';
     }
 
     function render($id = 0)
@@ -77,7 +77,11 @@ class Menu_SelectBox extends SGL_Category
         $ret = $this->_ret;
 
         //  exclude element if applicable
-        if ($this->_excludeCatID) {
+        if (isset($this->_excludeCatID) && is_array($this->_excludeCatID)) {
+            foreach ($this->_excludeCatID as $key) {
+                unset($ret[$key]);
+            }
+        } elseif (isset($this->_excludeCatID)) {
             unset($ret[$this->_excludeCatID]);
         }
         return $ret;
