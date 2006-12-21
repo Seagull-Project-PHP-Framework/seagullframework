@@ -83,6 +83,8 @@
         'Static Html article' => 'Static Html article',
         'Set id of static Html article' => 'Set id of static Html article',
         'Article will be rendered with this template' => 'Article will be rendered with this template',
+        'Show unpublished article' => 'Show unpublished article',
+        'Unpublished article will be not shown unless allowed' => 'Unpublished article will be not shown unless allowed',
 
         // Html Block
         'Html text' => 'Texte au format Html',

@@ -76,6 +76,8 @@ $words = array(
     'Set id of static Html article'                           => 'Укажите ID статичной HTML статьи',
     'Article will be rendered with this template'             => 'Шаблон для рендеринга статьи',
     'Template name'                                           => 'Название шаблона',
+    'Show unpublished article'                                => 'Показывать неопубликованную статью',
+    'Unpublished article will be not shown unless allowed'    => 'Неопубликованная статья не показывается, пока не разрешено',
 
     // navigation block
     'Start root node'                                         => 'Корневой раздел',
