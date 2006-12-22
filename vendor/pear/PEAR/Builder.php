@@ -35,7 +35,7 @@ require_once 'PEAR/PackageFile.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC1
+ * @version    Release: 1.5.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since PHP 4.0.2
  * @see        http://pear.php.net/manual/en/core.ppm.pear-builder.php
@@ -333,7 +333,7 @@ class PEAR_Builder extends PEAR_Common
         if (!file_exists($build_dir) || !is_dir($build_dir) || !chdir($build_dir)) {
             return $this->raiseError("could not chdir to $build_dir");
         }
-        putenv('PHP_PEAR_VERSION=1.5.0RC1');
+        putenv('PHP_PEAR_VERSION=1.5.0RC2');
         foreach ($to_run as $cmd) {
             $err = $this->_runCommand($cmd, $callback);
             if (PEAR::isError($err)) {

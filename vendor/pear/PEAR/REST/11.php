@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 11.php,v 1.5 2006/04/01 16:59:56 pajoye Exp $
+ * @version    CVS: $Id: 11.php,v 1.6 2006/12/14 00:29:32 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.3
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC1
+ * @version    Release: 1.5.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.3
  */
@@ -56,7 +56,7 @@ class PEAR_REST_11
             return $categorylist;
         }
         $ret = array();
-        if (!is_array($categorylist['c'])) {
+        if (!is_array($categorylist['c']) || !isset($categorylist['c'][0])) {
             $categorylist['c'] = array($categorylist['c']);
         }
         PEAR::pushErrorHandling(PEAR_ERROR_RETURN);

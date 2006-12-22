@@ -16,7 +16,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Guess.php,v 1.24 2006/11/21 03:32:50 cellog Exp $
+ * @version    CVS: $Id: Guess.php,v 1.25 2006/12/14 00:24:37 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since PEAR 0.1
  */
@@ -93,7 +93,7 @@
  * @author     Gregory Beaver <cellog@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC1
+ * @version    Release: 1.5.0RC2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -259,7 +259,7 @@ class OS_Guess
         if (!($major && $minor) && @is_link('/lib/libc.so.6')) {
             // Let's try reading the libc.so.6 symlink
             if (ereg('^libc-(.*)\.so$', basename(readlink('/lib/libc.so.6')), $matches)) {
-                list($major, $minor) = explode('.', $matches);
+                list($major, $minor) = explode('.', $matches[1]);
             }
         }
         if (!($major && $minor)) {
