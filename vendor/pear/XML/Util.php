@@ -16,7 +16,7 @@
 // | Authors: Stephan Schmidt <schst@php-tools.net>                       |
 // +----------------------------------------------------------------------+
 //
-//    $Id: Util.php,v 1.27 2006/12/01 17:14:25 schst Exp $
+//    $Id: Util.php,v 1.28 2006/12/16 09:42:56 schst Exp $
 
 /**
  * error code for invalid chars in XML name
@@ -725,7 +725,7 @@ class XML_Util {
         }
 
         // check for invalid chars
-        if (!preg_match('/^([[:alpha:]_]([[:alnum:]\-\.]*)?:)?[[:alpha:]_]([[:alnum:]\-\.]+)?$/', $string)) {
+        if (!preg_match('/^([[:alpha:]_]([[:alnum:]\-\.]*)?:)?[[:alpha:]_]([[:alnum:]\_\-\.]+)?$/', $string)) {
             return XML_Util::raiseError('XML names may only contain alphanumeric chars, period, hyphen, colon and underscores', XML_UTIL_ERROR_INVALID_CHARS);
          }
         // XML name is valid
