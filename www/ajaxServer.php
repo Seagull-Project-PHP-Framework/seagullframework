@@ -1,7 +1,7 @@
 <?php
 
 $rootDir = dirname(__FILE__) . '/..';
-$varDir = dirname(__FILE__) . '/../var';
+$varDir  = dirname(__FILE__) . '/../var';
 
 //  check for lib cache
 define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
