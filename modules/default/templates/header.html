@@ -14,6 +14,10 @@
     <link rel="shortcut icon" type="images/x-icon" href="{webRoot}/favicon.ico" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
     <link rel="stylesheet" type="text/css" media="screen" href="{makeCssLink(theme,conf[navigation][stylesheet],moduleName)}" />
+    
+    {foreach:aCssFiles,file}
+    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/{file}" />
+    {end:}
 
     {scriptOpen:h}
         var SGL_JS_WEBROOT="{webRoot}";
