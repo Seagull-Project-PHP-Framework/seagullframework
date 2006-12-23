@@ -52,6 +52,7 @@ class SGL_Output
     var $onLoad = '';
     var $aOnLoadEvents = array();
     var $aJavascriptFiles = array();
+    var $aCssFiles = array();
     var $aHeaders = array();
 
     /**
@@ -541,6 +542,27 @@ class SGL_Output
         } else {
             if (!in_array($file,$this->aJavascriptFiles)) {
                 $this->aJavascriptFiles[] = $file;
+            }
+        }
+    }
+
+    /**
+     * For adding CSS files to include.
+     *
+     * @param  mixed $file or array $file path/to/cssFile, relative to www/ dir e.g. css/foo.css
+     * @return void
+     */
+    function addCssFile($file)
+    {
+        if (is_array($file)) {
+            foreach ($file as $cssFile) {
+                if (!in_array($cssFile,$this->aCssFiles)) {
+                    $this->aCssFiles[] = $cssFile;
+                }
+            }
+        } else {
+            if (!in_array($file,$this->aCssFiles)) {
+                $this->aCssFiles[] = $file;
             }
         }
     }
