@@ -535,12 +535,12 @@ class SGL_Output
     {
         if (is_array($file)) {
             foreach ($file as $jsFile) {
-                if (!in_array($jsFile,$this->aJavascriptFiles)) {
+                if (!in_array($jsFile, $this->aJavascriptFiles)) {
                     $this->aJavascriptFiles[] = $jsFile;
                 }
             }
         } else {
-            if (!in_array($file,$this->aJavascriptFiles)) {
+            if (!in_array($file, $this->aJavascriptFiles)) {
                 $this->aJavascriptFiles[] = $file;
             }
         }
