@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+24-12-06    Updated scriptaculous libs to 1.6.5
 23-12-06    Added addCssFile() helper method to SGL_Output, Sometimes you may
             want to include a stylesheet from a vendor lib. In the same way
             Output.php provides a addJavascriptFile(), you can now pass a
