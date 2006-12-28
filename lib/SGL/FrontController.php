@@ -132,6 +132,7 @@ class SGL_FrontController
         return $ret;
     }
 
+
     function init()
     {
         SGL_FrontController::setupMinimumEnv();
