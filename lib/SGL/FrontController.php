@@ -89,6 +89,7 @@ class SGL_FrontController
                 new SGL_Task_BuildHeaders(
                 new SGL_Task_SetSystemAlert(
                 new SGL_Task_BuildView(
+                new SGL_Task_BuildDebugBlock(
                 new SGL_Task_SetupBlocks(
                 new SGL_Task_SetupNavigation(
                 new SGL_Task_SetupGui(
@@ -97,7 +98,7 @@ class SGL_FrontController
 
                 //  target
                 new SGL_MainProcess()
-                ))))))))))))))))));
+                )))))))))))))))))));
             $process->process($input, $output);
 
         } else {
