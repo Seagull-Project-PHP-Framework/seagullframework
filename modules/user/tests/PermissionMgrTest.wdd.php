@@ -20,7 +20,7 @@ class TestPermissionMgr extends UnitTestCase {
         $classPrefix = ucfirst($classPrefix);
 
         // copy fake files to user module
-        $tmpDir = session_save_path();
+        $tmpDir = SGL_Util::getTmpDir();
         $testDir = $tmpDir . '/testRetrievePermsFromFile';
         $ok = mkdir($testDir);
         $testModuleDir = $tmpDir . '/testRetrievePermsFromFile/user';
