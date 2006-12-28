@@ -430,5 +430,37 @@ class SGL_Util
         $aReturn['aParams'] = $aPreparedParams;
         return $aReturn;
     }
+
+    /**
+     * Returns the system's tmp directory.
+     *
+     * Mactel doesn't supply tmp path in most of the normal places.
+     *
+     * @return string  Path to tmp dir
+     */
+    function getTmpDir()
+    {
+       // Try to get from environment variable
+       if (!empty($_ENV['TMP'])) {
+           return realpath($_ENV['TMP']);
+       } elseif (!empty($_ENV['TMPDIR'])) {
+           return realpath($_ENV['TMPDIR']);
+       } elseif (!empty($_ENV['TEMP'])) {
+           return realpath($_ENV['TEMP']);
+       }
+       // Detect by creating a temporary file
+       else {
+           // Try to use system's temporary directory
+           // as random name shouldn't exist
+           $temp_file = tempnam(md5(uniqid(rand(), true)), '');
+           if ($temp_file) {
+               $temp_dir = realpath(dirname($temp_file));
+               unlink($temp_file);
+               return $temp_dir;
+           } else {
+               return false;
+           }
+       }
+    }
 }
 ?>
