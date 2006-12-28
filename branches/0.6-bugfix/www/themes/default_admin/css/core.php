@@ -856,3 +856,24 @@ a.clearSearch:hover {
 .disabled, a.disabled, a.disabled:visited {
     color: grey;
 }
+
+
+#debug {
+    color: #333333;
+    position: absolute;
+    z-index: 999;
+    top: 0px;
+    right: 0px;
+    border: 1px black solid;
+    margin: 10px;
+    padding: 5px 20px;
+    width: 120px;
+    height: 300px;
+    background-color: grey;
+    opacity:0.9;
+    text-align: left;
+    overflow: auto;
+}
+#debug a, #debug a:visited {
+    color: #CCCCCC;
+}
