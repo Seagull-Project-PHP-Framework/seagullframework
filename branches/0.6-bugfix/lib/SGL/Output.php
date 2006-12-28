@@ -51,6 +51,8 @@ class SGL_Output
 {
     var $onLoad = '';
     var $aOnLoadEvents = array();
+    var $onUnload = '';
+    var $aOnUnloadEvents = array();
     var $aJavascriptFiles = array();
     var $aCssFiles = array();
     var $aHeaders = array();
@@ -525,6 +527,11 @@ class SGL_Output
         $this->aOnLoadEvents[] = $event;
     }
 
+    function addOnUnloadEvent($event)
+    {
+        $this->aOnUnloadEvents[] = $event;
+    }
+
     /**
      * For adding JavaScript files to include.
      *
@@ -577,6 +584,19 @@ class SGL_Output
         }
         if (count($this->aOnLoadEvents)) {
             return implode(';', $this->aOnLoadEvents);
+        }
+    }
+
+    function getOnUnloadEvents()
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if (!empty($conf['site']['globalJavascriptOnUnload'])) {
+            $this->aOnUnloadEvents[] = $conf['site']['globalJavascriptOnUnload'];
+        }
+        if (count($this->aOnUnloadEvents)) {
+            return implode(';', $this->aOnUnloadEvents);
         }
     }
 
