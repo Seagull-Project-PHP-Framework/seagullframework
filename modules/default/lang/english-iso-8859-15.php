@@ -347,7 +347,9 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'The Smarty template hooks have not been implemented yet' => 'The Smarty template hooks have not been implemented yet',
         'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8' => 'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8',
         'Global Javascript Onload' => 'Global Javascript Onload',
+        'Global Javascript OnUnload' => 'Global Javascript OnUnload',
         'globalJavascript' => 'If you want a Javascript onload expression called on every page of your site, put it here',
+        'globalJavascriptOnUnload' => 'If you want a Javascript onunload expression called on every page of your site, put it here',
         'Custom Config File' => 'Custom Config File',
 
 /*

@@ -78,7 +78,15 @@
     {end:}
 </head>
 {if:GLOBALS.empty(onLoad)}
+    {if:GLOBALS.empty(onUnload)}
 <body>
+    {else:}
+<body onunload="{onUnload}">
+    {end:}
 {else:}
+    {if:GLOBALS.empty(onUnload)}
 <body onload="{onLoad}">
+    {else:}
+<body onload="{onLoad}" onunload="{onUnload}">
+    {end:}
 {end:}

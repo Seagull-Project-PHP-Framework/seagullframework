@@ -131,8 +131,16 @@
 
 </head>
 {if:GLOBALS.empty(onLoad)}
+    {if:GLOBALS.empty(onUnload)}
 <body class="sgl">
+    {else:}
+<body class="sgl" onunload="{onUnload}">
+    {end:}
 {else:}
+    {if:GLOBALS.empty(onUnload)}
 <body class="sgl" onload="{onLoad}">
+    {else:}
+<body class="sgl" onload="{onLoad}" onunload="{onUnload}">
+    {end:}
 {end:}
     <div id="outer-wrapper">
