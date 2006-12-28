@@ -19,7 +19,7 @@ class FileTest extends UnitTestCase {
     {
         $src = SGL_CORE_DIR . '/Install';
 
-        $tmpDir = session_save_path();
+        $tmpDir = SGL_Util::getTmpDir();
         $target = $tmpDir . '/testDirCopy';
         $ok = SGL_File::copyDir($src, $target, $overwrite = true);
         $this->assertTrue($ok);
