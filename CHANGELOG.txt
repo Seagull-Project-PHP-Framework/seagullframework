@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+28-12-06    Added onunload handling (Steven Stremciuc)
 28-12-06    Added SGL_Util::getTmpDir(), tmpdir tests now work on Mactel
 27-12-06    Added an overlay debug block, displays system info
 24-12-06    Updated scriptaculous libs to 1.6.5
