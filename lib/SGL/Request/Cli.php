@@ -5,7 +5,6 @@ class SGL_Request_Cli extends SGL_Request
     function init()
     {
         require_once 'Console/Getopt.php';
-
         $shortOptions = '';
         $longOptions = array('moduleName=', 'managerName=', 'action=');
 
@@ -30,6 +29,7 @@ class SGL_Request_Cli extends SGL_Request
             $value[0] = str_replace('--', '', $value[0]);
             $this->aProps[$value[0]] = $value[1];
         }
+        $this->type = SGL_REQUEST_CLI;
         return true;
     }
 }
