@@ -141,6 +141,11 @@ class SGL_Request
         return count($this->aProps) ? false : true;
     }
 
+    function getType()
+    {
+        return $this->type;
+    }
+
     function merge($aHash)
     {
         $firstKey = key($aHash);
@@ -222,6 +227,16 @@ class SGL_Request
     {
         if (isset($this->aProps['managerName'])) {
             $ret = $this->aProps['managerName'];
+        } else {
+            $ret = 'default';
+        }
+        return $ret;
+    }
+
+    function getActionName()
+    {
+        if (isset($this->aProps['action'])) {
+            $ret = $this->aProps['action'];
         } else {
             $ret = 'default';
         }
