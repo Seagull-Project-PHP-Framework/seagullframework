@@ -1,6 +1,6 @@
 <?php
 
-class SGL_Request_Browser extends SGL_Request
+class SGL_Request_Ajax extends SGL_Request
 {
     function init()
     {
@@ -20,12 +20,10 @@ class SGL_Request_Browser extends SGL_Request
             SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
             require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
             require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
 
             $aStrats = array(
                 new SGL_UrlParser_ClassicStrategy(),
-                new SGL_UrlParser_AliasStrategy(),
                 new SGL_UrlParser_SefStrategy(),
                 );
             $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
@@ -48,9 +46,8 @@ class SGL_Request_Browser extends SGL_Request
         $input->setCurrentUrl($url);
 
         //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
-
-        $this->type = SGL_REQUEST_BROWSER;
+        $this->aProps = array_merge($_GET, $aQueryData, $_POST);
+        $this->type = SGL_REQUEST_AJAX;
         return true;
     }
 }
