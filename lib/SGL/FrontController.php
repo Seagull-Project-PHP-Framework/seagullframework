@@ -116,19 +116,42 @@ class SGL_FrontController
     {
         $conf = $input->getConfig();
         $req = $input->getRequest();
-        $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
-            $req->getManagerName());
-        if (!empty($conf[$mgr]['filterChain'])) {
-            $aFilters = explode(',', $conf[$mgr]['filterChain']);
+
+        switch ($req->getType()) {
+
+        case SGL_REQUEST_BROWSER:
+        case SGL_REQUEST_CLI:
+            $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
+                $req->getManagerName());
+            //  load filters defined by specific manager
+            if (!empty($conf[$mgr]['filterChain'])) {
+                $aFilters = explode(',', $conf[$mgr]['filterChain']);
+                $input->setFilters($aFilters);
+                $ret = true;
+
+            //  load sitewide custom filters
+            } elseif (!empty($conf['site']['filterChain'])) {
+                $aFilters = explode(',', $conf['site']['filterChain']);
+                $input->setFilters($aFilters);
+                $ret = true;
+            } else {
+                $ret = false;
+            }
+            break;
+
+        case SGL_REQUEST_AJAX:
+            $aFilters = array(
+                'SGL_Task_Init',
+                'SGL_Task_SetupORM',
+                'SGL_Task_CreateSession',
+                'SGL_Task_CustomBuildOutputData',
+                'SGL_Task_ExecuteAjaxAction',
+                );
             $input->setFilters($aFilters);
             $ret = true;
-        } elseif (!empty($conf['site']['filterChain'])) {
-            $aFilters = explode(',', $conf['site']['filterChain']);
-            $input->setFilters($aFilters);
-            $ret = true;
-        } else {
-            $ret = false;
+            break;
         }
+
         return $ret;
     }
 
