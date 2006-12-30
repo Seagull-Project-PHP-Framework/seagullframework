@@ -535,7 +535,8 @@ class SGL_Output
     /**
      * For adding JavaScript files to include.
      *
-     * @param  mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js
+     * @param   mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js.
+                can also be remote js file e.g. http://example.com/foo.js
      * @return void
      */
     function addJavascriptFile($file)
@@ -543,12 +544,16 @@ class SGL_Output
         if (is_array($file)) {
             foreach ($file as $jsFile) {
                 if (!in_array($jsFile, $this->aJavascriptFiles)) {
-                    $this->aJavascriptFiles[] = $jsFile;
+                    $this->aJavascriptFiles[] = (strpos($jsFile, 'http://') === 0)
+                        ? $jsFile
+                        : SGL_BASE_URL . '/' . $jsFile;
                 }
             }
         } else {
             if (!in_array($file, $this->aJavascriptFiles)) {
-                $this->aJavascriptFiles[] = $file;
+                $this->aJavascriptFiles[] = (strpos($file, 'http://') === 0)
+                    ? $file
+                    : SGL_BASE_URL . '/' . $file;
             }
         }
     }
