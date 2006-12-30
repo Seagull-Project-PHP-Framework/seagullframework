@@ -6,6 +6,7 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+30-12-06	Added ability to include remote js files (Steven Stremciuc)
 28-12-06    Added onunload handling (Steven Stremciuc)
 28-12-06    Added SGL_Util::getTmpDir(), tmpdir tests now work on Mactel
 27-12-06    Added an overlay debug block, displays system info
