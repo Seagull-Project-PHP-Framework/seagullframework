@@ -1,2 +1,14 @@
-# Add your custom default settings below
-adminRealName = John Wayne
+; Add your customised settings below, and rename this file to customInstallDefaults.ini.
+; Then when you run the Seagull installer, these values will be used.
+
+adminFirstName   = Alouicious
+adminLastName    = Bird
+siteName         = Your Site Name
+adminEmail       = bird@example.com
+siteKeywords     = your, keywords, here
+siteDesc         = Your description here
+siteCookie       = EG_SESSID
+prefix           = eg_
+name             = example_db ; this is database name
+aModuleList      = block,default,user,navigation,publisher
+insertSampleData = 1
