@@ -118,6 +118,11 @@ class SGL_Manager
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = & SGL_Translation::singleton();
         }
+
+        //  determine the value for the masterTemplate
+        if (isset($this->conf['site']['masterTemplate'])) {
+            $this->masterTemplate = $this->conf['site']['masterTemplate'];
+        }
     }
 
     function &_getDb()
