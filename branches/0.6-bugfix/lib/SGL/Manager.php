@@ -120,7 +120,7 @@ class SGL_Manager
         }
 
         //  determine the value for the masterTemplate
-        if (isset($this->conf['site']['masterTemplate'])) {
+        if (!empty($this->conf['site']['masterTemplate'])) {
             $this->masterTemplate = $this->conf['site']['masterTemplate'];
         }
     }
