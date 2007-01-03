@@ -531,6 +531,32 @@ class SGL_Output
     {
         $this->aOnUnloadEvents[] = $event;
     }
+    
+    function getOnLoadEvents()
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if (!empty($conf['site']['globalJavascriptOnload'])) {
+            $this->aOnLoadEvents[] = $conf['site']['globalJavascriptOnload'];
+        }
+        if (count($this->aOnLoadEvents)) {
+            return implode(';', $this->aOnLoadEvents);
+        }
+    }
+
+    function getOnUnloadEvents()
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if (!empty($conf['site']['globalJavascriptOnUnload'])) {
+            $this->aOnUnloadEvents[] = $conf['site']['globalJavascriptOnUnload'];
+        }
+        if (count($this->aOnUnloadEvents)) {
+            return implode(';', $this->aOnUnloadEvents);
+        }
+    }    
 
     /**
      * For adding JavaScript files to include.
@@ -557,6 +583,20 @@ class SGL_Output
             }
         }
     }
+    
+    function getJavascriptFiles()
+    {
+        if (isset($this->javascriptSrc)) {
+            if (is_array($this->javascriptSrc)) {     
+                $aFiles = array_merge($this->javascriptSrc, $this->aJavascriptFiles);
+            } else {
+            	$aFiles[] = $this->javascriptSrc;
+            }
+        } else {
+            $aFiles = $this->aJavascriptFiles;
+        }
+        return $aFiles;
+    }    
 
     /**
      * For adding CSS files to include.
@@ -577,42 +617,6 @@ class SGL_Output
                 $this->aCssFiles[] = $file;
             }
         }
-    }
-
-    function getOnLoadEvents()
-    {
-        $c = & SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        if (!empty($conf['site']['globalJavascriptOnload'])) {
-            $this->aOnLoadEvents[] = $conf['site']['globalJavascriptOnload'];
-        }
-        if (count($this->aOnLoadEvents)) {
-            return implode(';', $this->aOnLoadEvents);
-        }
-    }
-
-    function getOnUnloadEvents()
-    {
-        $c = & SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        if (!empty($conf['site']['globalJavascriptOnUnload'])) {
-            $this->aOnUnloadEvents[] = $conf['site']['globalJavascriptOnUnload'];
-        }
-        if (count($this->aOnUnloadEvents)) {
-            return implode(';', $this->aOnUnloadEvents);
-        }
-    }
-
-    function getJavascriptFiles()
-    {
-        if (isset($this->javascriptSrc)) {
-            $aFiles = array_merge($this->javascriptSrc, $this->aJavascriptFiles);
-        } else {
-            $aFiles = $this->aJavascriptFiles;
-        }
-        return $aFiles;
     }
 
     /**
