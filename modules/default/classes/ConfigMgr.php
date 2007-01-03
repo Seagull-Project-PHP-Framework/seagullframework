@@ -135,6 +135,10 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['baseUrl'] = 'Please enter a valid URI';
             }
 
+            if (empty($input->conf['site']['masterTemplate'])) {
+                $aErrors['masterTemplate'] = 'Please enter a valid template name';
+            }
+
             //  paths
             if (empty($input->conf['path']['webRoot'])) {
                 $aErrors['webRoot'] = 'Please enter a valid path';

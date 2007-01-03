@@ -124,6 +124,13 @@ function toggleTransElements() {
                 <input type="text" name="conf[site][defaultManager]" id="conf[site][defaultManager]" value="{conf[site][defaultManager]}" />
             </p>
             <p>
+                <label class="tipOwner" for="conf[site][masterTemplate]">{translate(#Default master template#)}
+                <span class="tipText">{translate(#This is the master template that will be loaded#)}</span>
+                </label>
+                <span class="error" flexy:if="error[masterTemplate]">{error[masterTemplate]}</span>
+                <input type="text" name="conf[site][masterTemplate]" id="conf[site][masterTemplate]" value="{conf[site][masterTemplate]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[site][defaultParams]">{translate(#Default params#)}
                 <span class="tipText">{translate(#Use these params to specify, eg, a static article for your homepage#)}</span>
                 </label>
