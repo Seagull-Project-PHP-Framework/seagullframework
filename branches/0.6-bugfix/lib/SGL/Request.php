@@ -268,7 +268,7 @@ class SGL_Request
         $c = &SGL_Config::singleton();
         $c->set('site', array('blocksEnabled' => 0));
         print '<pre>';
-        print_r($this->aProps[$key]);
+        print_r($this->aProps);
     }
 }
 ?>
