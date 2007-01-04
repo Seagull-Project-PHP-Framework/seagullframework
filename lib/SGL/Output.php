@@ -588,15 +588,27 @@ class SGL_Output
     {
         if (isset($this->javascriptSrc)) {
             if (is_array($this->javascriptSrc)) {     
-                $aFiles = array_merge($this->javascriptSrc, $this->aJavascriptFiles);
+                $aFiles = array_merge(
+                    $this->_prependWithBaseUrl($this->javascriptSrc),
+                    $this->aJavascriptFiles
+                    );
             } else {
-            	$aFiles[] = $this->javascriptSrc;
+            	$aFiles[] = $this->webRoot . '/' . $this->javascriptSrc;
             }
         } else {
             $aFiles = $this->aJavascriptFiles;
         }
         return $aFiles;
-    }    
+    }
+
+    function _prependWithBaseUrl($aRelativeUrls)
+    {
+        $aRet = array();
+        foreach ($aRelativeUrls as $relativeUrl) {
+            $aRet[] = $this->webRoot . '/' . $relativeUrl;
+        }
+        return $aRet;
+    }
 
     /**
      * For adding CSS files to include.
