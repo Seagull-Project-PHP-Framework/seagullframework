@@ -8,6 +8,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+05-01-07    Added ability to customise modules during install
+            (Dmitri Lakachauskis)
 02-01-07	Added ability to set a custom master template in config
 			(Peter Termaten)
 30-12-06	Added ability to include remote js files (Steven Stremciuc)
