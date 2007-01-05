@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+05-01-07    Fixed bug where disabling registration disabled all managers
+            that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
 02-01-07	Added ability to set a custom master template in config
