@@ -76,11 +76,14 @@ module setup
 // ini-file.
 function overrideDefaultInstallSettings()
 {
-    if (file_exists(SGL_PATH.'/etc/customInstallDefaults.ini')) {
-        $customInstallDefaults = parse_ini_file(SGL_PATH.'/etc/customInstallDefaults.ini', false);
-        $ret = $customInstallDefaults;
+    $customConfig = SGL_PATH . '/etc/customInstallDefaults.ini';
+    if (file_exists($customConfig)) {
+        $ret = parse_ini_file($customConfig, false);
     } else {
         $ret = array();
+    }
+    if (!empty($ret['aModuleList'])) {
+        $ret['aModuleList'] = explode(',', $ret['aModuleList']);
     }
     return $ret;
 }
@@ -214,13 +217,15 @@ class ActionProcess extends HTML_QuickForm_Action
                     }
                 }
             }
-        } elseif (PEAR::isError($dbh)) { // a new install
-            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
-            SGL_Error::pop(); // two errors produced
+        } else { // a new install
             SGL_Error::pop();
-        } else {
-            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
-            SGL_Error::pop();
+            if (PEAR::isError($dbh)) {
+                SGL_Error::pop(); // two errors produced
+            }
+            $aDefaultData = overrideDefaultInstallSettings();
+            $data['aModuleList'] = !empty($aDefaultData['aModuleList'])
+                ? $aDefaultData['aModuleList']
+                : SGL_Install_Common::getMinimumModuleList();
         }
 
         $runner = new SGL_TaskRunner();
