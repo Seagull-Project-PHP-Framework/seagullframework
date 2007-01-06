@@ -49,6 +49,7 @@
 //  setup seagull environment
 require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
 require_once dirname(__FILE__)  . '/../lib/SGL/Task/Install.php';
+require_once dirname(__FILE__)  . '/../lib/SGL/Install/Common.php';
 
 class RebuildController extends SGL_FrontController
 {
@@ -106,6 +107,12 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $transContainer = ($conf['translation']['container'] == 'db') ? 1 : 0;
         $transLanguage  = str_replace('_','-', explode(',', $conf['translation']['installedLanguages']));
 
+        //  check for custom modules
+        $aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();
+        $aModules = !empty($aDefaultData['aModuleList'])
+            ? $aDefaultData['aModuleList']
+            : SGL_Install_Common::getMinimumModuleList();
+
         $data = array(
             'createTables' => 1,
             'insertSampleData' => 1,
@@ -114,7 +121,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
             'adminFirstName' => 'Demo',
             'adminLastName' => 'Admin',
             'adminEmail' => 'demian@phpkitchen.com',
-            'aModuleList' => SGL_Install_Common::getMinimumModuleList(),
+            'aModuleList' => $aModules,
             'serverName' => isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : 'localhost',
             'installPassword'       => $installPassword,
             'storeTranslationsInDB' => $transContainer,

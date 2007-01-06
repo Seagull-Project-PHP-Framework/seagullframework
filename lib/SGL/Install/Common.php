@@ -227,6 +227,25 @@ HTML;
     {
         return array('block', 'default', 'navigation', 'user');
     }
+
+    /**
+     * This adds default values for the installer form, based on a ini file.
+     *
+     * @return array
+     */
+    function overrideDefaultInstallSettings()
+    {
+        $customConfig = SGL_PATH . '/etc/customInstallDefaults.ini';
+        if (file_exists($customConfig)) {
+            $ret = parse_ini_file($customConfig, false);
+        } else {
+            $ret = array();
+        }
+        if (!empty($ret['aModuleList'])) {
+            $ret['aModuleList'] = explode(',', $ret['aModuleList']);
+        }
+        return $ret;
+    }
 }
 
 if (!(function_exists('file_put_contents'))) {
