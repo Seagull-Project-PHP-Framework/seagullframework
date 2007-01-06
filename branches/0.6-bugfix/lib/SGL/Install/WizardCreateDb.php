@@ -130,7 +130,7 @@ class WizardCreateDb extends HTML_QuickForm_Page
             'prefix' => '',
             'insertSampleData' => false,
             ));
-        $this->setDefaults(overrideDefaultInstallSettings());
+        $this->setDefaults(SGL_Install_Common::overrideDefaultInstallSettings());
 
         $this->addElement('header', null, 'Database Setup: page 5 of 6');
 

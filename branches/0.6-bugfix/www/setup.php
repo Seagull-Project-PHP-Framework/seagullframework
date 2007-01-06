@@ -72,22 +72,6 @@ module setup
     - register module in registry
 */
 
-// This adds default values for the installer form, based on a
-// ini-file.
-function overrideDefaultInstallSettings()
-{
-    $customConfig = SGL_PATH . '/etc/customInstallDefaults.ini';
-    if (file_exists($customConfig)) {
-        $ret = parse_ini_file($customConfig, false);
-    } else {
-        $ret = array();
-    }
-    if (!empty($ret['aModuleList'])) {
-        $ret['aModuleList'] = explode(',', $ret['aModuleList']);
-    }
-    return $ret;
-}
-
 //  initialise
 
 //  set initial paths according to install type
@@ -222,7 +206,7 @@ class ActionProcess extends HTML_QuickForm_Action
             if (PEAR::isError($dbh)) {
                 SGL_Error::pop(); // two errors produced
             }
-            $aDefaultData = overrideDefaultInstallSettings();
+            $aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();
             $data['aModuleList'] = !empty($aDefaultData['aModuleList'])
                 ? $aDefaultData['aModuleList']
                 : SGL_Install_Common::getMinimumModuleList();
