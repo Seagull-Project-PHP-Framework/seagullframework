@@ -15,39 +15,6 @@ SGL_NODE_GROUP nodes.
 
 */
 $aSections = array(
-/*    array (
-      'title'           => 'Events',
-      'parent_id'       => SGL_NODE_ADMIN,
-      'uriType'         => 'dynamic',
-      'module'          => 'event',
-      'manager'         => 'EventMgr.php',
-      'actionMapping'   => '',
-      'add_params'      => '',
-      'is_enabled'      => 1,
-      'perms'           => SGL_ADMIN,
-        ),
-    array (
-      'title'           => 'Calendar',
-      'parent_id'       => SGL_NODE_GROUP,
-      'uriType'         => 'dynamic',
-      'module'          => 'event',
-      'manager'         => 'CalendarMgr.php',
-      'actionMapping'   => '',
-      'add_params'      => '',
-      'is_enabled'      => 1,
-      'perms'           => SGL_ADMIN,
-        ),
-    array (
-      'title'           => 'Events',
-      'parent_id'       => SGL_NODE_GROUP,
-      'uriType'         => 'dynamic',
-      'module'          => 'event',
-      'manager'         => 'EventMgr.php',
-      'actionMapping'   => '',
-      'add_params'      => '',
-      'is_enabled'      => 1,
-      'perms'           => SGL_ADMIN,
-        ),*/
 // user
     array (
       'title'           => 'Events',
@@ -58,7 +25,7 @@ $aSections = array(
       'actionMapping'   => '',
       'add_params'      => '',
       'is_enabled'      => 1,
-      'perms'           => SGL_MEMBER,
+      'perms'           => SGL_ADMIN,
         ),
     );
 ?>
