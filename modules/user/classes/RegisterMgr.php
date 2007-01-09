@@ -293,6 +293,8 @@ class User_AddUser extends SGL_Observable
         $this->oUser = $oUser;
 
         if ($success) {
+            //  set user id for use in observers
+            $this->oUser->usr_id = $success;
             //  invoke observers
             $this->notify();
             $ret = $success;
