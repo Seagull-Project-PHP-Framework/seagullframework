@@ -38,6 +38,26 @@
     <script type="text/javascript" src="{file}"></script>
     {end:}
 
+    {scriptOpen:h}
+    {foreach:onReadyDom,eventHandler}
+        sgl.ready("{eventHandler}");
+    {end:}
+    {if:onLoad}
+    window.onload = function() {
+        {foreach:onLoad,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {if:onUnload}
+    window.onunload = function() {
+        {foreach:onUnload,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {scriptClose:h}
+
     {if:wysiwyg}
     {if:wysiwyg_fck}
     <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
@@ -77,16 +97,4 @@
     {end:}
     {end:}
 </head>
-{if:GLOBALS.empty(onLoad)}
-    {if:GLOBALS.empty(onUnload)}
 <body>
-    {else:}
-<body onunload="{onUnload}">
-    {end:}
-{else:}
-    {if:GLOBALS.empty(onUnload)}
-<body onload="{onLoad}">
-    {else:}
-<body onload="{onLoad}" onunload="{onUnload}">
-    {end:}
-{end:}

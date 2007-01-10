@@ -44,6 +44,26 @@
     <script type="text/javascript" src="{file}"></script>
     {end:}
 
+    {scriptOpen:h}
+    {foreach:onReadyDom,eventHandler}
+        sgl.ready("{eventHandler}");
+    {end:}
+    {if:onLoad}
+    window.onload = function() {
+        {foreach:onLoad,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {if:onUnload}
+    window.onunload = function() {
+        {foreach:onUnload,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {scriptClose:h}
+
     {if:wysiwyg}
     {if:wysiwyg_htmlarea}
     <script type="text/javascript">
@@ -130,17 +150,5 @@
     {end:}
 
 </head>
-{if:GLOBALS.empty(onLoad)}
-    {if:GLOBALS.empty(onUnload)}
 <body class="sgl">
-    {else:}
-<body class="sgl" onunload="{onUnload}">
-    {end:}
-{else:}
-    {if:GLOBALS.empty(onUnload)}
-<body class="sgl" onload="{onLoad}">
-    {else:}
-<body class="sgl" onload="{onLoad}" onunload="{onUnload}">
-    {end:}
-{end:}
     <div id="outer-wrapper">
