@@ -8,6 +8,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+10-01-07    Added SGL_String::toValidVariableName() in addition to existing
+            toValidFileName()
 05-01-07    Added ability to customise modules during install
             (Dmitri Lakachauskis)
 02-01-07	Added ability to set a custom master template in config

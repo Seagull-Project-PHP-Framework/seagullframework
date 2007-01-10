@@ -545,6 +545,18 @@ class SGL_String
         return $formated;
     }
 
+    function toValidVariableName($str)
+    {
+        //  remove illegal chars
+        $search = '/[^a-zA-Z1-9_]/';
+        $replace = '';
+        $res = preg_replace($search, $replace, $str);
+        //  ensure 1st letter is lc
+        $firstLetter = strtolower($res[0]);
+        $final = substr_replace($res, $firstLetter, 0, 1);
+        return $final;
+    }
+
     function toValidFileName($origName)
     {
         return SGL_String::dirify($origName);

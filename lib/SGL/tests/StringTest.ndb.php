@@ -98,6 +98,18 @@ class StringTest extends UnitTestCase {
     {
         return is_int($val) && $val > 0;
     }
+
+    function test_toValidVariableName()
+    {
+        $aControl[] = 'hsdfsd(*&*&^Y&  _+|"|:sdfdf  sSDDFD';
+        $aControl[] = ' Dsdfsd(*&*&^Y&  _+|"|:sdfdf  sSDDFD';
+        $aExpected[] = 'hsdfsdY_sdfdfsSDDFD';
+        $aExpected[] = 'dsdfsdY_sdfdfsSDDFD';
+        foreach ($aControl as $k => $control) {
+            $ret = SGL_String::toValidVariableName($control);
+            $this->assertEqual($aExpected[$k], $ret);
+        }
+    }
 }
 
 ?>
