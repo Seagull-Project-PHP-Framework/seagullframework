@@ -53,6 +53,8 @@ class SGL_Output
     var $aOnLoadEvents = array();
     var $onUnload = '';
     var $aOnUnloadEvents = array();
+    var $onReadyDom = '';
+    var $aOnReadyDomEvents = array();
     var $aJavascriptFiles = array();
     var $aCssFiles = array();
     var $aHeaders = array();
@@ -522,16 +524,20 @@ class SGL_Output
         return (abs($rid) == SGL_ADMIN) ? true : false;
     }
 
-    function addOnLoadEvent($event)
+    function addOnLoadEvent($event, $bOnReady = false)
     {
-        $this->aOnLoadEvents[] = $event;
+        if ($bOnReady) {
+            $this->aOnReadyDomEvents[] = $event;
+        } else {
+            $this->aOnLoadEvents[] = $event;
+        }
     }
 
     function addOnUnloadEvent($event)
     {
         $this->aOnUnloadEvents[] = $event;
     }
-    
+
     function getOnLoadEvents()
     {
         $c = & SGL_Config::singleton();
@@ -541,7 +547,7 @@ class SGL_Output
             $this->aOnLoadEvents[] = $conf['site']['globalJavascriptOnload'];
         }
         if (count($this->aOnLoadEvents)) {
-            return implode(';', $this->aOnLoadEvents);
+            return $this->aOnLoadEvents;
         }
     }
 
@@ -554,9 +560,22 @@ class SGL_Output
             $this->aOnUnloadEvents[] = $conf['site']['globalJavascriptOnUnload'];
         }
         if (count($this->aOnUnloadEvents)) {
-            return implode(';', $this->aOnUnloadEvents);
+            return $this->aOnUnloadEvents;
         }
-    }    
+    }
+
+    function getOnReadyDomEvents()
+    {
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        if (!empty($conf['site']['globalJavascriptOnReadyDom'])) {
+            $this->aOnReadyDomEvents[] = $conf['site']['globalJavascriptOnReadyDom'];
+        }
+        if (count($this->aOnReadyDomEvents)) {
+            return $this->aOnReadyDomEvents;
+        }
+    }
 
     /**
      * For adding JavaScript files to include.
@@ -586,28 +605,42 @@ class SGL_Output
     
     function getJavascriptFiles()
     {
+        $aFiles = array();
+
+        $c = & SGL_Config::singleton();
+        $conf = $c->getAll();
+        // Check for global files to include
+        if (!empty($conf['site']['globalJavascriptFiles'])) {
+            $aTmp = explode(';', $conf['site']['globalJavascriptFiles']);
+            foreach ($aTmp as $file) {
+                $aFiles[] = (strpos($file, 'http://') === 0)
+                    ? $file
+                    : SGL_BASE_URL . '/' . $file;
+            }
+        }
+        // BC with old way of including js files
         if (isset($this->javascriptSrc)) {
             if (is_array($this->javascriptSrc)) {     
-                $aFiles = array_merge(
-                    $this->_prependWithBaseUrl($this->javascriptSrc),
-                    $this->aJavascriptFiles
-                    );
+                foreach ($this->javascriptSrc as $file) {
+                    $aFiles[] = (strpos($file, 'http://') === 0)
+                        ? $file
+                        : SGL_BASE_URL . '/' . $file;
+                }
             } else {
-            	$aFiles[] = $this->webRoot . '/' . $this->javascriptSrc;
+            	$aFiles[] = (strpos($this->javascriptSrc, 'http://') === 0)
+                    ? $this->javascriptSrc
+                    : SGL_BASE_URL . '/' . $this->javascriptSrc;
             }
-        } else {
-            $aFiles = $this->aJavascriptFiles;
         }
+        // Get files added with $output->addJavascriptFile()
+        if (count($this->aJavascriptFiles)) {
+            $aFiles = array_merge(
+                $aFiles,    
+                $this->aJavascriptFiles
+            );
+        }
+        
         return $aFiles;
-    }
-
-    function _prependWithBaseUrl($aRelativeUrls)
-    {
-        $aRet = array();
-        foreach ($aRelativeUrls as $relativeUrl) {
-            $aRet[] = $this->webRoot . '/' . $relativeUrl;
-        }
-        return $aRet;
     }
 
     /**

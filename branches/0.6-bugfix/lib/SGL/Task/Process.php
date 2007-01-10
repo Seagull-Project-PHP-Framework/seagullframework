@@ -968,6 +968,7 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
         //  get all html onLoad events and js files
         $output->onLoad = $output->getOnLoadEvents();
         $output->onUnload = $output->getOnUnloadEvents();        
+        $output->onReadyDom = $output->getOnReadyDomEvents();
         $output->javascriptSrc = $output->getJavascriptFiles();
 
         //  unset unnecessary objects
