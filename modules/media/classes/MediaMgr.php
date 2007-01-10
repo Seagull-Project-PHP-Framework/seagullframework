@@ -34,18 +34,18 @@ require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
 /**
  * For managing different media files.
  *
- * @package seagull
+ * @package    seagull
  * @subpackage media
- * @author  Demian Turner <demian@phpkitchen.com>
+ * @author     Demian Turner <demian@phpkitchen.com>
  */
 class MediaMgr extends FileMgr
 {
     // add more of these from http://filext.com/
     var $_aIdents = array(
-        'application/pdf' => '25 50 44 46 2D 31 2E',
+        'application/pdf'    => '25 50 44 46 2D 31 2E',
         'application/msword' => 'D0 CF 11 E0 A1 B1 1A E1',
-        'application/zip' => '50 4B 03 04',
-        'video/mpeg' => '00 00 01 BA 21 00 01'
+        'application/zip'    => '50 4B 03 04',
+        'video/mpeg'         => '00 00 01 BA 21 00 01'
     );
 
     function MediaMgr()
@@ -53,56 +53,59 @@ class MediaMgr extends FileMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::FileMgr();
 
-        $this->pageTitle    = 'Media Manager';
-        $this->template     = 'mediaList.html';
+        $this->module    = 'media';
+        $this->template  = 'mediaList.html';
+        $this->pageTitle = 'Media Manager';
 
         $this->da = & MediaDAO::singleton();
-        $this->_aActionsMapping =  array(
-            'add'       => array('add'),
-            'insert'    => array('insert', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'delete'    => array('delete', 'redirectToDefault'),
-            'setDownload' => array('setDownload'),
-            'list'      => array('list'),
-            'view'      => array('view'),
-            'previewMedia'      => array('previewMedia'),
+        $this->_aActionsMapping = array(
+            'add'          => array('add'),
+            'insert'       => array('insert', 'redirectToDefault'),
+            'edit'         => array('edit'),
+            'update'       => array('update', 'redirectToDefault'),
+            'delete'       => array('delete', 'redirectToDefault'),
+            'setDownload'  => array('setDownload'),
+            'list'         => array('list'),
+            'view'         => array('view'),
+            'previewMedia' => array('previewMedia'),
         );
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $this->validated        = true;
-        $input->error           = array();
-        $input->pageTitle       = $this->pageTitle;
-        $input->template        = $this->template;
+
+        $this->validated       = true;
+        $input->error          = array();
+        $input->module         = $this->module;
+        $input->template       = $this->template;
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = 'masterLeftCol.html';
 
         //  form vars
-        $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->submitted       = $req->get('submit');
-        $input->from            = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
-        $input->mediaId         = $req->get('frmMediaId');
-        $input->mediaSize       = $req->get('frmSize');
-        $input->aDelete         = $req->get('frmDelete');
+        $input->action    = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->submitted = $req->get('submit');
+        $input->from      = ($req->get('frmFrom'))? $req->get('frmFrom') : 0;
+        $input->mediaId   = $req->get('frmMediaId');
+        $input->mediaSize = $req->get('frmSize');
+        $input->aDelete   = $req->get('frmDelete');
 
         //  filter vars
-        $input->mediaTypeId     = $req->get('byTypeId');
-        $input->dateRange       = $req->get('byDateRange');
+        $input->mediaTypeId = $req->get('byTypeId');
+        $input->dateRange   = $req->get('byDateRange');
 
         //  view type
-        $input->viewType        = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
+        $input->viewType = ($req->get('frmViewType')) ? $req->get('frmViewType') : 'thumb';
 
         //  Pager's total items value (maintaining it saves a count(*) on each request)
         $input->totalItems = $req->get('totalItems');
 
         //  request values for upload
-        $input->aMedia              = $req->get('mediaFile');
-        $input->mediaFileName       = $input->aMedia['name'];
-        $input->mediaFileType       = $input->aMedia['type'];
-        $input->mediaFileTmpName    = $input->aMedia['tmp_name'];
-        $input->mediaFileSize       = $input->aMedia['size'];
+        $input->aMedia           = $req->get('mediaFile');
+        $input->mediaFileName    = $input->aMedia['name'];
+        $input->mediaFileType    = $input->aMedia['type'];
+        $input->mediaFileTmpName = $input->aMedia['tmp_name'];
+        $input->mediaFileSize    = $input->aMedia['size'];
 
         //  request values for save upload
         $input->media = (object)$req->get('media');
@@ -277,69 +280,46 @@ class MediaMgr extends FileMgr
         $output->template = 'mediaAdd.html';
         if ($input->submitted) { // if file uploaded
 
+            // default upload directory for all media files
             if (!$this->ensureUploadDirWritable(SGL_UPLOAD_DIR)) {
                 return false;
             }
+            // generating unique name for each uploaded file
+            $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() .
+                SGL_Date::getTime());
 
-            $uniqueName = md5($input->mediaFileName . SGL_Session::getUid() . SGL_Date::getTime());
-            $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
+            // non-image file is uploaded
+            if (!$this->isImage($input->mediaFileType)) {
+                $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName;
+                move_uploaded_file($input->mediaFileTmpName, $targetLocation);
 
-            if (!$this->isImage($input->mediaFileType)) { // non-image file
-                copy($input->mediaFileTmpName, $targetLocation);
-                $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
-                $output->fileTypeName    = $this->_getType($output->fileTypeID);
-                $output->mediaUniqueName = $uniqueName;
-            } else { // image
+            // image file is uploaded
+            } else {
 
-                // test ability to create img tranform obj
-                require_once 'Image/Transform.php';
-                $imageDriver = $this->conf['MediaMgr']['imageDriver'];
-                $im = Image_Transform::factory($imageDriver);
-                if (PEAR::isError($im)) {
+                // for images we add extension
+                $uniqueName .= $this->getMimeExtension($input->mediaFileType);
+                $imageConfig = SGL_MOD_DIR . '/' . $this->module . '/image.ini';
+
+                require_once SGL_CORE_DIR . '/Image.php';
+                $image = & new SGL_Image($uniqueName);
+                $ok = $image->init($imageConfig);
+                if (PEAR::isError($ok)) {
                     return false;
                 }
-
-                list($filename, $ext) = explode('.', $input->mediaFileName);
-
-                // ensure default image is not larger than max size allowed
-                $newWidth       = $this->conf['MediaMgr']['imageMaxWidth'];
-                $newHeight      = $this->conf['MediaMgr']['imageMaxHeight'];
-                $srcImgLocation = $input->mediaFileTmpName;
-                $targetLocation = SGL_UPLOAD_DIR . '/' . $uniqueName . '.jpg';
-
-                $ok = $this->resizeImageAndSave($im, $srcImgLocation,
-                    $targetLocation, $newWidth, $newHeight);
-
-                // hard-code to jpeg as all images are converted to jpegs
-                $output->fileTypeID      = 5;
-                $output->fileTypeName    = $this->_getType($output->fileTypeID);
-                $output->mediaUniqueName = $uniqueName . '.jpg';
-                $output->mediaFileType   = 'image/jpeg';
-                $output->mediaFileName   = $filename . '.jpg';
-
-                if (!empty($this->conf['MediaMgr']['createThumbnails'])) {
-                    $aThumbs = explode(',', $this->conf['MediaMgr']['createThumbnails']);
-                    $thumbsDir = SGL_UPLOAD_DIR . '/' . $this->conf['MediaMgr']['thumbsDir'];
-                    if (!$this->ensureUploadDirWritable($thumbsDir)) {
-                        return false;
-                    }
-                    foreach ($aThumbs as $thumbName) {
-                        $thumbName   = strtolower($thumbName);
-                        $thumbWidth  = SGL_Inflector::camelise("thumb $thumbName width");
-                        $thumbHeight = SGL_Inflector::camelise("thumb $thumbName height");
-
-                        //  create thumbnail
-                        $newWidth       = $this->conf['MediaMgr'][$thumbWidth];
-                        $newHeight      = $this->conf['MediaMgr'][$thumbHeight];
-                        $srcImgLocation = $input->mediaFileTmpName;
-                        $targetLocation = $thumbsDir . '/' . $thumbName . '_' . $uniqueName . '.jpg';
-                        $ok = $this->resizeImageAndSave($im, $srcImgLocation, $targetLocation, $newWidth, $newHeight);
-                    }
+                $ok = $image->create($input->mediaFileTmpName);
+                if (PEAR::isError($ok)) {
+                    return false;
                 }
             }
-            $output->save = true;
-        } else { // display upload screen
-            $output->save = false;
+
+            $output->fileTypeID      = $this->_mime2FileType($input->mediaFileType);
+            $output->fileTypeName    = $this->_getType($output->fileTypeID);
+            $output->mediaUniqueName = $uniqueName;
+            $output->save            = true;
+
+        // display upload screen
+        } else {
+            $output->save       = false;
             $output->fileTypeID = 0;
         }
     }

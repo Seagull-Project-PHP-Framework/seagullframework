@@ -165,34 +165,38 @@ class MediaDAO extends SGL_Manager
 
     function deleteMediaById($mediaId)
     {
-        $uploadDir = SGL_UPLOAD_DIR;
         require_once 'DB/DataObject.php';
-
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $media->get($mediaId);
 
-        //  delete physical file
-        if (is_file($uploadDir . '/' . $media->file_name)) {
-            @unlink($uploadDir . '/' . $media->file_name);
-        } else {
-            //  this is requested to remove sample files & for testing
-            $uploadDir = SGL_MOD_DIR . '/media/www/images';
-            @unlink($uploadDir . '/' . $media->file_name);
-        }
-
-        //  delete thumbnails if media is of type image
-        if ($media->file_type_id == 5) {
+        if ($media->file_type_id != 5) {
             //  should do this check with CONSTANTS e.g. SGL_FILETYPE_IMAGE
-            $c = new SGL_Config();
-            $configFile = SGL_MOD_DIR . '/media/conf.ini';
-            $config = $c->load($configFile);
-            $thumbnails = explode(',', $config['MediaMgr']['createThumbnails']);
-            foreach ($thumbnails as $thumbSize) {
-                if (is_file($uploadDir . '/thumbs/' .$thumbSize . '_' . $media->file_name)) {
-                    @unlink($uploadDir . '/thumbs/' .$thumbSize . '_' . $media->file_name);
-                }
+            if (is_file(SGL_UPLOAD_DIR . '/' . $media->file_name)) {
+                @unlink(SGL_UPLOAD_DIR . '/' . $media->file_name);
+            } elseif (is_file(SGL_MOD_DIR . '/media/www/images/' . $media->file_name)) {
+                @unlink(SGL_MOD_DIR . '/media/www/images/' . $media->file_name);
+            }
+
+        // removing image
+        } else {
+            require_once SGL_CORE_DIR . '/Image.php';
+            $configFile = SGL_MOD_DIR . '/media/image.ini';
+
+            $image = & new SGL_Image($media->file_name);
+            $ok = $image->init($configFile);
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            $ok = $image->delete();
+            if (PEAR::isError($ok, SGL_ERROR_NOFILE)) {
+                $image->moduleName = 'media';
+                $ok = $image->delete();
+            }
+            if (PEAR::isError($ok)) {
+                return $ok;
             }
         }
+
         return $media->delete();
     }
 }
