@@ -109,6 +109,7 @@ class SGL_FrontController
         if ($output->conf['site']['outputBuffering']) {
             ob_end_flush();
         }
+        
         echo $output->data;
     }
 
@@ -150,6 +151,20 @@ class SGL_FrontController
             $input->setFilters($aFilters);
             $ret = true;
             break;
+            
+
+        case SGL_REQUEST_AMF:
+            $aFilters = array(
+                'SGL_Task_Init',
+                'SGL_Task_SetupORM',
+                'SGL_Task_CreateSession',
+                'SGL_Task_ExecuteAmfAction',
+                );
+            $input->setFilters($aFilters);
+            $ret = true;
+            break;
+            
+            
         }
 
         return $ret;

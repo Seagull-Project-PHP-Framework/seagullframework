@@ -42,6 +42,7 @@ define('SGL_REQUEST_BROWSER',   1);
 define('SGL_REQUEST_CLI',       2);
 define('SGL_REQUEST_AJAX',      3);
 define('SGL_REQUEST_XMLRPC',    4);
+define('SGL_REQUEST_AMF',     	5);
 
 /**
  * Loads Request driver, provides a number of filtering methods.
@@ -59,7 +60,6 @@ class SGL_Request
         if ($this->isEmpty()) {
             $type = $this->getRequestType();
             $typeName = $this->constantToString($type);
-
             $file = SGL_CORE_DIR . '/Request/' . $typeName . '.php';
             if (!is_file($file)) {
               return PEAR::raiseError('Request driver could not be located',
@@ -94,6 +94,10 @@ class SGL_Request
         case SGL_REQUEST_AJAX:
             $ret = 'Ajax';
             break;
+
+        case SGL_REQUEST_AMF:
+            $ret = 'Amf';
+            break;
         }
         return $ret;
     }
@@ -106,6 +110,12 @@ class SGL_Request
         } elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                         $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
             return SGL_REQUEST_AJAX;
+
+        // the first two bytes of an AMF message should be 0x00|0x01 and 0x00|0x03
+        } elseif (isset($GLOBALS["HTTP_RAW_POST_DATA"]) &&
+        			    $GLOBALS["HTTP_RAW_POST_DATA"][0] < 0x0A &&
+        			    $GLOBALS["HTTP_RAW_POST_DATA"][0] < 0x0A  ) {
+            return SGL_REQUEST_AMF;
 
         } else {
             return SGL_REQUEST_BROWSER;
