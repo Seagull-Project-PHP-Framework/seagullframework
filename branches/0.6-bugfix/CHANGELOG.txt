@@ -8,6 +8,9 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+10-01-07    New SGL_Image library fully integrated, see
+            http://trac.seagullproject.org/wiki/Howto/WorkingWithImages
+            (Dmitri Lakachauskis)
 10-01-07    Added amf-php integration, SGL_Request_Amf is now a request type
             (Thomas Goetz)
 10-01-07    Added SGL_String::toValidVariableName() in addition to existing
