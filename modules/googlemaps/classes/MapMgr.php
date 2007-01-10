@@ -68,6 +68,7 @@ class MapMgr extends SGL_Manager
         $output->template = 'viewMap.html';
         $apiKey = $this->conf['MapMgr']['apiKey'];
         $output->addJavascriptFile('http://maps.google.com/maps?file=api&v=2&key=' . $apiKey);
+        $output->addJavascriptFile('googlemaps/js/clusterer2.js');
         $output->addJavascriptFile('googlemaps/js/googleMaps.js');
         $output->addOnLoadEvent('loadGoogleMap()');
         $output->addOnUnloadEvent('GUnload()');

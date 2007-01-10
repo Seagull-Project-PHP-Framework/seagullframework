@@ -6,10 +6,12 @@
         map.addControl(new GSmallMapControl());
         map.addControl(new GMapTypeControl());
 
+        var clusterer = new Clusterer(map);
+
         aCodes = getUserGeoCodes();
         for (var i = 0; i < aCodes.length; i++) {
             var point = new GLatLng(aCodes[i][0], aCodes[i][1]);
-            map.addOverlay(new GMarker(point));
+            clusterer.AddMarker(new GMarker(point), "")
         }
       }
     }
