@@ -8,10 +8,14 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+10-01-07    Added amf-php integration, SGL_Request_Amf is now a request type
+            (Thomas Goetz)
 10-01-07    Added SGL_String::toValidVariableName() in addition to existing
             toValidFileName()
 05-01-07    Added ability to customise modules during install
             (Dmitri Lakachauskis)
+04-01-07	Refactored SGL_Request to template pattern, now it loads driver
+            implementation based on request type (Browser, Ajax, Cli)
 02-01-07	Added ability to set a custom master template in config
 			(Peter Termaten)
 30-12-06	Added ability to include remote js files (Steven Stremciuc)
