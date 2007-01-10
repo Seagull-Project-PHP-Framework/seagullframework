@@ -291,6 +291,9 @@ class SGL_Image
         if (PEAR::isError($ok)) {
             return $ok;
         }
+        if (!file_exists($fileName)) {
+            return SGL::raiseError('SGL_Image: file not found', SGL_ERROR_NOFILE);
+        }
         unlink($fileName);
         $ok = $this->_toThumbnails('unlink'); // delete thumbnails
         if (PEAR::isError($ok)) {
