@@ -9,8 +9,7 @@ class GetUserGeoCode
                     ? $observable->oUser->region
                     : $observable->oUser->country;
 
-        $url    = 'http://api.local.yahoo.com/MapsService/V1/geocode'
-                . '?appid=SeagullFramework'
+        $url    = 'http://api.local.yahoo.com/MapsService/V1/geocode?appid=SeagullFramework'
                 . '&street=' . urlencode($observable->oUser->addr_1)
                 . '&city=' . urlencode($observable->oUser->city)
                 . '&state=' . urlencode($state)
@@ -20,7 +19,30 @@ class GetUserGeoCode
         if (!PEAR::isError($req->sendRequest())) {
             $serializedResponse = $req->getResponseBody();
         }
-        $aResponse = unserialize($serializedResponse);
+        $aResponse = @unserialize($serializedResponse);
+        if (!$aResponse) {
+            $url    = 'http://api.local.yahoo.com/MapsService/V1/geocode?appid=SeagullFramework'
+                    . '&city=' . urlencode($observable->oUser->city)
+                    . '&state=' . urlencode($state)
+                    . '&output=php';
+
+            $req =& new HTTP_Request($url);
+            if (!PEAR::isError($req->sendRequest())) {
+                $serializedResponse = $req->getResponseBody();
+            }
+            $aResponse = @unserialize($serializedResponse);
+            if (!$aResponse) {
+                $url    = 'http://api.local.yahoo.com/MapsService/V1/geocode?appid=SeagullFramework'
+                        . '&state=' . urlencode($state)
+                        . '&output=php';
+
+                $req =& new HTTP_Request($url);
+                if (!PEAR::isError($req->sendRequest())) {
+                    $serializedResponse = $req->getResponseBody();
+                }
+                $aResponse = @unserialize($serializedResponse);
+            }
+        }
         if (is_array($aResponse) && isset($aResponse['ResultSet']) && is_array($aResponse['ResultSet'])) {
             $aResult = $aResponse['ResultSet'];
             if (isset($aResult['Result']['precision'])) {
