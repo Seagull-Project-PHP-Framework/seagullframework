@@ -73,6 +73,17 @@ class SGL_Config
         return $instance;
     }
 
+    function exists($key)
+    {
+        if (is_array($key)) {
+            $key1 = key($key);
+            $key2 = $key[$key1];
+            return array_key_exists($key2, $this->aProps[$key1]);
+        } else {
+            return array_key_exists($key, $this->aProps);
+        }
+    }
+
     function get($key)
     {
         if (is_array($key)) {

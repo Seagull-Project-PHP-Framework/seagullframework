@@ -233,18 +233,27 @@ HTML;
      *
      * @return array
      */
-    function overrideDefaultInstallSettings()
+    function overrideDefaultInstallSettings($aData = array())
     {
+        //  flatten module array if exists
+        if (array_key_exists('aModuleList', $aData)) {
+            $aData['aModuleList'] = implode(',', $aData['aModuleList']);
+        }
+        //  read in custom install defaults
         $customConfig = SGL_PATH . '/etc/customInstallDefaults.ini';
         if (file_exists($customConfig)) {
-            $ret = parse_ini_file($customConfig, false);
+            $aOverrideData = parse_ini_file($customConfig, true);
         } else {
-            $ret = array();
+            $aOverrideData = array();
         }
-        if (!empty($ret['aModuleList'])) {
-            $ret['aModuleList'] = explode(',', $ret['aModuleList']);
+        //  override data passed as arg with custom data
+        $aRet = array_merge($aData, $aOverrideData);
+
+        //  explode module data back to array
+        if (!empty($aRet['aModuleList'])) {
+            $aRet['aModuleList'] = explode(',', $aRet['aModuleList']);
         }
-        return $ret;
+        return $aRet;
     }
 }
 
