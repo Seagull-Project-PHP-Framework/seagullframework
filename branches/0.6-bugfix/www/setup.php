@@ -206,11 +206,14 @@ class ActionProcess extends HTML_QuickForm_Action
             if (PEAR::isError($dbh)) {
                 SGL_Error::pop(); // two errors produced
             }
-            $aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();
-            $data['aModuleList'] = !empty($aDefaultData['aModuleList'])
-                ? $aDefaultData['aModuleList']
-                : SGL_Install_Common::getMinimumModuleList();
+            #$aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            #    ? $aDefaultData['aModuleList']
+            #    : SGL_Install_Common::getMinimumModuleList();
         }
+
+        //  override with custom settings if they exist
+        $data = SGL_Install_Common::overrideDefaultInstallSettings($data);
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);

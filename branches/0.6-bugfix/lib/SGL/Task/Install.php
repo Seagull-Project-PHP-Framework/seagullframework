@@ -140,13 +140,13 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
-        $storeTransInDbClause = (array_key_exists('storeTranslationsInDB', $data)
+        (array_key_exists('storeTranslationsInDB', $data)
                 && $data['storeTranslationsInDB'] == 1)
             ? $c->set('translation', array('container' => 'db'))
             : $c->set('translation', array('container' => 'file'));
 
         //  add missing translations to db
-        $missingTransClause =  (array_key_exists('addMissingTranslationsToDB', $data)
+        (array_key_exists('addMissingTranslationsToDB', $data)
                 && $data['addMissingTranslationsToDB'] == 1)
             ? $c->set('translation', array('addMissingTrans' => true))
             : $c->set('translation', array('addMissingTrans' => false));
@@ -159,7 +159,16 @@ class SGL_Task_CreateConfig extends SGL_Task
         if (preg_match("/cgi|apache2filter/i", php_sapi_name())) {
             $c->set('site', array('frontScriptName' => 'index.php?'));
         }
-
+        //  parse custom config overrides
+        foreach ($data as $k => $v) {
+            if (is_array($v)) {
+                foreach ($v as $kk => $vv) {
+                    if ($c->exists(array($k => $kk))) {
+                        $c->set($k, array($kk => $vv));
+                    }
+                }
+            }
+        }
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);
@@ -1381,7 +1390,7 @@ class SGL_Task_RemoveTestDataToConfig extends SGL_UpdateHtmlTask
 {
     function run($data = null)
     {
-        if (is_file(SGL_VAR_DIR . '/test.conf.ini.php')) {    	
+        if (is_file(SGL_VAR_DIR . '/test.conf.ini.php')) {
 	        $this->setup();
 	        $c = new SGL_Config();
 	        foreach ($data['aModuleList'] as $module) {

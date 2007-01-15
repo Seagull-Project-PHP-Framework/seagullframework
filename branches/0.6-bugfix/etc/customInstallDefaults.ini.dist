@@ -7,8 +7,11 @@ siteName         = Your Site Name
 adminEmail       = bird@example.com
 siteKeywords     = your, keywords, here
 siteDesc         = Your description here
-siteCookie       = EG_SESSID
-prefix           = eg_
-name             = example_db ; this is database name
+siteCookie       = FOO_SESSID
+prefix           = foo_
+name             = foo_db ; this is database name
 aModuleList      = block,default,user,navigation,publisher
 insertSampleData = 1
+
+; any config key can be overridden, just supply key and group name
+; in same format as found in default.conf.dist.ini
