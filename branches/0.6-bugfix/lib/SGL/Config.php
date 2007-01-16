@@ -73,14 +73,20 @@ class SGL_Config
         return $instance;
     }
 
+    /**
+     * Returns true if config key exists.
+     *
+     * @param mixed $key string or array
+     * @return boolean
+     */
     function exists($key)
     {
         if (is_array($key)) {
             $key1 = key($key);
             $key2 = $key[$key1];
-            return array_key_exists($key2, $this->aProps[$key1]);
+            return isset($this->aProps[$key1][$key2]);
         } else {
-            return array_key_exists($key, $this->aProps);
+            return isset($this->aProps[$key]);
         }
     }
 

@@ -8,6 +8,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+16-01-07    Added ability to add any config value to customInstallDefaults.ini
+            to override default values
 10-01-07    New SGL_Image library fully integrated, see
             http://trac.seagullproject.org/wiki/Howto/WorkingWithImages
             (Dmitri Lakachauskis)
