@@ -89,7 +89,7 @@ class Menu_ExplorerBsd
         $menu = HTML_TreeMenu::createFromStructure($options);
 
         require_once SGL_MOD_DIR . '/navigation/classes/HTML_TreeMenu_DHTML_SGL.php';
-        $theme = $_SESSION['aPrefs']['theme'];
+        $theme = 'default';
         $treeMenu = & new HTML_TreeMenu_DHTML_SGL($menu, array(
             'images' =>  SGL_BASE_URL . "/themes/$theme/images/treeNav",
             'defaultClass'  => 'treeMenuDefault'));
