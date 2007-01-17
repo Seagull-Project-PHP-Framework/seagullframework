@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+17-01-07    Fixed bug where category builder icons were not found if default theme
+            not used
 05-01-07    Fixed bug where disabling registration disabled all managers
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
