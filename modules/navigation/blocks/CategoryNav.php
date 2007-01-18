@@ -46,21 +46,22 @@
  */
 class Navigation_Block_CategoryNav
 {
-
-    function init(&$output)
+    function init(&$output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $output->addJavascriptFile('js/TreeMenu.js');
-        return $this->getBlockContent();
+        return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent()
+    function getBlockContent(&$output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $theme = $_SESSION['aPrefs']['theme'];
+
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
-        $menu = & new MenuBuilder('ExplorerBsd');
-        $menu->setStartId(0);
+        $options = array();
+        $menu = & new MenuBuilder('ExplorerBsd', $options);
+        $menu->setStartId($aParams['startParentNode']);
         $html = $menu->toHtml();
         return $html;
     }
