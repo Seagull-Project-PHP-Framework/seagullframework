@@ -10,6 +10,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+18-01-07    Category block now parameterized and is configurable
 16-01-07    Added ability to add any config value to customInstallDefaults.ini
             to override default values
 10-01-07    New SGL_Image library fully integrated, see
