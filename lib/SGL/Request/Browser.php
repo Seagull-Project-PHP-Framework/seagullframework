@@ -19,13 +19,17 @@ class SGL_Request_Browser extends SGL_Request
             $url = unserialize($data);
             SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
-            $aStratsToLoad = explode(',', $conf['site']['inputUrlHandlers']);
-            $aStratsToLoad = array_filter($aStratsToLoad);
+            $aStratsToLoad = array();
+            if (isset($conf['site']['inputUrlHandlers'])) {
+                $aStratsToLoad = explode(',', $conf['site']['inputUrlHandlers']);
+                $aStratsToLoad = array_filter($aStratsToLoad);
+            }
 
-            if (!is_array($aStratsToLoad) || !count($aStratsToLoad)) {
+            if (!count($aStratsToLoad)) {
                 $aStratsToLoad = $this->getDefaultUrlParsingStrategies();
             }
             foreach ($aStratsToLoad as $strat) {
+                $strat = trim($strat);
                 require_once SGL_CORE_DIR . '/UrlParser/'.$strat.'Strategy.php';
                 $className = 'SGL_UrlParser_'.$strat.'Strategy';
                 $aStrats[] = new $className();

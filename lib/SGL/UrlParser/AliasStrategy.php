@@ -8,7 +8,6 @@
  */
 
 require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
-//require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
 
 /**
  * Concrete simple url parser strategy.
