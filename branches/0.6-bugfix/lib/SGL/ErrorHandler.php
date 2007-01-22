@@ -209,10 +209,7 @@ EOL;
                     : null;
 
                 //  store formatted output
-                ob_start();
-                print_r($aExtraInfo);
-                $info = ob_get_contents();
-                ob_end_clean();
+                $info = print_r($aExtraInfo, true);
 
                 //  rebuild error output w/out html
                 require_once SGL_CORE_DIR . '/Util.php';
