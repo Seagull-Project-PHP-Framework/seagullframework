@@ -10,6 +10,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+22-01-07    Input URL parsing strategies now configurable
 18-01-07    Category block now parameterized and is configurable
 16-01-07    Added ability to add any config value to customInstallDefaults.ini
             to override default values
