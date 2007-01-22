@@ -341,6 +341,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Send feedback to project for bugs' => 'Send feedback to project for bugs',
         'Words which system was unable to translate will be enclosed in "> <" marks' => 'Words which system was unable to translate will be enclosed in "> <" marks',
         'Output URL handler' => 'Output URL handler',
+        'Input URL handlers' => 'Input URL handlers',
+        'Define the URL handlers that will be run on incoming requests' => 'Define the URL handlers that will be run on incoming requests',
         'What format would you like your output URLs, Seagull Search Engine Friendly is the default' => 'What format would you like your output URLs, Seagull Search Engine Friendly is the default',
         'The classic URL handler has not been implemented yet' => 'The classic URL handler has not been implemented yet',
         'Template Engine' => 'Template Engine',

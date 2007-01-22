@@ -94,6 +94,12 @@ function toggleTransElements() {
                 </select>
             </p>
             <p>
+                <label class="tipOwner" for="conf[site][inputUrlHandlers]">{translate(#Input URL handlers#)}
+                <span class="tipText">{translate(#Define the URL handlers that will be run on incoming requests#)}</span>
+                </label>
+                <input type="text" name="conf[site][inputUrlHandlers]" id="conf[site][inputUrlHandlers]" value="{conf[site][inputUrlHandlers]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[site][blocksEnabled]">{translate(#Enable Blocks#)}
                 <span class="tipText">{translate(#You can turn the blocks off globally#)}</span>
                 </label>
