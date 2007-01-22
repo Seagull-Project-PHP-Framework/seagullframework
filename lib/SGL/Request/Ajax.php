@@ -19,8 +19,8 @@ class SGL_Request_Ajax extends SGL_Request
             $url = unserialize($data);
             SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
             require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
+            require_once SGL_CORE_DIR . '/UrlParser/SefStrategy.php';
 
             $aStrats = array(
                 new SGL_UrlParser_ClassicStrategy(),
