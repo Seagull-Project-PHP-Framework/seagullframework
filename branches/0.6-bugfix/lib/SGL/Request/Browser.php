@@ -19,15 +19,17 @@ class SGL_Request_Browser extends SGL_Request
             $url = unserialize($data);
             SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
+            $aStratsToLoad = explode(',', $conf['site']['inputUrlHandlers']);
+            $aStratsToLoad = array_filter($aStratsToLoad);
 
-            $aStrats = array(
-                new SGL_UrlParser_ClassicStrategy(),
-                new SGL_UrlParser_AliasStrategy(),
-                new SGL_UrlParser_SefStrategy(),
-                );
+            if (!is_array($aStratsToLoad) || !count($aStratsToLoad)) {
+                $aStratsToLoad = $this->getDefaultUrlParsingStrategies();
+            }
+            foreach ($aStratsToLoad as $strat) {
+                require_once SGL_CORE_DIR . '/UrlParser/'.$strat.'Strategy.php';
+                $className = 'SGL_UrlParser_'.$strat.'Strategy';
+                $aStrats[] = new $className();
+            }
             $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
 
             $err = $url->init();
@@ -52,6 +54,19 @@ class SGL_Request_Browser extends SGL_Request
 
         $this->type = SGL_REQUEST_BROWSER;
         return true;
+    }
+
+    /**
+     * Returns array of default strategies.
+     *
+     * These parsing strategies are used for default Seagull URL handling, to parse
+     * standard urls (classic), URL aliases (routes) and Sef (internal) URLs.
+     *
+     * @return array
+     */
+    function getDefaultUrlParsingStrategies()
+    {
+        return array('Classic', 'Alias', 'Sef');
     }
 }
 ?>
