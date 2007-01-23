@@ -724,10 +724,6 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename4)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename4, 0, array('SGL_Sql', 'execute'));
-                    #$displayHtml = $result ? $this->success : $this->failure;
-                    #$this->updateHtml($module . '_dataSample', $displayHtml);
-                } else {
-                    #$this->updateHtml($module . '_dataSample', $this->noFile);
                 }
             }
         }
