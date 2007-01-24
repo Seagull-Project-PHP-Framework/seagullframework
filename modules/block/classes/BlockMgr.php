@@ -39,7 +39,7 @@
 // $Id: BlockMgr.php,v 1.36 2005/05/29 00:14:37 demian Exp $
 
 require_once SGL_MOD_DIR  . '/block/classes/Block.php';
-require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR  . '/user/classes/UserDAO.php';
 require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 
@@ -60,7 +60,7 @@ class BlockMgr extends SGL_Manager
 
         require_once SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;
-        $daUser             = &DA_User::singleton();
+        $daUser             = &UserDAO::singleton();
         $daNav              = &NavigationDAO::singleton();
         $this->da           = new SGL_Delegator();
         $this->da->add($daUser);
