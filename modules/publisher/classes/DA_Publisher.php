@@ -32,11 +32,11 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | DA_Publisher.php                                                            |
+// | PublisherDAO.php                                                            |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
-// $Id: DA_Publisher.php,v 1.14 2005/06/21 23:26:24 demian Exp $
+// $Id: PublisherDAO.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 /**
  * Data access methods for the publisher module.
@@ -46,14 +46,14 @@
  * @copyright Demian Turner 2005
  * @version $Revision: 1.14 $
  */
-class DA_Publisher
+class PublisherDAO
 {
     /**
      * Constructor - set default resources.
      *
-     * @return DA_Publisher
+     * @return PublisherDAO
      */
-    function DA_Publisher()
+    function PublisherDAO()
     {
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
@@ -72,17 +72,17 @@ class DA_Publisher
     }
 
     /**
-     * Returns a singleton DA_Publisher instance.
+     * Returns a singleton PublisherDAO instance.
      *
      * example usage:
-     * $da = & DA_Publisher::singleton();
+     * $da = & PublisherDAO::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference
      *
      * @access  public
      * @static
-     * @return  DA_Publisher reference to DA_Publisher object
+     * @return  PublisherDAO reference to PublisherDAO object
      */
     function &singleton()
     {
@@ -99,7 +99,7 @@ class DA_Publisher
     function retrievePaginatedItemType($options)
     {
         $query = "
-            SELECT      item_type_id, item_type_name 
+            SELECT      item_type_id, item_type_name
             FROM        {$this->conf['table']['item_type']}
             WHERE       item_type_id != 1";
 

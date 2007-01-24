@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: ContentTypeMgr.php,v 1.2 2005/02/26 21:02:21 demian Exp $
 
-require_once SGL_MOD_DIR  . '/publisher/classes/DA_Publisher.php';
+require_once SGL_MOD_DIR  . '/publisher/classes/PublisherDAO.php';
 
 /**
  * Content Type Manager
@@ -71,7 +71,7 @@ class ContentTypeMgr extends SGL_Manager
 
         $this->pageTitle    = 'Content Type Manager';
         $this->template     = 'contentTypeList.html';
-        $this->da = &DA_Publisher::singleton();
+        $this->da = &PublisherDAO::singleton();
 
         $this->fieldTypes   = array('0' => 'single line', '1' => 'textarea', '2' => 'HTML textarea');
 
