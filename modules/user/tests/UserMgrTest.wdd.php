@@ -1,8 +1,6 @@
 <?php
 require_once dirname(__FILE__). '/../classes/UserMgr.php';
 
-Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'));
-
 /**
  * Test suite.
  *
@@ -15,6 +13,7 @@ class TestUserMgr extends UnitTestCase {
     {
         $this->da = & DA_User::singleton();
         $this->UnitTestCase('UserMgr Test');
+        Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'));
     }
 
     function setup()
