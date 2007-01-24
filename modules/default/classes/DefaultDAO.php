@@ -171,7 +171,7 @@ class DefaultDAO extends SGL_Manager
      * @param integer $moduleId
      * @return boolean
      *
-     * @todo move to DA_User
+     * @todo move to UserDAO
      */
     function deletePermsByModuleId($moduleId)
     {
@@ -249,7 +249,7 @@ class DefaultDAO extends SGL_Manager
      * @param string $permName
      * @return integer
      *
-     * @todo move to DA_User
+     * @todo move to UserDAO
      */
     function getPermissionIdByPermName($permName)
     {
@@ -268,7 +268,7 @@ class DefaultDAO extends SGL_Manager
      * @param integer $permId
      * @return mixed
      *
-     * @todo move to DA_User
+     * @todo move to UserDAO
      */
     function deleteRolePermissionByPermId($permId)
     {
