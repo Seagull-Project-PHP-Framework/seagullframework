@@ -6,7 +6,7 @@ require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
  *
  * @package user
  * @author  Demian Turner <demian@phpkitchen.net>
- * @version $Id: DA_UserTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
+ * @version $Id: UserDAOTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
  */
 class NavigationDAOTest extends UnitTestCase {
 

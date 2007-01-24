@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: NavStyleMgr.php,v 1.32 2005/06/23 19:15:26 demian Exp $
 
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 /**
  * To administer section nav bar stylesheets.
@@ -57,7 +57,7 @@ class NavStyleMgr extends SGL_Manager
 
         $this->pageTitle    = 'Navigation Style Manager';
         $this->template     = 'navStyleList.html';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'list'   => array('list'),

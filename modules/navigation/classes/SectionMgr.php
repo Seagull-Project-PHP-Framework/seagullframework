@@ -41,7 +41,7 @@
 
 require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
-require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR  . '/user/classes/UserDAO.php';
 require_once SGL_MOD_DIR  . '/default/classes/ModuleMgr.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 
@@ -63,7 +63,7 @@ class SectionMgr extends SGL_Manager
         $this->template       = 'sectionList.html';
 
         $daDefault = &DefaultDAO::singleton();
-        $daUser    = &DA_User::singleton();
+        $daUser    = &UserDAO::singleton();
         $daNav     = &NavigationDAO::singleton();
         $this->da  = new SGL_Delegator();
         $this->da->add($daDefault);
