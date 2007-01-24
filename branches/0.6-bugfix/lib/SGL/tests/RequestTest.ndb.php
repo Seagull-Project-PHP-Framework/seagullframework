@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/../Request.php';
+require_once dirname(__FILE__) . '/../Request/Cli.php';
 
 /**
  * Test suite.
@@ -49,8 +50,8 @@ class RequestTest extends UnitTestCase
     {
         $_SERVER['argc'] = 1;
         $_SERVER['argv'] = array('index.php');
-        $req = new SGL_Request();
-        $req->initCli();
+        $req = new SGL_Request_Cli();
+        $req->init();
 
         // test no params
         $this->assertFalse(count($req->getAll()));
@@ -58,8 +59,8 @@ class RequestTest extends UnitTestCase
         unset($req);
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default');
-        $req = new SGL_Request();
-        $req->initCli();
+        $req = new SGL_Request_Cli();
+        $req->init();
 
         // test module name is caught
         $this->assertTrue(count($req->getAll()) == 1);
@@ -69,8 +70,8 @@ class RequestTest extends UnitTestCase
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default',
             '--managerName=translation', '--action=update');
-        $req = new SGL_Request();
-        $req->initCli();
+        $req = new SGL_Request_Cli();
+        $req->init();
 
         // test module name, manager and action are recognized
         $this->assertTrue(count($req->getAll()) == 3);
@@ -89,8 +90,8 @@ class RequestTest extends UnitTestCase
             '--paramNumberTwo=secondParameter',
             '--paramNumberThree=thirdParameter'
         );
-        $req = new SGL_Request();
-        $req->initCli();
+        $req = new SGL_Request_Cli();
+        $req->init();
 
         // test optional params
         $this->assertTrue(count($req->getAll()) == 6);
