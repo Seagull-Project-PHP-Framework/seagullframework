@@ -40,7 +40,7 @@
 // $Id: Category.php,v 1.10 2005/04/27 23:32:41 demian Exp $
 
 require_once SGL_CORE_DIR. '/NestedSet.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 define('SGL_MAX_RECURSION', 100);
 
@@ -70,7 +70,7 @@ class SGL_Category
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $this->da = & DA_User::singleton();
+        $this->da = & UserDAO::singleton();
         $this->dbh = & SGL_DB::singleton();
 
         //  Nested Set Params
@@ -457,7 +457,7 @@ class SGL_Category
         $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
 
-        
+
         $req = & SGL_Request::singleton();
 
         //  logical case for publisher->articleview->view
@@ -468,7 +468,7 @@ class SGL_Category
         if (strtolower($managerName) == 'articleview' &&
             strtolower($action) == 'view') {
             // summary is the correct action when browsing categories
-            $action = "summary";    
+            $action = "summary";
         }
 
         //  build url for current page

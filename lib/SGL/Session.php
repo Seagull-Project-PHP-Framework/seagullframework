@@ -165,9 +165,9 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get DA_User object
-        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $da = & DA_User::singleton();
+        //  get UserDAO object
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();

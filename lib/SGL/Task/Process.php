@@ -338,8 +338,8 @@ class SGL_Task_SetupPerms extends SGL_DecorateProcess
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            $da = & DA_User::singleton();
+            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            $da = & UserDAO::singleton();
             $aPerms = $da->getPermsByModuleId();
             $serialized = serialize($aPerms);
             $cache->save($serialized, 'all_users', 'perms');
@@ -967,7 +967,7 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
 
         //  get all html onLoad events and js files
         $output->onLoad = $output->getOnLoadEvents();
-        $output->onUnload = $output->getOnUnloadEvents();        
+        $output->onUnload = $output->getOnUnloadEvents();
         $output->onReadyDom = $output->getOnReadyDomEvents();
         $output->javascriptSrc = $output->getJavascriptFiles();
 
