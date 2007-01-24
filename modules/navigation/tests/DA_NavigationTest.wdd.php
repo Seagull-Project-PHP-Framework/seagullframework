@@ -1,5 +1,5 @@
 <?php
-require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
 
 /**
  * Test suite.
@@ -8,16 +8,16 @@ require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: DA_UserTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
  */
-class DA_NavigationTest extends UnitTestCase {
+class NavigationDAOTest extends UnitTestCase {
 
-    function DA_NavigationTest()
+    function NavigationDAOTest()
     {
-        $this->UnitTestCase('DA_Navigation Test');
+        $this->UnitTestCase('NavigationDAO Test');
     }
 
     function setup()
     {
-        $this->da = & DA_Navigation::singleton($forceNew = true);
+        $this->da = & NavigationDAO::singleton($forceNew = true);
     }
 
     function testAddSection()
@@ -170,8 +170,8 @@ class xSGL_Task_BuildNavigation extends SGL_Task
                 ),
             );
 
-#        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
-        $da = & DA_Navigation::singleton();
+#        require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
+        $da = & NavigationDAO::singleton();
 //        $aModuleList = SGL_Util::getAllModuleDirs($onlyRegistered = true);
 
         #foreach ($aModuleList as $module) {

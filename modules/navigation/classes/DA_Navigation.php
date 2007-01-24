@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | DA_Navigation.php                                                         |
+// | NavigationDAO.php                                                         |
 // +---------------------------------------------------------------------------+
 // | Authors:   Andrey Podshivalov  <planetaz@gmail.com>                       |
 // +---------------------------------------------------------------------------+
@@ -46,16 +46,16 @@ require_once SGL_CORE_DIR . '/NestedSet.php';
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Andrey Podshivalov <demian@phpkitchen.com>
  */
-class DA_Navigation extends SGL_Manager
+class NavigationDAO extends SGL_Manager
 {
     var $_params  = array();
 
     /**
      * Constructor - set default resources.
      *
-     * @return DA_Navigation
+     * @return NavigationDAO
      */
-    function DA_Navigation()
+    function NavigationDAO()
     {
         parent::SGL_Manager();
         $this->_params = array(
@@ -89,11 +89,11 @@ class DA_Navigation extends SGL_Manager
     }
 
     /**
-     * Returns a singleton DA_Navigation instance.
+     * Returns a singleton NavigationDAO instance.
      *
      * @access  public
      * @static
-     * @return  DA_Navigation reference to DA_Navigation object
+     * @return  NavigationDAO reference to NavigationDAO object
      */
     function &singleton($forceNew = false)
     {
@@ -101,7 +101,7 @@ class DA_Navigation extends SGL_Manager
 
         // If the instance is not there, create one
         if (!isset($instance) || $forceNew) {
-            $instance = new DA_Navigation();
+            $instance = new NavigationDAO();
         }
         return $instance;
     }

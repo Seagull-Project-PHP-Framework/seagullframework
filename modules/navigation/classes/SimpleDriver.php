@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: NavBuilder.php,v 2.0 2006/02/14 23:28:37 demian Exp $
 
-require_once SGL_MOD_DIR  . '/navigation/classes/DA_Navigation.php';
+require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
 
 /**
  * Handles generation of nested unordered lists in HTML containing data from sections table.
@@ -215,7 +215,7 @@ class SimpleDriver
 
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
-        $this->da        = &DA_Navigation::singleton();
+        $this->da        = &NavigationDAO::singleton();
         $this->req       = $output->request;
         $this->output    = &$output;
         $this->_rid      = (int)SGL_Session::get('rid');
