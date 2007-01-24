@@ -464,7 +464,7 @@ class SectionMgr extends SGL_Manager
      *
      * @return array
      *
-     * @todo move to DA_Publisher
+     * @todo move to PublisherDAO
      */
     function _getStaticArticles()
     {
