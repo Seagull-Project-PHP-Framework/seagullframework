@@ -75,7 +75,7 @@ class ImageTest extends UnitTestCase
     function testEnsureDirIsWritable()
     {
         require_once 'System.php';
-        $tmpdir = session_save_path();
+        $tmpdir = SGL_Util::getTmpDir();
 
         // create dir
         $dir = '/thumbs/small';

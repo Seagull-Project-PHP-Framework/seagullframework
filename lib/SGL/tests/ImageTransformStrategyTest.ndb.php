@@ -28,7 +28,7 @@ class ImageTransformStrategyTest extends UnitTestCase
         $driver = & new MockImage_Transform_Driver_GD_SGL();
         $driver->expectOnce('load', array($this->imageSampleFile));
 
-        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
+        $strategy = & new SGL_ImageTransform_FooStrategy1($driver);
         $ret = $strategy->load('/path/to/file_not_found.jpg');
         $this->assertIsA($ret, 'PEAR_Error');
 
@@ -45,13 +45,13 @@ class ImageTransformStrategyTest extends UnitTestCase
         $driver->expectOnce('save', array($this->imageSampleFile,
             $argSaveFormat, $argSaveQuality));
 
-        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
+        $strategy = & new SGL_ImageTransform_FooStrategy1($driver);
         $strategy->load($this->imageSampleFile);
         $strategy->save($argSaveQuality, $argSaveFormat);
     }
 }
 
-class SGL_ImageTransform_FooStrategy extends SGL_ImageTransformStrategy
+class SGL_ImageTransform_FooStrategy1 extends SGL_ImageTransformStrategy
 {
     function transform()
     {
