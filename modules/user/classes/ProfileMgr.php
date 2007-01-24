@@ -39,7 +39,7 @@
 // $Id: ProfileMgr.php,v 1.17 2005/06/08 10:07:28 demian Exp $
 
 require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
 
 /**
@@ -61,7 +61,7 @@ class ProfileMgr extends SGL_Manager
         $this->pageTitle = 'User Profile';
         $this->template  = 'profile.html';
 
-        $daUser    = &DA_User::singleton();
+        $daUser    = &UserDAO::singleton();
         $daDefault = &DefaultDAO::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);

@@ -11,7 +11,7 @@ class TestUserMgr extends UnitTestCase {
 
     function TestUserMgr()
     {
-        $this->da = & DA_User::singleton();
+        $this->da = & UserDAO::singleton();
         $this->UnitTestCase('UserMgr Test');
         Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'));
     }

@@ -39,7 +39,7 @@
 // $Id: AccountMgr.php,v 1.25 2005/05/17 23:54:52 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/RegisterMgr.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -56,7 +56,7 @@ class AccountMgr extends RegisterMgr
         parent::RegisterMgr();
 
         $this->pageTitle = 'My Account';
-        $this->da = & DA_User::singleton();
+        $this->da = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'edit'          => array('edit'),

@@ -32,11 +32,11 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
-// | DA_User.php                                                               |
+// | UserDAO.php                                                               |
 // +---------------------------------------------------------------------------+
 // | Authors:   Demian Turner <demian@phpkitchen.com>                          |
 // +---------------------------------------------------------------------------+
-// $Id: DA_User.php,v 1.14 2005/06/21 23:26:24 demian Exp $
+// $Id: UserDAO.php,v 1.14 2005/06/21 23:26:24 demian Exp $
 
 //  role sync constants
 define('SGL_ROLESYNC_ADD',              1);
@@ -50,30 +50,30 @@ define('SGL_ROLESYNC_VIEWONLY',         4);
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class DA_User extends SGL_Manager
+class UserDAO extends SGL_Manager
 {
     /**
      * Constructor - set default resources.
      *
-     * @return DA_User
+     * @return UserDAO
      */
-    function DA_User()
+    function UserDAO()
     {
         parent::SGL_Manager();
     }
 
     /**
-     * Returns a singleton DA_User instance.
+     * Returns a singleton UserDAO instance.
      *
      * example usage:
-     * $da = & DA_User::singleton();
+     * $da = & UserDAO::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference
      *
      * @access  public
      * @static
-     * @return  DA_User reference to DA_User object
+     * @return  UserDAO reference to UserDAO object
      */
     function &singleton()
     {
@@ -81,7 +81,7 @@ class DA_User extends SGL_Manager
 
         // If the instance is not there, create one
         if (!isset($instance)) {
-            $instance = new DA_User();
+            $instance = new UserDAO();
         }
         return $instance;
     }

@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: PreferenceMgr.php,v 1.39 2005/05/17 23:54:53 demian Exp $
 
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -57,7 +57,7 @@ class OrgTypeMgr extends SGL_Manager
 
         $this->pageTitle    = 'OrgType Manager';
         $this->template     = 'orgTypeList.html';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

@@ -39,7 +39,7 @@
 // $Id: RegisterMgr.php,v 1.38 2005/06/05 23:14:43 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/LoginMgr.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once SGL_CORE_DIR . '/Observer.php';
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once 'Validate.php';
@@ -61,7 +61,7 @@ class RegisterMgr extends SGL_Manager
 
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -275,7 +275,7 @@ class User_AddUser extends SGL_Observable
         $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
         $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
-        $da = & DA_User::singleton();
+        $da = & UserDAO::singleton();
         $oUser = $da->getUserById();
         $oUser->setFrom($this->input->user);
         $oUser->passwdClear = $this->input->user->passwd;

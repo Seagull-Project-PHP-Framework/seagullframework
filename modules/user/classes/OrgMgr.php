@@ -39,7 +39,7 @@
 // $Id: OrgMgr.php,v 1.43 2005/06/05 23:14:43 demian Exp $
 
 require_once SGL_CORE_DIR . '/NestedSet.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once 'Validate.php';
 
 /**
@@ -67,7 +67,7 @@ class OrgMgr extends SGL_Manager
 
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

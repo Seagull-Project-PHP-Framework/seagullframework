@@ -7,20 +7,20 @@ require_once dirname(__FILE__). '/../classes/LoginMgr.php';
  *
  * @package user
  * @author  Demian Turner <demian@phpkitchen.net>
- * @version $Id: DA_UserTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
+ * @version $Id: UserDAOTest.wdb.php,v 1.1 2005/06/23 15:18:06 demian Exp $
  */
-class DA_UserTest extends UnitTestCase {
+class UserDAOTest extends UnitTestCase {
 
-    function DA_UserTest()
+    function UserDAOTest()
     {
-        $this->UnitTestCase('DA_User Test');
+        $this->UnitTestCase('UserDAO Test');
     }
 
     function setup()
     {
-        //  get DA_User object
-        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $this->da = & DA_User::singleton();
+        //  get UserDAO object
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $this->da = & UserDAO::singleton();
     }
 
 

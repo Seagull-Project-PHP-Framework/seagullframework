@@ -41,7 +41,7 @@
 // $Id: UserImportMgr.php,v 1.7 2005/05/24 10:48:46 demian Exp $
 
 require_once SGL_MOD_DIR . '/user/classes/UserMgr.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 /**
  * Module allows administrator to load users from CSV file.
@@ -57,7 +57,7 @@ class UserImportMgr extends UserMgr
 
         $this->pageTitle    = 'User Import Manager';
         $this->template     = 'userImport.html';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'list' => array('list'),

@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: RoleMgr.php,v 1.34 2005/05/17 23:54:53 demian Exp $
 
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once 'DB/DataObject.php';
 
 /**
@@ -67,7 +67,7 @@ class RoleMgr extends SGL_Manager
 
         $this->template     = 'roleManager.html';
         $this->pageTitle    = 'Role Manager';
-        $this->da           = & DA_User::singleton();
+        $this->da           = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

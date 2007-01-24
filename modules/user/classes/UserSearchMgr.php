@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: UserSearchMgr.php,v 1.10 2005/06/06 00:40:33 demian Exp $
 
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 /**
  * Manages searching for User objects.
@@ -57,7 +57,7 @@ class UserSearchMgr extends SGL_Manager
 
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';
-        $this->da = & DA_User::singleton();
+        $this->da = & UserDAO::singleton();
 
         $this->sortBy = 'usr_id';
         $this->validated = true;
