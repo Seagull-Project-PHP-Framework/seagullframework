@@ -40,7 +40,7 @@
 
 require_once SGL_CORE_DIR . '/Emailer.php';
 require_once SGL_MOD_DIR  . '/newsletter/classes/NewsletterMgr.php';
-require_once SGL_MOD_DIR  . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR  . '/user/classes/UserDAO.php';
 require_once 'Mail.php';
 require_once 'Mail/mime.php';
 require_once 'Validate.php';
@@ -63,7 +63,7 @@ class ListMgr extends NewsletterMgr
 
         $this->pageTitle        = 'Newsletter List Mgr';
         $this->template         = 'listSubscribers.html';
-        $this->da               = & DA_User::singleton();
+        $this->da               = & UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'list'   => array('list'),      // Compose newsletter
