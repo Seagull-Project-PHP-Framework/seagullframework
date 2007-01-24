@@ -1621,8 +1621,8 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     function run($data)
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
-            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            $da = & DA_User::singleton();
+            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            $da = & UserDAO::singleton();
             $oUser = $da->getUserById();
 
             $oUser->username = $data['adminUserName'];
@@ -1653,8 +1653,8 @@ class SGL_Task_CreateMemberUser extends SGL_Task
     function run($data)
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
-            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            $da = & DA_User::singleton();
+            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            $da = & UserDAO::singleton();
             $oUser = $da->getUserById();
 
             $oUser->username = 'member';
@@ -1696,8 +1696,8 @@ PHP;
         }
 
         //  update lang in default prefs
-        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $da = & DA_User::singleton();
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
         $lang = isset($_SESSION['install_language'])
             ? $_SESSION['install_language']
             : 'en-iso-8859-15';

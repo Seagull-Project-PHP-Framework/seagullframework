@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/../DB.php';
-require_once dirname(__FILE__) . '/../../../modules/user/classes/DA_User.php';
+require_once dirname(__FILE__) . '/../../../modules/user/classes/UserDAO.php';
 
 /**
  * Test suite.
