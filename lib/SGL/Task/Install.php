@@ -800,8 +800,8 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1
                 && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
 
-            require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
-            $da = & DA_Navigation::singleton();
+            require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
+            $da = & NavigationDAO::singleton();
 
             foreach ($data['aModuleList'] as $module) {
                 $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
@@ -838,8 +838,8 @@ class SGL_Task_RemoveNavigation extends SGL_Task
 {
     function run($data)
     {
-        require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
-        $da = & DA_Navigation::singleton();
+        require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
+        $da = & NavigationDAO::singleton();
 
         foreach ($data['aModuleList'] as $module) {
             $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
