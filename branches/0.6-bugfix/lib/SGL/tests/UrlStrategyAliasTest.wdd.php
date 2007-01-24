@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/../UrlParser/AliasStrategy.php';
-require_once SGL_MOD_DIR . '/navigation/classes/DA_Navigation.php';
+require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
 
 /**
  * Test suite.
@@ -21,16 +21,16 @@ class UrlStrategyAliasTest extends UnitTestCase
     function setup()
     {
         $c = &SGL_Config::singleton();
-        $this->da = & DA_Navigation::singleton($forceNew = true);        
+        $this->da = & NavigationDAO::singleton($forceNew = true);
         $this->conf = $c->getAll();
         $this->obj = new stdClass();
-        $this->dbh = & SGL_DB::singleton();                       
+        $this->dbh = & SGL_DB::singleton();
         $this->exampleUrl = 'http://example.com/';
     }
-           
+
     // Testing the simplest alias in the end of uri
     // Simple alias: index.php/test/
-    
+
     function testSimpleAlias() {
         $section = array (
           'title' => 'Alias Test Section',
@@ -45,31 +45,31 @@ class UrlStrategyAliasTest extends UnitTestCase
           'uri_alias' => 'test',
           'perms' => '1',        // role id, eg: 1 for admin
         );
-            
+
         $ok = $this->da->addSection($section);
-        
+
         $this->assertTrue($ok);
-        
-        $this->strategy = new SGL_UrlParser_AliasStrategy();               
+
+        $this->strategy = new SGL_UrlParser_AliasStrategy();
 
         $aUrlSegments = array (
             0 => 'index.php',
             1 => "test"
         );
-        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);              
+        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
-        
-       
+
+
         //  assert expected keys present
         $this->assertEqual($ret['moduleName'],'block');
         $this->assertEqual($ret['managerName'],'block');
-        $this->assertEqual($ret['action'],'list');        
-        
+        $this->assertEqual($ret['action'],'list');
+
     }
-    
+
     // Here we go: example.com/news/2/
     // Instead of http://example.com/publisher/articleview/action/view/frmArticleID/2/
-    
+
     function testFlexibleAlias() {
         $section = array (
           'title' => 'Alias Test Section',
@@ -84,26 +84,26 @@ class UrlStrategyAliasTest extends UnitTestCase
           'uri_alias' => 'news',
           'perms' => '1',        // role id, eg: 1 for admin
         );
-            
+
         $ok = $this->da->addSection($section);
-        
+
         $this->assertTrue($ok);
-        
-        $this->strategy = new SGL_UrlParser_AliasStrategy();               
+
+        $this->strategy = new SGL_UrlParser_AliasStrategy();
 
         $aUrlSegments = array (
             0 => 'index.php',
             1 => 'news',
             2 => '2'
         );
-        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);              
+        $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
         $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
-        
+
         //  assert expected keys present
         $this->assertEqual($ret['moduleName'],'publisher');
         $this->assertEqual($ret['managerName'],'articleview');
-        $this->assertEqual($ret['frmArticleID'],'2');               
-    
+        $this->assertEqual($ret['frmArticleID'],'2');
+
     }
 
     function tearDown()
