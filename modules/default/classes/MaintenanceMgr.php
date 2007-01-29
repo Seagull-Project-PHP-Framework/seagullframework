@@ -189,6 +189,11 @@ class MaintenanceMgr extends SGL_Manager
             );
 
         define('SGL_ADMIN_REBUILD', 1);
+
+        $buildNavTask = SGL::moduleIsEnabled('cms')
+            ? 'SGL_Task_BuildNavigation2'
+            : 'SGL_Task_BuildNavigation';
+
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_SetTimeout());
@@ -200,7 +205,7 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new $buildNavTask());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());

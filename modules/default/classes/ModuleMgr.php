@@ -241,6 +241,7 @@ class ModuleMgr extends SGL_Manager
         );
         define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
         require_once SGL_CORE_DIR . '/Task/Install.php';
+
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_DefineTableAliases());
@@ -297,6 +298,7 @@ class ModuleMgr extends SGL_Manager
                 );
             define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
             require_once SGL_CORE_DIR . '/Task/Install.php';
+
             $runner = new SGL_TaskRunner();
             $runner->addData($data);
             $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
