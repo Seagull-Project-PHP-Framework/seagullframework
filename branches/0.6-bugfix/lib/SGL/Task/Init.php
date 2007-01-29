@@ -554,6 +554,38 @@ class SGL_Task_LoadCustomConfig extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_InitialiseModules extends SGL_Task
+{
+    function run($conf)
+    {
+        //  skip if we're in installer
+        if (defined('SGL_INSTALLED')) {
+            $locator = &SGL_ServiceLocator::singleton();
+            $dbh = $locator->get('DB');
+            if (!$dbh) {
+                $dbh = & SGL_DB::singleton();
+                $locator->register('DB', $dbh);
+            }
+            $query = "
+                SELECT  name
+                FROM    {$conf['table']['module']}
+                ";
+            $aRet = $dbh->getAll($query);
+            if (is_array($aRet) && count($aRet)) {
+                foreach ($aRet as $oModule) {
+                    $moduleInitFile = SGL_MOD_DIR . '/' . $oModule->name . '/init.php';
+                    if (is_file($moduleInitFile)) {
+                        require_once $moduleInitFile;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_EnsureBC extends SGL_Task
 {
     function run($data)
@@ -569,7 +601,7 @@ class SGL_Task_EnsureBC extends SGL_Task
                 if (is_file($location)) {
                     unlink($location);
                 }
-                $fileHandler = fopen ($location, "w");
+                $fileHandler = fopen($location, "w");
                 fwrite ($fileHandler, $data);
                 fclose ($fileHandler);
                 return true;

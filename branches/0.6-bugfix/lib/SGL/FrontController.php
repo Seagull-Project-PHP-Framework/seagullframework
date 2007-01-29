@@ -70,6 +70,10 @@ class SGL_FrontController
         $input->setRequest($req);
         $output = &new SGL_Output();
 
+        $setupNav = SGL::moduleIsEnabled('cms')
+            ? 'SGL_Task_SetupNavigation2'
+            : 'SGL_Task_SetupNavigation';
+
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
@@ -91,7 +95,7 @@ class SGL_FrontController
                 new SGL_Task_BuildView(
                 new SGL_Task_BuildDebugBlock(
                 new SGL_Task_SetupBlocks(
-                new SGL_Task_SetupNavigation(
+                new $setupNav(
                 new SGL_Task_SetupGui(
                 new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
@@ -109,7 +113,7 @@ class SGL_FrontController
         if ($output->conf['site']['outputBuffering']) {
             ob_end_flush();
         }
-        
+
         echo $output->data;
     }
 
@@ -151,7 +155,7 @@ class SGL_FrontController
             $input->setFilters($aFilters);
             $ret = true;
             break;
-            
+
 
         case SGL_REQUEST_AMF:
             $aFilters = array(
@@ -163,8 +167,8 @@ class SGL_FrontController
             $input->setFilters($aFilters);
             $ret = true;
             break;
-            
-            
+
+
         }
 
         return $ret;
@@ -192,6 +196,7 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
+        $init->addTask(new SGL_Task_InitialiseModules());
         $init->main();
         define('SGL_INITIALISED', true);
     }
@@ -229,6 +234,7 @@ class SGL_FrontController
                 $coreLibs  . '/BlockLoader.php',
                 $coreLibs  . '/Translation.php',
                 $coreLibs  . '/../data/ary.languages.php',
+                $coreLibs  . '.php', // loads SGL.php
             );
             $fileCache = '';
             foreach ($aRequiredFiles as $file) {

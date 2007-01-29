@@ -358,7 +358,7 @@ class SGL_NestedSet
                     WHERE {$this->_fieldsInternal['id']} = $node_id";
             $result =& $this->dbh->query($sql);
             if (PEAR::isError($result)) {
-                return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
+                return $result;
             }
             $result->fetchInto($this->_aNodes[$node_id], DB_FETCHMODE_ASSOC);
             if (is_null($this->_aNodes[$node_id])) {

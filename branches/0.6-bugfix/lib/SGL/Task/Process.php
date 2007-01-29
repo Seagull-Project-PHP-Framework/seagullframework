@@ -52,9 +52,6 @@ class SGL_Task_Init extends SGL_DecorateProcess
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
         }
-        // load base utility lib
-        require_once SGL_LIB_DIR . '/SGL.php';
-
         //  start output buffering
         if ($this->conf['site']['outputBuffering']) {
             ob_start();
