@@ -10,6 +10,9 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+30-01-07    Added SGL_Task_InitialiseModules() task, this gets executed before
+            the filter chain and looks for any file called init.php in the root
+            of any active module
 22-01-07    Input URL parsing strategies now configurable
 18-01-07    Category block now parameterized and is configurable
 16-01-07    Added ability to add any config value to customInstallDefaults.ini
