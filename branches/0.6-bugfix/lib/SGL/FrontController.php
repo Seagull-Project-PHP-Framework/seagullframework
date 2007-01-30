@@ -234,7 +234,6 @@ class SGL_FrontController
                 $coreLibs  . '/BlockLoader.php',
                 $coreLibs  . '/Translation.php',
                 $coreLibs  . '/../data/ary.languages.php',
-                $coreLibs  . '.php', // loads SGL.php
             );
             $fileCache = '';
             foreach ($aRequiredFiles as $file) {
