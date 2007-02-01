@@ -87,6 +87,7 @@ class SGL_Output
     function generateSelect($aValues, $selected = null, $multiple = false, $options = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         if (!is_array($aValues) || (isset($options) && !is_array($options))) {
             SGL::raiseError('Incorrect param passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
@@ -602,7 +603,7 @@ class SGL_Output
             }
         }
     }
-    
+
     function getJavascriptFiles()
     {
         $aFiles = array();
@@ -620,7 +621,7 @@ class SGL_Output
         }
         // BC with old way of including js files
         if (isset($this->javascriptSrc)) {
-            if (is_array($this->javascriptSrc)) {     
+            if (is_array($this->javascriptSrc)) {
                 foreach ($this->javascriptSrc as $file) {
                     $aFiles[] = (strpos($file, 'http://') === 0)
                         ? $file
@@ -635,11 +636,11 @@ class SGL_Output
         // Get files added with $output->addJavascriptFile()
         if (count($this->aJavascriptFiles)) {
             $aFiles = array_merge(
-                $aFiles,    
+                $aFiles,
                 $this->aJavascriptFiles
             );
         }
-        
+
         return $aFiles;
     }
 
