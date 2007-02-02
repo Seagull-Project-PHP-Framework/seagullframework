@@ -171,7 +171,8 @@ class SGL_Config
                 return SGL::raiseError('Problem reading config file',
                     SGL_ERROR_INVALIDFILEPERMS);
             } else {
-                SGL::displayStaticPage('No global config file could be found');
+                SGL::displayStaticPage('No global config file could be found, '.
+                    'file searched for was ' .$file);
             }
         }
     }
