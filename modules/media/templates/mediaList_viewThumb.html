@@ -2,11 +2,11 @@
 @import url("{webRoot}/js/lightbox/css/lightbox.css");
 </style>
 <script type="text/javascript">
-var fileLoadingImage = SGL_JS_WEBROOT +'/js/lightbox/images/loading.gif';		
+var fileLoadingImage = SGL_JS_WEBROOT +'/js/lightbox/images/loading.gif';
 var fileBottomNavCloseImage = SGL_JS_WEBROOT +'/js/lightbox/images/closelabel.gif';
 </script>
 
-                
+
                 <div class="thumb" flexy:foreach="aMedia,key,oMedia" flexy:ignore>
                     <div class="thumbBox" id="media{oMedia.media_id}">
                         <div class="thumbToolbar">
@@ -19,7 +19,7 @@ var fileBottomNavCloseImage = SGL_JS_WEBROOT +'/js/lightbox/images/closelabel.gi
                             </span>
                         </div>
                         <div class="thumbMedia">
-                            
+
                             <img src="{makeUrl(#previewMedia#,#media#,##)}frmMediaId/{oMedia.media_id}/frmSize/small" alt="" title="" />
                         </div>
                         <div class="thumbInfo">
