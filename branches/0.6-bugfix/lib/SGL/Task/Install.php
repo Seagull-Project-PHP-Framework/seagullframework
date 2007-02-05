@@ -1409,7 +1409,7 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
 /**
  * @package Task
  */
-class SGL_Task_RemoveTestDataToConfig extends SGL_UpdateHtmlTask
+class SGL_Task_RemoveTestDataFromConfig extends SGL_UpdateHtmlTask
 {
     function run($data = null)
     {
