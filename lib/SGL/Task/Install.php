@@ -1258,29 +1258,28 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
-                    if (file_exists(SGL_WEB_ROOT . "/$module")) {
-                        PEAR::raiseError('A www directory was detected in ' .
-                            ' one of the modules therefore an attempt to create ' .
-                            ' a corresponding symlink was made ' .
-                            ' but the symlink already exists ' .
-                            ' in seagull/www');
-                    } else {
 
-                        // windows
-                        if (strpos(PHP_OS, 'WIN') !== false) {
+                    // windows
+                    if (strpos(PHP_OS, 'WIN') !== false) {
 
-                            // if linkd binary is present
-                            $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                        // if linkd binary is present
+                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
 
-                            //  otherwise just copy
-                            if (!$ok) {
-                                require_once SGL_CORE_DIR . '/File.php';
-                                $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
-                            }
-                        } else {
-                            $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                        //  otherwise just copy
+                        if (!$ok) {
+                            require_once SGL_CORE_DIR . '/File.php';
+                            $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
                         }
+                    } elseif (is_link(SGL_WEB_ROOT . "/$module")) {
+                            PEAR::raiseError('A www directory was detected in ' .
+                                ' one of the modules therefore an attempt to create ' .
+                                ' a corresponding symlink was made ' .
+                                ' but the symlink already exists ' .
+                                ' in seagull/www');
+                    } else {
+                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                     }
+
                 } else {
                     PEAR::raiseError('A www directory was detected in one of the modules '.
                     ' but the required webserver' .
@@ -1311,7 +1310,7 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
                 }
             } elseif (file_exists($wwwDir)) {
                 if (is_writable(SGL_WEB_ROOT)) {
-                    if (file_exists(SGL_WEB_ROOT . "/$module")) {
+                    if (is_link(SGL_WEB_ROOT . "/$module")) {
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
                 } else {
@@ -1323,6 +1322,7 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
         }
     }
 }
+
 
 /**
  * @package Task
