@@ -228,7 +228,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename3 = '/data.sample.pg.sql';
             $this->filename4 = '/data.block.add.pg.sql';
             $this->filename5 = '/data.custom.pg.sql';
-            $this->filename6 = '/constraints.pg.sql';
+            $this->filename6 = '/data.test.pg.sql';
+            $this->filename7 = '/constraints.pg.sql';
             break;
 
         case 'mysql':
@@ -238,7 +239,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename3 = '/data.sample.my.sql';
             $this->filename4 = '/data.block.add.my.sql';
             $this->filename5 = '/data.custom.my.sql';
-            $this->filename6 = '/constraints.my.sql';
+            $this->filename6 = '/data.test.my.sql';
+            $this->filename7 = '/constraints.my.sql';
             break;
 
         case 'mysql_SGL':
@@ -248,7 +250,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename3 = '/data.sample.my.sql';
             $this->filename4 = '/data.block.add.my.sql';
             $this->filename5 = '/data.custom.my.sql';
-            $this->filename6 = '/constraints.my.sql';
+            $this->filename6 = '/data.test.my.sql';
+            $this->filename7 = '/constraints.my.sql';
             break;
 
         case 'oci8_SGL':
@@ -258,7 +261,8 @@ class SGL_UpdateHtmlTask extends SGL_Task
             $this->filename3 = '/data.sample.oci.sql';
             $this->filename4 = '/data.block.add.oci.sql';
             $this->filename5 = '/data.custom.oci.sql';
-            $this->filename6 = '/constraints.oci.sql';
+            $this->filename6 = '/data.test.oci.sql';
+            $this->filename7 = '/constraints.oci.sql';
             break;
         }
 
@@ -798,8 +802,8 @@ class SGL_Task_CreateConstraints extends SGL_UpdateHtmlTask
             //  Go back and load module foreign keys/constraints, if any
             foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
-                if (file_exists($modulePath . $this->filename6)) {
-                    $result = SGL_Sql::parse($modulePath . $this->filename6, 0, array('SGL_Sql', 'execute'));
+                if (file_exists($modulePath . $this->filename7)) {
+                    $result = SGL_Sql::parse($modulePath . $this->filename7, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_constraints', $displayHtml);
                 } else {
