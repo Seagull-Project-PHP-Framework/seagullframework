@@ -1366,8 +1366,8 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
             if (is_file($dataDir . $this->filename2)) {
                 $aFiles['dataDefault'] = 1;
             }
-            if (is_file($dataDir . $this->filename3)) {
-                $aFiles['dataSample'] = 1;
+            if (is_file($dataDir . $this->filename6)) {
+                $aFiles['dataTest'] = 1;
             }
             //  load current test config
             if (is_file(SGL_VAR_DIR . '/test.conf.ini.php')) {
@@ -1384,9 +1384,9 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
 	                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.default.my.sql';
 	                $update = true;
 	            }
-	            if (isset($aFiles['dataSample'])) {
+	            if (isset($aFiles['dataTest'])) {
 	                $nextId = $this->getNextKey($aTestData['dataFiles']);
-	                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.sample.my.sql';
+	                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.test.my.sql';
 	                $update = true;
 	            }
 	            if ($update) {
