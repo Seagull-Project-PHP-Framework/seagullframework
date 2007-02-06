@@ -83,7 +83,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $aParsedUri['managerName'] = strtolower($mgrCopy);
         } else {
             $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
-            $aParsedUri['managerName'] = $conf['site']['defaultManager'];
+            $aParsedUri['managerName'] = $mgrCopy = $conf['site']['defaultManager'];
             if (!empty($conf['site']['defaultParams'])) {
                 $aParams = SGL_Url::querystringArrayToHash(
                     explode('/', $conf['site']['defaultParams']));
