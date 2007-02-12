@@ -654,12 +654,12 @@ class SGL_Output
     {
         if (is_array($file)) {
             foreach ($file as $cssFile) {
-                if (!in_array($cssFile,$this->aCssFiles)) {
+                if (!in_array($cssFile, $this->aCssFiles)) {
                     $this->aCssFiles[] = $cssFile;
                 }
             }
         } else {
-            if (!in_array($file,$this->aCssFiles)) {
+            if (!in_array($file, $this->aCssFiles)) {
                 $this->aCssFiles[] = $file;
             }
         }

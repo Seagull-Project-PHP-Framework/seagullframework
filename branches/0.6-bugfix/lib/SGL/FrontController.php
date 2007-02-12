@@ -290,6 +290,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
                 $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
+        SGL_Manager::display($output);
         $mgr->display($output);
     }
 }

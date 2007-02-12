@@ -306,7 +306,9 @@ class SGL_Manager
     }
 
     /**
-     * Abstract page display method.
+     * Parent page display method.
+     *
+     * Sets CSS file if supplied in request
      *
      * @abstract
      *
@@ -314,7 +316,19 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output) {}
+    function display(&$output)
+    {
+        //  reinstate dynamically added css
+        if (!$output->manager->isValid()) {
+            if (!count($output->aCssFiles)) {
+                //  get action
+                $cssFile = $output->request->get('cssFile');
+                if (!is_null($cssFile)) {
+                    $output->addCssFile($cssFile);
+                }
+            }
+        }
+    }
 
     /**
      * Return true if child class has validated.
