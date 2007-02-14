@@ -10,6 +10,9 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+12-02-07    Added ability to reinstate dynamically loaded CSS files during post when
+            validation fails [2930] (see also
+            http://trac.seagullproject.org/wiki/Howto/CSS/Handling#ModulespecificCSS)
 05-02-07    Added ability to add custom data to your modules, makes it easier to diverge
             from svn code, create file called data.custom.my.sql for this purpose
 30-01-07    Added SGL_Task_InitialiseModules() task, this gets executed before
