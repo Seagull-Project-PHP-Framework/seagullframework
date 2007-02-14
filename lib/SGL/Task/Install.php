@@ -1637,7 +1637,8 @@ class SGL_Task_SyncSequences extends SGL_Task
         //  remove irrelevant errors
         $finalErrorCount = SGL_Error::count();
         if ($finalErrorCount > $initialErrorCount) {
-            for ($x = 0; $x <= $numErrors = $finalErrorCount - $initialErrorCount; $x++) {
+            $numErrors = $finalErrorCount - $initialErrorCount;
+            for ($x = 0; $x < $numErrors; $x++) {
                 SGL_Error::pop();
             }
         }
