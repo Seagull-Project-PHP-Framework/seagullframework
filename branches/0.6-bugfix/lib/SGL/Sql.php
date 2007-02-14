@@ -137,7 +137,7 @@ class SGL_Sql
                 //  handle error
                 if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
                     return $res;
-                } elseif (DB::isError($res)) {
+                } elseif (PEAR::isError($res)) {
                     // Print out info on bad statements
                     echo '<pre>'.$res->getMessage().'</pre>';
                     echo '<pre>'. $res->getUserInfo() . '</pre>';
