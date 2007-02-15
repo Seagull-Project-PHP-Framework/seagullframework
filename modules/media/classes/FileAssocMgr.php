@@ -121,13 +121,16 @@ class FileAssocMgr extends SGL_Manager
         $aMedia = $this->dbh->getAll($query);
 
         foreach ($aMedia as $k => $media) {
-            if (!is_null($input->isEventImage)) {
-                if ($this->isAssociatedToEventImage($media->media_id, $input->eventId)) {
-                    $aMedia[$k]->associated = true;
-                }
-            } else {
-                if ($this->isAssociatedToEvent($media->media_id, $input->eventId)) {
-                    $aMedia[$k]->associated = true;
+            //  check for event links
+            if (SGL::moduleIsEnabled('event')) {
+                if (!is_null($input->isEventImage)) {
+                    if ($this->isAssociatedToEventImage($media->media_id, $input->eventId)) {
+                        $aMedia[$k]->associated = true;
+                    }
+                } else {
+                    if ($this->isAssociatedToEvent($media->media_id, $input->eventId)) {
+                        $aMedia[$k]->associated = true;
+                    }
                 }
             }
         }
