@@ -402,6 +402,24 @@ function toggleTransElements() {
                 </label>
                 {generateRadioPair(#conf[cache][libCacheEnabled]#,conf[cache][libCacheEnabled]):h}
             </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][cleaningFactor]">{translate(#Cleaning factor#)}
+                    <span class="tipText">{translate(#Cleaning factor tip#)}</span>
+                </label>
+                <input type="text" name="conf[cache][cleaningFactor]" id="conf[cache][cleaningFactor]" value="{conf[cache][cleaningFactor]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][readControl]">{translate(#Read control#)}
+                    <span class="tipText">{translate(#Read control tip#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][readControl]#,conf[cache][readControl]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][writeControl]">{translate(#Write control#)}
+                    <span class="tipText">{translate(#Write control tip#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][writeControl]#,conf[cache][writeControl]):h}
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="databaseOptions">
