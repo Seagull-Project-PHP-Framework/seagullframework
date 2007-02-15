@@ -242,6 +242,16 @@ class ModuleMgr extends SGL_Manager
         define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
         require_once SGL_CORE_DIR . '/Task/Install.php';
 
+        //  if we're installing cms, insert sections to 'page' table
+        $installingCms = false;
+        if ($input->moduleName == 'cms') {
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+            require_once SGL_MOD_DIR . '/cms/init.php';
+            $installingCms = true;
+        } else {
+            $buildNavTask = 'SGL_Task_BuildNavigation';
+        }
+
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_DefineTableAliases());
@@ -249,7 +259,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new $buildNavTask());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_LoadTranslations());
@@ -263,12 +273,17 @@ class ModuleMgr extends SGL_Manager
         $ok = $runner->main();
 
         //  check for errors
+        $extraMsg = ($installingCms)
+            ? '.  To recreate the navigation for other installed modules, please' .
+              ' <a href="'.SGL_Url::makeLink('list', 'maintenance', 'default').'">rebuild</a> your Seagull installation.'
+            : '';
+
         if (SGL_Error::count()) {
             $oError = SGL_Error::getLast();
             $msg = $oError->getMessage();
             $type = SGL_MESSAGE_WARNING;
         } else {
-            $msg = 'The ' . $input->moduleName . ' module was successfully installed';
+            $msg = 'The ' . $input->moduleName . ' module was successfully installed' . $extraMsg;
             $type = SGL_MESSAGE_INFO;
         }
         SGL::raiseMsg($msg, false, $type);
@@ -322,7 +337,14 @@ class ModuleMgr extends SGL_Manager
                 $ok = SGL_Translation::removeTranslations($oModule->name);
             }
 
-            SGL::raiseMsg('The ' . $oModule->name . ' module was successfully uninstalled',
+            //  add rebuild info if we're uninstalling cms
+            //$oModule = $this->da->getModuleById($input->moduleId);
+            $extraMsg = ($oModule->name == 'cms')
+                ? '.  To complete the uninstall of the cms module, please' .
+                  ' <a href="'.SGL_Url::makeLink('list', 'maintenance', 'default').'">rebuild</a> your Seagull installation.'
+                : '';
+
+            SGL::raiseMsg('The ' . $oModule->name . ' module was successfully uninstalled' . $extraMsg,
                 false, SGL_MESSAGE_INFO);
         }
     }
