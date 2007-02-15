@@ -338,7 +338,6 @@ class ModuleMgr extends SGL_Manager
             }
 
             //  add rebuild info if we're uninstalling cms
-            //$oModule = $this->da->getModuleById($input->moduleId);
             $extraMsg = ($oModule->name == 'cms')
                 ? '.  To complete the uninstall of the cms module, please' .
                   ' <a href="'.SGL_Url::makeLink('list', 'maintenance', 'default').'">rebuild</a> your Seagull installation.'
