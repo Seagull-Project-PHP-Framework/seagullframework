@@ -130,6 +130,9 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('path', array('installRoot' => $data['installRoot']));
         $c->set('path', array('webRoot' => $data['webRoot']));
 
+        //  reset moduleOverride on re-install
+        $c->set('path', array('moduleDirOverride' => ''));
+
         //  various
         $c->set('site', array('serverTimeOffset' => $data['serverTimeOffset']));
         $c->set('site', array('baseUrl' => SGL_BASE_URL));
