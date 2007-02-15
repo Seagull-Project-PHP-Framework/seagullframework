@@ -162,8 +162,7 @@ class SGL_Image
      */
     function generateUniqueFileName()
     {
-        return md5($_SERVER['REMOTE_ADDR'] . SGL_Session::getUid() .
-            SGL_Date::getTime());
+        return md5(uniqid(rand(), true));
     }
 
     /**
