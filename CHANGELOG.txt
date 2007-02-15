@@ -10,6 +10,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+15-02-07    Added new cache options (Dmitri Lakachauskis)
 12-02-07    Added ability to reinstate dynamically loaded CSS files during post when
             validation fails [2930] (see also
             http://trac.seagullproject.org/wiki/Howto/CSS/Handling#ModulespecificCSS)
