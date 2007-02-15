@@ -135,12 +135,8 @@ class SGL_Sql
                 $res = call_user_func_array(
                     array($executerCallback[0], $executerCallback[1]), $sql);
                 //  handle error
-                if (PEAR::isError($res, DB_ERROR_ALREADY_EXISTS)) {
+                if (PEAR::isError($res)) {
                     return $res;
-                } elseif (PEAR::isError($res)) {
-                    // Print out info on bad statements
-                    echo '<pre>'.$res->getMessage().'</pre>';
-                    echo '<pre>'. $res->getUserInfo() . '</pre>';
                 }
             }
             $aLines[] = $sql;
