@@ -1499,7 +1499,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     continue;
                 }
 
-                $info = $dbh->tableInfo($table);
+                $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                 foreach ($info as $field) {
                     if (eregi('primary_key', $field['flags'])) {
                         $primary_field = $field['name'];
@@ -1530,7 +1530,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             foreach ($aTables as $table) {
                 $primary_field = '';
                 if ($table != $conf['table']['sequence']) {
-                    $info = $dbh->tableInfo($table);
+                    $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                     foreach ($info as $field) {
                         if (isset($field['flags']) && eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
@@ -1555,7 +1555,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             foreach ($aTables as $table) {
                 $primary_field = '';
                 if ($table != $conf['table']['sequence']) {
-                    $info = $dbh->tableInfo($table);
+                    $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
@@ -1595,7 +1595,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 $primary_field = '';
                 // get tablename
                 if (preg_match("/^(.*)_seq$/",$sequence,$table)) {
-                    $info = $dbh->tableInfo($this->dbh->quoteIdentifier($table[1]));
+                    $info = $dbh->tableInfo($dbh->quoteIdentifier($table[1]));
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
