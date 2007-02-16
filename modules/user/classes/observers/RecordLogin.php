@@ -10,7 +10,7 @@ class RecordLogin extends SGL_Observer
 
             require_once 'DB/DataObject.php';
             $login = DB_DataObject::factory($observable->conf['table']['login']);
-            $login->login_id = $observable->dbh->nextId('login');
+            $login->login_id = $observable->dbh->nextId($observable->conf['table']['login']);
             $login->usr_id = $uid;
             $login->date_time = SGL_Date::getTime(true);
             $login->remote_ip = $_SERVER['REMOTE_ADDR'];
