@@ -1595,7 +1595,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 $primary_field = '';
                 // get tablename
                 if (preg_match("/^(.*)_seq$/",$sequence,$table)) {
-                    $info = $dbh->tableInfo($table[1]);
+                    $info = $dbh->tableInfo($this->dbh->quoteIdentifier($table[1]));
                     foreach ($info as $field) {
                         if (eregi('primary_key', $field['flags'])) {
                             $primary_field = $field['name'];
