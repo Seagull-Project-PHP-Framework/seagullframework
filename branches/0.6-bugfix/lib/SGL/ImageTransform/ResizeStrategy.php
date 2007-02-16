@@ -66,8 +66,7 @@ class SGL_ImageTransform_ResizeStrategy extends SGL_ImageTransformStrategy
         } elseif (isset($height) && $aSize[1] > $height) {
             return $this->driver->scaleByY($height);
         }
-        return SGL::raiseError('Invalid resizing params',
-            SGL_ERROR_INVALIDCONFIG);
+        return true;
     }
 }
 
