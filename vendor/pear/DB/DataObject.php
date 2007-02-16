@@ -15,7 +15,7 @@
  * @author     Alan Knowles <alan@akbkhome.com>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DataObject.php,v 1.410 2006/03/06 01:31:40 alan_k Exp $
+ * @version    CVS: $Id: DataObject.php,v 1.423 2006/12/05 08:35:32 alan_k Exp $
  * @link       http://pear.php.net/package/DB_DataObject
  */
   
@@ -235,7 +235,7 @@ class DB_DataObject extends DB_DataObject_Overload
     * @access   private
     * @var      string
     */
-    var $_DB_DataObject_version = "1.8.4";
+    var $_DB_DataObject_version = "1.8.5";
 
     /**
      * The Database table (used by table extends)
@@ -434,8 +434,8 @@ class DB_DataObject extends DB_DataObject_Overload
         } else {
             /* theoretically MDB2! */
             if (isset($this->_query['limit_start']) && strlen($this->_query['limit_start'] . $this->_query['limit_count'])) {
-                $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
-            }
+	            $DB->setLimit($this->_query['limit_count'],$this->_query['limit_start']);
+	        }
         }
         
         
@@ -591,7 +591,8 @@ class DB_DataObject extends DB_DataObject_Overload
      */
     function whereAdd($cond = false, $logic = 'AND')
     {
-        if (!isset($this->_query)) {
+        
+	if (!isset($this->_query)) {
             return $this->raiseError(
                 "You cannot do two queries on the same object (clone it before finding)", 
                 DB_DATAOBJECT_ERROR_INVALIDARGS);
@@ -995,7 +996,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) . " ";
                 continue;
@@ -1066,7 +1067,8 @@ class DB_DataObject extends DB_DataObject_Overload
                         if (!$seq) {
                             $seq = $DB->getSequenceName($this->__table );
                         }
-                        $pgsql_key = $DB->getOne("SELECT last_value FROM ".$seq);
+                        $pgsql_key = $DB->getOne("SELECT currval('".$seq . "')"); 
+
                         if (PEAR::isError($pgsql_key)) {
                             $this->raiseError($r);
                             return false;
@@ -1235,7 +1237,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) . ' ';
                 continue;
@@ -1533,6 +1535,9 @@ class DB_DataObject extends DB_DataObject_Overload
          
         $result  = &$_DB_DATAOBJECT['RESULTS'][$t->_DB_resultid];
         $l = $result->fetchRow(DB_DATAOBJECT_FETCHMODE_ORDERED);
+        // free the results - essential on oracle.
+        $t->free();
+        
         return (int) $l[0];
     }
 
@@ -1693,7 +1698,9 @@ class DB_DataObject extends DB_DataObject_Overload
                 $DB = &$_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5];
        
                 $tables = $DB->getListOf('tables');
-                require_once 'DB/DataObject/Generator.php';
+                class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
+                    
                 foreach($tables as $table) {
                     $y = new DB_DataObject_Generator;
                     $y->fillTableSchema($x->_database,$table);
@@ -1730,7 +1737,10 @@ class DB_DataObject extends DB_DataObject_Overload
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
                     $this->debug("Loading Generator to fetch Schema",1);
                 }
-                require_once 'DB/DataObject/Generator.php';
+                class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
+                    
+                
                 $x = new DB_DataObject_Generator;
                 $x->fillTableSchema($this->_database,$this->__table);
             }
@@ -1760,8 +1770,12 @@ class DB_DataObject extends DB_DataObject_Overload
         foreach ($schemas as $ini) {
              if (file_exists($ini) && is_file($ini)) {
                 $_DB_DATAOBJECT['INI'][$this->_database] = parse_ini_file($ini, true);
-                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
-                    $this->debug("Loaded ini file: $ini","databaseStructure",1);
+                if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) { 
+                    if (!is_readable ($ini)) {
+                        $this->debug("ini file is not readable: $ini","databaseStructure",1);
+                    } else {
+                        $this->debug("Loaded ini file: $ini","databaseStructure",1);
+                    }
                 }
             } else {
                 if (!empty($_DB_DATAOBJECT['CONFIG']['debug'])) {
@@ -1777,7 +1791,9 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         // - if not try building it..
         if (!empty($_DB_DATAOBJECT['CONFIG']['proxy'])) {
-            require_once 'DB/DataObject/Generator.php';
+            class_exists('DB_DataObject_Generator') ? '' : 
+                require_once 'DB/DataObject/Generator.php';
+                
             $x = new DB_DataObject_Generator;
             $x->fillTableSchema($this->_database,$this->__table);
             // should this fail!!!???
@@ -2114,9 +2130,11 @@ class DB_DataObject extends DB_DataObject_Overload
                 
                 
                 if (($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'sqlite') 
-                    && is_file($this->_database)) 
-                {
+                    && is_file($this->_database))  {
                     $this->_database = basename($this->_database);
+                }
+                if ($_DB_DATAOBJECT['CONNECTIONS'][$this->_database_dsn_md5]->dsn['phptype'] == 'ibase')  {
+                    $this->_database = substr(basename($this->_database), 0, -4);
                 }
                 
             }
@@ -2457,7 +2475,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($this->$k == 'f') ? 0 : (int)(bool) $this->$k) :  
+                            (($this->$k === 'f') ? 0 : (int)(bool) $this->$k) :  
                             $this->$k
                     )) );
                 continue;
@@ -2541,8 +2559,9 @@ class DB_DataObject extends DB_DataObject_Overload
         // proxy = full|light
         if (!$class && isset($_DB_DATAOBJECT['CONFIG']['proxy'])) { 
             $proxyMethod = 'getProxy'.$_DB_DATAOBJECT['CONFIG']['proxy'];
+            class_exists('DB_DataObject_Generator') ? '' : 
+                    require_once 'DB/DataObject/Generator.php';
             
-            require_once 'DB/DataObject/Generator.php';
             $d = new DB_DataObject;
            
             $d->__table = $table;
@@ -2760,6 +2779,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
                 
                 $this->$k = $this->getLink($key, $table, $link);
+                
                 if (is_object($this->$k)) {
                     $loaded[] = $k; 
                 }
@@ -2815,7 +2835,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access public
      * @return mixed object on success
      */
-    function &getLink($row, $table = null, $link = false)
+    function getLink($row, $table = null, $link = false)
     {
         
         
@@ -2831,8 +2851,8 @@ class DB_DataObject extends DB_DataObject_Overload
                     if ($p = strpos($row,".")) {
                         $row = substr($row,0,$p);
                     }
-                    $r = &$this->getLink($row,$table,$link);
-                    return $r;
+                    return $this->getLink($row,$table,$link);
+                    
                 } 
                 
                 $this->raiseError(
@@ -2849,8 +2869,8 @@ class DB_DataObject extends DB_DataObject_Overload
                 return $r; 
             }
             $table = substr($row, 0, $p);
-            $r = &$this->getLink($row, $table);
-            return $r;
+            return $this->getLink($row, $table);
+            
 
         }
         
@@ -2858,8 +2878,7 @@ class DB_DataObject extends DB_DataObject_Overload
         
         if (!isset($this->$row)) {
             $this->raiseError("getLink: row not set $row", DB_DATAOBJECT_ERROR_NODATA);
-            $r = false;
-            return $r;
+            return false;
         }
         
         // check to see if we know anything about this table..
@@ -2870,22 +2889,22 @@ class DB_DataObject extends DB_DataObject_Overload
             $this->raiseError(
                 "getLink:Could not find class for row $row, table $table", 
                 DB_DATAOBJECT_ERROR_INVALIDCONFIG);
-            $r = false;
-            return $r;
+            return false;
         }
         if ($link) {
             if ($obj->get($link, $this->$row)) {
+                $obj->free();
                 return $obj;
             } 
-            $r = false;
-            return $r;
+            return  false;
         }
         
         if ($obj->get($this->$row)) {
+            $obj->free();
             return $obj;
         }
-        $r = false;
-        return $r;
+        return false;
+        
     }
 
     /**
@@ -3050,6 +3069,19 @@ class DB_DataObject extends DB_DataObject_Overload
             foreach ($olinks as $k => $v) {
                 /* link contains {this column} = {linked table}:{linked column} */
                 $ar = explode(':', $v);
+                
+                // Feature Request #4266 - Allow joins with multiple keys
+                
+                $links_key_array = strpos($k,',');
+                if ($links_key_array !== false) {
+                    $k = explode(',', $k);
+                }
+                
+                $ar_array = strpos($ar[1],',');
+                if ($ar_array !== false) {
+                    $ar[1] = explode(',', $ar[1]);
+                }
+             
                 if ($ar[0] == $this->__table) {
                     
                     // you have explictly specified the column
@@ -3096,7 +3128,13 @@ class DB_DataObject extends DB_DataObject_Overload
                 }
             }
         }
-        
+        // finally if these two table have column names that match do a join by default on them
+
+        if (($ofield === false) && $joinCol) {
+            $ofield = $joinCol;
+            $tfield = $joinCol;
+
+        }
         /* did I find a conneciton between them? */
 
         if ($ofield === false) {
@@ -3120,21 +3158,24 @@ class DB_DataObject extends DB_DataObject_Overload
                 $DB->quoteIdentifier($obj->__table) : 
                  $obj->__table ;
                 
-         
+        $dbPrefix  = '';
+        if (strlen($obj->_database) && in_array($DB->dsn['phptype'],array('mysql','mysqli'))) {
+            $dbPrefix = ($quoteIdentifiers
+                         ? $DB->quoteIdentifier($obj->_database)
+                         : $obj->_database) . '.';    
+        }
+        
+        // if they are the same, then dont add a prefix...                
+        if ($obj->_database == $this->_database) {
+           $dbPrefix = '';
+        }
         // as far as we know only mysql supports database prefixes..
         // prefixing the database name is now the default behaviour,
         // as it enables joining mutiple columns from multiple databases...
-        if (    
-                in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                strlen($obj->_database)
-            ) 
-        {
+         
             // prefix database (quoted if neccessary..)
-            $objTable = ($quoteIdentifiers
-                         ? $DB->quoteIdentifier($obj->_database)
-                         : $obj->_database)
-                    . '.' . $objTable;
-        }
+        $objTable = $dbPrefix . $objTable;
+       
          
         
         
@@ -3173,13 +3214,7 @@ class DB_DataObject extends DB_DataObject_Overload
             $fullJoinAs = in_array($DB->dsn["phptype"],array('mysql','mysqli','pgsql')) ? "AS {$joinAs}" :  $joinAs;
         } else {
             // if 
-            if (
-                    in_array($DB->dsn['phptype'],array('mysql','mysqli')) &&
-                    strlen($obj->_database)
-                ) 
-            {
-                $joinAs = ($quoteIdentifiers ? $DB->quoteIdentifier($obj->_database) : $obj->_database) . '.' . $joinAs;
-            }
+            $joinAs = $dbPrefix . $joinAs;
         }
         
         
@@ -3187,9 +3222,25 @@ class DB_DataObject extends DB_DataObject_Overload
             case 'INNER':
             case 'LEFT': 
             case 'RIGHT': // others??? .. cross, left outer, right outer, natural..?
-                $this->_join .= "\n {$joinType} JOIN {$objTable}  {$fullJoinAs}".
-                                " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
+                
+                // Feature Request #4266 - Allow joins with multiple keys
+                $this->_join .= "\n {$joinType} JOIN {$objTable} {$fullJoinAs}";
+                if (is_array($ofield)) {
+                	$key_count = count($ofield);
+                    for($i = 0; $i < $key_count; $i++) {
+                    	if ($i == 0) {
+                    		$this->_join .= " ON {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    	}
+                    	else {
+                    		$this->_join .= " AND {$joinAs}.{$ofield[$i]}={$table}.{$tfield[$i]} {$appendJoin} ";
+                    	}
+                     }
+                } else {
+	                $this->_join .= " ON {$joinAs}.{$ofield}={$table}.{$tfield} {$appendJoin} ";
+                }
+
                 break;
+                
             case '': // this is just a standard multitable select..
                 $this->_join .= "\n , {$objTable} {$fullJoinAs} {$appendJoin}";
                 $this->whereAdd("{$joinAs}.{$ofield}={$table}.{$tfield}");
@@ -3233,7 +3284,7 @@ class DB_DataObject extends DB_DataObject_Overload
                         ($v & DB_DATAOBJECT_BOOL) ? 
                             // this is thanks to the braindead idea of postgres to 
                             // use t/f for boolean.
-                            (($obj->$k == 'f') ? 0 : (int)(bool) $obj->$k) :  
+                            (($obj->$k === 'f') ? 0 : (int)(bool) $obj->$k) :  
                             $obj->$k
                     )));
                 continue;
@@ -3292,7 +3343,7 @@ class DB_DataObject extends DB_DataObject_Overload
      * @access   public
      * @return   true on success or array of key=>setValue error message
      */
-    function setFrom(&$from, $format = '%s', $skipEmpty=false)
+    function setFrom($from, $format = '%s', $skipEmpty=false)
     {
         global $_DB_DATAOBJECT;
         $keys  = $this->keys();
@@ -3828,7 +3879,7 @@ class DB_DataObject extends DB_DataObject_Overload
                 
                 if ($cols[$col] &  DB_DATAOBJECT_STR) {
                     // it's a 't'/'f' !
-                    return ($this->$col == 't');
+                    return ($this->$col === 't');
                 }
                 return (bool) $this->$col;
             
@@ -3883,7 +3934,6 @@ class DB_DataObject extends DB_DataObject_Overload
         }
         $colorize = ($logtype == 'ERROR') ? '<font color="red">' : '<font>';
         echo "<code>{$colorize}<B>$class: $logtype:</B> ". nl2br(htmlspecialchars($message)) . "</font></code><BR>\n";
-        flush();
     }
 
     /**
