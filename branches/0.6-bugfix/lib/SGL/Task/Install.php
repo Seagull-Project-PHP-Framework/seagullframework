@@ -1539,7 +1539,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     }
                     if ($primary_field != '') {
                         $data[] = array($table, $dbh->getOne('SELECT MAX(' .
-                            $primary_field . ') FROM ' . $table . ' WHERE 1'));
+                            $primary_field . ') FROM ' . $dbh->quoteIdentifier($table) . ' WHERE 1'));
                     } else {
                         $data[] = array($table, 0);
                     }
