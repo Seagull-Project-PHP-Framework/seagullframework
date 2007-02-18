@@ -241,11 +241,11 @@ class SGL_Image
         if (!$callback($srcLocation, $destLocation)) {
             return SGL::raiseError("SGL_Image: function '$callback' failed");
         }
-        $ok = $this->transform();
+        $ok = $this->_toThumbnails();
         if (PEAR::isError($ok)) {
             return $ok;
         }
-        $ok = $this->_toThumbnails();
+        $ok = $this->transform();
         if (PEAR::isError($ok)) {
             return $ok;
         }
