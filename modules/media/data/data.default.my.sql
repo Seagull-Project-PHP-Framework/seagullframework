@@ -43,7 +43,7 @@ INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, @permissionId);
 INSERT INTO `media` (`media_id`, `file_type_id`, `name`, `file_name`, `file_size`, `mime_type`, `date_created`, `added_by`, `description`, `num_times_downloaded`) VALUES (1, 5, 'demo_building_1.jpg', '1949219608d3fb6f09012a522c1873a3.jpg', 13340, 'image/jpeg', '2006-09-08 13:20:01', 1, '', NULL),
 (2, 5, 'demo_building_2.jpg', '0046994b6c45437e5471658c070bf1d4.jpg', 17251, 'image/jpeg', '2006-09-07 13:20:16', 1, '', NULL),
 (3, 5, 'demo_hands.jpg', 'a7ed16c0e3258c8a11e7ee5cb9c675bb.jpg', 12949, 'image/jpeg', '2006-08-29 14:49:28', 1, '', NULL),
-(4, 5, 'Poignée de main', '0126d73b6c53574ff2270097c1c30df9.jpg', 8058, 'image/jpeg', '2006-08-25 16:51:15', 0, 'Rien à dire', NULL),
+(4, 5, 'Poignee de main', '0126d73b6c53574ff2270097c1c30df9.jpg', 8058, 'image/jpeg', '2006-08-25 16:51:15', 0, 'Rien à dire', NULL),
 (5, 5, 'demo_handshake_2.jpg', 'fd386a28e5a31fe9016a83a941261439.jpg', 9209, 'image/jpeg', '2006-08-12 16:51:42', 1, '', NULL),
 (6, 5, 'demo_horloge.jpg', 'dbf1d40da6d959f63a20b923639029f5.jpg', 49822, 'image/jpeg', '2006-08-05 16:52:00', 1, '', NULL),
 (7, 5, 'moi petit', '56fec1313edc8ec9bc41626fd690a3af.jpg', 82812, 'image/jpeg', '2006-09-22 16:52:24', 1, '', NULL),
