@@ -742,6 +742,16 @@ class SGL_Output
         return ++ $int;
     }
 
+    function isChecked($value)
+    {
+        if ($value) {
+            $ret = 'checked="checked"';
+        } else {
+            $ret = '';
+        }
+        return $ret;
+    }
+
     function getCurrentModule()
     {
         $reg =& SGL_Registry::singleton();
