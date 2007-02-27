@@ -2,7 +2,7 @@
 class MediaDAO extends SGL_Manager
 {
     /**
-     * @return CmsDAO
+     * @return MediaDAO
      */
     function MediaDAO()
     {
@@ -196,7 +196,6 @@ class MediaDAO extends SGL_Manager
                 return $ok;
             }
         }
-
         return $media->delete();
     }
 }

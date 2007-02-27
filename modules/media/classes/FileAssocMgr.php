@@ -49,6 +49,7 @@ class FileAssocMgr extends SGL_Manager
             'listImageChoices'   => array('listImageChoices'),
             'associateToEvent'   => array('associateToEvent', 'redirectToCaller'),
             'associateToUser'    => array('associateToUser', 'redirectToCaller'),
+            'associateToCategory' => array('associateToCategory', 'redirectToCaller'),
         );
     }
 
@@ -67,6 +68,8 @@ class FileAssocMgr extends SGL_Manager
         $input->callerMod       = $req->get('frmCallerMod');
         $input->mediaTypeId     = $req->get('frmMediaTypeId');
         $input->fileTypeId      = $req->get('frmFileTypeId');
+        $input->mediaId         = $req->get('frmMediaId');
+        $input->categoryId      = $req->get('frmCategoryId');
         $input->aAssocIds       = $req->get('frmAssociateIds');
         $input->eventId         = $req->get('frmEventId');
         $input->isEventImage    = $req->get('frmIsEventImage');
@@ -74,7 +77,9 @@ class FileAssocMgr extends SGL_Manager
         $input->userId          = $req->get('frmUserId');
 
         if ($input->action == 'list') {
-            $input->nextAction = 'associateToEvent';
+            $input->nextAction = ($input->callerMgr == 'category')
+                ? 'associateToCategory'
+                : 'associateToEvent';
         }
     }
 
@@ -133,9 +138,27 @@ class FileAssocMgr extends SGL_Manager
                     }
                 }
             }
+            //  check for category links
+            if (SGL::moduleIsEnabled('cms')) {
+                if ($this->isAssociatedToCategory($media->media_id, $input->categoryId)) {
+                    $aMedia[$k]->associated = true;
+                }
+            }
         }
         $output->aMedia = $aMedia;
         $output->template = 'fileAssocList.html';
+    }
+
+    function isAssociatedToCategory($mediaId, $categoryId)
+    {
+        $query = "
+            SELECT  media_id
+            FROM    ".$this->dbh->quoteIdentifier($this->conf['table']['category-media'])."
+            WHERE   media_id = $mediaId
+            AND     category_id = $categoryId
+        ";
+        $mediaId = $this->dbh->getOne($query);
+        return $mediaId;
     }
 
     function isAssociatedToEventImage($mediaId, $eventId)
@@ -199,6 +222,21 @@ class FileAssocMgr extends SGL_Manager
                 }
             }
         }
+    }
+
+    function _cmd_associateToCategory(&$input, &$output)
+    {
+        //  first delete existing association for this category
+        $query = "
+            DELETE FROM ".$this->dbh->quoteIdentifier($this->conf['table']['category-media'])."
+            WHERE       category_id = $input->categoryId";
+        $ok = $this->dbh->query($query);
+
+        //  then add new one
+        $query = "
+            INSERT INTO ".$this->dbh->quoteIdentifier($this->conf['table']['category-media'])."
+            VALUES      ($input->categoryId, $input->mediaId)";
+        $ok = $this->dbh->query($query);
     }
 
     function _cmd_redirectToCaller(&$input, &$output)

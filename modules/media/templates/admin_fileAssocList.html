@@ -57,7 +57,7 @@ function toggleHighlight(element){
                 {end:}
             {else:}
 			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
-                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+                           onchange="javascript:toggleHighlight(this)" flexy:raw="{isChecked(media.associated)}"  />
 			{end:}
 
 			<!-- DISPLAY RADIO TO SELECT DEFAULT IMG -->
@@ -79,7 +79,7 @@ function toggleHighlight(element){
 		{else:}
 			<!-- IF IT'S A FILE DISPLAY THIS -->
 			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
-                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+                           onchange="javascript:toggleHighlight(this)" flexy:raw="{isChecked(media.associated)}"  />
 			<div class="thumb_icon">
 				 {this.plugin(#id2MediaIcon#,media.file_type_id):h}
 			</div>

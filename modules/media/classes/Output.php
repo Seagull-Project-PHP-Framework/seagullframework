@@ -126,15 +126,5 @@ class MediaOutput
     {
         return $arrayToSearch[$key];
     }
-
-    function checkCheckbox($value)
-    {
-        if ($value) {
-            $ret = 'checked="checked"';
-        } else {
-            $ret = '';
-        }
-        return $ret;
-    }
 }
 ?>

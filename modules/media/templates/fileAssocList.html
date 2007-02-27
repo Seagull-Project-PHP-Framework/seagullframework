@@ -34,6 +34,7 @@ function toggleHighlight(element){
     <input type="hidden" name="frmIsEventImage" value="{isEventImage}" />
     <input type="hidden" name="frmEventId" value="{eventId}" />
     <input type="hidden" name="frmUserId" value="{userId}" />
+    <input type="hidden" name="frmCategoryId" value="{categoryId}" />
 
 	{foreach:aMedia,k,media}
 	   {if:this.plugin(#rowStart#,k,#image#)}
@@ -41,31 +42,53 @@ function toggleHighlight(element){
             <div class="gallery_row">
        {end:}
 
+        {if:isEqual(callerMgr,#category#)}
+		<div class="thumb">
+		{else:}
 		<div class="complete_thumb_highlighted">
+        {end:}
 
 		{if:this.plugin(#isImage#,media.file_type_id)}
 		<!-- IF IT'S AN IMAGE DISPLAY THIS -->
 
-			{if:isEqual(callerMgr,#account#)}
-                {if:media.isDefaultImg}
-                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
-                       value="{media.media_id}" checked="checked" flexy:ignore /> select
+            <!--1. CHOOSING IMG FOR CATEGORY - DAMNED LACK OF IFELSE IN FLEXY-->
+    		{if:isEqual(callerMgr,#category#)}
+                <input type="radio" id="image_{media.media_id}" name="frmMediaId"
+                       value="{media.media_id}" flexy:raw="{isChecked(media.associated)}" flexy:ignore />
+    		{else:}
+            <!--2. CHOOSING IMAGE FOR MY ACCOUNT-->
+    			{if:isEqual(callerMgr,#account#)}
+                    {if:media.isDefaultImg}
+                    <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                           value="{media.media_id}" checked="checked" flexy:ignore /> select
+                    {else:}
+                    <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
+                           value="{media.media_id}" flexy:ignore /> select
+                    {end:}
                 {else:}
-                <input type="radio" id="image_{media.media_id}" name="frmDefaultImg"
-                       value="{media.media_id}" flexy:ignore /> select
-                {end:}
-            {else:}
-			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
-                           onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
-			{end:}
+            <!--3. CHOOSING IMAGES FOR EVENT-->
+    			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
+                               onchange="javascript:toggleHighlight(this)" flexy:raw="{isChecked(media.associated)}"  />
+    			{end:}
+            {end:}
 
-			<div class="thumb_icon">
-				    {this.plugin(#id2MediaIcon#,media.file_type_id):h}
-			</div>
+            <!--DISPLAY RELVANT IMAGE/ICON-->
+            {if:isEqual(callerMgr,#category#)}
+            <div class="thumbBox" id="media{media.media_id}">
+                <div class="thumbMedia">
+                    <img src="{makeUrl(#previewMedia#,#media#,#media#)}frmMediaId/{media.media_id}/frmSize/small" alt="" title="" />
+                </div>
+            </div>
+            {else:}
+    			<div class="thumb_icon">
+    				    {this.plugin(#id2MediaIcon#,media.file_type_id):h}
+    			</div>
+			{end:}
 		{else:}
+
 	   <!-- IF IT'S A FILE DISPLAY THIS -->
 			<input type="checkbox" name="frmAssociateIds[]" value="{media.media_id}" flexy:ignore
-                   onchange="javascript:toggleHighlight(this)" flexy:raw="{this.plugin(#checkCheckbox#,media.associated)}"  />
+                   onchange="javascript:toggleHighlight(this)" flexy:raw="{isChecked(media.associated)}"  />
 			<div class="thumb_icon">
 				<!-- IN HERE YOU COULD DISPLAY THE THUMBNAIL OF THE IMAGE AND CHANGE THE CLASS TO 'thumb'
 				OTHERWISE IT JUST DISPLAYS THE IMAGE ICON -->
@@ -94,7 +117,7 @@ function toggleHighlight(element){
        {end:}
     {end:}
 
-    <div class="cb">
+    <div style="clear:both">
 		<div class="form_section">
 			<input class="wideButton" type="submit" name="submitted" value="Associate" />
 		</div>
