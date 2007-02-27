@@ -262,7 +262,7 @@ class MediaMgr extends FileMgr
             require_once 'System.php';
             $success = System::mkDir(array($targetDir));
             if (!$success) {
-                SGL::raiseError('The upload directory does not appear to be writable, please give the
+                SGL::raiseError('The upload directory,'.$targetDir.', does not appear to be writable, please give the
                 webserver permissions to write to it', SGL_ERROR_FILEUNWRITABLE);
                 return false;
             } else {
