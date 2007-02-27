@@ -10,6 +10,9 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+27-02-07    Added isChecked utility method to Output class, usage:
+                <input type="checkbox" flexy:raw="{isChecked(obj.associated)}" />
+            It outputs 'checked="checked"' depending on user-supplied value
 15-02-07    Added new cache options (Dmitri Lakachauskis)
 12-02-07    Added ability to reinstate dynamically loaded CSS files during post when
             validation fails [2930] (see also
