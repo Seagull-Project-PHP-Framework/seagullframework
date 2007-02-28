@@ -107,7 +107,8 @@ div.thumbMedia {
 .thumb h3 {
     width: 124px;
     overflow: hidden;
-    font-size: 0.8em;
+    font-size: 0.9em;
+    margin-top: 0.8em;
     font-weight: normal;
     color: <?php echo $greyDark ?>;
 }
@@ -145,7 +146,7 @@ div.complete_thumb_highlighted input{
 */
 
 .thumb img:hover{
-	border:1px solid #000000;
+	/*border:1px solid #000000;*/
 }
 
 .thumb_title{
