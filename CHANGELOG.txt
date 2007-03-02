@@ -10,6 +10,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+02-03-07    Configurable install root path implemented
 27-02-07    Added isChecked utility method to Output class, usage:
                 <input type="checkbox" flexy:raw="{isChecked(obj.associated)}" />
             It outputs 'checked="checked"' depending on user-supplied value
