@@ -67,7 +67,17 @@ class SGL_Task_SetupPaths extends SGL_Task
             define('SGL_PATH', '@PHP-DIR@/Seagull');
             define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
         } else {
-            define('SGL_PATH', dirname(dirname(dirname(dirname(__FILE__)))));
+            $path = $GLOBALS['varDir']  . '/INSTALL_COMPLETE.php';
+            if (is_file($path)) {
+                $configFile = $GLOBALS['varDir']  . '/'
+                    . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
+                require_once $configFile;
+                if (!empty($conf['path']['installRoot'])) {
+                    define('SGL_PATH', $conf['path']['installRoot']);
+                }
+            } else {
+                define('SGL_PATH', dirname(dirname(dirname(dirname(__FILE__)))));
+            }
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         }
 
