@@ -37,11 +37,6 @@ function toggleHighlight(element){
     <input type="hidden" name="frmCategoryId" value="{categoryId}" />
 
 	{foreach:aMedia,k,media}
-	   {if:this.plugin(#rowStart#,k,#image#)}
-	       <!--start row-->
-            <div class="gallery_row">
-       {end:}
-
         {if:isEqual(callerMgr,#category#)}
 		<div class="thumb">
 		{else:}
@@ -98,23 +93,12 @@ function toggleHighlight(element){
 
 
 			<div class="thumb_title">
-				<h1>
+				<h3>
 					<label for="frmAssociateIds[]">{media.name}</label>
-				</h1>
+				</h3>
 			</div>
 		</div>
 
-	   {if:this.plugin(#isLastElement#,k,aMedia)}
-	        <!--last element-->
-	        <!--end row-->
-            </div>
-            <div class="cb"></div>
-       {end:}
-	   {if:this.plugin(#rowEnd#,k,#image#)}
-	        <!--end row-->
-            </div>
-            <div class="cb"></div>
-       {end:}
     {end:}
 
     <div style="clear:both">
