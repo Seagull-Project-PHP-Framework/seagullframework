@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+07-03-07    Customised admin passwd preserved on rebuild
 07-03-07    Browser change passwd prompts in installer fixed (Dmitri Lakachauskis)
 17-01-07    Fixed bug where category builder icons were not found if default theme
             not used
