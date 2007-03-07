@@ -199,6 +199,16 @@ class SGL_Config
                 [3] => conf.ini
             )
         */
+
+        // make Windows and Unix paths consistent
+        $path = str_replace('\\', '/', $path);
+        $modDirPath = str_replace('\\', '/', SGL_MOD_DIR);
+
+        // configuration path must be within SGL_MOD_DIR
+        if (strpos($path, $modDirPath) === false) {
+            return $path;
+        }
+
         preg_match("#(.*)\/(.*)\/(conf.ini)$#", $path, $aMatches);
         $moduleName = $aMatches[2];
 
