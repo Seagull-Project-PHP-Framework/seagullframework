@@ -162,6 +162,16 @@ class SGL_Config
      */
     function load($file)
     {
+        //  create cached copy if module config and cache does not exist
+        //  if file has php extension it must be global config
+        if (substr($file, -3, 3) != 'php') {
+            $cachedFileName = $this->getCachedFileName($file);
+            if (!is_file($cachedFileName)) {
+                $ok = $this->createCachedFile($cachedFileName);
+            }
+            //  ensure module config reads are done from cached copy
+            $file = $cachedFileName;
+        }
         $ph = &SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
@@ -177,6 +187,60 @@ class SGL_Config
         }
     }
 
+    function getCachedFileName($path)
+    {
+        /*
+        get module name - expecting:
+            Array
+            (
+                [0] => /foo/bar/baz/mymodules/conf.ini
+                [1] => /foo/bar/baz
+                [2] => mymodules
+                [3] => conf.ini
+            )
+        */
+        preg_match("#(.*)\/(.*)\/(conf.ini)$#", $path, $aMatches);
+        $moduleName = $aMatches[2];
+
+        //  ensure we operate on copy of master
+        $cachedFileName = SGL_VAR_DIR . '/config/' .$moduleName.'.ini';
+        return $cachedFileName;
+    }
+
+    function ensureCacheDirExists()
+    {
+        $varConfigDir = SGL_VAR_DIR . '/config';
+        if (!is_dir($varConfigDir)) {
+            require_once 'System.php';
+            $ok = System::mkDir(array('-p', $varConfigDir));
+            @chmod($varConfigDir, 0777);
+        }
+    }
+
+    function getModulesDir()
+    {
+        static $modDir;
+        if (is_null($modDir)) {
+        //  allow for custom modules dir
+            $c = &SGL_Config::singleton();
+            $customModDir = $c->get(array('path' => 'moduleDirOverride'));
+            $modDir = !empty($customModDir)
+                ? $customModDir
+                : 'modules';
+        }
+        return $modDir;
+    }
+
+    function createCachedFile($cachedModuleConfigFile)
+    {
+        $filename = basename($cachedModuleConfigFile);
+        list($module, $ext) = split('\.', $filename);
+        $masterModuleConfigFile = SGL_MOD_DIR . "/$module/conf.ini";
+        $this->ensureCacheDirExists();
+        $ok = copy($masterModuleConfigFile, $cachedModuleConfigFile);
+        return $ok;
+    }
+
     function save($file = null)
     {
         if (is_null($file)) {
@@ -185,6 +249,16 @@ class SGL_Config
                     SGL_ERROR_NOFILE);
             }
             $file = $this->fileName;
+        }
+        //  determine if we're saving a module config file
+        //  $file is only defined for module config saving
+        if ($file != $this->fileName) {
+            $modDir = $this->getModulesDir();
+
+            if (stristr($file, $modDir)) {
+                $this->ensureCacheDirExists();
+                $file = $this->getCachedFileName($file);
+            }
         }
         $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
