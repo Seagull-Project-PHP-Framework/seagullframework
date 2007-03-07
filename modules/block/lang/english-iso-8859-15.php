@@ -98,8 +98,9 @@
         'URI of RSS feed' => 'URI of RSS feed',
         'Items to show' => 'Items to show',
         'Number of Items to show' => 'Number of Items to show',
+        'News list will be rendered with this template' => 'News list will be rendered with this template',
 
         // LangSwitcher2 block
-        'Image extension for flags' => 'Image extension for flags',
+        'Image extension for flags' => 'Image extension for flags'
     );
 ?>
