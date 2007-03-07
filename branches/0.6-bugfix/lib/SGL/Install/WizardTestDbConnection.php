@@ -60,8 +60,8 @@ function canConnectToDbServer()
                 ? '/'.$aFormValues['dbName']
                 : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
-        $aFormValues['user'] . ':' .
-        $aFormValues['pass'] . '@' .
+        $aFormValues['databaseUser'] . ':' .
+        $aFormValues['databaseUserPass'] . '@' .
         $protocol .
         $host . $port . $dbName;
 
@@ -152,15 +152,15 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');
 
         //  credentials
-        $this->addElement('text',  'user',    'Database username: ');
-        $this->addElement('password', 'pass', 'Database password: ');
+        $this->addElement('text',  'databaseUser',    'Database username: ');
+        $this->addElement('password', 'databaseUserPass', 'Database password: ');
         $this->addElement('text',  'dbName',    'Database name: ', array(
             'id' => 'dbLoginNameElement', 'size'=> 25));
-        $this->addRule('user', 'Please specify the db username', 'required');
+        $this->addRule('databaseUser', 'Please specify the db username', 'required');
 
         //  test db connect
         $this->registerRule('canConnectToDbServer','function','canConnectToDbServer');
-        $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
+        $this->addRule('databaseUser', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');

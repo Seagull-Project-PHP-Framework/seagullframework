@@ -71,8 +71,8 @@ function canCreateDb()
         ? ':' . $aFormValues['dbPort']['port']
         : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
-        $aFormValues['user'] . ':' .
-        $aFormValues['pass'] . '@' .
+        $aFormValues['databaseUser'] . ':' .
+        $aFormValues['databaseUserPass'] . '@' .
         $protocol .
         $host . $port . $dbName;
 
