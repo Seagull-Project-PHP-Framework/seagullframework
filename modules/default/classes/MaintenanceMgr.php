@@ -173,14 +173,23 @@ class MaintenanceMgr extends SGL_Manager
         $transContainer = ($this->conf['translation']['container'] == 'db') ? 1 : 0;
         $transLanguage  = str_replace('_','-', explode(',', $this->conf['translation']['installedLanguages']));
 
+        //  retrieve admin user
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $oUserDao = &UserDAO::singleton();
+        $oAdmin = $oUserDao->getUserById(SGL_ADMIN);
+
         $data = array(
             'createTables'          => 1,
             'insertSampleData'      => $input->useSampleData,
-            'adminUserName'         => 'admin',
-            'adminPassword'         => 'admin',
-            'adminFirstName'        => 'Demo',
-            'adminLastName'         => 'Admin',
-            'adminEmail'            => 'demian@phpkitchen.com',
+
+            // admin data
+            'adminUserName'         => $oAdmin->username,
+            'adminPassword'         => $oAdmin->passwd,
+            'adminFirstName'        => $oAdmin->first_name,
+            'adminLastName'         => $oAdmin->last_name,
+            'adminEmail'            => $oAdmin->email,
+            'adminPasswordIsHash'   => true,
+
             'aModuleList'           => SGL_Util::getAllModuleDirs($onlyRegistered = true),
             'serverName'            => SGL_SERVER_NAME,
             'installPassword'       => $installPassword,
