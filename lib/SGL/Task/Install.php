@@ -111,8 +111,8 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('db', array('prefix' => $data['prefix']));
         $c->set('db', array('host' => $data['host']));
         $c->set('db', array('name' => $data['name']));
-        $c->set('db', array('user' => $data['user']));
-        $c->set('db', array('pass' => $data['pass']));
+        $c->set('db', array('user' => $data['databaseUser']));
+        $c->set('db', array('pass' => $data['databaseUserPass']));
         $c->set('db', array('port' => $data['dbPort']['port']));
         $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
         $c->set('db', array('socket' => $data['socket']));
