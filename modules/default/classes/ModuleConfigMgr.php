@@ -84,20 +84,10 @@ class ModuleConfigMgr extends SGL_Manager
         $aErrors = array();
         if (empty($input->moduleNameId)) {
             $aErrors[] = 'You must select a module to edit';
+        } elseif (!SGL::moduleIsEnabled($input->moduleNameId)) {
+            $aErrors[] = 'This module is not registered or does not exist';
         } else {
-            if (!SGL::moduleIsEnabled($input->moduleNameId)) {
-                $aErrors[] = 'This module is not registered or does not exist';
-            } else {
-                $input->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->moduleNameId . '/conf.ini');
-                //  Default validation on module conf file
-                if (!is_file($input->moduleConfigFile) || !is_readable($input->moduleConfigFile)) {
-                    $aErrors[] = 'The config file ' . $input->moduleConfigFile .
-                        ' does not exist or is not readable.';
-                } elseif (!is_writable($input->moduleConfigFile)) {
-                    $aErrors[] = 'The config file ' . $input->moduleConfigFile .
-                        ' is not writable. Check files permissions.';
-                }
-            }
+             $input->moduleConfigFile = realpath(SGL_MOD_DIR . '/' . $input->moduleNameId . '/conf.ini');
         }
         //  Validate fields
         if ($input->submitted) {

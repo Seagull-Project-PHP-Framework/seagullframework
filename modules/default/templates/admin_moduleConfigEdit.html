@@ -33,14 +33,6 @@
                 </dl>
             {end:}
         </fieldset>
-        <dl class="onSide buttonsBottom">
-            <dt>&nbsp;</dt>
-            <dd>
-                <input type="submit" class="sgl-button" name="submitted" value="{translate(#Save#)}" />&nbsp;
-                <input type="reset" class="sgl-button" name="resetForm" value="{translate(#Reset#)}" />&nbsp;
-                <a href="{makeUrl(##,#module#,#default#)}" class="sgl-button">{translate(#Cancel#)}</a> &nbsp;
-            </dd>
-        </dl>
     </form>
     {else:}
     {foreach:error,idx,msg}
