@@ -10,6 +10,11 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+07-03-07    File operations on module config files now happen exclusively in
+            SGL_VAR_DIR, ie seagull/var.  So the config file for the default module
+            is now automatically copied to seagull/var/config/default.ini.  And the
+            original file located at seagull/modules/default/conf.ini currently serves
+            only as a master copy.
 02-03-07    Configurable install root path implemented
 27-02-07    Added isChecked utility method to Output class, usage:
                 <input type="checkbox" flexy:raw="{isChecked(obj.associated)}" />
