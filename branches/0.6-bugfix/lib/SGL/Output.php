@@ -525,6 +525,12 @@ class SGL_Output
         return (abs($rid) == SGL_ADMIN) ? true : false;
     }
 
+    function isAuthenticated()
+    {
+        $rid = SGL_Session::getRoleId();
+        return ($rid == SGL_GUEST) ? false : true;
+    }
+
     function addOnLoadEvent($event, $bOnReady = false)
     {
         if ($bOnReady) {
