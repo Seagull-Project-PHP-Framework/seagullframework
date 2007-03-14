@@ -1527,6 +1527,13 @@ class SGL_Task_SyncSequences extends SGL_Task
         case 'mysql_SGL':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
+
+            //  make sure sequence table exists
+            if (!in_array('sequence',$aTables)) {
+                require_once SGL_CORE_DIR . '/Sql.php';
+                SGL_Sql::parse(SGL_ETC_DIR . '/sequence.my.sql', 0, array('SGL_Sql', 'execute'));
+            }
+
             foreach ($aTables as $table) {
                 $primary_field = '';
                 if ($table != $conf['table']['sequence']) {

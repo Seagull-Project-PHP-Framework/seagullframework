@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+14-03-07    Fixed 'switching db type using config mgr breaks site' (Steven Stremciuc)
 07-03-07    Customised admin passwd preserved on rebuild
 07-03-07    Browser change passwd prompts in installer fixed (Dmitri Lakachauskis)
 17-01-07    Fixed bug where category builder icons were not found if default theme
@@ -12,6 +13,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+14-03-07    Updated scriptaculous to 1.7.0 (Julien Casanova)
 13-03-07    Added isAuthenticated() to SGL_Output
 07-03-07    File operations on module config files now happen exclusively in
             SGL_VAR_DIR, ie seagull/var.  So the config file for the default module
