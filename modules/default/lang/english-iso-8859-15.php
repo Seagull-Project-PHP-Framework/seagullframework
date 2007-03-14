@@ -29,6 +29,7 @@
 /*  CONFIG MGR  */
         'Config Manager' => 'Config Manager',
         'config info successfully updated' => 'Config info successfully updated',
+        'config info successfully updated but failed syncing sequences' => 'Config info successfully updated but failed syncing sequences',
         'Deny list' => 'Deny list',
         'Allow list' => 'Allow list',
 

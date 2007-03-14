@@ -281,6 +281,7 @@ class ConfigMgr extends SGL_Manager
         }
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
+        $dbType = $c->get(array('db' => 'type')); // get db type before merge
         $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
 
@@ -288,7 +289,23 @@ class ConfigMgr extends SGL_Manager
         $ok = $c->save();
 
         if (!is_a($ok, 'PEAR_Error')) {
-            SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
+            //  check if db type has changed
+            if ($dbType != $input->conf['db']['type']) {
+                //  we need to remove DB service, or SyncSequences will
+                //  use it and think the db type is the old one and run the
+                //  wrong sync code.
+                $locator = & SGL_ServiceLocator::singleton();
+                $locator->remove('DB');
+                //  rebuild sequences
+                require_once SGL_CORE_DIR . '/Task/Install.php';
+                $res = SGL_Task_SyncSequences::run();
+            }
+
+            if (isset($res) && PEAR::isError($res)) {
+                SGL::raiseMsg('config info successfully updated but failed syncing sequences', true, SGL_MESSAGE_WARNING);
+            } else {
+                SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
+            }
         } else {
             SGL::raiseError('There was a problem saving your configuration, make sure /var is writable',
                 SGL_ERROR_FILEUNWRITABLE);
