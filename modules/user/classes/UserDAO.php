@@ -1112,7 +1112,7 @@ class UserDAO extends SGL_Manager
             $numRows = $this->dbh->getOne("
                 SELECT COUNT(usr_id)
                 FROM {$this->conf['table']['user']}
-                WHERE username = '$username'");
+                WHERE username = ".$this->dbh->quoteSmart($username));
 
             //  return false if any rows found
             $ret = (boolean)$numRows == 0;
@@ -1135,7 +1135,7 @@ class UserDAO extends SGL_Manager
             $numRows = $this->dbh->getOne("
                 SELECT COUNT(usr_id)
                 FROM {$this->conf['table']['user']}
-                WHERE email = '$email'");
+                WHERE email = ".$this->dbh->quoteSmart($email));
 
             //  return false if any rows found
             $ret = (boolean)$numRows == 0;
