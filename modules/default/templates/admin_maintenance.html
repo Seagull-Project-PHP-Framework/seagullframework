@@ -62,6 +62,18 @@
         </fieldset>
     </form>
 
+    <form method="post" action="" flexy:ignore>
+        <h3>{translate(#Delete cached configs#)}</h3>
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="deleteConfigs" />
+        </fieldset>
+        <fieldset class="inside">
+            <p class="center">
+                <input class="sgl-button" type="submit" name="submit" value="{translate(#Delete#)}" />
+            </p>
+        </fieldset>
+    </form>
+
     <form name="rebuildSeagull" method="post" id="rebuildSeagull" flexy:ignore>
         <h3>{translate(#Rebuild Seagull#)}</h3>
         <fieldset class="inside">

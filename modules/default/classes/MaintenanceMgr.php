@@ -34,9 +34,11 @@
 // +---------------------------------------------------------------------------+
 // | MaintenanceMgr.php                                                        |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
 // $Id: MaintenanceMgr.php,v 1.56 2005/05/31 23:34:23 demian Exp $
+
+require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 
 /**
  * Provides tools preform maintenance tasks.
@@ -46,9 +48,6 @@
  * @version $Revision: 1.56 $
  * @since   PHP 4.1
  */
-
-require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
-
 class MaintenanceMgr extends SGL_Manager
 {
     function MaintenanceMgr()
@@ -56,18 +55,19 @@ class MaintenanceMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'Maintenance';
-        $this->template     = 'maintenance.html';
-        $this->redirect     = true;
-        $this->da           = & DefaultDAO::singleton();
+        $this->pageTitle = 'Maintenance';
+        $this->template  = 'maintenance.html';
+        $this->redirect  = true;
+        $this->da        = &DefaultDAO::singleton();
 
-        $this->_aActionsMapping =  array(
-            'dbgen'     => array('dbgen'),
-            'rebuildSequences' => array('rebuildSequences'),
-            'rebuildSeagull' => array('rebuildSeagull'),
-            'clearCache' => array('clearCache'),
+        $this->_aActionsMapping = array(
+            'dbgen'              => array('dbgen'),
+            'rebuildSequences'   => array('rebuildSequences'),
+            'rebuildSeagull'     => array('rebuildSeagull'),
+            'clearCache'         => array('clearCache'),
             'checkLatestVersion' => array('checkLatestVersion', 'redirectToDefault'),
-            'list'      => array('list'),
+            'list'               => array('list'),
+            'deleteConfigs'      => array('deleteConfigs', 'redirectToDefault')
         );
     }
 
@@ -75,13 +75,13 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->validated    = true;
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->pageTitle      = $this->pageTitle;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->submitted   = $req->get('submitted');
-        $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
-        $input->cache       = ($req->get('frmCache')) ? $req->get('frmCache') : array();
+        $input->template       = $this->template;
+        $input->submitted      = $req->get('submitted');
+        $input->action         = ($req->get('action')) ? $req->get('action') : 'list';
+        $input->cache          = ($req->get('frmCache')) ? $req->get('frmCache') : array();
         $input->useSampleData  = ($req->get('frmSampleData')) ? 1 : 0;
 
         if ($input->submitted) {
@@ -290,6 +290,15 @@ class MaintenanceMgr extends SGL_Manager
                 SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
             }
         }
+    }
+
+    function _cmd_deleteConfigs(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once SGL_CORE_DIR . '/File.php';
+        SGL_File::rmDir(SGL_VAR_DIR . '/config', '-r');
+        SGL::raiseMsg('Cached configs successfully deleted', true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
