@@ -348,3 +348,12 @@ function applyToAllCheckboxes(formName, elementName, isChecked)
         setCheckboxes(formName, elementName, false)
     }
 }
+
+//  select/deselect options in a combobox
+function toggleSelected(elem, state)
+{
+	var i;
+	for (i = 0; i< elem.length; i++) {
+		elem[i].selected = state;
+	}
+}
