@@ -265,7 +265,7 @@ class SGL_Manager
     function _authorise($mgrPerm, $mgrName, $input)
     {
         // if user has no global manager perms check for each action
-        if (!SGL_Session::hasPerms($mgrPerm)) {
+        if (!SGL_Session::hasPerms($mgrPerm) && !SGL::runningFromCLI()) {
 
             // and if chained methods to be called are allowed
             $ret = true;
