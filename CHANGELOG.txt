@@ -13,6 +13,7 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+21-03-07    Implemented Ajax username uniqueness check (Dmitri Lakachauskis)
 21-03-07    Added SGL_AjaxProvider to handle response encoding and error handling
             (Julien Casanova)
 19-03-07    Added 'delete config caches' to mtce screen (Dmitri Lakachauskis)

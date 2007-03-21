@@ -132,6 +132,9 @@ class SGL_AjaxProvider
             $ret = $response;
             header('Content-Type: text/javascript');
             break;
+
+        default:
+            $ret = 'You haven\'t defined your response format, see SGL_AjaxProvider::processResponse';
         }
         return $ret;
     }
