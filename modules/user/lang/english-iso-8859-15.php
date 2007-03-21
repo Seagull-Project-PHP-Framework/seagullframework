@@ -68,6 +68,7 @@ $words = array(
     // validate
     'You must enter a username'             => 'You must enter a username',
     'username min length'                   => 'Your username must be alphanumeric with at least 5 characters and no spaces',
+    'Selected username is available'        => 'Selected username is available',
 
     'You must enter at least address 1'     => 'You must enter at least address 1',
     'You must enter your city'              => 'You must enter your city',

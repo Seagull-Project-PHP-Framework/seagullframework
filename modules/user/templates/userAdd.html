@@ -1,9 +1,11 @@
 <div id="content">
     <h1 class="pageTitle">{translate(pageTitle)}</h1>
-    <div class="message">{msgGet()}</div>
+    <div id="ajaxMessage" class="message">{msgGet()}</div>
 
     <form id="frmUser" method="post" action="" flexy:ignore>
         <fieldset class="hide">
+            <input flexy:if="!isAdmin()" id="usernameWrongFormatMsg" type="hidden" name="usernameWrongFormatMsg" value="{translate(#username min length#)}" />
+            <input flexy:if="!isAdmin()" id="ajaxProviderIsUniqueUsernameUrl" type="hidden" name="usernameWrongFormatMsg" value="{makeUrl(#isUniqueUsername#,##,#user#)}" />
         {if:isAdd}
             <input type="hidden" name="action"value="insert" />
             {if:redir}
@@ -33,6 +35,9 @@
                         {translate(error[username])}
                     </div>
                     <input id="user_username" type="text" name="user[username]" value="{user.username}" />
+                    {if:!isAdmin()}
+                    &nbsp;<input type="button" name="button" value="Check Availability" onclick="UserRegister.isUniqueUsername('user_username')" />
+                    {end:}
                 </dd>
                 <dt>
                     <label for="user_first-name">{translate(#First Name#)}</label>
@@ -242,3 +247,49 @@
     </form>
 
 </div>
+
+{if:!isAdmin()}
+<script type="text/javascript">
+     UserRegister = {
+
+        // predefined containers
+        messageContainer: 'ajaxMessage',
+        messageWrongUserFormat: 'usernameWrongFormatMsg',
+        ajaxProviderUniqueUrl: 'ajaxProviderIsUniqueUsernameUrl',
+
+        isUniqueUsername: function(username) {
+            if (!UserValidator.isValidUsername($(username).getValue())) {
+                this._showMessage('error', $(this.messageWrongUserFormat).getValue());
+            } else {
+                new Ajax.Request($(this.ajaxProviderUniqueUrl).getValue(), {
+                    parameters: {username: $(username).getValue()},
+                    onSuccess: this._showResults
+                });
+            }
+            return false;
+        },
+
+        _showMessage: function (messageType, messageText) {
+            var innerDiv = document.createElement('div');
+            $(innerDiv).toggleClassName(messageType + 'Message').update(messageText);
+            $(this.messageContainer).show().update('').appendChild(innerDiv)
+            Effect.Fade(this.messageContainer, {duration: 3.0});
+        },
+
+        _showResults: function (transport) {
+            var result = new Array();
+            result = transport.responseText.split('::', 2);
+            UserRegister._showMessage(result[0], result[1]);
+        }
+    }
+
+    UserValidator = {
+        isValidUsername: function(value) {
+            if (value == '') {
+                return false;
+            }
+            return value.match('^[a-zA-Z0-9]{5,}$');
+        }
+    }
+</script>
+{end:}

@@ -228,6 +228,12 @@ class RegisterMgr extends SGL_Manager
             $output->countries = SGL::loadRegionList('countries');
             $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
         }
+
+        $sessId = SGL_Session::getId();
+        $output->addJavascriptFile(array(
+            'js/scriptaculous/lib/prototype.js',
+            'js/scriptaculous/src/scriptaculous.js?load=effects'
+        ));
     }
 
     function _cmd_add(&$input, &$output)
