@@ -145,13 +145,19 @@ class SGL_FrontController
             break;
 
         case SGL_REQUEST_AJAX:
-            $aFilters = array(
-                'SGL_Task_Init',
-                'SGL_Task_SetupORM',
-                'SGL_Task_CreateSession',
-                'SGL_Task_CustomBuildOutputData',
-                'SGL_Task_ExecuteAjaxAction',
-                );
+            $moduleName     = ucfirst($req->getModuleName());
+            $providerName   = $moduleName . 'AjaxProvider';
+            if (!empty($conf[$providerName]['filterChain'])) {
+                $aFilters = explode(',', $conf[$providerName]['filterChain']);
+            } else {
+                $aFilters = array(
+                    'SGL_Task_Init',
+                    'SGL_Task_SetupORM',
+                    'SGL_Task_CreateSession',
+                    'SGL_Task_CustomBuildOutputData',
+                    'SGL_Task_ExecuteAjaxAction',
+                    );
+            }
             $input->setFilters($aFilters);
             $ret = true;
             break;
