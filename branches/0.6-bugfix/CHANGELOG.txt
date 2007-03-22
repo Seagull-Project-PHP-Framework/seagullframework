@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+22-03-07    Fixed listing of PEAR and pearified channel server listings
 14-03-07    Fixed 'switching db type using config mgr breaks site' (Steven Stremciuc)
 07-03-07    Customised admin passwd preserved on rebuild
 07-03-07    Browser change passwd prompts in installer fixed (Dmitri Lakachauskis)
