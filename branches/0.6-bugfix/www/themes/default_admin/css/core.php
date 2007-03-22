@@ -108,7 +108,10 @@ a.narrow, input.narrow {
     font-size: 1em;
     border: 1px solid <?php echo $borderDark ?>;
     -moz-border-radius: 0.4em;
-    margin-right: -1px; /* hides annoying horizontal scrolling in IE */
+    margin-right: -1px; /* hides annoying horizontal scrolling in ie6 */
+<?php if (isBrowserFamily('MSIE7')) { ?>
+    margin-right: -2px; /* hides annoying horizontal scrolling in ie7 */
+<?php } ?>
 }
 #content {
     clear: both;
@@ -439,7 +442,9 @@ dl.buttonsBottom {
     font-family: helvetica;
 }
 html>body #container table {
+<?php if (!isBrowserFamily('MSIE')) { ?>
     border-collapse: separate;
+<?php } ?>
     border-spacing: 0px;
 }
 #container table.noBorder {
