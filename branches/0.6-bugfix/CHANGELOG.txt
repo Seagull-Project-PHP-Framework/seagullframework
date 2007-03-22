@@ -14,7 +14,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
-21-03-07    Added abililty to extend SGL_Output so your custom template
+21-03-07    Added abililty to extend SGL_Output so your custom template, see
+            http://trac.seagullproject.org/changeset/3001
             methods are available to all modules
 21-03-07    Added abililty to customise filterChain with Ajax requests
 21-03-07    Authentication no longer needed for CLI requests (openhaus)
