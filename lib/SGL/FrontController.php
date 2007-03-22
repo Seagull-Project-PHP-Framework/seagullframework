@@ -51,6 +51,30 @@ require_once dirname(__FILE__)  . '/Task/Init.php';
 class SGL_FrontController
 {
     /**
+     * Allow SGL_Output with its template methods to be extended.
+     *
+     * Remember to add your custom include path to the global config, ie a class
+     * called FOO_Output will be discovered if it exists in seagull/lib/FOO/Output.php.
+     * This means '/path/to/seagull/lib/FOO' must be added to
+     * $conf['path']['additionalIncludePath'].  The class definition would be:
+     *
+     *  class FOO_Output extends SGL_Output {}
+     *
+     * @param  array $conf
+     */
+    function getOutputClass($conf)
+    {
+        if (!empty($conf['site']['customOutputClassName'])) {
+            $className = $conf['site']['customOutputClassName'];
+            $path = trim(preg_replace('/_/', '/', $className)) . '.php';
+            require_once $path;
+        } else {
+            $className = 'SGL_Output';
+        }
+        return $className;
+    }
+
+    /**
      * Main invocation, init tasks plus main process.
      *
      */
@@ -68,7 +92,8 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $outputClass = SGL_FrontController::getOutputClass($input->getConfig());
+        $output = &new $outputClass();
 
         $setupNav = SGL::moduleIsEnabled('cms')
             ? 'SGL_Task_SetupNavigation2'
