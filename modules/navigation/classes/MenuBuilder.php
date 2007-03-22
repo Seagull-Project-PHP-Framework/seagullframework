@@ -49,12 +49,13 @@ class MenuBuilder
 {
     var $GUI        = null;
     var $options    = array();
-    var $_startId    = 0;
+    var $_startId   = 0;
+    var $_options   = array();
 
     function MenuBuilder($type, $options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
+        $this->_options = $options;
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $this->GUI = & $this->_factory($type, $conf, $options);
@@ -105,7 +106,7 @@ class MenuBuilder
 
         case 'menu_selectbox':
             $cache = & SGL_Cache::singleton();
-            $cacheId = 'categorySelect';
+            $cacheId = 'categorySelect' . $this->_startId . serialize($this->_options);
             if ($data = $cache->get($cacheId, 'categorySelect')) {
                 $ret = unserialize($data);
                 SGL::logMessage('categorySelect from cache', PEAR_LOG_DEBUG);
