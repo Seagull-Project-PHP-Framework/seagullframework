@@ -1117,6 +1117,11 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         if (!is_writable(SGL_TMP_DIR)) {
 
             $tmpDir = System::mkDir(array(SGL_TMP_DIR));
+            $htAccessContent = <<< EOF
+Order allow,deny
+Deny from all
+EOF;
+            $ok = file_put_contents(SGL_TMP_DIR . '/.htaccess', $htAccessContent);
             if (!$tmpDir) {
                 SGL_Install_Common::errorPush(SGL::raiseError('The tmp directory does not '.
                 'appear to be writable, please give the webserver permissions to write to it'));
