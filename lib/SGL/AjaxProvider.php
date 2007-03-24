@@ -40,6 +40,7 @@
 define('SGL_RESPONSEFORMAT_JSON', 1);
 define('SGL_RESPONSEFORMAT_PHPARRAY', 2);
 define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
+define('SGL_RESPONSEFORMAT_HTML', 4);
 /**
  * Abstract model controller for all the 'ajax provider' classes.
  *
@@ -69,7 +70,7 @@ class SGL_AjaxProvider
      *
      * @var integer
      */
-    var $responseFormat;
+    var $responseFormat = SGL_RESPONSEFORMAT_HTML;
 
     /**
      * Constructor.
@@ -116,11 +117,17 @@ class SGL_AjaxProvider
         }
         // Returned encoded response with appropriate headers
         switch (strtoupper($this->responseFormat)) {
+
         case SGL_RESPONSEFORMAT_JSON:
             require_once 'HTML/AJAX/JSON.php';
             $json = new HTML_AJAX_JSON();
             $ret = $json->encode($response);
             header('Content-Type: text/plain');
+            break;
+
+        case SGL_RESPONSEFORMAT_HTML:
+            $ret = $response;
+            header('Content-Type: text/html');
             break;
 
         case SGL_RESPONSEFORMAT_PHPARRAY:
