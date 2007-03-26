@@ -164,13 +164,15 @@ class SGL_Config
     {
         //  create cached copy if module config and cache does not exist
         //  if file has php extension it must be global config
-        if (substr($file, -3, 3) != 'php') {
-            $cachedFileName = $this->getCachedFileName($file);
-            if (!is_file($cachedFileName)) {
-                $ok = $this->createCachedFile($cachedFileName);
+        if (defined('SGL_INSTALLED')) {
+            if (substr($file, -3, 3) != 'php') {
+                $cachedFileName = $this->getCachedFileName($file);
+                if (!is_file($cachedFileName)) {
+                    $ok = $this->createCachedFile($cachedFileName);
+                }
+                //  ensure module config reads are done from cached copy
+                $file = $cachedFileName;
             }
-            //  ensure module config reads are done from cached copy
-            $file = $cachedFileName;
         }
         $ph = &SGL_ParamHandler::singleton($file);
         $data = $ph->read();
