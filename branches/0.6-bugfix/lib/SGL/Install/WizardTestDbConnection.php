@@ -110,18 +110,21 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
 
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
-            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');
+            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(true);"');
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
-            'onClick="toggleDbNameForLogin(false);"');
+            'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(false);"');
 
         if (SGL_MINIMAL_INSTALL == false) {
             $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
-                'onClick="toggleDbNameForLogin(true);"');
+                'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
             $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-                'onClick="toggleDbNameForLogin(true);"');
+                'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
         }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
+
+        //  mysql cluster
+        $this->addElement('checkbox', 'mysqlCluster', 'Install on MySQL Cluster', 'Yes (only for mysql cluster installs!)', 'id=mysqlCluster');
 
         //  host
         $this->addElement('text',  'host',     'Host: ');

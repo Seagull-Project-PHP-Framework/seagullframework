@@ -126,10 +126,23 @@ class SGL_Sql
             if (!preg_match("/;\s*$/", $sql)) {
                 continue;
             }
+
             // strip semi-colons for MaxDB, Oracle and mysql 3.23
             if ($conf['db']['type'] == 'oci8_SGL' || $conf['db']['type'] == 'odbc' || $isMysql323) {
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
+
+            // support for mysql cluster
+            if ($conf['db']['type'] == 'mysql_SGL'
+                    && $conf['db']['mysqlCluster'] == true
+                    && preg_match('/create table/i', $sql)) {
+                if (preg_match('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', $sql)) {
+                    $sql = preg_replace('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', 'engine=ndbcluster', $sql);
+                } elseif (preg_match('/\)\s*;\s*$/', $sql)) {
+                    $sql = preg_replace('/;\s*$/', 'engine=ndbcluster;', $sql);
+                }
+            }
+
             // Execute the statement.
             if (!is_null($executerCallback) && is_callable($executerCallback)) {
                 $res = call_user_func_array(
