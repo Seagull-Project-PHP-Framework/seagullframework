@@ -161,6 +161,19 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addElement('checkbox', 'insertSampleData', 'Include Sample Data?', 'Yes', 'id=insertSampleData');
 
         if (SGL_MINIMAL_INSTALL == false) {
+
+            $moreOptionsLinkName = 'Show';
+            $this->addElement('link', null, 'Advanced options', '#', $moreOptionsLinkName,
+                array(
+                    'onclick' => 'toggleMoreOptions(\'moreOptionsContainer\', this)',
+                    'id'      => 'moreOptionsLink'
+                ));
+            // deprecated method - open container
+            $this->addElement('html', '
+                </table>
+                <div id="moreOptionsContainer" style="display: none;">
+                    <table border="0" width="800px">');
+
             $this->addElement('header', null, 'Translation Setup');
 
             //  store translation in db
@@ -175,6 +188,14 @@ class WizardCreateDb extends HTML_QuickForm_Page
             //  store translation in db
             $this->addElement('checkbox', 'addMissingTranslationsToDB', 'Add missing Translations to Database?',
                 'Yes (EXPERIMENTAL - use at your own risk)', "id = addMissingTranslationsToDB");
+
+            // deprecated method - close container
+            $this->addElement('html', '
+                    </table>
+                </div>
+                </table>
+                <table border="0">');
+
         } else {
             $this->addElement('hidden', 'a', 'aa', "id = storeTranslationsInDB");
             $this->addElement('hidden', 'b', 'bb', "id = installLangs");

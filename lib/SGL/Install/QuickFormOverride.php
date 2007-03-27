@@ -55,6 +55,13 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             if (dbLoginName != null) {
                 dbLoginName.disabled = true;
             }
+
+            //  toggle translation setup
+            var dbStorageSelected = document.getElementById('storeTranslationsInDB');
+            if (dbStorageSelected != null && dbStorageSelected.checked) {
+                document.getElementById('moreOptionsLink').innerHTML = 'Hide';
+                document.getElementById('moreOptionsContainer').style.display = 'block';
+            }
         }
 
         function toggleLangList(myCheckbox)
@@ -133,6 +140,18 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             } else {
                 mysqlCluster.checked = false;
                 mysqlCluster.disabled = true;
+            }
+        }
+
+        function toggleMoreOptions(containerName, oTrigger)
+        {
+            var elem = document.getElementById(containerName);
+            if (elem.style.display == 'none') {
+                elem.style.display = 'block';
+                oTrigger.innerHTML = 'Hide';
+            } else {
+                elem.style.display = 'none';
+                oTrigger.innerHTML = 'Show';
             }
         }
     </script>
