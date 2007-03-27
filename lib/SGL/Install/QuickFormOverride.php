@@ -123,6 +123,18 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             }
 
         }
+
+        function toggleMysqlCluster(enable)
+        {
+            var mysqlCluster = document.getElementById('mysqlCluster');
+
+            if (enable) {
+                mysqlCluster.disabled = false;
+            } else {
+                mysqlCluster.checked = false;
+                mysqlCluster.disabled = true;
+            }
+        }
     </script>
 </head>
 <body onLoad="javascript:init();" id="content">
