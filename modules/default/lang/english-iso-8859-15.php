@@ -269,6 +269,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Write control tip' => 'Enable write control will lightly slow the cache writing but not the cache reading. Write control can detect some corrupt cache files but maybe it\'s not a perfect control',
         'Database Options'=>'Database Options',
         'Type'=>'Type',
+        'MySQL Cluster' => 'MySQL Cluster',
+        'Only future table creation will be affected, manually edit existing tables' => 'Only future table creation will be affected, manually edit existing tables',
         'Host'=>'Host',
         'Port'=>'Port',
         'Protocol'=>'Protocol',

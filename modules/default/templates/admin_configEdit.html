@@ -437,6 +437,12 @@ function toggleTransElements() {
                 </select>
             </p>
             <p>
+                <label class="tipOwner" for="conf[db][mysqlCluster]">{translate(#MySQL Cluster#)}
+                <span class="tipText">{translate(#Only future table creation will be affected, manually edit existing tables#)}</span>
+                </label>
+                {generateRadioPair(#conf[db][mysqlCluster]#,conf[db][mysqlCluster]):h}
+            </p>
+            <p>
                 <label for="conf">{translate(#Host#)}</label>
                 <input type="text" name="conf[db][host]" value="{conf[db][host]}" />
             </p>
