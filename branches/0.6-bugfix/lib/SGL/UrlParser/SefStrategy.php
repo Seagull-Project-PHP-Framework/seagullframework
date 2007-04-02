@@ -231,7 +231,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                     //  in this case, the key from the flexy foreach is what we want to assign as the value, ie
                     //  - frmOrgTypeId/0
                     //  - frmOrgTypeId/1 ... etc
-                    } elseif (isset($aList[$idx]) && is_null($listKey)) {
+                    } elseif (is_array($aList) && isset($aList[$idx]) && is_null($listKey)) {
                         $qsParamValue = $idx;
 
                     } else {
