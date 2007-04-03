@@ -14,6 +14,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+03-04-07    Added abililty to set a new theme for all members (see Users and Security ->
+            Manage preferences)
 27-03-07    Translation steps in installer are now hidden by default (Dmitri Lakachauskis)
 27-03-07    Renamed 'blog' module to 's9ywrapper'
 27-03-07    Added support for MySQL cluster (Steven Stremciuc)
