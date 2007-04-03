@@ -64,6 +64,7 @@ class PreferenceMgr extends SGL_Manager
             'insert'    => array('insert', 'redirectToDefault'),
             'edit'      => array('edit'),
             'update'    => array('update', 'redirectToDefault'),
+            'updateThemeForAllMembers' => array('updateThemeForAllMembers', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
         );
@@ -105,6 +106,7 @@ class PreferenceMgr extends SGL_Manager
         $input->from            = ($req->get('frmFrom'))?$req->get('frmFrom'):0;
         $input->prefId          = $req->get('frmPrefId');
         $input->currentModule   = $req->get('frmCurrentModule');
+        $input->themeName       = $req->get('frmThemeName');
         $input->pref            = (object) $req->get('pref');
         $input->aDelete         = $req->get('frmDelete');
         $input->totalItems      = $req->get('totalItems');
@@ -151,6 +153,7 @@ class PreferenceMgr extends SGL_Manager
             $aLocales[$locale] = $locale;
         }
         $output->aLocales = $aLocales;
+        $output->aThemes = $this->aThemes;
         require_once SGL_DAT_DIR . '/ary.timezones.en.php';
         $output->aTimezones = $tz;
     }
@@ -224,6 +227,14 @@ class PreferenceMgr extends SGL_Manager
             $ret = $this->da->syncDefaultPrefs();
         }
         SGL::raiseMsg('pref successfully updated', true, SGL_MESSAGE_INFO);
+    }
+
+    function _cmd_updateThemeForAllMembers(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $ok = $this->da->updatePrefByRoleId('theme', $input->themeName, $roleId = SGL_MEMBER);
+        SGL::raiseMsg('theme set for all users', false, SGL_MESSAGE_INFO);
     }
 
     function _cmd_delete(&$input, &$output)

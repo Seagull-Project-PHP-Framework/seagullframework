@@ -590,7 +590,7 @@ class UserDAO extends SGL_Manager
         } elseif (!PEAR::isError($aRes)) {
 
             //  return default prefs if none exist for given user id
-            if ($uid != 0) { // uid of 0 is the anonymous/public user
+            if ($uid != SGL_GUEST) {
                 return $this->getPrefsByUserId();
             } else {
                 $aRes = $this->getMasterPrefs();
@@ -647,6 +647,20 @@ class UserDAO extends SGL_Manager
 
     /**
      * Get preferences mapping.
+     *
+     * returns similar:
+        Array
+        (
+            [sessionTimeout] => 1
+            [timezone] => 2
+            [theme] => 3
+            [dateFormat] => 4
+            [language] => 5
+            [resPerPage] => 6
+            [showExecutionTimes] => 7
+            [locale] => 8
+        )
+
      *
      * @access  public
      * @return  array   An hash of preference id => name
@@ -765,6 +779,43 @@ class UserDAO extends SGL_Manager
             }
             $this->dbh->commit();
         }
+        return true;
+    }
+
+    /**
+     * Updates all preferences for users of a given role.
+     *
+     * @param string $name
+     * @param string $value
+     * @param integer $roleId
+     * @return boolean
+     */
+    function updatePrefByRoleId($name, $value, $roleId)
+    {
+        //  get id for pref
+        $aMap = $this->getPrefsMapping();
+        $prefId = $aMap[$name];
+
+        //  get list of users with for role
+        $aUsers = $this->getUsersByRoleId($roleId);
+
+        //  update all users' prefs
+        $this->dbh->autocommit();
+        $sth = $this->dbh->prepare("
+            UPDATE {$this->conf['table']['user_preference']}
+            SET value = '$value'
+            WHERE preference_id = '$prefId'
+            AND usr_id = ?
+            ");
+        foreach ($aUsers as $userId) {
+            $ok = $this->dbh->execute($sth, $userId);
+
+            if (PEAR::isError($ok)) {
+                $this->dbh->rollBack();
+                return $ok;
+            }
+        }
+        $this->dbh->commit();
         return true;
     }
 
