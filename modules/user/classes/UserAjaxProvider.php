@@ -34,7 +34,7 @@
 // +---------------------------------------------------------------------------+
 // | UserAjaxProvider.php                                                      |
 // +---------------------------------------------------------------------------+
-// | Authors: Dmitri Lakachauskis <lakiboy83@gmail.com>                        |
+// | Author: Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
 require_once dirname(__FILE__) . '/UserDAO.php';
@@ -43,8 +43,9 @@ require_once SGL_CORE_DIR . '/AjaxProvider.php';
 /**
  * Simple wrapper to UserDAO to use with AJAX.
  *
- * @package user
- * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
+ * @package    seagull
+ * @subpackage user
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class UserAjaxProvider extends SGL_AjaxProvider
 {
@@ -52,7 +53,7 @@ class UserAjaxProvider extends SGL_AjaxProvider
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_AjaxProvider();
-        $this->responseFormat = SGL_RESPONSEFORMAT_JAVASCRIPT;
+        $this->responseFormat = SGL_RESPONSEFORMAT_JSON;
         $this->da = &UserDAO::singleton();
     }
 
@@ -71,8 +72,6 @@ class UserAjaxProvider extends SGL_AjaxProvider
     /**
      * Check if username is unique.
      *
-     * @todo make response strings translateable.
-     *
      * @param  string $username
      * @return array
      */
@@ -81,10 +80,20 @@ class UserAjaxProvider extends SGL_AjaxProvider
         $req = &SGL_Request::singleton();
         $username = $req->get('username');
         $ok = $this->da->isUniqueUsername($username);
-        $ret = $ok
-            ? array('type' => 'info', 'message' => 'Selected username is available')
-            : array('type' => 'error', 'message' => 'This username already exist in the DB, please choose another');
-        return implode('::', $ret);
+        if ($ok) {
+            $msg = 'Selected username is available';
+            $ret = array(
+                'type'    => 'info',
+                'message' => SGL_Output::translate($msg)
+            );
+        } else {
+            $msg = 'This username already exist in the DB, please choose another';
+            $ret = array(
+                'type'    => 'error',
+                'message' => SGL_Output::translate($msg)
+            );
+        }
+        return $ret;
     }
 }
 

@@ -254,32 +254,37 @@
 
         // predefined containers
         messageContainer: 'ajaxMessage',
-        messageWrongUserFormat: 'usernameWrongFormatMsg',
-        ajaxProviderUniqueUrl: 'ajaxProviderIsUniqueUsernameUrl',
+        messageWrongUserFormat: $F('usernameWrongFormatMsg'),
+        urlIsUniqueUsername: $F('ajaxProviderIsUniqueUsernameUrl'),
 
         isUniqueUsername: function(username) {
-            if (!UserValidator.isValidUsername($(username).getValue())) {
-                this._showMessage('error', $(this.messageWrongUserFormat).getValue());
+            if (!UserValidator.isValidUsername($F(username))) {
+                this._showMessage('error', this.messageWrongUserFormat);
             } else {
-                new Ajax.Request($(this.ajaxProviderUniqueUrl).getValue(), {
-                    parameters: {username: $(username).getValue()},
-                    onSuccess: this._showResults
-                });
+                new Ajax.Request(this.urlIsUniqueUsername, {
+                        method: 'post',
+                        parameters: {username: $F(username)},
+                        onSuccess: this._showResults
+                    });
             }
             return false;
         },
 
-        _showMessage: function (messageType, messageText) {
+        _showMessage: function(messageType, messageText) {
             var innerDiv = document.createElement('div');
             $(innerDiv).toggleClassName(messageType + 'Message').update(messageText);
             $(this.messageContainer).show().update('').appendChild(innerDiv)
-            Effect.Fade(this.messageContainer, {duration: 3.0});
+            // Opacity effect is used, because we don't want screen to jump
+            new Effect.Opacity(this.messageContainer, {
+                duration: 1.5,
+                from: 1.0,
+                to: 0
+            });
         },
 
-        _showResults: function (transport) {
-            var result = new Array();
-            result = transport.responseText.split('::', 2);
-            UserRegister._showMessage(result[0], result[1]);
+        _showResults: function(transport) {
+            var result = eval('(' + transport.responseText + ')');
+            UserRegister._showMessage(result.type, result.message);
         }
     }
 
