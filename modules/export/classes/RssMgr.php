@@ -188,66 +188,97 @@ class RssMgr extends SGL_Manager
         return $limit;
     }
 
-     /**
-      *
-      * Fetch news
-      * used for feeds
-      *
-      * @param   int     $limit
-      */
-     function getNews($limit = 10)
-     {
-         SGL::logMessage(null, PEAR_LOG_DEBUG);
+    /**
+     *Fetch news used for feeds
+     *
+     * @param   int     $limit
+     */
+    function getNews($limit = 10)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-         $dbh = & SGL_DB::singleton();
-         $c = &SGL_Config::singleton();
-         $conf = $c->getAll();
-         $query = "
-                 SELECT  i.item_id AS id,
-                         i.date_created AS created,
-                         i.last_updated AS modified,
-                         i.start_date AS issued,
-                         ia.addition AS title,
-                         ia2.addition AS description,
-                         u.username AS username,
-                         CONCAT(first_name, ' ', last_name) AS fullname
-                 FROM
-                         {$conf['table']['item']} i,
-                         {$conf['table']['item_type']} it,
-                         {$conf['table']['item_addition']} ia,
-                         {$conf['table']['item_addition']} ia2,
-                         {$conf['table']['item_type_mapping']} itm,
-                         {$conf['table']['item_type_mapping']} itm2,
-                         {$conf['table']['user']} u
-                 WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
-                 AND     i.created_by_id = u.usr_id
-                 AND     ia2.item_type_mapping_id = itm2.item_type_mapping_id
-                 AND     i.item_id = ia.item_id
-                 AND     i.item_id = ia2.item_id
-                 AND     it.item_type_id = itm.item_type_id
-                 AND     itm.field_type <> itm2.field_type
-                 AND     it.item_type_id = ?
-                 AND     i.start_date < ?
-                 AND     i.expiry_date  > ?
-                 AND     i.status  = ?
-                 GROUP BY i.item_id
-                 ORDER BY i.date_created DESC
-                 LIMIT 0, ?
-             ";
+        $cache    = &SGL_Cache::singleton();
 
-        $aRes = $dbh->getAll($query, array(
-            SGL_ITEM_TYPE_ARTICLE_HTML,
-            SGL_Date::getTime(),
-            SGL_Date::getTime(),
-            SGL_STATUS_PUBLISHED,
-            $limit), DB_FETCHMODE_ASSOC);
+        $hasCache = false;
+        if ($data = $cache->get('rss', 'export')) {
+            $aRes = unserialize($data);
 
-        if (DB::isError($aRes)) {
-            SGL::raiseError('problem getting news: ' .
-                $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS);
-            return false;
+            //  check if stored last_updated equals last_updated in db return cache
+            $hasCache = ($aRes['last_updated'] == $this->getLastUpdated()) ? true : false;
+
+            unset($aRes['last_updated']);
+        }
+
+        if (!$hasCache) {
+            $query = "
+                    SELECT  i.item_id AS id,
+                            i.date_created AS created,
+                            i.last_updated AS modified,
+                            i.start_date AS issued,
+                            ia.addition AS title,
+                            ia2.addition AS description,
+                            u.username AS username,
+                            CONCAT(first_name, ' ', last_name) AS fullname
+                    FROM
+                            {$this->conf['table']['item']} i,
+                            {$this->conf['table']['item_type']} it,
+                            {$this->conf['table']['item_addition']} ia,
+                            {$this->conf['table']['item_addition']} ia2,
+                            {$this->conf['table']['item_type_mapping']} itm,
+                            {$this->conf['table']['item_type_mapping']} itm2,
+                            {$this->conf['table']['user']} u
+                    WHERE   ia.item_type_mapping_id = itm.item_type_mapping_id
+                    AND     i.created_by_id = u.usr_id
+                    AND     ia2.item_type_mapping_id = itm2.item_type_mapping_id
+                    AND     i.item_id = ia.item_id
+                    AND     i.item_id = ia2.item_id
+                    AND     it.item_type_id = itm.item_type_id
+                    AND     itm.field_type <> itm2.field_type
+                    AND     it.item_type_id = ?
+                    AND     i.start_date < ?
+                    AND     i.expiry_date  > ?
+                    AND     i.status  = ?
+                    GROUP BY i.item_id
+                    ORDER BY i.date_created DESC
+                    LIMIT 0, ?
+            ";
+
+            $aRes = $this->dbh->getAll($query, array(
+                SGL_ITEM_TYPE_ARTICLE_HTML,
+                SGL_Date::getTime(),
+                SGL_Date::getTime(),
+                SGL_STATUS_PUBLISHED,
+                $limit), DB_FETCHMODE_ASSOC);
+
+            if (DB::isError($aRes)) {
+                SGL::raiseError('problem getting news: ' .
+                    $aRes->getMessage(), SGL_ERROR_NOAFFECTEDROWS);
+                return false;
+            }
+
+            //  add last_updated key/value
+            $aCache = $aRes;
+            $aCache['last_updated'] = $this->getLastUpdated();
+
+            //  cache data
+            $data = serialize($aCache);
+            $cache->save($data, 'rss', 'export');
+
+            SGL::logMessage('RSS news from db', PEAR_LOG_DEBUG);
+        } else {
+            SGL::logMessage('RSS news from cache', PEAR_LOG_DEBUG);
         }
         return $aRes;
+    }
+
+    function getLastUpdated()
+    {
+        $dbh = SGL_DB::singleton();
+        $query = "SELECT MAX(last_updated)
+                    FROM {$this->conf['table']['item']}
+                    WHERE status = ". SGL_STATUS_PUBLISHED;
+        $result = $dbh->getOne($query);
+        return $result;
     }
 }
 
