@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+09-04-07    Fixed RSS caching problem (AJ Tarachanowicz)
 22-03-07    Fixed listing of PEAR and pearified channel server listings
 14-03-07    Fixed 'switching db type using config mgr breaks site' (Steven Stremciuc)
 07-03-07    Customised admin passwd preserved on rebuild
