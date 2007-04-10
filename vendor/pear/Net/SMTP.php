@@ -18,7 +18,7 @@
 // |          Damian Alejandro Fernandez Sosa <damlists@cnba.uba.ar>      |
 // +----------------------------------------------------------------------+
 //
-// $Id: SMTP.php,v 1.55 2006/02/06 06:00:22 jon Exp $
+// $Id: SMTP.php,v 1.58 2007/03/28 04:53:34 chagenbu Exp $
 
 require_once 'PEAR.php';
 require_once 'Net/Socket.php';
@@ -123,7 +123,7 @@ class Net_SMTP
         if (isset($port)) $this->port = $port;
         if (isset($localhost)) $this->localhost = $localhost;
 
-        $this->_socket = &new Net_Socket();
+        $this->_socket = new Net_Socket();
 
         /*
          * Include the Auth_SASL package.  If the package is not available,
@@ -268,7 +268,8 @@ class Net_SMTP
             }
         }
 
-        return PEAR::raiseError('Invalid response code received from server');
+        return PEAR::raiseError('Invalid response code received from server',
+                                $this->_code);
     }
 
     /**
@@ -424,7 +425,31 @@ class Net_SMTP
     function auth($uid, $pwd , $method = '')
     {
         if (empty($this->_esmtp['AUTH'])) {
-            return PEAR::raiseError('SMTP server does no support authentication');
+            if (version_compare(PHP_VERSION, '5.1.0', '>=')) {
+                if (!isset($this->_esmtp['STARTTLS'])) {
+                    return PEAR::raiseError('SMTP server does not support authentication');
+                }
+                if (PEAR::isError($result = $this->_put('STARTTLS'))) {
+                    return $result;
+                }
+                if (PEAR::isError($result = $this->_parseResponse(220))) {
+                    return $result;
+                }
+                if (PEAR::isError($result = $this->_socket->enableCrypto(true, STREAM_CRYPTO_METHOD_TLS_CLIENT))) {
+                    return $result;
+                } elseif ($result !== true) {
+                    return PEAR::raiseError('STARTTLS failed');
+                }
+
+                /* Send EHLO again to recieve the AUTH string from the
+                 * SMTP server. */
+                $this->_negotiate();
+                if (empty($this->_esmtp['AUTH'])) {
+                    return PEAR::raiseError('SMTP server does not support authentication');
+                }
+            } else {
+                return PEAR::raiseError('SMTP server does not support authentication');
+            }
         }
 
         /* If no method has been specified, get the name of the best
@@ -442,21 +467,25 @@ class Net_SMTP
         }
 
         switch ($method) {
-            case 'DIGEST-MD5':
-                $result = $this->_authDigest_MD5($uid, $pwd);
-                break;
-            case 'CRAM-MD5':
-                $result = $this->_authCRAM_MD5($uid, $pwd);
-                break;
-            case 'LOGIN':
-                $result = $this->_authLogin($uid, $pwd);
-                break;
-            case 'PLAIN':
-                $result = $this->_authPlain($uid, $pwd);
-                break;
-            default:
-                $result = PEAR::raiseError("$method is not a supported authentication method");
-                break;
+        case 'DIGEST-MD5':
+            $result = $this->_authDigest_MD5($uid, $pwd);
+            break;
+
+        case 'CRAM-MD5':
+            $result = $this->_authCRAM_MD5($uid, $pwd);
+            break;
+
+        case 'LOGIN':
+            $result = $this->_authLogin($uid, $pwd);
+            break;
+
+        case 'PLAIN':
+            $result = $this->_authPlain($uid, $pwd);
+            break;
+
+        default:
+            $result = PEAR::raiseError("$method is not a supported authentication method");
+            break;
         }
 
         /* If an error was encountered, return the PEAR_Error object. */
