@@ -252,10 +252,10 @@ class SGL_DB
         require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
         $req =& SGL_Request::singleton();
-        $pager_options['currentPage'] = (array_key_exists($pager_options, 'currentPage')) 
-            ? $pager_options['currentPage'] 
+        $pager_options['currentPage'] = (array_key_exists('currentPage', $pager_options))
+            ? $pager_options['currentPage']
             : $req->get('pageID');
-        $pager_options['append']   = isset($pager_options['append']) 
+        $pager_options['append'] = isset($pager_options['append'])
             ? $pager_options['append']
             : false;
         $pager_options['fileName'] = isset($pager_options['fileName'])
