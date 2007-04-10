@@ -249,13 +249,18 @@ class SGL_DB
             $pager_options['totalItems'] = $totalItems;
         }
 
+        require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
         $req =& SGL_Request::singleton();
-        $pager_options['currentPage'] = $req->get('pageID');
-
-        require_once 'Pager/Pager.php';
-        $pager_options['append']   = isset($pager_options['append'])   ? $pager_options['append']   : false;
-        $pager_options['fileName'] = isset($pager_options['fileName']) ? $pager_options['fileName'] : '/pageID/%d/';
+        $pager_options['currentPage'] = (array_key_exists($pager_options, 'currentPage')) 
+            ? $pager_options['currentPage'] 
+            : $req->get('pageID');
+        $pager_options['append']   = isset($pager_options['append']) 
+            ? $pager_options['append']
+            : false;
+        $pager_options['fileName'] = isset($pager_options['fileName'])
+            ? $pager_options['fileName']
+            : '/pageID/%d/';
 
         // translate PEAR::Pager
         $pager_options['altPrev'] = SGL_String::translate('altPrev');
