@@ -55,7 +55,7 @@ class SGL_FrontController
      *
      * Remember to add your custom include path to the global config, ie a class
      * called FOO_Output will be discovered if it exists in seagull/lib/FOO/Output.php.
-     * This means '/path/to/seagull/lib/FOO' must be added to
+     * This means '/path/to/seagull/lib' must be added to
      * $conf['path']['additionalIncludePath'].  The class definition would be:
      *
      *  class FOO_Output extends SGL_Output {}
