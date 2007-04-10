@@ -279,3 +279,4 @@ class DefaultDAO extends SGL_Manager
         return $this->dbh->query($query);
     }
 }
+?>
