@@ -47,7 +47,7 @@
  * @author     Sean Coates <sean@php.net>
  * @copyright  2003-2006 PEAR <pear-group@php.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version    CVS: $Id: mime.php,v 1.62 2006/12/06 14:44:39 cipri Exp $
+ * @version    CVS: $Id: mime.php,v 1.65 2007/04/05 09:56:55 cipri Exp $
  * @link       http://pear.php.net/package/Mail_mime
  * @notes      This class is based on HTML Mime Mail class from
  *             Richard Heyes <richard@phpguru.org> which was based also
@@ -327,11 +327,11 @@ class Mail_mime
                                            : $file;
         if ($isfile === true) {
             // Force the name the user supplied, otherwise use $file
-            $filename = (!empty($name)) ? $name : $file;
+            $filename = (strlen($name)) ? $name : $file;
         } else {
             $filename = $name;
         }
-        if (empty($filename)) {
+        if (!strlen($filename)) {
             $err = PEAR::raiseError(
               "The supplied filename for the attachment can't be empty"
             );
@@ -606,7 +606,7 @@ class Mail_mime
             }
         }
 
-        if (!empty($this->_html_images) AND isset($this->_htmlbody)) {
+        if (count($this->_html_images) AND isset($this->_htmlbody)) {
             foreach ($this->_html_images as $key => $value) {
                 $regex = array();
                 $regex[] = '#(\s)((?i)src|background|href(?-i))\s*=\s*(["\']?)' .
@@ -624,10 +624,10 @@ class Mail_mime
         }
 
         $null        = null;
-        $attachments = !empty($this->_parts)                ? true : false;
-        $html_images = !empty($this->_html_images)          ? true : false;
-        $html        = !empty($this->_htmlbody)             ? true : false;
-        $text        = (!$html AND !empty($this->_txtbody)) ? true : false;
+        $attachments = count($this->_parts)                 ? true : false;
+        $html_images = count($this->_html_images)           ? true : false;
+        $html        = strlen($this->_htmlbody)             ? true : false;
+        $text        = (!$html AND strlen($this->_txtbody)) ? true : false;
 
         switch (true) {
         case $text AND !$attachments:
@@ -660,17 +660,16 @@ class Mail_mime
             break;
 
         case $html AND !$attachments AND $html_images:
+            $message =& $this->_addRelatedPart($null);
             if (isset($this->_txtbody)) {
-                $message =& $this->_addAlternativePart($null);
-                $this->_addTextPart($message, $this->_txtbody);
-                $related =& $this->_addRelatedPart($message);
+                $alt =& $this->_addAlternativePart($message);
+                $this->_addTextPart($alt, $this->_txtbody);
+                $this->_addHtmlPart($alt);
             } else {
-                $message =& $this->_addRelatedPart($null);
-                $related =& $message;
+                $this->_addHtmlPart($message);
             }
-            $this->_addHtmlPart($related);
             for ($i = 0; $i < count($this->_html_images); $i++) {
-                $this->_addHtmlImagePart($related, $this->_html_images[$i]);
+                $this->_addHtmlImagePart($message, $this->_html_images[$i]);
             }
             break;
 
@@ -873,6 +872,24 @@ class Mail_mime
                     $hdr_val = $previous . $hdr_val;
                     $previous = "";
                 }
+                //Fix for Bug #10298, Ota Mares <om@viazenetti.de>
+                //Check if there is a double quote at beginning or end of the string to 
+                //prevent that an open or closing quote gets ignored because its encapsuled
+                //by an encoding prefix or suffix. 
+                
+                //Remove the double quote and set the specific prefix or suffix variable
+                //so later we can concat the encoded string and the double quotes back 
+                //together to get the intended string.
+                $quotePrefix = $quoteSuffix = '';
+                if ($hdr_val{0} == '"') {
+                    $hdr_val = substr($hdr_val, 1);
+                    $quotePrefix = '"';
+                }
+                if ($hdr_val{strlen($hdr_val)-1} == '"') {
+                    $hdr_val = substr($hdr_val, 0, -1);
+                    $quoteSuffix = '"';
+                }
+
                 if (function_exists('iconv_mime_encode') && preg_match('#[\x80-\xFF]{1}#', $hdr_val)){
                     $imePref = array();
                     if ($build_params['head_encoding'] == 'base64'){
@@ -884,7 +901,7 @@ class Mail_mime
                     $imePrefs['output-charset'] = $build_params['head_charset'];
                     $hdr_val = iconv_mime_encode($hdr_name, $hdr_val, $imePrefs);
                     $hdr_val = preg_replace("#^{$hdr_name}\:\ #", "", $hdr_val);
-                }elseif (preg_match('#[\x80-\xFF]{1}#', $hdr_val)){
+                }elseif (preg_match('#([\x80-\xFF]){1}#', $hdr_val)){
                     //This header contains non ASCII chars and should be encoded.
                     switch ($build_params['head_encoding']) {
                     case 'base64':
@@ -925,8 +942,8 @@ class Mail_mime
                         $maxLength1stLine = $maxLength - strlen($hdr_name) - 2;
                         
                         //Replace all special characters used by the encoder.
-                        $search  = array("=",   "_",   "?",   " ");
-                        $replace = array("=3D", "=5F", "=3F", "_");
+                        $search  = array('=',   '_',   '?',   ' ');
+                        $replace = array('=3D', '=5F', '=3F', '_');
                         $hdr_val = str_replace($search, $replace, $hdr_val);
                         
                         //Replace all extended characters (\x80-xFF) with their
@@ -978,6 +995,9 @@ class Mail_mime
                     }
                     $hdr_val = $output;
                 }
+                //Fix for Bug #10298, Ota Mares <om@viazenetti.de>
+                //Concat the double quotes if existant and encoded string together
+                $hdr_val = $quotePrefix . $hdr_val . $quoteSuffix;
                 $hdr_value_out .= $hdr_val;
             }
             $input[$hdr_name] = $hdr_value_out;

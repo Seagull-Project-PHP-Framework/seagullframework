@@ -47,7 +47,7 @@
  * @author     Sean Coates <sean@php.net>
  * @copyright  2003-2006 PEAR <pear-group@php.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @version    CVS: $Id: mimePart.php,v 1.19 2006/12/03 20:22:48 cipri Exp $
+ * @version    CVS: $Id: mimePart.php,v 1.21 2007/04/05 09:56:55 cipri Exp $
  * @link       http://pear.php.net/package/Mail_mime
  */
 
@@ -207,7 +207,7 @@ class Mail_mimePart {
     {
         $encoded =& $this->_encoded;
 
-        if (!empty($this->_subparts)) {
+        if (count($this->_subparts)) {
             srand((double)microtime()*1000000);
             $boundary = '=_' . md5(rand() . microtime());
             $this->_headers['Content-Type'] .= ';' . MAIL_MIMEPART_CRLF . "\t" . 'boundary="' . $boundary . '"';
@@ -325,6 +325,10 @@ class Mail_mimePart {
                     ; // Do nothing if a tab.
                 } elseif(($dec == 61) OR ($dec < 32 ) OR ($dec > 126)) {
                     $char = $escape . strtoupper(sprintf('%02s', dechex($dec)));
+                } elseif (($dec == 46) AND ($newline == '')) { 
+                    //Bug #9722: convert full-stop at bol
+                    //Some Windows servers need this, won't break anything (cipri)
+                    $char = '=2E';
                 }
 
                 if ((strlen($newline) + strlen($char)) >= $line_max) {        // MAIL_MIMEPART_CRLF is not counted
