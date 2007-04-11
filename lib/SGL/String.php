@@ -224,21 +224,40 @@ class SGL_String
         $conf = $c->getAll();
 
         if (       !$conf['site']['tidyhtml']
-                || !function_exists('tidy_parse_string')
-                || SGL::isPhp5()) { // tidy 2 in PHP5 has different API
+                || !extension_loaded('tidy')) {
             return $html;
         }
-        //  so we don't get doctype, html, head, body etc. tags added; default is false
-        tidy_setopt('show-body-only', true);
-        //  no wrapping of lines
-        tidy_setopt('wrap', 0);
-        tidy_setopt('indent', 1);
-        tidy_setopt('indent-spaces', 1);
-        tidy_parse_string($html);
-        if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
-            SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
+        //  PHP5 version
+        if (SGL::isPhp5()) {
+            $options = array(
+                'wrap' => 0,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'output-xhtml' => true,
+                'drop-font-tags' => false,
+                'clean' => false,
+            );
+            if (strlen($html)) {
+                $tidy = new Tidy();
+                $tidy->parseString($html, $options, 'utf8');
+                $tidy->cleanRepair();
+                $ret = $tidy->body();
+            }
+        //  PHP4 version
+        } else {
+            //  so we don't get doctype, html, head, body etc. tags added; default is false
+            tidy_setopt('show-body-only', true);
+            //  no wrapping of lines
+            tidy_setopt('wrap', 0);
+            tidy_setopt('indent', 1);
+            tidy_setopt('indent-spaces', 1);
+            tidy_parse_string($html);
+            if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
+                SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
+            }
+            $ret = tidy_get_output();
         }
-        return tidy_get_output();
+        return $ret;
     }
 
     /**
@@ -492,7 +511,6 @@ class SGL_String
         $aLines = explode("\n", $str);
         $aSegment = array_slice($aLines, 0, $lines);
 
-
         //  close tags like <ul> so page layout doesn't break
         $unclosedListTags = 0;
         $aMatches = array();
@@ -509,7 +527,9 @@ class SGL_String
         for ($x=0; $x < $unclosedListTags; $x++) {
             array_push($aSegment, '</ul>');
         }
-        return implode("\n", $aSegment);
+        $ret = implode("\n", $aSegment);
+        $ret = SGL_String::tidy($ret);
+        return $ret;
     }
 
     /**
