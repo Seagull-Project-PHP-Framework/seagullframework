@@ -40,16 +40,20 @@
 
 require_once SGL_MOD_DIR  . '/block/classes/Block.php';
 require_once SGL_MOD_DIR  . '/user/classes/UserDAO.php';
-require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
 require_once SGL_CORE_DIR . '/Delegator.php';
+
+if (SGL::moduleIsEnabled('cms')) {
+    require_once SGL_MOD_DIR  . '/cms/classes/NavigationDAO.php';
+} else {
+    require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
+}
 
 /**
  * To administer blocks.
  *
- * @package block
+ * @package seagull
+ * @subpackage  block
  * @author  Gilles Laborderie <gillesl@users.sourceforge.net>
- * @version $Revision: 1.36 $
- * @since   PHP 4.1
  */
 class BlockMgr extends SGL_Manager
 {
@@ -61,7 +65,9 @@ class BlockMgr extends SGL_Manager
         require_once SGL_DAT_DIR . '/ary.blocksNames.php';
         $this->aBlocksNames = $aBlocksNames;
         $daUser             = &UserDAO::singleton();
-        $daNav              = &NavigationDAO::singleton();
+        $daNav = (SGL::moduleIsEnabled('cms'))
+            ? CmsNavigationDAO::singleton()
+            : NavigationDAO::singleton();
         $this->da           = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daNav);
