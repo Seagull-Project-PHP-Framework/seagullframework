@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.2        |
 +-----------------------+
 BUGFIXES
+11-04-07    Fixed #1264, Media module probs
 09-04-07    Fixed RSS caching problem (AJ Tarachanowicz)
 22-03-07    Fixed listing of PEAR and pearified channel server listings
 14-03-07    Fixed 'switching db type using config mgr breaks site' (Steven Stremciuc)
