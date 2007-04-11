@@ -451,7 +451,8 @@ class SGL_Output
      */
     function summarise($str, $limit=50, $element=SGL_WORD, $appendString=' ...')
     {
-         return SGL_String::summarise($str, $limit, $element, $appendString);
+         $ret = SGL_String::summarise($str, $limit, $element, $appendString);
+         return $ret;
     }
 
     /**
