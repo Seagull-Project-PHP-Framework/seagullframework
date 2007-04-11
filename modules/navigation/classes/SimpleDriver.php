@@ -586,7 +586,8 @@ class SimpleDriver
             if (!$section->childIsCurrent && empty($section->dontMatch)) {
                 if (strpos($this->querystring, $section->resource_uri . '/') === 0) {
 
-                    //  inexact match has been found
+                    //  inexact match has been found,
+                    //  eg: media/media/action/add [$this->querystring] contains media/media [$section->resource_uri]
                     $section->isCurrent      = true;
                     $this->_currentSectionId = $section->section_id;
                     $this->_currentTitle     = $section->title;
