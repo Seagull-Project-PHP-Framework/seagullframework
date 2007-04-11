@@ -25,7 +25,7 @@
         'Download' => 'D\'load',
         'View' => 'View',
         'With selected document(s)' => 'With selected document(s)',
-        'Error: Not a recognised file type' => 'Error: Not a recognised file type',
+        'Error: Not an allowed file type' => 'Error: Not an allowed file type',
         'Error: A file with this name already exists' => 'Error: A file with this name already exists',
         'Please wait while document uploads' => 'Please wait while document uploads',
         'Please wait until upload is finished' => 'Please wait until upload is finished',
@@ -35,7 +35,7 @@
 //  File types
         'unknown' => 'unknown',
         'Image' => 'image',
-        
+
 //  Actions
         'Edit media' => 'Edit media',
         'Add a media' => 'Add a media',

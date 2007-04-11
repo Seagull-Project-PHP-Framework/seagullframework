@@ -23,7 +23,7 @@
         'Download' => '¦ci±gnij',
         'View' => 'Poka¿',
         'With selected document(s)' => 'Z zaznaczonych dokumentów',
-        'Error: Not a recognised file type' => 'B³±d: Nie rozpoznano typu pliku',
+        'Error: Not an allowed file type' => 'B³±d: Nie rozpoznano typu pliku',
         'Error: A file with this name already exists' => 'B³±d: Plik o takiej samej nazwie ju¿ istnieje',
         'Please wait while document uploads' => 'Proszê czekaæ trwa przesy³anie dokumentu',
         'Please wait until upload is finished' => 'Proszê czekaæ na zakoñczenie przesy³ania pliku',
@@ -33,7 +33,7 @@
 //  File types
         'unknown' => 'b/d',
         'Image' => 'obrazek',
-        
+
 //  Actions
         'Edit media' => 'Edytor mediów',
     );

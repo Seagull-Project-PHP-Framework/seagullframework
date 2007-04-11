@@ -37,6 +37,11 @@ require_once SGL_MOD_DIR . '/media/classes/MediaDAO.php';
  * @package    seagull
  * @subpackage media
  * @author     Demian Turner <demian@phpkitchen.com>
+ * @todo
+ *  - merge mime type arrays
+ *  - byte reading detection only works sometimes
+ *  - changing file ext. checks are primitive
+ *  - ambiguity between file type not recognised and not allowed
  */
 class MediaMgr extends FileMgr
 {
@@ -47,6 +52,17 @@ class MediaMgr extends FileMgr
         'application/zip'    => '50 4B 03 04',
         'video/mpeg'         => '00 00 01 BA 21 00 01'
     );
+
+    //  FIXME: combine this array and 2nd dim. with above
+    var $_aMimeExtensions = array(
+        'application/msword'=>'doc',
+        'image/gif'=>'gif',
+        'image/jpeg'=>'jpg',
+        'application/pdf'=>'pdf',
+        'image/png'=>'png',
+        'application/zip'=>'zip',
+        'text/plain'=>'txt'
+        );
 
     function MediaMgr()
     {
@@ -116,6 +132,14 @@ class MediaMgr extends FileMgr
             ? $input->media->name
             : $input->media->orig_name;
 
+        //  check for extension name changes of existing files
+        if (isset($input->media->name)) {
+            $ext = $this->getFileExtension($input->media->name);
+            if (!$this->isAllowedExtension($ext)) {
+                $aErrors['disallowed_extension'] = 'This extension is not allowed';
+            }
+        }
+
         //  if media has been uploaded
         if (!empty($input->mediaFileName)) {
             if ($mimeType = $this->getMimeType($input->mediaFileTmpName)) {
@@ -123,7 +147,14 @@ class MediaMgr extends FileMgr
                 $input->mediaFileName = $this->toValidFileName($input->mediaFileName,
                     $mimeType);
             } else {
-                $aErrors['unrecognised_type'] = 'Not a recognised file type';
+                $aErrors['disallowed_extension'] = 'This extension is not allowed';
+            }
+            //  check text files
+            if ($mimeType == 'text/plain') {
+                $ext = $this->getFileExtension($input->mediaFileName);
+                if ($ext != 'txt') {
+                    $aErrors['disallowed_extension'] = 'This extension is not allowed';
+                }
             }
             //  ... and does not exist in uploads dir
             if (is_readable(SGL_UPLOAD_DIR . '/' . $input->mediaFileName)) {
@@ -156,22 +187,23 @@ class MediaMgr extends FileMgr
         // get the correct extension type for the file
         $extension = $this->getMimeExtension($mimeType);
 
-        return $finalString . $extension;
+        return $finalString . '.' . $extension;
     }
 
     function getMimeExtension($mimeType)
     {
-        $mime = array(
-            'application/msword'=>'.doc',
-            'image/gif'=>'.gif',
-            'image/jpeg'=>'.jpg',
-            'application/pdf'=>'.pdf',
-            'image/png'=>'.png',
-            'application/zip'=>'.zip',
-            'text/plain'=>'.txt'
-        );
+        return $this->_aMimeExtensions[$mimeType];
+    }
 
-        return $mime[$mimeType];
+    function getFileExtension($filename)
+    {
+        $ext = end(explode('.', $filename));
+        return $ext;
+    }
+
+    function isAllowedExtension($ext)
+    {
+        return in_array($ext, $this->_aMimeExtensions);
     }
 
     function condense($value)
@@ -206,12 +238,12 @@ class MediaMgr extends FileMgr
         return ($found ? $type : false);
     }
 
-    function isTextFile($filename)
+    function isTextFile($path)
     {
-        if (!is_readable($filename)) {
+        if (!is_readable($path)) {
             return false;
         }
-        $data = file_get_contents($filename);
+        $data = file_get_contents($path);
         $bad = false;
         for ($x = 0 , $y = strlen($data); !$bad && $x < $y; $x++) {
             $bad = (ord($data{$x}) > 127);
@@ -222,7 +254,7 @@ class MediaMgr extends FileMgr
     function getMimeType($filename)
     {
         // is the file an image file
-        if ($fileInfo = getimagesize($filename)){
+        if ($fileInfo = @getimagesize($filename)){
             $ret = $fileInfo['mime'];
 
         // is the file type listed in our catalogued types $this->_aIdents
@@ -244,15 +276,17 @@ class MediaMgr extends FileMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $sessId = SGL_Session::getId();
-		$output->addJavascriptFile(array(
-            'js/scriptaculous/lib/prototype.js',
-            'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
-            'js/lightbox/lightbox.js',
-            'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
-            'media/js/Widgets.js',
-            'media/js/media.js',
-            ));
+        if ($output->action != 'add') {
+            $sessId = SGL_Session::getId();
+    		$output->addJavascriptFile(array(
+                'js/scriptaculous/lib/prototype.js',
+                'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
+                'js/lightbox/lightbox.js',
+                'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
+                'media/js/Widgets.js',
+                'media/js/media.js',
+                ));
+        }
     }
 
     function ensureUploadDirWritable($targetDir)
@@ -297,7 +331,7 @@ class MediaMgr extends FileMgr
             } else {
 
                 // for images we add extension
-                $uniqueName .= $this->getMimeExtension($input->mediaFileType);
+                $uniqueName .= '.' . $this->getMimeExtension($input->mediaFileType);
                 $imageConfig = SGL_MOD_DIR . '/' . $this->module . '/image.ini';
 
                 require_once SGL_CORE_DIR . '/Image.php';
