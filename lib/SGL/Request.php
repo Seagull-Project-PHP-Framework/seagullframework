@@ -260,6 +260,9 @@ class SGL_Request
         $sglSessionName = $conf['cookie']['name'];
 
         foreach ($this->aProps as $key => $value) {
+            if (is_array($value)) {
+                continue;
+            }
             if (!empty($value) && $key != 'lang' && strpos($key, $sglSessionName) === false) {
                 $uri .= ($key == 'moduleName' || $key == 'managerName')
                     ? $value . '/'
