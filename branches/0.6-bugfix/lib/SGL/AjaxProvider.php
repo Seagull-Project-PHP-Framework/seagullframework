@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 
 define('SGL_RESPONSEFORMAT_JSON', 1);
-define('SGL_RESPONSEFORMAT_PHPARRAY', 2);
+define('SGL_RESPONSEFORMAT_PLAIN', 2);
 define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
 define('SGL_RESPONSEFORMAT_HTML', 4);
 /**
@@ -130,7 +130,7 @@ class SGL_AjaxProvider
             header('Content-Type: text/html');
             break;
 
-        case SGL_RESPONSEFORMAT_PHPARRAY:
+        case SGL_RESPONSEFORMAT_PLAIN:
             $ret = $response;
             header('Content-Type: text/plain');
             break;
