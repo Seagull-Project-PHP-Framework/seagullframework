@@ -175,8 +175,9 @@ class MaintenanceMgr extends SGL_Manager
 
         //  retrieve admin user
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $oUserDao = &UserDAO::singleton();
-        $oAdmin = $oUserDao->getUserById(SGL_ADMIN);
+        $oUserDao    = &UserDAO::singleton();
+        $oAdmin      = $oUserDao->getUserById(SGL_ADMIN);
+        $aMasterPref = $oUserDao->getMasterPrefs();
 
         $data = array(
             'createTables'          => 1,
@@ -195,6 +196,8 @@ class MaintenanceMgr extends SGL_Manager
             'installPassword'       => $installPassword,
             'storeTranslationsInDB' => $transContainer,
             'installLangs'          => $transLanguage,
+
+            'aPrefs'                => $aMasterPref
             );
 
         define('SGL_ADMIN_REBUILD', 1);
