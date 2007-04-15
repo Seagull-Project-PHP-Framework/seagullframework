@@ -961,7 +961,14 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
                         'error_text' => 'not available',
                         'encoding' => $encoding
                     );
+
+                    //  switch phptype to mysql when using mysql_SGL otherwise the langs table
+                    //  and index's will not be created.
+                    if (($oldType = $trans->storage->db->phptype) == 'mysql_SGL') {
+                        $trans->storage->db->phptype = 'mysql';
+                    }
                     $result = $trans->addLang($langData);
+                    $trans->storage->db->phptype = $oldType;
                 }
 
                 //  iterate through modules

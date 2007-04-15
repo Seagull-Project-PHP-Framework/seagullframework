@@ -125,12 +125,6 @@ class SGL_Translation
             require_once 'Translation2.php';
             $instance[$type] = &Translation2::factory($driver, $dbh, $params);
         }
-        //  switch phptype to mysql when using mysql_SGL otherwise the langs table
-        //  and index's will not be created.
-        if ($dbh->dsn['phptype'] == 'mysql_SGL') {
-            $instance[$type]->storage->db->phptype = 'mysql';
-        }
-
         return $instance[$type];
     }
 
