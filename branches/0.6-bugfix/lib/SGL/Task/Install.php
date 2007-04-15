@@ -1758,7 +1758,7 @@ PHP;
         $da = & UserDAO::singleton();
         $lang = isset($_SESSION['install_language'])
             ? $_SESSION['install_language']
-            : 'en-iso-8859-15';
+            : $data['aPrefs']['language'];
         $ok = $da->updateMasterPrefs(array('language' => $lang));
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
@@ -1773,7 +1773,7 @@ PHP;
         //  update tz in default prefs
         $tz = isset($_SESSION['install_timezone'])
             ? $_SESSION['install_timezone']
-            : 'UTC';
+            : $data['aPrefs']['timezone'];
         $ok = $da->updateMasterPrefs(array('timezone' => $tz));
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
