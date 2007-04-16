@@ -122,11 +122,11 @@ class ListMgr extends NewsletterMgr
             $v = & new Validate();
 
             if (isset($input->from)) {
-                    if (!$v->email($input->from)) {
-                        $aErrors['from'] = 'incorrectly formatted email';
-                    }
-                } else {
-                    $aErrors['from'] = 'Please fill in the email field';
+                if (!$v->email($input->from)) {
+                    $aErrors['from'] = 'incorrectly formatted email';
+                }
+            } else {
+                $aErrors['from'] = 'Please fill in the email field';
             }
 
             // Validation for subscriber edit
