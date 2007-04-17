@@ -117,7 +117,7 @@ class UserDAO extends SGL_Manager
         //  assign preferences associated with org user belongs to
         //  first get all prefs associated with user's org or default
         //  prefs if orgs are disabled
-        if (@$this->conf['OrgMgr']['enabled']) {
+        if (!empty($this->conf['OrgMgr']['enabled'])) {
             $aPrefs = $this->getUserPrefsByOrgId($oUser->organisation_id, SGL_RET_ID_VALUE);
         } else {
             $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
