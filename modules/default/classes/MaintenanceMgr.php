@@ -177,7 +177,7 @@ class MaintenanceMgr extends SGL_Manager
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
         $oUserDao    = &UserDAO::singleton();
         $oAdmin      = $oUserDao->getUserById(SGL_ADMIN);
-        $aMasterPref = $oUserDao->getMasterPrefs();
+        $aMasterPrefs= $oUserDao->getMasterPrefs();
 
         $data = array(
             'createTables'          => 1,
@@ -190,14 +190,12 @@ class MaintenanceMgr extends SGL_Manager
             'adminLastName'         => $oAdmin->last_name,
             'adminEmail'            => $oAdmin->email,
             'adminPasswordIsHash'   => true,
-
             'aModuleList'           => SGL_Util::getAllModuleDirs($onlyRegistered = true),
             'serverName'            => SGL_SERVER_NAME,
             'installPassword'       => $installPassword,
             'storeTranslationsInDB' => $transContainer,
             'installLangs'          => $transLanguage,
-
-            'aPrefs'                => $aMasterPref
+            'aPrefs'                => $aMasterPrefs
             );
 
         define('SGL_ADMIN_REBUILD', 1);
