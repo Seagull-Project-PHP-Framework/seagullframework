@@ -46,6 +46,23 @@
     Usage: $ php etc/envRebuild.php
 */
 
+//  ensure script run as root
+$processUser = posix_getpwuid(posix_geteuid());
+if ($processUser['name'] !== 'root') {
+    die("\nALERT!! You must run this script as root\n\n");
+}
+
+//  set initial paths according to install type
+$pearTest = '@PHP-DIR@';
+if ($pearTest != '@' . 'PHP-DIR'. '@') {
+    define('SGL_PEAR_INSTALLED', true);
+    $rootDir = '@PHP-DIR@/Seagull';
+    $varDir = '@DATA-DIR@/Seagull/var';
+} else {
+    $rootDir = dirname(__FILE__) . '/..';
+    $varDir = dirname(__FILE__) . '/../var';
+}
+
 //  setup seagull environment
 require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
 require_once dirname(__FILE__)  . '/../lib/SGL/Task/Install.php';
@@ -112,6 +129,9 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $aModules = !empty($aDefaultData['aModuleList'])
             ? $aDefaultData['aModuleList']
             : SGL_Install_Common::getMinimumModuleList();
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $oUserDao    = &UserDAO::singleton();
+        $aMasterPrefs= $oUserDao->getMasterPrefs();
 
         $data = array(
             'createTables' => 1,
@@ -126,21 +146,33 @@ class SGL_Rebuild extends SGL_ProcessRequest
             'installPassword'       => $installPassword,
             'storeTranslationsInDB' => $transContainer,
             'installLangs'          => $transLanguage,
+            'aPrefs'                => $aMasterPrefs
             );
+
+        if (SGL::moduleIsEnabled('cms')) {
+            require_once SGL_MOD_DIR  . '/cms/classes/NavigationDAO.php';
+            require_once SGL_MOD_DIR  . '/cms/init.php';
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+        } else {
+            require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+        }
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_SetTimeout());
+        $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_DropDatabase());
         $runner->addTask(new SGL_Task_CreateDatabase());
         $runner->addTask(new SGL_Task_CreateTables());
-        $runner->addTask(new SGL_Task_LoadDefaultData());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
-        $runner->addTask(new SGL_Task_LoadBlockData());
-        $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new $buildNavTask());
+        $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
@@ -148,8 +180,11 @@ class SGL_Rebuild extends SGL_ProcessRequest
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_UnLinkWwwData());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_CreateMemberUser());
+        $runner->addTask(new SGL_Task_EnableDebugBlock());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
         $ok = $runner->main();
