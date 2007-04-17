@@ -117,7 +117,10 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('siteName', 'Please specify the site\'s name', 'required');
 
         //  set lang
-        $aInstalledLanguages =  @$_SESSION["_installationWizard_container"]['values']['page5']['installLangs'];
+        $aInstalledLanguages = isset($_SESSION["_installationWizard_container"]['values']['page5']['installLangs'])
+            ? $_SESSION["_installationWizard_container"]['values']['page5']['installLangs']
+            : array();
+
         if (count($aInstalledLanguages)) {
 
             //  return only selected langs

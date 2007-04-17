@@ -136,7 +136,9 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         //  catch case where when manager + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
         if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
-            @list(,$cookieValue) = split('=', $aParsedUri['managerName']);
+            $cookieValue = isset($aParsedUri['managerName'][1])
+                ? $aParsedUri['managerName'][1]
+                : '';
             $cookieValue = substr($cookieValue, 0, -1);
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
             array_unshift($aUriParts, $cookieValue);

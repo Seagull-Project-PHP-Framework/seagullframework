@@ -155,7 +155,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
             $buildNavTask = 'SGL_Task_BuildNavigation2';
         } else {
             require_once SGL_MOD_DIR  . '/navigation/classes/NavigationDAO.php';
-            $buildNavTask = 'SGL_Task_BuildNavigation2';
+            $buildNavTask = 'SGL_Task_BuildNavigation';
         }
 
         $runner = new SGL_TaskRunner();

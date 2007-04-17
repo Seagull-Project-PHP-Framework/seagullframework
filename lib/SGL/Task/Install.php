@@ -1106,8 +1106,9 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         //  create cache dir
         if (!is_dir(SGL_CACHE_DIR)) {
             $cacheDir = System::mkDir(array(SGL_CACHE_DIR));
-            @chmod($cacheDir, 0777);
-
+            if (is_dir($cacheDir)) {
+                @chmod($cacheDir, 0777);
+            }
             if (!($cacheDir)) {
                 SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating cache dir'));
             }
@@ -1116,7 +1117,9 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         //  create entities dir
         if (!is_dir(SGL_ENT_DIR)) {
             $entDir = System::mkDir(array(SGL_ENT_DIR));
-            @chmod($entDir, 0777);
+            if (is_dir($cacheDir)) {
+                @chmod($entDir, 0777);
+            }
             if (!($entDir)) {
                 SGL_Install_Common::errorPush(PEAR::raiseError('Problem creating entity dir'));
             }
