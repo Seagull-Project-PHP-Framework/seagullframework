@@ -273,7 +273,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 
         // check for timeout
         $session = $input->get('session');
-        $timeout = $session->isTimedOut();
+        $timeout = !$session->updateIdle();
 
         //  store request in session
         $aRequestHistory = SGL_Session::get('aRequestHistory');
@@ -292,7 +292,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
-            //  check that session is not invalid or timed out
+            //  check that session is valid or timed out
             if (!$session->isValid() || $timeout) {
 
                 //  prepare referer info for redirect after login
