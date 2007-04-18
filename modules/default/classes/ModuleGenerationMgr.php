@@ -141,7 +141,6 @@ class ModuleGenerationMgr extends SGL_Manager
 
             // check if table exists
             $entity = ucfirst($mgrName);
-
             $res = file_exists(SGL_ENT_DIR . '/' . $entity . '.php');
             if (!$res) {
                 $msg =  'Please generate a table (with the same name as your manager entity, eg, "pizza") '.
@@ -553,6 +552,7 @@ EOD;
                 '%mgrName%'    => $output->managerName,
                 '%MgrName%'    => $output->managerLongName,
                 '%field_list%' => implode(', ', array_keys($output->modelFields)),
+                '%crud%'       => $input->createModule->createCRUD ? 'true' : 'false',
             );
             foreach ($aMethods as $method) {
                 if (isset($input->createModule->$method)) {
