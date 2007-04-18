@@ -30,8 +30,10 @@ class SGL_Request_Browser extends SGL_Request
             }
             foreach ($aStratsToLoad as $strat) {
                 $strat = trim($strat);
-                require_once SGL_CORE_DIR . '/UrlParser/'.$strat.'Strategy.php';
                 $className = 'SGL_UrlParser_'.$strat.'Strategy';
+                if (!class_exists($className)) {
+                    require_once SGL_CORE_DIR . '/UrlParser/'.$strat.'Strategy.php';
+                }
                 $aStrats[] = new $className();
             }
             $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
