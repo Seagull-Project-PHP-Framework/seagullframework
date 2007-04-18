@@ -211,7 +211,11 @@ class ActionProcess extends HTML_QuickForm_Action
 
         //  override with custom settings if they exist
         $data = SGL_Install_Common::overrideDefaultInstallSettings($data);
-
+        $buildNavTask = 'SGL_Task_BuildNavigation';
+        if (in_array('cms', $data['aModuleList'])) {
+            require_once SGL_MOD_DIR . '/cms/init.php';
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+        }
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_SetTimeout());
@@ -224,7 +228,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
+        $runner->addTask(new $buildNavTask());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_CreateConstraints());
