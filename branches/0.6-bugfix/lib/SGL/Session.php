@@ -288,12 +288,31 @@ class SGL_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            if (mktime() - $lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
-                $_SESSION['lastRefreshed'] = mktime();
-            }
             return false;
         }
     }
+
+    /**
+     * Updates the idle time.
+     *
+     * @access  public
+     * @return  boolean true if session idle time delayed
+     */
+    function updateIdle()
+     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $ret = false;
+        //  check for session timeout
+        if (!$this->isTimedOut()) {
+            if (mktime() - $_SESSION['lastRefreshed'] > SGL_SESSION_UPDATE_WINDOW ) {
+                $_SESSION['lastRefreshed'] = mktime();
+            }
+            $ret = true;
+        }
+        return $ret;
+    }
+
 
     /**
      * Returns true if specified permission exists in the session.
