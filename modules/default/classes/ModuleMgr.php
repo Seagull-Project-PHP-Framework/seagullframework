@@ -258,14 +258,16 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateTables());
         $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new $buildNavTask());
         $runner->addTask(new SGL_Task_LoadBlockData());
-        $runner->addTask(new SGL_Task_LoadSampleData());
-        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_SyncSequences()); // only needed for section table
+        $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+
+
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_SymLinkWwwData());
