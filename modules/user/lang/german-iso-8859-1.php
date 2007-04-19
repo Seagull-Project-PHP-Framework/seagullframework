@@ -1,4 +1,5 @@
 <?php
+$words['Selected username is available'] = 'Der ausgewählte Benutzername ist verfügbar';
 $words['Please enter a company name'] = 'Bitte geben Sie einen Firmennamen an';
 $words['Please enter a telephone number'] = 'Bitte geben Sie eine Telefonnummer an';
 $words['Preferences for org'] = 'Einstellungen für Organsisationen';
@@ -25,7 +26,7 @@ $words['Login'] = 'Einloggen';
 $words['Organisation list'] = 'Organisationen anzeigen';
 $words['New organisation'] = 'Neue Organisation';
 $words['Edit organisation'] = 'Organisation bearbeiten';
-$words['The selected organisation cannot be deleted because there are users relating to it'] = 'Die ausgewählte Organisation kann nicht gelöscht werden, weil noch Benutzer zu dieser Organisation gehören';
+$words['The selected organisation cannot be deleted because there are users relating to it'] = 'Die ausgewählte Organisation %s kann nicht gelöscht werden, weil noch Benutzer zu dieser Organisation gehören!';
 $words['You must enter a role name'] = 'Bitte geben Sie einen Rollennamen an';
 $words['OrgType Manager :: Add'] = 'Organisationstypen Manager :: Hinzufügen';
 $words['OrgType Manager :: Edit'] = 'Organisationstypen Manager :: Bearbeiten';
@@ -45,7 +46,7 @@ $words['Use the document manager to upload CSV files.'] = 'Benutzen Sie den Doku
 $words['Import users into selected organisation.'] = 'Benutzer in ausgewählte Organisation importieren';
 $words['User will be assigned to selected role.'] = 'Benutzer wird ausgewählte Rolle zugewiesen werden';
 $words['Changing permission assignments for'] = 'Bearbeite Berechtigungen für';
-$words['Reset password info'] = 'Wenn Sie das Passwort für den Administrator ändern stellen Sie bitte sicher, dass die E-Mail Adresse an die die das neue Passwort geschickt wird korrekt ist und der Mailversand funktioniert. Bitte überprüfen Sie dazu die Einstellungen unter >Benutzer Bearbeiten<.';
+$words['Reset password info'] = 'Wenn Sie das Passwort für den Administrator ändern stellen Sie bitte sicher, dass die E-Mail Adresse an die die das neue Passwort geschickt wird korrekt ist und der Mailversand funktioniert. Bitte überprüfen Sie dazu die Einstellungen unter >Benutzer Bearbeiten';
 $words['Remaining permissions'] = 'Mögliche Berechtigungen';
 $words['Selected permissions for'] = 'Ausgewählte Berechtigungen für';
 $words['Editing permission'] = 'Bearbeite Berechtigung';

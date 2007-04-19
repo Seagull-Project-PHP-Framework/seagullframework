@@ -1,4 +1,5 @@
 <?php
+$words['an alias is just a search-engine-friendly URL'] = 'Ein alias ist eine Suchmaschinenfreundliche URL';
 $words['Select a content'] = 'Wählen Sie einen Inhalt aus';
 $words['pre-existing static content'] = 'Vorhandener Statischer Artikel';
 $words['output from specified module'] = 'Ausgabe von einem Modul';
@@ -16,7 +17,7 @@ $words['Top level (no parent)'] = 'Oberste Ebene';
 $words['Automatic alias'] = 'automatischer Alias';
 $words['All roles'] = 'Alle Rollen';
 $words['Please fill in a title'] = 'Bitte geben Sie einen Titel an';
-$words['To access this section, a user must have access to the parent section.'] = 'Ein Benutzer muss zuerst die übergeordnete Sektion aufrufen bevor er diese Sektion aufrufen kann';
+$words['To access this section, a user must have access to the parent section.'] = 'Ein Benutzer muss Zugang zu übergeordneten Sektionen haben bevor er diese Sektion aufrufen kann. Eine oder mehrere Rollen Ihrer Auswahl haben keine Berechtigung zu %s';
 $words['Section successfully added but alias creation failed as there can be no duplicates'] = 'Die Sektion wurde erfolgreich hinzugefügt. Leider konnte der Alias nicht erstellt werden, weil keine Duplikate erlaubt sind';
 $words['Section Manager :: Add'] = 'Sektionsmanager :: Hinzufügen';
 $words['Section Manager'] = 'Sektionsmanager';

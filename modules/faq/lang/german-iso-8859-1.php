@@ -1,4 +1,5 @@
 <?php
+$words['add faq'] = 'FAQ hinzufügen';
 $words['Faq list'] = 'FAQs anzeigen';
 $words['edit faq'] = 'FAQs bearbeiten';
 $words['reorder faqs'] = 'FAQs neu ordnen';

@@ -1,4 +1,8 @@
 <?php
+$words['News list will be rendered with this template'] = 'Liste wird mit diesem Template wiedergegeben';
+$words['Unpublished article will be not shown unless allowed'] = 'Soll auch ein unveröffentlichter Artikel angezeigt werden?';
+$words['Show unpublished article'] = 'Unveröffentlichte Artikel anzeigen';
+$words['Image extension for flags'] = 'Dateierweiterung für Flaggen';
 $words['Html text'] = 'HTML Text';
 $words['Login template name'] = 'Name des Login-Templates';
 $words['Logout template name'] = 'Name des Logout-Templates';
