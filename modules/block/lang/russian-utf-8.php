@@ -111,6 +111,7 @@ $words = array(
     'URI of RSS feed'         => 'URI ресурса RSS',
     'Items to show'           => 'Показывать единиц',
     'Number of Items to show' => 'Количество записей для показа',
+    'News list will be rendered with this template' => 'Генерировать список новостей, используя данный шаблон',
 
     // html block
     'Html text' => 'HTML текст',

@@ -79,6 +79,7 @@ $words = array(
     'You must choose a security question'   => 'Пожалуйста, укажите секретный вопрос',
     'Please enter a telephone number'       => 'Пожалуйста, укажите телефонный номер',
     'You must provide a security answer'    => 'Пожалуйста, укажите секретный ответ',
+    'Selected username is available'        => 'Выбранное имя пользователя свободно',
 
     // messages
     'profile successfully updated' => 'Профиль успешно отредактирован',

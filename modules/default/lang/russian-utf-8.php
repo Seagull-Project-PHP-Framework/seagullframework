@@ -298,6 +298,7 @@ $defaultWords = array(
 
     // messages
     'config info successfully updated' => 'Конфигурация успешно обновлена',
+    'config info successfully updated but failed syncing sequences' => 'Конфигурация успешно обновлена, но не удалось обновить последовательности',
 
     // list
     'Please use the following form to edit your config file' => 'Пожалуйста, используйте следующую форму для редактирования файла конфигурации',
@@ -347,7 +348,6 @@ $defaultWords = array(
     'Custom filter chain'          => 'Пользовательский filter chain',
     'Broadcast message'            => 'Общее сообщение', // xxx
     'Global Javascript Onload'     => 'Глобальный onload Javascript',
-    'globalJavascript'             => 'Если Вы хотите загружать выражение Javascript при событии onload для каждой страницы сайта, напишите его здесь',
     'Paths'                        => 'Пути',
     'Install Root'                 => 'Корень инсталляции',
     'Web Root'                     => 'Корень для web (document_root)',
@@ -355,6 +355,18 @@ $defaultWords = array(
     'Module Directory Override'    => 'Указать новый путь к директории модулей',
     'Upload Directory Override'    => 'Указать новый путь к upload директории',
     'Custom Config File'           => 'Пользовательский файл конфигурации',
+    'Default master template'      => 'Главный шаблон по умолчанию',
+    'Input URL handlers'           => 'Обработчики входящих URL',
+    'Define the URL handlers that will be run on incoming requests' => 'Определяет URL обработчики для входящих запросов',
+    'Global Javascript Files'      => 'Глобальные javascript файлы',
+    'Global Javascript OnReadyDOM' => 'Глобальный javascript OnReadyDOM',
+    'Global Javascript Onload'     => 'Глобальный javascript Onload',
+    'Global Javascript OnUnload'   => 'Глобальный javascript OnUnload',
+    'globalJavascriptFiles'        => 'Если Вы хотите загружать Javascript файл на каждой странице Вашего сайта, укажите его здесь (разделяйте файлы через ";")',
+    'globalJavascriptOnReadyDom'   => 'Выражение Javascript, указанное здесь, будет исполнено, как только DOM страницы готов, это происходит перед событием onload',
+    'globalJavascriptOnload'       => 'Если Вы хотите исполнять Javascript onload выражение на каждой странице Вашего сайта, укажите его здесь',
+    'globalJavascriptOnUnload'     => 'Если Вы хотите исполнять Javascript onunload выражение на каждой странице Вашего сайта, укажите его здесь',
+    'Custom output class'          => 'Пользовательский output класс',
 
     // session
     'Session'                      => 'Сессия',
@@ -414,6 +426,12 @@ $defaultWords = array(
     'Enable library caching' => 'Включить кэширование библиотек',
     'Cache lifetime (secs)'  => 'Время кэширования (в секундах)',
     'Default is 24 hours'    => 'По умолчанию 24 часа',
+    'Cleaning factor'        => 'Фактор отчистки',
+    'Cleaning factor tip'    => '0 - автоматическая чистка кэша, 1 - постоянная чистка кэша, Х (число) > 1 - запуск автоматической чистки в Х раз',
+    'Read control'           => 'Контроль по чтению',
+    'Read control tip'       => 'Если включен, то контрольный ключ записывается в файл кэша, а при чтении подсчитывается и сравнивается',
+    'Write control'          => 'Контроль записи',
+    'Write control tip'      => 'Включенный контроль записи заметно замедляет создание кэш-файла, но не его чтение. Контроль записи способен обнаруживать испорченные кэш-файлы, но это не идеальный контроль',
 
     // database
     'DB'                      => 'БД',
@@ -433,6 +451,8 @@ $defaultWords = array(
     'Post-connection query'   => 'Запрос после соединения',
     'This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8' => 'Этот запрос используется для установки сравнения по умолчанию для данного соединения (MySQL 4.1 и выше). Например: SET NAMES \'utf8\'',
     'Database Table Mappings' => 'Отображение таблиц базы данных',
+    'MySQL Cluster'           => 'MySQL кластер',
+    'Only future table creation will be affected, manually edit existing tables' => 'Действует только на создание будущих таблиц, редактируйте существующие таблицы вручную',
 
     // logging
     'Logs'            => 'Журнал',
@@ -534,30 +554,32 @@ $defaultWords = array(
     'Rebuild Seagull'           => 'Обновить Seagull',
 
     // list
-    'Back to Maintenance' => 'Назад в обслуживание',
-    'Templates'           => 'Шаблоны',
-    'navigation'          => 'навигация',
-    'blocks'              => 'блоки',
-    'categories'          => 'категории',
-    'permissions'         => 'уровни доступа',
-    'select all'          => 'выбрать все',
-    'templates'           => 'шаблоны',
-    'translations'        => 'перевод',
-    'with sample data'    => 'с образцовыми данными',
+    'Back to Maintenance'   => 'Назад в обслуживание',
+    'Templates'             => 'Шаблоны',
+    'navigation'            => 'навигация',
+    'blocks'                => 'блоки',
+    'categories'            => 'категории',
+    'permissions'           => 'уровни доступа',
+    'select all'            => 'выбрать все',
+    'templates'             => 'шаблоны',
+    'translations'          => 'перевод',
+    'with sample data'      => 'с образцовыми данными',
     'WARNING: This will drop your database' => 'ВНИМАНИЕ: Это действие удалит базу данных
         и создаcт Ваше окружение Seagull, базируясь на найденых файлах.
         Это действие выполнится корректно, только если текущий пользователь БД имеет полный список привилегий, т.е.
         может удалять и создавать базы данных.',
+    'Delete cached configs' => 'Удалить кэшированные файлы конфигурации',
 
     // validate
     'please check at least one box' => 'пожалуйста, отметьте по крайней мере один флажок',
 
     // messages
-    'Data Objects rebuilt successfully'  => 'Data Objects успешно обновлены',
-    'Cache files successfully deleted'   => 'Файлы кэша успешно удалены',
-    'Sequences rebuilt successfully'     => 'Последовательности успешно обновлены',
-    'Your current version is up to date' => 'Ваша версия является последней',
-    'remote interface problem'           => 'Произошла проблема доступа удаленного интерфейса',
+    'Data Objects rebuilt successfully'   => 'Data Objects успешно обновлены',
+    'Cache files successfully deleted'    => 'Файлы кэша успешно удалены',
+    'Sequences rebuilt successfully'      => 'Последовательности успешно обновлены',
+    'Your current version is up to date'  => 'Ваша версия является последней',
+    'remote interface problem'            => 'Произошла проблема доступа удаленного интерфейса',
+    'Cached configs successfully deleted' => 'Кэшированные файлы конфигурации успешно удалены',
 
 
 /* TranslationMgr */
