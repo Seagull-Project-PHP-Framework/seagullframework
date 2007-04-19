@@ -231,6 +231,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $runner->addTask(new $buildNavTask());
         $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
