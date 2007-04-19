@@ -9,10 +9,10 @@
         <div class="message">{msgGet()}</div>
     </div>
     <form name="translations" action="" method="post" flexy:ignore id="translations">
-        <input type="hidden" name="action" value="update" /> 
-        <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
+        <input type="hidden" name="action" value="update" />
+        <input type="hidden" name="frmCurrentLang" value="{currentLang}" />
         <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
-    
+
         <h3>{translate(#You are editing: Module#)} "{currentModuleName}"</h3>
         <fieldset class="noBorder">
             <table class="full">
@@ -35,15 +35,15 @@
                                     </tr>
                                 </table>
                             </td>
-                        {else:}  
-                            <td class="left">{k}</td>
+                        {else:}
+                            <td class="left">{this.plugin(#getArrayValue#,aSourceLang,k)}</td>
                             <td class="left"><input type="text" name="translation[{k}]" value="{v}" size="50" /></td>
                         {end:}
                     </tr>
                 </tbody>
             </table>
             <input type="submit" class="sgl-button" name="save" value="{translate(#Save Translation#)}" />
-            <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}" 
+            <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}"
                         onclick="document.location.href='{makeUrl(##,#translation#,#default#)}'" />
         </fieldset>
     </form>

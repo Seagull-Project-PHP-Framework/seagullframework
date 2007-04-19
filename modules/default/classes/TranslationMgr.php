@@ -250,7 +250,13 @@ class TranslationMgr extends SGL_Manager
                 $output->sourceElements = count($input->aSourceLang);
                 $output->targetElements = count($input->aTargetLang);
                 $output->template = 'langDiff.html';
-                $output->aTargetLang = $aDiff;
+
+                foreach($aDiff as $key) {
+                    //provide original string
+                    $aLangDiff[$key] = $input->aSourceLang[$key];
+                }
+
+                $output->aTargetLang = $aLangDiff;
                 $output->currentModuleName = ucfirst($output->currentModule);
 
                 //  bypass redirection

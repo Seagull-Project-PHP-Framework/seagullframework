@@ -18,10 +18,10 @@
     </fieldset>
 
     <form name="translations" action="" method="post" flexy:ignore id="translations">
-        <input type="hidden" name="action" value="append" /> 
-        <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
+        <input type="hidden" name="action" value="append" />
+        <input type="hidden" name="frmCurrentLang" value="{currentLang}" />
         <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
-    
+
         <fieldset class="noBorder">
             <table class="full">
                 <thead>
@@ -34,13 +34,13 @@
                     <tr flexy:foreach="aTargetLang,k,v">
                         <td class="left">{v}</td>
                         <td class="left">
-                            <input type="text" name="translation[{v}]" value="" size="50" />
+                            <input type="text" name="translation[{k}]" value="" size="50" />
                         </td>
                     </tr>
                 </tbody>
             </table>
             <input type="submit" class="sgl-button" name="save" value="{translate(#Save Translation#)}" />
-            <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}" 
+            <input type="button" class="sgl-button" name="back" value="{translate(#Cancel#)}"
                         onclick="document.location.href='{makeUrl(##,#translation#,#default#)}'" />
         </fieldset>
     </form>

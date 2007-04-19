@@ -91,5 +91,10 @@ class DefaultOutput
         }
         return $ret;
     }
+
+    function getArrayValue($array, $value)
+    {
+        return $array[$value];
+    }
 }
 ?>
