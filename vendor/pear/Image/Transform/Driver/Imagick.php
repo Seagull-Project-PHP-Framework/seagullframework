@@ -18,7 +18,7 @@
  * @author     Peter Bowyer <peter@mapledesign.co.uk>
  * @copyright  2002-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Imagick.php,v 1.6 2005/07/15 05:18:42 jausions Exp $
+ * @version    CVS: $Id: Imagick.php,v 1.9 2007/04/19 16:36:09 dufuz Exp $
  * @deprecated
  * @link       http://pear.php.net/package/Image_Transform
  */
@@ -26,7 +26,7 @@
 /**
  * Include of base class
  */
-require_once "Image/Transform.php";
+require_once 'Image/Transform.php';
 
 
 /**
@@ -45,7 +45,6 @@ class Image_Transform_Driver_Imagick extends Image_Transform
      */
     var $imageHandle;
 
-
     /**
      * Handler of the image ressource before
      * the last transformation
@@ -62,7 +61,7 @@ class Image_Transform_Driver_Imagick extends Image_Transform
         if (!PEAR::loadExtension('imagick')) {
             return PEAR::raiseError('The imagick extension can not be found.', true);
         }
-        include('Image/Transform/Driver/Imagick/ImageTypes.php');
+        include 'Image/Transform/Driver/Imagick/ImageTypes.php';
         return true;
     } // End Image_IM
 
@@ -96,11 +95,12 @@ class Image_Transform_Driver_Imagick extends Image_Transform
      *
      * @param int   new_x   new width
      * @param int   new_y   new width
+     * @param mixed $options Optional parameters
      *
      * @return none
      * @see PEAR::isError()
      */
-    function _resize($new_x, $new_y)
+    function _resize($new_x, $new_y, $options = null)
     {
         if ($img2 = imagick_copy_resize($this->imageHandle, $new_x, $new_y, IMAGICK_FILTER_CUBIC, 1)){
             $this->oldImage = $this->imageHandle;
@@ -186,7 +186,10 @@ class Image_Transform_Driver_Imagick extends Image_Transform
      */
     function save($filename, $type='', $quality = 75)
     {
-        if ($type == '') {
+        if (function_exists('imagick_setcompressionquality')) {
+            imagick_setcompressionquality($this->imageHandle, $quality);
+        }
+        if ($type != '') {
             $type = strtoupper($type);
             imagick_write($this->imageHandle, $filename, $type);
         } else {
@@ -223,14 +226,13 @@ class Image_Transform_Driver_Imagick extends Image_Transform
      */
     function free()
     {
-        if(is_resource($this->imageHandle)){
+        if (is_resource($this->imageHandle)){
             imagick_free($this->imageHandle);
         }
-        if(is_resource($this->oldImage)){
+        if (is_resource($this->oldImage)){
             imagick_free($this->oldImage);
         }
         return true;
     }
 
 } // End class ImageIM
-?>

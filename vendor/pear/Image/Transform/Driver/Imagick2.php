@@ -21,11 +21,11 @@
  * @author     Philippe Jausions <Philippe.Jausions@11abacus.com>
  * @copyright  2002-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Imagick2.php,v 1.6 2005/04/28 17:54:03 jausions Exp $
+ * @version    CVS: $Id: Imagick2.php,v 1.10 2007/04/19 16:36:09 dufuz Exp $
  * @link       http://pear.php.net/package/Image_Transform
  */
 
-require_once "Image/Transform.php";
+require_once 'Image/Transform.php';
 
 /**
  * imagick PECL extension implementation for Image_Transform package
@@ -67,7 +67,7 @@ class Image_Transform_Driver_Imagick2 extends Image_Transform
     function __construct()
     {
         if (PEAR::loadExtension('imagick')) {
-            include('Image/Transform/Driver/Imagick/ImageTypes.php');
+            include 'Image/Transform/Driver/Imagick/ImageTypes.php';
         } else {
             $this->isError(PEAR::raiseError('Couldn\'t find the imagick extension.',
                 IMAGE_TRANSFORM_ERROR_UNSUPPORTED));
@@ -225,7 +225,7 @@ class Image_Transform_Driver_Imagick2 extends Image_Transform
         $quality = $this->_getOption('quality', $options, 75);
         imagick_setcompressionquality($this->imageHandle, $quality);
 
-        if ($type && strcasecomp($type, $this->type)
+        if ($type && strcasecmp($type, $this->type)
             && !imagick_convert($this->imageHandle, $type)) {
             return $this->raiseError('Couldn\'t save image to file (conversion failed).',
                 IMAGE_TRANSFORM_ERROR_FAILED);
@@ -289,7 +289,6 @@ class Image_Transform_Driver_Imagick2 extends Image_Transform
         return true;
     }
 
-
     /**
      * Crops the image
      *
@@ -303,7 +302,11 @@ class Image_Transform_Driver_Imagick2 extends Image_Transform
      */
     function crop($width, $height, $x = 0, $y = 0)
     {
-        if (!imagick_crop($this->imageHandle, $x, $y, $x + $width, $y + $height)) {
+        // Sanity check
+        if (!$this->intersects($width, $height, $x, $y)) {
+            return PEAR::raiseError('Nothing to crop', IMAGE_TRANSFORM_ERROR_OUTOFBOUND);
+        }
+        if (!imagick_crop($this->imageHandle, $x, $y, $width, $height)) {
             return $this->raiseError('Couldn\'t crop image.',
                 IMAGE_TRANSFORM_ERROR_FAILED);
         }
@@ -379,5 +382,3 @@ class Image_Transform_Driver_Imagick2 extends Image_Transform
     }
 
 } // End class Image_Transform_Driver_Imagick2
-
-?>

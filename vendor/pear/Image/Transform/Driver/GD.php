@@ -21,11 +21,11 @@
  * @author     Philippe Jausions <Philippe.Jausions@11abacus.com>
  * @copyright  2002-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: GD.php,v 1.29 2005/05/13 16:34:58 jausions Exp $
+ * @version    CVS: $Id: GD.php,v 1.32 2007/04/19 16:36:09 dufuz Exp $
  * @link       http://pear.php.net/package/Image_Transform
  */
 
-require_once "Image/Transform.php";
+require_once 'Image/Transform.php';
 
 /**
  * GD implementation for Image_Transform package
@@ -87,7 +87,6 @@ class Image_Transform_Driver_GD extends Image_Transform
         $this->__construct();
     } // End function Image
 
-
     /**
      * Check settings
      *
@@ -122,7 +121,6 @@ class Image_Transform_Driver_GD extends Image_Transform
 
     } // End function Image
 
-
     /**
      * Loads an image from file
      *
@@ -155,7 +153,6 @@ class Image_Transform_Driver_GD extends Image_Transform
 
     } // End load
 
-
     /**
      * Adds a border of constant width around an image
      *
@@ -187,7 +184,6 @@ class Image_Transform_Driver_GD extends Image_Transform
 
         return true;
     }
-
 
     /**
      * addText
@@ -223,7 +219,6 @@ class Image_Transform_Driver_GD extends Image_Transform
         }
         return true;
     } // End addText
-
 
     /**
      * Rotates image by the given angle
@@ -314,14 +309,19 @@ class Image_Transform_Driver_GD extends Image_Transform
      * @param int height Cropped image height
      * @param int x X-coordinate to crop at
      * @param int y Y-coordinate to crop at
-     *
      * @return bool|PEAR_Error TRUE or a PEAR_Error object on error
      * @access public
      */
     function crop($width, $height, $x = 0, $y = 0)
     {
-        $width   = min($width,  $this->new_x - $x - 1);
-        $height  = min($height, $this->new_y - $y - 1);
+        // Sanity check
+        if (!$this->intersects($width, $height, $x, $y)) {
+            return PEAR::raiseError('Nothing to crop', IMAGE_TRANSFORM_ERROR_OUTOFBOUND);
+        }
+        $x = min($this->new_x, max(0, $x));
+        $y = min($this->new_y, max(0, $y));
+        $width   = min($width,  $this->new_x - $x);
+        $height  = min($height, $this->new_y - $y);
         $new_img = $this->_createImage($width, $height);
 
         if (!imagecopy($new_img, $this->imageHandle, 0, 0, $x, $y, $width, $height)) {
@@ -339,7 +339,6 @@ class Image_Transform_Driver_GD extends Image_Transform
         return true;
     }
 
-
     /**
      * Converts the image to greyscale
      *
@@ -350,7 +349,6 @@ class Image_Transform_Driver_GD extends Image_Transform
         imagecopymergegray($this->imageHandle, $this->imageHandle, 0, 0, 0, 0, $this->new_x, $this->new_y, 0);
         return true;
     }
-
 
    /**
     * Resize Action
@@ -450,9 +448,9 @@ class Image_Transform_Driver_GD extends Image_Transform
 
         if ($filename == '') {
             header('Content-type: ' . $this->getMimeType($type));
-            $action = 'save image to file';
-        } else {
             $action = 'output image';
+        } else {
+            $action = 'save image to file';
         }
 
         $functionName = 'image' . $type;
@@ -461,7 +459,11 @@ class Image_Transform_Driver_GD extends Image_Transform
                 $result = $functionName($this->imageHandle, $filename, $quality);
                 break;
             default:
-                $result = $functionName($this->imageHandle, $filename);
+                if ($filename == '') {
+                    $result = $functionName($this->imageHandle);
+                } else {
+                    $result = $functionName($this->imageHandle, $filename);
+                }
         }
         if (!$result) {
             return PEAR::raiseError('Couldn\'t ' . $action,
@@ -474,7 +476,6 @@ class Image_Transform_Driver_GD extends Image_Transform
         return true;
 
     } // End save
-
 
     /**
      * Displays image without saving and lose changes.
@@ -574,5 +575,3 @@ class Image_Transform_Driver_GD extends Image_Transform
         return $new_img;
     }
 }
-
-?>

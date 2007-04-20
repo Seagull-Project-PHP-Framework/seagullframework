@@ -19,7 +19,7 @@
  * @author     Philippe Jausions <Philippe.Jausions@11abacus.com>
  * @copyright  2002-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: IM.php,v 1.23 2005/04/28 03:56:25 jausions Exp $
+ * @version    CVS: $Id: IM.php,v 1.25 2007/04/19 16:36:09 dufuz Exp $
  * @link       http://pear.php.net/package/Image_Transform
  */
 
@@ -64,7 +64,6 @@ class Image_Transform_Driver_IM extends Image_Transform
     function __construct()
     {
         $this->_init();
-        require_once 'System.php';
         if (!defined('IMAGE_TRANSFORM_IM_PATH')) {
             $path = dirname(System::which('convert'))
                     . DIRECTORY_SEPARATOR;
@@ -77,7 +76,6 @@ class Image_Transform_Driver_IM extends Image_Transform
                 IMAGE_TRANSFORM_ERROR_UNSUPPORTED));
         }
     } // End Image_IM
-
 
     /**
      * Initialize the state of the object
@@ -112,7 +110,6 @@ class Image_Transform_Driver_IM extends Image_Transform
         return true;
 
     } // End load
-
 
     /**
      * Image_Transform_Driver_IM::_get_image_details()
@@ -191,7 +188,6 @@ class Image_Transform_Driver_IM extends Image_Transform
         return true;
 
     } // End rotate
-
 
     /**
      * Crop image
@@ -367,7 +363,7 @@ class Image_Transform_Driver_IM extends Image_Transform
      */
     function display($type = '', $quality = null)
     {
-        $type    = strtoupper(($type == '') ? $type : $this->type);
+        $type    = strtoupper(($type == '') ? $this->type : $type);
         switch ($type) {
             case 'JPEG':
                 $type = 'JPG';
@@ -407,5 +403,3 @@ class Image_Transform_Driver_IM extends Image_Transform
     }
 
 } // End class ImageIM
-
-?>

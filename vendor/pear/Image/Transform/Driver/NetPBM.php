@@ -19,7 +19,7 @@
  * @author     Philippe Jausions <Philippe.Jausions@11abacus.com>
  * @copyright  2002-2005 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: NetPBM.php,v 1.18 2005/04/28 04:50:03 jausions Exp $
+ * @version    CVS: $Id: NetPBM.php,v 1.21 2007/04/19 16:36:09 dufuz Exp $
  * @link       http://pear.php.net/package/Image_Transform
  */
 
@@ -42,7 +42,6 @@ require_once 'System.php';
  */
 class Image_Transform_Driver_NetPBM extends Image_Transform
 {
-
     /**
      * associative array commands to be executed
      * @var array
@@ -63,7 +62,6 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
      */
     function __construct()
     {
-        require_once 'System.php';
         if (!defined('IMAGE_TRANSFORM_NETPBM_PATH')) {
             $path = dirname(System::which('pnmscale'))
                     . DIRECTORY_SEPARATOR;
@@ -232,15 +230,20 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
     /**
      * Crop an image
      *
-     * @param int width Cropped image width
-     * @param int height Cropped image height
-     * @param int x X-coordinate to crop at
-     * @param int y Y-coordinate to crop at
+     * @param int $width Cropped image width
+     * @param int $height Cropped image height
+     * @param int $x positive X-coordinate to crop at
+     * @param int $y positive Y-coordinate to crop at
      *
      * @return mixed TRUE or a PEAR error object on error
+     * @todo keep track of the new cropped size
      **/
     function crop($width, $height, $x = 0, $y = 0)
     {
+        // Sanity check
+        if (!$this->intersects($width, $height, $x, $y)) {
+            return PEAR::raiseError('Nothing to crop', IMAGE_TRANSFORM_ERROR_OUTOFBOUND);
+        }
         if ($x != 0 || $y != 0
             || $width != $this->img_x
             || $height != $this->img_y) {
@@ -538,14 +541,14 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
      * @param int $quality 75
      * @return TRUE or PEAR Error object on error
      */
-    function save($filename, $type = null, $quality = null)
+    function save($filename, $type = null, $quality = 75)
     {
         $type    = (is_null($type)) ? $this->type : $type;
         $options = array();
         if (!is_null($quality)) {
             $options['quality'] = $quality;
         }
-        $quality = $this->_getOption('quality', $options, 75);
+        $quality = $this->_getOption('quality', $options, $quality);
 
         $nullDevice = (OS_WINDOWS) ? 'nul' : '/dev/null';
 
@@ -597,5 +600,3 @@ class Image_Transform_Driver_NetPBM extends Image_Transform
 
 
 } // End class ImageIM
-
-?>
