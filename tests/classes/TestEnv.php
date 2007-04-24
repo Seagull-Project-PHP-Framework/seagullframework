@@ -45,18 +45,9 @@ class SGL_Task_SetupSimpleTestORM extends SGL_Task
 {
     function run($conf = array())
     {
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
-        $options = array(
-            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
-            'schema_location'       => SGL_ENT_DIR,
-            'class_location'        => SGL_ENT_DIR,
-            'require_prefix'        => SGL_ENT_DIR . '/',
-            'class_prefix'          => 'DataObjects_',
-            'debug'                 => 0,
-            'production'            => 0,
-            'ignore_sequence_keys'  => 'ALL',
-            'generator_strip_schema' => 1,
-        );
+        $conf['debug']['dataObject'] = 0;
+        $oTask = new SGL_Task_InitialiseDbDataObject();
+        $ok = $oTask->run($conf);
         require_once 'DB/DataObject/Generator.php';
 
 #FIXME:  add logic so entities aren't regenned on every request
