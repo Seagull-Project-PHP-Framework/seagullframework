@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Schema for default
 
 -- ==============================================================
@@ -60,7 +60,7 @@ create sequence session_seq;
 --  Index: user_session_last_updated
 -- ==============================================================
 
-create  index user_session_last_updated on user_session (
+create index user_session_last_updated on user_session (
     last_updated
 );
 
@@ -68,7 +68,7 @@ create  index user_session_last_updated on user_session (
 --  Index: user_session_usr_id
 -- ==============================================================
 
-create  index user_session_usr_id on user_session (
+create index user_session_usr_id on user_session (
     usr_id
 );
 
@@ -76,7 +76,7 @@ create  index user_session_usr_id on user_session (
 --  Index: user_session_username
 -- ==============================================================
 
-create  index user_session_username on user_session (
+create index user_session_username on user_session (
     username
 );
 

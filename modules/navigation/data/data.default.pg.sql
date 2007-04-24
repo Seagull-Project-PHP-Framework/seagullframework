@@ -1,23 +1,44 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Data dump for /navigation
 
 BEGIN;
 
 
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'navigation', 'Navigation', 'The ''Navigation'' module is what you use to build your site navigation, it creates menus that you can customise in terms of look and feel, and allows you to link to any site resource.', 'navigation/page', 'navigation.png', '', NULL, NULL, NULL);
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'navigation', 'Navigation', 'The ''Navigation'' module is what you use to build your site navigation, it creates menus that you can customise in terms of look and feel, and allows you to link to any site resource.', 'navigation/page', 'navigation.png', 'Andrey Podshivalov', NULL, 'BSD', 'beta');
 
-
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_cmd_changeStyle', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_cmd_list', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_add', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_insert', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_edit', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_update', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_delete', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_reorder', '', (SELECT max(module_id) FROM module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', (SELECT max(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_cmd_changeStyle', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'navstylemgr_cmd_list', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_add', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_insert', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_edit', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_update', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_delete', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_reorder', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'sectionmgr_cmd_list', '', (
+    SELECT max(module_id) FROM module
+    ));
 
 --
 -- Dumping data for table section

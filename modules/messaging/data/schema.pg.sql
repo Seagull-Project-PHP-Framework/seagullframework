@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Schema for /modules/messaging
 
 BEGIN;
@@ -24,7 +24,7 @@ create sequence contact_seq;
 -- ==============================================================
 --  Index: usr_contact_fk                                        
 -- ==============================================================
-create  index usr_contact_fk on contact 
+create index usr_contact_fk on contact 
 (
    usr_id
 );
@@ -55,7 +55,7 @@ create sequence instant_message_seq;
 -- ==============================================================
 --  Index: usr_instant_from_fk                                   
 -- ==============================================================
-create  index usr_instant_from_fk on instant_message 
+create index usr_instant_from_fk on instant_message 
 (
    user_id_to
 );
@@ -63,7 +63,7 @@ create  index usr_instant_from_fk on instant_message
 -- ==============================================================
 --  Index: ust_instant_to_fk                                     
 -- ==============================================================
-create  index ust_instant_to_fk on instant_message 
+create index ust_instant_to_fk on instant_message 
 (
    user_id_from
 );

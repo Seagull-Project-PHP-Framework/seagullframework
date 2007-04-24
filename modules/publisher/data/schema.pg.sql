@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Schema for /publisher
 
 BEGIN;
@@ -30,7 +30,7 @@ create sequence document_seq;
 -- ==============================================================
 --  Index: document_document_type_fk                             
 -- ==============================================================
-create  index document_document_type_fk on document 
+create index document_document_type_fk on document 
 (
    document_type_id
 );
@@ -38,7 +38,7 @@ create  index document_document_type_fk on document
 -- ==============================================================
 --  Index: category_document_fk                                  
 -- ==============================================================
-create  index category_document_fk on document 
+create index category_document_fk on document 
 (
    category_id
 );
@@ -88,7 +88,7 @@ create sequence item_seq;
 -- ==============================================================
 --  Index: item_item_type_fk                                     
 -- ==============================================================
-create  index item_item_type_fk on item 
+create index item_item_type_fk on item 
 (
    item_type_id
 );
@@ -96,7 +96,7 @@ create  index item_item_type_fk on item
 -- ==============================================================
 --  Index: category_item_fk                                      
 -- ==============================================================
-create  index category_item_fk on item 
+create index category_item_fk on item 
 (
    category_id
 );
@@ -123,7 +123,7 @@ create sequence item_addition_seq;
 -- ==============================================================
 --  Index: item_item_addition_fk                                 
 -- ==============================================================
-create  index item_item_addition_fk on item_addition 
+create index item_item_addition_fk on item_addition 
 (
    item_id
 );
@@ -131,7 +131,7 @@ create  index item_item_addition_fk on item_addition
 -- ==============================================================
 --  Index: item_type_mapping_item_addition                       
 -- ==============================================================
-create  index item_type_mapping_item_addition_fk on item_addition 
+create index item_type_mapping_item_addition_fk on item_addition 
 (
    item_type_mapping_id
 );
@@ -173,7 +173,7 @@ create sequence item_type_mapping_seq;
 -- ==============================================================
 --  Index: item_type_item_type_mapping_fk                        
 -- ==============================================================
-create  index item_type_item_type_mapping_fk on item_type_mapping 
+create index item_type_item_type_mapping_fk on item_type_mapping 
 (
    item_type_id
 );

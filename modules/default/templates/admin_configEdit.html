@@ -42,6 +42,14 @@ function toggleTransElements() {
                 <input type="text" class="longText" name="conf[site][showLogo]" id="conf[site][showLogo]" value="{conf[site][showLogo]}" />
             </p>
             <p>
+                <label for="conf[site][description]">{translate(#Description#)}</label>
+                <input type="text" class="longText" name="conf[site][description]" id="conf[site][description]" value="{conf[site][description]}" />
+            </p>
+            <p>
+                <label for="conf[site][keywords]">{translate(#Keywords#)}</label>
+                <input type="text" class="longText" name="conf[site][keywords]" id="conf[site][keywords]" value="{conf[site][keywords]}" />
+            </p>
+            <p>
                 <label for="conf[site][compression]">{translate(#Gzip compression#)}</label>
                 {generateRadioPair(#conf[site][compression]#,conf[site][compression]):h}
             </p>

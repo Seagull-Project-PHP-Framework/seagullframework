@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 15-08-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- default data for event
 
 BEGIN;
@@ -7,15 +7,27 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'event', 'Events', 'For managing ca
 
 -- SELECT @moduleId := MAX(module_id) FROM module;
 
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'calendarmgr', '', (SELECT max(module_id) from module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'eventmgr', '', (SELECT max(module_id) from module));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'locationmgr', '', (SELECT max(module_id) from module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'calendarmgr', '', (
+    SELECT max(module_id) from module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'eventmgr', '', (
+    SELECT max(module_id) from module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'locationmgr', '', (
+    SELECT max(module_id) from module
+    ));
 
 -- member role perms
 
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'calendarmgr'));
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'eventmgr'));
-INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (SELECT permission_id FROM permission WHERE name = 'locationmgr'));
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (
+    SELECT permission_id FROM permission WHERE name = 'calendarmgr'
+    ));
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (
+    SELECT permission_id FROM permission WHERE name = 'eventmgr'
+    ));
+INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (
+    SELECT permission_id FROM permission WHERE name = 'locationmgr'
+    ));
 
 -- remove after devel
 -- SELECT @permissionId := permission_id FROM permission WHERE name = 'maintenancemgr';

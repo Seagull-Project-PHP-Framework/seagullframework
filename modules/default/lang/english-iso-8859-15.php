@@ -221,6 +221,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Session max lifetime (secs)'=>'Session max lifetime (secs)',
         'Site name'=>'Site name',
         'Show logo'=>'Show logo',
+        'Keywords'=>'Keywords',
         'Gzip compression'=>'Gzip compression',
         'Output buffering'=>'Output buffering',
         'Enable IP banning'=>'Enable IP banning',

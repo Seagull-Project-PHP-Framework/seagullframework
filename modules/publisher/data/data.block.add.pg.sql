@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 20-08-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Setup blocks for publisher
 
 BEGIN;
@@ -15,13 +15,31 @@ INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Navigation_Block_CategoryNav', 'Catego
 -- SELECT @sectionIdFiles := section_id FROM section WHERE title = 'Files';
 
 -- create block assignments
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'), (SELECT section_id FROM section WHERE title = 'Publishing'));
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'), (SELECT section_id FROM section WHERE title = 'Articles'));
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'), (SELECT section_id FROM section WHERE title = 'Categories'));
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'), (SELECT section_id FROM section WHERE title = 'Files'));
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'
+    ), (
+    SELECT section_id FROM section WHERE title = 'Publishing'
+    ));
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'
+    ), (
+    SELECT section_id FROM section WHERE title = 'Articles'
+    ));
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'
+    ), (
+    SELECT section_id FROM section WHERE title = 'Categories'
+    ));
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'
+    ), (
+    SELECT section_id FROM section WHERE title = 'Files'
+    ));
 
 -- create block role assignments
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'), 1);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'Navigation_Block_CategoryNav'
+    ), 1);
 
 -- sample blocks
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Publisher_Block_SiteNews', 'Site News', '', '', 4, 'Left', 0, 1, 'N;');
@@ -34,15 +52,31 @@ INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Publisher_Block_Html', 'Donate', '', '
 -- SELECT @blockIdSeagullGear := block_id FROM block WHERE title = 'Seagull Gear';
 -- SELECT @blockIdDonate := block_id FROM block WHERE title = 'Donate';
 
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Publisher_Block_SiteNews'), 0); 
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Publisher_Block_RecentHtmlArticles2'), 0); 
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE title = 'Seagull Gear'), 0); 
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE title = 'Donate', 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Publisher_Block_SiteNews'
+    ), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Publisher_Block_RecentHtmlArticles2'
+    ), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE title = 'Seagull Gear'
+    ), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE title = 'Donate'
+    ), 0);
 
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'Publisher_Block_SiteNews'), -2);
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'Publisher_Block_RecentHtmlArticles2'), -2);
-INSERT INTO block_role VALUES ((SELECT @blockIdSeagullGear := block_id FROM block WHERE title = 'Seagull Gear'), -2);
-INSERT INTO block_role VALUES ((SELECT @blockIdDonate := block_id FROM block WHERE title = 'Donate'), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'Publisher_Block_SiteNews'
+    ), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'Publisher_Block_RecentHtmlArticles2'
+    ), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE title = 'Seagull Gear'
+    ), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE title = 'Donate'
+    ), -2);
 
 COMMIT;
 

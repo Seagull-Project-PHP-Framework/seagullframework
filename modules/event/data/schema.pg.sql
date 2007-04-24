@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 15-08-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Schema for event
 
 BEGIN;
@@ -44,11 +44,11 @@ CREATE TABLE "event-media" (
   is_event_image        INT4                NOT NULL default 0
 );
 
-CREATE INDEX idx_event_media ON table "event-media" (
+CREATE INDEX idx_event_media_1 ON "event-media" (
   event_id
 );
 
-CREATE INDEX idx_event_media ON table "event-media" (
+CREATE INDEX idx_event_media_2 ON "event-media" (
   media_id
 );
 
@@ -96,4 +96,3 @@ CREATE TABLE location_type (
 );
 
 COMMIT;
-

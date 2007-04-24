@@ -309,6 +309,7 @@ $defaultWords = array(
     'Base URL'                     => 'Базовый URL',
     'Site name'                    => 'Название сайта',
     'Show logo'                    => 'Показывать логотип',
+    'Keywords'                     => 'Ключевые слова',
     'If path to image is specified, image will be shown; if left blank, Site name from above will appear as text' => 'Показывает изображение, если указан путь к соответствующему файлу; название сайта будет показано в виде текста, если ничего не указано',
     'Gzip compression'             => 'Компрессия gzip',
     'Output buffering'             => 'Буферизация вывода',

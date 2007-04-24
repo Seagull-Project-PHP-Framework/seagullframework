@@ -1,4 +1,4 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-21
 -- Schema for /modules/user
 
 BEGIN;
@@ -24,7 +24,7 @@ create sequence login_seq;
 -- ==============================================================
 --  Index: usr_login_fk
 -- ==============================================================
-create  index usr_login_fk on login
+create index usr_login_fk on login
 (
    usr_id
 );
@@ -162,7 +162,7 @@ create sequence role_permission_seq;
 -- ==============================================================
 --  Index: permission_id
 -- ==============================================================
-create  index permission_id on role_permission
+create index permission_id on role_permission
 (
    permission_id
 );
@@ -170,7 +170,7 @@ create  index permission_id on role_permission
 -- ==============================================================
 --  Index: role_id
 -- ==============================================================
-create  index role_id on role_permission
+create index role_id on role_permission
 (
    role_id
 );
@@ -181,7 +181,7 @@ create  index role_id on role_permission
 create table user_preference
 (
    user_preference_id   INT4                 not null,
-   usr_id               INT8                 not null default 0,
+   usr_id               INT4                 not null default 0,
    preference_id        INT4                 not null,
    value                VARCHAR(128)         null,
    constraint PK_USER_PREFERENCE primary key (user_preference_id)
@@ -196,7 +196,7 @@ create sequence user_preference_seq;
 -- ==============================================================
 --  Index: usr_user_preferences_fk
 -- ==============================================================
-create  index usr_user_preferences_fk on user_preference
+create index usr_user_preferences_fk on user_preference
 (
    usr_id
 );
@@ -204,7 +204,7 @@ create  index usr_user_preferences_fk on user_preference
 -- ==============================================================
 --  Index: preference_user_preference_fk
 -- ==============================================================
-create  index preference_user_preference_fk on user_preference
+create index preference_user_preference_fk on user_preference
 (
    preference_id
 );
@@ -213,8 +213,8 @@ create  index preference_user_preference_fk on user_preference
 --  Table: org_preference
 -- ==============================================================
 create table org_preference (
-   org_preference_id   INT4                 not null,
-   organisation_id      INT8                 not null default 0,
+   org_preference_id    INT4                 not null,
+   organisation_id      INT4                 not null default 0,
    preference_id        INT4                 not null,
    value                VARCHAR(128)         null,
    constraint PK_ORG_PREFERENCE primary key (org_preference_id)
@@ -229,7 +229,7 @@ create sequence org_preference_seq;
 -- ==============================================================
 --  Index: organisation_org_preference_fk
 -- ==============================================================
-create  index organisation_org_preference_fk on org_preference
+create index organisation_org_preference_fk on org_preference
 (
    organisation_id
 );
@@ -237,7 +237,7 @@ create  index organisation_org_preference_fk on org_preference
 -- ==============================================================
 --  Index: preference_org_preference_fk
 -- ==============================================================
-create  index preference_org_preference_fk on org_preference
+create index preference_org_preference_fk on org_preference
 (
    preference_id
 );

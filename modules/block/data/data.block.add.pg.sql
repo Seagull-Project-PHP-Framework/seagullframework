@@ -1,5 +1,5 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
--- block data for block 
+-- Last edited: Antonio J. Garcia 2007-04-21
+-- block data for block
 
 BEGIN;
 
@@ -13,14 +13,26 @@ INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Default_Block_Sample2', 'Syndication',
 -- SELECT @blockIdSample2 := block_id FROM block WHERE name = 'Default_Block_Sample2';
 -- SELECT @blockIdSampleRss := block_id FROM block WHERE name = 'Export_Block_ShowRss';
 
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'User_Block_Login2'), 0);
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Default_Block_Sample1'), 0);
-INSERT INTO block_assignment VALUES ((SELECT block_id FROM block WHERE name = 'Default_Block_Sample2'), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'User_Block_Login2'
+    ), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Default_Block_Sample1'
+    ), 0);
+INSERT INTO block_assignment VALUES ((
+    SELECT block_id FROM block WHERE name = 'Default_Block_Sample2'
+    ), 0);
 -- INSERT INTO block_assignment VALUES (@blockIdSampleRss, 0);
 
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'User_Block_Login2'), -2);
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'Default_Block_Sample1'), -2);
-INSERT INTO block_role VALUES ((SELECT block_id FROM block WHERE name = 'Default_Block_Sample2'), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'User_Block_Login2'
+    ), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'Default_Block_Sample1'
+    ), -2);
+INSERT INTO block_role VALUES ((
+    SELECT block_id FROM block WHERE name = 'Default_Block_Sample2'
+    ), -2);
 -- INSERT INTO block_role VALUES (@blockIdSampleRss, -2);
 
 COMMIT;
