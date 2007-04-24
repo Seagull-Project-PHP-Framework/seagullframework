@@ -105,7 +105,7 @@ class SGL_Sql
                     $statementType = 'insert';
                 } elseif (preg_match('/select(.*?)from/i', $line)) {
                     $statementType = 'select';
-                } elseif (preg_match('/create index/i', $line)) {
+                } elseif (preg_match('/create (unique )?index/i', $line)) {
                     $statementType = 'createIndex';
                 } elseif (preg_match('/delete from/i', $line)) {
                     $statementType = 'delete';
@@ -115,6 +115,8 @@ class SGL_Sql
                     $statementType = 'ref';
                 } elseif (preg_match('/add constraint/i', $line)) {
                     $statementType = 'addConstraint';
+                } elseif (preg_match('/create sequence/i', $line)) {
+                    $statementType = 'createSequence';
                 }
                 if (!empty($statementType)) {
                     $line = SGL_Sql::prefixTableNameInStatement($line, $statementType);
@@ -328,6 +330,11 @@ class SGL_Sql
             case 'ref':
                 $pattern     = '/(REFERENCES)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
                 $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+                break;
+
+            case 'createSequence':
+                $pattern     = '/(CREATE)(.*?)(SEQUENCE)(\W+)?([A-Za-z0-9_-]+)/i';
+                $replacement = '${1}${2}${3}${4}' . SGL_Sql::addTablePrefix('$5');
                 break;
 
             default:
