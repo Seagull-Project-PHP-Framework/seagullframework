@@ -117,8 +117,8 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         if (SGL_MINIMAL_INSTALL == false) {
             $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
                 'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
-            $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-                'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
+            //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+            //    'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
         }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
