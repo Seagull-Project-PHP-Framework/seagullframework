@@ -1,5 +1,6 @@
--- Last edited: Pierpaolo Toniolo 15-08-2006
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- Data dump for blog
+-- leave subqueries on a single line in order that table prefixes works
 
 BEGIN;
 

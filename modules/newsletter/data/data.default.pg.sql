@@ -1,5 +1,6 @@
--- Last edited: Antonio J. Garcia 2007-04-21
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- data for /newsletter
+-- leave subqueries on a single line in order that table prefixes works
 
 BEGIN;
 

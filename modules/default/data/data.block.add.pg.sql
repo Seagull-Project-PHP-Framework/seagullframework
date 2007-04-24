@@ -1,4 +1,5 @@
--- Last edited: Antonio J. Garcia 2007-04-21
+-- Last edited: Antonio J. Garcia 2007-04-24
+-- leave subqueries on a single line in order that table prefixes works
 BEGIN;
 -- LangSwitcher2
 INSERT INTO block VALUES ({SGL_NEXT_ID}, 'Default_Block_LangSwitcher2', 'Language switcher', NULL, NULL, 1, 'BodyTop', 1, 1,'N;');

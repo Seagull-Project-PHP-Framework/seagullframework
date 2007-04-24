@@ -1,5 +1,6 @@
--- Last edited: Antonio J. Garcia 2007-04-21
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- Constraints for /user
+-- leave "references" on a single line in order that table prefixes works
 
 BEGIN;
 

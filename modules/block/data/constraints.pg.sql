@@ -1,5 +1,6 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- Constraints for /block
+-- leave "references" on a single line in order that table prefixes works
 
 BEGIN;
 

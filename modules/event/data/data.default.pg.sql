@@ -1,6 +1,6 @@
--- Last edited: Antonio J. Garcia 2007-04-21
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- default data for event
-
+-- leave subqueries on a single line in order that table prefixes works
 BEGIN;
 
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'event', 'Events', 'For managing calendar and event functionality.', NULL, '48/module_contactus.png', 'Demian Turner', NULL, 'GPL', 'devel');

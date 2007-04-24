@@ -1,5 +1,6 @@
--- Last edited: Pierpaolo Toniolo 29-03-2006
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- Sample dump for /messaging
+-- leave subqueries on a single line in order that table prefixes works
 
 BEGIN;
 

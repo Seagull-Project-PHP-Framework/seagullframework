@@ -1,5 +1,6 @@
--- Last edited: Pierpaolo Toniolo 26-07-2005
+-- Last edited: Antonio J. Garcia 2007-04-24
 -- Constraints for /messaging
+-- leave "references" on a single line in order that table prefixes works
 
 BEGIN;
 

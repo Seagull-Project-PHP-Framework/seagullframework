@@ -4,9 +4,9 @@
 BEGIN;
 
 -- ==============================================================
---  Table: block                                                 
+--  Table: block
 -- ==============================================================
-create table block 
+create table block
 (
    block_id             INT4                 not null,
    name                 VARCHAR(64)          null,
@@ -28,7 +28,7 @@ create table block
 create sequence block_seq;
 
 -- ==============================================================
---  Table: block_assignment                                      
+--  Table: block_assignment
 -- ==============================================================
 create table block_assignment
 (
@@ -44,24 +44,24 @@ create table block_assignment
 create sequence block_assignment_seq;
 
 -- ==============================================================
---  Index: block_assignment_fk                                   
+--  Index: block_assignment_fk
 -- ==============================================================
-create index block_assignment_fk on block_assignment 
+create index block_assignment_fk on block_assignment
 (
    block_id
 );
 
 -- ==============================================================
---  Index: block_assignment_fk2                                  
+--  Index: block_assignment_fk2
 -- ==============================================================
-create index block_assignment_fk2 on block_assignment 
+create index block_assignment_fk2 on block_assignment
 (
    section_id
 );
 
 -- ==============================================================
 --  table block_role
---  DK 
+--  DK
 -- ==============================================================
 create table block_role (
     block_id integer not null,
