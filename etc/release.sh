@@ -145,6 +145,7 @@ function createMinimalFlag()
 
 ##############################
 # prune developer
+# removes GPL  modules
 ##############################
 function pruneDeveloper()
 {
@@ -427,7 +428,7 @@ exportSvn
 
 createMinimalFlag
 
-pruneDeveloper
+#pruneDeveloper
 
 if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
@@ -435,15 +436,15 @@ fi
 
 createTarball
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
-#scpApiDocsToSglSite
+scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 
