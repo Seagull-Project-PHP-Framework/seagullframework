@@ -187,12 +187,12 @@ class DB_pgsql extends DB_common
      * Example of connecting to a new link via a socket:
      * <code>
      * require_once 'DB.php';
-     * 
+     *
      * $dsn = 'pgsql://user:pass@unix(/tmp)/dbname?new_link=true';
      * $options = array(
      *     'portability' => DB_PORTABILITY_ALL,
      * );
-     * 
+     *
      * $db =& DB::connect($dsn, $options);
      * if (PEAR::isError($db)) {
      *     die($db->getMessage());
@@ -492,7 +492,7 @@ class DB_pgsql extends DB_common
     function quoteBoolean($boolean) {
         return $boolean ? 'TRUE' : 'FALSE';
     }
-     
+
     // }}}
     // {{{ escapeSimple()
 
@@ -786,7 +786,7 @@ class DB_pgsql extends DB_common
     /**
      * Gets the DBMS' native error message produced by the last query
      *
-     * {@internal Error messages are used instead of error codes 
+     * {@internal Error messages are used instead of error codes
      * in order to support older versions of PostgreSQL.}}
      *
      * @return string  the DBMS' error message
@@ -970,6 +970,9 @@ class DB_pgsql extends DB_common
     function _pgFieldFlags($resource, $num_field, $table_name)
     {
         $field_name = @pg_fieldname($resource, $num_field);
+
+        // Check if $table_name is quoted using quoteIdentifier
+        $table_name = (strpos($table_name,'"') === 0)?substr($table_name,1,strlen($table_name)-2):$table_name;
 
         // Check if there's a schema in $table_name and update things
         // accordingly.
