@@ -79,7 +79,7 @@ class SGL_Error
     /**
      * Remove first error off stack.
      *
-     * @return unknown
+     * @return PEAR_Error
      */
     function shift()
     {
@@ -89,6 +89,18 @@ class SGL_Error
     function getLast()
     {
         return end($GLOBALS['_SGL']['ERRORS']);
+    }
+
+    /**
+     * Reset error stack to empty array.
+     *
+     * @return boolean
+     */
+    function reset()
+    {
+        unset($GLOBALS['_SGL']['ERRORS']);
+        $GLOBALS['_SGL']['ERRORS'] = array();
+        return true;
     }
 
     function toString($oError)
@@ -138,6 +150,7 @@ EOF;
             SGL_ERROR_INVALIDREQUEST    => 'invalid request',
             SGL_ERROR_INVALIDTYPE       => 'invalid type',
             SGL_ERROR_RECURSION         => 'recursion',
+            SGL_ERROR_RESOURCENOTFOUND  => 'page not found',
         );
         if (in_array($errorCode, array_keys($aErrorCodes))) {
             return strtoupper($aErrorCodes[$errorCode]);

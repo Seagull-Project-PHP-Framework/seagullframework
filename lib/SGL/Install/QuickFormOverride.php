@@ -39,12 +39,6 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 
         function init()
         {
-            //  temp measure
-            var prefix = document.getElementById('prefix');
-            if (prefix != null) {
-                prefix.disabled = true;
-            }
-
             //  disable 'use existing data' by default
             var useExistingData = document.getElementById('useExistingData');
             if (useExistingData != null) {
@@ -60,6 +54,13 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
             var dbLoginName = document.getElementById('dbLoginNameElement');
             if (dbLoginName != null) {
                 dbLoginName.disabled = true;
+            }
+
+            //  toggle translation setup
+            var dbStorageSelected = document.getElementById('storeTranslationsInDB');
+            if (dbStorageSelected != null && dbStorageSelected.checked) {
+                document.getElementById('moreOptionsLink').innerHTML = 'Hide';
+                document.getElementById('moreOptionsContainer').style.display = 'block';
             }
         }
 
@@ -128,6 +129,30 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
                 dbLoginName.disabled = true;
             }
 
+        }
+
+        function toggleMysqlCluster(enable)
+        {
+            var mysqlCluster = document.getElementById('mysqlCluster');
+
+            if (enable) {
+                mysqlCluster.disabled = false;
+            } else {
+                mysqlCluster.checked = false;
+                mysqlCluster.disabled = true;
+            }
+        }
+
+        function toggleMoreOptions(containerName, oTrigger)
+        {
+            var elem = document.getElementById(containerName);
+            if (elem.style.display == 'none') {
+                elem.style.display = 'block';
+                oTrigger.innerHTML = 'Hide';
+            } else {
+                elem.style.display = 'none';
+                oTrigger.innerHTML = 'Show';
+            }
         }
     </script>
 </head>

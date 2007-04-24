@@ -105,14 +105,13 @@ class SGL
         if (empty($conf['log']['enabled']) || $conf['log']['enabled'] == false) {
             return;
         }
-
         // Deal with the fact that logMessage may be called using the
         // deprecated method signature, or the new one
         if (is_int($file)) {
-            $priority =& $file;
+            $priority = $file;
         }
         // Priority is under logging threshold level
-        if ($priority > @constant($conf['log']['priority'])) {
+        if ($priority > SGL_String::pseudoConstantToInt($conf['log']['priority'])) {
             return;
         }
         // Grab DSN if we are logging to a database
@@ -128,16 +127,15 @@ class SGL
         } else {
             $logName = $conf['log']['name'];
         }
-
-        require_once 'Log.php';
+        include_once 'Log.php';
 
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton( $conf['log']['type'],
-                                    $logName,
-                                    $conf['log']['ident'],
-                                    array(  $conf['log']['paramsUsername'],
-                                            $conf['log']['paramsPassword'],
-                                            'dsn' => $dsn
+        $logger = & Log::singleton($conf['log']['type'],
+                                   $logName,
+                                   $conf['log']['ident'],
+                                   array(  $conf['log']['paramsUsername'],
+                                           $conf['log']['paramsPassword'],
+                                           'dsn' => $dsn
                                     ));
         // If log message is an error object, extract info
         if (is_a($message, 'PEAR_Error')) {
@@ -147,7 +145,7 @@ class SGL
                 if (is_array($userinfo)) {
                     $userinfo = implode(', ', $userinfo);
                 }
-            $message .= ' : ' . $userinfo;
+                $message .= ' : ' . $userinfo;
             }
         }
         // Obtain backtrace information, if supported by PHP
@@ -228,22 +226,22 @@ class SGL
         return $error;
     }
 
-    function raiseMsg($msg, $getTranslation = true, $msgType = SGL_MESSAGE_ERROR)
+    function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
     {
         //  must not log message here
-        if (is_string($msg) && !empty($msg)) {
+        if (is_string($messageKey) && !empty($messageKey)) {
 
-            $message = SGL_String::translate($msg);
+            $message = SGL_String::translate($messageKey);
 
             //  catch error message that results for 'logout' where trans file is not loaded
             if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
                         && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
                         || (!$getTranslation)) {
-                SGL_Session::set('message', $msg);
+                SGL_Session::set('message', $messageKey);
             } else {
                 SGL_Session::set('message', $message);
             }
-            SGL_Session::set('messageType', $msgType);
+            SGL_Session::set('messageType', $messageType);
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
         }
@@ -336,31 +334,31 @@ class SGL
       *
       * @author  Philippe Lhoste <PhiLho(a)GMX.net>
       */
-     function loadRegionList($fileType)
-     {
-         SGL::logMessage(null, PEAR_LOG_DEBUG);
+    function loadRegionList($fileType)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-         if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
-             SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
-             return;
-         }
-         $lang = SGL::getCurrentLang();
-         $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
-         if (!file_exists($file)) {
-             $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
-         }
-         require_once $file;
+        if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
+            SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
+            return;
+        }
+        $lang = SGL::getCurrentLang();
+        $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+        if (!file_exists($file)) {
+            $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+        }
+        include_once $file;
 
-         $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
-         if (is_array($a)) {
+        $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
+        if (is_array($a)) {
             asort($a);
-         }
-         return $a;
-     }
+        }
+        return $a;
+    }
 
-     function displayStaticPage($msg)
-     {
-        require_once SGL_CORE_DIR . '/Install/Common.php';
+    function displayStaticPage($msg)
+    {
+        include_once SGL_CORE_DIR . '/Install/Common.php';
         SGL_Install_Common::printHeader('An error has occurred');
         if (SGL::runningFromCli()) {
             print $msg;
@@ -372,7 +370,7 @@ class SGL
         }
         SGL_Install_Common::printFooter();
         exit();
-     }
+    }
 
      /**
       * Returns true if a minimal version of Seagull has been installed.
@@ -380,10 +378,10 @@ class SGL
       * @static
       * @return boolean
       */
-     function isMinimalInstall()
-     {
+    function isMinimalInstall()
+    {
         return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
-     }
+    }
 
      /**
       * Returns true if a module is installed, ie has a record in the module table.
@@ -392,8 +390,8 @@ class SGL
       * @param string $moduleName
       * @return boolean
       */
-     function moduleIsEnabled($moduleName)
-     {
+    function moduleIsEnabled($moduleName)
+    {
         static $aInstances;
         if (!isset($aInstances)) {
             $aInstances = array();
@@ -412,10 +410,15 @@ class SGL
                 SELECT  module_id
                 FROM    {$conf['table']['module']}
                 WHERE   name = '$moduleName'";
-            $aInstances[$moduleName] = $dbh->getOne($query);
+            $ret = $dbh->getOne($query);
+            if (PEAR::isError($ret)) {
+                return false;
+            } else {
+                $aInstances[$moduleName] = $ret;
+            }
         }
         return ! is_null($aInstances[$moduleName]);
-     }
+    }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {

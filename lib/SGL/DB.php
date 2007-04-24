@@ -66,7 +66,11 @@ class SGL_DB
      */
     function &singleton($dsn = null)
     {
+        $msg = 'Cannot connect to DB, check your credentials, exiting ...';
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
+        if (empty($dsn['phptype'])) {
+            return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
+        }
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -79,7 +83,6 @@ class SGL_DB
             $conn = DB::connect($dsn);
             $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
             if (DB::isError($conn)) {
-                $msg = 'Cannot connect to DB, check your credentials, exiting ...';
                 if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php') && defined('SGL_INSTALLED')) {
                     $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be'.
                     ' able to run the setup again.';
@@ -249,13 +252,18 @@ class SGL_DB
             $pager_options['totalItems'] = $totalItems;
         }
 
+        require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
         $req =& SGL_Request::singleton();
-        $pager_options['currentPage'] = $req->get('pageID');
-
-        require_once 'Pager/Pager.php';
-        $pager_options['append']   = isset($pager_options['append'])   ? $pager_options['append']   : false;
-        $pager_options['fileName'] = isset($pager_options['fileName']) ? $pager_options['fileName'] : '/pageID/%d/';
+        $pager_options['currentPage'] = (array_key_exists('currentPage', $pager_options))
+            ? $pager_options['currentPage']
+            : $req->get('pageID');
+        $pager_options['append'] = isset($pager_options['append'])
+            ? $pager_options['append']
+            : false;
+        $pager_options['fileName'] = isset($pager_options['fileName'])
+            ? $pager_options['fileName']
+            : '/pageID/%d/';
 
         // translate PEAR::Pager
         $pager_options['altPrev'] = SGL_String::translate('altPrev');

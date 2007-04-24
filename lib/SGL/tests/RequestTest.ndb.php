@@ -1,28 +1,35 @@
 <?php
 require_once dirname(__FILE__) . '/../Request.php';
+require_once dirname(__FILE__) . '/../Request/Cli.php';
 
 /**
  * Test suite.
  *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.net>
- * @version $Id: UrlTest.ndb.php,v 1.1 2005/06/23 14:56:01 demian Exp $
+ * @package    seagull
+ * @subpackage test
+ * @author     Demian Turner <demian@phpkitchen.net>
+ * @version    $Id: UrlTest.ndb.php,v 1.1 2005/06/23 14:56:01 demian Exp $
  */
-class RequestTest extends UnitTestCase {
-
+class RequestTest extends UnitTestCase
+{
     function RequestTest()
     {
         $this->UnitTestCase('Request Test');
     }
 
-    function setup()
+    function setUp()
     {
-
     }
 
-    function teardown()
+    function tearDown()
     {
         $_REQUEST = array();
+        if (isset($_SERVER['argc'])) {
+            unset($_SERVER['argc']);
+        }
+        if (isset($_SERVER['argv'])) {
+            unset($_SERVER['argv']);
+        }
     }
 
     function testAdd()
@@ -37,6 +44,63 @@ class RequestTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('foo', $req->getAll()));
         $this->assertTrue(array_key_exists('bar', $req->getAll()));
         $this->assertEqual($req->get('foo'), 'fooValue');
+    }
+
+    function testCliArguments()
+    {
+        $_SERVER['argc'] = 1;
+        $_SERVER['argv'] = array('index.php');
+        $req = new SGL_Request_Cli();
+        $req->init();
+
+        // test no params
+        $this->assertFalse(count($req->getAll()));
+
+        unset($req);
+        $_SERVER['argc'] = 2;
+        $_SERVER['argv'] = array('index.php', '--moduleName=default');
+        $req = new SGL_Request_Cli();
+        $req->init();
+
+        // test module name is caught
+        $this->assertTrue(count($req->getAll()) == 1);
+        $this->assertTrue($req->get('moduleName') == 'default');
+
+        unset($req);
+        $_SERVER['argc'] = 2;
+        $_SERVER['argv'] = array('index.php', '--moduleName=default',
+            '--managerName=translation', '--action=update');
+        $req = new SGL_Request_Cli();
+        $req->init();
+
+        // test module name, manager and action are recognized
+        $this->assertTrue(count($req->getAll()) == 3);
+        $this->assertTrue($req->get('moduleName') == 'default');
+        $this->assertTrue($req->get('managerName') == 'translation');
+        $this->assertTrue($req->get('action') == 'update');
+
+        unset($req);
+        $_SERVER['argc'] = 6;
+        $_SERVER['argv'] = array(
+            'index.php',
+            '--moduleName=default',
+            '--managerName=translation',
+            '--action=update',
+            '--paramNumberOne=firstParameter',
+            '--paramNumberTwo=secondParameter',
+            '--paramNumberThree=thirdParameter'
+        );
+        $req = new SGL_Request_Cli();
+        $req->init();
+
+        // test optional params
+        $this->assertTrue(count($req->getAll()) == 6);
+        $this->assertTrue($req->get('moduleName') == 'default');
+        $this->assertTrue($req->get('managerName') == 'translation');
+        $this->assertTrue($req->get('action') == 'update');
+        $this->assertTrue($req->get('paramNumberOne') == 'firstParameter');
+        $this->assertTrue($req->get('paramNumberTwo') == 'secondParameter');
+        $this->assertTrue($req->get('paramNumberThree') == 'thirdParameter');
     }
 }
 

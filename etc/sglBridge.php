@@ -54,6 +54,9 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
             $protocol .
             $conf['database']['host'];
         $dbh = &SGL_DB::singleton($dsn);
+        if (PEAR::isError($dbh)) {
+            die($dbh->getMessage());
+        }
 
         $query = 'DROP DATABASE IF EXISTS ' . $conf['database']['name'];
         $result = $dbh->query($query);

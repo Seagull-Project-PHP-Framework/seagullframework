@@ -95,7 +95,7 @@ class SGL_TaskRunner
             $this->aTasks[] = & $oTask;
             return true;
         }
-        return PEAR::raiseError('unexpected object type');
+        return PEAR::raiseError('an SGL_Task object was expected');
     }
 
     function main()

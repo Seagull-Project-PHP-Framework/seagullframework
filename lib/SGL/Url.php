@@ -297,7 +297,6 @@ class SGL_URL
                                 //  this is an install and index.php was omitted
                                 $this->path = $urlinfo['path'];
                                 $this->querystring = @$urlinfo['query'];
-                                $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
                                 $this->querystring = substr($value, $frontScriptEndIndex);
@@ -412,6 +411,12 @@ class SGL_URL
         foreach ($aZendDebugParams as $param) {
             if (isset($aRet[$param])) {
                 unset($aRet[$param]);
+            }
+        }
+        //  remove querystring data
+        foreach ($aRet as $k => $v) {
+            if (stristr($k, '?start_debug')) {
+                unset($aRet[$k]);
             }
         }
         return $aRet;
@@ -842,17 +847,6 @@ class SGL_URL
             }
         }
         return $aUriParts;
-    }
-
-    function ensureWebrootSet()
-    {
-        if (!defined('SGL_BASE_URL')) {
-            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
-                define('SGL_BASE_URL', $aMatches[1]);
-            } else {
-                die('Could not set webroot');
-            }
-        }
     }
 }
 

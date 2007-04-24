@@ -82,6 +82,34 @@ class StringTest extends UnitTestCase {
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
+
+    function test_pseudoConstantToInt()
+    {
+        define('TMP_CONSTANT', 23);
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'TMP_CONSTANT'")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('TMP_CONSTANT')));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("23")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt(23)));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'UNDEFINED_TEST_CONSTANT'")));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('UNDEFINED_TEST_CONSTANT')));
+    }
+
+    function _isValidPseudoConstantToIntRetVal($val)
+    {
+        return is_int($val) && $val > 0;
+    }
+
+    function test_toValidVariableName()
+    {
+        $aControl[] = 'hsdfsd(*&*&^Y&  _+|"|:sdfdf  sSDDFD';
+        $aControl[] = ' Dsdfsd(*&*&^Y&  _+|"|:sdfdf  sSDDFD';
+        $aExpected[] = 'hsdfsdY_sdfdfsSDDFD';
+        $aExpected[] = 'dsdfsdY_sdfdfsSDDFD';
+        foreach ($aControl as $k => $control) {
+            $ret = SGL_String::toValidVariableName($control);
+            $this->assertEqual($aExpected[$k], $ret);
+        }
+    }
 }
 
 ?>

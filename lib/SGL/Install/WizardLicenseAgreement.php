@@ -59,7 +59,7 @@ class WizardLicenseAgreement extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'license' => $licenseTxt,
             ));
-        $this->setDefaults(overrideDefaultInstallSettings());
+        $this->setDefaults(SGL_Install_Common::overrideDefaultInstallSettings());
 
         $this->addElement('header',     null, 'Seagull License Agreement: page 1 of 6');
         $this->addElement('textarea',   'license', null, array('rows' => 15, 'cols' => 80));

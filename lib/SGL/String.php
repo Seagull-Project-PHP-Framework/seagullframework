@@ -49,7 +49,6 @@ define('SGL_CENSOR_WORD_FRAGMENT',  3);
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.14 $
- * @since   PHP 4.1
  */
 class SGL_String
 {
@@ -69,12 +68,13 @@ class SGL_String
         $conf = $c->getAll();
 
         $editedText = $text;
-        if ($conf['censor']['mode'] != SGL_CENSOR_DISABLE) {
+        $censorMode = SGL_String::pseudoConstantToInt($conf['censor']['mode']);
+        if ($censorMode != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
             if (is_array($aBadWords)) {
                 $replacement = $conf['censor']['replaceString'];
 
-                switch ($conf['censor']['mode']) {
+                switch ($censorMode) {
                 case SGL_CENSOR_EXACT_MATCH:
                     $regExPrefix = '(\s*)';
                     $regExSuffix = '(\W*)';
@@ -95,7 +95,7 @@ class SGL_String
                 }
             }
         }
-        return ($editedText);
+        return $editedText;
     }
 
     /**
@@ -110,7 +110,7 @@ class SGL_String
 
         if (defined(PHP_EOL)) {
             $crlf = PHP_EOL;
-        } else {
+        } elseif (defined('SGL_CLIENT_OS')) {
             // Win case
             if (SGL_CLIENT_OS == 'Win') {
                 $crlf = "\r\n";
@@ -121,6 +121,8 @@ class SGL_String
             } else {
                 $crlf = "\n";
             }
+        } else {
+            $crlf = "\n";
         }
         return $crlf;
     }
@@ -177,8 +179,10 @@ class SGL_String
             } else {
                 $clean = array_map(array('SGL_String', 'clean'), $var);
             }
+            return SGL_String::trimWhitespace($clean);
+        } else {
+            return false;
         }
-        return SGL_String::trimWhitespace($clean);
     }
 
     function removeJs($var)
@@ -220,21 +224,40 @@ class SGL_String
         $conf = $c->getAll();
 
         if (       !$conf['site']['tidyhtml']
-                || !function_exists('tidy_parse_string')
-                || SGL::isPhp5()) { // tidy 2 in PHP5 has different API
+                || !extension_loaded('tidy')) {
             return $html;
         }
-        //  so we don't get doctype, html, head, body etc. tags added; default is false
-        tidy_setopt('show-body-only', true);
-        //  no wrapping of lines
-        tidy_setopt('wrap', 0);
-        tidy_setopt('indent', 1);
-        tidy_setopt('indent-spaces', 1);
-        tidy_parse_string($html);
-        if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
-            SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
+        //  PHP5 version
+        if (SGL::isPhp5()) {
+            $options = array(
+                'wrap' => 0,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'output-xhtml' => true,
+                'drop-font-tags' => false,
+                'clean' => false,
+            );
+            if (strlen($html)) {
+                $tidy = new Tidy();
+                $tidy->parseString($html, $options, 'utf8');
+                $tidy->cleanRepair();
+                $ret = $tidy->body();
+            }
+        //  PHP4 version
+        } else {
+            //  so we don't get doctype, html, head, body etc. tags added; default is false
+            tidy_setopt('show-body-only', true);
+            //  no wrapping of lines
+            tidy_setopt('wrap', 0);
+            tidy_setopt('indent', 1);
+            tidy_setopt('indent-spaces', 1);
+            tidy_parse_string($html);
+            if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
+                SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
+            }
+            $ret = tidy_get_output();
         }
-        return tidy_get_output();
+        return $ret;
     }
 
     /**
@@ -488,7 +511,6 @@ class SGL_String
         $aLines = explode("\n", $str);
         $aSegment = array_slice($aLines, 0, $lines);
 
-
         //  close tags like <ul> so page layout doesn't break
         $unclosedListTags = 0;
         $aMatches = array();
@@ -505,7 +527,9 @@ class SGL_String
         for ($x=0; $x < $unclosedListTags; $x++) {
             array_push($aSegment, '</ul>');
         }
-        return implode("\n", $aSegment);
+        $ret = implode("\n", $aSegment);
+        $ret = SGL_String::tidy($ret);
+        return $ret;
     }
 
     /**
@@ -539,6 +563,18 @@ class SGL_String
             $i++;
         }
         return $formated;
+    }
+
+    function toValidVariableName($str)
+    {
+        //  remove illegal chars
+        $search = '/[^a-zA-Z1-9_]/';
+        $replace = '';
+        $res = preg_replace($search, $replace, $str);
+        //  ensure 1st letter is lc
+        $firstLetter = strtolower($res[0]);
+        $final = substr_replace($res, $firstLetter, 0, 1);
+        return $final;
     }
 
     function toValidFileName($origName)
@@ -632,6 +668,33 @@ class SGL_String
     function stripIniFileIllegalChars($string)
     {
         return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
+    }
+
+    /**
+     * Converts strings representing constants to int values.
+     *
+     * Used for when constants are stored as strings in config.
+     *
+     * @static
+     * @param string $string
+     * @return integer
+     */
+    function pseudoConstantToInt($string)
+    {
+        $ret = 0;
+        if (is_int($string)) {
+            $ret = $string;
+        }
+        if (is_numeric($string)) {
+            $ret = (int)$string;
+        }
+        if (SGL_Inflector::isConstant($string)) {
+            $const = str_replace("'", '', $string);
+            if (defined($const)) {
+                $ret = constant($const);
+            }
+        }
+        return $ret;
     }
 }
 

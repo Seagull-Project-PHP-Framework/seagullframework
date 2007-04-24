@@ -165,9 +165,9 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  get DA_User object
-        require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-        $da = & DA_User::singleton();
+        //  get UserDAO object
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();
@@ -288,12 +288,31 @@ class SGL_Session
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
-            if (mktime() - $lastPageRefreshTime > SGL_SESSION_UPDATE_WINDOW ) {
-                $_SESSION['lastRefreshed'] = mktime();
-            }
             return false;
         }
     }
+
+    /**
+     * Updates the idle time.
+     *
+     * @access  public
+     * @return  boolean true if session idle time delayed
+     */
+    function updateIdle()
+     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $ret = false;
+        //  check for session timeout
+        if (!$this->isTimedOut()) {
+            if (mktime() - $_SESSION['lastRefreshed'] > SGL_SESSION_UPDATE_WINDOW ) {
+                $_SESSION['lastRefreshed'] = mktime();
+            }
+            $ret = true;
+        }
+        return $ret;
+    }
+
 
     /**
      * Returns true if specified permission exists in the session.
@@ -372,7 +391,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION) && isset($_SESSION['rid'])) {
+        if (isset($_SESSION) && count($_SESSION) && isset($_SESSION['rid'])) {
             return $_SESSION['rid'];
         } else {
             return false;

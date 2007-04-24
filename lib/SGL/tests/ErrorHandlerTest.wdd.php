@@ -52,7 +52,6 @@ class ErrorHandlerTest extends UnitTestCase
         $this->assertErrorPattern("/$str/");
     }
 
-    //  this doesn't work because sgl's custom error handler gets overridden by simpletest's
     function testSglRaiseError()
     {
         SGL::raiseError('test PEAR error msg', SGL_ERROR_INVALIDARGS);

@@ -41,7 +41,6 @@
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
 
-
 /**
  * Application controller.
  *
@@ -51,6 +50,30 @@ require_once dirname(__FILE__)  . '/Task/Init.php';
  */
 class SGL_FrontController
 {
+    /**
+     * Allow SGL_Output with its template methods to be extended.
+     *
+     * Remember to add your custom include path to the global config, ie a class
+     * called FOO_Output will be discovered if it exists in seagull/lib/FOO/Output.php.
+     * This means '/path/to/seagull/lib' must be added to
+     * $conf['path']['additionalIncludePath'].  The class definition would be:
+     *
+     *  class FOO_Output extends SGL_Output {}
+     *
+     * @param  array $conf
+     */
+    function getOutputClass($conf)
+    {
+        if (!empty($conf['site']['customOutputClassName'])) {
+            $className = $conf['site']['customOutputClassName'];
+            $path = trim(preg_replace('/_/', '/', $className)) . '.php';
+            require_once $path;
+        } else {
+            $className = 'SGL_Output';
+        }
+        return $className;
+    }
+
     /**
      * Main invocation, init tasks plus main process.
      *
@@ -69,7 +92,12 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $outputClass = SGL_FrontController::getOutputClass($input->getConfig());
+        $output = &new $outputClass();
+
+        $setupNav = SGL::moduleIsEnabled('cms')
+            ? 'SGL_Task_SetupNavigation2'
+            : 'SGL_Task_SetupNavigation';
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
@@ -90,10 +118,10 @@ class SGL_FrontController
                 new SGL_Task_BuildHeaders(
                 new SGL_Task_SetSystemAlert(
                 new SGL_Task_BuildView(
+                new SGL_Task_BuildDebugBlock(
                 new SGL_Task_SetupBlocks(
-                new SGL_Task_SetupNavigation(
+                new $setupNav(
                 new SGL_Task_SetupGui(
-                new SGL_Task_GetPerformanceInfo(
                 new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
 
@@ -110,6 +138,7 @@ class SGL_FrontController
         if ($output->conf['site']['outputBuffering']) {
             ob_end_flush();
         }
+
         echo $output->data;
     }
 
@@ -117,21 +146,65 @@ class SGL_FrontController
     {
         $conf = $input->getConfig();
         $req = $input->getRequest();
-        $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
-            $req->getManagerName());
-        if (!empty($conf[$mgr]['filterChain'])) {
-            $aFilters = explode(',', $conf[$mgr]['filterChain']);
+
+        switch ($req->getType()) {
+
+        case SGL_REQUEST_BROWSER:
+        case SGL_REQUEST_CLI:
+            $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
+                $req->getManagerName());
+            //  load filters defined by specific manager
+            if (!empty($conf[$mgr]['filterChain'])) {
+                $aFilters = explode(',', $conf[$mgr]['filterChain']);
+                $input->setFilters($aFilters);
+                $ret = true;
+
+            //  load sitewide custom filters
+            } elseif (!empty($conf['site']['filterChain'])) {
+                $aFilters = explode(',', $conf['site']['filterChain']);
+                $input->setFilters($aFilters);
+                $ret = true;
+            } else {
+                $ret = false;
+            }
+            break;
+
+        case SGL_REQUEST_AJAX:
+            $moduleName     = ucfirst($req->getModuleName());
+            $providerName   = $moduleName . 'AjaxProvider';
+            if (!empty($conf[$providerName]['filterChain'])) {
+                $aFilters = explode(',', $conf[$providerName]['filterChain']);
+            } else {
+                $aFilters = array(
+                    'SGL_Task_Init',
+                    'SGL_Task_SetupORM',
+                    'SGL_Task_CreateSession',
+                    'SGL_Task_CustomBuildOutputData',
+                    'SGL_Task_ExecuteAjaxAction',
+                    );
+            }
             $input->setFilters($aFilters);
             $ret = true;
-        } elseif (!empty($conf['site']['filterChain'])) {
-            $aFilters = explode(',', $conf['site']['filterChain']);
+            break;
+
+
+        case SGL_REQUEST_AMF:
+            $aFilters = array(
+                'SGL_Task_Init',
+                'SGL_Task_SetupORM',
+                'SGL_Task_CreateSession',
+                'SGL_Task_ExecuteAmfAction',
+                );
             $input->setFilters($aFilters);
             $ret = true;
-        } else {
-            $ret = false;
+            break;
+
+
         }
+
         return $ret;
     }
+
 
     function init()
     {
@@ -146,12 +219,15 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
+        $init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetupPearErrorCallback());
         $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_LoadCustomConfig());
+        $init->addTask(new SGL_Task_InitialiseModules());
         $init->main();
         define('SGL_INITIALISED', true);
     }
@@ -233,19 +309,19 @@ class SGL_MainProcess extends SGL_ProcessRequest
 
         $req  = $input->getRequest();
         $mgr  = $input->get('manager');
-        $conf = $mgr->conf;
-        $mgr->validate($req, $input);
 
+        $mgr->validate($req, $input);
         $input->aggregate($output);
 
         //  process data if valid
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
-            if (PEAR::isError($ok)) {
-                //  stop with error page
-                SGL::displayStaticPage($ok->getMessage());
+            if (SGL_Error::count() && SGL_Session::getRoleId() != SGL_ADMIN
+                    && $mgr->conf['debug']['production']) {
+                $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
+        SGL_Manager::display($output);
         $mgr->display($output);
     }
 }

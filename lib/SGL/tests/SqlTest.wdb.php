@@ -15,14 +15,26 @@ class SqlTest extends UnitTestCase {
         $this->UnitTestCase('SQL Test');
     }
 
-    function setup()
+    function setUp()
     {
         $this->sql = new SGL_Sql();
+
+        // save config
+        $c = &SGL_Config::singleton();
+        $this->startUpConf = $c->getAll();
     }
 
     function tearDown()
     {
         unset($this->sql);
+
+        // restore config
+        $c = &SGL_Config::singleton();
+        foreach ($this->startUpConf as $container => $param) {
+            foreach ($param as $key => $value) {
+                $c->set($container, array($key => $value));
+            }
+        }
     }
 
     function testParseData()
@@ -49,6 +61,10 @@ class SqlTest extends UnitTestCase {
 
     function testextractTableNamesWithFuzz()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $partialSql = "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
         $res = $this->sql->extractTableNameFromInsertStatement($partialSql);
         $this->assertEqual($res, 'module');
@@ -142,6 +158,10 @@ class SqlTest extends UnitTestCase {
 
     function testExtractTablenameFromCreateStatement()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $sql = <<< EOF
 /*==============================================================*/
 /* Table: block                                                 */
@@ -188,6 +208,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement1()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'create table block';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'block');
@@ -195,6 +219,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement2()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'create table `block';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'block');
@@ -202,6 +230,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement3()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'create table if not exists block';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'block');
@@ -209,6 +241,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement4()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'create table if not exists `block`';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'block');
@@ -216,6 +252,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement5()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'create table `block`';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'block');
@@ -223,6 +263,10 @@ EOF;
 
     function testExtractTableNameFromCreateStatement6()
     {
+        // reset prefix
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => ''));
+
         $str = 'CREATE TABLE `event-media` (';
         $tableName = SGL_Sql::extractTableNameFromCreateStatement($str);
         $this->assertEqual($tableName, 'event-media');
@@ -233,6 +277,213 @@ EOF;
         $schemaFile =  SGL_MOD_DIR . '/default/data/schema.my.sql';
         $res = SGL_Sql::parse($schemaFile);
         $this->assertTrue(strlen($res) > 2000); // a parsed ~ 2k file is returned
+    }
+
+    function testAddTablePrefix()
+    {
+        require_once 'Text/Password.php';
+        $prefix = Text_Password::create();
+        $table  = 'module';
+
+        $c = &SGL_Config::singleton();
+        $c->set('db', array('prefix' => $prefix));
+
+        $ret = SGL_Sql::addTablePrefix($table);
+        $this->assertEqual($ret, $prefix . $table);
+    }
+
+    function testPrefixTableNameInCreateTableStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            'create table block',
+            'create table `block',
+            'create table if not exists block',
+            'create table if not exists `block`',
+            'create table `block`',
+            'CREATE TABLE `event-media` ('
+        );
+        $aExpected = array(
+            "create table {$prefix}block",
+            "create table `{$prefix}block",
+            "create table if not exists {$prefix}block",
+            "create table if not exists `{$prefix}block`",
+            "create table `{$prefix}block`",
+            "CREATE TABLE `{$prefix}event-media` ("
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'createTable');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInInsertStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO `module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO `module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO ` module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO 'module' VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+        );
+        $aExpected = array(
+            "INSERT INTO {$prefix}module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO `{$prefix}module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO `{$prefix}module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO ` {$prefix}module` VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+            "INSERT INTO '{$prefix}module' VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',",
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'insert');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInSelectStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            "SELECT @langSwitcher2BlockId := block_id FROM block WHERE name = 'Default_Block_LangSwitcher2'",
+            "SELECT @moduleId := MAX(module_id) FROM module",
+            "SELECT @moduleId := MAX(module_id) FROM `module`",
+            "SELECT @moduleId := MAX(module_id) FROM `module` WHERE id = 325"
+        );
+        $aExpected = array(
+            "SELECT @langSwitcher2BlockId := block_id FROM {$prefix}block WHERE name = 'Default_Block_LangSwitcher2'",
+            "SELECT @moduleId := MAX(module_id) FROM {$prefix}module",
+            "SELECT @moduleId := MAX(module_id) FROM `{$prefix}module`",
+            "SELECT @moduleId := MAX(module_id) FROM `{$prefix}module` WHERE id = 325"
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'select');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInCreateIndexStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            'create index block_assignment_fk on block_assignment',
+            'create index `block_assignment_fk` on `block_assignment` ',
+            'create unique index `block_assignment_fk` using btree on `block_assignment` ',
+            'create fulltext index `block_assignment_fk` on `block_assignment` ',
+        );
+        $aExpected = array(
+            "create index {$prefix}block_assignment_fk on {$prefix}block_assignment",
+            "create index `{$prefix}block_assignment_fk` on `{$prefix}block_assignment` ",
+            "create unique index `{$prefix}block_assignment_fk` using btree on `{$prefix}block_assignment` ",
+            "create fulltext index `{$prefix}block_assignment_fk` on `{$prefix}block_assignment` ",
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'createIndex');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInAlterTableStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            'alter table block_assignment',
+            'alter table `block_assignment`',
+            'alter table block_assignment add constraint FK_block_assignment foreign key (block_id)',
+            'alter table `block_assignment` add constraint `FK_block_assignment` foreign key (block_id)'
+        );
+        $aExpected = array(
+            "alter table {$prefix}block_assignment",
+            "alter table `{$prefix}block_assignment`",
+            "alter table {$prefix}block_assignment add constraint {$prefix}FK_block_assignment foreign key (block_id)",
+            "alter table `{$prefix}block_assignment` add constraint `{$prefix}FK_block_assignment` foreign key (block_id)"
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'alterTable');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInReferencesStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            'references block (block_id) on delete restrict on update restrict',
+            'references `block` (block_id) on delete restrict on update restrict',
+        );
+        $aExpected = array(
+            "references {$prefix}block (block_id) on delete restrict on update restrict",
+            "references `{$prefix}block` (block_id) on delete restrict on update restrict",
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'ref');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
+    }
+
+    function testPrefixTableNameInDeleteStatement()
+    {
+        $c = &SGL_Config::singleton();
+
+        // set prefix
+        $prefix = 'prefix_';
+        $c->set('db', array('prefix' => $prefix));
+
+        $aInitials = array(
+            'DELETE FROM block',
+            'DELETE FROM `block` WHERE block_id = @catNavBlockId',
+        );
+        $aExpected = array(
+            "DELETE FROM {$prefix}block",
+            "DELETE FROM `{$prefix}block` WHERE block_id = @catNavBlockId",
+        );
+
+        for ($i = 0, $cnt = count($aInitials); $i < $cnt; $i++) {
+            $str = $aInitials[$i];
+            $ret = SGL_Sql::prefixTableNameInStatement($str, 'delete');
+            $this->assertEqual($ret, $aExpected[$i]);
+        }
     }
 }
 ?>

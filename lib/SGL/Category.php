@@ -40,7 +40,7 @@
 // $Id: Category.php,v 1.10 2005/04/27 23:32:41 demian Exp $
 
 require_once SGL_CORE_DIR. '/NestedSet.php';
-require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
+require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 define('SGL_MAX_RECURSION', 100);
 
@@ -70,7 +70,7 @@ class SGL_Category
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $this->da = & DA_User::singleton();
+        $this->da = & UserDAO::singleton();
         $this->dbh = & SGL_DB::singleton();
 
         //  Nested Set Params
@@ -88,7 +88,7 @@ class SGL_Category
             ),
             'tableName'     => $this->conf['table']['category'],
             /** @todo Use $this->conf['table']['table_lock'] */
-            'lockTableName' => 'table_lock',
+            'lockTableName' => $this->conf['db']['prefix'] . 'table_lock',
             'sequenceName'  => $this->conf['table']['category']);
     }
 
@@ -457,12 +457,25 @@ class SGL_Category
         $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
 
-        //  build url for current page
+
         $req = & SGL_Request::singleton();
-        $url = SGL_Url::makeLink(   $req->get('action'),
-                                    $req->get('managerName'),
-                                    $req->get('moduleName')
-                                    );
+
+        //  logical case for publisher->articleview->view
+        $managerName = $req->get('managerName');
+        $action = $req->get('action');
+
+        //  Make sure the articleview->view page shows the right breadcrumbs
+        if (strtolower($managerName) == 'articleview' &&
+            strtolower($action) == 'view') {
+            // summary is the correct action when browsing categories
+            $action = "summary";
+        }
+
+        //  build url for current page
+        $url = SGL_Url::makeLink(  $action,
+                                   $managerName,
+                                   $req->get('moduleName')
+                                   );
         $url .= 'frmCatID/';
 
         foreach ($crumbs as $crumb) {

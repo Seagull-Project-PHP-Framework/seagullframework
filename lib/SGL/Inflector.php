@@ -114,7 +114,18 @@ class SGL_Inflector
         $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
 
         //  if the file exists, mgr name is valid and has not been omitted
-        return !is_file($path);
+        if (!is_file($path)) {
+            //  so before we can be sure of simplification, let's check for presence of simplified Manager,
+            //  ie, that has same name of module, so if module is foo, look for FooMgr
+            $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($aParsedUri['moduleName']);
+            $corrected = SGL_Inflector::caseFix($mgrName, true);
+            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+            //  if a default mgr can be loaded, then we assume that mgr name was omitted in request
+            $ret = is_file($pathToMgr);
+        } else {
+            $ret = false;
+        }
+        return $ret;
     }
 
     /**
@@ -154,6 +165,34 @@ class SGL_Inflector
         return strtolower($name);
     }
 
+   /**
+    * Converts "string with spaces" to "camelCase" string.
+    *
+    * @access  public
+    * @param   string $s
+    * @return  string
+    *
+    * @author Julien Casanova <julien_casanova AT yahoo DOT fr>
+    */
+    function camelise($s)
+    {
+        $ret = '';
+        $i = 0;
+
+        $s = preg_replace('!\s+!', ' ', $s);
+        $s = trim($s);
+        $aString = explode(' ', $s);
+        foreach ($aString as $value) {
+            if ($i == 0) {
+                $ret .= strtolower($value);
+            } else {
+                $ret .= ucfirst(strtolower($value));
+            }
+            $i++;
+        }
+        return $ret;
+    }
+
     function getTitleFromCamelCase($camelCaseWord)
     {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
@@ -182,6 +221,34 @@ class SGL_Inflector
             }
         }
     }
+
+    function isConstant($str)
+    {
+        if (empty($str)) {
+            return false;
+        }
+        if (preg_match('/sessid/i', $str)) {
+            return false;
+        }
+        $pattern = '@^[A-Z_\']*$@';
+        if (!preg_match($pattern, $str)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns a human-readable string from $lower_case_and_underscored_word,
+     * by replacing underscores with a space, and by upper-casing the initial characters.
+     *
+     * @param string $lower_case_and_underscored_word String to be made more readable
+     * @return string Human-readable string
+     */
+	function humanise($lowerCaseAndUnderscoredWord)
+	{
+		$replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+		return $replace;
+	}
 
     /**
      * Makes up for case insensitive classnames in php4 with get_class().

@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . '/../Locale.php';
 
 /**
  * Test suite.
@@ -23,6 +22,7 @@ class LocaleTest extends UnitTestCase {
 
     function testSingletonWithArg()
     {
+        require_once dirname(__FILE__) . '/../Locale.php';
         $locale = SGL_Locale::singleton('en_GB');
     }
 }

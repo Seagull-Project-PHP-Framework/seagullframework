@@ -1,4 +1,18 @@
 <?php
+/**
+ * Returns systime in ms.
+ *
+ * @return string   Execution time in milliseconds
+ */
+function getSystemTime()
+{
+    $time = gettimeofday();
+    $resultTime = $time['sec'] * 1000;
+    $resultTime += floor($time['usec'] / 1000);
+    return $resultTime;
+}
+
+
 //  start timer
 define('SGL_START_TIME', getSystemTime());
 $pearTest = '@PHP-DIR@';
@@ -30,17 +44,4 @@ if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
 }
 
 SGL_FrontController::run();
-
-/**
- * Returns systime in ms.
- *
- * @return string   Execution time in milliseconds
- */
-function getSystemTime()
-{
-    $time = gettimeofday();
-    $resultTime = $time['sec'] * 1000;
-    $resultTime += floor($time['usec'] / 1000);
-    return $resultTime;
-}
 ?>
