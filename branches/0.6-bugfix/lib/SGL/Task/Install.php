@@ -1153,18 +1153,8 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         $conf = $c->getAll();
 
         //  init DB_DataObject
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
-        $options = array(
-            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
-            'schema_location'       => SGL_ENT_DIR,
-            'class_location'        => SGL_ENT_DIR,
-            'require_prefix'        => SGL_ENT_DIR . '/',
-            'class_prefix'          => 'DataObjects_',
-            'debug'                 => 0,
-            'production'            => 0,
-            'ignore_sequence_keys'  => 'ALL',
-            'generator_strip_schema'=> 1,
-        );
+        $oTask = new SGL_Task_InitialiseDbDataObject();
+        $ok = $oTask->run($conf);
 
         require_once 'DB/DataObject/Generator.php';
         ob_start();
@@ -1173,7 +1163,6 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         if (is_file($keysFile)) {
             $ok = unlink($keysFile);
         }
-
         // drop old entities on re-install
         if (isset($_SESSION['install_dbPrefix'])) {
             if (is_writable(SGL_ENT_DIR)) {
@@ -1189,7 +1178,6 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
                 }
             }
         }
-
         $generator = new DB_DataObject_Generator();
         $generator->start();
         $out = ob_get_contents();

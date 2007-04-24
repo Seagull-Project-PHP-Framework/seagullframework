@@ -68,18 +68,9 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
-        $options = array(
-            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
-            'schema_location'       => SGL_ENT_DIR,
-            'class_location'        => SGL_ENT_DIR,
-            'require_prefix'        => SGL_ENT_DIR . '/',
-            'class_prefix'          => 'DataObjects_',
-            'debug'                 => $this->conf['debug']['dataObject'],
-            'production'            => 0,
-            'ignore_sequence_keys'  => 'ALL',
-            'generator_strip_schema' => 1,
-        );
+        $conf = $input->getConfig();
+        $oTask = new SGL_Task_InitialiseDbDataObject();
+        $ok = $oTask->run($conf);
 
         $this->processRequest->process($input, $output);
     }
