@@ -542,7 +542,6 @@ class UserDAO extends SGL_Manager
             AND     op.organisation_id = " . $orgId;
 
         $aRes = $this->dbh->getAssoc($query);
-print '<pre>'; print_r($query);
         if (!DB::isError($aRes) && count($aRes)) {
             //  return default prefs if none exist for given org id
             return $aRes;
