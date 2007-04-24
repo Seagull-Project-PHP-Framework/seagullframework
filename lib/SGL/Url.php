@@ -413,6 +413,12 @@ class SGL_URL
                 unset($aRet[$param]);
             }
         }
+        //  remove querystring data
+        foreach ($aRet as $k => $v) {
+            if (stristr($k, '?start_debug')) {
+                unset($aRet[$k]);
+            }
+        }
         return $aRet;
     }
 
