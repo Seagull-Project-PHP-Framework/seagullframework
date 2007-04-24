@@ -252,12 +252,19 @@ class DB_DataObject_Generator extends DB_DataObject
                     $table = $bits[1];
                 }
             }
+            $quotedTable = !empty($options['quote_identifiers']) ?
+                $__DB->quoteIdentifier($table) : $table;
+
             if (!$is_MDB2) {
-                $defs =  $__DB->tableInfo($__DB->quoteIdentifier($table));
+
+                $defs =  $__DB->tableInfo($quotedTable);
             } else {
-                $defs =  $__DB->reverse->tableInfo($table);
+                $defs =  $__DB->reverse->tableInfo($quotedTable);
                 // rename the length value, so it matches db's return.
                 foreach ($defs as $k => $v) {
+                    if (!isset($defs[$k]['length'])) {
+                        continue;
+                    }
                     $defs[$k]['len'] = $defs[$k]['length'];
                 }
             }
