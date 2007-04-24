@@ -16,6 +16,8 @@ BUGFIXES
             that inherited from RegisterMgr (Dmitri Lakachauskis)
 
 IMPROVEMENTS
+24-04-07    Enhanced RSS export, now takes and CMS or DAO method as datasrc, see
+            http://trac.seagullproject.org/wiki/Modules/Export
 19-04-07    All Russian translations updated (Dmitri Lakachauskis)
 19-04-07    All German translations updated (Werner Krauss)
 11-04-07    Enabled SGL_String::tidy() to work with PHP5
