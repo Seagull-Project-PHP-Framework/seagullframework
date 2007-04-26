@@ -488,7 +488,8 @@ class SGL_Output
             //  required to remove message that persists when register_globals = on
             unset($GLOBALS['message']);
             unset($GLOBALS['messageType']);
-        } elseif (SGL_Error::count()) {
+        }
+        if (SGL_Error::count()) {
 
             // get all errors from stack
             while ($msg = SGL_Error::pop()) {
