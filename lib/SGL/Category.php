@@ -503,7 +503,7 @@ class SGL_Category
     {
         $nestedSet = new SGL_NestedSet($this->_params);
         $node = $nestedSet->getNode($id);
-        if ($node) {
+        if (!PEAR::isError($node)) {
             return $node['label'];
         } else {
             return false;
