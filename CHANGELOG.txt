@@ -7,6 +7,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+27-04-07    Rebuild functionality disabled in production mode (Dmitri Lakachauskis)
 
 
 +-----------------------+
