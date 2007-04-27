@@ -150,9 +150,18 @@ class STR_FileScanner
      */
     function getAllTestFiles($type)
     {
+        $c = SGL_Config::singleton();
+        $moduleDir = ($c->get(array('path' => 'moduleDirOverride')))
+            ? $c->get(array('path' => 'moduleDirOverride'))
+            : 'modules';
+
         $tests = array();
         foreach ($GLOBALS['_STR'][$type . '_layers'] as $layer => $data) {
             foreach ($GLOBALS['_STR']['directories'] as $path) {
+                //  swap in custom modules dir
+                if ($path == 'modules') {
+                    $path = $moduleDir;
+                }
                 if (empty($tests[$layer])) {
                     $tests[$layer] = array();
                 }
