@@ -163,6 +163,11 @@ class MaintenanceMgr extends SGL_Manager
                 false, SGL_MESSAGE_INFO);
             return false;
         }
+        if (!empty($this->conf['debug']['production'])) {
+            SGL::raiseMsg('This operation is not supported in production mode',
+                false, SGL_MESSAGE_INFO);
+            return false;
+        }
         require_once SGL_CORE_DIR . '/Task/Install.php';
 
         //  retrieve Install password

@@ -74,7 +74,7 @@
         </fieldset>
     </form>
 
-    <form name="rebuildSeagull" method="post" id="rebuildSeagull" flexy:ignore>
+    <form flexy:if="!conf[debug][production]" name="rebuildSeagull" method="post" id="rebuildSeagull" flexy:ignore>
         <h3>{translate(#Rebuild Seagull#)}</h3>
         <fieldset class="inside">
             <p class="center">
