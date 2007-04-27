@@ -4,6 +4,8 @@ CHANGELOG
 | VERSION: 0.6.3        |
 +-----------------------+
 BUGFIXES
+27-04-07    Tests now correctly identify custom module paths
+
 IMPROVEMENTS
 
 
