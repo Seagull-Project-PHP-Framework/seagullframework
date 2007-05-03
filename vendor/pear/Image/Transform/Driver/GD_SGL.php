@@ -231,6 +231,23 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
 
         return true;
     }
+
+    function _createImage($width = -1, $height = -1, $trueColor = null)
+    {
+        $new_img = parent::_createImage($width, $height, $trueColor);
+        if ($this->getImageType() == 'png') {
+            imagealphablending($new_img, false);
+        }
+        return $new_img;
+    }
+
+    function save($filename, $type = '', $quality = null)
+    {
+        if ($this->getImageType() == 'png') {
+            imagesavealpha($this->imageHandle, true);
+        }
+        return parent::save($filename, $type, $quality);
+    }
 }
 
 ?>
