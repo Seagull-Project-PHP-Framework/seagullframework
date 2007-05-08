@@ -409,7 +409,7 @@ class SGL
             $query = "
                 SELECT  module_id
                 FROM    {$conf['table']['module']}
-                WHERE   name = '$moduleName'";
+                WHERE   name = " .$dbh->quoteSmart($moduleName);
             $ret = $dbh->getOne($query);
             if (PEAR::isError($ret)) {
                 return false;
