@@ -285,6 +285,10 @@ class SGL_Session
         $currentTime = mktime();
         $lastPageRefreshTime = $_SESSION['lastRefreshed'];
         $timeout = $_SESSION['aPrefs']['sessionTimeout'];
+        //  if timeout is set to zero session never expires
+        if (empty($timeout)) {
+            return false;
+        }
         if ($currentTime - $lastPageRefreshTime > $timeout) {
             return true;
         } else {
