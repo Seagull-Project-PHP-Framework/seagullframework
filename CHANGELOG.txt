@@ -7,6 +7,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+09-05-07    Updating AMFPHP support to version 1.9
 27-04-07    Rebuild functionality disabled in production mode (Dmitri Lakachauskis)
 
 
