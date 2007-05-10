@@ -302,12 +302,25 @@ class BlockMgr extends SGL_Manager
 
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
 
+        $transId = ($this->conf['translation']['container'] == 'db')
+            ? ', trans_id'
+            : '';
+
+        if (SGL::moduleIsEnabled('cms')) {
+            $id = 'page_id';
+            $table = $this->conf['table']['page'];
+        } else {
+            $table = $this->conf['table']['section'];
+            $id = 'section_id';
+        }
         $query = "
             SELECT
-                ba.block_id, ba.section_id as sections, s.title as section_title, trans_id
-            FROM {$this->conf['table']['block_assignment']} ba,
-            {$this->conf['table']['section']} s
-            WHERE s.section_id=ba.section_id";
+                ba.block_id, ba.section_id as sections,
+                s.title as section_title $transId
+            FROM
+                {$this->conf['table']['block_assignment']} ba,
+                {$table} s
+            WHERE s.$id = ba.section_id";
 
         $aBlockSections = $this->dbh->getAssoc($query, false, array(), DB_FETCHMODE_ASSOC, true);
 
