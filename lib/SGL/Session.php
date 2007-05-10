@@ -100,10 +100,11 @@ class SGL_Session
      *  o persist user object in session
      *
      * @access  public
-     * @param   int $uid    user id if present
+     * @param   int $uid       user id if present
+     * @param   int $lifetime  cookie lifetime in seconds
      * @return  void
      */
-    function SGL_Session($uid = -1)
+    function SGL_Session($uid = -1, $lifetime = 0)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
@@ -116,7 +117,7 @@ class SGL_Session
         //  set session timeout to 0 (until the browser is closed) initially,
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
-            0,
+            $lifetime,
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
