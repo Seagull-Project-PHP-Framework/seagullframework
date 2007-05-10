@@ -311,6 +311,11 @@ class BlockMgr extends SGL_Manager
 
         $aBlockSections = $this->dbh->getAssoc($query, false, array(), DB_FETCHMODE_ASSOC, true);
 
+        if (PEAR::isError($aBlockSections)) {
+            SGL::raiseError($aBlockSections->getMessage());
+            return false;
+        }
+
         $this->_rebuildPagedData($aPagedData, $aBlockSections);
 
         $output->aPagedData = $aPagedData;
