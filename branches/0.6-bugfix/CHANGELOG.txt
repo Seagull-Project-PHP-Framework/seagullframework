@@ -7,7 +7,9 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
-09-05-07    Made cookie lifetime managable (Dmitri Lakachauskis)
+11-05-07    Media templates for admin now call member templates to avoid duplication
+            (James Floyd)
+10-05-07    Made cookie lifetime managable (Dmitri Lakachauskis)
 09-05-07    Updating AMFPHP support to version 1.9
 27-04-07    Rebuild functionality disabled in production mode (Dmitri Lakachauskis)
 
