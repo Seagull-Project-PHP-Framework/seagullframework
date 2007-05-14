@@ -76,19 +76,6 @@ class SGL_Task_SetupPaths extends SGL_Task
                     define('SGL_PATH', $conf['path']['installRoot']);
                 }
             } else {
-                //  accept custom path from installer
-//                if (!empty($_POST['customRootPath'])) {
-//                    $suppliedPath = $_SESSION['customRootPath'] = $_POST['customRootPath'];
-//                } else {
-//                    $suppliedPath =  isset($_SESSION['customRootPath'])
-//                        ? $_SESSION['customRootPath']
-//                        : '';
-//                }
-//                $sglPath = (!empty($suppliedPath))
-//                    ? $_POST['customRootPath']
-//                    :  dirname(dirname(dirname(dirname(__FILE__))));
-//                $rootDir;
-//                define('SGL_PATH', $sglPath);
                 define('SGL_PATH', $GLOBALS['rootDir']);
             }
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
