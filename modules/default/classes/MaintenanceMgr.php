@@ -238,6 +238,18 @@ class MaintenanceMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_EnableDebugBlock());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
+        //  check for custom tasks in config
+        if (!empty($this->conf['site']['customRebuildTasks'])) {
+            $tasks = $this->conf['site']['customRebuildTasks'];
+            if (is_array($tasks)) {
+                foreach ($this->conf['site']['customRebuildTasks'] as $task) {
+                    $runner->addTask(new $task());
+                }
+            } else {
+                $runner->addTask(new $tasks());
+            }
+        }
+
         $ok = $runner->main();
 
         if (SGL_Error::count()) {
