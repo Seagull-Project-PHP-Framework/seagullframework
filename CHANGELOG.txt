@@ -7,6 +7,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+16-05-07    Added ability to add custom tasks to be executed during a Seagull rebuild
+            see [3098] and http://trac.seagullproject.org/wiki/Howto/WorkingWithModules#Rebuilding
 11-05-07    Media templates for admin now call member templates to avoid duplication
             (James Floyd)
 10-05-07    Made cookie lifetime managable (Dmitri Lakachauskis)
