@@ -75,8 +75,6 @@ class STR_TestEnv
      */
     function buildSchema()
     {
-        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-
         // get schema files
         $aSchemaFiles = $GLOBALS['_STR']['CONF']['schemaFiles'];
 
@@ -95,14 +93,21 @@ class STR_TestEnv
      */
     function loadData()
     {
-        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-
-        // get schema files
+        // get datda files
         $aDataFiles = $GLOBALS['_STR']['CONF']['dataFiles'];
 
         if (is_array($aDataFiles) && count($aDataFiles)) {
             foreach ($aDataFiles as $dataFile) {
                 SGL_Sql::parse(STR_PATH .'/'. $dataFile, E_ALL, array('SGL_Sql', 'execute'));
+            }
+        }
+        //  shell_exec raw sql if exists
+        $aSqlFiles = $GLOBALS['_STR']['CONF']['rawSqlFiles'];
+        if (is_array($aSqlFiles) && count($aSqlFiles)) {
+            foreach ($aSqlFiles as $sqlFile) {
+                $file = STR_PATH .'/'. $sqlFile;
+                $cmd= "/usr/bin/mysql -u{$GLOBALS['_STR']['CONF']['database']['user']} {$GLOBALS['_STR']['CONF']['database']['name']} < $file";
+                $ok = `$cmd`;
             }
         }
     }
