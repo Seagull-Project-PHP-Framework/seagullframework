@@ -61,5 +61,25 @@ class DB_mysqli_SGL extends DB_mysqli
         @$GLOBALS['_SGL']['QUERY_COUNT'] ++;
         return parent::simpleQuery($query);
     }
+
+
+    function multiQuery($query)
+    {
+        if (!mysqli_multi_query($this->connection, $query)) {
+            $this->raiseError();
+        }
+        $res = mysqli_store_result($this->connection);
+        if (mysqli_more_results($this->connection)) {
+            while (mysqli_next_result($this->connection)) {
+                //  aggregate results
+            }
+        }
+        $aRes = array();
+
+        while ($oRow = mysqli_fetch_object($res)) {
+            $aRes[] = $oRow;
+        }
+        return $aRes;
+    }
 }
 ?>
