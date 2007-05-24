@@ -47,6 +47,9 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
         if ($dbType == 'mysql') {
             $dbType = 'mysql_SGL';
         }
+        if ($dbType == 'mysqli') {
+            $dbType = 'mysqli_SGL';
+        }
     	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
         $dsn = $dbType . '://' .
             $conf['database']['user'] . ':' .

@@ -225,9 +225,10 @@ class SGL_UpdateHtmlTask extends SGL_Task
         $this->conf = $c->getAll();
 
         //  setup db type vars
+        $this->dbType = $this->conf['db']['type'];
+
         switch ($this->conf['db']['type']) {
         case 'pgsql':
-            $this->dbType = 'pgsql';
             $this->filename1 = '/schema.pg.sql';
             $this->filename2 = '/data.default.pg.sql';
             $this->filename3 = '/data.sample.pg.sql';
@@ -238,18 +239,9 @@ class SGL_UpdateHtmlTask extends SGL_Task
             break;
 
         case 'mysql':
-            $this->dbType = 'mysql';
-            $this->filename1 = '/schema.my.sql';
-            $this->filename2 = '/data.default.my.sql';
-            $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/data.block.add.my.sql';
-            $this->filename5 = '/data.custom.my.sql';
-            $this->filename6 = '/data.test.my.sql';
-            $this->filename7 = '/constraints.my.sql';
-            break;
-
+        case 'mysqli':
         case 'mysql_SGL':
-            $this->dbType = 'mysql_SGL';
+        case 'mysqli_SGL':
             $this->filename1 = '/schema.my.sql';
             $this->filename2 = '/data.default.my.sql';
             $this->filename3 = '/data.sample.my.sql';
@@ -260,7 +252,7 @@ class SGL_UpdateHtmlTask extends SGL_Task
             break;
 
         case 'oci8_SGL':
-            $this->dbType = 'oci8';
+            $this->dbType = 'oci8'; // exception to dbType naming
             $this->filename1 = '/schema.oci.sql';
             $this->filename2 = '/data.default.oci.sql';
             $this->filename3 = '/data.sample.oci.sql';
@@ -320,7 +312,11 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
         $this->conf = $c->getAll();
 
         //  disable fk constraints if mysql (>= 4.1.x)
-        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {
+        if        ($this->conf['db']['type'] == 'mysql_SGL'
+                || $this->conf['db']['type'] == 'mysql'
+                || $this->conf['db']['type'] == 'mysqli'
+                || $this->conf['db']['type'] == 'mysqli_SGL') {
+
             $dbh = & SGL_DB::singleton();
             $query = 'SET FOREIGN_KEY_CHECKS=0;';
             $res = $dbh->query($query);
@@ -599,7 +595,8 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             $this->updateHtml('status', $statusText);
 
             //  load 'sequence' table
-            if ($this->conf['db']['type'] == 'mysql_SGL') {
+            if ($this->conf['db']['type'] == 'mysql_SGL' || $this->conf['db']['type'] == 'mysqli_SGL') {
+
                 $result = SGL_Sql::parse(SGL_ETC_DIR . '/sequence.my.sql', 0, array('SGL_Sql', 'execute'));
             }
             //  Load each module's schema, if there is a sql file in /data
@@ -1034,7 +1031,12 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
         $this->conf = $c->getAll();
 
         //  re-enable fk constraints if mysql (>= 4.1.x)
-        if ($this->conf['db']['type'] == 'mysql' || $this->conf['db']['type'] == 'mysql_SGL') {
+        if        ($this->conf['db']['type'] == 'mysql_SGL'
+                || $this->conf['db']['type'] == 'mysql'
+                || $this->conf['db']['type'] == 'mysqli'
+                || $this->conf['db']['type'] == 'mysqli_SGL') {
+
+
             $dbh = & SGL_DB::singleton();
             $query = 'SET FOREIGN_KEY_CHECKS=1;';
             $res = $dbh->query($query);
@@ -1529,6 +1531,7 @@ class SGL_Task_SyncSequences extends SGL_Task
             }
             break;
 
+        case 'mysqli_SGL':
         case 'mysql_SGL':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
