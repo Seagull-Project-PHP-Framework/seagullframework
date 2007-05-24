@@ -68,11 +68,11 @@ class ConfigMgr extends SGL_Manager
         $this->template = 'configEdit.html';
         $this->aDbTypes = array(
             'mysql_SGL' => 'mysql_SGL',
+            'mysqli_SGL' => 'mysqli_SGL',
             'mysql' => 'mysql',
+            'mysqli' => 'mysqli',
             'pgsql' => 'pgsql',
             'oci8_SGL' => 'oci8',
-            'maxdb_SGL' => 'maxdb_SGL',
-            'db2_SGL' => 'db2',
             );
         $this->aLogTypes = array(
             'file' => 'file',
