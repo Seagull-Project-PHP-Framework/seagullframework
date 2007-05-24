@@ -72,7 +72,10 @@ class SGL_Sql
         $conf = $c->getAll();
 
         $isMysql323 = false;
-        if ($conf['db']['type'] == 'mysql_SGL' || $conf['db']['type'] == 'mysql') {
+        if        ($conf['db']['type'] == 'mysql_SGL'
+                || $conf['db']['type'] == 'mysql'
+                || $conf['db']['type'] == 'mysqli'
+                || $conf['db']['type'] == 'mysqli_SGL') {
             $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
             if (isset($aEnvData['db_info']) && ereg('3.23', $aEnvData['db_info']['version'])) {
                 $isMysql323 = true;
@@ -244,7 +247,9 @@ class SGL_Sql
             break;
 
         case 'mysql_SGL':
+        case 'mysqli_SGL':
         case 'mysql':
+        case 'mysqli':
             $shortName = 'my';
             break;
 
