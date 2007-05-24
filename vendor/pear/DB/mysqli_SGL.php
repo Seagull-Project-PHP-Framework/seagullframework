@@ -1,13 +1,13 @@
 <?php
-require_once "DB/mysql.php";
+require_once "DB/mysqli.php";
 
-class DB_mysql_SGL extends DB_mysql
+class DB_mysqli_SGL extends DB_mysqli
 {
 
-    function DB_mysql_SGL()
+    function DB_mysqli_SGL()
     {
-        $this->DB_mysql();
-        $this->phptype = 'mysql_SGL';
+        $this->DB_mysqli();
+        $this->phptype = 'mysqli_SGL';
     }
 
     function nextId($name, $null=false)
