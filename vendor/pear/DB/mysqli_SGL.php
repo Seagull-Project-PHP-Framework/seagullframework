@@ -76,8 +76,30 @@ class DB_mysqli_SGL extends DB_mysqli
         }
         $aRes = array();
 
-        while ($oRow = mysqli_fetch_object($res)) {
-            $aRes[] = $oRow;
+        if ($res) {
+            while ($oRow = mysqli_fetch_object($res)) {
+                $aRes[] = $oRow;
+            }
+        }
+        return $aRes;
+    }
+
+    function getMultiCol($query)
+    {
+        if (!mysqli_multi_query($this->connection, $query)) {
+            $this->raiseError();
+        }
+        $res = mysqli_store_result($this->connection);
+        if (mysqli_more_results($this->connection)) {
+            while (mysqli_next_result($this->connection)) {
+                //  aggregate results
+            }
+        }
+        $aRes = array();
+        if ($res) {
+            while ($aRow = mysqli_fetch_row($res)) {
+                $aRes[] = $aRow[0];
+            }
         }
         return $aRes;
     }
