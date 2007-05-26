@@ -451,6 +451,11 @@ class SGL_URL
                 $this->aRes[] = $res;
             }
         }
+        //  reverse order of strats so Classic comes last in array and overrides SEF
+        if ($conf['site']['outputUrlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
+            $tmp = array_reverse($this->aRes);
+            $this->aRes = $tmp;
+        }
         $ret = call_user_func_array('array_merge', $this->aRes);
         return $ret;
     }
