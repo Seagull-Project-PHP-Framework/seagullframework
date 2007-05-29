@@ -186,7 +186,7 @@ HTML;
                     $message
                 </div>
                 <span class="error">*&nbsp;</span>Password
-                <input type="password" name="frmPassword" maxlength="24" />
+                <input type="password" name="frmSetupPassword" maxlength="24" />
             </div>
             <p><input type="submit" class="formsubmit" name="submitted" value="Enter" /></p>
         </div>
