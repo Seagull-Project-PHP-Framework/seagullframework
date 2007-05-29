@@ -40,7 +40,7 @@
 /**
  * Strategy for resizing images.
  *
- * @package    seagull
+ * @package    SGL
  * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */

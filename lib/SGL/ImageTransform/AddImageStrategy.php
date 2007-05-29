@@ -40,7 +40,7 @@
 /**
  * Strategy for adding image across original one.
  *
- * @package    seagull
+ * @package    SGL
  * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */

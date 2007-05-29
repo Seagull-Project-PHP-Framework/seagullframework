@@ -40,7 +40,7 @@
 /**
  * Strategy for overlaying color across image.
  *
- * @package    seagull
+ * @package    SGL
  * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */

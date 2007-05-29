@@ -42,7 +42,7 @@ define('SGL_IMAGE_DEFAULT_SECTION', 'default');
 /**
  * Base image class.
  *
- * @package    seagull
+ * @package    SGL
  * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
