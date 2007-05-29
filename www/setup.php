@@ -138,10 +138,10 @@ if (isset($_GET['start'])) {
 if (is_file(SGL_PATH . '/var/INSTALL_COMPLETE.php')
         && empty($_SESSION['valid'])) {
 
-    if (!empty($_POST['frmPassword'])) {
+    if (!empty($_POST['frmSetupPassword'])) {
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
         $secret = trim(substr($aLines[1], 1));
-        if ($_POST['frmPassword'] != $secret) {
+        if ($_POST['frmSetupPassword'] != $secret) {
             $_SESSION['message'] = 'incorrect password';
             header('Location: setup.php');
             exit;
