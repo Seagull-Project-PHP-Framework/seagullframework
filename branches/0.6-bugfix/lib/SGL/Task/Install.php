@@ -606,6 +606,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 //  Load the module's schema
                 if (file_exists($modulePath . $this->filename1)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename1, 0, array('SGL_Sql', 'execute'));
+#FIXME: should test for PEAR::error
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_schema', $displayHtml);
                 } else {
