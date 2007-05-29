@@ -538,6 +538,9 @@ class NavigationDAO extends SGL_Manager
         }
 
         $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
+        if (PEAR::isError($nodeId)) {
+            return $nodeId;
+        }
         // update trans_id
         $this->nestedSet->updateNode($nodeId, array('trans_id' => $nodeId));
 
