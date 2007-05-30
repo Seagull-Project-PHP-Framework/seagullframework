@@ -8,7 +8,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
-29-05-07    Added ability to add multiple attachments in SGL_Emailer (Peter Termaten)
+29-05-07    Added ability to add multiple attachments in SGL_Emailer
+            see http://trac.seagullproject.org/wiki/Howto/SendingEmails (Peter Termaten)
 24-05-07    Implementing PHP handling of stored proc resultsets using mysqli_SGL driver
 24-05-07    Integrated PEAR::DB's mysqli driver
 16-05-07    Added ability to add custom tasks to be executed during a Seagull rebuild
