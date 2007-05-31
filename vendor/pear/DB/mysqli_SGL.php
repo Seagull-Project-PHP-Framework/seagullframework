@@ -86,20 +86,21 @@ class DB_mysqli_SGL extends DB_mysqli
 
     function getMultiCol($query)
     {
-        if (!mysqli_multi_query($this->connection, $query)) {
-            $this->raiseError();
-        }
-        $res = mysqli_store_result($this->connection);
-        if (mysqli_more_results($this->connection)) {
-            while (mysqli_next_result($this->connection)) {
-                //  aggregate results
-            }
-        }
         $aRes = array();
-        if ($res) {
-            while ($aRow = mysqli_fetch_row($res)) {
-                $aRes[] = $aRow[0];
-            }
+        if (mysqli_multi_query($this->connection, $query)) {
+            do {
+                /* store first result set */
+                if ($result = mysqli_store_result($this->connection)) {
+                    while ($aRow = mysqli_fetch_row($result)) {
+                        $aRes[] = $aRow[0];
+                    }
+                    mysqli_free_result($result);
+                }
+                /* print divider */
+                if (mysqli_more_results($this->connection)) {
+
+                }
+            } while (mysqli_next_result($this->connection));
         }
         return $aRes;
     }
