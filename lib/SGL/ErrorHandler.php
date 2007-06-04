@@ -156,7 +156,7 @@ class SGL_ErrorHandler
                 //  PHP error code
                 $output = <<<EOF
 <hr />
-<div class="errorContent">
+<div id="errorWrapper" class="errorContent">
         <strong>MESSAGE</strong>: $errStr<br />
         <strong>TYPE:</strong> {$this->errorType[$errNo][0]}<br />
         <strong>FILE:</strong> $file<br />
@@ -190,21 +190,26 @@ EOL;
 
                 //  get extra info
                 $dbh = & SGL_DB::singleton();
-                $lastQuery = $dbh->last_query;
+
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
                 $aExtraInfo['lastSQL'] = isset($dbh->last_query) ?
                     $dbh->last_query : null;
                 $aExtraInfo['userID'] = SGL_Session::get('uid');
-                $aExtraInfo['clientData']['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
-                $aExtraInfo['clientData']['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
-                $aExtraInfo['clientData']['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
-                $aExtraInfo['clientData']['SERVER_PORT'] = $_SERVER['SERVER_PORT'];
+                $aExtraInfo['clientData']['HTTP_REFERER'] = isset($_SERVER['HTTP_REFERER'])
+                    ? $_SERVER['HTTP_REFERER']
+                    : null;
+                $aExtraInfo['clientData']['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT'])
+                    ? $_SERVER['HTTP_USER_AGENT']
+                    : null;
+                $aExtraInfo['clientData']['REMOTE_ADDR'] = isset($_SERVER['REMOTE_ADDR'])
+                    ? $_SERVER['REMOTE_ADDR']
+                    : null;
+                $aExtraInfo['clientData']['SERVER_PORT'] = isset($_SERVER['SERVER_PORT'])
+                    ? $_SERVER['SERVER_PORT']
+                    : null;
 
                 //  store formatted output
-                ob_start();
-                print_r($aExtraInfo);
-                $info = ob_get_contents();
-                ob_end_clean();
+                $info = print_r($aExtraInfo, true);
 
                 //  rebuild error output w/out html
                 require_once SGL_CORE_DIR . '/Util.php';

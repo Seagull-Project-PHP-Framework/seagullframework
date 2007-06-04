@@ -118,6 +118,11 @@ class SGL_Manager
         if ($this->conf['translation']['container'] == 'db') {
             $this->trans = & SGL_Translation::singleton();
         }
+
+        //  determine the value for the masterTemplate
+        if (!empty($this->conf['site']['masterTemplate'])) {
+            $this->masterTemplate = $this->conf['site']['masterTemplate'];
+        }
     }
 
     function &_getDb()
@@ -167,8 +172,9 @@ class SGL_Manager
 
         if (SGL_Error::count()) {
             $oLastError = SGL_Error::getLast();
-            if ($oLastError->getCode() == SGL_ERROR_INVALIDCALL) {
+            if ($oLastError->getCode() == SGL_ERROR_RESOURCENOTFOUND) {
                 $defaultMgrLoaded = true;
+                $output->addHeader('HTTP/1.1 404 Not Found');
             }
 
         //  determine if action param from $_GET is valid
@@ -188,7 +194,7 @@ class SGL_Manager
         {
             //  determine global manager perm, ie that is valid for all actions
             //  in the mgr
-            $mgrPerm = @constant('SGL_PERMS_' . strtoupper($mgrName));
+            $mgrPerm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName));
 
             //  check authorisation
             $ok = $this->_authorise($mgrPerm, $mgrName, $input);
@@ -259,7 +265,7 @@ class SGL_Manager
     function _authorise($mgrPerm, $mgrName, $input)
     {
         // if user has no global manager perms check for each action
-        if (!SGL_Session::hasPerms($mgrPerm)) {
+        if (!SGL_Session::hasPerms($mgrPerm) && !SGL::runningFromCLI()) {
 
             // and if chained methods to be called are allowed
             $ret = true;
@@ -272,7 +278,7 @@ class SGL_Manager
                 $methodName = '_cmd_' . $methodName;
 
                 //  build relevant perms constant
-                $perm = @constant('SGL_PERMS_' . strtoupper($mgrName . $methodName));
+                $perm = SGL_String::pseudoConstantToInt('SGL_PERMS_' . strtoupper($mgrName . $methodName));
 
                 //  return false if user doesn't have method specific or classwide perms
                 if (SGL_Session::hasPerms($perm) === false) {
@@ -289,7 +295,7 @@ class SGL_Manager
     function getTemplate(&$input)
     {
         $req = $input->getRequest();
-        $mgr = $req->get('managerName');
+        $mgrName = $req->get('managerName');
         $userRid = SGL_Session::getRoleId();
 
         if (isset($this->conf[$mgrName]['adminGuiAllowed'])
@@ -300,7 +306,9 @@ class SGL_Manager
     }
 
     /**
-     * Abstract page display method.
+     * Parent page display method.
+     *
+     * Sets CSS file if supplied in request
      *
      * @abstract
      *
@@ -308,7 +316,19 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output) {}
+    function display(&$output)
+    {
+        //  reinstate dynamically added css
+        if (!$output->manager->isValid()) {
+            if (!count($output->aCssFiles)) {
+                //  get action
+                $cssFile = $output->request->get('cssFile');
+                if (!is_null($cssFile)) {
+                    $output->addCssFile($cssFile);
+                }
+            }
+        }
+    }
 
     /**
      * Return true if child class has validated.
@@ -380,6 +400,18 @@ class SGL_Manager
         }
         $aMergedParams = array_merge($aParams, $aRet);
         return $aMergedParams;
+    }
+
+    function handleError($oError, &$output)
+    {
+        $output->template = 'error.html';
+        $output->masterTemplate = 'masterNoCols.html';
+        $output->aError = array(
+            'message'   => $oError->getMessage(),
+            'debugInfo' => $oError->getDebugInfo(),
+            'level'     => $oError->getCode(),
+            'errorType' => SGL_Error::constantToString($oError->getCode())
+        );
     }
 }
 ?>

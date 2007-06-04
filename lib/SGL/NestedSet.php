@@ -143,9 +143,8 @@ class SGL_NestedSet
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['norder']}";
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = '';
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
@@ -184,9 +183,8 @@ class SGL_NestedSet
                         $where $groupBy
                         ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
                 $result =& $this->dbh->query($sql);
-                if (DB::isError($result)) {
-                    SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-                    return;
+                if (PEAR::isError($result)) {
+                    return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                 }
                 while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
                     $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -223,9 +221,8 @@ class SGL_NestedSet
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
@@ -262,9 +259,8 @@ class SGL_NestedSet
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = '';
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
@@ -307,9 +303,8 @@ class SGL_NestedSet
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)) {
@@ -362,9 +357,8 @@ class SGL_NestedSet
                     FROM $this->_tableName
                     WHERE {$this->_fieldsInternal['id']} = $node_id";
             $result =& $this->dbh->query($sql);
-            if (DB::isError($result)) {
-                SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-                return;
+            if (PEAR::isError($result)) {
+                return $result;
             }
             $result->fetchInto($this->_aNodes[$node_id], DB_FETCHMODE_ASSOC);
             if (is_null($this->_aNodes[$node_id])) {
@@ -415,9 +409,8 @@ class SGL_NestedSet
                     ORDER BY {$this->_fieldsInternal['l']}";
         }
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = array();
         while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
@@ -521,9 +514,8 @@ class SGL_NestedSet
                 SET $set
                 WHERE {$this->_fieldsInternal['id']} = $id";
         $result =& $this->dbh->query($sql);
-        if (DB::isError($result)) {
-            SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
-            return;
+        if (PEAR::isError($result)) {
+            return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         return $result;
     }

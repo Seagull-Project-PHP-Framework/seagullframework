@@ -133,13 +133,35 @@ class SGL_Emailer
         $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
         if (!empty($this->options['filepath'])) {
-            $mime->addAttachment($this->options['filepath'],$this->options['mimetype']);
+            if (!is_array($this->options['filepath'])) {
+                //single attachment
+                $mime->addAttachment($this->options['filepath'],$this->options['mimetype']);
+            } else {
+                //multiple attachments
+                $count_f = count($this->options['filepath']);
+                $count_m = count($this->options['mimetype']);
+                //$mimetype ='';
+                for ($i = 0; $i < $count_f; $i++) {
+                    //multiple mime-types??
+                    if ($count_m == $count_f) {
+                        $mimetype =  $this->options['mimetype'][$i];
+                    } else {
+                        if (is_string($this->options['mimetype'])) {
+                            $mimetype = $this->options['mimetype'];
+                        } else {
+                            $mimetype = $this->options['mimetype'][0];
+                        }
+                    }
+                    $mime->addAttachment($this->options['filepath'][$i], $mimetype);
+                }
+            }
         }
         // Add Cc-address
         if (!empty($this->options['Cc'])) {
             $mime->addCc($this->options['Cc']);
         }
         $body = $mime->get(array(
+            'head_encoding' => 'base64',
             'html_encoding' => '7bit',
             'html_charset' => $GLOBALS['_SGL']['CHARSET'],
             'text_charset' => $GLOBALS['_SGL']['CHARSET'],
@@ -152,7 +174,7 @@ class SGL_Emailer
     }
 
     // PEAR Mail::factory wrapper
-    function factory()
+    function &factory()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
