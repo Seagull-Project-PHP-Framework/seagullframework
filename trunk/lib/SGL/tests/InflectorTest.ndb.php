@@ -21,6 +21,20 @@ class InflectorTest extends UnitTestCase {
         $this->assertEqual($ret, 'This Is Another Camel Word');
     }
 
+    function testCamelise()
+    {
+        $aControl[] = 'Here is a string to camelise';
+        $aControl[] = ' here IS a StrIng tO CameLise';
+        $aControl[] = ' Here  is a  STRING To  CameliSE';
+        $aControl[] = "Here is\na string\n\nto camelise";
+        $expected   = 'hereIsAStringToCamelise';
+
+        foreach ($aControl as $k => $control) {
+            $ret = SGL_Inflector::camelise($control);
+            $this->assertEqual($expected, $ret);
+        }
+    }
+
     function testIsCamelCase()
     {
         $str = 'thisIsCamel';
@@ -138,6 +152,48 @@ class InflectorTest extends UnitTestCase {
         $incorrect = 'defaultmgr';
         $ret = SGL_Inflector::caseFix($incorrect);
         $this->assertEqual($ret, 'DefaultMgr');
+    }
+
+    function testIsConstant()
+    {
+        $this->assertTrue(SGL_Inflector::isConstant('THIS_IS_A_CONSTANT'));
+        $this->assertTrue(SGL_Inflector::isConstant('CONSTANT'));
+        $this->assertTrue(SGL_Inflector::isConstant("'CONSTANT'"));
+        $this->assertFalse(SGL_Inflector::isConstant('CONSTANTa'));
+        $this->assertFalse(SGL_Inflector::isConstant('1'));
+        $this->assertFalse(SGL_Inflector::isConstant(''));
+        $this->assertFalse(SGL_Inflector::isConstant('127.0.0.1'));
+        $this->assertFalse(SGL_Inflector::isConstant('/'));
+        $this->assertFalse(SGL_Inflector::isConstant('SGLSESSID'));
+        $this->assertFalse(SGL_Inflector::isConstant('CUR ADM OUR NOR STA NID'));
+    }
+
+    function test_isMgrNameOmitted()
+    {
+        $aParsedUri = array(
+            'moduleName' => 'default',
+            'managerName' => 'config',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        $aParsedUri = array(
+            'moduleName' => 'default',
+            'managerName' => 'foo',
+            );
+        $this->assertTrue(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        $aParsedUri = array(
+            'moduleName' => 'foo',
+            'managerName' => 'bar',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
+
+        //  a case where a module does not have a default mgr
+        $aParsedUri = array(
+            'moduleName' => 'navigation',
+            'managerName' => 'bar',
+            );
+        $this->assertFalse(SGL_Inflector::isMgrNameOmitted($aParsedUri));
     }
 }
 

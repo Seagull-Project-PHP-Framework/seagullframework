@@ -48,19 +48,7 @@ class SGL_Delegator
 
     function __call($methodName, $parameters)
     {
-//        $delegated = false;
         foreach ($this->aDelegates as $delegate) {
-//            $class   = new ReflectionClass($delegate);
-//            $methods = $class->getMethods();
-//
-//            foreach ($methods as $method) {
-//               if ($methodName == $method->getName()) {
-//                    $delegated = true;
-//
-//                    return call_user_func_array(
-//                        array($delegate, $method->getName()), $parameters);
-//               }
-//            }
             if (is_callable(array($delegate, $methodName))) {
                 return call_user_func_array(
                     array($delegate, $methodName), $parameters);
