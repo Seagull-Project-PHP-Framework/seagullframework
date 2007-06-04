@@ -26,7 +26,7 @@ $aSections = array(
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,       // role id or constant, eg: 1 for admin
                                             //   multiple possible, as comma-separated string
-                                            //   eg: "2,4,6,7"
+                                            //   eg: "SGL_GUEST, SGL_MEMBER, SGL_ADMIN"
         ),
     array (
       'title'           => 'Articles',

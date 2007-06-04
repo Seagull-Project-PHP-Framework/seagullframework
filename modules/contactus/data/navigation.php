@@ -12,7 +12,7 @@ $aSections = array(
       'actionMapping'   => '',
       'add_params'      => '',
       'is_enabled'      => 1,
-      'perms'           => SGL_GUEST,
+      'perms'           => "SGL_GUEST, SGL_MEMBER, SGL_ADMIN",
         ),
     );
 ?>

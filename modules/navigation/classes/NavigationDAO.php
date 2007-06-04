@@ -541,6 +541,20 @@ class NavigationDAO extends SGL_Manager
             $aLanguages = $section['languages'];
             unset($section['languages']);
         }
+        //  intercept a list of constants occuring in quotes,
+        //  ie 'perms' => "SGL_GUEST, SGL_MEMBER, SGL_ADMIN",
+        if (is_string($section['perms'])) {
+            $aConstants = split(',', $section['perms']);
+            if (is_array($aConstants)) {
+                $aPerms = array();
+                foreach ($aConstants as $myconstant) {
+                    $aPerms[] = constant(trim($myconstant));
+                }
+                //$perms = substr($perms, 0, -1);
+                $perms = join(',', $aPerms);
+                $section['perms'] = $perms;
+            }
+        }
 
         $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
         if (PEAR::isError($nodeId)) {
