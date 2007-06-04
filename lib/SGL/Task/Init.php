@@ -67,15 +67,25 @@ class SGL_Task_SetupPaths extends SGL_Task
             define('SGL_PATH', '@PHP-DIR@/Seagull');
             define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
         } else {
-            define('SGL_PATH', dirname(dirname(dirname(dirname(__FILE__)))));
+            $path = $GLOBALS['varDir']  . '/INSTALL_COMPLETE.php';
+            if (is_file($path)) {
+                $configFile = $GLOBALS['varDir']  . '/'
+                    . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
+                require_once $configFile;
+                if (!empty($conf['path']['installRoot'])) {
+                    define('SGL_PATH', $conf['path']['installRoot']);
+                }
+            } else {
+                define('SGL_PATH', $GLOBALS['rootDir']);
+            }
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
         }
 
         if (!defined('PATH_SEPARATOR')) { // defined in >= PHP 4.3.4
             define('PATH_SEPARATOR', (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':');
         }
-        $allowed = @ini_set('include_path', '.' . PATH_SEPARATOR
-            . SGL_LIB_PEAR_DIR);
+        $sglPath = '.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR;
+        $allowed = @ini_set('include_path', $sglPath);
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
             if (function_exists('set_include_path')) {
@@ -152,29 +162,103 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
 
         //  error codes to use with SGL::raiseError()
         //  start at -100 in order not to conflict with PEAR::DB error codes
-        define('SGL_ERROR_INVALIDARGS',         -101);  // wrong args to function
-        define('SGL_ERROR_INVALIDCONFIG',       -102);  // something wrong with the config
-        define('SGL_ERROR_NODATA',              -103);  // no data available
-        define('SGL_ERROR_NOCLASS',             -104);  // no class exists
-        define('SGL_ERROR_NOMETHOD',            -105);  // no method exists
-        define('SGL_ERROR_NOAFFECTEDROWS',      -106);  // no rows where affected by update/insert/delete
-        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);  // limit queries on unsuppored databases
+
+        /**
+         * Wrong args to function.
+         */
+        define('SGL_ERROR_INVALIDARGS',         -101);
+        /**
+         * Something wrong with the config.
+         */
+        define('SGL_ERROR_INVALIDCONFIG',       -102);
+        /**
+         * No data available.
+         */
+        define('SGL_ERROR_NODATA',              -103);
+        /**
+         * No class exists.
+         */
+        define('SGL_ERROR_NOCLASS',             -104);
+        /**
+         * No method exists.
+         */
+        define('SGL_ERROR_NOMETHOD',            -105);
+        /**
+         * No rows were affected by query.
+         */
+        define('SGL_ERROR_NOAFFECTEDROWS',      -106);
+        /**
+         * Limit queries on unsuppored databases.
+         */
+        define('SGL_ERROR_NOTSUPPORTED'  ,      -107);
+        /**
+         * Invalid call.
+         */
         define('SGL_ERROR_INVALIDCALL',         -108);
+        /**
+         * Authentication failure.
+         */
         define('SGL_ERROR_INVALIDAUTH',         -109);
+        /**
+         * Failed to send email.
+         */
         define('SGL_ERROR_EMAILFAILURE',        -110);
+        /**
+         * Failed to connect to DB.
+         */
         define('SGL_ERROR_DBFAILURE',           -111);
+        /**
+         * A DB transaction failed.
+         */
         define('SGL_ERROR_DBTRANSACTIONFAILURE',-112);
+        /**
+         * User not allow to access site.
+         */
         define('SGL_ERROR_BANNEDUSER',          -113);
+        /**
+         * File not found.
+         */
         define('SGL_ERROR_NOFILE',              -114);
+        /**
+         * Perms were invalid.
+         */
         define('SGL_ERROR_INVALIDFILEPERMS',    -115);
+        /**
+         * Session was invalild.
+         */
         define('SGL_ERROR_INVALIDSESSION',      -116);
+        /**
+         * Posted data was invalid.
+         */
         define('SGL_ERROR_INVALIDPOST',         -117);
+        /**
+         * Translation invalid.
+         */
         define('SGL_ERROR_INVALIDTRANSLATION',  -118);
+        /**
+         * Could not write to the file.
+         */
         define('SGL_ERROR_FILEUNWRITABLE',      -119);
+        /**
+         * Method perms were invalid.
+         */
         define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
+        /**
+         * Request was invalid.
+         */
         define('SGL_ERROR_INVALIDREQUEST',      -121);
+        /**
+         * Type invalid.
+         */
         define('SGL_ERROR_INVALIDTYPE',         -122);
+        /**
+         * Excessive recursion occured.
+         */
         define('SGL_ERROR_RECURSION',           -123);
+        /**
+         * Resource could not be found.
+         */
+        define('SGL_ERROR_RESOURCENOTFOUND',    -404);
 
         //  message types to use with SGL:raiseMsg($msg, $translation, $msgType)
         define('SGL_MESSAGE_ERROR',             0);  // by default
@@ -199,6 +283,12 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
         define('SGL_STATUS_APPROVED',           3);
         define('SGL_STATUS_PUBLISHED',          4);
         define('SGL_STATUS_ARCHIVED',           5);
+
+        //  comment status types
+        define('SGL_COMMENT_FOR_APPROVAL',      0);
+        define('SGL_COMMENT_APPROVED',          1);
+        define('SGL_COMMENT_AKISMET_PASSED',    2);
+        define('SGL_COMMENT_AKISMET_FAILED',    3);
 
         //  define return types, k/v pairs, arrays, strings, etc
         define('SGL_RET_NAME_VALUE',            1);
@@ -236,6 +326,31 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
     function run($conf)
     {
+        // On install, $conf is empty let's load it
+        if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
+            $c = &SGL_Config::singleton();
+            $conf1 = $c->load(SGL_ETC_DIR . '/customInstallDefaults.ini');
+            if (isset($conf1['path']['moduleDirOverride'])) {
+                $conf['path']['moduleDirOverride'] = $conf1['path']['moduleDirOverride'];
+            }
+        // On re-install or INSTALL_COMPLETE
+        } elseif (count($conf)) {
+            //  set constant to represent profiling mode so it can be used in Controller
+            define('SGL_PROFILING_ENABLED', ($conf['debug']['profiling']) ? true : false);
+            define('SGL_SEAGULL_VERSION', $conf['tuples']['version']);
+
+            //  which degree of error severity before emailing admin
+            define('SGL_EMAIL_ADMIN_THRESHOLD',
+                SGL_String::pseudoConstantToInt($conf['debug']['emailAdminThreshold']));
+            define('SGL_BASE_URL', $conf['site']['baseUrl']);
+
+            //  add additional search paths
+            if (!empty($conf['path']['additionalIncludePath'])) {
+                $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
+                    . $conf['path']['additionalIncludePath']);
+            }
+        }
+
         if (isset($conf['path']['webRoot'])) {
             define('SGL_WEB_ROOT', $conf['path']['webRoot']);
         } elseif (defined('SGL_PEAR_INSTALLED')) {
@@ -271,23 +386,45 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('PEAR_LOG_INFO',     6);     /** Informational */
             define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
         }
+    }
+}
 
-        if (count($conf)) {
+/**
+ * @package Task
+ */
+class SGL_Task_InitialiseDbDataObject extends SGL_Task
+{
+    function run($conf = array())
+    {
+        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = array(
+            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
+            'schema_location'       => SGL_ENT_DIR,
+            'class_location'        => SGL_ENT_DIR,
+            'require_prefix'        => SGL_ENT_DIR . '/',
+            'class_prefix'          => 'DataObjects_',
+            'debug'                 => $conf['debug']['dataObject'],
+            'production'            => 0,
+            'ignore_sequence_keys'  => 'ALL',
+            'generator_strip_schema'=> 1,
+            'quote_identifiers'     => 1,
+        );
+    }
+}
 
-            //  set constant to represent profiling mode so it can be used in Controller
-            define('SGL_PROFILING_ENABLED', ($conf['debug']['profiling']) ? true : false);
-            define('SGL_SEAGULL_VERSION', $conf['tuples']['version']);
-
-            //  which degree of error severity before emailing admin
-            $const = str_replace("'", "", $conf['debug']['emailAdminThreshold']);
-            define('SGL_EMAIL_ADMIN_THRESHOLD', constant($const));
-            define('SGL_BASE_URL', $conf['site']['baseUrl']);
-
-            //  add additional search paths
-            if (!empty($conf['path']['additionalIncludePath'])) {
-                $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
-                    . $conf['path']['additionalIncludePath']);
-            }
+/**
+ * @package Task
+ */
+class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
+{
+    function run($conf)
+    {
+        // for 0.6.x versions
+        if (!empty($conf['db']['prefix'])
+                && $conf['db']['prefix'] == 'not implemented yet') {
+            $config = &SGL_Config::singleton();
+            $config->set('db', array('prefix' => ''));
+            $config->save();
         }
     }
 }
@@ -314,6 +451,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
     function run($conf)
     {
         //  set PEAR error handler
+        #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
     }
 
@@ -335,12 +473,10 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         $debugInfo = $oError->getDebugInfo();
         SGL::logMessage('PEAR' . " :: $message : $debugInfo", PEAR_LOG_ERR);
 
-        //  if sesssion debug, send error info to screen
-        if (isset($conf['debug']['production']) && !$conf['debug']['production'] || SGL_Session::get('debug')) {
-            SGL_Error::push($oError);
-            if ($conf['debug']['showBacktrace']) {
-                echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
-            }
+        //  send error info to screen
+        SGL_Error::push($oError);
+        if (!empty($conf['debug']['showBacktrace'])) {
+            echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }
     }
 }
@@ -417,7 +553,7 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
         @ini_set('allow_url_fopen',             0); //  this can be quite dangerous if enabled
         if (count($conf)) {
-            @ini_set('error_log',                   SGL_PATH . '/' . $conf['log']['name']);
+            @ini_set('error_log', SGL_PATH . '/' . $conf['log']['name']);
             if (!empty($conf['log']['ignoreRepeated'])) {
                 ini_set('ignore_repeated_errors', true);
                 ini_set('ignore_repeated_source', true);
@@ -443,6 +579,53 @@ class SGL_Task_RegisterTrustedIPs extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_LoadCustomConfig extends SGL_Task
+{
+    function run($conf)
+    {
+        if (!empty($conf['path']['pathToCustomConfigFile'])) {
+            if (is_file($conf['path']['pathToCustomConfigFile'])) {
+                require_once realpath($conf['path']['pathToCustomConfigFile']);
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_InitialiseModules extends SGL_Task
+{
+    function run($conf)
+    {
+        //  skip if we're in installer
+        if (defined('SGL_INSTALLED')) {
+            $locator = &SGL_ServiceLocator::singleton();
+            $dbh = $locator->get('DB');
+            if (!$dbh) {
+                $dbh = & SGL_DB::singleton();
+                $locator->register('DB', $dbh);
+            }
+            $query = "
+                SELECT  name
+                FROM    {$conf['table']['module']}
+                ";
+            $aRet = $dbh->getAll($query);
+            if (is_array($aRet) && count($aRet)) {
+                foreach ($aRet as $oModule) {
+                    $moduleInitFile = SGL_MOD_DIR . '/' . $oModule->name . '/init.php';
+                    if (is_file($moduleInitFile)) {
+                        require_once $moduleInitFile;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_EnsureBC extends SGL_Task
 {
     function run($data)
@@ -458,7 +641,7 @@ class SGL_Task_EnsureBC extends SGL_Task
                 if (is_file($location)) {
                     unlink($location);
                 }
-                $fileHandler = fopen ($location, "w");
+                $fileHandler = fopen($location, "w");
                 fwrite ($fileHandler, $data);
                 fclose ($fileHandler);
                 return true;

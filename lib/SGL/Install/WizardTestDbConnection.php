@@ -60,8 +60,8 @@ function canConnectToDbServer()
                 ? '/'.$aFormValues['dbName']
                 : '';
     $dsn = $aFormValues['dbType']['type'] . '://' .
-        $aFormValues['user'] . ':' .
-        $aFormValues['pass'] . '@' .
+        $aFormValues['databaseUser'] . ':' .
+        $aFormValues['databaseUserPass'] . '@' .
         $protocol .
         $host . $port . $dbName;
 
@@ -106,22 +106,25 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbPort'  => array('port' => 3306),
             'dbName'  => 'not required for MySQL login',
             ));
-        $this->setDefaults(overrideDefaultInstallSettings());
+        $this->setDefaults(SGL_Install_Common::overrideDefaultInstallSettings());
 
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
-            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);"');
+            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(true);"');
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
-            'onClick="toggleDbNameForLogin(false);"');
+            'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(false);"');
 
         if (SGL_MINIMAL_INSTALL == false) {
             $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
-                'onClick="toggleDbNameForLogin(true);"');
-            $radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-                'onClick="toggleDbNameForLogin(true);"');
+                'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
+            //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+            //    'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
         }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
+
+        //  mysql cluster
+        $this->addElement('checkbox', 'mysqlCluster', 'Install on MySQL Cluster', 'Yes (only for mysql cluster installs!)', 'id=mysqlCluster');
 
         //  host
         $this->addElement('text',  'host',     'Host: ');
@@ -152,15 +155,15 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');
 
         //  credentials
-        $this->addElement('text',  'user',    'Database username: ');
-        $this->addElement('password', 'pass', 'Database password: ');
+        $this->addElement('text',  'databaseUser',    'Database username: ');
+        $this->addElement('password', 'databaseUserPass', 'Database password: ');
         $this->addElement('text',  'dbName',    'Database name: ', array(
             'id' => 'dbLoginNameElement', 'size'=> 25));
-        $this->addRule('user', 'Please specify the db username', 'required');
+        $this->addRule('databaseUser', 'Please specify the db username', 'required');
 
         //  test db connect
         $this->registerRule('canConnectToDbServer','function','canConnectToDbServer');
-        $this->addRule('user', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
+        $this->addRule('databaseUser', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
 
         //  submit
         $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');

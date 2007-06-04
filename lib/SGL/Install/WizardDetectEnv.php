@@ -66,7 +66,7 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $this->setDefaults(array(
             'detectEnv' => 1,
             ));
-        $this->setDefaults(overrideDefaultInstallSettings());
+        $this->setDefaults(SGL_Install_Common::overrideDefaultInstallSettings());
 
         $this->addElement('header',     null, 'Detect Environment: page 3 of 6');
 
