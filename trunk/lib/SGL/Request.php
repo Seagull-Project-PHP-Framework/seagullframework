@@ -38,8 +38,14 @@
 // +---------------------------------------------------------------------------+
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
+define('SGL_REQUEST_BROWSER',   1);
+define('SGL_REQUEST_CLI',       2);
+define('SGL_REQUEST_AJAX',      3);
+define('SGL_REQUEST_XMLRPC',    4);
+define('SGL_REQUEST_AMF',     	5);
+
 /**
- * Wraps all $_GET $_POST $_FILES arrays into a Request object, provides a number of filtering methods.
+ * Loads Request driver, provides a number of filtering methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -52,11 +58,67 @@ class SGL_Request
     function init()
     {
         if ($this->isEmpty()) {
-            $res = (!SGL::runningFromCLI())
-                ? $this->initHttp()
-                : $this->initCli();
+            $type = $this->getRequestType();
+            $typeName = $this->constantToString($type);
+            $file = SGL_CORE_DIR . '/Request/' . $typeName . '.php';
+            if (!is_file($file)) {
+              return PEAR::raiseError('Request driver could not be located',
+                  SGL_ERROR_NOFILE);
+            }
+            require_once $file;
+            $class = 'SGL_Request_' . $typeName;
+            if (!class_exists($class)) {
+              return PEAR::raiseError('Request driver class does not exist',
+                  SGL_ERROR_NOCLASS);
+            }
+            $obj = new $class();
+            $ok = $obj->init();
+
+            return PEAR::isError($ok)
+                ? $ok
+                : $obj;
         }
-        return $res;
+    }
+
+    function constantToString($constant)
+    {
+        switch($constant) {
+        case SGL_REQUEST_BROWSER:
+            $ret = 'Browser';
+            break;
+
+        case SGL_REQUEST_CLI:
+            $ret = 'Cli';
+            break;
+
+        case SGL_REQUEST_AJAX:
+            $ret = 'Ajax';
+            break;
+
+        case SGL_REQUEST_AMF:
+            $ret = 'Amf';
+            break;
+        }
+        return $ret;
+    }
+
+    function getRequestType()
+    {
+        if (SGL::runningFromCLI()) {
+            $ret = SGL_REQUEST_CLI;
+
+        } elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                        $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+            $ret = SGL_REQUEST_AJAX;
+
+        } else if(isset($_SERVER['CONTENT_TYPE']) &&
+            $_SERVER['CONTENT_TYPE'] == 'application/x-amf') {
+            $ret = SGL_REQUEST_AMF;
+
+        } else {
+            $ret = SGL_REQUEST_BROWSER;
+        }
+        return $ret;
     }
 
     /**
@@ -77,8 +139,8 @@ class SGL_Request
         static $instance;
 
         if (!isset($instance) || $forceNew) {
-            $instance = new SGL_Request();
-            $err = $instance->init();
+            $obj = new SGL_Request();
+            $instance = $obj->init();
         }
         return $instance;
     }
@@ -88,77 +150,9 @@ class SGL_Request
         return count($this->aProps) ? false : true;
     }
 
-    function initHttp()
+    function getType()
     {
-        //  get config singleton
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
-
-        //  get current url object
-        $cache = & SGL_Cache::singleton();
-        $cacheId = md5($_SERVER['PHP_SELF']);
-
-        if ($data = $cache->get($cacheId, 'uri')) {
-            $url = unserialize($data);
-            SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
-        } else {
-            require_once SGL_CORE_DIR . '/UrlParser/SimpleStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/AliasStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
-
-            $aStrats = array(
-                new SGL_UrlParser_ClassicStrategy(),
-                new SGL_UrlParser_AliasStrategy(),
-                new SGL_UrlParser_SefStrategy(),
-                );
-            $url = new SGL_URL($_SERVER['PHP_SELF'], true, $aStrats);
-
-            $err = $url->init();
-            if (PEAR::isError($err)) {
-                return $err;
-            }
-            $data = serialize($url);
-            $cache->save($data, $cacheId, 'uri');
-            SGL::logMessage('URI parsed ####' . $_SERVER['PHP_SELF'] . '####', PEAR_LOG_DEBUG);
-        }
-        $aQueryData = $url->getQueryData();
-        if (PEAR::isError($aQueryData)) {
-            return $aQueryData;
-        }
-        //  assign to registry
-        $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
-
-        //  merge REQUEST AND FILES superglobal arrays
-        $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
-    }
-
-    function initCli()
-    {
-        require_once 'Console/Getopt.php';
-
-        $shortOptions = '';
-        $longOptions = array('moduleName=', 'managerName=', 'action=');
-
-        $console = new Console_Getopt();
-        $arguments = $console->readPHPArgv();
-        array_shift($arguments);
-        $options = $console->getopt2($arguments, $shortOptions, $longOptions);
-
-        if (!is_array($options) ) {
-            die("CLI parameters invalid\n");
-        }
-
-        $this->aProps = array();
-
-        /* Take all _valid_ parameters and add them into aProps. */
-        while (list($parameter, $value) = each($options[0])) {
-            $value[0] = str_replace('--', '', $value[0]);
-            $this->aProps[$value[0]] = $value[1];
-        }
+        return $this->type;
     }
 
     function merge($aHash)
@@ -217,6 +211,12 @@ class SGL_Request
     {
         $this->aProps = array_merge_recursive($this->aProps, $aParams);
     }
+
+    function reset()
+    {
+        unset($this->aProps);
+        $this->aProps = array();
+    }
     /**
      * Return an array of all Request properties.
      *
@@ -242,6 +242,16 @@ class SGL_Request
         return $ret;
     }
 
+    function getActionName()
+    {
+        if (isset($this->aProps['action'])) {
+            $ret = $this->aProps['action'];
+        } else {
+            $ret = 'default';
+        }
+        return $ret;
+    }
+
     function getUri()
     {
         $uri = '';
@@ -250,13 +260,15 @@ class SGL_Request
         $sglSessionName = $conf['cookie']['name'];
 
         foreach ($this->aProps as $key => $value) {
+            if (is_array($value)) {
+                continue;
+            }
             if (!empty($value) && $key != 'lang' && strpos($key, $sglSessionName) === false) {
                 $uri .= ($key == 'moduleName' || $key == 'managerName')
                     ? $value . '/'
                     : $key . '/' . $value . '/';
             }
         }
-
         // remove trailing slash
         $uri = preg_replace('/\/$/','',$uri);
 
@@ -268,8 +280,7 @@ class SGL_Request
         $c = &SGL_Config::singleton();
         $c->set('site', array('blocksEnabled' => 0));
         print '<pre>';
-        print_r($this->aProps[$key]);
+        print_r($this->aProps);
     }
 }
-
 ?>

@@ -207,15 +207,13 @@ class SGL_Util
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'File/Util.php';
-        require_once SGL_MOD_DIR  . '/default/classes/DA_Default.php';
-        $da = & DA_Default::singleton();
 
         //  match all folders except CVS
         $ret = SGL_Util::listDir(SGL_MOD_DIR, FILE_LIST_DIRS, FILE_SORT_NAME,
             create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
         foreach ($ret as $module) {
-            if ($onlyRegistered && !$da->moduleIsRegistered($module)) {
+            if ($onlyRegistered && !SGL::moduleIsEnabled($module)) {
                 unset($ret[$module]);
             }
         }
@@ -348,14 +346,16 @@ class SGL_Util
      * we can improve security in situations where browsers might be able to
      * read them.  Thanks to Georg Gell for the idea.
      *
-     * @param string $file
+     * @param string $file  Path to ini file
      */
     function makeIniUnreadable($file)
     {
         $iniFle = file($file);
         $string = ';<?php die("Eat dust"); ?>' . "\n";
         array_unshift($iniFle, $string);
-        file_put_contents($file, implode("", $iniFle));
+        file_put_contents($file . '.php', implode('', $iniFle));
+        //  remove original ini file
+        unlink($file);
     }
     /**
      * Returns a hash of the form array('en-iso-8859-15' => 'English (en-iso-8859-15),) etc.
@@ -429,6 +429,38 @@ class SGL_Util
         $aReturn['details'] = $details;
         $aReturn['aParams'] = $aPreparedParams;
         return $aReturn;
+    }
+
+    /**
+     * Returns the system's tmp directory.
+     *
+     * Mactel doesn't supply tmp path in most of the normal places.
+     *
+     * @return string  Path to tmp dir
+     */
+    function getTmpDir()
+    {
+       // Try to get from environment variable
+       if (!empty($_ENV['TMP'])) {
+           return realpath($_ENV['TMP']);
+       } elseif (!empty($_ENV['TMPDIR'])) {
+           return realpath($_ENV['TMPDIR']);
+       } elseif (!empty($_ENV['TEMP'])) {
+           return realpath($_ENV['TEMP']);
+       }
+       // Detect by creating a temporary file
+       else {
+           // Try to use system's temporary directory
+           // as random name shouldn't exist
+           $temp_file = tempnam(md5(uniqid(rand(), true)), '');
+           if ($temp_file) {
+               $temp_dir = realpath(dirname($temp_file));
+               unlink($temp_file);
+               return $temp_dir;
+           } else {
+               return false;
+           }
+       }
     }
 }
 ?>

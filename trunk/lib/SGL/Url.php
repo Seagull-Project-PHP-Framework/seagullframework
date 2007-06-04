@@ -297,7 +297,6 @@ class SGL_URL
                                 //  this is an install and index.php was omitted
                                 $this->path = $urlinfo['path'];
                                 $this->querystring = @$urlinfo['query'];
-                                $install = true;
                             } else {
                                 $this->path = substr($value, 0, $frontScriptStartIndex);
                                 $this->querystring = substr($value, $frontScriptEndIndex);
@@ -414,6 +413,12 @@ class SGL_URL
                 unset($aRet[$param]);
             }
         }
+        //  remove querystring data
+        foreach ($aRet as $k => $v) {
+            if (stristr($k, '?start_debug')) {
+                unset($aRet[$k]);
+            }
+        }
         return $aRet;
     }
 
@@ -445,6 +450,12 @@ class SGL_URL
             } else {
                 $this->aRes[] = $res;
             }
+        }
+        //  reverse order of strats so Classic comes last in array and overrides SEF
+        if (!empty($conf['site']['outputUrlHandler'])
+                && $conf['site']['outputUrlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
+            $tmp = array_reverse($this->aRes);
+            $this->aRes = $tmp;
         }
         $ret = call_user_func_array('array_merge', $this->aRes);
         return $ret;
@@ -842,17 +853,6 @@ class SGL_URL
             }
         }
         return $aUriParts;
-    }
-
-    function ensureWebrootSet()
-    {
-        if (!defined('SGL_BASE_URL')) {
-            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
-                define('SGL_BASE_URL', $aMatches[1]);
-            } else {
-                die('Could not set webroot');
-            }
-        }
     }
 }
 
