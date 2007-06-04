@@ -126,6 +126,9 @@ function parseIniFile()
     return $ret;
 }
 
+$rootDir = dirname(__FILE__) . '/..';
+$varDir = dirname(__FILE__) . '/../var';
+
 //  main
 STR_init();
 $conf = $GLOBALS['_STR']['CONF'];
