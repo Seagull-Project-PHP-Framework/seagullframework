@@ -52,9 +52,6 @@ class SGL_Task_Init extends SGL_DecorateProcess
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
         }
-        // load base utility lib
-        require_once SGL_LIB_DIR . '/SGL.php';
-
         //  start output buffering
         if ($this->conf['site']['outputBuffering']) {
             ob_start();
@@ -71,18 +68,9 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
-        $options = array(
-            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
-            'schema_location'       => SGL_ENT_DIR,
-            'class_location'        => SGL_ENT_DIR,
-            'require_prefix'        => SGL_ENT_DIR . '/',
-            'class_prefix'          => 'DataObjects_',
-            'debug'                 => $this->conf['debug']['dataObject'],
-            'production'            => 0,
-            'ignore_sequence_keys'  => 'ALL',
-            'generator_strip_schema' => 1,
-        );
+        $conf = $input->getConfig();
+        $oTask = new SGL_Task_InitialiseDbDataObject();
+        $ok = $oTask->run($conf);
 
         $this->processRequest->process($input, $output);
     }
@@ -164,15 +152,12 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
         $language = substr($locale, 0,2);
 
         if ($this->conf['site']['extendedLocale'] == false) {
-
-            $cat = constant(str_replace("'", "", $this->conf['site']['localeCategory']));
-
             //  The default locale category is LC_ALL, but this will cause probs for
             //  european users who get their decimal points (.) changed to commas (,)
             //  and php numeric calculations will break.  The solution for these users
             //  is to select the LC_TIME category.  For a global effect change this in
             //  Config.
-            if (setlocale($cat, $locale) == false) {
+            if (setlocale(SGL_String::pseudoConstantToInt($this->conf['site']['localeCategory']), $locale) == false) {
                 setlocale(LC_TIME, $locale);
             }
             @putenv('TZ=' . $timezone);
@@ -235,6 +220,9 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
             header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
             header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
             header('X-Powered-By: Seagull http://seagullproject.org');
+            foreach ($output->getHeaders() as $header) {
+                header($header);
+            }
         }
     }
 }
@@ -276,7 +264,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 
         // check for timeout
         $session = $input->get('session');
-        $timeout = $session->isTimedOut();
+        $timeout = !$session->updateIdle();
 
         //  store request in session
         $aRequestHistory = SGL_Session::get('aRequestHistory');
@@ -295,7 +283,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
-            //  check that session is not invalid or timed out
+            //  check that session is valid or timed out
             if (!$session->isValid() || $timeout) {
 
                 //  prepare referer info for redirect after login
@@ -338,8 +326,8 @@ class SGL_Task_SetupPerms extends SGL_DecorateProcess
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);
         } else {
-            require_once SGL_MOD_DIR . '/user/classes/DA_User.php';
-            $da = & DA_User::singleton();
+            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            $da = & UserDAO::singleton();
             $aPerms = $da->getPermsByModuleId();
             $serialized = serialize($aPerms);
             $cache->save($serialized, 'all_users', 'perms');
@@ -437,6 +425,9 @@ class SGL_Task_CreateSession extends SGL_DecorateProcess
 /**
  * Resolves request params into Manager model object.
  *
+ * The module is resolved from Request parameter, if resolution fails, default
+ * module is loaded.
+ *
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
@@ -446,79 +437,81 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_MOD_DIR . '/default/classes/DA_Default.php';
-        $da = & DA_Default::singleton();
         $req = $input->getRequest();
         $moduleName = $req->get('moduleName');
         $managerName = $req->get('managerName');
         $getDefaultMgr = false;
-        $homePageRequest = false;
 
         if (empty($moduleName) || empty($managerName)) {
 
             SGL::logMessage('Module and manager names could not be determined from request');
             $getDefaultMgr = true;
-            $homePageRequest = true;
 
         } else {
-            if (!$da->moduleIsRegistered($moduleName)) {
-                SGL::logMessage('module "'.$moduleName.'"does not appear to be registered');
+            if (!SGL::moduleIsEnabled($moduleName)) {
+                SGL::raiseError('module "'.$moduleName.'" does not appear to be registered',
+                    SGL_ERROR_RESOURCENOTFOUND);
                 $getDefaultMgr = true;
             } else {
                 //  load current module's config if not present
                 $conf = $this->c->ensureModuleConfigLoaded($moduleName);
 
-                if (PEAR::isError($conf)) {
-                    SGL::raiseError('could not locate module\'s config file',
-                        SGL_ERROR_NOFILE);
-                } else {
+                if (!PEAR::isError($conf)) {
                     //  set $this->conf to contain global and current module config.
                     $this->conf = $conf;
-                }
+                    //  get manager name, if $managerName not correct attempt to load default
+                    //  manager w/$moduleName
+                    $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
+                    $retMgrName = $this->getManagerName($managerName, $mgrPath);
+                    if ($retMgrName === false) {
+                        SGL::raiseError("Specified manager '$managerName' could not be found, ".
+                            "defaults loaded, pls ensure full manager name is present in module's conf.ini",
+                            SGL_ERROR_RESOURCENOTFOUND);
+                    }
+                    $managerName = ($retMgrName)
+                        ? $retMgrName
+                        : $this->getManagerName($moduleName, $mgrPath);
+                    if (!empty($managerName)) {
 
-                //  get manager name if $managerName not correct attempt to load default
-                //  manager w/$moduleName
-                $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
-                $retMgrName = $this->getManagerName($managerName, $mgrPath);
-                if ($retMgrName === false) {
-                    SGL::raiseError("Specified manager '$managerName' could not be found, ".
-                        "default loaded, pls ensure full manager name is present in module's conf.ini");
-                }
-                $managerName = ($retMgrName)
-                    ? $retMgrName
-                    : $this->getManagerName($moduleName, $mgrPath);
-                if (!empty($managerName)) {
+                        //  build path to manager class
+                        $classPath = $mgrPath . $managerName . '.php';
+                        if (@is_file($classPath)) {
+                            require_once $classPath;
 
-                    //  build path to manager class
-                    $classPath = $mgrPath . $managerName . '.php';
-                    if (@is_file($classPath)) {
-                        require_once $classPath;
-
-                        //  if class exists, instantiate it
-                        if (@class_exists($managerName)) {
-                            $input->moduleName = $moduleName;
-                            $input->set('manager', new $managerName);
+                            //  if class exists, instantiate it
+                            if (@class_exists($managerName)) {
+                                $input->moduleName = $moduleName;
+                                $input->set('manager', new $managerName);
+                            } else {
+                                SGL::logMessage("Class $managerName does not exist");
+                                $getDefaultMgr = true;
+                            }
                         } else {
-                            SGL::logMessage("Class $managerName does not exist");
+                            SGL::logMessage("Could not find file $classPath");
                             $getDefaultMgr = true;
                         }
                     } else {
-                        SGL::logMessage("Could not find file $classPath");
+                        SGL::logMessage('Manager name could not be determined from '.
+                                        'SGL_Process_ResolveManager::getManagerName');
                         $getDefaultMgr = true;
                     }
                 } else {
-                    SGL::logMessage('Manager name could not be determined from '.
-                                    'SGL_Process_ResolveManager::getManagerName');
+                    //  remove last error and rethrow as SGL_ERROR_RESOURCENOTFOUND
+                    //  so can be caught in SGL_Manager
+                    SGL_Error::pop();
+                    $msg = $conf->getMessage();
+                    SGL::raiseError($msg, SGL_ERROR_RESOURCENOTFOUND);
                     $getDefaultMgr = true;
                 }
             }
         }
         if ($getDefaultMgr) {
-            $ok = $this->getDefaultManager($input);
-            if (!$homePageRequest || !$ok) {
-                SGL::raiseError("The specified manager could not be found, default loaded",
-                    SGL_ERROR_INVALIDCALL);
+            $ok = $this->getConfiguredDefaultManager($input);
+            if (!$ok) {
+                SGL::raiseError("The default manager could not be found",
+                    SGL_ERROR_RESOURCENOTFOUND);
             }
+            $this->getDefaultManager($input);
         }
         $this->processRequest->process($input, $output);
     }
@@ -529,7 +522,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
      * @param SGL_Registry $input
      * @return boolean
      */
-    function getDefaultManager(&$input)
+    function getConfiguredDefaultManager(&$input)
     {
         $defaultModule = $this->conf['site']['defaultModule'];
         $defaultMgr = $this->conf['site']['defaultManager'];
@@ -573,6 +566,24 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             $req->add($aParams);
         }
         $input->setRequest($req); // this ought to take care of itself
+        return true;
+    }
+
+    function getDefaultManager(&$input)
+    {
+        $defaultModule = 'default';
+        $defaultMgr = 'default';
+        $mgrName = SGL_Inflector::caseFix(
+            SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
+        $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
+        require_once $path;
+        $mgr = new $mgrName();
+        $input->moduleName = $defaultModule;
+        $input->set('manager', $mgr);
+        $req = $input->getRequest();
+        $req->set('moduleName', $defaultModule);
+        $req->set('managerName', $defaultMgr);
+        $input->setRequest($req);
         return true;
     }
 
@@ -710,6 +721,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptClose      = "\n//--> </script>\n";
         $output->isMinimalInstall = SGL::isMinimalInstall();
         $output->conf             = $this->c->getAll();
+        $output->showExecutionTimes = ($_SESSION['aPrefs']['showExecutionTimes'] == 1 ) ? true : false;
     }
 }
 
@@ -760,38 +772,6 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
 }
 
 /**
- * Collects performance data.
- *
- * @package Task
- * @author  Demian Turner <demian@phpkitchen.com>
- */
-class SGL_Task_GetPerformanceInfo extends SGL_DecorateProcess
-{
-    function process(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $this->processRequest->process($input, $output);
-        //  get performance info
-        if (!empty($_SESSION['aPrefs']['showExecutionTimes'])
-                && $_SESSION['aPrefs']['showExecutionTimes'] == 1) {
-
-            //  prepare query count
-            $output->queryCount = $GLOBALS['_SGL']['QUERY_COUNT'];
-
-            //  and execution time
-            $output->executionTime = getSystemTime() - @SGL_START_TIME;
-        } else {
-            $output->executionTime = 0;
-        }
-        //  send memory consumption to output
-        if (SGL_PROFILING_ENABLED && function_exists('memory_get_usage')) {
-            $output->memoryUsage = number_format(memory_get_usage());
-        }
-    }
-}
-
-/**
  * Builds navigation menus.
  *
  * @package Task
@@ -835,7 +815,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 }
 
 /**
- * Setup which Graphical User Interface to use.
+ * Setup which admin Graphical User Interface to use.
  *
  * @package Task
  */
@@ -872,19 +852,17 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                     SGL::raiseError('could not locate module\'s config file',
                         SGL_ERROR_NOFILE);
                 }
-
                 //  set $this->conf to contain global and current module config.
                 $this->conf = $conf;
             }
 
             // then check if manager requires to switch to adminGUI
-            if (isset($this->conf[$mgrName]['adminGuiAllowed'])
-                && $this->conf[$mgrName]['adminGuiAllowed']) {
+            if (isset( $this->conf[$mgrName]['adminGuiAllowed'])
+                    && $this->conf[$mgrName]['adminGuiAllowed']) {
                 $adminGuiRequested = true;
 
-                // exception
-                // 1. allows to preview articles with default theme
-                if ($mgrName == 'ArticleMgr' && $output->action == 'view') {
+                //  check for adminGUI override in action
+                if (isset($output->overrideAdminGuiAllowed) && $output->overrideAdminGuiAllowed) {
                     $adminGuiRequested = false;
                 }
             }
@@ -935,6 +913,36 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
 }
 
 /**
+ * Builds data for debug block.
+ *
+ * @package Task
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
+class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
+{
+    function process(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->processRequest->process($input, $output);
+        if (!empty($this->conf['debug']['infoBlock'])) {
+            $output->debug_request = $output->request;
+            $output->debug_session = $_SESSION;
+            $output->debug_module = $output->moduleName;
+            $output->debug_manager = isset($output->managerName)
+                ? $output->managerName
+                : '';
+            $output->debug_action = $output->action;
+            $output->debug_section = $output->sectionId;
+            $output->debug_master_template = $output->masterTemplate;
+            $output->debug_template = $output->template;
+            $output->debug_theme = $output->theme;
+
+        }
+    }
+}
+
+/**
  * @package Task
  */
 class SGL_Task_BuildView extends SGL_DecorateProcess
@@ -945,8 +953,11 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
 
         $this->processRequest->process($input, $output);
 
-        //  get all html onLoad events
-        $output->onLoad = $output->getAllOnLoadEvents();
+        //  get all html onLoad events and js files
+        $output->onLoad = $output->getOnLoadEvents();
+        $output->onUnload = $output->getOnUnloadEvents();
+        $output->onReadyDom = $output->getOnReadyDomEvents();
+        $output->javascriptSrc = $output->getJavascriptFiles();
 
         //  unset unnecessary objects
         unset($output->currentUrl);

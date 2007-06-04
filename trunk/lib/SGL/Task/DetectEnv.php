@@ -125,7 +125,6 @@ class SGL_EnvSummaryTask extends SGL_Task
 
             //  exception for php version check
             if (preg_match("/>.*/", $depValue)) {
-                $comparator = $depValue{0};
                 $value = substr($depValue, 1);
                 if (version_compare($actual, $value, 'g')) {
                     $status = 'green';
@@ -196,8 +195,6 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $aRequirements = array(
         'apc' => array(SGL_FORBIDDEN => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
-        'dom' => array(SGL_RECOMMENDED => 1),
-        'domxml' => array(SGL_RECOMMENDED => 1),
         'gd' => array(SGL_RECOMMENDED => 1),
         'iconv' => array(SGL_RECOMMENDED => 1),
         'mysql' => array(SGL_NEUTRAL => 0),
@@ -220,6 +217,11 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 
     function run()
     {
+        if (SGL::isPhp5()) {
+            $this->aRequirements['dom'] = array(SGL_RECOMMENDED => 1);
+        } else {
+            $this->aRequirements['domxml'] = array(SGL_RECOMMENDED => 1);
+        }
         foreach ($this->aRequirements as $m => $dep) {
             $this->aData[$m] = bool2int(extension_loaded($m));
         }
@@ -272,7 +274,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
     var $title = 'php.ini Settings';
     var $key = 'php.ini_settings';
     var $aRequirements = array(
-        'safe_mode' => array(SGL_RECOMMENDED => 0),
+        'safe_mode' => array(SGL_REQUIRED => 0),
         'register_globals' => array(SGL_RECOMMENDED => 0),
         'magic_quotes_gpc' => array(SGL_RECOMMENDED => 0),
         'magic_quotes_runtime' => array(SGL_RECOMMENDED => 0),
@@ -284,6 +286,7 @@ class SGL_Task_GetPhpIniValues extends SGL_EnvSummaryTask
         );
 
     var $aErrors = array(
+        'safe_mode' => "This software will not work correctly if safe_mode is enabled",
         'memory_limit' => "Please set the option 'memory_limit' in your php.ini to a minimum of 16MB",
         );
 

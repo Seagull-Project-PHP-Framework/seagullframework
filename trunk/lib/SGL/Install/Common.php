@@ -97,6 +97,17 @@ class SGL_Install_Common
         return $version;
     }
 
+    function ensureWebrootSet()
+    {
+        if (!defined('SGL_BASE_URL')) {
+            if (@preg_match('/^(.*)\/.*\.php$/', $_SERVER['SCRIPT_NAME'], $aMatches)) {
+                define('SGL_BASE_URL', $aMatches[1]);
+            } else {
+                die('Could not set webroot');
+            }
+        }
+    }
+
     /**
      * Returns html head section of page, only used for 'enter passwd for
      * access setup' screen
@@ -110,7 +121,7 @@ class SGL_Install_Common
         if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
         }
-        SGL_URL::ensureWebrootSet();
+        SGL_Install_Common::ensureWebrootSet();
         $baseUrl = SGL_BASE_URL;
         $html = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -175,7 +186,7 @@ HTML;
                     $message
                 </div>
                 <span class="error">*&nbsp;</span>Password
-                <input type="password" name="frmPassword" maxlength="24" />
+                <input type="password" name="frmSetupPassword" maxlength="24" />
             </div>
             <p><input type="submit" class="formsubmit" name="submitted" value="Enter" /></p>
         </div>
@@ -215,6 +226,34 @@ HTML;
     function getMinimumModuleList()
     {
         return array('block', 'default', 'navigation', 'user');
+    }
+
+    /**
+     * This adds default values for the installer form, based on a ini file.
+     *
+     * @return array
+     */
+    function overrideDefaultInstallSettings($aData = array())
+    {
+        //  flatten module array if exists
+        if (array_key_exists('aModuleList', $aData)) {
+            $aData['aModuleList'] = implode(',', $aData['aModuleList']);
+        }
+        //  read in custom install defaults
+        $customConfig = SGL_PATH . '/etc/customInstallDefaults.ini';
+        if (file_exists($customConfig)) {
+            $aOverrideData = parse_ini_file($customConfig, true);
+        } else {
+            $aOverrideData = array();
+        }
+        //  override data passed as arg with custom data
+        $aRet = array_merge($aData, $aOverrideData);
+
+        //  explode module data back to array
+        if (!empty($aRet['aModuleList'])) {
+            $aRet['aModuleList'] = explode(',', $aRet['aModuleList']);
+        }
+        return $aRet;
     }
 }
 
