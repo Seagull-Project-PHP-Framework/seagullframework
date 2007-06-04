@@ -45,18 +45,9 @@ class SGL_Task_SetupSimpleTestORM extends SGL_Task
 {
     function run($conf = array())
     {
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
-        $options = array(
-            'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
-            'schema_location'       => SGL_ENT_DIR,
-            'class_location'        => SGL_ENT_DIR,
-            'require_prefix'        => SGL_ENT_DIR . '/',
-            'class_prefix'          => 'DataObjects_',
-            'debug'                 => 0,
-            'production'            => 0,
-            'ignore_sequence_keys'  => 'ALL',
-            'generator_strip_schema' => 1,
-        );
+        $conf['debug']['dataObject'] = 0;
+        $oTask = new SGL_Task_InitialiseDbDataObject();
+        $ok = $oTask->run($conf);
         require_once 'DB/DataObject/Generator.php';
 
 #FIXME:  add logic so entities aren't regenned on every request
@@ -84,8 +75,6 @@ class STR_TestEnv
      */
     function buildSchema()
     {
-        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-
         // get schema files
         $aSchemaFiles = $GLOBALS['_STR']['CONF']['schemaFiles'];
 
@@ -104,14 +93,21 @@ class STR_TestEnv
      */
     function loadData()
     {
-        $dbType = $GLOBALS['_STR']['CONF']['database']['type'];
-
-        // get schema files
+        // get datda files
         $aDataFiles = $GLOBALS['_STR']['CONF']['dataFiles'];
 
         if (is_array($aDataFiles) && count($aDataFiles)) {
             foreach ($aDataFiles as $dataFile) {
                 SGL_Sql::parse(STR_PATH .'/'. $dataFile, E_ALL, array('SGL_Sql', 'execute'));
+            }
+        }
+        //  shell_exec raw sql if exists
+        $aSqlFiles = $GLOBALS['_STR']['CONF']['rawSqlFiles'];
+        if (is_array($aSqlFiles) && count($aSqlFiles)) {
+            foreach ($aSqlFiles as $sqlFile) {
+                $file = STR_PATH .'/'. $sqlFile;
+                $cmd= "/usr/bin/mysql -u{$GLOBALS['_STR']['CONF']['database']['user']} {$GLOBALS['_STR']['CONF']['database']['name']} < $file";
+                $ok = `$cmd`;
             }
         }
     }

@@ -51,7 +51,7 @@ require_once 'HTML/TreeMenu.php';
 class STR_Menu
 {
 
-    /** 
+    /**
      * A method to return the HTML code needed to display a tree-based
      * menu of all the Max tests.
      *
@@ -61,7 +61,7 @@ class STR_Menu
     function buildTree()
     {
         $conf = $GLOBALS['_STR']['CONF'];
-        
+
         // Create the root of the test suite
         $menu     = new HTML_TreeMenu();
         $rootNode = new HTML_TreeNode(
@@ -129,7 +129,7 @@ class STR_Menu
         $code .= "\n<script>\n";
         $code .= file_get_contents(STR_PATH . '/tests/media/TreeMenu.js');
         $code .= "\n</script>";
-        $code .= $tree->toHTML();        
+        $code .= $tree->toHTML();
         return $code;
     }
 }
