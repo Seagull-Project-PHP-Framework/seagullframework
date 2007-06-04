@@ -8,6 +8,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+04-06-07    Improved dynamic navigation, see http://trac.seagullproject.org/ticket/1470
+            (Dmitri Lakachauskis)
 29-05-07    Added ability to add multiple attachments in SGL_Emailer
             see http://trac.seagullproject.org/wiki/Howto/SendingEmails (Peter Termaten)
 24-05-07    Implementing PHP handling of stored proc resultsets using mysqli_SGL driver
