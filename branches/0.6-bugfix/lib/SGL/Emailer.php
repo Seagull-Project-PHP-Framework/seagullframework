@@ -161,6 +161,7 @@ class SGL_Emailer
             $mime->addCc($this->options['Cc']);
         }
         $body = $mime->get(array(
+            'head_encoding' => 'base64',
             'html_encoding' => '7bit',
             'html_charset' => $GLOBALS['_SGL']['CHARSET'],
             'text_charset' => $GLOBALS['_SGL']['CHARSET'],

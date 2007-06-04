@@ -4,6 +4,7 @@ CHANGELOG
 | VERSION: 0.6.3        |
 +-----------------------+
 BUGFIXES
+04-06-07    Fixed parsing of multiple roles for navigation
 26-05-07    Fixed Classic URI parsing see http://trac.seagullproject.org/changeset/3105
 27-04-07    Tests now correctly identify custom module paths
 
