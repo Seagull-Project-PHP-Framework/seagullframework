@@ -186,6 +186,12 @@ class SGL_BlockLoader
                 $blockClass = $oBlock->name;
                 preg_match('/^(.*)_.*_(.*)$/', $blockClass, $aMatches);
                 @$blockPath = strtolower($aMatches[1]) . '/blocks/' . $aMatches[2];
+
+                //  load CMS blocks if installed
+                if (SGL::moduleIsEnabled('cms') && $blockPath == 'navigation/blocks/Navigation') {
+                    $blockPath = 'cms/blocks/Navigation';
+                    $blockClass = 'Cms_Block_Navigation';
+                }
                 if (file_exists(SGL_MOD_DIR . '/' . $blockPath . '.php')) {
                     require_once SGL_MOD_DIR . '/' . $blockPath . '.php';
                 } else {

@@ -75,6 +75,16 @@ class SGL_Cache
                 'cacheDir'  => SGL_TMP_DIR . '/',
                 'lifeTime'  => $conf['cache']['lifetime'],
                 'caching'   => $isEnabled);
+            // new options are added via issets for BC
+            if (isset($conf['cache']['cleaningFactor'])) {
+                $options['automaticCleaningFactor'] = $conf['cache']['cleaningFactor'];
+            }
+            if (isset($conf['cache']['readControl'])) {
+                $options['readControl'] = $conf['cache']['readControl'];
+            }
+            if (isset($conf['cache']['writeControl'])) {
+                $options['writeControl'] = $conf['cache']['writeControl'];
+            }
             $instance = new Cache_Lite($options);
         }
         return $instance;
