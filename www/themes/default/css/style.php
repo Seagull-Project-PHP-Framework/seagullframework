@@ -43,6 +43,8 @@
 
     ////////////////////////////   DO NOT MODIFY   /////////////////////////////
 
+    require_once '../../helpers.php';
+
     // send default cacheing headers and content type
     header('Pragma: cache');
     header('Cache-Control: public');
@@ -98,30 +100,20 @@
     $srvModDate = timestampToDate(max($modTimes));
     header("Last-Modified: $srvModDate");
 
-    // get browser family
-    $browserFamily = 'None';
-    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-
-    if (!empty($ua)) {
-        if (strstr($ua, 'Opera')) {
-            $browserFamily = 'Opera';
-        } elseif (strstr($ua, 'MSIE')) {
-            $browserFamily = 'MSIE';
-        } else {
-            $browserFamily = 'Gecko';
-        }
-    }
-
     //  get base url for css classes that include images
     $path = dirname($_SERVER['PHP_SELF']);
     $aPath = explode('/', $path);
     $aPath = array_filter($aPath);
     array_pop($aPath);
     $baseUrl = join('/', $aPath);
+    array_pop($aPath);
+    array_pop($aPath);
+
+    $webRootUrl = join('/', $aPath);
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on')
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
-
+    $webRootUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $webRootUrl;
     require_once './vars.php';
     require_once './core.php';
     require_once './blockStyle.php';
