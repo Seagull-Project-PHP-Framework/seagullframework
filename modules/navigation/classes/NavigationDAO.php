@@ -537,6 +537,11 @@ class NavigationDAO extends SGL_Manager
             $section['resource_uri'] = substr($section['resource_uri'], 0, -1);
         }
 
+        if (isset($section['languages'])) {
+            $aLanguages = $section['languages'];
+            unset($section['languages']);
+        }
+
         $nodeId = $this->nestedSet->createSubNode($section['parent_id'], $section);
         if (PEAR::isError($nodeId)) {
             return $nodeId;
@@ -546,10 +551,32 @@ class NavigationDAO extends SGL_Manager
 
         // add translation
         if ($this->conf['translation']['container'] == 'db') {
-            // fetch fallback lang
-            $lang = SGL_Translation::getFallbackLangID();
-            // insert translation
-            $ok = $this->trans->add($nodeId, 'nav', array($lang => $section['title']));
+            if (!isset($aLanguages)) {
+                // fetch fallback lang
+                $langId = SGL_Translation::getFallbackLangID();
+                $aLanguages = array($langId => $section['title']);
+            }
+            foreach ($aLanguages as $langId => $sectionTitle) {
+                // insert translation
+                $langId = SGL_Translation::transformLangID($langId, SGL_LANG_ID_TRANS2);
+                $ok = $this->trans->add($nodeId, 'nav', array($langId => $sectionTitle));
+            }
+        }
+
+        // add alias
+        if (isset($section['uriAlias'])) {
+            $urlAliasId = $this->dbh->nextId($this->conf['table']['uri_alias']);
+            $ok = $this->addUriAlias($urlAliasId, $section['uriAlias'], $nodeId);
+            // duplicated alias
+            if (PEAR::isError($ok)) {
+                SGL_Error::pop();
+            // update resource uri with alias id
+            } else {
+                $resourceUri = 'uriAlias:' . $urlAliasId . ':'
+                    . $section['resource_uri'];
+                $this->nestedSet->updateNode($nodeId,
+                    array('resource_uri' => $resourceUri));
+            }
         }
 
         // sync with sequence table
