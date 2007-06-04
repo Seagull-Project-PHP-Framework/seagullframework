@@ -137,7 +137,7 @@ class BugMgr extends SGL_Manager
     {
         $ok = $this->_sendEmail($input->bug, $input->moduleName);
         if (!PEAR::isError($ok)) {
-            SGL::raiseMsg('email submitted successfully');
+            SGL::raiseMsg('email submitted successfully', SGL_MESSAGE_INFO);
         } else {
             SGL::raiseError('Problem sending email', SGL_ERROR_EMAILFAILURE);
         }
