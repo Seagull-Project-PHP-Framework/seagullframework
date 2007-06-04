@@ -6,7 +6,7 @@
 # +---------------------------------------------------------------------------+
 # | execute from seagull svn repository root                                  |
 # +---------------------------------------------------------------------------+
-# | Usage: ./release.sh revision_num release_name                             |
+# | Usage: ./release.sh revision_num release_name [min]                       |
 # +---------------------------------------------------------------------------+
 
 ##############################
@@ -14,11 +14,11 @@
 ##############################
 
 # binaries
-SVN=/usr/bin/svn
+SVN=/sw/bin/svn
 SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
-PHP=/usr/local/bin/php
-PEAR=/usr/local/bin/pear
+PHP=/usr/bin/php
+PEAR=/usr/bin/pear
 
 # SF FTP details
 FTP_HOSTNAME=upload.sourceforge.net
@@ -46,7 +46,7 @@ function usage()
       echo "Usage: ./release.sh revision_num release_name [minimal_install]"
       echo "    where \"revision_num\" is the $PROJECT_NAME svn revision number (e.g. 226)"
       echo "    and \"release_name\" is the release name (e.g. 0.4.5) which gives the full name \"seagull-0.4.5\""
-      echo "    the optional 3 parameter, 'min', will create a minimal install"
+      echo "    the optional 3rd parameter, 'min', will create a minimal install"
 }
 
 ##############################
@@ -145,6 +145,7 @@ function createMinimalFlag()
 
 ##############################
 # prune developer
+# removes GPL  modules
 ##############################
 function pruneDeveloper()
 {
@@ -208,22 +209,25 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/lib/pear/Translation2
     rm -rf $PROJECT_NAME/lib/pear/Validate
     rm -rf $PROJECT_NAME/lib/SGL/tests
-    rm -rf $PROJECT_NAME/modules/blog
+    rm -rf $PROJECT_NAME/modules/comment
     rm -rf $PROJECT_NAME/modules/contactus
     rm -rf $PROJECT_NAME/modules/documentor
     rm -rf $PROJECT_NAME/modules/export
     rm -rf $PROJECT_NAME/modules/faq
     rm -rf $PROJECT_NAME/modules/gallery2
     rm -rf $PROJECT_NAME/modules/guestbook
+    rm -rf $PROJECT_NAME/modules/googlemaps
     rm -rf $PROJECT_NAME/modules/messaging
     rm -rf $PROJECT_NAME/modules/newsletter
     rm -rf $PROJECT_NAME/modules/publisher
     rm -rf $PROJECT_NAME/modules/randommsg
+    rm -rf $PROJECT_NAME/modules/s9ywrapper
     rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/tests
     rm -rf $PROJECT_NAME/www/js/html_ajax
     rm -rf $PROJECT_NAME/www/js/jcalc
     rm -rf $PROJECT_NAME/www/js/jscalendar
+    rm -rf $PROJECT_NAME/www/js/lightbox
     rm -rf $PROJECT_NAME/www/js/overlib
     rm -rf $PROJECT_NAME/www/js/scriptaculous
     rm -rf $PROJECT_NAME/www/savant
@@ -340,7 +344,7 @@ EOF
 ##############################
 function scpApiDocsToSglSite()
 {
-    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/html/seagull_api/
+    scp seagullApiDocs-$RELEASE_NAME.tar.gz demian@phpkitchen.com:/var/www/seagull_api/
 }
 
 ##############################
@@ -356,21 +360,18 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
 
     # remove all but core modules
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/block
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/contactus
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/documentor
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/export
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/faq
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/guestbook
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/messaging
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/newsletter
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/randommsg
+#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/s9ywrapper
 
-
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/blog
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/publisher
-#    rm -rf $PROJECT_NAME-$RELEASE_NAME/modules/gallery2
 
 
 #    rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/blog
@@ -416,14 +417,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 createMinimalFlag
 
@@ -435,13 +436,13 @@ fi
 
 createTarball
 
-#uploadToSfWholePackage
+uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
