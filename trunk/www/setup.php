@@ -72,19 +72,6 @@ module setup
     - register module in registry
 */
 
-// This adds default values for the installer form, based on a
-// ini-file.
-function overrideDefaultInstallSettings()
-{
-    if (file_exists(SGL_PATH.'/etc/customInstallDefaults.ini')) {
-        $customInstallDefaults = parse_ini_file(SGL_PATH.'/etc/customInstallDefaults.ini', false);
-        $ret = $customInstallDefaults;
-    } else {
-        $ret = array();
-    }
-    return $ret;
-}
-
 //  initialise
 
 //  set initial paths according to install type
@@ -139,18 +126,22 @@ if (isset($_GET['start'])) {
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 
-    header('Location: '.SGL_BASE_URL.'/index.php/default/welcome/1');
-    exit;
+    $aUrl = array(
+        'managerName' => 'default',
+        'moduleName'  => 'default',
+        'welcome'     => 1
+    );
+    SGL_HTTP::redirect($aUrl);
 }
 
 //  check authorization
 if (is_file(SGL_PATH . '/var/INSTALL_COMPLETE.php')
         && empty($_SESSION['valid'])) {
 
-    if (!empty($_POST['frmPassword'])) {
+    if (!empty($_POST['frmSetupPassword'])) {
         $aLines = file(SGL_PATH . '/var/INSTALL_COMPLETE.php');
         $secret = trim(substr($aLines[1], 1));
-        if ($_POST['frmPassword'] != $secret) {
+        if ($_POST['frmSetupPassword'] != $secret) {
             $_SESSION['message'] = 'incorrect password';
             header('Location: setup.php');
             exit;
@@ -195,42 +186,64 @@ class ActionProcess extends HTML_QuickForm_Action
         $dbh = & SGL_DB::singleton();
         $res = false;
         if (!PEAR::isError($dbh)) {
-            $query = 'SELECT COUNT(*) FROM module';
+            require_once SGL_CORE_DIR . '/Sql.php';
+            $table = SGL_Sql::addTablePrefix('module');
+            $query = 'SELECT COUNT(*) FROM ' . $table;
             $res = $dbh->getOne($query);
         }
 
-        if (!PEAR::isError($res) && $res > 1) { // it's a rebuild
+        if (!PEAR::isError($res) && $res > 1) { // it's a re-install
             $data['aModuleList'] = SGL_Install_Common::getModuleList();
-        } elseif (PEAR::isError($dbh)) { // a new install
-            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            if (count($data['aModuleList'])) {
+                foreach ($data['aModuleList'] as $key => $moduleName) {
+                    if (!SGL::moduleIsEnabled($moduleName)) {
+                        unset($data['aModuleList'][$key]);
+                    }
+                }
+            }
+        } else { // a new install
             SGL_Error::pop();
-        } else {
+            if (PEAR::isError($dbh)) {
+                SGL_Error::pop(); // two errors produced
+            }
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
-            SGL_Error::pop();
         }
 
+        //  override with custom settings if they exist
+        $data = SGL_Install_Common::overrideDefaultInstallSettings($data);
+        $buildNavTask = 'SGL_Task_BuildNavigation';
+        if (in_array('cms', $data['aModuleList'])) {
+            require_once SGL_MOD_DIR . '/cms/init.php';
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+        }
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
         $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_CreateConfig());
+        $runner->addTask(new SGL_Task_LoadCustomConfig());
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
         $runner->addTask(new SGL_Task_DropTables());
         $runner->addTask(new SGL_Task_CreateTables());
-        $runner->addTask(new SGL_Task_LoadDefaultData());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_BuildNavigation());
-        $runner->addTask(new SGL_Task_LoadBlockData());
-        $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new $buildNavTask());
+        $runner->addTask(new SGL_Task_LoadBlockData());
         $runner->addTask(new SGL_Task_CreateConstraints());
         $runner->addTask(new SGL_Task_SyncSequences());
         $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+
         $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
         $runner->addTask(new SGL_Task_CreateDataObjectEntities());
         $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_UnLinkWwwData());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
+        $runner->addTask(new SGL_Task_AddTestDataToConfig());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 

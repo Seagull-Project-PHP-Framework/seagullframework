@@ -18,10 +18,10 @@
 
 /*
 -- userAdd.html ----------------------------------------------*/
-#frmUserAdd p label {
+#frmUser p label {
     width: 170px;
 }
-#frmUserAdd input.longText {
+#frmUser input.longText {
     width: 200px;
 }
 
