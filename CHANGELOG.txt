@@ -3,6 +3,7 @@ CHANGELOG
 +-----------------------+
 | VERSION: 0.6.3        |
 +-----------------------+
+
 BUGFIXES
 04-06-07    Fixed parsing of multiple roles for navigation [3117]
 26-05-07    Fixed Classic URI parsing see http://trac.seagullproject.org/changeset/3105
