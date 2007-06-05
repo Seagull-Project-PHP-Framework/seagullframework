@@ -6,6 +6,9 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+01-04-07    Implemented SGL_Authenticator lib, dependency on DB to use admin
+            screens removed, file-based driver selected by default, call
+            http://example.com/index.php/default/login/ to invoke
 
 +-----------------------+
 | VERSION: 0.6.3        |
