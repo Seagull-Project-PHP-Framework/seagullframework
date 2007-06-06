@@ -216,7 +216,7 @@ class SimpleDriver
         $c = &SGL_Config::singleton();
         $this->conf      = $c->getAll();
         $this->da        = &NavigationDAO::singleton();
-        $this->req       = $output->request;
+        $this->req       = &SGL_Request::singleton();
         $this->output    = &$output;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
@@ -261,7 +261,8 @@ class SimpleDriver
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
-        $url     = $this->output->currentUrl;
+        $reg     = &SGL_Registry::singleton();
+        $url     = $reg->getCurrentUrl();
         $cache   = &SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender

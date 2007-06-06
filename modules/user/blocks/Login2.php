@@ -66,8 +66,14 @@ class User_Block_Login2
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $blockOutput            = new SGL_Output();
-        $blockOutput->theme     = $_SESSION['aPrefs']['theme'];
-        $blockOutput->imagesDir = $output->imagesDir;
+        $theme = isset( $_SESSION['aPrefs']['theme'])
+            ? $_SESSION['aPrefs']['theme']
+            : 'default';
+        $blockOutput->theme     = $theme;
+        $imageDir = (isset($output->imagesDir))
+            ? $output->imagesDir
+            : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
+        $blockOutput->imagesDir = $imageDir;
 
         $c = &SGL_Config::singleton();
         $blockOutput->conf = $c->ensureModuleConfigLoaded('user');

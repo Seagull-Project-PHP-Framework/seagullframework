@@ -56,7 +56,10 @@ class Navigation_Block_Navigation
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  prepare navigation driver
-        $navDriver = $output->conf['navigation']['driver'];
+
+        $navDriver = isset($output->conf['navigation']['driver'])
+            ? $output->conf['navigation']['driver']
+            : 'SimpleDriver';
         $navDrvFile   = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
         if (is_file($navDrvFile)) {
             require_once $navDrvFile;

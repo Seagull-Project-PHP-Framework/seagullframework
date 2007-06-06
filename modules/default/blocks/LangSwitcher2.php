@@ -118,17 +118,23 @@ class Default_Block_LangSwitcher2
 
             $aLangData[$langKey]['is_current'] =
                 SGL::getCurrentLang() == $aLangData[$langKey]['code'];
-            $imageFile = SGL_WEB_ROOT . '/themes/' . $_SESSION['aPrefs']['theme'] .
+            $theme = isset( $_SESSION['aPrefs']['theme'])
+                ? $_SESSION['aPrefs']['theme']
+                : 'default';
+            $imageFile = SGL_WEB_ROOT . '/themes/' . $theme .
                 '/images/flags/' . $langKey . '.' . $aParams['extension'];
+            $imageDir = (isset($output->imagesDir))
+                ? $output->imagesDir
+                : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
             $aLangData[$langKey]['image'] = file_exists($imageFile)
-                ? "{$output->imagesDir}/flags/{$langKey}.{$aParams['extension']}"
+                ? "$imageDir/flags/{$langKey}.{$aParams['extension']}"
                 : false;
         }
 
         $blockOutput                 = & new SGL_Output();
         $blockOutput->conf           = $conf;
-        $blockOutput->theme          = $_SESSION['aPrefs']['theme'];
-        $blockOutput->imagesDir      = $output->imagesDir;
+        $blockOutput->theme          = $theme;
+        $blockOutput->imagesDir      = $imageDir;
         $blockOutput->masterTemplate = $aParams['template'];
         $blockOutput->aLangs         = $aLangData;
 
