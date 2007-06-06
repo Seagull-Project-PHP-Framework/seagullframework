@@ -60,7 +60,9 @@ class SGL
     function getCurrentLang()
     {
         $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
-        $sessLang = $_SESSION['aPrefs']['language'];
+        $sessLang = isset($_SESSION['aPrefs']['language'])
+            ? $_SESSION['aPrefs']['language']
+            : 'en-iso-8859-15';
         return $aLangs[$sessLang][2];
     }
 
