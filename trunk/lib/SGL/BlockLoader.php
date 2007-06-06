@@ -114,8 +114,14 @@ class SGL_BlockLoader
         //  put data generated so far into class scope
         $this->output = &$output;
         $cache = & SGL_Cache::singleton();
+        $currLang = (isset($output->currLang))
+            ? $output->currLang
+            : '';
+        $charset = (isset($output->charset))
+            ? $output->charset
+            : '';
         $cacheId = $this->_currentSectionId . $this->_rid
-            . $output->currLang . $output->charset;
+            . $currLang . $charset;
         if ($data = $cache->get($cacheId, 'blocks')) {
             $this->aBlocks = unserialize($data);
 
