@@ -103,7 +103,6 @@ class SGL_AjaxProvider
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_null($response)) {
-            $response = $this->output;
             return;
         }
         // Handle errors
