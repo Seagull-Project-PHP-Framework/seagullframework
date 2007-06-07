@@ -1120,7 +1120,7 @@ class SGL_Task_CreateFileSystem extends SGL_Task
         //  create entities dir
         if (!is_dir(SGL_ENT_DIR)) {
             $entDir = System::mkDir(array(SGL_ENT_DIR));
-            if (is_dir($cacheDir)) {
+            if (is_dir($entDir)) {
                 @chmod($entDir, 0777);
             }
             if (!($entDir)) {
