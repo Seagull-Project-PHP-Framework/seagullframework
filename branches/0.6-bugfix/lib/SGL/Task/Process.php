@@ -709,6 +709,11 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
             $output->remoteIp = $_SERVER['REMOTE_ADDR'];
             $output->isMember = true;
         }
+        // check if theme is affected by the current manager
+        $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
+        if (isset($this->conf[$mgrName]['theme'])) {
+            $output->theme = $this->conf[$mgrName]['theme'];
+        }
         $output->currUrl          = $_SERVER['PHP_SELF'];
         $output->currLang         = SGL::getCurrentLang();
         $output->theme            = $_SESSION['aPrefs']['theme'];
