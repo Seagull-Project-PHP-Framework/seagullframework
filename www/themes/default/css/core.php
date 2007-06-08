@@ -214,6 +214,10 @@ ul {
     list-style-position: inside;
     list-style-image: url('<?php echo $baseUrl ?>/images/bullet.gif');
 }
+ul.noindent {
+    margin-left:0px;
+    padding-left:0px;
+}
 li {
     padding-left: 0.5em;
 }
