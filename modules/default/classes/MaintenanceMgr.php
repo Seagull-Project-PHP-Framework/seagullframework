@@ -243,10 +243,14 @@ class MaintenanceMgr extends SGL_Manager
             $tasks = $this->conf['site']['customRebuildTasks'];
             if (is_array($tasks)) {
                 foreach ($this->conf['site']['customRebuildTasks'] as $task) {
-                    $runner->addTask(new $task());
+                    if (class_exists($task)) {
+                        $runner->addTask(new $task());
+                    }
                 }
             } else {
-                $runner->addTask(new $tasks());
+                if (class_exists($tasks)) {
+                    $runner->addTask(new $tasks());
+                }
             }
         }
 
