@@ -711,7 +711,9 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         }
         $output->currUrl          = $_SERVER['PHP_SELF'];
         $output->currLang         = SGL::getCurrentLang();
-        $output->theme            = $_SESSION['aPrefs']['theme'];
+        $output->theme            = isset($_SESSION['aPrefs']['theme'])
+                                    ? $_SESSION['aPrefs']['theme']
+                                    : 'default';
         $output->charset          = $GLOBALS['_SGL']['CHARSET'];
         $output->webRoot          = SGL_BASE_URL;
         $output->imagesDir        = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
@@ -721,7 +723,8 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptClose      = "\n//--> </script>\n";
         $output->isMinimalInstall = SGL::isMinimalInstall();
         $output->conf             = $this->c->getAll();
-        $output->showExecutionTimes = ($_SESSION['aPrefs']['showExecutionTimes'] == 1 ) ? true : false;
+        $output->showExecutionTimes = (isset($_SESSION['aPrefs']['showExecutionTimes'])
+            && $_SESSION['aPrefs']['showExecutionTimes'] == 1 ) ? true : false;
     }
 }
 
