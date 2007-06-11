@@ -349,6 +349,11 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
                 $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
                     . $conf['path']['additionalIncludePath']);
             }
+            //  add pear include path
+            if (!empty($conf['path']['pearIncludePath'])) {
+                $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
+                    . $conf['path']['pearIncludePath']);
+            }
         }
 
         if (isset($conf['path']['webRoot'])) {
