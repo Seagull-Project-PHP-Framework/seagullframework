@@ -225,7 +225,7 @@ HTML;
 
     function getMinimumModuleList()
     {
-        return array('block', 'default', 'navigation', 'user');
+        return array('block');
     }
 
     /**
