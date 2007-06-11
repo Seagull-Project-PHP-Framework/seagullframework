@@ -270,7 +270,6 @@ class SGL_FrontController
                 $ok = file_put_contents($cachedLibs, $fileCache);
             }
         }
-        require_once 'PEAR.php';
 //        require_once 'DB.php';
     }
 
