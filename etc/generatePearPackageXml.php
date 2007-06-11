@@ -160,7 +160,7 @@ EOT;
 //                'modules' => 'php',
                 'etc' => 'data',
                 'var' => 'data',
-                'www' => 'web_dir',
+                'www' => 'web',
             ),
 
             'roles'             =>
