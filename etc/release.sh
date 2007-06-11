@@ -423,7 +423,7 @@ checkPreviousVersions
 # move to tmp dir
 cd /tmp
 
-exportSvn
+#exportSvn
 
 #createMinimalFlag
 
