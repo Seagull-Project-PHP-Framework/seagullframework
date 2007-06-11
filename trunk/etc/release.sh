@@ -17,8 +17,8 @@
 SVN=/sw/bin/svn
 SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
-PHP=/usr/bin/php
-PEAR=/usr/bin/pear
+PHP=/opt/local/bin/php
+PEAR=/opt/local/bin/pear
 
 # SF FTP details
 FTP_HOSTNAME=upload.sourceforge.net
@@ -382,11 +382,12 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME/lib/data/ary.states.pl.php
 
     # copy PEAR overrides into root
-    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME-$RELEASE_NAME/
-    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/db2_SGL.php $PROJECT_NAME-$RELEASE_NAME/
-    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/maxdb_SGL.php $PROJECT_NAME-$RELEASE_NAME/
-    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/mysql_SGL.php $PROJECT_NAME-$RELEASE_NAME/
-    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/oci8_SGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME/
+    cp $PROJECT_NAME/lib/pear/DB/db2_SGL.php $PROJECT_NAME/
+    cp $PROJECT_NAME/lib/pear/DB/maxdb_SGL.php $PROJECT_NAME/
+    cp $PROJECT_NAME/lib/pear/DB/mysql_SGL.php $PROJECT_NAME/
+    cp $PROJECT_NAME/lib/pear/DB/oci8_SGL.php $PROJECT_NAME/
+
     #cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Frontend/WebSGL.php $PROJECT_NAME-$RELEASE_NAME/
     #cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Command/RemoteSGL.php $PROJECT_NAME-$RELEASE_NAME/
     #cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Command/RemoteSGL.xml $PROJECT_NAME-$RELEASE_NAME/
@@ -399,10 +400,10 @@ function buildMinimalPearPackage()
     $PEAR uninstall phpkitchen/Seagull_default
 
     # create package.xml
-    $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
+    $PHP $PROJECT_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
 
     # generate package
-    $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
+    $PEAR package -n /tmp/$PROJECT_NAME/package2.xml
 
     mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
 }
