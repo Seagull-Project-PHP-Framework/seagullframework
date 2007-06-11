@@ -95,39 +95,27 @@ class SGL_FrontController
         $outputClass = SGL_FrontController::getOutputClass($input->getConfig());
         $output = &new $outputClass();
 
-        $setupNav = SGL::moduleIsEnabled('cms')
-            ? 'SGL_Task_SetupNavigation2'
-            : 'SGL_Task_SetupNavigation';
-
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
                 //  pre-process (order: top down)
                 new SGL_Task_Init(
-                new SGL_Task_SetupORM(
                 new SGL_Task_StripMagicQuotes(
                 new SGL_Task_DiscoverClientOs(
                 new SGL_Task_ResolveManager(
-                new SGL_Task_CreateSession(
                 new SGL_Task_SetupLangSupport(
-                new SGL_Task_SetupPerms(
-                new SGL_Task_AuthenticateRequest(
-                new SGL_Task_SetupLocale(
 
                 //  post-process (order: bottom up)
                 new SGL_Task_BuildHeaders(
                 new SGL_Task_SetSystemAlert(
                 new SGL_Task_BuildView(
                 new SGL_Task_BuildDebugBlock(
-                new SGL_Task_SetupBlocks(
-                new $setupNav(
                 new SGL_Task_SetupGui(
-                new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
 
                 //  target
                 new SGL_MainProcess()
-                )))))))))))))))))));
+                )))))))))));
             $process->process($input, $output);
 
         } else {
@@ -219,7 +207,7 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
-        $init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
+        //$init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetupPearErrorCallback());
@@ -227,7 +215,7 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
-        $init->addTask(new SGL_Task_InitialiseModules());
+        //$init->addTask(new SGL_Task_InitialiseModules());
         $init->main();
         define('SGL_INITIALISED', true);
     }
@@ -261,7 +249,7 @@ class SGL_FrontController
                 $coreLibs  . '/Array.php',
                 $coreLibs  . '/Error.php',
                 $coreLibs  . '/Cache.php',
-                $coreLibs  . '/DB.php',
+//                $coreLibs  . '/DB.php',
                 $coreLibs  . '/BlockLoader.php',
                 $coreLibs  . '/Translation.php',
                 $coreLibs  . '/../data/ary.languages.php',
@@ -283,7 +271,7 @@ class SGL_FrontController
             }
         }
         require_once 'PEAR.php';
-        require_once 'DB.php';
+//        require_once 'DB.php';
     }
 
     function setupMinimumEnv()

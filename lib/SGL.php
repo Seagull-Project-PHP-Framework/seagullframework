@@ -394,6 +394,7 @@ class SGL
       */
     function moduleIsEnabled($moduleName)
     {
+        return false;
         static $aInstances;
         if (!isset($aInstances)) {
             $aInstances = array();
