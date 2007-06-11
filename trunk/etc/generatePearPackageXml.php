@@ -29,7 +29,7 @@ define('SGL_PKG_TMP_BUILD_DIR', '/tmp/seagull-'.SGL_PKG_RELEASE_NAME);
     /**
      * Package file manager for package.xml 2.
      */
-    require_once 'PEAR/PackageFileManager.php';
+    require_once 'PEAR/PackageFileManager2.php';
 
     /**
      * Some help functions.
@@ -121,7 +121,7 @@ IMPROVEMENTS
 EOT;
 
     // Instanciate package file manager
-	$pkg = new PEAR_PackageFileManager();
+	$pkg = new PEAR_PackageFileManager2();
 
     // Setting options
 	$e = $pkg->setOptions(

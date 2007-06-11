@@ -405,7 +405,7 @@ function buildMinimalPearPackage()
     # generate package
     $PEAR package -n /tmp/$PROJECT_NAME/package2.xml
 
-    mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
+#    mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
 }
 
 ##############################
