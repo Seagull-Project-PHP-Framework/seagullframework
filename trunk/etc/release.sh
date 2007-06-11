@@ -423,14 +423,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 #createMinimalFlag
 
@@ -452,7 +452,7 @@ cd /tmp
 
 #scpApiDocsToSglSite
 
-#renameSvnExport
+renameSvnExport
 buildMinimalPearPackage
 
 exit 0
