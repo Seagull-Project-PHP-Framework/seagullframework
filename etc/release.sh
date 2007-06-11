@@ -364,7 +364,6 @@ function buildMinimalPearPackage()
     rm -f $PROJECT_NAME/etc/Flexy2Smarty.php
     rm -f $PROJECT_NAME/etc/flexy2SmartyRunner.php
     rm -f $PROJECT_NAME/etc/generatePackageSimpleTest.php
-    rm -f $PROJECT_NAME/etc/generatePearPackageXml.php
     rm -f $PROJECT_NAME/etc/mysql5_field_test.php
     rm -f $PROJECT_NAME/etc/ociTableDrop.sh
     rm -f $PROJECT_NAME/etc/mysql5_field_test.php
@@ -417,14 +416,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-checkPreviousVersions
+#checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-exportSvn
+#exportSvn
 
 #createMinimalFlag
 
