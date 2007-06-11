@@ -354,6 +354,7 @@ function buildMinimalPearPackage()
     # remove unwanted files
     rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME-$RELEASE_NAME/tests
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/docs
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
@@ -423,7 +424,7 @@ checkPreviousVersions
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 #createMinimalFlag
 
