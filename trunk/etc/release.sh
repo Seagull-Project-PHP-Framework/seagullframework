@@ -349,6 +349,12 @@ function scpApiDocsToSglSite()
 ##############################
 # build minimal PEAR package
 ##############################
+function renameSvnExport()
+{
+    mv $PROJECT_NAME $PROJECT_NAME-$RELEASE_NAME
+
+}
+
 function buildMinimalPearPackage()
 {
     # remove unwanted files
@@ -359,34 +365,35 @@ function buildMinimalPearPackage()
     rm -rf $PROJECT_NAME-$RELEASE_NAME/package2.xml
     rm -rf $PROJECT_NAME-$RELEASE_NAME/Seagull-$RELEASE_NAME.tgz
 
-    rm -f $PROJECT_NAME/etc/convertCategories.php
-    rm -f $PROJECT_NAME/etc/cvsNightlyBuild.sh
-    rm -f $PROJECT_NAME/etc/Flexy2Smarty.php
-    rm -f $PROJECT_NAME/etc/flexy2SmartyRunner.php
-    rm -f $PROJECT_NAME/etc/generatePackageSimpleTest.php
-    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
-    rm -f $PROJECT_NAME/etc/ociTableDrop.sh
-    rm -f $PROJECT_NAME/etc/mysql5_field_test.php
-    rm -f $PROJECT_NAME/etc/phpDocCli.sh
-    rm -f $PROJECT_NAME/etc/phpDocWeb.ini
-    rm -f $PROJECT_NAME/etc/release.sh
-    rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
-    rm -f $PROJECT_NAME/etc/sglBridge.php
-    rm -rf $PROJECT_NAME/lib/data/ary.countries.de.php
-    rm -rf $PROJECT_NAME/lib/data/ary.countries.fr.php
-    rm -rf $PROJECT_NAME/lib/data/ary.countries.it.php
-    rm -rf $PROJECT_NAME/lib/data/ary.countries.pl.php
-    rm -rf $PROJECT_NAME/lib/data/ary.countries.ru.php
-    rm -rf $PROJECT_NAME/lib/data/ary.states.de.php
-    rm -rf $PROJECT_NAME/lib/data/ary.states.it.php
-    rm -rf $PROJECT_NAME/lib/data/ary.states.pl.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/convertCategories.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/cvsNightlyBuild.sh
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/Flexy2Smarty.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/flexy2SmartyRunner.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/generatePackageSimpleTest.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/ociTableDrop.sh
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/mysql5_field_test.php
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/phpDocCli.sh
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/phpDocWeb.ini
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/release.sh
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/seagull-pgsql-createDB.sh
+    rm -f $PROJECT_NAME-$RELEASE_NAME/etc/sglBridge.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.countries.de.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.countries.fr.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.countries.it.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.countries.pl.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.countries.ru.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.states.de.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.states.it.php
+    rm -rf $PROJECT_NAME-$RELEASE_NAME/lib/data/ary.states.pl.php
+    #rm -rf $PROJECT_NAME-$RELEASE_NAME/www/themes/default/images
 
     # copy PEAR overrides into root
-    cp $PROJECT_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME/
-    cp $PROJECT_NAME/lib/pear/DB/db2_SGL.php $PROJECT_NAME/
-    cp $PROJECT_NAME/lib/pear/DB/maxdb_SGL.php $PROJECT_NAME/
-    cp $PROJECT_NAME/lib/pear/DB/mysql_SGL.php $PROJECT_NAME/
-    cp $PROJECT_NAME/lib/pear/DB/oci8_SGL.php $PROJECT_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/HTML/Tree.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/db2_SGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/maxdb_SGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/mysql_SGL.php $PROJECT_NAME-$RELEASE_NAME/
+    cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/DB/oci8_SGL.php $PROJECT_NAME-$RELEASE_NAME/
 
     #cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Frontend/WebSGL.php $PROJECT_NAME-$RELEASE_NAME/
     #cp $PROJECT_NAME-$RELEASE_NAME/lib/pear/PEAR/Command/RemoteSGL.php $PROJECT_NAME-$RELEASE_NAME/
@@ -400,10 +407,10 @@ function buildMinimalPearPackage()
     $PEAR uninstall phpkitchen/Seagull_default
 
     # create package.xml
-    $PHP $PROJECT_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
+    $PHP $PROJECT_NAME-$RELEASE_NAME/etc/generatePearPackageXml.php make $RELEASE_NAME
 
     # generate package
-    $PEAR package -n /tmp/$PROJECT_NAME/package2.xml
+    $PEAR package -n /tmp/$PROJECT_NAME-$RELEASE_NAME/package2.xml
 
 #    mv Seagull-$RELEASE_NAME.tgz /tmp/$PROJECT_NAME-$RELEASE_NAME
 }
@@ -445,6 +452,7 @@ cd /tmp
 
 #scpApiDocsToSglSite
 
+#renameSvnExport
 buildMinimalPearPackage
 
 exit 0
