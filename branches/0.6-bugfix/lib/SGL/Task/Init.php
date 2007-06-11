@@ -440,6 +440,7 @@ class SGL_Task_SetGlobals extends SGL_Task
         $GLOBALS['_SGL']['ERRORS'] =            array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
+        $GLOBALS['_SGL']['CHARSET'] =           '';
     }
 }
 
