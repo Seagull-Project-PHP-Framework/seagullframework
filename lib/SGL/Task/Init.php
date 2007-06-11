@@ -355,6 +355,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
                     . $conf['path']['pearIncludePath']);
             }
         }
+        require_once 'PEAR.php';
 
         if (isset($conf['path']['webRoot'])) {
             define('SGL_WEB_ROOT', $conf['path']['webRoot']);
