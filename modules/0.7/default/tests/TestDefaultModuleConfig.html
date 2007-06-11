@@ -1,0 +1,606 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/seagull/branches/0.6-bugfix/www/index.php/user/login/action/logout/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Home</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<!-- TEST LOGIN -->
+<tr>
+	<td>type</td>
+	<td>frm_username_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Module Manager</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Configuration</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config Manager</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<!-- TEST ENABLING OUTPUT BUFFERING AND CONFIG SAVING -->
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[site][outputBuffering]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Configuration</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[site][compression]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[site][outputBuffering]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[site][blocksEnabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>Admin menu</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[site][blocksEnabled]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Admin menu</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>conf[site][alert]</td>
+	<td>my broadcast message</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Seagull Framework</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>my broadcast message</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Admin</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Configuration</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>conf[site][alert]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>my broadcast message</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Session</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[session][handler]]</td>
+	<td>label=database</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>You need to login to use this feature. Fill your username and password below.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>document.forms[1].submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Session</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>file database</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[session][extended]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[session][singleUser]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Session</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[session][extended]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[session][singleUser]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[session][handler]]</td>
+	<td>label=file</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>You need to login to use this feature. Fill your username and password below.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>document.forms[1].submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config Manager</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(@href, 'javascript:showSelectedOptions("configuration","navigationOptions")')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[navigation][enabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextNotPresent</td>
+	<td>Admin menu</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Navigation</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[navigation][enabled]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Admin menu</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Debug</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[debug][showBugReporterLink]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[debug][showBugReporterLink]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Debug</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[debug][showBugReporterLink]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Caching</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[cache][enabled]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Caching</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[cache][libCacheEnabled]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Caching</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[cache][enabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[cache][libCacheEnabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Logs</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.configuration.elements['conf[log][enabled]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Logs</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[log][type]</td>
+	<td>label=sql</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>conf[log][name]</td>
+	<td>log_table</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Logs</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>conf[log][name]</td>
+	<td>var/log/php_log.txt</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[log][type]</td>
+	<td>label=file</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf[log][enabled]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Censorship</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[censor][mode]</td>
+	<td>label=word fragment</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Censorship</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>conf[censor][mode]</td>
+	<td>label=no censoring</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Config info successfully updated</td>
+	<td></td>
+</tr>
+<!-- LOGOUT AT END OF TEST -->
+<tr>
+	<td>clickAndWait</td>
+	<td>link=logout</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>You have been successfully logged out</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

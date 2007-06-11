@@ -1,0 +1,62 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form id="userImport" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
+        <input type="hidden" name="action" value="insertImportedUsers" />
+    </fieldset>
+    <fieldset>
+        <dl class="onSide">
+            <dt>
+                <label class="tipOwner" for="frmCsvFile">
+                    <span class="required">* </span>{translate(#userfile#)}
+                    <span class="tipText">{translate(#Use the document manager to upload CSV files.#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <div class="error" flexy:if="error[csvFile]">
+                    {translate(error[csvFile])}
+                </div>
+                {if:noCsvFile}
+                    <div class="error">
+                        {translate(#You should first upload at least one csv file in your upload dir#)}
+                    </div>
+                {end:}
+                <select id="frmCsvFile" name="frmCsvFile">
+                    {generateSelect(aFiles):h}
+                </select>
+            </dd>
+            <dt>
+                <label class="tipOwner" for="frmOrgId">
+                    <span class="required">* </span>{translate(#organisation#,#ucfirst#)}
+                    <span class="tipText">{translate(#Import users into selected organisation.#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <select id="frmOrgId" name="frmOrgId">
+                    {generateSelect(aOrgs,organisation):h}
+                </select>
+            </dd>
+            <dt>
+                <label class="tipOwner" for="frmRoleId">
+                    <span class="required">* </span>{translate(#role#,#ucfirst#)}
+                    <span class="tipText">{translate(#User will be assigned to selected role.#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <select id="frmRoleId" name="frmRoleId">
+                    {generateSelect(aRoles,role):h}
+                </select>
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd>
+                <input class="button" type="submit" name="submitted" value="{translate(#Process#)}" />
+                <!--input class="button" type="button" value="{translate(#Cancel#)}"
+                    onclick="document.location.href='{makeUrl(##,#user#,#user#)}'" /-->
+            </dd>
+        </dl>
+    </fieldset>
+    <p>
+        <span class="required">*</span> {translate(#denotes required field#)}
+    </p>
+</form>

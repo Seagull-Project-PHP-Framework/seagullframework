@@ -1,0 +1,33 @@
+<?php
+$words['Messages did not reach all recipients'] = 'As mensanges não foram enviadas para todos os destinatários';
+$words['Reply'] = 'Responder';
+$words['Compose Message'] = 'Criar mensagem';
+$words['Read'] = 'Ler';
+$words['From'] = 'De';
+$words['cancel'] = 'cancelar';
+$words['Sent Messages'] = 'Mensagens enviadas';
+$words['No messages in outbox'] = 'Nenhuma mensagem na caixa de saída';
+$words['To'] = 'Para';
+$words['go to inbox'] = 'ir para a caixa de entrada';
+$words['Full Name'] = 'Nome completo';
+$words['Contacts'] = 'Contatos';
+$words['Contact Manager'] = 'Gerenciador de contatos';
+$words['send message to selected user(s)'] = 'enviar mensagem para o(s) usuário(s) selecionado(s)';
+$words['Inbox'] = 'Caixa de entrada';
+$words['In order to send an instant message, you must select recipients from the contacts tab'] = 'Para enviar uma mensagem, você deve selecionar destinatários pela aba de contatos';
+$words['Sender'] = 'Remetente';
+$words['Date'] = 'Data';
+$words['No messages in inbox'] = 'Nenhuma mensagem na caixa de entrda';
+$words['check for new messages'] = 'pegar novas mensagens';
+$words['go to outbox'] = 'ir para caixa de saída';
+$words['contacts'] = 'contatos';
+$words['Group'] = 'Grupo';
+$words['Subject'] = 'Assunto';
+$words['Message'] = 'Mensagem';
+$words['Messages'] = 'Mensagens';
+$words['contacts successfully deleted'] = 'Os contatos selecionados foram removidos com sucesso';
+$words['contacts successfully added'] = 'Os contados foram adicionados com sucesso';
+$words['admin cannot save contacts'] = 'Administradores nao podem salvar contatos';
+$words['Message sent successfully'] = 'Mensagem enviada com suceso';
+$words['message deleted successfully'] = 'Mensagen(s) removida(s) com sucesso';
+?>

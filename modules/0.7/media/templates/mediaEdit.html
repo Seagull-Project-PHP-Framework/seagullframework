@@ -1,0 +1,67 @@
+<h1>{translate(#Edit media#)} '{media.name}'</h1>
+<div class="moduleContainer" id="mediaContainer" flexy:ignore>
+
+    <form method="post" action="" name="mediaEdit" id="mediaEdit">
+        <div class="hide">
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
+            <input type="hidden" name="media[added_by]" value="{loggedOnUserID}" />
+            <input type="hidden" name="media[orig_name]" value="{media.name}" />
+        </div>
+
+        <ul id="formFields">
+            <!-- Image -->
+            <div id="mediaImage" style="position:absolute;">
+                <img src="{makeUrl(#previewMedia#,#media#,##)}frmMediaId/{media.media_id}/frmSize/large" alt="image" />
+            </div>
+            <li class="fieldset">
+                <!-- Name -->
+                <label for="">{translate(#Name#)}</label>
+                <div class="full">
+                    <input class="field text large" id="mediaName" type="text" name="media[name]" value="{media.name}" />
+                </div>
+            </li>
+            <li class="fieldset">
+                <!-- Description -->
+                <label for="">{translate(#Description#)}</label>
+                <div class="full">
+                    <textarea class="field textarea medium" id="mediaDescription" name="media[description]">{media.description}</textarea>
+                </div>
+            </li>
+            <li class="fieldset">
+                <!-- Tags -->
+                <label for="">{translate(#Tags#)}</label>
+                <div class="full">
+                    <input class="field text large" id="mediaTags" type="text" name="media[tags]" value="Not implemented yet" />
+                </div>
+            </li>
+            <li class="fieldset">
+                <!-- Details -->
+                <div class="mediaDetail">
+                    <p>{translate(#Type#)}</p>
+                    <span>{translate(media.link_file_type_id.name)}</span>
+                </div>
+                <div class="mediaDetail">
+                    <p>{translate(#Size#)}</p>
+                    <span>{formatBytes(media.file_size)}</span>
+                </div>
+                <div class="mediaDetail">
+                    <p>{translate(#Owner#)}</p>
+                    <span>{media.link_added_by.username}</span>
+                </div>
+                <div class="mediaDetail">
+                    <p>{translate(#Date Added#)}</p>
+                    <span>{formatDate(media.date_created)}</span>
+                </div>
+            </li>
+        </ul>
+                
+            </dl>
+        </fieldset>
+
+    <input class="button" type="submit" name="submit" value="{translate(#Save#)}" />
+    <input class="button" type="button" value="{translate(#Cancel#)}"
+    	   onclick="javascript:document.location.href='{makeUrl(##,#media#,#media#)}'" />
+
+    </form>
+</div>

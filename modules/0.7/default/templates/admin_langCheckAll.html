@@ -1,0 +1,50 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}:&nbsp;</span>
+    <a class="action cancel" href="{makeUrl(##,#translation#,#default#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="translation_list" action="" method="post" id="translation_list" flexy:ignore>
+        <h3>{translate(#Check all modules for#)} {currentLangName}</h3>
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="checkAllModules" />
+            <p>
+                <select name="frmCurrentLang">{generateSelect(aLangs,currentLang):h}</select>
+                <input type="submit" class="sgl-button" name="submitted" value="{translate(#check all modules#)}" />
+            </p>
+            <table class="medium">
+                <thead>
+                    <tr>
+                        <th width="30%" class="left">{translate(#Module Name#)}</th>
+                        <th width="30%" class="left">{translate(#Status#)}</th>
+                        <th width="40%" class="left">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr flexy:foreach="modules,k,v">
+                        <td class="left">{v[title]}</td>
+                        <td class="left">{translate(v[status])}</td>
+                        <td class="left">
+                        {if:v[diff]}
+                            <input type="button" class="sgl-button narrow" value="{translate(#update#)}" 
+                                onclick="javascript:document.location.href='{makeUrl(#verify#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
+                        {end:}
+                        {if:v[edit]}
+                            <input type="button" class="sgl-button narrow" value="{translate(#edit#)}" 
+                                onclick="javascript:document.location.href='{makeUrl(#edit#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
+                        {end:}
+                        {if:v[msg]}
+                            {translate(v[msg])}
+                        {else}&nbsp;
+                        {end:}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

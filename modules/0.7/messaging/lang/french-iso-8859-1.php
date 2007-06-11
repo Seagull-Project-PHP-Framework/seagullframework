@@ -1,0 +1,33 @@
+<?php
+$words['go to outbox'] = 'aller à la boîte d\'envoi';
+$words['contacts'] = 'contacts';
+$words['Full Name'] = 'Nom complet';
+$words['Contacts'] = 'Contacts';
+$words['Contact Manager'] = 'Gestionnaire de contacts';
+$words['send message to selected user(s)'] = 'envoyer le message au(x) contact(s) sélectionné(s)';
+$words['go to inbox'] = 'aller à la boîte de réception';
+$words['Sent Messages'] = 'Messages envoyés';
+$words['No messages in outbox'] = 'Pas de messages dans la boîte d\'envoi';
+$words['To'] = 'A';
+$words['From'] = 'De';
+$words['cancel'] = 'annuler';
+$words['Read'] = 'Lire';
+$words['Compose Message'] = 'Ecrire un message';
+$words['Messages did not reach all recipients'] = 'Les messages n\'ont pas pu être transmis à tous les destinataires';
+$words['Inbox'] = 'Boîte de réception';
+$words['In order to send an instant message, you must select recipients from the contacts tab'] = 'Pour envoyer un message instantané, vous devez sélectionner les destinataires depuis la barre de contacts';
+$words['Sender'] = 'Expéditeur';
+$words['Date'] = 'Date';
+$words['Reply'] = 'Répondre';
+$words['No messages in inbox'] = 'Pas de nouveaux messages';
+$words['check for new messages'] = 'vérifier l\'arrivée de nouveaux messages';
+$words['Messages'] = 'Messages';
+$words['Group'] = 'Groupe';
+$words['Subject'] = 'Sujet';
+$words['Message'] = 'Message';
+$words['contacts successfully deleted'] = 'Le(s) contact(s) sélectionné(s) a(ont) été supprimé(s) avec succès';
+$words['contacts successfully added'] = 'Le(s) contact(s) a(ont) été ajouté(s) avec succès';
+$words['admin cannot save contacts'] = 'L\'administrateur n\'est pas authorisé à sauvegarder des contacts';
+$words['Message sent successfully'] = 'Message envoyé avec succès';
+$words['message deleted successfully'] = 'Message(s) supprimé(s) avec succès';
+?>

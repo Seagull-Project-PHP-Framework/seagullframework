@@ -1,0 +1,38 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+{if:results}
+<table class="wide">
+    <tr>
+        <td colspan="2" class="title">{translate(#Questions#)}</td>
+    </tr>
+    <tr flexy:foreach="results,key,valueObj">
+        <td width="60">{formatDate(valueObj.last_updated)}</td>
+        <td><a href="{makeUrl(##,#faq#)}#{valueObj.faq_id}">{valueObj.question}</a></td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+        <td colspan="2" class="title">{translate(#Answers#)}</td>
+    </tr>
+    {foreach:results,key,valueObj}
+    <tr>
+        <td width="60" align="right" valign="top">
+            <a class="noDecoration" name="{valueObj.faq_id}"><strong>{translate(#Q#)}</strong>:</a>
+        </td>
+        <td><strong>{valueObj.question}</strong></td>
+    </tr>
+    <tr>
+        <td width="60" align="right" valign="top"><strong>{translate(#A#)}</strong>:</td>
+        <td>{valueObj.answer:h}</td>
+    </tr>
+    <tr>
+        <td colspan="2" align="right"><a href="#">{translate(#back to top#)}</a></td>
+    </tr>
+    {end:}
+</table>
+{end:}
+
+<!-- ARE COMMENTS ENABLED -->
+{if:conf[FaqMgr][commentsEnabled]}
+    <flexy:include src="comments.html" />
+{end:}

@@ -1,0 +1,105 @@
+<?php
+/*
+  Language-file polish-iso-8859-2.php
+  Author: Tomasz Osmialowski <ichtis@gmail.com>
+*/
+$words['Newsletter'] = 'Biuletyn';
+$words['Subscribe'] = 'Zapisz';
+$words['subscribe'] = 'zapisz';
+$words['Unsubscribe'] = 'Wypisz';
+$words['unsubscribe'] = 'wypisz';
+$words['Unable to subscribe you to some lists'] = 'Nie mo¿na zapisaæ siê do wszystkich zaznaczonych list. W celu potwierdzenia zapisu zosta³ wys³any email. Proszê sprawdziæ swoj± pocztê.'; // Unable to subscribe you to all of the selected lists. An email was sent to confirm this action. Please check your e-mail.';
+$words['Unable to unsubscribe you to some lists'] = 'Nie mo¿na wypisaæ siê ze wszystkich zaznaczonych list.'; // Unable to unsubscribe you to from all of the selected lists. An email was sent to confirm this action. Please check your e-mail.';
+$words['Please fill in the email field'] = 'Proszê podaæ adres email';
+$words['Please enter your name and e-mail address and select the newsletters that you want to subscribe.'] = 'Proszê podaæ swoje imiê i adres email oraz zaznaczyæ biuletyn do subskrypcji.';
+$words['Please fill in a real name'] = 'Proszê podaæ imiê i nazwisko';
+$words['Please select at least one newsletter'] = 'Proszê zaznaczyæ co najmniej jeden biuletyn';
+$words['Please input a valid authorization key'] = 'Proszê podaæ poprawny klucz autoryzacji';
+$words['Invalid input supplied to list name'] = 'B³êdny wpis do listy';
+$words['Thank you subscribe email confirmation'] = 'Dziêkujemy za subskrypcjê naszego biuletynu! Email potwierdzaj±cy wpis zosta³ przes³any na twój adres poczty elektronicznej. Proszê sprawdziæ swoj± pocztê.'; // Email An email was sent to your e-mail address to confirm your action. Please check your e-mail.';
+$words['Thank you subscribe'] = 'Dziêkujemy za subskrypcjê naszego biuletynu!';
+$words['Thank you unsubscribe email confirmation'] = 'Zosta³e¶ wypisany z naszego biuletynu. Email potwierdzaj±cy wpis zosta³ przes³any na twój adres poczty elektronicznej. Proszê sprawdziæ swoj± pocztê.'; // Email An email was sent to your e-mail address to confirm your action. Please check your e-mail.';
+$words['Thank you unsubscribe'] = 'Zosta³e¶ wypisany z naszego biuletynu.';
+$words['Invalid e-mail / authorization code pair.'] = 'B³êdny email / kod autoryzacji.';
+$words['Authorization accepted! Thank you for subscribing to our newsletter.'] = 'Autoryzacja zatwierdzona! Dziêkujemy za subskrypcjê naszego biuletynu.';
+$words['Authorization accepted! You were unsubscribed from our newsletter.'] = 'Autoryzacja zatwierdzona! Zosta³e¶ wypisany z naszego biuletynu.';
+$words['Authorization accepted! Thank you for updating your subscription.'] = 'Autoryzacja zatwierdzona! Dziêkujemy za potwierdzenie swojej subskrypcji.';
+$words['Tehere was an error processing your request.'] = 'Powsta³ b³±d podczas realizowania zadania.';
+$words['Action confirmation for newsletter'] = 'Potwierdzenie biuletynu';
+$words['Newsletter action confirmation from'] = 'Potwierdzenie zapisu do biuletynu ';
+$words['Dear'] = 'Witaj';
+$words['You receive this message because we got an'] = 'Otrzyma³e¶ t± wiadomo¶æ, poniewa¿ dostali¶my';
+$words['request with your e-mail address, to the newsletter'] = 'pro¶bê z twoim adresem email zapisu do biuletynu';
+$words['List name'] = 'Nazwa listy';
+$words['E-mail'] = 'E-mail';
+$words['Authorize'] = 'Autoryzacja';
+$words['Authorization code'] = 'Kod autoryzacji';
+$words['To confirm this action you can'] = 'Aby potwierdziæ musisz';
+$words['click here'] = 'klikn±æ tutaj';
+$words['or go to'] = 'lub i¶æ do';
+$words['and fill in the form with your e-mail and authorization code'] = 'i wype³niæ w formularzu w twoim emailem i kodem autoryzacji';
+$words['If this is an unrequested action just delete this e-mail'] = 'Je¿eli nie chcia³e¶ zapisaæ siê, mo¿esz usun±æ ten email';
+$words['Best regards'] = 'Z powa¿aniem';
+$words['Subscribers'] = 'Subskrybenci';
+$words['Compose'] = 'Napisz';
+$words['Newsletter List Mgr'] = 'Menad¿er biuletynu';
+$words['Address Book'] = 'Ksi±¿ka adresowa';
+$words['address book blurb'] = 'Aby dodaæ adresy u¿ytkowników, kliknij na ich nazwê roli';
+$words['Subject'] = 'Temat';
+$words['Message'] = 'Wiadomo¶æ';
+$words['Send'] = 'Wy¶lij';
+$words['Done'] = 'Zakoñcz';
+$words['From'] = 'Od';
+$words['To'] = 'Do';
+$words['Please fill in the subject field'] = 'Proszê podaæ tytu³';
+$words['Please fill in the body field'] = 'Proszê podaæ tre¶æ';
+$words['Please include at least one email address'] = 'Proszê podaæ co najmniej jeden adres email';
+$words['incorrectly formatted email'] = 'Poda³e¶ co najmniej jeden z³y adres email';
+$words['Newsletter sent successfully'] = 'Biuletyn zosta³ wys³any poprawnie';
+$words['To groups'] = 'Do grup';
+$words['To newslists'] = 'Do listy';
+$words['You managed to choose an invalid group'] = 'Wybra³e¶ z³± grupê';
+$words['You managed to choose an invalid newsletter list'] = 'Wybra³e¶ z³± listê biuletynu';
+$words['Newsletter List Mgr :: Subscribers'] = 'Biuletyn :: Subskrybenci';
+$words['Newsletter List Mgr :: Subscriber Edit'] = 'Biuletyn :: Edycja subskrybentów';
+$words['Status_0'] = 'Aktywny';
+$words['Status_1'] = 'Oczekuj±cy';
+$words['Status_2'] = 'Wstrzymany';
+$words['Status_9'] = 'Nazwa listy';
+$words['With selected user(s)'] = 'Z zaznaczonych u¿ytkowników';
+$words['Subscriber updated successfully'] = 'Dane subskrybenta zosta³y zapisane';
+$words['Subscriber deleted successfully'] = 'Usuniêto subskrybenta';
+$words['Total users'] = 'Razem u¿ytkowników';
+$words['List'] = 'Lista';
+$words['Pending'] = 'Oczekuj±cy';
+$words['Updated'] = 'Zmieniony';
+$words['Created'] = 'Utworzony';
+$words['Action'] = 'Akcja';
+$words['Key'] = 'Klucz';
+$words['Generate Key'] = 'Generuj klucz';
+$words['Add Subscriber'] = 'Dodaj subskrybenta';
+$words['Newsletter List Mgr :: Lists'] = 'Biuletyn :: Listy';
+$words['Newsletter List Mgr :: List Add'] = 'Biuletyn :: Dodaj do listy';
+$words['Newsletter List Mgr :: List Edit'] = 'Biuletyn :: Edytuj listê';
+$words['Total lists'] = 'Razem list';
+$words['Add List'] = 'Dodaj listê';
+$words['With selected list(s)'] = 'Z zaznaczonych list';
+$words['Lists'] = 'Listy';
+$words['List updated successfully'] = 'Dane listy zosta³y zapisane';
+$words['List deleted successfully'] = 'Usuniêto listê';
+$words['Please fill in the list field'] = 'Proszê wype³niæ poprawnie pola listy';
+$words['Max lenght for list field is 32 characters'] = 'Maksymalna d³ugo¶æ dla pola to 32 znaki';
+$words['Max lenght for description field is 128 characters'] = 'Maksymalna d³ugo¶æ dla pola opisowego to 128 znaków';
+$words['This list name already exists'] = 'Taka nazwa listy ju¿ istnieje';
+
+$words['Adress Book'] = 'Ksi±¿ka adresowa';
+$words['Guestbook Information'] = 'Nowa wiadomo¶æ';
+$words['Delete Selected'] = 'usuñ zaznaczone';
+$words['Newsletter List'] = 'Lista biuletynów';
+$words['Export Subscriber'] = 'Eksport subskrybentów';
+
+$words['Subscriber Details'] = 'Informacje o subskrybencie';
+$words['Action request'] = 'Wywo³ana akcja';
+$words['Select newsletter where you want to subscribe'] = 'Wybierz grupê biuletynu';
+
+?>
