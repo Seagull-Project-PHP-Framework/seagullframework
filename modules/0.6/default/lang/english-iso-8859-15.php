@@ -137,6 +137,7 @@
         'Forgot Password' => 'Forgot Your Password',
         'Not Registered' => 'Not Registered?',
         'Email' => 'Email',
+        'Remember me' => 'Remember me',
 
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',

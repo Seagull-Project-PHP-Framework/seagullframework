@@ -138,6 +138,9 @@ $words = array(
     // title
     'Login' => 'Login',
 
+    // list
+    'Remember me' => 'Remember me',
+
     // form
     'Authorisation Required' => 'Authorisation Required',
 

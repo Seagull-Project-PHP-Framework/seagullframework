@@ -182,6 +182,11 @@ $defaultWords = array(
     'Total'   => 'Всего',
 
 
+/* Login block */
+
+    'Remember me' => 'Запомнить меня',
+
+
 /* DefaultMgr */
 
     'Welcome to' => 'Добро пожаловать в',

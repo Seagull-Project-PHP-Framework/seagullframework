@@ -79,6 +79,8 @@ class LoginMgr extends SGL_Manager
         $input->password    = $req->get('frmPassword');
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
 
+        $input->extendedLifetime = $req->get('frmExtendedLifetime');
+
         //  get referer details if present
         $input->redir = $req->get('redir');
 
@@ -170,7 +172,8 @@ class User_DoLogin extends SGL_Observable
         $this->conf = $this->input->getConfig();
         $this->dbh = $this->_getDb();
 
-        if ($res = $this->_doLogin($this->input->username, $this->input->password)) {
+        if ($res = $this->_doLogin($this->input->username,
+                $this->input->password, $this->input->extendedLifetime)) {
 
             //  invoke observers
             $this->notify();
@@ -216,7 +219,7 @@ class User_DoLogin extends SGL_Observable
         }
     }
 
-    function _doLogin($username, $password)
+    function _doLogin($username, $password, $lifetime)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -232,8 +235,13 @@ class User_DoLogin extends SGL_Observable
             $uid = $aResult['usr_id'];
             $rid = $aResult['role_id'];
 
+            if (!empty($lifetime)
+                    && !empty($this->conf['LoginMgr']['cookieLifetime'])) {
+                $lifetime = $this->conf['LoginMgr']['cookieLifetime'];
+            }
+
             //  associate new session with authenticated user
-            new SGL_Session($uid);
+            new SGL_Session($uid, $lifetime);
 
             return $aResult;
 

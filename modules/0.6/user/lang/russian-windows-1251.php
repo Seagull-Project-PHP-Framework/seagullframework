@@ -137,6 +137,9 @@ $words = array(
     // title
     'Login' => 'Вход',
 
+    // list
+    'Remember me' => 'Запомнить меня',
+
     // form
     'Authorisation Required' => 'Требуется авторизация',
 
