@@ -11,6 +11,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+12-06-07    Implemented persistent logins (Dmitri Lakachauskis)
 07-06-07    Added ability to set theme on a per-module basis (Thomas Goetz)
 04-06-07    Improved dynamic navigation, see http://trac.seagullproject.org/ticket/1470
             (Dmitri Lakachauskis)
