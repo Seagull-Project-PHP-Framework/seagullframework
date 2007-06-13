@@ -371,6 +371,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'globalJavascriptOnUnload' => 'If you want a Javascript onunload expression called on every page of your site, put it here',
         'Custom Config File' => 'Custom config file',
         'Custom output class' => 'Custom output class',
+        'Show errors' => 'Show errors',
+        'Select No if you do not want errors displayed in the logs' => 'Select No if you do not want errors displayed in the logs',
 
 /*
  ConfigMgr: MTA options

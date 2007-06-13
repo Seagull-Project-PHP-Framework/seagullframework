@@ -544,6 +544,12 @@ function toggleTransElements() {
                 <label for="conf[log][paramsPassword]">{translate(#Target password#)}</label>
                 <input type="text" name="conf[log][paramsPassword]" id="conf[log][paramsPassword]" value="{conf[log][paramsPassword]}" />
             </p>
+            <p>
+                <label class="tipOwner" for="conf[log][showErrors]">{translate(#Show errors#)}
+                <span class="tipText">{translate(#Select No if you do not want errors displayed in the logs#)}</span>
+                </label>
+                {generateRadioPair(#conf[log][showErrors]#,conf[log][showErrors]):h}
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="mtaOptions">
