@@ -176,7 +176,9 @@ LINE: $line
  --
 EOL;
                 }
-                echo $output;
+                if (!empty($conf['log']['showErrors']) && $conf['log']['showErrors'] == true) {
+                    echo $output;
+                }
 
                 //  disable block so errors can be seen
                 $c->set('site', array('blocksEnabled' => false));
