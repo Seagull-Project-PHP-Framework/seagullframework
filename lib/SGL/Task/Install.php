@@ -97,9 +97,15 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->merge($oldConf); // overwrite with old values
 
         //  admin emails
-        $c->set('email', array('admin' => $data['adminEmail']));
-        $c->set('email', array('info' => $data['adminEmail']));
-        $c->set('email', array('support' => $data['adminEmail']));
+        if (empty($c['email']['admin'])) {
+            $c->set('email', array('admin' => $data['adminEmail']));
+        }
+        if (empty($c['email']['info'])) {
+            $c->set('email', array('info' => $data['adminEmail']));
+        }
+        if (empty($c['email']['support'])) {
+            $c->set('email', array('support' => $data['adminEmail']));
+        }
 
         // correct db prefix
         if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
