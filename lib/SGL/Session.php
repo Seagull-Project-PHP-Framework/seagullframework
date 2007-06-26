@@ -155,7 +155,7 @@ class SGL_Session
         }
 
         if ($rememberMe) {
-            $this->setRememberMeCookie($save = true);
+            $this->setRememberMeCookie();
         }
     }
 
