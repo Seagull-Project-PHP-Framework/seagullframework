@@ -100,8 +100,8 @@ class SGL_Session
      *  o persist user object in session
      *
      * @access  public
-     * @param   int $uid       user id if present
-     * @param   int $lifetime  cookie lifetime in seconds
+     * @param   int $uid             user id if present
+     * @param   boolean $rememberMe  set remember me cookie
      * @return  void
      */
     function SGL_Session($uid = -1, $rememberMe = null)
@@ -147,24 +147,22 @@ class SGL_Session
             require_once 'DB/DataObject.php';
             $sessUser = DB_DataObject::factory($conf['table']['user']);
             $sessUser->get($uid);
-            $this->_init($sessUser);
+            $this->_init($sessUser, $rememberMe);
+            if ($rememberMe) {
+                $this->setRememberMeCookie();
+            }
 
         //  if session doesn't exist, initialise
-        } elseif (!SGL_Session::exists()){
+        } elseif (!SGL_Session::exists()) {
             $this->_init();
-        }
-
-        if ($rememberMe) {
-            $this->setRememberMeCookie();
         }
     }
 
     function setRememberMeCookie()
     {
-
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
-        $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']) );
+        $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
         $ok = setcookie(
             'SGL_REMEMBER_ME',
             $cookie,
@@ -172,7 +170,7 @@ class SGL_Session
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']
-            );
+        );
     }
 
     /**
@@ -182,7 +180,7 @@ class SGL_Session
      * @param   object  $oUser  user object if present
      * @return  boolean true on successful initialisation
      */
-    function _init($oUser = null)
+    function _init($oUser = null, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -211,19 +209,21 @@ class SGL_Session
                     ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
             );
+
             //  check for rememberMe cookie
-            if (!empty($conf['cookie']['rememberMeEnabled'])) {
-                list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
-                $uid = $da->getUserIdByCookie($oUser->username, $cookieValue);
-                //  if it doesn't exist, set it
-// FIXME: new method refactoring needed
-                if (!$cookieValue || !$uid) {
-                    $salt = 'SGL_SALT';
-                    $cookieValue = md5($salt . md5($oUser->username . $salt));
-                    $ok = $da->addUserLoginCookie($oUser->usr_id, $cookieValue);
-                }
+            list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
+            //  if 'remember me' cookie is set remove it
+            if (!empty($cookieValue)) {
+                $da->deleteUserLoginCookieByUserId($oUser->usr_id, $cookieValue);
+            }
+            //  add new 'remember me' cookie
+            if (!empty($rememberMe)) {
+                $salt = 'SGL_SALT'; // @todo: make salt configurable
+                $cookieValue = md5($salt . $aSessVars['key']);
+                $da->addUserLoginCookie($oUser->usr_id, $cookieValue);
                 $aSessVars['cookie'] = $cookieValue;
             }
+
         //  otherwise it's a guest session, these values always get
         //  set and exist in the session before a login
         } else {
@@ -578,7 +578,7 @@ class SGL_Session
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
         //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
         if (!empty($conf['cookie']['rememberMeEnabled'])) {
-            $ok = setcookie(  'SGL_REMEMBER_ME', null, 0, $conf['cookie']['path'],
+            $ok = setcookie('SGL_REMEMBER_ME', null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
         }
 
