@@ -800,11 +800,11 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
             if (is_file($navDrvFile)) {
                 require_once $navDrvFile;
             } else {
-                SGL::raiseError('specified navigation driver does not exist',
+                return SGL::raiseError("specified navigation driver, $navDrvFile, does not exist",
                     SGL_ERROR_NOFILE);
             }
             if (!class_exists($navDriver)) {
-                SGL::raiseError('problem with navigation driver object', SGL_ERROR_NOCLASS);
+                return SGL::raiseError('problem with navigation driver object', SGL_ERROR_NOCLASS);
             }
             $nav = & new $navDriver($output);
 
