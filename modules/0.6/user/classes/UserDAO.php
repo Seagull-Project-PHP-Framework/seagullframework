@@ -1218,5 +1218,37 @@ class UserDAO extends SGL_Manager
     }
 
     //OrgPreferenceMgr::_updateAll
+
+    /**
+     * Returns UID if valid cookie exists, otherwise null.
+     *
+     * @param string $username
+     * @param string $cookie
+     * @return integer
+     */
+    function getUserIdByCookie($username, $cookie)
+    {
+        $query = "
+            SELECT  u.usr_id
+            FROM " . $this->conf['table']['user'] . " u, user_cookie uc
+            WHERE   u.username = " . $this->dbh->quote($username) . "
+            AND     u.is_acct_active = 1
+            AND uc.usr_id = u.usr_id
+            AND     uc.cookie_name = " .$this->dbh->quote($cookie);
+
+        $uid = $this->dbh->getOne($query);
+        return $uid;
+    }
+
+    function addUserLoginCookie($uid, $cookieValue)
+    {
+        $query = "
+            INSERT INTO `user_cookie` ( `usr_id` , `cookie_name` )
+            VALUES (
+            '$uid', " .$this->dbh->quote($cookieValue) ."
+            )";
+        $ok = $this->dbh->query($query);
+        return $ok;
+    }
 }
 ?>
