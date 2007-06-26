@@ -161,7 +161,7 @@ class VariousTest extends UnitTestCase {
         return $ret;
     }
 
-    function testOringActions()
+    function testORingActions()
     {
         $action = 'insert';
         $this->assertTrue($action == ('update' || 'insert'));
@@ -182,6 +182,17 @@ class VariousTest extends UnitTestCase {
             'file5' => 'modules/block/data/schema.my.sql',
           );
           $this->assertEqual(6, $this->getNextKey($aFiles));
+    }
+
+    function testVariousZeroBooleanCasts()
+    {
+        $var = 0;
+        $ret = (!(bool) $var);
+        $this->assertEqual($ret, true);
+        $ret = !(bool) $var;
+        $var = "0";
+        $ret = !(bool) $var;
+        $this->assertEqual($ret, true);
     }
 
     function getNextKey($aKeys)

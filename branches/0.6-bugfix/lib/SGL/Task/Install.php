@@ -97,15 +97,9 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->merge($oldConf); // overwrite with old values
 
         //  admin emails
-        if (empty($c['email']['admin'])) {
-            $c->set('email', array('admin' => $data['adminEmail']));
-        }
-        if (empty($c['email']['info'])) {
-            $c->set('email', array('info' => $data['adminEmail']));
-        }
-        if (empty($c['email']['support'])) {
-            $c->set('email', array('support' => $data['adminEmail']));
-        }
+        $c->set('email', array('admin' => $data['adminEmail']));
+        $c->set('email', array('info' => $data['adminEmail']));
+        $c->set('email', array('support' => $data['adminEmail']));
 
         // correct db prefix
         if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
@@ -1681,7 +1675,6 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
             $da = & UserDAO::singleton();
             $oUser = $da->getUserById();
-
             $oUser->username        = $data['adminUserName'];
             $oUser->first_name      = $data['adminFirstName'];
             $oUser->last_name       = $data['adminLastName'];
