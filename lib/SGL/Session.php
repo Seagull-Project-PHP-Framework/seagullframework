@@ -104,7 +104,7 @@ class SGL_Session
      * @param   int $lifetime  cookie lifetime in seconds
      * @return  void
      */
-    function SGL_Session($uid = -1, $lifetime = 0)
+    function SGL_Session($uid = -1, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
@@ -117,7 +117,7 @@ class SGL_Session
         //  set session timeout to 0 (until the browser is closed) initially,
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
-            $lifetime,
+            0,
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
@@ -153,6 +153,26 @@ class SGL_Session
         } elseif (!SGL_Session::exists()){
             $this->_init();
         }
+
+        if ($rememberMe) {
+            $this->setRememberMeCookie($save = true);
+        }
+    }
+
+    function setRememberMeCookie()
+    {
+
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']) );
+        $ok = setcookie(
+            'SGL_REMEMBER_ME',
+            $cookie,
+            time() + 31104000, // 360 days
+            $conf['cookie']['path'],
+            $conf['cookie']['domain'],
+            $conf['cookie']['secure']
+            );
     }
 
     /**
@@ -191,6 +211,19 @@ class SGL_Session
                     ? array()
                     : $da->getPermsByUserId($oUser->usr_id),
             );
+            //  check for rememberMe cookie
+            if (!empty($conf['cookie']['rememberMeEnabled'])) {
+                list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
+                $uid = $da->getUserIdByCookie($oUser->username, $cookieValue);
+                //  if it doesn't exist, set it
+// FIXME: new method refactoring needed
+                if (!$cookieValue || !$uid) {
+                    $salt = 'SGL_SALT';
+                    $cookieValue = md5($salt . md5($oUser->username . $salt));
+                    $ok = $da->addUserLoginCookie($oUser->usr_id, $cookieValue);
+                }
+                $aSessVars['cookie'] = $cookieValue;
+            }
         //  otherwise it's a guest session, these values always get
         //  set and exist in the session before a login
         } else {
@@ -226,7 +259,7 @@ class SGL_Session
             if ($conf['session']['handler'] == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-                @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
 
             } elseif ($conf['session']['handler'] == 'database') {
                 $value = $this->dbRead($oldSessionId);
@@ -268,8 +301,19 @@ class SGL_Session
         $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] .
             $acceptLang . $userAgent);
 
-        //  compare actual key with session key, and that UID is not 0 (guest)
-        return  ($currentKey == $_SESSION['key']) && $_SESSION['uid'];
+        //  compare actual key with session key
+        return  ($currentKey == $_SESSION['key']);
+    }
+
+    /**
+     * Returns true if current user is a guest (not logged in)
+     *
+     * @return boolean
+     */
+    function isAnonymous()
+    {
+        $ret = !((bool) $_SESSION['uid']);
+        return $ret;
     }
 
     /**
@@ -532,6 +576,11 @@ class SGL_Session
         //  clear session cookie so theme comes from DB and not session
         setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
+        //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
+        if (!empty($conf['cookie']['rememberMeEnabled'])) {
+            $ok = setcookie(  'SGL_REMEMBER_ME', null, 0, $conf['cookie']['path'],
+                $conf['cookie']['domain'], $conf['cookie']['secure']);
+        }
 
         $sess = & new SGL_Session();
     }

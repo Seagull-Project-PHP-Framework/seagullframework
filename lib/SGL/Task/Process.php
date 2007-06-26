@@ -258,6 +258,31 @@ class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
  */
 class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 {
+    function isRememberMeCookieValid($cookie)
+    {
+        if (!$cookie) {
+            return false;
+        }
+        list($username, $cookieValue) = @unserialize($cookie);
+        if (!$username || !$cookieValue) {
+            return false;
+        }
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
+        $uid = $da->getUserIdByCookie($username, $cookieValue);
+        if ($uid) {
+            $ret = array('uid' => $uid, 'cookieVal' => $cookieValue);
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    function doLogin($uid, $input)
+    {
+        $input->set('session', new SGL_Session($uid));
+    }
+
     function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -276,10 +301,21 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         $aTruncated = array_slice($aRequestHistory, 0, 2);
         SGL_Session::set('aRequestHistory', $aTruncated);
 
-        //  if page requires authentication and we're not debugging
         $mgr = $input->get('manager');
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
-        if (isset( $this->conf[$mgrName]['requiresAuth'])
+
+        //  test for anonymous session and rememberMe cookie
+        if ($session->isAnonymous() && !empty($this->conf['cookie']['rememberMeEnabled'])) {
+            $cookie = (isset($_COOKIE['SGL_REMEMBER_ME']))
+                ? $_COOKIE['SGL_REMEMBER_ME']
+                : false;
+            if ($aRes = $this->isRememberMeCookieValid($cookie)) {
+                $this->doLogin($aRes['uid'], $input);
+            }
+
+        //  or if page requires authentication and we're not debugging
+        } elseif (isset(
+                   $this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
@@ -301,8 +337,6 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
                     SGL_HTTP::redirect($loginPage);
                 }
             }
-        } else {
-            //  no authentication required
         }
 
         $this->processRequest->process($input, $output);
