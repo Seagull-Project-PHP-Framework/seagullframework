@@ -688,6 +688,10 @@ function toggleTransElements() {
                 <label for="conf[cookie][secure]">{translate(#Secure#)}</label>
                 {generateRadioPair(#conf[cookie][secure]#,conf[cookie][secure]):h}
             </p>
+            <p>
+                <label for="conf[cookie][rememberMeEnabled]">{translate(#Enable persistent logins#)}</label>
+                {generateRadioPair(#conf[cookie][rememberMeEnabled]#,conf[cookie][rememberMeEnabled]):h}
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="censorship">
