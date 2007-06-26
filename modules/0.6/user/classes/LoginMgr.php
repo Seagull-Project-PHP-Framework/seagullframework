@@ -126,6 +126,17 @@ class LoginMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $uid = SGL_Session::getUid();
+        if ($uid > SGL_GUEST
+                && !empty($this->conf['cookie']['rememberMeEnabled'])
+                && !empty($_COOKIE['SGL_REMEMBER_ME'])) {
+            list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
+            if (!empty($cookieValue)) {
+                require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+                $_da = &UserDAO::singleton();
+                $_da->deleteUserLoginCookieByUserId($uid, $cookieValue);
+            }
+        }
         SGL_Session::destroy();
         SGL::raiseMsg('You have been successfully logged out', true, SGL_MESSAGE_INFO);
 

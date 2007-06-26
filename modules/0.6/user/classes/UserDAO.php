@@ -1224,29 +1224,92 @@ class UserDAO extends SGL_Manager
      *
      * @param string $username
      * @param string $cookie
+     *
      * @return integer
      */
     function getUserIdByCookie($username, $cookie)
     {
         $query = "
             SELECT  u.usr_id
-            FROM " . $this->conf['table']['user'] . " u, user_cookie uc
+            FROM    {$this->conf['table']['user']} u,
+                    {$this->conf['table']['user_cookie']} uc
             WHERE   u.username = " . $this->dbh->quote($username) . "
-            AND     u.is_acct_active = 1
-            AND uc.usr_id = u.usr_id
-            AND     uc.cookie_name = " .$this->dbh->quote($cookie);
-
+                      AND u.is_acct_active = 1
+                      AND uc.usr_id = u.usr_id
+                      AND uc.cookie_name = " . $this->dbh->quote($cookie);
         $uid = $this->dbh->getOne($query);
         return $uid;
     }
 
-    function addUserLoginCookie($uid, $cookieValue)
+    /**
+     * Deletes all 'remember me' cookies by UID.
+     *
+     * @param integer $userId
+     * @param string  $constraint
+     *
+     * @return void
+     */
+    function deleteUserLoginCookiesByUserId($userId, $constraint = '')
     {
         $query = "
-            INSERT INTO `user_cookie` ( `usr_id` , `cookie_name` )
+            DELETE FROM {$this->conf['table']['user_cookie']}
+            WHERE  usr_id = " . intval($userId) . $constraint;
+        return $this->dbh->query($query);
+    }
+
+    /**
+     * Delete login cookie.
+     *
+     * @param integer $userId
+     * @param string  $cookieValue
+     *
+     * @return void
+     */
+    function deleteUserLoginCookieByUserId($userId, $cookieValue)
+    {
+        $constraint = ' AND cookie_name = ' . $this->dbh->quoteSmart($cookieValue);
+        return $this->deleteUserLoginCookiesByUserId($userId, $constraint);
+    }
+
+    /**
+     * Deletes obsolete cookies.
+     *
+     * @param integer $expirePeriod  validity period in seconds
+     *
+     * @return void
+     */
+    function deleteExpiredUserLoginCookies($expirePeriod = null)
+    {
+        if (empty($expirePeriod)) {
+            $expirePeriod = 60 * 60 * 24 * 30 * 12; /* ~ 1 year */
+        }
+        $startTime  = time() - $expirePeriod;
+        $expireDate = strftime("%Y-%m-%d %H:%M:%S", $startTime);
+
+        $query = "
+            DELETE FROM {$this->conf['table']['user_cookie']}
+            WHERE  login_time < $expireDate
+        ";
+        return $this->dbh->query($query);
+    }
+
+    /**
+     * Add 'remember me' cookie.
+     *
+     * @param integer $uid
+     * @param string  $cookieValue
+     *
+     * @return void
+     */
+    function addUserLoginCookie($uid, $cookieValue)
+    {
+        $now   = SGL_Date::getTime();
+        $query = "
+            INSERT INTO {$this->conf['table']['user_cookie']}
             VALUES (
-            '$uid', " .$this->dbh->quote($cookieValue) ."
-            )";
+                " . intval($uid) . ",
+                " . $this->dbh->quoteSmart($cookieValue) . ",
+                '" . $now . "')";
         $ok = $this->dbh->query($query);
         return $ok;
     }

@@ -217,8 +217,14 @@ CREATE TABLE if not exists user_permission (
   KEY permission_id (permission_id)
 ) TYPE=InnoDB;
 
+/*==============================================================*/
+/* Table: user_cookie                                           */
+/*==============================================================*/
 CREATE TABLE `user_cookie` (
-  `usr_id` int(11) NOT NULL,
-  `cookie_name` varchar(32) NOT NULL
-);
+    `usr_id`                  int(11)             NOT NULL,
+    `cookie_name`             varchar(32)         NOT NULL,
+    `login_time`              datetime            NOT NULL,
 
+    KEY (usr_id),
+    KEY (cookie_name)
+);
