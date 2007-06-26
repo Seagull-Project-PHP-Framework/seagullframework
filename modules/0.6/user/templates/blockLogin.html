@@ -5,10 +5,12 @@
         <dt><label for="frm_password_block">{translate(#Password#)}</label></dt>
         <dd><input type="password" name="frmPassword" id="frm_password_block" size="15" value="{password}" maxlength="10" /></dd>
     </dl>
+    {if:conf[cookie][rememberMeEnabled]}
     <p>
         <input type="checkbox" name="frmExtendedLifetime" value="1" />
         {translate(#Remember me#)}
     </p>
+    {end:}
     <p><input type="submit" class="button" name="submitted" value="{translate(#Submit login#)}" /></p>
     {if:conf[RegisterMgr][enabled]}
     <p><a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a></p>

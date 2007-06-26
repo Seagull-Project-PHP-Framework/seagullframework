@@ -26,16 +26,15 @@
                 </div>
                 <input type="password" name="frmPassword" id="frm_password" value="{password}" maxlength="24" />
             </dd>
+            {if:conf[cookie][rememberMeEnabled]}
             <dt>
                 <label for="frm_extendedLifetime">{translate(#Remember me#)}</label>
             </dt>
             <dd>
-                <input flexy:if="extendedLifetime" id="frm_extendedLifetime"
-                    type="checkbox" name="frmExtendedLifetime" value="1"
-                    checked="checked" />
-                <input flexy:if="!extendedLifetime" id="frm_extendedLifetime"
+                <input id="frm_extendedLifetime"
                     type="checkbox" name="frmExtendedLifetime" value="1" />
             </dd>
+            {end:}
             <dt>&nbsp;</dt>
             <dd>
                 <input type="submit" class="button" name="submitted" value="{translate(#Login#)}" />
