@@ -258,17 +258,26 @@ class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
  */
 class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 {
-    function isRememberMeCookieValid($cookie)
+    /**
+     * Returns 'remember me' cookie data.
+     *
+     * @return mixed
+     */
+    function getRememberMeCookieData()
     {
-        if (!$cookie) {
+        //  no 'remember me' cookie found
+        if (!isset($_COOKIE['SGL_REMEMBER_ME'])) {
             return false;
         }
+        $cookie = $_COOKIE['SGL_REMEMBER_ME'];
         list($username, $cookieValue) = @unserialize($cookie);
+        //  wrong cookie value was saved
         if (!$username || !$cookieValue) {
             return false;
         }
+        //  get UID by cookie value
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da = & UserDAO::singleton();
+        $da  = &UserDAO::singleton();
         $uid = $da->getUserIdByCookie($username, $cookieValue);
         if ($uid) {
             $ret = array('uid' => $uid, 'cookieVal' => $cookieValue);
@@ -278,9 +287,19 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         return $ret;
     }
 
-    function doLogin($uid, $input)
+    /**
+     * Authenticate user.
+     *
+     * @param integer      $uid
+     * @param SGL_Registry $input
+     *
+     * @return void
+     */
+    function doLogin($uid, &$input)
     {
-        $input->set('session', new SGL_Session($uid));
+        //  if we do login here, then $uid was recovered by cookie,
+        //  i.e. we need to activate 'remember me' functionality
+        $input->set('session', new SGL_Session($uid, $rememberMe = true));
     }
 
     function process(&$input, &$output)
@@ -305,12 +324,11 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
 
         //  test for anonymous session and rememberMe cookie
-        if ($session->isAnonymous() && !empty($this->conf['cookie']['rememberMeEnabled'])) {
-            $cookie = (isset($_COOKIE['SGL_REMEMBER_ME']))
-                ? $_COOKIE['SGL_REMEMBER_ME']
-                : false;
-            if ($aRes = $this->isRememberMeCookieValid($cookie)) {
-                $this->doLogin($aRes['uid'], $input);
+        if ($session->isAnonymous()
+                && !empty($this->conf['cookie']['rememberMeEnabled'])) {
+            $aCookieData = $this->getRememberMeCookieData();
+            if (!empty($aCookieData['uid'])) {
+                $this->doLogin($aCookieData['uid'], $input);
             }
 
         //  or if page requires authentication and we're not debugging
