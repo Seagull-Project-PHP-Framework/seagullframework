@@ -3,6 +3,8 @@
     <a class="action adduser" href="{makeUrl(#add#,#user#,#user#)}">{translate(#New User#)}</a>
     <a class="action search" href="{makeUrl(#add#,#usersearch#,#user#)}">{translate(#Search#)}</a>
     <a class="action download" href="{makeUrl(##,#userimport#,#user#)}">{translate(#Import users#)}</a>
+    <a flexy:if="conf[cookie][rememberMeEnabled]" class="action delete"
+       href="{makeUrl(#removeExpiredCookies#,#user#,#user#)}">{translate(#Remove expired cookies#)}</a>
 </div>
 <div id="content">
     <div id="content-header">

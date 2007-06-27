@@ -56,9 +56,10 @@ class LoginMgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->_aActionsMapping =  array(
-            'login' => array('login'),
-            'list'  => array('list'),
-            'logout' => array('logout'),
+            'login'         => array('login'),
+            'list'          => array('list'),
+            'logout'        => array('logout'),
+            'removeCookies' => array('removeCookies', 'redirectToMyAccount')
         );
     }
 
@@ -153,6 +154,32 @@ class LoginMgr extends SGL_Manager
             $output->username = 'admin';
             $output->password = 'admin';
         }
+    }
+
+    function _cmd_removeCookies(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $uid = SGL_Session::getUid();
+        if ($uid > SGL_GUEST
+                && !empty($this->conf['cookie']['rememberMeEnabled'])) {
+            $_da = &UserDAO::singleton();
+            $_da->deleteUserLoginCookiesByUserId($uid);
+
+            SGL::raiseMsg('Persistent cookies successfully removed',
+                true, SGL_MESSAGE_INFO);
+        }
+    }
+
+    function _cmd_redirectToMyAccount(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $aRedir = array(
+            'moduleName'  => 'user',
+            'managerName' => 'account'
+        );
+        SGL_HTTP::redirect($aRedir);
     }
 }
 

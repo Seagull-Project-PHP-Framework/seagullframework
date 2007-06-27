@@ -1288,7 +1288,7 @@ class UserDAO extends SGL_Manager
 
         $query = "
             DELETE FROM {$this->conf['table']['user_cookie']}
-            WHERE  login_time < $expireDate
+            WHERE  login_time < '$expireDate'
         ";
         return $this->dbh->query($query);
     }

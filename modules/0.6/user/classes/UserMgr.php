@@ -86,6 +86,7 @@ class UserMgr extends RegisterMgr
             'syncToRole'            => array('syncToRole', 'redirectToDefault'),
             'viewLogin'             => array('viewLogin'),
             'truncateLoginTbl'      => array('truncateLoginTbl', 'redirectToDefault'),
+            'removeExpiredCookies'  => array('removeExpiredCookies', 'redirectToDefault')
         );
     }
 
@@ -257,6 +258,9 @@ class UserMgr extends RegisterMgr
                 }
                 $ret = $this->da->deletePrefsByUserId($userId);
                 $ret = $this->da->deletePermsByUserId($userId);
+                if (!empty($this->conf['cookie']['rememberMeEnabled'])) {
+                    $ret = $this->da->deleteUserLoginCookiesByUserId($userId);
+                }
                 $query = "DELETE FROM {$this->conf['table']['user']} WHERE usr_id=$userId";
                 if (is_a($this->dbh->query($query), 'PEAR_Error')) {
                     $results[$userId] = 0; //log result for user
@@ -561,6 +565,18 @@ class UserMgr extends RegisterMgr
         }
         SGL::raiseMsg("$succeeded user(s) were synched successfully. $failed user(s) failed.",
             false, $errorType);
+    }
+
+    function _cmd_removeExpiredCookies(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!empty($this->conf['cookie']['rememberMeEnabled'])) {
+            $this->da->deleteExpiredUserLoginCookies();
+
+            SGL::raiseMsg('Expired persistent cookies successfully removed',
+                true, SGL_MESSAGE_INFO);
+        }
     }
 
     function _sendStatusNotification($oUser, $isEnabled)

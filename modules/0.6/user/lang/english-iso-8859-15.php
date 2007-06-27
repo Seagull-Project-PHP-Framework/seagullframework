@@ -20,6 +20,8 @@ $words = array(
     'Password'                     => 'Password',
     'edit preferences'             => 'edit preferences',
     'view profile'                 => 'view profile',
+    'Manage Cookies'               => 'Manage Cookies',
+    'remove persistent cookies'    => 'remove persistent cookies',
     'No results found for that ID' => 'No results found for that ID',
 
     // profile form (admin template)
@@ -64,6 +66,7 @@ $words = array(
 
     // messages
     'profile successfully updated' => 'Your profile details have been successfully updated',
+    'Persistent cookies successfully removed' => 'Persistent cookies successfully removed',
 
     // validate
     'You must enter a username'             => 'You must enter a username',
@@ -436,6 +439,7 @@ $words = array(
     'add missing perms'    => 'add missing perms',
     'remove extra perms'   => 'remove extra perms',
     'complete sync'        => 'complete sync',
+    'Remove expired cookies' => 'Remove expired cookies',
 
     // add / edit
     'add user'             => 'add user',
@@ -473,6 +477,7 @@ $words = array(
     'Status changed successfully'          => 'Status changed successfully',
     'user successfully deleted'            => 'The selected users(s) have been successfully deleted',
     'The user has been successfully added' => 'The user has been successfully added',
+    'Expired persistent cookies successfully removed' => 'Expired persistent cookies successfully removed',
 
 
 /**

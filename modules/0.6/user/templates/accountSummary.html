@@ -31,5 +31,11 @@
         <dd>
             <a href="{makeUrl(#edit#,#userpassword#,#user#)}">{translate(#change password#)}</a>
         </dd>
+        {if:conf[cookie][rememberMeEnabled]}
+        <dt>{translate(#Manage Cookies#)}</dt>
+        <dd>
+            <a href="{makeUrl(#removeCookies#,#login#,#user#)}">{translate(#remove persistent cookies#)}</a>
+        </dd>
+        {end:}
     </dl>
 </div>
