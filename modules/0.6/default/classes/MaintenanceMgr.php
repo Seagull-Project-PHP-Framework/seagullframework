@@ -158,8 +158,8 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (!preg_match("/mysql/", $this->dbh->phptype)) {
-            SGL::raiseMsg('This operation is currently only supported for MySQL',
+        if (!preg_match("/(mysql|pgsql)/", $this->dbh->phptype)) {
+            SGL::raiseMsg('This operation is currently only supported for MySQL or PostgreSQL',
                 false, SGL_MESSAGE_INFO);
             return false;
         }
