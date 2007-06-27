@@ -11,6 +11,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+27-06-07    Implemented ability to rebuild Seagull for Postgresql (ajmixto)
 13-06-07    Added ability to suppress errors in logs, useful for Ajax debugging
 12-06-07    Implemented persistent logins (Dmitri Lakachauskis)
 07-06-07    Added ability to set theme on a per-module basis (Thomas Goetz)
