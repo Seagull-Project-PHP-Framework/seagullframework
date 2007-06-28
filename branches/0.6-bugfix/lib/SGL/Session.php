@@ -160,6 +160,7 @@ class SGL_Session
 
     function setRememberMeCookie()
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
