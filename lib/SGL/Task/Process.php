@@ -111,24 +111,43 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
     }
 }
 
+class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
+{
+    function process(&$input, &$output)
+    {
+        //  check for maintenance mode "on"
+
+        if (!empty($this->conf['site']['maintenanceMode'])) {
+            // allow admin to access and to connect if provided a key
+            $rid = SGL_Session::getRoleId();
+            $adminMode = SGL_Session::get('adminMode');
+            if ($rid != SGL_ADMIN && !$adminMode) {
+                SGL::displayMaintenancePage($output);
+            }
+        }
+
+        $this->processRequest->process($input, $output);
+    }
+}
+
 /**
- * Handle a debug session.
+ * Set an admin mode to give priviledged session.
  *
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_DetectDebug extends SGL_DecorateProcess
+class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        //  set debug session if allowed
-        $req = $input->getRequest();
-        $debug = $req->get('debug');
-        if ($debug && SGL::debugAllowed()) {
-            $debug = ($debug == 'on') ? 1 : 0;
-            SGL_Session::set('debug', $debug);
+        //  set adminMode session if allowed
+        $req        = SGL_Request::singleton();
+        $adminKey   = $req->get('adminKey');
+        if (!empty($this->conf['site']['adminKey']) &&
+            $adminKey == $this->conf['site']['adminKey']) {
+            SGL_Session::set('adminMode', true);
         }
 
         $this->processRequest->process($input, $output);
@@ -236,12 +255,11 @@ class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->processRequest->process($input, $output);
-
-        if (isset($this->conf['site']['alert'])) {
-            SGL_Session::set('message', $this->conf['site']['alert']);
-            SGL_Session::set('messageType', SGL_MESSAGE_INFO);
+        if (isset($this->conf['site']['broadcastMessage'])) {
+            SGL_Session::set('broadcastMessage', $this->conf['site']['broadcastMessage']);
         }
+
+        $this->processRequest->process($input, $output);
     }
 }
 

@@ -149,7 +149,7 @@ class SGL_ErrorHandler
 
             //  if a debug sesssion has been started, or the site in in
             //  development mode, send error info to screen
-            if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
+            if (!$conf['debug']['production'] || SGL_Session::get('adminMode')) {
                 $source = $this->_getSourceContext($file, $line);
                 //  generate screen debug html
                 //  type is 1st dimension element from $errorType array, ie,
