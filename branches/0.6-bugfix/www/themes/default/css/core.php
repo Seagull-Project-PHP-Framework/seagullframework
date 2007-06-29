@@ -103,7 +103,7 @@ html > body #middleCol {
     width: <?php echo ($mainWrapperWidth - $rightColWidth -6) . 'px' ?>;
 }
 #layout-noCols #middleCol {
-    width: <?php echo ($mainWrapperWidth -6) . 'px' ?>;
+    width: <?php echo ($mainWrapperWidth) -6 . 'px' ?>;
 }
 #leftCol {
     float: left;
@@ -491,6 +491,13 @@ tr.rowHover td, tr:hover td {
 }
 .error, .required {
     color: <?php echo $error ?>;
+}
+.broadcastMessage {
+    margin: 10px;
+    padding: 5px;
+    text-align: center;
+    background: #99cc00;
+    color: #fff;
 }
 
 /* PEAR Errors

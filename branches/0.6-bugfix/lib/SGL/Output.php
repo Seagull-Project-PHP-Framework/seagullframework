@@ -505,6 +505,26 @@ class SGL_Output
     }
 
     /**
+     * Returns formatted broadcast message.
+     *
+     * @return string
+     */
+    function getBroadcastMessage()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $message     = SGL_Session::get('broadcastMessage');
+        if (!empty($message)) {
+            SGL_Session::remove('broadcastMessage');
+
+            //  required to remove message that persists when register_globals = on
+            unset($GLOBALS['broadcastMessage']);
+
+            return '<div class="broadcastMessage">' . $message . '</div>';
+        }
+    }
+
+    /**
      * Returns true if current user or passed role ID is that of an admin.
      *
      * @return boolean

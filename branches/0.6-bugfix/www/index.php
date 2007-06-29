@@ -44,4 +44,5 @@ if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
 }
 
 SGL_FrontController::run();
+print '<pre>'; print_r($_SESSION);
 ?>

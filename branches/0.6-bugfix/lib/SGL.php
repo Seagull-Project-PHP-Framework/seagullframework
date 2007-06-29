@@ -374,6 +374,30 @@ class SGL
         exit();
     }
 
+    function displayMaintenancePage($output)
+    {
+        $c      = &SGL_Config::singleton();
+        $conf   = $c->getAll();
+        $output->moduleName         = 'default';
+        $output->theme              = !empty($conf['site']['defaultTheme'])
+            ? $conf['site']['defaultTheme']
+            : 'default';
+        $output->masterTemplate     = 'masterBlank.html';
+        $output->template           = 'maintenance.html';
+        $output->charset            = $GLOBALS['_SGL']['CHARSET'];
+        $output->webRoot            = SGL_BASE_URL;
+        $output->imagesDir          = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
+        $output->versionAPI         = SGL_SEAGULL_VERSION;
+        $output->sessID             = SGL_Session::getId();
+        $output->scriptOpen         = "\n<script type='text/javascript'>\n//<![CDATA[\n";
+        $output->scriptClose        = "\n//]]>\n</script>\n";
+        $output->conf               = $conf;
+
+        $view = new SGL_HtmlSimpleView($output);
+        echo $view->render();
+
+        exit();
+    }
      /**
       * Returns true if a minimal version of Seagull has been installed.
       *
