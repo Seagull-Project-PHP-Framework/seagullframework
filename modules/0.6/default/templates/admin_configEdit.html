@@ -190,6 +190,16 @@ function toggleTransElements() {
                 <label for="conf[site][alert]">{translate(#Broadcast message#)}</label>
                 <input type="text" class="longText" name="conf[site][alert]" id="conf[site][alert]" value="{conf[site][alert]}" />
             </p>
+	        <p>
+                <label for="conf[site][maintenanceMode]">{translate(#Maintenance mode#)}</label>
+                {generateRadioPair(#conf[site][maintenanceMode]#,conf[site][maintenanceMode]):h}
+            </p>
+			<p>
+                <label class="tipOwner" for="conf[site][adminKey]">{translate(#Admin key#)}
+                	<span  class="tipText">{translate(#tipAdminKey#)}</span>
+				</label>
+				<input type="text" name="conf[site][adminKey]" id="conf[site][adminKey]" value="{conf[site][adminKey]}" />
+            </p>
             <p>
                 <label class="tipOwner" for="conf[site][globalJavascriptFiles]">{translate(#Global Javascript Files#)}
                 <span  class="tipText">{translate(#globalJavascriptFiles#)}</span>
