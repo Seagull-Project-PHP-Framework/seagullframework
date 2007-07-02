@@ -292,10 +292,11 @@ class NavigationDAO extends SGL_Manager
 
     function getSectionIdByTitle($title)
     {
+        $title = $this->dbh->quoteSmart($title);
         $query = "
             SELECT section_id
             FROM {$this->conf['table']['section']}
-            WHERE title = '$title'";
+            WHERE title = $title";
 
         $result = $this->dbh->getOne($query);
         return $result;
