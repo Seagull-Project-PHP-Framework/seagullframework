@@ -1,0 +1,30 @@
+<?php
+$words['FAQs'] = 'Vanliga frågor';
+$words['FAQ Manager'] = 'Vanliga frågor - Hantering';
+$words['FAQ Manager :: Browse'] = 'Vanliga frågor - Hantering :: Visa';
+$words['FAQ Manager :: Reorder'] = 'Vanliga frågor - Hantering :: Omorganisera';
+$words['FAQ Manager :: Add'] = 'Vanliga frågor - Hantering :: Lägg till';
+$words['FAQ Manager :: Edit'] = 'Vanliga frågor - Hantering :: Redigera';
+$words['Please fill in a question'] = 'Vänligen fyll i en fråga';
+$words['Please fill in an answer'] = 'Vänligen fyll i ett svar';
+$words['Question'] = 'Fråga';
+$words['Answer'] = 'Svar';
+$words['FAQ ID'] = 'FAQ ID';
+$words['Date created'] = 'Datum skapad';
+$words['Questions'] = 'Frågor';
+$words['Answers'] = 'Svar';
+$words['Q'] = 'F';
+$words['A'] = 'S';
+$words['No FAQs found'] = 'Inga vanliga frågor funna';
+$words['new faq'] = 'Ny vanlig fråga';
+$words['reorder'] = 'Omorganisera';
+$words['id'] = 'id';
+$words['FAQ'] = 'Vanliga frågor';
+$words['Order'] = 'Ordning';
+$words['With selected faq(s)'] = 'Med valda vanliga frågor';
+$words['reorder instruction'] = 'Ändra visningsordningen genom att välja en post och klicka på \"flytta upp\" eller \"flytta ner\". Glöm inte klicka \"Klar\" när du är klar.';
+$words['faq updated successfully'] = 'Din vanliga fråga har uppdaterats';
+$words['faqs reordered successfully'] = 'Dina vanliga frågor har omorganiserats';
+$words['faq saved successfully'] = 'Din vanliga fråga har sparats';
+$words['faq deleted successfully'] = 'Dina vanliga frågor har raderats';
+?>
