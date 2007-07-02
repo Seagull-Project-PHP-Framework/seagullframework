@@ -369,13 +369,10 @@ class SGL_Util
         $aLangs = array();
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
-            $keyId = ($langKeyType)
-                ? SGL_Translation::transformLangID($id, $langKeyType)
-                : $id;
             if (count($aSelected) && in_array($id, $aSelected)) {
-                $aSelectedLangs[$keyId] =  $langName . ' (' . $id . ')';
+                $aSelectedLangs[$id] =  $langName . ' (' . $id . ')';
             } else {
-                $aLangs[$keyId] =  $langName . ' (' . $id . ')';
+                $aLangs[$id] =  $langName . ' (' . $id . ')';
             }
         }
 
