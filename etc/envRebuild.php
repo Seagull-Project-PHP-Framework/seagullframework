@@ -122,7 +122,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
 
         //  retrieve translation settings
         $transContainer = ($conf['translation']['container'] == 'db') ? 1 : 0;
-        $transLanguage  = str_replace('_','-', explode(',', $conf['translation']['installedLanguages']));
+        $transLanguage  = explode(',', $conf['translation']['installedLanguages']);
 
         //  check for custom modules
         $aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();

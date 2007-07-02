@@ -63,9 +63,9 @@ class TranslationTest extends UnitTestCase
         // add languages
         foreach ($this->aLangs as $langId) {
             $aLang = array(
-                'lang_id'    => SGL_Translation::transformLangID($langId),
+                'lang_id'    => $langId,
                 'table_name' => $conf['translation']['tablePrefix'] .
-                    '_' . SGL_Translation::transformLangID($langId),
+                    '-' . $langId,
                 'meta'       => '',
                 'name'       => $aLangs[$langId],
                 'error_text' => 'not available',
@@ -78,10 +78,8 @@ class TranslationTest extends UnitTestCase
         // change conf value to current languages
         $this->oldConf['translation']['installedLanguages'] =
             $conf['translation']['installedLanguages'];
-        $callback = array('SGL_Translation', 'transformLangID');
-        $aConfigLangs = array_map($callback, $this->aLangs);
         $c->set('translation',
-            array('installedLanguages' => implode(',', $aConfigLangs)));
+            array('installedLanguages' => implode(',', $this->aLangs)));
 
         // make sure user singleton has same options and connection
         $foo = &SGL_Translation::singleton();
@@ -103,7 +101,7 @@ class TranslationTest extends UnitTestCase
                             continue;
                         }
                     }
-                    $langId = SGL_Translation::transformLangID($this->aLangs[$i]);
+                    $langId = $this->aLangs[$i];
 
                     // generate translation string
                     $aTrans[$langId] = $pageId . '_' . $stringId . '_' . $langId;

@@ -192,7 +192,6 @@ class SGL_Translation
     {
         //  fetch translations from database and cache
         $cache = & SGL_Cache::singleton();
-        $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
 
         //  returned cached translations else fetch from db and cache
         if ($serialized = $cache->get($module, 'translation_'. $lang)) {
@@ -206,7 +205,7 @@ class SGL_Translation
             $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
             //  build global lang file
-            $langID = str_replace('_', '-', $lang);
+            $langID = $lang;
             $language = @$aLanguages[$langID][1];
             $globalLangFile = $language .'.php';
             $path = SGL_MOD_DIR . '/' . $module . '/lang/';
@@ -249,8 +248,6 @@ class SGL_Translation
             require_once SGL_CORE_DIR . '/Translation.php';
             $trans = &SGL_Translation::singleton('admin');
 
-            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_TRANS2);
-
             foreach ($aTrans as $key => $value) {
                 $string = array($langID => $value);
                 $result = $trans->add(stripslashes($key), $module, $string);
@@ -268,8 +265,6 @@ class SGL_Translation
                 $aTransStrip[stripslashes($key)] = $value;
             }
             $root = & $c->parseConfig($aTransStrip, 'phparray');
-
-            $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
             //  write translation to file
             $filename = SGL_MOD_DIR . '/' . $module . '/lang/' .
@@ -298,7 +293,6 @@ class SGL_Translation
         $conf = $c->getAll();
 
         if (!empty($module) && !empty($lang)) {
-            $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_TRANS2);
             $installedLangs = explode(',', $conf['translation']['installedLanguages']);
 
             if ($conf['translation']['container'] == 'db'
@@ -353,12 +347,10 @@ class SGL_Translation
      */
     function getLangID()
     {
-        if ($langID = str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET'])) {
+        if ($langID = SGL::getCurrentLang() .'-'. $GLOBALS['_SGL']['CHARSET']) {
             return $langID;
         } else {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            return $conf['translation']['fallbackLang'];
+            $this->getFallbackLangID();
         }
     }
 
@@ -373,36 +365,6 @@ class SGL_Translation
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         return $conf['translation']['fallbackLang'];
-    }
-
-    /**
-     * Transform langID to opposite format
-     *
-     * SGL_LANG_ID_SGL - en-iso-8859-15
-     * SGL_LANG_ID_TRANS2 - en_iso_8859_15
-     *
-     * @static
-     * @param string langID language id
-     * @param int format language id format
-     * @return langID string
-     */
-     function transformLangID($langID, $format = null)
-     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        if (isset($format)) {
-            $langID = ($format == SGL_LANG_ID_SGL)
-                ? str_replace('_', '-', $langID)
-                : str_replace('-', '_', $langID);
-
-            return $langID;
-        } else {
-            $langID = (strstr($langID, '-'))
-                ? str_replace('-', '_', $langID)
-                : str_replace('_', '-', $langID);
-            return $langID;
-        }
     }
 
     /**

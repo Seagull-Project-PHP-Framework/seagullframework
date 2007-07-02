@@ -377,7 +377,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         $language = $aLanguages[$lang][1];
 
         //  fetch default translation
-        $langId = str_replace('-', '_', $lang);
+        $langId = $lang;
         $defaultWords = SGL_Translation::getTranslations('default', $langId);
 
         //  fetch module translations
