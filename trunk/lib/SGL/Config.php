@@ -55,8 +55,31 @@ class SGL_Config
     {
         $this->aProps = array();
         if ($this->isEmpty() && $autoLoad) {
-            $configFile = SGL_VAR_DIR  . '/'
-                . SGL_Task_SetupPaths::hostnameToFilename() . '.conf.php';
+            $siteName   = SGL_Task_SetupPaths::hostnameToFilename();
+            $configFile = SGL_VAR_DIR  . '/' . $siteName . '.conf.php';
+            if (!is_file($configFile)) {
+
+                // if no conf file do with confmap.php
+                $confMapFile = SGL_VAR_DIR  . '/' . 'confmap.php';
+                $configFile  = null;
+                $confMap     = array();
+                if (@include $confMapFile) {
+
+                    //  search site in confMap array
+                    foreach ($confMap as $key => $value) {
+                        if (@preg_match("/^$key$/", $siteName, $aMatches)) {
+                            $configFile = $value;
+                            break;
+                        }
+                    }
+                }
+
+                if ($configFile) {
+                    $configFile = SGL_VAR_DIR  . '/' . $configFile;
+                } else {
+                    SGL::displayStaticPage('The requested site was not found on this server.');
+                }
+            }
             $conf = $this->load($configFile);
             $this->fileName = $configFile;
             $this->replace($conf);
