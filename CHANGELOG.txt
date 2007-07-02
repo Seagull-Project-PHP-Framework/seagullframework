@@ -6,9 +6,15 @@ CHANGELOG
 BUGFIXES
 
 IMPROVEMENTS
+02-07-07    Added Administration section for contactus module (Dmitri Lakachauskis)
+02-07-07    Made calling global config file more flexible [3231] (Andrey Podshivalov)
 01-04-07    Implemented SGL_Authenticator lib, dependency on DB to use admin
             screens removed, file-based driver selected by default, call
             http://example.com/index.php/default/login/ to invoke
+
+BUGFIXES
+02-07-07    Added lang_id patch [3224] (AJ Tarachanowicz)
+02-07-07    Fixed expiry_date issue with articles in Publisher (tmpvar)
 
 +-----------------------+
 | VERSION: 0.6.3        |
