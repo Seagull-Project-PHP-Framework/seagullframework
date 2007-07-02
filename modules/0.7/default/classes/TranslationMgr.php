@@ -153,7 +153,7 @@ class TranslationMgr extends SGL_Manager
 
         //  if the target lang file does not exist
         if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
+            $curLang = $input->currentLang;
             $target = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
                 $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
 
@@ -202,8 +202,7 @@ class TranslationMgr extends SGL_Manager
             $currentLang = $output->currentLang;
         } else {
             $aLangs      = $this->trans->getLangs();
-            $currentLang = SGL_Translation::transformLangID($output->currentLang,
-                SGL_LANG_ID_TRANS2);
+            $currentLang = $output->currentLang;
         }
         $output->aLangs          = $aLangs;
         $output->currentLang     = $currentLang;
@@ -220,7 +219,7 @@ class TranslationMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
+            $curLang = $input->currentLang;
             $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
                 $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
 
@@ -273,7 +272,7 @@ class TranslationMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
+            $curLang = $input->currentLang;
             $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
                 $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
 
@@ -360,7 +359,7 @@ class TranslationMgr extends SGL_Manager
             unset($defaultWords);
 
             //get source array
-            $fbackLang = SGL_Translation::transformLangID($fallbackLang, SGL_LANG_ID_SGL);
+            $fbackLang = $fallbackLang;
             $aModules[$name]['orig'] = SGL_MOD_DIR . '/' . $name . '/lang/' .
                     $GLOBALS['_SGL']['LANGUAGE'][$fbackLang][1] . '.php';
 
@@ -372,7 +371,7 @@ class TranslationMgr extends SGL_Manager
             unset($defaultWords, $words);
 
             //  get target array
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
+            $curLang = $input->currentLang;
             $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
                     $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
 

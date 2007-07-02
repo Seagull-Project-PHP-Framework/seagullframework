@@ -227,8 +227,7 @@ class ModuleMgr extends SGL_Manager
         // retrieve translation settings
         $transContainer = ($this->conf['translation']['container'] == 'db')
             ? 1 : 0;
-        $transLanguage = str_replace('_', '-',
-            explode(',', $this->conf['translation']['installedLanguages']));
+        $transLanguage = explode(',', $this->conf['translation']['installedLanguages']);
 
         $data = array(
             'createTables'           => 1,

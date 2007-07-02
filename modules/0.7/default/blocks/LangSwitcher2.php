@@ -78,8 +78,7 @@ class Default_Block_LangSwitcher2
 
         $aLangs          = SGL_Util::getLangsDescriptionMap();
         $aLangsDef       = $GLOBALS['_SGL']['LANGUAGE'];
-        $aInstalledLangs = str_replace('_', '-',
-            explode(',', $conf['translation']['installedLanguages']));
+        $aInstalledLangs = explode(',', $conf['translation']['installedLanguages']);
 
         $aLangData = array();
         foreach ($aLangs as $langKey => $langName) {
