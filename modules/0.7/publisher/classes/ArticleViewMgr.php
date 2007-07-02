@@ -123,7 +123,7 @@ class ArticleViewMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $output->template = 'articleView.html';
-        $ret = SGL_Item::getItemDetail($input->articleID, null, $input->articleLang);
+        $ret = SGL_Item::getItemDetail($input->articleID, null, $input->articleLang,true);
         //  Encode current url for redirecting purposes
         $url = $input->getCurrentUrl();
         $output->redir = urlencode(urlencode($url->toString()));
@@ -200,7 +200,8 @@ class ArticleViewMgr extends SGL_Manager
             $input->dataTypeID,
             '',
             $input->from,
-            'start_date');
+            'start_date',
+            true);
 
         if (is_array($aResult['data']) && count($aResult['data'])) {
             $limit = $_SESSION['aPrefs']['resPerPage'];
