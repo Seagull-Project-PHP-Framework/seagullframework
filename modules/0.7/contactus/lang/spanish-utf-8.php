@@ -1,0 +1,4 @@
+<?php
+    $words = array(
+    );
+?>
