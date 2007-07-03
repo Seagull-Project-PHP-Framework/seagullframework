@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+03-07-07    Fixed SMTP authentication driver choice in Config (mburkardt)
 11-06-07    Correctly initialised charset global
 04-06-07    Fixed parsing of multiple roles for navigation [3117]
 26-05-07    Fixed Classic URI parsing see http://trac.seagullproject.org/changeset/3105
