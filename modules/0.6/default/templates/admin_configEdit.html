@@ -600,8 +600,12 @@ function toggleTransElements() {
                 <input type="text" name="conf[mta][smtpPort]" id="conf[mta][smtpPort]" value="{conf[mta][smtpPort]}" />
             </p>
             <p>
-                <label for="conf[mta][smtpAuth]">{translate(#Use SMTP authentication#)}</label>
-                {generateRadioPair(#conf[mta][smtpAuth]#,conf[mta][smtpAuth]):h}
+                <label class="tipOwner" for="conf[mta][smtpAuth]">{translate(#Use SMTP authentication#)}
+                <span class="tipText">{translate(#PEAR::Mail supported SMTP authentication methods#)}</span>
+                </label>
+                <select name="conf[mta][smtpAuth]" id="conf[mta][smtpAuth]">
+                    {generateSelect(aMtaAuthentication,conf[mta][smtpAuth]):h}
+                </select>
             </p>
             <p>
                 <label class="tipOwner" for="conf[mta][smtpUsername]">{translate(#SMTP username#)}

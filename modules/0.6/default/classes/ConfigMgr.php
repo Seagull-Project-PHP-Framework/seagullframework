@@ -54,6 +54,7 @@ class ConfigMgr extends SGL_Manager
     var $aLogTypes;
     var $aLogNames;
     var $aMtaBackends;
+    var $aMtaAuthentication;
     var $aCensorModes;
     var $aNavDrivers;
     var $aNavRenderers;
@@ -84,6 +85,13 @@ class ConfigMgr extends SGL_Manager
             'mail' => 'mail() function',
             'smtp' => 'SMTP',
             'sendmail' => 'Sendmail',
+            );
+        $this->aMtaAuthentication = array(
+            '0' => 'no',
+            'LOGIN' => 'LOGIN',
+            'PLAIN' => 'PLAIN',
+            'CRAM-MD5' => 'CRAM-MD5',
+            'DIGEST-MD5' => 'DIGEST-MD5',
             );
         $this->aCensorModes = array(
             0 => 'no censoring',
@@ -173,7 +181,12 @@ class ConfigMgr extends SGL_Manager
                 break;
 
             case 'smtp':
-                if ($input->conf['mta']['smtpAuth'] == 1) {
+                $aAuthentication = array_keys($this->aMtaAuthentication);
+                if (!in_array($input->conf['mta']['smtpAuth'], $aAuthentication)) {
+                    $aErrors['mtaBackend'] = 'Please choose a valid authentication method';
+                    $input->displayTab = 'mtaOptions';
+                }
+                if ($input->conf['mta']['smtpAuth'] != 0) {
                     if (empty($input->conf['mta']['smtpUsername'])) {
                         $aErrors['smtpUsername'] = 'Please enter a valid Username';
                         $input->displayTab = 'mtaOptions';
@@ -227,6 +240,7 @@ class ConfigMgr extends SGL_Manager
         $output->aLogPriorities     = $aLogLevels;
         $output->aEmailThresholds   = $aLogLevels;
         $output->aMtaBackends       = $this->aMtaBackends;
+        $output->aMtaAuthentication = $this->aMtaAuthentication;
         $output->aCensorModes       = $this->aCensorModes;
         $output->aNavDrivers        = $this->aNavDrivers;
         $output->aNavRenderers      = $this->aNavRenderers;

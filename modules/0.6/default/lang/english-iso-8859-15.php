@@ -389,6 +389,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'SMTP port' => 'SMTP port',
         'Optional if you use SMTP as Backend. Default: 25' => 'Optional if you use \'SMTP\' as Backend. Default: 25',
         'Use SMTP authentication' => 'Use SMTP authentication',
+        'PEAR::Mail supported SMTP authentication methods' => 'PEAR::Mail supported SMTP authentication methods',
         'SMTP username' => 'SMTP username',
         'SMTP password' => 'SMTP password',
         'Mandatory if you use SMTP as Backend and SMTP authentication is enabled' => 'Mandatory if you use \'SMTP\' as Backend and \'SMTP authentication\' is enabled',
