@@ -102,7 +102,9 @@ class STR_TestEnv
             }
         }
         //  shell_exec raw sql if exists
-        $aSqlFiles = $GLOBALS['_STR']['CONF']['rawSqlFiles'];
+        $aSqlFiles = isset($GLOBALS['_STR']['CONF']['rawSqlFiles'])
+            ? $GLOBALS['_STR']['CONF']['rawSqlFiles']
+            : null;
         if (is_array($aSqlFiles) && count($aSqlFiles)) {
             foreach ($aSqlFiles as $sqlFile) {
                 $file = STR_PATH .'/'. $sqlFile;
