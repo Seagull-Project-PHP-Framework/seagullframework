@@ -47,7 +47,7 @@ create table preference
 create sequence preference_seq;
 
 -- ==============================================================
---  Table: organization
+--  Table: organisation
 -- ==============================================================
 create table organisation (
    organisation_id int4 NOT NULL default 0,
@@ -79,10 +79,10 @@ create table organisation (
 );
 
 -- ==============================================================
---  sequence organization_seq
+--  sequence organisation_seq
 -- ==============================================================
 
-create sequence organization_seq;
+create sequence organisation_seq;
 
 -- ==============================================================
 --  Table: organisation_type
@@ -94,10 +94,10 @@ create table organisation_type (
 );
 
 -- ==============================================================
---  sequence organization_type_seq
+--  sequence organisation_type_seq
 -- ==============================================================
 
-create sequence organization_type_seq;
+create sequence organisation_type_seq;
 
 -- ==============================================================
 --  Table: permission
