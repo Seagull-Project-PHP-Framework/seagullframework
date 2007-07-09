@@ -91,21 +91,15 @@ class ModuleConfigMgr extends SGL_Manager
         }
         //  Validate fields
         if ($input->submitted) {
-            if (!empty($this->conf['tuples']['demoMode'])) {
-                // don't allow users to manipulate configurations in demo mode
-                $aErrors[] = 'You cannot save configurations in the demo mode.';
-            } else {
-
-                $aFields = array(
-                    'name' => 'Please, specify a name',
-                    'title' => 'Please, specify a title',
-                    'description' => 'Please, specify a description'
-                );
-                if (!empty($input->module)) {
-                    foreach ($aFields as $field => $errorMsg) {
-                        if (empty($input->module->$field)) {
-                            $aErrors[$field] = $errorMsg;
-                        }
+            $aFields = array(
+                'name' => 'Please, specify a name',
+                'title' => 'Please, specify a title',
+                'description' => 'Please, specify a description'
+            );
+            if (!empty($input->module)) {
+                foreach ($aFields as $field => $errorMsg) {
+                    if (empty($input->module->$field)) {
+                        $aErrors[$field] = $errorMsg;
                     }
                 }
             }
