@@ -281,6 +281,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'DB username'=>'DB username',
         'DB password'=>'DB password',
         'DB name'=>'DB name',
+        'DB charset' => 'DB charset',
+        'DB collation' => 'DB collation',
         'Table prefix' => 'Table prefix',
         'This is used to prefix all tables in database, change with caution' => 'This is used to prefix all tables in database, change with caution',
         'Only letters and digits are allowed, first symbol must be a letter, last symbol can be an underscore' => 'Only letters and digits are allowed, first symbol must be a letter, last symbol can be an underscore',

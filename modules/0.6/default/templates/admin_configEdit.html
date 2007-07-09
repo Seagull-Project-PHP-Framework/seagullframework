@@ -495,6 +495,14 @@ function toggleTransElements() {
                 <input type="text" name="conf[db][name]" value="{conf[db][name]}" />
             </p>
             <p>
+                <label for="conf">{translate(#DB charset#)}</label>
+                <input type="text" name="conf[db][charset]" value="{conf[db][charset]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB collation#)}</label>
+                <input type="text" name="conf[db][collation]" value="{conf[db][collation]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf_db_prefix">{translate(#Table prefix#)}
                     <span class="tipText">{translate(#This is used to prefix all tables in database, change with caution#)}</span>
                 </label>
