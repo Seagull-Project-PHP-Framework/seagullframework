@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+09-07-07    Added support for charset and collation in MySQL (Dmitri Lakachauskis)
 09-07-07    Test runner now takes global config into account and works for Postgres
             (ajmixto)
 29-06-07    Implemented ability to set Seagull into maintenance mode (Julien Casanova)
