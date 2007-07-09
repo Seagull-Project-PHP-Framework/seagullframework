@@ -1,0 +1,5 @@
+            $s['%field%_mod']=isset($s['%field%_mod']) ? 1 : 0;
+            if (array_key_exists('%field%_mod', $s) && $s['%field%_mod'] != 0) {
+                //use both dates (between)
+                $criteria .= " AND %table%.%field% BETWEEN '{$s['%field%_1st']}' AND '{$s['%field%_2nd']} 23:59:59' ";
+            }

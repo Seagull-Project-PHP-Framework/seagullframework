@@ -1,0 +1,40 @@
+        <p>
+            <label for="search[%field%_mod]">%caption%</label>
+            <span class="error" flexy:if="error[%field%_mod]">error[%field%_mod]</span>
+            <input flexy:if="search.%field%_mod" type="checkbox" name="search[%field%_mod]" id="search[%field%_mod]" value="1" checked onChange=""/>
+            <input flexy:if="!search.%field%_mod" type="checkbox" name="search[%field%_mod]" id="search[%field%_mod]" value="1" />
+            <p name="%field%_mod" id="%field%_mod">
+                <label for="search[%field%_1st]">From</label>
+                <span class="error" flexy:if="error[%field%_1st]">error[%field%_1st]</span>
+                <input type="hidden" name="search[%field%_1st]" id="search[%field%_1st]" value="{search.%field%_1st}" />
+                <img class="calendar" id="search[%field%_1st]Trigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="search[%field%_1st]ToShow" id="search[%field%_1st]ToShow">{formatDatePretty(search.%field%_1st)}</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;To&nbsp;&nbsp;&nbsp;&nbsp; 
+                <input type="hidden" name="search[%field%_2nd]" id="search[%field%_2nd]" value="search.%field%_2nd" />
+                <img class="calendar" id="search[%field%_2nd]Trigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="search[%field%_2nd]ToShow" id="search[%field%_2nd]ToShow">{formatDatePretty(search.%field%_2nd)}</span>
+            </p>
+            <style type="text/css">
+                @import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+            </style>
+            <script type="text/javascript">
+                Calendar.setup(
+                    {
+                        inputField  : "search[%field%_1st]",        // ID of the input field
+                        ifFormat    : "%Y-%m-%d",                   // the date format
+                        displayArea : "search[%field%_1st]ToShow",
+                        daFormat    : SGL_JS_DATETEMPLATE,
+                        button      : "search[%field%_1st]Trigger"  // ID of the button
+                    }
+                );            
+                Calendar.setup(
+                    {
+                        inputField  : "search[%field%_2nd]",        // ID of the input field
+                        ifFormat    : "%Y-%m-%d",                   // the date format
+                        displayArea : "search[%field%_2nd]ToShow",
+                        daFormat    : SGL_JS_DATETEMPLATE,
+                        button      : "search[%field%_2nd]Trigger"  // ID of the button
+                    }
+                );
+            </script>
+        </p>

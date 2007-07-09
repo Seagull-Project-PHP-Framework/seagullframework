@@ -2,11 +2,13 @@
         $%mgrName%->%mgrName%_id = $input->%mgrName%Id;
         $%mgrName%->find(true);
         $%mgrName%->setFrom($input->%mgrName%);
+        $%mgrName%->last_updated = SGL_Date::getTime();
+        $%mgrName%->updated_by = SGL_Session::getUid();
         $success = $%mgrName%->update();
 
         if ($success !== false) {
-            SGL::raiseMsg('%mgrName% update successfull', false, SGL_MESSAGE_INFO);
+            SGL::raiseMsg('%MgrCaptionSimple% update successfull', false, SGL_MESSAGE_INFO);
         } else {
-            SGL::raiseError('%mgrName% update NOT successfull',
+            SGL::raiseError('%MgrCaptionSimple% update NOT successfull',
                 SGL_ERROR_NOAFFECTEDROWS);
         }

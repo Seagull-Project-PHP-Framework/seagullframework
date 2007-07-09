@@ -1,0 +1,18 @@
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $output->template  = '%mgrName%Search.html';
+        $output->pageTitle = '%MgrCaption% :: Search';
+        $output->action    = 'list';
+%defaultdata%
+    }
+
+    function searchlist(&$input)
+    {
+        $criteria = '';
+
+        //  if search form data present, built search criteria SQL
+        if (!(empty($input->search))) {
+
+            $s = $input->search;
+%searchfields%
+        }
+        return $criteria;

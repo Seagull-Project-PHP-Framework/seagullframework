@@ -1,35 +1,49 @@
-<h1 class="pageTitle">{translate(pageTitle)}</h1>
-<span flexy:if="msgGet()">{msgGet()}</span>
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" title="Add new %MgrCaptionSimple%'s record" href="{makeUrl(#add#,#%mgrName%#,#%moduleName%#)}">{translate(#New %MgrCaptionSimple%#)}</a>
+    <a class="action reorder" title="Refresh %MgrCaptionSimple%s list" href="{makeUrl(#list#,#%mgrName%#,#%moduleName%#)}">{translate(#Refresh#)}</a>
+    <a class="action search" title="Search %MgrCaptionSimple%s list" href="{makeUrl(#search#,#%mgrName%#,#%moduleName%#)}'))">{translate(#Search#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="frm%MgrName%Manager" method="post" action="" flexy:ignore id="frm%MgrName%Manager">
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="delete" />
 
-<form name="%mgrName%" method="post" flexy:ignore id="%mgrName%">
-    <input type="hidden" name="action" value="delete" /><br />
-    {if:pager}<flexy:include src="pager.html" />{end:}
-
-    <table class="wide">
-        <tr>
-            <td colspan="2">
-                <input type="button" onclick="javascript:document.location.href='{makeUrl(#add#,#%mgrName%#,#%moduleName%#)}'" value="{translate(#Add entry#)}" />
-            </td>
-        </tr>
-        <tr>
-            %table_header%
-            <th>action</th>
-        </tr>
-
-        <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
-            %table_body%
-            <td width="10%" nowrap>
-            <a href="{makeUrl(#edit#,#%mgrName%#,#%moduleName%#,aPagedData[data],#frm%MgrName%ID|%mgrName%_id#,key)}" />
-                [{translate(#edit#)}]
-            </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="edit" />
-            </td>
-        </tr>
-
-        <tr>
-            <td colspan="3">{translate(#With selected message(s)#)}:
-                <input type="submit" name="delete" value="{translate(#Delete#)}"
-                        onclick="return confirmSubmit('message', '%mgrName%_delete_confirm')" />
-            </td>
-        </tr>
-    </table>
-</form>
+            <table class="full">
+                <thead>
+                    <tr class="infos">
+                        <td class="right" colspan="%noofcolumns%">
+                            {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                    <tr>
+%table_header%
+                        <th class="center">action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="infos">
+                        <td class="right" colspan="%noofcolumns%">
+                            {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+%table_body%
+                        <td class="center">
+                            <a title="Edit %MgrCaptionSimple%'s record" href="{makeUrl(#edit#,#%mgrName%#,#%moduleName%#,aPagedData[data],#frm%MgrName%ID|%mgrName%_id#,key)}">[{translate(#edit#)}]
+                            <img src="{webRoot}/themes/{theme}/images/22/action_edit1.gif" alt="edit" /></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <a type="submit" class="sgl-button" title="Delete selected %MgrCaptionSimple%'s records" href="javascript:magicForm('{makeUrl(#delete#,#%mgrName%#,#%moduleName%#,##,#ajaxrequest|1#)}','frm%MgrName%Manager');" onClick="return confirmSubmit('{translate(#%MgrName%#)}', 'frm%MgrName%Manager')">{translate(#delete selected#)}</a>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

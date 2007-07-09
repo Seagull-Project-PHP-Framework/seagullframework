@@ -1,0 +1,6 @@
+            <p>
+                <label %tooltipclass% for="%mgrName%[%field%]">%required%{translate(#%caption%#,#ucfirst#)} %tooltipspan%</label>
+                <span class="error" flexy:if="error[%field%]">{translate(error[%field%])}</span>
+                <input flexy:if="%mgrName%.%field%" type="checkbox" name="%mgrName%[%field%]" id="%mgrName%[%field%]" value="1" checked/>
+                <input flexy:if="!%mgrName%.%field%" type="checkbox" name="%mgrName%[%field%]" id="%mgrName%[%field%]" value="1" />
+            </p>

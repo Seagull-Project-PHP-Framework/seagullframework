@@ -1,0 +1,7 @@
+            <p>
+                <label %tooltipclass% for="%mgrName%[%field%]">%required%{translate(#%caption%#,#ucfirst#)} %tooltipspan%</label>
+                <span class="error" flexy:if="error[%field%]">{translate(error[%field%])}</span>
+                <select name="%mgrName%[%field%]">
+                    {generateSelect(%fktable%,%mgrName%.%field%):h}
+                </select>
+            </p>
