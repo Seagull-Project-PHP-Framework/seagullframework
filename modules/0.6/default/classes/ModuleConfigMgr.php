@@ -146,6 +146,12 @@ class ModuleConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (!empty($this->conf['tuples']['demoMode'])) {
+            SGL::raiseMsg('Module config settings cannot be modified in demo mode',
+                false, SGL_MESSAGE_WARNING);
+            return false;
+        }
+
         // First update module properties
         $oModule = DB_DataObject::factory($this->conf['table']['module']);
         $oModule->get('name', $input->moduleNameId);
