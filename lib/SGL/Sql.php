@@ -283,68 +283,68 @@ class SGL_Sql
     function prefixTableNameInStatement($str, $type)
     {
         switch ($type) {
-            case 'select':
-                $pattern     = '/(SELECT)(.*?)(FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'select':
+            $pattern     = '/(SELECT)(.*?)(FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'insert':
-                $pattern     = '/(INSERT INTO)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' .
-                    SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'insert':
+            $pattern     = '/(INSERT INTO)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' .
+                SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'delete':
-                $pattern     = '/(DELETE FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'delete':
+            $pattern     = '/(DELETE FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'createTable':
-                $pattern     = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'createTable':
+            $pattern     = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'createIndex':
-                $pattern     = '/(CREATE)(.*?)(INDEX)(\W+)?([A-Za-z0-9_-]+)(\W+)?' .
-                    '(.*?)(ON)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}${7}${8}${9}' .
-                    SGL_Sql::addTablePrefix('$10') . '${11}';
-                break;
+        case 'createIndex':
+            $pattern     = '/(CREATE)(.*?)(INDEX)(\W+)?([A-Za-z0-9_-]+)(\W+)?' .
+                '(.*?)(ON)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}${7}${8}${9}' .
+                SGL_Sql::addTablePrefix('$10') . '${11}';
+            break;
 
-            case 'alterTable':
-                // prefix sub-statements on the same line
-                if (preg_match('/add constraint/i', $str)) {
-                    $str = SGL_Sql::prefixTableNameInStatement($str, 'addConstraint');
-                }
-                if (preg_match('/references/i', $str)) {
-                    $str = SGL_Sql::prefixTableNameInStatement($str, 'ref');
-                }
-                $pattern     = '/(ALTER)(.*?)(TABLE)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'alterTable':
+            // prefix sub-statements on the same line
+            if (preg_match('/add constraint/i', $str)) {
+                $str = SGL_Sql::prefixTableNameInStatement($str, 'addConstraint');
+            }
+            if (preg_match('/references/i', $str)) {
+                $str = SGL_Sql::prefixTableNameInStatement($str, 'ref');
+            }
+            $pattern     = '/(ALTER)(.*?)(TABLE)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'addConstraint':
-                $pattern     = '/(ADD CONSTRAINT)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'addConstraint':
+            $pattern     = '/(ADD CONSTRAINT)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'ref':
-                $pattern     = '/(REFERENCES)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'ref':
+            $pattern     = '/(REFERENCES)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'createSequence':
-                $pattern     = '/(CREATE)(.*?)(SEQUENCE)(\W+)?([A-Za-z0-9_-]+)/i';
-                $replacement = '${1}${2}${3}${4}' . SGL_Sql::addTablePrefix('$5');
-                break;
+        case 'createSequence':
+            $pattern     = '/(CREATE)(.*?)(SEQUENCE)(\W+)?([A-Za-z0-9_-]+)/i';
+            $replacement = '${1}${2}${3}${4}' . SGL_Sql::addTablePrefix('$5');
+            break;
 
-            default:
-                return SGL::raiseError('Unknown replacement format',
-                    SGL_ERROR_INVALIDARGS);
+        default:
+            return SGL::raiseError('Unknown replacement format',
+                SGL_ERROR_INVALIDARGS);
         }
         $str = preg_replace($pattern, $replacement, $str);
         return $str;
@@ -354,6 +354,14 @@ class SGL_Sql
     {
         if ($driver != 'pgsql') {
             $result = 'CREATE DATABASE ' . $dbname;
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+             if (!empty($this->conf['db']['charset'])) {
+                 $query .= ' CHARACTER SET ' . $conf['db']['charset'];
+             }
+             if (!empty($this->conf['db']['collation'])) {
+                 $query .= ' COLLATE ' . $conf['db']['collation'];
+             }
         } else {
             $result = 'CREATE SCHEMA public';
         }
