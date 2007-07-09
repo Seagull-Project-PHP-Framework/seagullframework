@@ -31,7 +31,7 @@ class NavigationDAOTest extends UnitTestCase {
           'actionMapping' => '', // eg: edit
           'add_params' => '',    // eg: frmArticleID/23
           'is_enabled' => 1,
-          'perms' => '1',        // role id, eg: 1 for admin
+          'perms' => SGL_ADMIN,        // role id, eg: 1 for admin
             );
         $ok = $this->da->addSimpleSection($section);
     }

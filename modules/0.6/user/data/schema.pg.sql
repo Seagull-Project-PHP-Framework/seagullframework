@@ -326,5 +326,26 @@ create index user_permission_id on user_permission
 (
    permission_id
 );
-
+--================================================================
+-- Table: user_cookie
+--================================================================
+CREATE TABLE user_cookie (
+    usr_id                  integer             NOT NULL,
+    cookie_name             varchar(32)         NOT NULL,
+    login_time              timestamp            NOT NULL
+);
+-- ==============================================================
+--  Index: user_cookie_usr_id
+-- ==============================================================
+create index user_cookie_usr_id on user_cookie
+(
+   usr_id
+);
+-- ==============================================================
+--  Index: user_cookie_cookie_name
+-- ==============================================================
+create index user_cookie_cookie_name on user_cookie
+(
+   cookie_name
+);
 COMMIT;

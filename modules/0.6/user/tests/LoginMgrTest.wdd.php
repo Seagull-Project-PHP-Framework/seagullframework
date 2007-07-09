@@ -53,7 +53,7 @@ class TestLoginMgr extends UnitTestCase {
         $doLogin->dbh = $doLogin->_getDb();
         $c = &SGL_Config::singleton();
         $doLogin->conf = $c->getAll();
-        $res = $doLogin->_doLogin($username, $passwd);
+        $res = $doLogin->_doLogin($username, $passwd,true);
         $this->assertTrue(is_array($res));
         $this->assertTrue(count($res));
     }
