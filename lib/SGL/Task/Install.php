@@ -337,18 +337,15 @@ class SGL_Task_CreateDatabase extends SGL_Task
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        if($this->conf['db']['type'] == 'pgsql') {
+        if ($this->conf['db']['type'] == 'pgsql') {
             $excludeDbName = false;
         } else {
             $excludeDbName = true;
         }
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName);
         $dbh = & SGL_DB::singleton($dsn);
-        if ($this->conf['db']['type'] == 'pgsql') {
-            $query = 'CREATE SCHEMA public';
-        } else {
-            $query = 'CREATE DATABASE ' . $dbh->quoteIdentifier($this->conf['db']['name']);
-        }
+        $query = SGL_Sql::buildDbCreateStatement($this->conf['db']['type'],
+            $dbh->quoteIdentifier($this->conf['db']['name']));
         $res = $dbh->query($query);
         if (PEAR::isError($res)) {
             SGL_Install_Common::errorPush($res);
@@ -367,11 +364,9 @@ class SGL_Task_DropDatabase extends SGL_Task
         $this->conf = $c->getAll();
 
         $dbh = & SGL_DB::singleton();
-        if ($this->conf['db']['type'] == 'pgsql') {
-            $query = 'DROP SCHEMA public CASCADE';
-        } else {
-            $query = 'DROP DATABASE ' . $dbh->quoteIdentifier($this->conf['db']['name']);
-        }
+        require_once SGL_CORE_DIR . '/Sql.php';
+        $query = SGL_Sql::buildDbDropStatement($this->conf['db']['type'],
+            $dbh->quoteIdentifier($this->conf['db']['name']));
         $res = $dbh->query($query);
         if (PEAR::isError($res)) {
             SGL_Install_Common::errorPush($res);

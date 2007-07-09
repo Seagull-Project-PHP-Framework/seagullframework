@@ -349,5 +349,26 @@ class SGL_Sql
         $str = preg_replace($pattern, $replacement, $str);
         return $str;
     }
+
+    function buildDbCreateStatement($driver, $dbname)
+    {
+        if ($driver != 'pgsql') {
+            $result = 'CREATE DATABASE ' . $dbname;
+        } else {
+            $result = 'CREATE SCHEMA public';
+        }
+        return $result;
+    }
+
+    function buildDbDropStatement($driver, $dbname)
+    {
+        if ($driver != 'pgsql') {
+            $result = 'DROP DATABASE IF EXISTS ' . $dbname;
+        } else {
+            $result = 'DROP SCHEMA public CASCADE';
+        }
+        return $result;
+    }
+
 }
 ?>
