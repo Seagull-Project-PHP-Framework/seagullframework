@@ -356,10 +356,10 @@ class SGL_Sql
             $result = 'CREATE DATABASE ' . $dbname;
             $c = &SGL_Config::singleton();
             $conf = $c->getAll();
-             if (!empty($this->conf['db']['charset'])) {
+             if (!empty($conf['db']['charset'])) {
                  $query .= ' CHARACTER SET ' . $conf['db']['charset'];
              }
-             if (!empty($this->conf['db']['collation'])) {
+             if (!empty($conf['db']['collation'])) {
                  $query .= ' COLLATE ' . $conf['db']['collation'];
              }
         } else {
