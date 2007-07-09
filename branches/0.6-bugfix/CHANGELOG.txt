@@ -12,6 +12,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+09-07-07    Test runner now takes global config into account and works for Postgres
+            (ajmixto)
 29-06-07    Implemented ability to set Seagull into maintenance mode (Julien Casanova)
 27-06-07    Implemented ability to rebuild Seagull for Postgresql (ajmixto)
 13-06-07    Added ability to suppress errors in logs, useful for Ajax debugging

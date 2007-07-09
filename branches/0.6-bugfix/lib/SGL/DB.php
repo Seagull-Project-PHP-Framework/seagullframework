@@ -38,8 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: DB.php,v 1.14 2005/06/20 10:56:31 demian Exp $
 
-define('SGL_DSN_ARRAY',                 0);
-define('SGL_DSN_STRING',                1);
+define('SGL_DSN_ARRAY',     0);
+define('SGL_DSN_STRING',    1);
 
 /**
  * Class for handling DB resources.
@@ -131,43 +131,54 @@ class SGL_DB
 
         //  override default mysql driver to allow for all sequence IDs to
         //  be kept in a single table
-        $dbType = $conf['db']['type'];
         if ($type == SGL_DSN_ARRAY) {
-            $dsn = array(
-                'phptype'  => $dbType,
-                'username' => $conf['db']['user'],
-                'password' => $conf['db']['pass'],
-                'protocol' => $conf['db']['protocol'],
-                'socket'   => $conf['db']['socket'],
-                'hostspec' => $conf['db']['host'],
-                'port'     => $conf['db']['port']
-            );
-            if (!$excludeDbName) {
-                $dsn['database'] = $conf['db']['name'];
-            }
+            $dsn = SGL_DB::_getDsnAsArray($conf, $excludeDbName);
         } else {
-            $socket = (isset($conf['db']['protocol'])
-                        && $conf['db']['protocol'] == 'unix'
-                        && !empty($conf['db']['socket']))
-                ? '(' . $conf['db']['socket'] . ')'
-                : '';
-            $protocol = isset($conf['db']['protocol'])
-                ? $conf['db']['protocol'] . $socket
-                : '';
-            $host = empty($conf['db']['socket']) ? '+' . $conf['db']['host'] : '';
-            $port = (!empty($conf['db']['port'])
-                        && isset($conf['db']['protocol'])
-                        && ($conf['db']['protocol'] == 'tcp'))
-                ? ':' . $conf['db']['port']
-                : '';
-            $dsn = $dbType . '://' .
-                $conf['db']['user'] . ':' .
-                $conf['db']['pass'] . '@' .
-                $protocol .
-                $host . $port;
-            if (!$excludeDbName) {
-                $dsn .= '/' . $conf['db']['name'];
-            }
+            $dsn = SGL_DB::_getDsnAsString($conf, $excludeDbName);
+        }
+        return $dsn;
+    }
+
+    function _getDsnAsArray($conf,$excludeDbName = false)
+    {
+        $dsn = array(
+            'phptype'  => $conf['db']['type'],
+            'username' => $conf['db']['user'],
+            'password' => $conf['db']['pass'],
+            'protocol' => $conf['db']['protocol'],
+            'socket'   => $conf['db']['socket'],
+            'hostspec' => $conf['db']['host'],
+            'port'     => $conf['db']['port']
+        );
+        if (!$excludeDbName) {
+            $dsn['database'] = $conf['db']['name'];
+        }
+        return $dsn;
+    }
+
+    function _getDsnAsString($conf,$excludeDbName = false)
+    {
+        $socket = (isset($conf['db']['protocol'])
+                && $conf['db']['protocol'] == 'unix'
+                && !empty($conf['db']['socket']))
+            ? '(' . $conf['db']['socket'] . ')'
+            : '';
+        $protocol = isset($conf['db']['protocol'])
+            ? $conf['db']['protocol'] . $socket
+            : '';
+        $host = empty($conf['db']['socket']) ? '+' . $conf['db']['host'] : '';
+        $port = (!empty($conf['db']['port'])
+                && isset($conf['db']['protocol'])
+                && ($conf['db']['protocol'] == 'tcp'))
+            ? ':' . $conf['db']['port']
+            : '';
+        $dsn = $conf['db']['type'] . '://' .
+            $conf['db']['user'] . ':' .
+            $conf['db']['pass'] . '@' .
+            $protocol .
+            $host . $port;
+        if (!$excludeDbName) {
+            $dsn .= '/' . $conf['db']['name'];
         }
         return $dsn;
     }
@@ -196,7 +207,6 @@ class SGL_DB
             $singleton = & SGL_DB::singleton();
             $locator->register('DB', $singleton);
         }
-
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
 

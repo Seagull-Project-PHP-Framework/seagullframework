@@ -92,22 +92,17 @@ class STR_DB
      */
     function getDsn()
     {
-        $conf = $GLOBALS['_STR']['CONF'];
-        $dbType = $conf['database']['type'];
+        $conf = $alternateConf = $GLOBALS['_STR']['CONF'];
+        $dbType = $conf['db']['type'];
         if ($dbType == 'mysql') {
-            $dbType = 'mysql_SGL';
+            $alternateConf['db']['type'] = 'mysql_SGL';
         }
 
-        $protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
-        $dsn = $dbType . '://' .
-            $conf['database']['user'] . ':' .
-            $conf['database']['pass'] . '@' .
-            $protocol .
-            $conf['database']['host'] . '/' .
-            $conf['database']['name'];
+        require_once  dirname(__FILE__) . '/../../lib/SGL/DB.php';
+        $dsn = SGL_DB::_getDsnAsString($alternateConf);
 
         //   override SGL dsn with temporary testing one
-        $GLOBALS['_SGL']['CONF']['db'] = $conf['database'];
+        $GLOBALS['_SGL']['CONF']['db'] = $conf['db'];
 
         return $dsn;
     }
