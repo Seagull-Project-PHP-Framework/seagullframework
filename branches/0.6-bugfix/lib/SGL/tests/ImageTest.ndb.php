@@ -246,6 +246,9 @@ class ImageTest extends UnitTestCase
         $driver->expectCallCount('save', 8);
 
         $ret = $image->create($this->imageSampleFile, 'copy');
+        if (PEAR::isError($ret)) {
+            die($ret->getMessage());
+        }
         $this->assertTrue($ret && (is_string($ret) || is_bool($ret)));
 
         // can't create file, 'cos it already exists
