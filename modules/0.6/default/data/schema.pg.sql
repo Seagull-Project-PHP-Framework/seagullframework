@@ -46,7 +46,7 @@ create table user_session (
    data_value                    TEXT            null,
    usr_id                        INT4            not null default 0,
    username                      VARCHAR(64)     null,
-   expiry                        INT4            not null,
+   expiry                        INT4            not null default 0,
    constraint PK_SESSION primary key (session_id)
 );
 
@@ -111,7 +111,7 @@ create sequence module_seq;
 -- some functions for better compatibility with mysql master schema file
 -- ==============================================================
 
-CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;'; 
+CREATE OR REPLACE FUNCTION unix_timestamp(TIMESTAMP WITHOUT TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 
 CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE) RETURNS BIGINT LANGUAGE SQL IMMUTABLE STRICT AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 
