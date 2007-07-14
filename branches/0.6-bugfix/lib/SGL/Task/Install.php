@@ -849,22 +849,24 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                 $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
                 if (file_exists($navigationPath)) {
                     require_once $navigationPath;
-                    foreach ($aSections as $aSection) {
-
-                        //  check if section is designated as child to last insert
-                        if ($aSection['parent_id'] == SGL_NODE_GROUP) {
-                            $aSection['parent_id'] = $this->groupId;
-                        }
-                        $id = $da->addSimpleSection($aSection);
-                        if (!PEAR::isError($id)) {
-                            if ($aSection['parent_id'] == SGL_NODE_ADMIN
-                                    || $aSection['parent_id'] == SGL_NODE_USER) {
-                                $this->groupId = $id;
-                            } else {
-                                $this->childId = $id;
+                    if (isset($aSections)) {
+                        foreach ($aSections as $aSection) {
+    
+                            //  check if section is designated as child to last insert
+                            if ($aSection['parent_id'] == SGL_NODE_GROUP) {
+                                $aSection['parent_id'] = $this->groupId;
                             }
-                        } else {
-                            SGL_Install_Common::errorPush($id);
+                            $id = $da->addSimpleSection($aSection);
+                            if (!PEAR::isError($id)) {
+                                if ($aSection['parent_id'] == SGL_NODE_ADMIN
+                                        || $aSection['parent_id'] == SGL_NODE_USER) {
+                                    $this->groupId = $id;
+                                } else {
+                                    $this->childId = $id;
+                                }
+                            } else {
+                                SGL_Install_Common::errorPush($id);
+                            }
                         }
                     }
                 }
