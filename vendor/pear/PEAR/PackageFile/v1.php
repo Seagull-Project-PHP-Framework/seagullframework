@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.72 2006/10/31 02:54:41 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.73 2007/05/10 00:00:38 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -281,7 +281,7 @@ define('PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME', 52);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -1200,9 +1200,24 @@ class PEAR_PackageFile_v1
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILEROLE,
                         array('file' => $file, 'role' => $fa['role'], 'roles' => PEAR_Common::getFileRoles()));
                 }
-                if ($file{0} == '.' && $file{1} == '/') {
+                if (preg_match('~/\.\.?(/|\\z)|^\.\.?/~', str_replace('\\', '/', $file))) {
+                    // file contains .. parent directory or . cur directory references
                     $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME,
                         array('file' => $file));
+                }
+                if (isset($fa['install-as']) &&
+                      preg_match('~/\.\.?(/|\\z)|^\.\.?/~', 
+                                 str_replace('\\', '/', $fa['install-as']))) {
+                    // install-as contains .. parent directory or . cur directory references
+                    $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME,
+                        array('file' => $file . ' [installed as ' . $fa['install-as'] . ']'));
+                }
+                if (isset($fa['baseinstalldir']) &&
+                      preg_match('~/\.\.?(/|\\z)|^\.\.?/~', 
+                                 str_replace('\\', '/', $fa['baseinstalldir']))) {
+                    // install-as contains .. parent directory or . cur directory references
+                    $this->_validateError(PEAR_PACKAGEFILE_ERROR_INVALID_FILENAME,
+                        array('file' => $file . ' [baseinstalldir ' . $fa['baseinstalldir'] . ']'));
                 }
             }
         }

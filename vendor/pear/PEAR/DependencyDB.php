@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: DependencyDB.php,v 1.34 2006/10/31 02:54:40 cellog Exp $
+ * @version    CVS: $Id: DependencyDB.php,v 1.35 2007/01/06 04:03:32 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -36,7 +36,7 @@ $GLOBALS['_PEAR_DEPENDENCYDB_INSTANCE'] = array();
  * @author     Tomas V.V.Cox <cox@idec.net.com>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -227,6 +227,12 @@ class PEAR_DependencyDB
             foreach ($temp as $dep) {
                 if (strtolower($dep['dep']['channel']) == strtolower($channel) &&
                       strtolower($dep['dep']['name']) == strtolower($package)) {
+                    if (!isset($dependencies[$info['channel']])) {
+                        $dependencies[$info['channel']] = array();
+                    }
+                    if (!isset($dependencies[$info['channel']][$info['package']])) {
+                        $dependencies[$info['channel']][$info['package']] = array();
+                    }
                     $dependencies[$info['channel']][$info['package']][] = $dep;
                 }
             }

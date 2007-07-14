@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v2.php,v 1.135 2006/10/31 02:54:41 cellog Exp $
+ * @version    CVS: $Id: v2.php,v 1.140 2007/06/03 04:22:13 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -29,7 +29,7 @@ require_once 'PEAR/ErrorStack.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -473,6 +473,9 @@ class PEAR_PackageFile_v2
      */
     function setRawState($state)
     {
+        if (!isset($this->_packageInfo['stability'])) {
+            $this->_packageInfo['stability'] = array();
+        }
         $this->_packageInfo['stability']['release'] = $state;
     }
 
@@ -754,6 +757,14 @@ class PEAR_PackageFile_v2
     function setDeps($deps)
     {
         $this->_packageInfo['dependencies'] = $deps;
+    }
+
+    /**
+     * WARNING - do not use this function directly unless you know what you're doing
+     */
+    function setCompatible($compat)
+    {
+        $this->_packageInfo['compatible'] = $compat;
     }
 
     function setPackagefile($file, $archive = false)
@@ -1939,16 +1950,16 @@ class PEAR_PackageFile_v2
         $this->getTasksNs();
         // transform all '-' to '/' and 'tasks:' to '' so tasks:replace becomes replace
         $task = str_replace(array($this->_tasksNs . ':', '-'), array('', ' '), $task);
-        $task = str_replace(' ', '/', ucwords($task));
-        $ps = (strtolower(substr(PHP_OS, 0, 3)) == 'win') ? ';' : ':';
-        foreach (explode($ps, ini_get('include_path')) as $path) {
-            if (file_exists($path . "/PEAR/Task/$task.php")) {
-                include_once "PEAR/Task/$task.php";
-                $task = str_replace('/', '_', $task);
-                if (class_exists("PEAR_Task_$task")) {
-                    return "PEAR_Task_$task";
-                }
-            }
+        $taskfile = str_replace(' ', '/', ucwords($task));
+        $task = str_replace(array(' ', '/'), '_', ucwords($task));
+        if (class_exists("PEAR_Task_$task")) {
+            return "PEAR_Task_$task";
+        }
+        $fp = @fopen("PEAR/Task/$taskfile.php", 'r', true);
+        if ($fp) {
+            fclose($fp);
+            require_once "PEAR/Task/$taskfile.php";
+            return "PEAR_Task_$task";
         }
         return false;
     }

@@ -18,7 +18,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: pearcmd.php,v 1.35 2006/09/22 02:48:44 cellog Exp $
+// $Id: pearcmd.php,v 1.37 2007/01/08 05:14:01 cellog Exp $
 
 ob_end_clean();
 if (!defined('PEAR_RUNTYPE')) {
@@ -47,7 +47,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.5.0RC2";
+$pear_package_version = "1.6.1";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -188,10 +188,28 @@ foreach ($opts as $opt) {
     $param = !empty($opt[1]) ? $opt[1] : true;
     switch ($opt[0]) {
         case 'd':
+            if ($param === true) {
+                die('Invalid usage of "-d" option, expected -d config_value=value, ' .
+                    'received "-d"' . "\n");
+            }
+            $possible = explode('=', $param);
+            if (count($possible) != 2) {
+                die('Invalid usage of "-d" option, expected -d config_value=value, received "' .
+                    $param . '"' . "\n");
+            }
             list($key, $value) = explode('=', $param);
             $config->set($key, $value, 'user');
             break;
         case 'D':
+            if ($param === true) {
+                die('Invalid usage of "-d" option, expected -d config_value=value, ' .
+                    'received "-d"' . "\n");
+            }
+            $possible = explode('=', $param);
+            if (count($possible) != 2) {
+                die('Invalid usage of "-d" option, expected -d config_value=value, received "' .
+                    $param . '"' . "\n");
+            }
             list($key, $value) = explode('=', $param);
             $config->set($key, $value, 'system');
             break;
@@ -387,7 +405,7 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
             return; // E_STRICT
         }
         if ($GLOBALS['config']->get('verbose') < 4) {
-            return; // @silenced error, show all if debug is high enough
+            return false; // @silenced error, show all if debug is high enough
         }
     }
     $errortype = array (
@@ -411,6 +429,7 @@ function error_handler($errno, $errmsg, $file, $line, $vars) {
         $file = basename($file);
     }
     print "\n$prefix: $errmsg in $file on line $line\n";
+    return false;
 }
 
 

@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Test.php,v 1.12 2006/03/28 05:33:42 cellog Exp $
+ * @version    CVS: $Id: Test.php,v 1.23 2007/06/13 17:46:36 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -37,7 +37,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -79,11 +79,21 @@ class PEAR_Command_Test extends PEAR_Command_Common
                 ),
                 'phpunit' => array(
                     'shortopt' => 'u',
-                    'doc' => 'Search parameters for AllTests.php, and use that to run phpunit-based tests',
+                    'doc' => 'Search parameters for AllTests.php, and use that to run phpunit-based tests
+If none is found, all .phpt tests will be tried instead.',
                 ),
                 'tapoutput' => array(
                     'shortopt' => 't',
                     'doc' => 'Output run-tests.log in TAP-compliant format',
+                ),
+                'cgi' => array(
+                    'shortopt' => 'c',
+                    'doc' => 'CGI php executable (needed for tests with POST/GET section)',
+                    'arg' => 'PHPCGI',
+                ),
+                'coverage' => array(
+                    'shortopt' => 'x',
+                    'doc'      => 'Generate a code coverage report (requires Xdebug 2.0.0+)',
                 ),
             ),
             'doc' => '[testfile|dir ...]
@@ -115,17 +125,12 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
             return $this->raiseError('ERROR: cannot use both --phpunit and --tapoutput at the same time');
         }
         require_once 'PEAR/Common.php';
-        require_once 'PEAR/RunTest.php';
         require_once 'System.php';
         $log = new PEAR_Common;
         $log->ui = &$this->ui; // slightly hacky, but it will work
-        $run = new PEAR_RunTest($log, $options);
         $tests = array();
-        if (isset($options['recur'])) {
-            $depth = 4;
-        } else {
-            $depth = 1;
-        }
+        $depth = isset($options['recur']) ? 4 : 1;
+
         if (!count($params)) {
             $params[] = '.';
         }
@@ -138,104 +143,125 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
                 if (PEAR::isError($pname)) {
                     return $this->raiseError($pname);
                 }
+ 
                 $package = &$reg->getPackage($pname['package'], $pname['channel']);
                 if (!$package) {
                     return PEAR::raiseError('Unknown package "' .
                         $reg->parsedPackageNameToString($pname) . '"');
                 }
+
                 $filelist = $package->getFilelist();
                 foreach ($filelist as $name => $atts) {
                     if (isset($atts['role']) && $atts['role'] != 'test') {
                         continue;
                     }
-                    if (isset($options['phpunit'])) {
-                        if (!preg_match('/AllTests\.php$/i', $name)) {
-                            continue;
-                        }
-                    } else {
-                        if (!preg_match('/\.phpt$/', $name)) {
-                            continue;
-                        }
+
+                    if (isset($options['phpunit']) && preg_match('/AllTests\.php\\z/i', $name)) {
+                        $params = array($atts['installed_as']);
+                        break;
+                    } elseif (!preg_match('/\.phpt\\z/', $name)) {
+                        continue;
                     }
                     $params[] = $atts['installed_as'];
                 }
             }
         }
+
         foreach ($params as $p) {
             if (is_dir($p)) {
                 if (isset($options['phpunit'])) {
                     $dir = System::find(array($p, '-type', 'f',
                                                 '-maxdepth', $depth,
                                                 '-name', 'AllTests.php'));
-                } else {
-                    $dir = System::find(array($p, '-type', 'f',
-                                                '-maxdepth', $depth,
-                                                '-name', '*.phpt'));
+                    if (count($dir)) {
+                        $tests = $dir;
+                        break;
+                    }
                 }
+                $dir = System::find(array($p, '-type', 'f',
+                                            '-maxdepth', $depth,
+                                            '-name', '*.phpt'));
                 $tests = array_merge($tests, $dir);
             } else {
-                if (isset($options['phpunit'])) {
-                    if (!preg_match('/AllTests\.php$/i', $p)) {
-                        continue;
+                if (isset($options['phpunit']) && preg_match('/AllTests\.php\\z/i', $p)) {
+                    $tests = array($p);
+                    break;
+                }
+
+                if (!file_exists($p)) {
+                    if (!preg_match('/\.phpt\\z/', $p)) {
+                        $p .= '.phpt';
                     }
-                    $tests[] = $p;
+                    $dir = System::find(array(dirname($p), '-type', 'f',
+                                                '-maxdepth', $depth,
+                                                '-name', $p));
+                    $tests = array_merge($tests, $dir);
                 } else {
-                    if (!file_exists($p)) {
-                        if (!preg_match('/\.phpt$/', $p)) {
-                            $p .= '.phpt';
-                        }
-                        $dir = System::find(array(dirname($p), '-type', 'f',
-                                                    '-maxdepth', $depth,
-                                                    '-name', $p));
-                        $tests = array_merge($tests, $dir);
-                    } else {
-                        $tests[] = $p;
-                    }
+                    $tests[] = $p;
                 }
             }
         }
+        
         $ini_settings = '';
         if (isset($options['ini'])) {
             $ini_settings .= $options['ini'];
         }
+
         if (isset($_ENV['TEST_PHP_INCLUDE_PATH'])) {
             $ini_settings .= " -d include_path={$_ENV['TEST_PHP_INCLUDE_PATH']}";
         }
+
         if ($ini_settings) {
             $this->ui->outputData('Using INI settings: "' . $ini_settings . '"');
         }
         $skipped = $passed = $failed = array();
-        $this->ui->outputData('Running ' . count($tests) . ' tests', $command);
+        $tests_count = count($tests);
+        $this->ui->outputData('Running ' . $tests_count . ' tests', $command);
         $start = time();
-        if (isset($options['realtimelog'])) {
-            if (file_exists('run-tests.log')) {
-                unlink('run-tests.log');
-            }
+        if (isset($options['realtimelog']) && file_exists('run-tests.log')) {
+            unlink('run-tests.log');
         }
+        
         if (isset($options['tapoutput'])) {
-            $tap = '1..' . count($tests) . "\n";
+            $tap = '1..' . $tests_count . "\n";
         }
-        $i = 1;
+
+        require_once 'PEAR/RunTest.php';
+        $run = new PEAR_RunTest($log, $options);
+        $run->tests_count = $tests_count;
+
+        if (isset($options['coverage']) && extension_loaded('xdebug')){
+            $run->xdebug_loaded = true;
+        } else {
+            $run->xdebug_loaded = false;
+        }
+
+        $j = $i = 1;
         foreach ($tests as $t) {
             if (isset($options['realtimelog'])) {
                 $fp = @fopen('run-tests.log', 'a');
                 if ($fp) {
-                    fwrite($fp, "Running test $t...");
+                    fwrite($fp, "Running test [$i / $tests_count] $t...");
                     fclose($fp);
                 }
             }
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-            $result = $run->run($t, $ini_settings);
+            if (isset($options['phpunit'])) {
+                $result = $run->runPHPUnit($t, $ini_settings);
+            } else {
+                $result = $run->run($t, $ini_settings, $j);
+            }
             PEAR::staticPopErrorHandling();
             if (PEAR::isError($result)) {
-                $this->ui->log(0, $result->getMessage());
+                $this->ui->log($result->getMessage());
                 continue;
             }
+            
             if (isset($options['tapoutput'])) {
                 $tap .= $result[0] . ' ' . $i . $result[1] . "\n";
-                $i++;
                 continue;
             }
+            
             if (isset($options['realtimelog'])) {
                 $fp = @fopen('run-tests.log', 'a');
                 if ($fp) {
@@ -243,6 +269,7 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
                     fclose($fp);
                 }
             }
+            
             if ($result == 'FAILED') {
             	$failed[] = $t;
             }
@@ -252,7 +279,10 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
             if ($result == 'SKIPPED') {
             	$skipped[] = $t;
             }
+            
+            $j++;
         }
+
         $total = date('i:s', time() - $start);
         if (isset($options['tapoutput'])) {
             $fp = @fopen('run-tests.log', 'w');
@@ -271,11 +301,10 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
             	foreach ($failed as $failure) {
             		$output .= $failure . "\n";
             	}
-                if (isset($options['realtimelog'])) {
-                    $fp = @fopen('run-tests.log', 'a');
-                } else {
-                    $fp = @fopen('run-tests.log', 'w');
-                }
+                
+                $mode = isset($options['realtimelog']) ? 'a' : 'w';
+                $fp   = @fopen('run-tests.log', $mode);
+
                 if ($fp) {
                     fwrite($fp, $output, strlen($output));
                     fclose($fp);
@@ -299,5 +328,3 @@ Run regression tests with PHP\'s regression testing script (run-tests.php).',
     }
     // }}}
 }
-
-?>

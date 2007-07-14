@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.75 2006/11/19 23:50:09 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.79 2007/05/29 16:38:16 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -57,6 +57,10 @@ class PEAR_Command_Registry extends PEAR_Command_Common
                 'allchannels' => array(
                     'shortopt' => 'a',
                     'doc' => 'list installed packages from all channels',
+                    ),
+                'channelinfo' => array(
+                    'shortopt' => 'i',
+                    'doc' => 'output fully channel-aware data, even on failure',
                     ),
                 ),
             'doc' => '<package>
@@ -123,10 +127,33 @@ installed package.'
 
     function doList($command, $options, $params)
     {
-        if (isset($options['allchannels'])) {
+        $reg = &$this->config->getRegistry();
+        $channelinfo = isset($options['channelinfo']);
+        if (isset($options['allchannels']) && !$channelinfo) {
             return $this->doListAll($command, array(), $params);
         }
-        $reg = &$this->config->getRegistry();
+        if (isset($options['allchannels']) && $channelinfo) {
+            // allchannels with $channelinfo
+            unset($options['allchannels']);
+            $channels = $reg->getChannels();
+            $errors = array();
+            PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
+            foreach ($channels as $channel) {
+                $options['channel'] = $channel->getName();
+                $ret = $this->doList($command, $options, $params);
+
+                if (PEAR::isError($ret)) {
+                    $errors[] = $ret;
+                }
+            }
+            PEAR::staticPopErrorHandling();
+            if (count($errors)) {
+                // for now, only give first error
+                return PEAR::raiseError($errors[0]);
+            }
+            return true;
+        }
+
         if (count($params) == 1) {
             return $this->doFileList($command, $options, $params);
         }
@@ -141,21 +168,42 @@ installed package.'
         }
         $installed = $reg->packageInfo(null, null, $channel);
         usort($installed, array(&$this, '_sortinfo'));
-        $i = $j = 0;
+
         $data = array(
             'caption' => 'Installed packages, channel ' .
                 $channel . ':',
             'border' => true,
-            'headline' => array('Package', 'Version', 'State')
+            'headline' => array('Package', 'Version', 'State'),
+            'channel' => $channel,
             );
+        if ($channelinfo) {
+            $data['headline'] = array('Channel', 'Package', 'Version', 'State');
+        }
+
         foreach ($installed as $package) {
             $pobj = $reg->getPackage(isset($package['package']) ?
                                         $package['package'] : $package['name'], $channel);
-            $data['data'][] = array($pobj->getPackage(), $pobj->getVersion(),
+            if ($channelinfo) {
+                $packageinfo = array($pobj->getChannel(), $pobj->getPackage(), $pobj->getVersion(),
                                     $pobj->getState() ? $pobj->getState() : null);
+            } else {
+                $packageinfo = array($pobj->getPackage(), $pobj->getVersion(),
+                                    $pobj->getState() ? $pobj->getState() : null);
+            }
+            $data['data'][] = $packageinfo;
         }
-        if (count($installed)==0) {
-            $data = '(no packages installed from channel ' . $channel . ')';
+        if (count($installed) == 0) {
+            if (!$channelinfo) {
+                $data = '(no packages installed from channel ' . $channel . ')';
+            } else {
+                $data = array(
+                    'caption' => 'Installed packages, channel ' .
+                        $channel . ':',
+                    'border' => true,
+                    'channel' => $channel,
+                    'data' => '(no packages installed)',
+                );
+            }
         }
         $this->ui->outputData($data, $command);
         return true;
@@ -163,15 +211,18 @@ installed package.'
     
     function doListAll($command, $options, $params)
     {
+        // This duplicate code is deprecated over
+        // list --channelinfo, which gives identical
+        // output for list and list --allchannels.
         $reg = &$this->config->getRegistry();
         $installed = $reg->packageInfo(null, null, null);
         foreach ($installed as $channel => $packages) {
             usort($packages, array($this, '_sortinfo'));
-            $i = $j = 0;
             $data = array(
                 'caption' => 'Installed packages, channel ' . $channel . ':',
                 'border' => true,
-                'headline' => array('Package', 'Version', 'State')
+                'headline' => array('Package', 'Version', 'State'),
+                'channel' => $channel
                 );
             foreach ($packages as $package) {
                 $pobj = $reg->getPackage(isset($package['package']) ?
@@ -184,6 +235,7 @@ installed package.'
                     'caption' => 'Installed packages, channel ' . $channel . ':',
                     'border' => true,
                     'data' => array(array('(no packages installed)')),
+                    'channel' => $channel
                     );
             }
             $this->ui->outputData($data, $command);
@@ -637,9 +689,12 @@ installed package.'
         }
         $info['Release Notes'] = $obj->getNotes();
         if ($compat = $obj->getCompatible()) {
+            if (!isset($compat[0])) {
+                $compat = array($compat);
+            }
             $info['Compatible with'] = '';
             foreach ($compat as $package) {
-                $info['Compatible with'] .= $package['channel'] . '/' . $package['package'] .
+                $info['Compatible with'] .= $package['channel'] . '/' . $package['name'] .
                     "\nVersions >= " . $package['min'] . ', <= ' . $package['max'];
                 if (isset($package['exclude'])) {
                     if (is_array($package['exclude'])) {
@@ -651,7 +706,7 @@ installed package.'
                         $info['Not Compatible with'] .= "\n";
                     }
                     $info['Not Compatible with'] .= $package['channel'] . '/' .
-                        $package['package'] . "\nVersions " . $package['exclude'];
+                        $package['name'] . "\nVersions " . $package['exclude'];
                 }
             }
         }

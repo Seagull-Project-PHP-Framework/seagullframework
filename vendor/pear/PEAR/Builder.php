@@ -16,9 +16,12 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Builder.php,v 1.29 2006/03/05 21:09:18 cellog Exp $
+ * @version    CVS: $Id: Builder.php,v 1.31 2007/01/10 05:32:51 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
+ * 
+ * TODO: log output parameters in PECL command line
+ * TODO: msdev path in configuration
  */
 
 /**
@@ -35,7 +38,7 @@ require_once 'PEAR/PackageFile.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since PHP 4.0.2
  * @see        http://pear.php.net/manual/en/core.ppm.pear-builder.php
@@ -50,6 +53,10 @@ class PEAR_Builder extends PEAR_Common
 
     var $extensions_built = array();
 
+    /**
+     * @var string Used for reporting when it is not possible to pass function
+     *             via extra parameter, e.g. log, msdevCallback
+     */
     var $current_callback = null;
 
     // used for msdev builds
@@ -83,6 +90,7 @@ class PEAR_Builder extends PEAR_Common
     {
         if (is_object($descfile)) {
             $pkg = $descfile;
+            $descfile = $pkg->getPackageFile();
         } else {
             $pf = &new PEAR_PackageFile($this->config, $this->debug);
             $pkg = &$pf->fromPackageFile($descfile, PEAR_VALIDATE_NORMAL);
@@ -90,12 +98,22 @@ class PEAR_Builder extends PEAR_Common
                 return $pkg;
             }
         }
-        $dir = dirname($pkg->getArchiveFile());
+        $dir = dirname($descfile);
         $old_cwd = getcwd();
 
         if (!file_exists($dir) || !is_dir($dir) || !chdir($dir)) {
             return $this->raiseError("could not chdir to $dir");
         }
+        // packages that were in a .tar have the packagefile in this directory
+        $vdir = $pkg->getPackage() . '-' . $pkg->getVersion();
+        if (file_exists($dir) && is_dir($vdir)) {
+            if (chdir($vdir)) {
+                $dir = getcwd();
+            } else {
+                return $this->raiseError("could not chdir to " . realpath($vdir));
+            }
+        }
+
         $this->log(2, "building in $dir");
 
         $dsp = $pkg->getPackage().'.dsp';
@@ -103,9 +121,8 @@ class PEAR_Builder extends PEAR_Common
             return $this->raiseError("The DSP $dsp does not exist.");
         }
         // XXX TODO: make release build type configurable
-        $command = 'msdev '.$dsp.' /MAKE "'.$info['package']. ' - Release"';
+        $command = 'msdev '.$dsp.' /MAKE "'.$pkg->getPackage(). ' - Release"';
 
-        $this->current_callback = $callback;
         $err = $this->_runCommand($command, array(&$this, 'msdevCallback'));
         if (PEAR::isError($err)) {
             return $err;
@@ -169,6 +186,7 @@ class PEAR_Builder extends PEAR_Common
         if (!$this->_firstline)
             $this->_firstline = $data;
         $this->_lastline = $data;
+        call_user_func($this->current_callback, $what, $data);
     }
     // }}}
 
@@ -242,6 +260,7 @@ class PEAR_Builder extends PEAR_Common
      */
     function build($descfile, $callback = null)
     {
+        $this->current_callback = $callback;
         if (PEAR_OS == "Windows") {
             return $this->_build_win32($descfile,$callback);
         }
@@ -269,7 +288,6 @@ class PEAR_Builder extends PEAR_Common
         }
         $dir = getcwd();
         $this->log(2, "building in $dir");
-        $this->current_callback = $callback;
         putenv('PATH=' . $this->config->get('bin_dir') . ':' . getenv('PATH'));
         $err = $this->_runCommand("phpize", array(&$this, 'phpizeCallback'));
         if (PEAR::isError($err)) {
@@ -284,7 +302,7 @@ class PEAR_Builder extends PEAR_Common
         $configure_options = $pkg->getConfigureOptions();
         if ($configure_options) {
             foreach ($configure_options as $o) {
-                $default = array_key_exists($o['default']) ? $o['default'] : null;
+                $default = array_key_exists('default', $o) ? $o['default'] : null;
                 list($r) = $this->ui->userDialog('build',
                                                  array($o['prompt']),
                                                  array('text'),
@@ -333,7 +351,7 @@ class PEAR_Builder extends PEAR_Common
         if (!file_exists($build_dir) || !is_dir($build_dir) || !chdir($build_dir)) {
             return $this->raiseError("could not chdir to $build_dir");
         }
-        putenv('PHP_PEAR_VERSION=1.5.0RC2');
+        putenv('PHP_PEAR_VERSION=1.6.1');
         foreach ($to_run as $cmd) {
             $err = $this->_runCommand($cmd, $callback);
             if (PEAR::isError($err)) {

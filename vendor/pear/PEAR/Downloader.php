@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.116 2006/10/31 02:54:40 cellog Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.132 2007/06/11 05:30:38 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -316,7 +316,9 @@ class PEAR_Downloader extends PEAR_Common
                             PEAR::staticPopErrorHandling();
                             break;
                         }
-                        $a = $this->downloadHttp('http://' . $params[$i]->getChannel() .
+                        $mirror = $this->config->get('preferred_mirror', null,
+                                                     $params[$i]->getChannel());
+                        $a = $this->downloadHttp('http://' . $mirror .
                             '/channel.xml', $this->ui, $dir, null, $curchannel->lastModified());
 
                         PEAR::staticPopErrorHandling();
@@ -361,6 +363,9 @@ class PEAR_Downloader extends PEAR_Common
             while ($reverify) {
                 $reverify = false;
                 foreach ($params as $i => $param) {
+                    //PHP Bug 40768 / PEAR Bug #10944
+                    //Nested foreaches fail in PHP 5.2.1
+                    key($params);
                     $ret = $params[$i]->detectDependencies($params);
                     if (PEAR::isError($ret)) {
                         $reverify = true;
@@ -382,6 +387,18 @@ class PEAR_Downloader extends PEAR_Common
             return $a;
         }
         while (PEAR_Downloader_Package::mergeDependencies($params));
+        PEAR_Downloader_Package::removeDuplicates($params, true);
+        $errorparams = array();
+        if (PEAR_Downloader_Package::detectStupidDuplicates($params, $errorparams)) {
+            if (count($errorparams)) {
+                foreach ($errorparams as $param) {
+                    $name = $this->_registry->parsedPackageNameToString($param->getParsedPackage());
+                    $this->pushError('Duplicate package ' . $name . ' found', PEAR_INSTALLER_FAILED);
+                }
+                $a = array();
+                return $a;
+            }
+        }
         PEAR_Downloader_Package::removeInstalled($params);
         if (!count($params)) {
             $this->pushError('No valid packages found', PEAR_INSTALLER_FAILED);
@@ -401,6 +418,7 @@ class PEAR_Downloader extends PEAR_Common
         if (isset($this->_options['pretend'])) {
             return $params;
         }
+        $somefailed = false;
         foreach ($params as $i => $package) {
             PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
             $pf = &$params[$i]->download();
@@ -413,12 +431,24 @@ class PEAR_Downloader extends PEAR_Common
                             true) .
                         '"');
                 }
+                $somefailed = true;
                 continue;
             }
             $newparams[] = &$params[$i];
             $ret[] = array('file' => $pf->getArchiveFile(),
                                    'info' => &$pf,
                                    'pkg' => $pf->getPackage());
+        }
+        if ($somefailed) {
+            // remove params that did not download successfully
+            PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
+            $err = $this->analyzeDependencies($newparams, true);
+            PEAR::popErrorHandling();
+            if (!count($newparams)) {
+                $this->pushError('Download failed', PEAR_INSTALLER_FAILED);
+                $a = array();
+                return $a;
+            }
         }
         $this->_downloadedPackages = $ret;
         return $newparams;
@@ -427,7 +457,7 @@ class PEAR_Downloader extends PEAR_Common
     /**
      * @param array all packages to be installed
      */
-    function analyzeDependencies(&$params)
+    function analyzeDependencies(&$params, $force = false)
     {
         $hasfailed = $failed = false;
         if (isset($this->_options['downloadonly'])) {
@@ -463,7 +493,7 @@ class PEAR_Downloader extends PEAR_Common
                     }
                     continue;
                 }
-                if (!$reset && $param->alreadyValidated()) {
+                if (!$reset && $param->alreadyValidated() && !$force) {
                     continue;
                 }
                 if (count($deps)) {
@@ -659,7 +689,8 @@ class PEAR_Downloader extends PEAR_Common
             $this->log(3, '+ tmp dir created at ' . $downloaddir);
         }
         if (!is_writable($downloaddir)) {
-            if (PEAR::isError(System::mkdir(array('-p', $downloaddir)))) {
+            if (PEAR::isError(System::mkdir(array('-p', $downloaddir))) ||
+                  !is_writable($downloaddir)) {
                 return PEAR::raiseError('download directory "' . $downloaddir .
                     '" is not writeable.  Change download_dir config variable to ' .
                     'a writeable dir');
@@ -670,6 +701,13 @@ class PEAR_Downloader extends PEAR_Common
 
     function setDownloadDir($dir)
     {
+        if (!@is_writable($dir)) {
+            if (PEAR::isError(System::mkdir(array('-p', $dir)))) {
+                return PEAR::raiseError('download directory "' . $dir .
+                    '" is not writeable.  Change download_dir config variable to ' .
+                    'a writeable dir');
+            }
+        }
         $this->_downloadDir = $dir;
     }
 
@@ -747,9 +785,16 @@ class PEAR_Downloader extends PEAR_Common
         }
         $version = $this->_registry->packageInfo($parr['package'], 'version',
             $parr['channel']);
+        $base2 = false;
         if ($chan->supportsREST($this->config->get('preferred_mirror')) &&
-              $base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))) {
-            $rest = &$this->config->getREST('1.0', $this->_options);
+              (($base2 = $chan->getBaseURL('REST1.3', $this->config->get('preferred_mirror'))) ||
+              ($base = $chan->getBaseURL('REST1.0', $this->config->get('preferred_mirror'))))) {
+            if ($base2) {
+                $rest = &$this->config->getREST('1.3', $this->_options);
+                $base = $base2;
+            } else {
+                $rest = &$this->config->getREST('1.0', $this->_options);
+            }
             if (!isset($parr['version']) && !isset($parr['state']) && $version
                   && !isset($this->_options['downloadonly'])) {
                 $url = $rest->getDownloadURL($base, $parr, $state, $version);
@@ -777,7 +822,8 @@ class PEAR_Downloader extends PEAR_Common
             PEAR::staticPopErrorHandling();
             if (!isset($this->_options['force']) &&
                   !isset($this->_options['downloadonly']) &&
-                  !PEAR::isError($testversion)) {
+                  !PEAR::isError($testversion) &&
+                  !isset($parr['group'])) {
                 if (version_compare($testversion, $url['version'], '>=')) {
                     return PEAR::raiseError($this->_registry->parsedPackageNameToString(
                         $parr, true) . ' is already installed and is newer than detected ' .
@@ -797,6 +843,9 @@ class PEAR_Downloader extends PEAR_Common
             }
             $pf->setRawPackage($url['package']);
             $pf->setDeps($url['info']);
+            if ($url['compatible']) {
+                $pf->setCompatible($url['compatible']);
+            }
             $pf->setRawState($url['stability']);
             $url['info'] = &$pf;
             if (!extension_loaded("zlib") || isset($this->_options['nocompress'])) {
@@ -968,6 +1017,9 @@ class PEAR_Downloader extends PEAR_Common
             }
             $pf->setRawPackage($url['package']);
             $pf->setDeps($url['info']);
+            if ($url['compatible']) {
+                $pf->setCompatible($url['compatible']);
+            }
             $pf->setRawState($url['stability']);
             $url['info'] = &$pf;
             if (!extension_loaded("zlib") || isset($this->_options['nocompress'])) {
@@ -1160,142 +1212,235 @@ class PEAR_Downloader extends PEAR_Common
             $this->sortPackagesForInstall($packages);
     }
 
-    function _getDepTreeDP($package, $packages, &$deps, &$checked)
-    {
-        $pf = $package->getPackageFile();
-        if (!is_array($checked)) {
-            $checked = array();
-        }
-        if (!isset($checked[strtolower($package->getChannel())])) {
-            $checked[strtolower($package->getChannel())] = array();
-        }
-        if (!isset($checked[strtolower($package->getChannel())][strtolower($package->getPackage())])) {
-            $checked[strtolower($package->getChannel())][strtolower($package->getPackage())] = array();
-        }
-        $checked[strtolower($package->getChannel())][strtolower($package->getPackage())]
-            = true;
-        $pdeps = $pf->getDeps(true);
-        if (!$pdeps) {
-            return;
-        }
-        if ($pf->getPackagexmlVersion() == '1.0') {
-            foreach ($pdeps as $dep) {
-                if ($dep['type'] != 'pkg') {
-                    continue;
-                }
-                $deps['pear.php.net'][strtolower($dep['name'])] = true;
-                foreach ($packages as $p) {
-                    $dep['channel'] = 'pear.php.net';
-                    $dep['package'] = $dep['name'];
-                    if ($p->isEqual($dep)) {
-                        if (!isset($checked[strtolower($p->getChannel())]
-                              [strtolower($p->getPackage())])) {
-                            // add the dependency's dependencies to the tree
-                            $this->_getDepTreeDP($p, $packages, $deps, $checked);
-                        }
-                    }
-                }
-            }
-        } else {
-            $tdeps = array();
-            if (isset($pdeps['required']['package'])) {
-                $t = $pdeps['required']['package'];
-                if (!isset($t[0])) {
-                    $t = array($t);
-                }
-                $tdeps = array_merge($tdeps, $t);
-            }
-            if (isset($pdeps['required']['subpackage'])) {
-                $t = $pdeps['required']['subpackage'];
-                if (!isset($t[0])) {
-                    $t = array($t);
-                }
-                $tdeps = array_merge($tdeps, $t);
-            }
-            if (isset($pdeps['optional']['package'])) {
-                $t = $pdeps['optional']['package'];
-                if (!isset($t[0])) {
-                    $t = array($t);
-                }
-                $tdeps = array_merge($tdeps, $t);
-            }
-            if (isset($pdeps['optional']['subpackage'])) {
-                $t = $pdeps['optional']['subpackage'];
-                if (!isset($t[0])) {
-                    $t = array($t);
-                }
-                $tdeps = array_merge($tdeps, $t);
-            }
-            if (isset($pdeps['group'])) {
-                if (!isset($pdeps['group'][0])) {
-                    $pdeps['group'] = array($pdeps['group']);
-                }
-                foreach ($pdeps['group'] as $group) {
-                    if (isset($group['package'])) {
-                        $t = $group['package'];
-                        if (!isset($t[0])) {
-                            $t = array($t);
-                        }
-                        $tdeps = array_merge($tdeps, $t);
-                    }
-                    if (isset($group['subpackage'])) {
-                        $t = $group['subpackage'];
-                        if (!isset($t[0])) {
-                            $t = array($t);
-                        }
-                        $tdeps = array_merge($tdeps, $t);
-                    }
-                }
-            }
-            foreach ($tdeps as $dep) {
-                if (!isset($dep['channel'])) {
-                    $depchannel = '__uri';
-                } else {
-                    $depchannel = $dep['channel'];
-                }
-                if (!is_array($deps)) {
-                    $deps = array();
-                }
-                if (!isset($deps[$depchannel])) {
-                    $deps[$depchannel] = array();
-                }
-                $deps[$depchannel][strtolower($dep['name'])] = true;
-                foreach ($packages as $p) {
-                    $dep['channel'] = $depchannel;
-                    $dep['package'] = $dep['name'];
-                    if ($p->isEqual($dep)) {
-                        if (!isset($checked[strtolower($p->getChannel())]
-                              [strtolower($p->getPackage())])) {
-                            // add the dependency's dependencies to the tree
-                            $this->_getDepTreeDP($p, $packages, $deps, $checked);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Sort a list of arrays of array(downloaded packagefilename) by dependency.
      *
-     * It also removes duplicate dependencies
+     * This uses the topological sort method from graph theory, and the
+     * Structures_Graph package to properly sort dependencies for installation.
      * @param array an array of downloaded PEAR_Downloader_Packages
      * @return array array of array(packagefilename, package.xml contents)
      */
     function sortPackagesForInstall(&$packages)
     {
+        require_once 'Structures/Graph.php';
+        require_once 'Structures/Graph/Node.php';
+        require_once 'Structures/Graph/Manipulator/TopologicalSorter.php';
+        $depgraph = new Structures_Graph(true);
+        $nodes = array();
+        $reg = &$this->config->getRegistry();
         foreach ($packages as $i => $package) {
-            $checked = $deps = array();
-            $this->_getDepTreeDP($packages[$i], $packages, $deps, $checked);
-            if (!isset($this->_depTree)) {
-                $this->_depTree = array();
-            }
-            if (!isset($this->_depTree[$package->getChannel()])) {
-                $this->_depTree[$package->getChannel()] = array();
-            }
-            $this->_depTree[$package->getChannel()][$package->getPackage()] = $deps;
+            $pname = $reg->parsedPackageNameToString(
+                array(
+                    'channel' => $package->getChannel(),
+                    'package' => strtolower($package->getPackage()),
+                ));
+            $nodes[$pname] = new Structures_Graph_Node;
+            $nodes[$pname]->setData($packages[$i]);
+            $depgraph->addNode($nodes[$pname]);
         }
-        usort($packages, array(&$this, '_sortInstall'));
+        $deplinks = array();
+        foreach ($nodes as $package => $node) {
+            $pf = &$node->getData();
+            $pdeps = $pf->getDeps(true);
+            if (!$pdeps) {
+                continue;
+            }
+            if ($pf->getPackagexmlVersion() == '1.0') {
+                foreach ($pdeps as $dep) {
+                    if ($dep['type'] != 'pkg' ||
+                          (isset($dep['optional']) && $dep['optional'] == 'yes')) {
+                        continue;
+                    }
+                    $dname = $reg->parsedPackageNameToString(
+                          array(
+                              'channel' => 'pear.php.net',
+                              'package' => strtolower($dep['name']),
+                          ));
+                    if (isset($nodes[$dname]))
+                    {
+                        if (!isset($deplinks[$dname])) {
+                            $deplinks[$dname] = array();
+                        }
+                        $deplinks[$dname][$package] = 1;
+                        // dependency is in installed packages
+                        continue;
+                    }
+                    $dname = $reg->parsedPackageNameToString(
+                          array(
+                              'channel' => 'pecl.php.net',
+                              'package' => strtolower($dep['name']),
+                          ));
+                    if (isset($nodes[$dname]))
+                    {
+                        if (!isset($deplinks[$dname])) {
+                            $deplinks[$dname] = array();
+                        }
+                        $deplinks[$dname][$package] = 1;
+                        // dependency is in installed packages
+                        continue;
+                    }
+                }
+            } else {
+                // the only ordering we care about is:
+                // 1) subpackages must be installed before packages that depend on them
+                // 2) required deps must be installed before packages that depend on them
+                if (isset($pdeps['required']['subpackage'])) {
+                    $t = $pdeps['required']['subpackage'];
+                    if (!isset($t[0])) {
+                        $t = array($t);
+                    }
+                    $this->_setupGraph($t, $reg, $deplinks, $nodes, $package);
+                }
+                if (isset($pdeps['group'])) {
+                    if (!isset($pdeps['group'][0])) {
+                        $pdeps['group'] = array($pdeps['group']);
+                    }
+                    foreach ($pdeps['group'] as $group) {
+                        if (isset($group['subpackage'])) {
+                            $t = $group['subpackage'];
+                            if (!isset($t[0])) {
+                                $t = array($t);
+                            }
+                            $this->_setupGraph($t, $reg, $deplinks, $nodes, $package);
+                        }
+                    }
+                }
+                if (isset($pdeps['optional']['subpackage'])) {
+                    $t = $pdeps['optional']['subpackage'];
+                    if (!isset($t[0])) {
+                        $t = array($t);
+                    }
+                    $this->_setupGraph($t, $reg, $deplinks, $nodes, $package);
+                }
+                if (isset($pdeps['required']['package'])) {
+                    $t = $pdeps['required']['package'];
+                    if (!isset($t[0])) {
+                        $t = array($t);
+                    }
+                    $this->_setupGraph($t, $reg, $deplinks, $nodes, $package);
+                }
+                if (isset($pdeps['group'])) {
+                    if (!isset($pdeps['group'][0])) {
+                        $pdeps['group'] = array($pdeps['group']);
+                    }
+                    foreach ($pdeps['group'] as $group) {
+                        if (isset($group['package'])) {
+                            $t = $group['package'];
+                            if (!isset($t[0])) {
+                                $t = array($t);
+                            }
+                            $this->_setupGraph($t, $reg, $deplinks, $nodes, $package);
+                        }
+                    }
+                }
+            }
+        }
+        $this->_detectDepCycle($deplinks);
+        foreach ($deplinks as $dependent => $parents) {
+            foreach ($parents as $parent => $unused) {
+                $nodes[$dependent]->connectTo($nodes[$parent]);
+            }
+        }
+        $installOrder = Structures_Graph_Manipulator_TopologicalSorter::sort($depgraph);
+        $ret = array();
+        for ($i = 0; $i < count($installOrder); $i++) {
+            foreach ($installOrder[$i] as $index => $sortedpackage) {
+                $data = &$installOrder[$i][$index]->getData();
+                $ret[] = &$nodes[$reg->parsedPackageNameToString(
+                          array(
+                              'channel' => $data->getChannel(),
+                              'package' => strtolower($data->getPackage()),
+                          ))]->getData();
+            }
+        }
+        $packages = $ret;
+        return;
+    }
+
+    /**
+     * Detect recursive links between dependencies and break the cycles
+     *
+     * @param array
+     * @access private
+     */
+    function _detectDepCycle(&$deplinks)
+    {
+        do {
+            $keepgoing = false;
+            foreach ($deplinks as $dep => $parents) {
+                foreach ($parents as $parent => $unused) {
+                    // reset the parent cycle detector
+                    $this->_testCycle(null, null, null);
+                    if ($this->_testCycle($dep, $deplinks, $parent)) {
+                        $keepgoing = true;
+                        unset($deplinks[$dep][$parent]);
+                        if (count($deplinks[$dep]) == 0) {
+                            unset($deplinks[$dep]);
+                        }
+                        continue 3;
+                    }
+                }
+            }
+        } while ($keepgoing);
+    }
+
+    function _testCycle($test, $deplinks, $dep)
+    {
+        static $visited = array();
+        if ($test === null) {
+            $visited = array();
+            return;
+        }
+        // this happens when a parent has a dep cycle on another dependency
+        // but the child is not part of the cycle
+        if (isset($visited[$dep])) {
+            return false;
+        }
+        $visited[$dep] = 1;
+        if ($test == $dep) {
+            return true;
+        }
+        if (isset($deplinks[$dep])) {
+            if (in_array($test, array_keys($deplinks[$dep]), true)) {
+                return true;
+            }
+            foreach ($deplinks[$dep] as $parent => $unused) {
+                if ($this->_testCycle($test, $deplinks, $parent)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Set up the dependency for installation parsing
+     *
+     * @param array $t dependency information
+     * @param PEAR_Registry $reg
+     * @param array $deplinks list of dependency links already established
+     * @param array $nodes all existing package nodes
+     * @param string $package parent package name
+     * @access private
+     */
+    function _setupGraph($t, $reg, &$deplinks, &$nodes, $package)
+    {
+        foreach ($t as $dep) {
+            $depchannel = !isset($dep['channel']) ?
+                '__uri': $dep['channel'];
+            $dname = $reg->parsedPackageNameToString(
+                  array(
+                      'channel' => $depchannel,
+                      'package' => strtolower($dep['name']),
+                  ));
+            if (isset($nodes[$dname]))
+            {
+                if (!isset($deplinks[$dname])) {
+                    $deplinks[$dname] = array();
+                }
+                $deplinks[$dname][$package] = 1;
+            }
+        }
     }
 
     function _dependsOn($a, $b)
@@ -1485,7 +1630,7 @@ class PEAR_Downloader extends PEAR_Common
         } else {
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
-        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.5.0RC2/PHP/" .
+        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.6.1/PHP/" .
             PHP_VERSION . "\r\n";
         if (isset($this)) { // only pass in authentication for non-static calls
             $username = $config->get('username');
@@ -1508,7 +1653,7 @@ class PEAR_Downloader extends PEAR_Common
         $headers = array();
         $reply = 0;
         while (trim($line = fgets($fp, 1024))) {
-            if (preg_match('/^([^:]+):\s+(.*)\s*$/', $line, $matches)) {
+            if (preg_match('/^([^:]+):\s+(.*)\s*\\z/', $line, $matches)) {
                 $headers[strtolower($matches[1])] = trim($matches[2]);
             } elseif (preg_match('|^HTTP/1.[01] ([0-9]{3}) |', $line, $matches)) {
                 $reply = (int) $matches[1];
@@ -1534,7 +1679,7 @@ class PEAR_Downloader extends PEAR_Common
             }
         }
         if (isset($headers['content-disposition']) &&
-            preg_match('/\sfilename=\"([^;]*\S)\"\s*(;|$)/', $headers['content-disposition'], $matches)) {
+            preg_match('/\sfilename=\"([^;]*\S)\"\s*(;|\\z)/', $headers['content-disposition'], $matches)) {
             $save_as = basename($matches[1]);
         } else {
             $save_as = basename($url);

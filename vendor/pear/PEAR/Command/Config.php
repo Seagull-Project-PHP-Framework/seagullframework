@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.52 2006/03/05 21:32:47 cellog Exp $
+ * @version    CVS: $Id: Config.php,v 1.53 2007/06/11 05:11:53 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -354,6 +354,8 @@ and uninstall).
         $config->set('doc_dir', $windows ? "$root\\pear\\docs" : "$root/pear/docs");
         $config->set('test_dir', $windows ? "$root\\pear\\tests" : "$root/pear/tests");
         $config->set('cache_dir', $windows ? "$root\\pear\\cache" : "$root/pear/cache");
+        $config->set('download_dir', $windows ? "$root\\pear\\download" : "$root/pear/download");
+        $config->set('temp_dir', $windows ? "$root\\pear\\temp" : "$root/pear/temp");
         $config->set('bin_dir', $windows ? "$root\\pear" : "$root/pear");
         $config->writeConfigFile();
         $this->_showConfig($config);

@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 11.php,v 1.6 2006/12/14 00:29:32 cellog Exp $
+ * @version    CVS: $Id: 11.php,v 1.12 2007/06/19 04:31:49 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.3
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.3
  */
@@ -109,7 +109,7 @@ class PEAR_REST_11
                             }
                         }
                         if (!isset($unstable) && $release['s'] != 'stable') {
-                            $latest = $unstable = $release['v'];
+                            $unstable = $release['v'];
                             $state = $release['s'];
                         }
                         if (isset($latest) && !isset($state)) {
@@ -126,13 +126,14 @@ class PEAR_REST_11
                         $latest = false;
                     }
                     if ($dostable) {
-                        if ($state == 'stable') {
+                        // $state is not set if there are no releases
+                        if (isset($state) && $state == 'stable') {
                             $ret[$package] = array('stable' => $latest);
                         } else {
                             $ret[$package] = array('stable' => '-n/a-');
                         }
                     } else {
-                            $ret[$package] = array('stable' => $latest);
+                        $ret[$package] = array('stable' => $latest);
                     }
                     continue;
                 }
@@ -153,12 +154,10 @@ class PEAR_REST_11
                     $latest = false;
                 }
 
-                if ($latest) {
-                    if (isset($packageinfo['deps'])) {
-                        if (!is_array($packageinfo['deps']) ||
-                              !isset($packageinfo['deps'][0])) {
-                            $packageinfo['deps'] = array($packageinfo['deps']);
-                        }
+                if ($latest && isset($packageinfo['deps'])) {
+                    if (!is_array($packageinfo['deps']) ||
+                          !isset($packageinfo['deps'][0])) {
+                        $packageinfo['deps'] = array($packageinfo['deps']);
                     }
                     $d = false;
                     foreach ($packageinfo['deps'] as $dep) {
@@ -197,6 +196,101 @@ class PEAR_REST_11
         }
         PEAR::popErrorHandling();
         return $ret;
+    }
+
+    /**
+     * List all categories of a REST server
+     *
+     * @param string $base base URL of the server
+     * @return array of categorynames
+     */
+    function listCategories($base)
+    {
+        $categorylist = $this->_rest->retrieveData($base . 'c/categories.xml');
+        if (PEAR::isError($categorylist)) {
+            return $categorylist;
+        }
+        if (!is_array($categorylist) || !isset($categorylist['c'])) {
+            return array();
+        }
+        if (isset($categorylist['c']['_content'])) {
+            // only 1 category
+            $categorylist['c'] = array($categorylist['c']);
+        }
+        return $categorylist['c'];
+    }
+
+    /**
+     * List packages in a category of a REST server
+     *
+     * @param string $base base URL of the server
+     * @param string $category name of the category
+     * @param boolean $info also download full package info
+     * @return array of packagenames
+     */
+    function listCategory($base, $category, $info=false)
+    {
+        if ($info == false) {
+            $url = '%s'.'c/%s/packages.xml';
+        } else {
+            $url = '%s'.'c/%s/packagesinfo.xml';
+        }
+        $url = sprintf($url,
+                    $base,
+                    urlencode($category));
+            
+        // gives '404 Not Found' error when category doesn't exist
+        $packagelist = $this->_rest->retrieveData($url);
+        if (PEAR::isError($packagelist)) {
+            return $packagelist;
+        }
+        if (!is_array($packagelist)) {
+            return array();
+        }
+
+        if ($info == false) {
+            if (!isset($packagelist['p'])) {
+                return array();
+            }
+            if (!is_array($packagelist['p']) ||
+                !isset($packagelist['p'][0])) { // only 1 pkg
+                $packagelist = array($packagelist['p']);
+            } else {
+                $packagelist = $packagelist['p'];
+            }
+            return $packagelist;
+        } else {
+            // info == true
+            if (!isset($packagelist['pi'])) {
+                return array();
+            }
+            if (!is_array($packagelist['pi']) ||
+                !isset($packagelist['pi'][0])) { // only 1 pkg
+                $packagelist_pre = array($packagelist['pi']);
+            } else {
+                $packagelist_pre = $packagelist['pi'];
+            }
+
+            $packagelist = array();
+            foreach ($packagelist_pre as $i => $item) {
+                // compatibility with r/<latest.txt>.xml
+                if (isset($item['a']['r'][0])) {
+                    // multiple releases
+                    $item['p']['v'] = $item['a']['r'][0]['v'];
+                    $item['p']['st'] = $item['a']['r'][0]['s'];
+                } elseif (isset($item['a'])) {
+                    // first and only release
+                    $item['p']['v'] = $item['a']['r']['v'];
+                    $item['p']['st'] = $item['a']['r']['s'];
+                }
+
+                $packagelist[$i] = array('attribs' => $item['p']['r'],
+                                         '_content' => $item['p']['n'],
+                                         'info' => $item['p']);
+            }
+        }
+
+        return $packagelist;
     }
 
     /**

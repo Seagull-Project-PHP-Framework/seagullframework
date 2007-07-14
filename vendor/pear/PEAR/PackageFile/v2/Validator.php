@@ -17,7 +17,7 @@
 // |                                                                      |
 // +----------------------------------------------------------------------+
 //
-// $Id: Validator.php,v 1.96 2006/11/21 03:17:17 cellog Exp $
+// $Id: Validator.php,v 1.102 2007/06/10 04:16:51 cellog Exp $
 /**
  * Private validation class used by PEAR_PackageFile_v2 - do not use directly, its
  * sole purpose is to split up the PEAR/PackageFile/v2.php file to make it smaller
@@ -109,7 +109,7 @@ class PEAR_PackageFile_v2_Validator
               isset($test['dependencies']['required']) &&
               isset($test['dependencies']['required']['pearinstaller']) &&
               isset($test['dependencies']['required']['pearinstaller']['min']) &&
-              version_compare('1.5.0RC2',
+              version_compare('1.6.1',
                 $test['dependencies']['required']['pearinstaller']['min'], '<')) {
             $this->_pearVersionTooLow($test['dependencies']['required']['pearinstaller']['min']);
             return false;
@@ -466,11 +466,11 @@ class PEAR_PackageFile_v2_Validator
         $a = $this->_stupidSchemaValidate($structure, $this->_packageInfo['version'], '<version>');
         $a &= $this->_stupidSchemaValidate($structure, $this->_packageInfo['stability'], '<stability>');
         if ($a) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $this->_packageInfo['version']['release'])) {
                 $this->_invalidVersion('release', $this->_packageInfo['version']['release']);
             }
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $this->_packageInfo['version']['api'])) {
                 $this->_invalidVersion('api', $this->_packageInfo['version']['api']);
             }
@@ -519,13 +519,13 @@ class PEAR_PackageFile_v2_Validator
         $type = $installcondition ? '<installcondition><php>' : '<dependencies><required><php>';
         $this->_stupidSchemaValidate($structure, $dep, $type);
         if (isset($dep['min'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?\\z/',
                   $dep['min'])) {
                 $this->_invalidVersion($type . '<min>', $dep['min']);
             }
         }
         if (isset($dep['max'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?\\z/',
                   $dep['max'])) {
                 $this->_invalidVersion($type . '<max>', $dep['max']);
             }
@@ -536,7 +536,7 @@ class PEAR_PackageFile_v2_Validator
             }
             foreach ($dep['exclude'] as $exclude) {
                 if (!preg_match(
-                     '/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?$/',
+                     '/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?(?:-[a-zA-Z0-9]+)?\\z/',
                      $exclude)) {
                     $this->_invalidVersion($type . '<exclude>', $exclude);
                 }
@@ -554,21 +554,21 @@ class PEAR_PackageFile_v2_Validator
         );
         $this->_stupidSchemaValidate($structure, $dep, '<dependencies><required><pearinstaller>');
         if (isset($dep['min'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['min'])) {
                 $this->_invalidVersion('<dependencies><required><pearinstaller><min>',
                     $dep['min']);
             }
         }
         if (isset($dep['max'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['max'])) {
                 $this->_invalidVersion('<dependencies><required><pearinstaller><max>',
                     $dep['max']);
             }
         }
         if (isset($dep['recommended'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['recommended'])) {
                 $this->_invalidVersion('<dependencies><required><pearinstaller><recommended>',
                     $dep['recommended']);
@@ -579,7 +579,7 @@ class PEAR_PackageFile_v2_Validator
                 $dep['exclude'] = array($dep['exclude']);
             }
             foreach ($dep['exclude'] as $exclude) {
-                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                       $exclude)) {
                     $this->_invalidVersion('<dependencies><required><pearinstaller><exclude>',
                         $exclude);
@@ -641,19 +641,19 @@ class PEAR_PackageFile_v2_Validator
             $this->_DepchannelCannotBeUri('<dependencies>' . $group . $type);
         }
         if (isset($dep['min'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['min'])) {
                 $this->_invalidVersion('<dependencies>' . $group . $type . '<min>', $dep['min']);
             }
         }
         if (isset($dep['max'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['max'])) {
                 $this->_invalidVersion('<dependencies>' . $group . $type . '<max>', $dep['max']);
             }
         }
         if (isset($dep['recommended'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['recommended'])) {
                 $this->_invalidVersion('<dependencies>' . $group . $type . '<recommended>',
                     $dep['recommended']);
@@ -664,7 +664,7 @@ class PEAR_PackageFile_v2_Validator
                 $dep['exclude'] = array($dep['exclude']);
             }
             foreach ($dep['exclude'] as $exclude) {
-                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                       $exclude)) {
                     $this->_invalidVersion('<dependencies>' . $group . $type . '<exclude>',
                         $exclude);
@@ -713,19 +713,19 @@ class PEAR_PackageFile_v2_Validator
         }
         $this->_stupidSchemaValidate($structure, $dep, $type);
         if (isset($dep['min'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['min'])) {
                 $this->_invalidVersion(substr($type, 1) . '<min', $dep['min']);
             }
         }
         if (isset($dep['max'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['max'])) {
                 $this->_invalidVersion(substr($type, 1) . '<max', $dep['max']);
             }
         }
         if (isset($dep['recommended'])) {
-            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+            if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                   $dep['recommended'])) {
                 $this->_invalidVersion(substr($type, 1) . '<recommended', $dep['recommended']);
             }
@@ -735,7 +735,7 @@ class PEAR_PackageFile_v2_Validator
                 $dep['exclude'] = array($dep['exclude']);
             }
             foreach ($dep['exclude'] as $exclude) {
-                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                       $exclude)) {
                     $this->_invalidVersion(substr($type, 1) . '<exclude', $exclude);
                 }
@@ -932,13 +932,13 @@ class PEAR_PackageFile_v2_Validator
             }
             $this->_stupidSchemaValidate($required, $package, $type);
             if (is_array($package) && array_key_exists('min', $package)) {
-                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                       $package['min'])) {
                     $this->_invalidVersion(substr($type, 1) . '<min', $package['min']);
                 }
             }
             if (is_array($package) && array_key_exists('max', $package)) {
-                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                       $package['max'])) {
                     $this->_invalidVersion(substr($type, 1) . '<max', $package['max']);
                 }
@@ -948,7 +948,7 @@ class PEAR_PackageFile_v2_Validator
                     $package['exclude'] = array($package['exclude']);
                 }
                 foreach ($package['exclude'] as $exclude) {
-                    if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?$/',
+                    if (!preg_match('/^\d+(?:\.\d+)*(?:[a-zA-Z]+\d*)?\\z/',
                           $exclude)) {
                         $this->_invalidVersion(substr($type, 1) . '<exclude', $exclude);
                     }
@@ -1007,6 +1007,11 @@ class PEAR_PackageFile_v2_Validator
             $dirname = $iscontents ? '<contents>' : $unknown;
         } else {
             $dirname = '<dir name="' . $list['attribs']['name'] . '">';
+            if (preg_match('~/\.\.?(/|\\z)|^\.\.?/~',
+                          str_replace('\\', '/', $list['attribs']['name']))) {
+                // file contains .. parent directory or . cur directory
+                $this->_invalidDirName($list['attribs']['name']);
+            }
         }
         $res = $this->_stupidSchemaValidate($struc, $list, $dirname);
         if ($allowignore && $res) {
@@ -1036,6 +1041,12 @@ class PEAR_PackageFile_v2_Validator
                         $ignored_or_installed[$file['attribs']['name']] = array();
                     }
                     $ignored_or_installed[$file['attribs']['name']][] = 1;
+                    if (preg_match('~/\.\.?(/|\\z)|^\.\.?/~',
+                                  str_replace('\\', '/', $file['attribs']['as']))) {
+                        // file contains .. parent directory or . cur directory references
+                        $this->_invalidFileInstallAs($file['attribs']['name'],
+                            $file['attribs']['as']);
+                    }
                 }
             }
             if (isset($list['ignore'])) {
@@ -1054,17 +1065,27 @@ class PEAR_PackageFile_v2_Validator
             }
         }
         if (!$allowignore && isset($list['file'])) {
+            if (is_string($list['file'])) {
+                $this->_oldStyleFileNotAllowed();
+                return false;
+            }
             if (!isset($list['file'][0])) {
                 // single file
                 $list['file'] = array($list['file']);
             }
             foreach ($list['file'] as $i => $file)
             {
-                if (isset($file['attribs']) && isset($file['attribs']['name']) &&
-                      $file['attribs']['name']{0} == '.' &&
-                        $file['attribs']['name']{1} == '/') {
-                    // name is something like "./doc/whatever.txt"
-                    $this->_invalidFileName($file['attribs']['name']);
+                if (isset($file['attribs']) && isset($file['attribs']['name'])) {
+                    if ($file['attribs']['name']{0} == '.' &&
+                          $file['attribs']['name']{1} == '/') {
+                        // name is something like "./doc/whatever.txt"
+                        $this->_invalidFileName($file['attribs']['name'], $dirname);
+                    }
+                    if (preg_match('~/\.\.?(/|\\z)|^\.\.?/~',
+                                  str_replace('\\', '/', $file['attribs']['name']))) {
+                        // file contains .. parent directory or . cur directory
+                        $this->_invalidFileName($file['attribs']['name'], $dirname);
+                    }
                 }
                 if (isset($file['attribs']) && isset($file['attribs']['role'])) {
                     if (!$this->_validateRole($file['attribs']['role'])) {
@@ -1325,7 +1346,7 @@ class PEAR_PackageFile_v2_Validator
         $this->_stack->push(__FUNCTION__, 'error',
             array('version' => $version),
             'This package.xml requires PEAR version %version% to parse properly, we are ' .
-            'version 1.5.0RC2');
+            'version 1.6.1');
     }
 
     function _invalidTagOrder($oktags, $actual, $root)
@@ -1347,6 +1368,13 @@ class PEAR_PackageFile_v2_Validator
         $this->_stack->push(__FUNCTION__, 'error', array('type' => $type),
             '<%type%> is not allowed inside release <filelist>, only inside ' .
             '<contents>, use <ignore> and <install> only');
+    }
+
+    function _oldStyleFileNotAllowed()
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(),
+            'Old-style <file>name</file> is not allowed.  Use' .
+            '<file name="name" role="role"/>');
     }
 
     function _tagMissingAttribute($tag, $attr, $context)
@@ -1381,7 +1409,21 @@ class PEAR_PackageFile_v2_Validator
     {
         $this->_stack->push(__FUNCTION__, 'error', array(
             'file' => $file),
-            'File "%file%" cannot begin with "."');
+            'File "%file%" in directory "%dir%" cannot begin with "./" or contain ".."');
+    }
+
+    function _invalidFileInstallAs($file, $as)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(
+            'file' => $file, 'as' => $as),
+            'File "%file%" <install as="%as%"/> cannot contain "./" or contain ".."');
+    }
+
+    function _invalidDirName($dir)
+    {
+        $this->_stack->push(__FUNCTION__, 'error', array(
+            'dir' => $file),
+            'Directory "%dir%" cannot begin with "./" or contain ".."');
     }
 
     function _filelistCannotContainFile($filelist)
@@ -1625,13 +1667,13 @@ class PEAR_PackageFile_v2_Validator
     function _usesroletaskMustHaveChannelOrUri($role, $tag)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('role' => $role, 'tag' => $tag),
-            '<%tag%> must contain either <uri>, or <channel> and <package>');
+            '<%tag%> for role "%role%" must contain either <uri>, or <channel> and <package>');
     }
 
     function _usesroletaskMustHavePackage($role, $tag)
     {
         $this->_stack->push(__FUNCTION__, 'error', array('role' => $role, 'tag' => $tag),
-            '<%tag%> must contain <package>');
+            '<%tag%> for role "%role%" must contain <package>');
     }
 
     function _usesroletaskMustHaveRoleTask($tag, $type)
@@ -1648,7 +1690,7 @@ class PEAR_PackageFile_v2_Validator
 
     function _invalidDepGroupName($name)
     {
-        $this->_stack->push(__FUNCTION__, 'error', array('group' => $name),
+        $this->_stack->push(__FUNCTION__, 'error', array('name' => $name),
             'Invalid dependency group name "%name%"');
     }
 
@@ -1683,8 +1725,9 @@ class PEAR_PackageFile_v2_Validator
             return false;
         }
         $dir_prefix = dirname($this->_pf->_packageFile);
+        $common = new PEAR_Common;
         $log = isset($this->_pf->_logger) ? array(&$this->_pf->_logger, 'log') :
-            array('PEAR_Common', 'log');
+            array($common, 'log');
         $info = $this->_pf->getContents();
         $info = $info['bundledpackage'];
         if (!is_array($info)) {
@@ -1795,7 +1838,7 @@ class PEAR_PackageFile_v2_Validator
     {
         if (!function_exists("token_get_all")) {
             $this->_stack->push(__FUNCTION__, 'error', array('file' => $file),
-                'Parser error: token_get_all() function must exist to analyze source code');
+                'Parser error: token_get_all() function must exist to analyze source code, PHP may have been compiled with --disable-tokenizer');
             return false;
         }
         if (!defined('T_DOC_COMMENT')) {

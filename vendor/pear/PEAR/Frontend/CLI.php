@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CLI.php,v 1.66 2006/11/19 23:56:32 cellog Exp $
+ * @version    CVS: $Id: CLI.php,v 1.67 2007/03/14 13:42:24 timj Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/Frontend.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -672,6 +672,10 @@ class PEAR_Frontend_CLI extends PEAR_Frontend
                 $this->_endTable();
                 break;
             case 'list-all':
+                if (!isset($data['data'])) {
+                      $this->_displayLine('No packages in channel');
+                      break;
+                }
                 $this->_startTable($data);
                 if (isset($data['headline']) && is_array($data['headline'])) {
                     $this->_tableRow($data['headline'], array('bold' => true), array(1 => array('wrap' => 55)));

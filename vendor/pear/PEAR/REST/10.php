@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.43 2006/11/01 05:09:05 cellog Exp $
+ * @version    CVS: $Id: 10.php,v 1.48 2007/06/01 23:41:34 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.5.0RC2
+ * @version    Release: 1.6.1
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -259,12 +259,13 @@ class PEAR_REST_10
      * @param array $release an array of format array('v' => version, 's' => state)
      *                       describing the release to download
      * @param array $info list of all releases as defined by allreleases.xml
-     * @param bool $found determines whether the release was found or this is the next
-     *                    best alternative
+     * @param bool|null $found determines whether the release was found or this is the next
+     *                    best alternative.  If null, then versions were skipped because
+     *                    of PHP dependency
      * @return array|PEAR_Error
      * @access private
      */
-    function _returnDownloadURL($base, $package, $release, $info, $found)
+    function _returnDownloadURL($base, $package, $release, $info, $found, $phpversion = false)
     {
         if (!$found) {
             $release = $info['r'][0];
@@ -325,8 +326,13 @@ class PEAR_REST_10
             break;
         }
         if (isset($pinfo['dc']) && isset($pinfo['dp'])) {
-            $deprecated = array('channel' => (string) $pinfo['dc'],
-                                'package' => trim($pinfo['dp']['_content']));
+            if (is_array($pinfo['dp'])) {
+                $deprecated = array('channel' => (string) $pinfo['dc'],
+                                    'package' => trim($pinfo['dp']['_content']));
+            } else {
+                $deprecated = array('channel' => (string) $pinfo['dc'],
+                                    'package' => trim($pinfo['dp']));
+            }
         } else {
             $deprecated = false;
         }
@@ -348,6 +354,7 @@ class PEAR_REST_10
                       'info' => $packagexml,
                       'compatible' => $compatible,
                       'deprecated' => $deprecated,
+                      'php' => $phpversion
                 );
         }
     }
@@ -367,6 +374,99 @@ class PEAR_REST_10
         return $packagelist['p'];
     }
 
+    /**
+     * List all categories of a REST server
+     *
+     * @param string $base base URL of the server
+     * @return array of categorynames
+     */
+    function listCategories($base)
+    {
+        $categories = array();
+
+        // c/categories.xml does not exist;
+        // check for every package its category manually
+        // This is SLOOOWWWW : ///
+        $packagelist = $this->_rest->retrieveData($base . 'p/packages.xml');
+        if (PEAR::isError($packagelist)) {
+            return $packagelist;
+        }
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            $ret = array();
+            return $ret;
+        }
+        if (!is_array($packagelist['p'])) {
+            $packagelist['p'] = array($packagelist['p']);
+        }
+
+        PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
+        foreach ($packagelist['p'] as $package) {
+                $inf = $this->_rest->retrieveData($base . 'p/' . strtolower($package) . '/info.xml');
+                if (PEAR::isError($inf)) {
+                    PEAR::popErrorHandling();
+                    return $inf;
+                }
+                $cat = $inf['ca']['_content'];
+                if (!isset($categories[$cat])) {
+                    $categories[$cat] = $inf['ca'];
+                }
+        }
+        return array_values($categories);
+    }
+
+    /**
+     * List a category of a REST server
+     *
+     * @param string $base base URL of the server
+     * @param string $category name of the category
+     * @param boolean $info also download full package info
+     * @return array of packagenames
+     */
+    function listCategory($base, $category, $info=false)
+    {
+        // gives '404 Not Found' error when category doesn't exist
+        $packagelist = $this->_rest->retrieveData($base.'c/'.urlencode($category).'/packages.xml');
+        if (PEAR::isError($packagelist)) {
+            return $packagelist;
+        }
+        if (!is_array($packagelist) || !isset($packagelist['p'])) {
+            return array();
+        }
+        if (!is_array($packagelist['p']) ||
+            !isset($packagelist['p'][0])) { // only 1 pkg
+            $packagelist = array($packagelist['p']);
+        } else {
+            $packagelist = $packagelist['p'];
+        }
+
+        if ($info == true) {
+            // get individual package info
+            PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
+            foreach ($packagelist as $i => $packageitem) {
+                $url = sprintf('%s'.'r/%s/latest.txt',
+                        $base,
+                        strtolower($packageitem['_content']));
+                $version = $this->_rest->retrieveData($url);
+                if (PEAR::isError($version)) {
+                    break; // skipit
+                }
+                $url = sprintf('%s'.'r/%s/%s.xml',
+                        $base,
+                        strtolower($packageitem['_content']),
+                        $version);
+                $info = $this->_rest->retrieveData($url);
+                if (PEAR::isError($info)) {
+                    break; // skipit
+                }
+                $packagelist[$i]['info'] = $info;
+            }
+            PEAR::popErrorHandling();
+        }
+
+        return $packagelist;
+    }
+
+
     function listAll($base, $dostable, $basic = true, $searchpackage = false, $searchsummary = false)
     {
         $packagelist = $this->_rest->retrieveData($base . 'p/packages.xml');
@@ -383,6 +483,17 @@ class PEAR_REST_10
         }
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
+        }
+
+        // only search-packagename = quicksearch !
+        if ($searchpackage && (!$searchsummary || empty($searchpackage))) {
+            $newpackagelist = array();
+            foreach ($packagelist['p'] as $package) {
+                if (!empty($searchpackage) && stristr($package, $searchpackage) !== false) {
+                    $newpackagelist[] = $package;
+                }
+            }
+            $packagelist['p'] = $newpackagelist;
         }
         PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
         $next = .1;
@@ -523,7 +634,7 @@ class PEAR_REST_10
         return $ret;
     }
 
-    function listLatestUpgrades($base, $state, $installed, $channel, &$reg)
+    function listLatestUpgrades($base, $pref_state, $installed, $channel, &$reg)
     {
         $packagelist = $this->_rest->retrieveData($base . 'p/packages.xml');
         if (PEAR::isError($packagelist)) {
@@ -536,14 +647,12 @@ class PEAR_REST_10
         if (!is_array($packagelist['p'])) {
             $packagelist['p'] = array($packagelist['p']);
         }
-        if ($state) {
-            $states = $this->betterStates($state, true);
-        }
         foreach ($packagelist['p'] as $package) {
             if (!isset($installed[strtolower($package)])) {
                 continue;
             }
             $inst_version = $reg->packageInfo($package, 'version', $channel);
+            $inst_state = $reg->packageInfo($package, 'release_state', $channel);
             PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
             $info = $this->_rest->retrieveData($base . 'r/' . strtolower($package) .
                 '/allreleases.xml');
@@ -559,18 +668,32 @@ class PEAR_REST_10
             if (!is_array($info['r']) || !isset($info['r'][0])) {
                 $info['r'] = array($info['r']);
             }
+            // $info['r'] is sorted by version number
             foreach ($info['r'] as $release) {
                 if ($inst_version && version_compare($release['v'], $inst_version, '<=')) {
-                    continue;
+                    // not newer than the one installed
+                    break;
                 }
-                if ($state) {
-                    if (in_array($release['s'], $states)) {
-                        $found = true;
-                        break;
-                    }
-                } else {
+
+                // new version > installed version
+                if (!$pref_state) {
+                    // every state is a good state
                     $found = true;
                     break;
+                } else {
+                    $new_state = $release['s'];
+                    // if new state >= installed state: go
+                    if (in_array($new_state, $this->betterStates($inst_state, true))) {
+                        $found = true;
+                        break;
+                    } else {
+                        // only allow to lower the state of package,
+                        // if new state >= preferred state: go
+                        if (in_array($new_state, $this->betterStates($pref_state, true))) {
+                            $found = true;
+                            break;
+                        }
+                    }
                 }
             }
             if (!$found) {
@@ -642,8 +765,13 @@ class PEAR_REST_10
         }
         PEAR::popErrorHandling();
         if (isset($pinfo['dc']) && isset($pinfo['dp'])) {
-            $deprecated = array('channel' => (string) $pinfo['dc'],
-                                'package' => trim($pinfo['dp']['_content']));
+            if (is_array($pinfo['dp'])) {
+                $deprecated = array('channel' => (string) $pinfo['dc'],
+                                    'package' => trim($pinfo['dp']['_content']));
+            } else {
+                $deprecated = array('channel' => (string) $pinfo['dc'],
+                                    'package' => trim($pinfo['dp']));
+            }
         } else {
             $deprecated = false;
         }
