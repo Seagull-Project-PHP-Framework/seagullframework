@@ -259,9 +259,9 @@ class UserDAOTest extends UnitTestCase {
 
     function testGetRemainingPerms()
     {
-        $aRolePerms = $this->da->getPermNamesByRoleId(2);
+        $aRolePerms = $this->da->getPermNamesByRoleId(SGL_MEMBER);
         $aRemainingPerms = $this->da->getPermsNotInRole($aRolePerms);
-        $this->assertEqual(count($aRemainingPerms), 121);
+        $this->assertEqual(count($aRemainingPerms), 139);
     }
 
     //  //////////////////////////////////////////////////
