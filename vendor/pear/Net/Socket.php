@@ -17,7 +17,7 @@
 // |          Chuck Hagenbuch <chuck@horde.org>                           |
 // +----------------------------------------------------------------------+
 //
-// $Id: Socket.php,v 1.29 2007/03/28 04:53:35 chagenbu Exp $
+// $Id: Socket.php,v 1.31 2007/05/04 04:30:29 chagenbu Exp $
 
 require_once 'PEAR.php';
 
@@ -464,17 +464,14 @@ class Net_Socket extends PEAR {
             return $this->raiseError('not connected');
         }
 
-        ob_start();
         $line = '';
         $timeout = time() + $this->timeout;
         while (!feof($this->fp) && (!$this->timeout || time() < $timeout)) {
-            $line .= fgets($this->fp, $this->lineLength);
+            $line .= @fgets($this->fp, $this->lineLength);
             if (substr($line, -1) == "\n") {
-                ob_end_clean();
                 return rtrim($line, "\r\n");
             }
         }
-        ob_end_clean();
         return $line;
     }
 
