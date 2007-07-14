@@ -4,9 +4,9 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
+ * LICENSE: This source file is subject to version 3.01 of the PHP license
  * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
+ * http://www.php.net/license/3_01.txt.  If you did not receive a copy of
  * the PHP License and are unable to obtain it through the web, please
  * send a note to license@php.net so we can mail you a copy immediately.
  *
@@ -14,8 +14,8 @@
  * @package    PHP_CompatInfo
  * @author     Davey Shafik <davey@php.net>
  * @author     Laurent Laville <pear@laurent-laville.org>
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: CompatInfo.php,v 1.35 2006/09/19 21:59:14 farell Exp $
+ * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
+ * @version    CVS: $Id: CompatInfo.php,v 1.38 2007/04/02 21:29:07 farell Exp $
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      File available since Release 0.7.0
  */
@@ -45,8 +45,8 @@ require_once 'PHP/CompatInfo/const_array.php';
  * @author     Davey Shafik <davey@php.net>
  * @author     Laurent Laville <pear@laurent-laville.org>
  * @copyright  Copyright 2003 Davey Shafik and Synaptic Media. All Rights Reserved.
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.0
+ * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
+ * @version    Release: 1.4.3
  * @link       http://pear.php.net/package/PHP_CompatInfo
  * @since      Class available since Release 0.7.0
  */
@@ -393,8 +393,8 @@ class PHP_CompatInfo
      * token_get_all() which is nicely
      * wrapped in PHP_CompatInfo::_tokenize
      *
-     * @param array $tokens Array of PHP Tokens
-     * @param boolean $debug Show Extra Output
+     * @param  array   $tokens Array of PHP Tokens
+     * @param  boolean $debug  Show Extra Output
      * @access private
      * @return array
      * @since  0.7.0
@@ -465,11 +465,17 @@ class PHP_CompatInfo
                 }
                 $const = strtoupper($tokens[$i][1]);
                 $found = array_search($const, $akeys);
-                if ($found !== false && !in_array($const, $options['ignore_constants'])) {
-                    if (!PHP_CompatInfo::_ignore($GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'],
-                        $min_ver, $max_ver)) {
-                        $constants[] = $const;
-                        $latest_version = $GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'];
+                if ($found !== false) {
+                    if (is_string($tokens[$i-1]) || (token_name($tokens[$i-1][0]) == 'T_ENCAPSED_AND_WHITESPACE')) {
+                        // PHP 5 constant tokens found into a string
+                    } else {
+                        if (!in_array($const, $options['ignore_constants'])) {
+                            if (!PHP_CompatInfo::_ignore($GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'],
+                                $min_ver, $max_ver)) {
+                                $constants[] = $const;
+                                $latest_version = $GLOBALS['_PHP_COMPATINFO_CONST'][$const]['init'];
+                            }
+                        }
                     }
                 }
             }
@@ -597,8 +603,8 @@ class PHP_CompatInfo
     /**
      * Token a file or string
      *
-     * @param string $input Filename or PHP code
-     * @param boolean $is_string Whether or note the input is a string
+     * @param  string  $input     Filename or PHP code
+     * @param  boolean $is_string Whether or note the input is a string
      * @access private
      * @return array|false
      * @since  0.7.0
@@ -620,7 +626,7 @@ class PHP_CompatInfo
      * Retrieve a listing of every file in $directory and
      * all subdirectories. Taken from PEAR_PackageFileManager_File
      *
-     * @param string $directory full path to the directory you want the list of
+     * @param  string $directory full path to the directory you want the list of
      * @access private
      * @return array list of files in a directory
      * @since  0.7.0
