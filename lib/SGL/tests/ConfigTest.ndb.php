@@ -96,7 +96,48 @@ class ConfigTest extends UnitTestCase {
         $conf = $this->c->load($file);
         $this->c->set('quux', array('foo' => 'bar'));
         $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
-        $this->assertEqual(array('foo' => 'bar'), $this->c->get('quux'));
+    }
+
+    function testImprovedConfigGet()
+    {
+        $lifetime = SGL_Config::get('cache.lifetime');
+        $this->assertEqual($lifetime, 86400);
+    }
+
+    function testConfigGetEmptyValue()
+    {
+        $res = SGL_Config::get('db.collation');
+        $this->assertTrue(empty($res));
+    }
+
+    function testConfigGetFalseValue()
+    {
+        $res = SGL_Config::get('db.collation');
+        $this->assertTrue(!($res));
+    }
+
+    function testConfigGetStrictFalseValue()
+    {
+        $res = SGL_Config::get('db.mysqlCluster');
+        $this->assertNotIdentical($res, false); // returns a string of zero length
+    }
+
+    function testConfigGetNonExistentValue()
+    {
+        $res = SGL_Config::get('foo.bar');
+        $this->assertIsA($res, 'PEAR_Error');
+    }
+
+    function testConfigGetValueWithMissingDimension()
+    {
+        $res = SGL_Config::get('foo.');
+        $this->assertIsA($res, 'PEAR_Error');
+    }
+
+    function testConfigGetValueWithMissingDimensionNoSeparator()
+    {
+        $res = SGL_Config::get('foo');
+        $this->assertIsA($res, 'PEAR_Error');
     }
 }
 ?>
