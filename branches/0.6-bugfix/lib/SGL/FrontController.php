@@ -139,7 +139,6 @@ class SGL_FrontController
         if (SGL_Config::get('site.outputBuffering')) {
             ob_end_flush();
         }
-
         echo $output->data;
     }
 

@@ -111,7 +111,7 @@ class SGL_Request
                         $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
             $ret = SGL_REQUEST_AJAX;
 
-        } else if(isset($_SERVER['CONTENT_TYPE']) &&
+        } elseif (isset($_SERVER['CONTENT_TYPE']) &&
             $_SERVER['CONTENT_TYPE'] == 'application/x-amf') {
             $ret = SGL_REQUEST_AMF;
 
@@ -234,7 +234,7 @@ class SGL_Request
 
     function getManagerName()
     {
-        if (isset($this->aProps['managerName'])) {
+        if (isset( $this->aProps['managerName'])) {
             $ret = $this->aProps['managerName'];
         } else {
             $ret = 'default';
@@ -244,7 +244,7 @@ class SGL_Request
 
     function getActionName()
     {
-        if (isset($this->aProps['action'])) {
+        if ( isset($this->aProps['action'])) {
             $ret = $this->aProps['action'];
         } else {
             $ret = 'default';
@@ -255,9 +255,7 @@ class SGL_Request
     function getUri()
     {
         $uri = '';
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $sglSessionName = $conf['cookie']['name'];
+        $sglSessionName = SGL_Config::get('cookie.name');
 
         foreach ($this->aProps as $key => $value) {
             if (is_array($value)) {

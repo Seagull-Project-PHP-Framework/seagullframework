@@ -121,7 +121,7 @@ class SGL_Config
                 $ret = false;
             }
         }
-        if (!$ret) {
+        if (!isset($ret)) {
             SGL::logMessage("Config key '[$key1][$key2]' does not exist", PEAR_LOG_DEBUG);
         }
         return $ret;

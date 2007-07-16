@@ -97,8 +97,6 @@ class SGL_BlockLoader
         if (isset($sectionId)) {
             $this->_currentSectionId = $sectionId;
         }
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
     }
 
     /**
@@ -127,7 +125,6 @@ class SGL_BlockLoader
 
             //  update uncached blocks
             $this->_loadBlocks(false);
-
             SGL::logMessage('blocks from cache', PEAR_LOG_DEBUG);
         } else {
             $this->_loadBlocks();
@@ -148,12 +145,15 @@ class SGL_BlockLoader
     {
         $dbh = & SGL_DB::singleton();
         $addWhere = $getAll ? '' : "AND b.is_cached = 0 ";
+
+        $b  = SGL_Config::get('table.block');
+        $ba = SGL_Config::get('table.block_assignment');
+        $br = SGL_Config::get('table.block_role');
         $query = "
             SELECT
                 b.block_id, b.name, b.title, b.title_class,
                 b.body_class, b.position, b.params, b.is_cached
-            FROM    {$this->conf['table']['block']} b, {$this->conf['table']['block_assignment']} ba,
-                    {$this->conf['table']['block_role']} br
+            FROM    $b b, $ba ba, $br br
             WHERE   b.is_enabled = 1 " . $addWhere .
             "AND     (br.block_id = b.block_id AND
                       (br.role_id = '" . SGL_Session::getRoleId() . "' OR br.role_id = '" . SGL_ANY_ROLE . "')
@@ -162,10 +162,9 @@ class SGL_BlockLoader
             AND     ( ba.section_id = ".SGL_ANY_SECTION." OR ba.section_id = " . $this->_currentSectionId . ' )
             ORDER BY b.blk_order
         ';
-
         $aResult = $dbh->getAll($query);
 
-        if (!DB::isError($aResult)) {
+        if (!PEAR::isError($aResult)) {
             $this->_aData = $aResult;
 
             //  render content from each class
@@ -198,13 +197,12 @@ class SGL_BlockLoader
                     $blockPath = 'cms/blocks/Navigation';
                     $blockClass = 'Cms_Block_Navigation';
                 }
-                if (file_exists(SGL_MOD_DIR . '/' . $blockPath . '.php')) {
+                if (file_exists( SGL_MOD_DIR . '/' . $blockPath . '.php')) {
                     require_once SGL_MOD_DIR . '/' . $blockPath . '.php';
                 } else {
                     unset($this->_aData[$index]);
                     SGL::raiseError('cannot load ' . $blockClass . '; '
-                        . $blockPath . '.php does not exist',
-                        SGL_ERROR_NOFILE);
+                        . $blockPath . '.php does not exist', SGL_ERROR_NOFILE);
                 }
                 if (!class_exists($blockClass)) {
                     unset($this->_aData[$index]);

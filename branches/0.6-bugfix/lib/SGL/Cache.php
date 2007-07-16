@@ -54,8 +54,8 @@ class SGL_Cache
      * singleton must be instantiated statically and
      * by reference
      *
-     * @access  public
-     * @param boolean $forceNew     If true and $conf['cache']['enabled'] is set to false,
+     * @access public
+     * @param boolean $forceNew    If true and $conf['cache']['enabled'] is set to false,
      *                              this will be ignored and caching enabled
      * @static
      * @return  mixed reference to Cache_Lite object
@@ -67,23 +67,20 @@ class SGL_Cache
         // If the instance doesn't exist, create one
         if (!isset($instance) || $forceNew) {
             require_once 'Cache/Lite.php';
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
 
-            $isEnabled = ($forceNew) ? true : $conf['cache']['enabled'];
+            $isEnabled = ($forceNew) ? true : SGL_Config::get('cache.enabled');
             $options = array(
                 'cacheDir'  => SGL_TMP_DIR . '/',
-                'lifeTime'  => $conf['cache']['lifetime'],
+                'lifeTime'  => SGL_Config::get('cache.lifetime'),
                 'caching'   => $isEnabled);
-            // new options are added via issets for BC
-            if (isset($conf['cache']['cleaningFactor'])) {
-                $options['automaticCleaningFactor'] = $conf['cache']['cleaningFactor'];
+            if (SGL_Config::get('cache.cleaningFactor')) {
+                $options['automaticCleaningFactor'] = SGL_Config::get('cache.cleaningFactor');
             }
-            if (isset($conf['cache']['readControl'])) {
-                $options['readControl'] = $conf['cache']['readControl'];
+            if (SGL_Config::get('cache.readControl')) {
+                $options['readControl'] = SGL_Config::get('cache.readControl');
             }
-            if (isset($conf['cache']['writeControl'])) {
-                $options['writeControl'] = $conf['cache']['writeControl'];
+            if (SGL_Config::get('cache.writeControl')) {
+                $options['writeControl'] = SGL_Config::get('cache.writeControl');
             }
             $instance = new Cache_Lite($options);
         }
