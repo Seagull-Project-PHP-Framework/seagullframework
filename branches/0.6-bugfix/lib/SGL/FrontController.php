@@ -60,12 +60,11 @@ class SGL_FrontController
      *
      *  class FOO_Output extends SGL_Output {}
      *
-     * @param  array $conf
      */
-    function getOutputClass($conf)
+    function getOutputClass()
     {
-        if (!empty($conf['site']['customOutputClassName'])) {
-            $className = $conf['site']['customOutputClassName'];
+        if (SGL_Config::get('site.customOutputClassName')) {
+            $className = SGL_Config::get('site.customOutputClassName');
             $path = trim(preg_replace('/_/', '/', $className)) . '.php';
             require_once $path;
         } else {
@@ -92,7 +91,7 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-        $outputClass = SGL_FrontController::getOutputClass($input->getConfig());
+        $outputClass = SGL_FrontController::getOutputClass();
         $output = &new $outputClass();
 
         $setupNav = SGL::moduleIsEnabled('cms')
@@ -137,7 +136,7 @@ class SGL_FrontController
             $chain = new SGL_FilterChain($input->getFilters());
             $chain->doFilter($input, $output);
         }
-        if ($output->conf['site']['outputBuffering']) {
+        if (SGL_Config::get('site.outputBuffering')) {
             ob_end_flush();
         }
 
@@ -146,24 +145,22 @@ class SGL_FrontController
 
     function customFilterChain(&$input)
     {
-        $conf = $input->getConfig();
-        $req = $input->getRequest();
+        $req  = $input->getRequest();
 
         switch ($req->getType()) {
-
         case SGL_REQUEST_BROWSER:
         case SGL_REQUEST_CLI:
             $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
                 $req->getManagerName());
             //  load filters defined by specific manager
-            if (!empty($conf[$mgr]['filterChain'])) {
-                $aFilters = explode(',', $conf[$mgr]['filterChain']);
+            if (SGL_Config::get("$mgr.filterChain")) {
+                $aFilters = explode(',', SGL_Config::get("$mgr.filterChain"));
                 $input->setFilters($aFilters);
                 $ret = true;
 
             //  load sitewide custom filters
-            } elseif (!empty($conf['site']['filterChain'])) {
-                $aFilters = explode(',', $conf['site']['filterChain']);
+            } elseif (SGL_Config::get('site.filterChain')) {
+                $aFilters = explode(',', SGL_Config::get('site.filterChain'));
                 $input->setFilters($aFilters);
                 $ret = true;
             } else {
@@ -174,8 +171,8 @@ class SGL_FrontController
         case SGL_REQUEST_AJAX:
             $moduleName     = ucfirst($req->getModuleName());
             $providerName   = $moduleName . 'AjaxProvider';
-            if (!empty($conf[$providerName]['filterChain'])) {
-                $aFilters = explode(',', $conf[$providerName]['filterChain']);
+            if (SGL_Config::get("$providerName.filterChain")) {
+                $aFilters = explode(',', SGL_Config::get("$providerName.filterChain"));
             } else {
                 $aFilters = array(
                     'SGL_Task_Init',
@@ -190,7 +187,6 @@ class SGL_FrontController
             $ret = true;
             break;
 
-
         case SGL_REQUEST_AMF:
             $aFilters = array(
                 'SGL_Task_Init',
@@ -201,10 +197,7 @@ class SGL_FrontController
             $input->setFilters($aFilters);
             $ret = true;
             break;
-
-
         }
-
         return $ret;
     }
 
@@ -321,7 +314,7 @@ class SGL_MainProcess extends SGL_ProcessRequest
         if ($mgr->isValid()) {
             $ok = $mgr->process($input, $output);
             if (SGL_Error::count() && SGL_Session::getRoleId() != SGL_ADMIN
-                    && $mgr->conf['debug']['production']) {
+                    && SGL_Config::get('debug.production')) {
                 $mgr->handleError(SGL_Error::getLast(), $output);
             }
         }
