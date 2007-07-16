@@ -347,10 +347,15 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
             $aCookieData = $this->getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
                 $this->doLogin($aCookieData['uid'], $input);
-            }
 
-        //  or if page requires authentication and we're not debugging
-        } elseif (isset(
+                //  session data updated
+                $session = $input->get('session');
+                $timeout = !$session->updateIdle();
+            }
+        }
+
+        //  if page requires authentication and we're not debugging
+        if (isset(
                    $this->conf[$mgrName]['requiresAuth'])
                 && $this->conf[$mgrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
