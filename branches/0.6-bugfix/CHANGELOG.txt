@@ -12,6 +12,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+16-07-07    Correctly suppressed backtrace info if disabled in config option
+            (Dmitri Lakachauskis)
 09-07-07    Added support for charset and collation in MySQL (Dmitri Lakachauskis)
 09-07-07    Test runner now takes global config into account and works for Postgres
             (ajmixto)
