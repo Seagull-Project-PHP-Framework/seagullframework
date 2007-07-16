@@ -104,10 +104,10 @@ class SGL_Config
         if (is_array($key)) {
             $key1 = key($key);
             $key2 = $key[$key1];
-            if (isset($this->aProps[$key1][$key2])) {
+            if (isset( $this->aProps[$key1][$key2])) {
                 $ret = $this->aProps[$key1][$key2];
             } else {
-                $ret = SGL::raiseError("Config key '[$key1][$key2]' does not exist", SGL_ERROR_INVALIDCONFIG);
+                $ret = false;
             }
         } elseif (is_string($key)) {
             //  get Config singleton
@@ -118,8 +118,11 @@ class SGL_Config
             } else {
                 $key1 = isset($aKeys[0]) ? $aKeys[0] : 'no value' ;
                 $key2 = isset($aKeys[1]) ? $aKeys[1] : 'no value' ;
-                $ret = SGL::raiseError("Config key '[$key1][$key2]' does not exist", SGL_ERROR_INVALIDCONFIG);
+                $ret = false;
             }
+        }
+        if (!$ret) {
+            SGL::logMessage("Config key '[$key1][$key2]' does not exist", PEAR_LOG_DEBUG);
         }
         return $ret;
     }

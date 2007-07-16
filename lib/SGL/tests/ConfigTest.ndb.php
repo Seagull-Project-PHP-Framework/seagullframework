@@ -125,19 +125,34 @@ class ConfigTest extends UnitTestCase {
     function testConfigGetNonExistentValue()
     {
         $res = SGL_Config::get('foo.bar');
-        $this->assertIsA($res, 'PEAR_Error');
+        $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimension()
     {
         $res = SGL_Config::get('foo.');
-        $this->assertIsA($res, 'PEAR_Error');
+        $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimensionNoSeparator()
     {
         $res = SGL_Config::get('foo');
-        $this->assertIsA($res, 'PEAR_Error');
+        $this->assertFalse($res);
     }
+
+    function testImprovedConfigGetWithVars()
+    {
+        $d = 'cache';
+        $lifetime = SGL_Config::get("$d.lifetime");
+        $this->assertEqual($lifetime, 86400);
+    }
+
+    function testImprovedConfigGetWithVars2()
+    {
+        $mgr = 'default';
+        $ret = SGL_Config::get("$mgr.filterChain");
+        $this->assertFalse(SGL_Config::get("$mgr.filterChain"));
+    }
+
 }
 ?>
