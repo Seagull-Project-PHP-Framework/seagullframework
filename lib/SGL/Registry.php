@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
+// $Id: Registry.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 /**
  * Generic data storage object, referred to as $input.
@@ -85,10 +85,7 @@ class SGL_Registry
 
     function setRequest($req)
     {
-        #$reg = &SGL_RequestRegistry::singleton();
         $this->set('request', $req);
-        //  php 4 version of
-        //  self::singleton()->set('request', $req);
     }
 
     function getCurrentUrl()
