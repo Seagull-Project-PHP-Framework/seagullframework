@@ -90,15 +90,38 @@ class SGL_Config
         }
     }
 
+    /**
+     * Returns a config key
+     *
+     * @since Seagull 0.6.3 easier access with static calls, ie
+     * $c = SGL_Config::get('cache.lifetime');
+     *
+     * @param mixed $key array or string
+     * @return string the value of the config key
+     */
     function get($key)
     {
         if (is_array($key)) {
             $key1 = key($key);
             $key2 = $key[$key1];
-            return $this->aProps[$key1][$key2];
-        } else {
-            return $this->aProps[$key];
+            if (isset($this->aProps[$key1][$key2])) {
+                $ret = $this->aProps[$key1][$key2];
+            } else {
+                $ret = SGL::raiseError("Config key '[$key1][$key2]' does not exist", SGL_ERROR_INVALIDCONFIG);
+            }
+        } elseif (is_string($key)) {
+            //  get Config singleton
+            $c = &SGL_Config::singleton();
+            $aKeys = split('\.', trim($key));
+            if (isset($aKeys[0]) && isset($aKeys[1])) {
+                $ret = $c->get(array($aKeys[0] => $aKeys[1]));
+            } else {
+                $key1 = isset($aKeys[0]) ? $aKeys[0] : 'no value' ;
+                $key2 = isset($aKeys[1]) ? $aKeys[1] : 'no value' ;
+                $ret = SGL::raiseError("Config key '[$key1][$key2]' does not exist", SGL_ERROR_INVALIDCONFIG);
+            }
         }
+        return $ret;
     }
 
     function set($key, $value)
