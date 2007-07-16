@@ -454,6 +454,10 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         //  set PEAR error handler
         #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
+        if (empty($conf['debug']['showBacktrace'])) {
+           $options = &PEAR::getStaticProperty('PEAR_Error', 'skiptrace');
+           $options = true;
+        }
     }
 
     /**

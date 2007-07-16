@@ -55,7 +55,7 @@ class SGL_Cache
      * by reference
      *
      * @access public
-     * @param boolean $forceNew    If true and $conf['cache']['enabled'] is set to false,
+     * @param boolean $forceNew    If true and $SGL_Config::get('cache.enabled')is set to false,
      *                              this will be ignored and caching enabled
      * @static
      * @return  mixed reference to Cache_Lite object
