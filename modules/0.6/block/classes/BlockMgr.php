@@ -62,8 +62,13 @@ class BlockMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        require_once SGL_DAT_DIR . '/ary.blocksNames.php';
-        $this->aBlocksNames = $aBlocksNames;
+        //  if custom block layout specified (can be loaded in any module's init.php file)
+        if (isset($GLOBALS['_SGL']['aBlocksNames'])) {
+            $this->aBlocksNames = $GLOBALS['_SGL']['aBlocksNames'];
+        } else {
+            require_once SGL_DAT_DIR . '/ary.blocksNames.php';
+            $this->aBlocksNames = $aBlocksNames;
+        }
         $daUser             = &UserDAO::singleton();
         $daNav = (SGL::moduleIsEnabled('cms'))
             ? CmsNavigationDAO::singleton()
