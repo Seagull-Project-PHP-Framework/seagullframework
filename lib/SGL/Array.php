@@ -57,7 +57,7 @@ class SGL_Array
         if (is_array($elem)) {
             $clean = array_filter($elem);
         } else {
-            SGL::raiseError('array argument expected, got '.gettype($elem),
+            SGL::raiseError('array argument expected, got ' . gettype($elem),
                 SGL_ERROR_INVALIDARGS);
         }
         return $clean;
