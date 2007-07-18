@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+18-07-07    Improved customising of block layouts
 16-07-07    Shorthand config calling implemented, you can now do:
                 SGL_Config::get('cache.lifetime')
             NOTE: empty() and isset() cannot check the return value of a function
