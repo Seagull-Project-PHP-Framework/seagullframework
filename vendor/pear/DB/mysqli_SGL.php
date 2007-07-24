@@ -102,6 +102,10 @@ class DB_mysqli_SGL extends DB_mysqli
                 }
             } while (mysqli_next_result($this->connection));
         }
+        //  test for errors
+        if ($err = mysqli_error($this->connection)) {
+            $aRes = PEAR::raiseError($err);
+        }
         return $aRes;
     }
 }
