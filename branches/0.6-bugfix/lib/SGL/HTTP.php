@@ -58,6 +58,9 @@ class SGL_HTTP
      */
     function redirect($url = '')
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         //  if arg is not an array of params, pass straight to header function
         if (is_scalar($url) && strlen($url)) {
 
@@ -65,11 +68,11 @@ class SGL_HTTP
             if (substr($url, -1) != '/') {
                 $url .= '/';
             }
+            if (is_callable(array($conf['site']['outputUrlHandler'], 'makeLinkFromString'))) {
+               $outputUrlHandler = new $conf['site']['outputUrlHandler'];
+               $url = $outputUrlHandler->makeLinkFromString($url);
+            }
         } else {
-
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-
             //  get a reference to the request object
             $req = & SGL_Request::singleton();
 
@@ -104,6 +107,10 @@ class SGL_HTTP
             }
             $url .= '/' . $qs;
 
+            if (is_callable(array($conf['site']['outputUrlHandler'], 'makeLinkFromString'))) {
+               $outputUrlHandler = new $conf['site']['outputUrlHandler'];
+               $url = $outputUrlHandler->makeLinkFromString($url);
+            }
             //  check for absolute uri as specified in RFC 2616
             SGL_Url::toAbsolute($url);
 
@@ -114,7 +121,6 @@ class SGL_HTTP
             //  determine is session propagated in cookies or URL
             SGL_Url::addSessionInfo($url);
         }
-
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
         exit;
