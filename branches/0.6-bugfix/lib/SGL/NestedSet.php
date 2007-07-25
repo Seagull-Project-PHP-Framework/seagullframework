@@ -610,6 +610,22 @@ class SGL_NestedSet
         return $ns->createSubNode($id, $values);
     }
 
+    function createLeftNode($id, $values)
+    {
+        $this->_cleanMemoryCache($id);
+
+        $ns = $this->_getNestedSet();
+        return $ns->createLeftNode($id, $values);
+    }
+
+    function createRightNode($id, $values)
+    {
+        $this->_cleanMemoryCache($id);
+
+        $ns = $this->_getNestedSet();
+        return $ns->createRightNode($id, $values);
+    }
+
     function moveTree($id, $targetid, $pos, $copy = false)
     {
         $this->_cleanMemoryCache();

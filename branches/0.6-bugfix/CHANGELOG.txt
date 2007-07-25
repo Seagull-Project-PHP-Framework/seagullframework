@@ -12,6 +12,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+25-07-07    Added create{Left|Right}Node to SGL_NestedSet (biggs)
+24-07-07    Better error handling for stored proc multiple resultsets (mysqli_SGL.php)
 18-07-07    Improved customising of block layouts, for details see
             http://trac.seagullproject.org/wiki/Howto/Blocks#Creatingcustomblockpositions
 16-07-07    Shorthand config calling implemented, you can now do:
