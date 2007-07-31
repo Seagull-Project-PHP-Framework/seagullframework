@@ -41,6 +41,7 @@ define('SGL_RESPONSEFORMAT_JSON', 1);
 define('SGL_RESPONSEFORMAT_PLAIN', 2);
 define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
 define('SGL_RESPONSEFORMAT_HTML', 4);
+define('SGL_RESPONSEFORMAT_XML', 5);
 /**
  * Abstract model controller for all the 'ajax provider' classes.
  *
@@ -138,6 +139,11 @@ class SGL_AjaxProvider
         case SGL_RESPONSEFORMAT_JAVASCRIPT:
             $ret = $response;
             header('Content-Type: text/javascript');
+            break;
+
+        case SGL_RESPONSEFORMAT_XML:
+            $ret = $response;
+            header('Content-Type: text/xml');
             break;
 
         default:
