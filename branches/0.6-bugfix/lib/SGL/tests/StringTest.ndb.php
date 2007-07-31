@@ -110,6 +110,42 @@ class StringTest extends UnitTestCase {
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
+
+    function testClean()
+    {
+        // with a string
+        $string = '<p>here is a string with tags<p>';
+        $clean  = SGL_String::clean($string);
+        $this->assertEqual($clean, 'here is a string with tags');
+        // recursive on an array
+        $array  = array(
+            'foo1'  => '<p>here is a string with tags<p>',
+            'foo2'  => '<span>bar2</span>'
+        );
+        $cleanArray = SGL_String::clean($array);
+        $expectedArray = array(
+            'foo1'  => 'here is a string with tags',
+            'foo2'  => 'bar2'
+        );
+        $this->assertEqual($cleanArray, $expectedArray);
+        // more recursive
+        $array  = array(
+            'foo1'  => array(
+                'bar1' => '<p>here is a string with tags<p>',
+                'bar2' => '<span>bar2</span>'
+            ),
+            'foo2'  => '<p>Another tagged string</p>'
+        );
+        $cleanArray = SGL_String::clean($array);
+        $expectedArray = array(
+            'foo1'  => array(
+                'bar1' => 'here is a string with tags',
+                'bar2' => 'bar2'
+            ),
+            'foo2'  => 'Another tagged string'
+        );
+        $this->assertEqual($cleanArray, $expectedArray);
+    }
 }
 
 ?>
