@@ -129,12 +129,18 @@ class SGL_String
 
     function trimWhitespace($var)
     {
-        if (!is_array($var)) {
-            $clean = trim($var);
-        } else {
-            $clean = array_map(array('SGL_String', 'trimWhitespace'), $var);
+        if (!isset($var)) {
+            return false;
         }
-        return $clean;
+        if (is_array($var)) {
+            $newArray = array();
+            foreach ($var as $key => $value) {
+                $newArray[$key] = SGL_String::trimWhitespace($value);
+            }
+            return $newArray;
+        } else {
+            return trim($var);
+        }
     }
 
     /**
@@ -173,30 +179,37 @@ class SGL_String
      */
     function clean($var)
     {
-        if (isset($var)) {
-            if (!is_array($var)) {
-                $clean = strip_tags($var);
-            } else {
-                $clean = array_map(array('SGL_String', 'clean'), $var);
-            }
-            return SGL_String::trimWhitespace($clean);
-        } else {
+        if (!isset($var)) {
             return false;
+        }
+        $var = SGL_String::trimWhitespace($var);
+        if (is_array($var)) {
+            $newArray = array();
+            foreach ($var as $key => $value) {
+                $newArray[$key] = SGL_String::clean($value);
+            }
+            return $newArray;
+        } else {
+            return strip_tags($var);
         }
     }
 
     function removeJs($var)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (isset($var)) {
-            if (!is_array($var)) {
-                $search = "/<script[^>]*?>.*?<\/script\s*>/i";
-                $replace = '';
-                $clean = preg_replace($search, $replace, $var);
-            } else {
-                $clean = array_map(array('SGL_String', 'removeJs'), $var);
+        if (!isset($var)) {
+            return false;
+        }
+        if (is_array($var)) {
+            $newArray = array();
+            foreach ($var as $key => $value) {
+                $newArray[$key] = SGL_String::removeJs($value);
             }
+            return $newArray;
+        } else {
+            $search = "/<script[^>]*?>.*?<\/script\s*>/i";
+            $replace = '';
+            $clean = preg_replace($search, $replace, $var);
+            return $clean;
         }
         return SGL_String::trimWhitespace($clean);
     }
