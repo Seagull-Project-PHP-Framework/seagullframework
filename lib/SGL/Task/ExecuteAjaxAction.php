@@ -22,16 +22,7 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
                 SGL_ERROR_NOCLASS);
         }
         $oProvider = new $providerClass();
-        if (method_exists($oProvider, $method)) {
-            if (!empty($input->ajaxRequestMessage)) {
-                $response = $input->ajaxRequestMessage;
-            } else {
-                $response = $oProvider->$method();
-            }
-            $output->data = $oProvider->processResponse($response);
-        } else {
-            $output->data = 'requested method does not exist';
-        }
+        $output->data = $oProvider->process($input, $output);
     }
 }
 ?>
