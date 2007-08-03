@@ -4,9 +4,9 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
 {
     function process(&$input, &$output)
     {
-        $req = $input->getRequest();
+        $req        = $input->getRequest();
         $moduleName = $req->getModuleName();
-        $method = $req->getActionName();
+        $method     = $req->getActionName();
 
         $providerFile = SGL_MOD_DIR . '/' .($moduleName) . '/classes/' .
             ucfirst($moduleName) . 'AjaxProvider.php';
@@ -23,7 +23,11 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
         }
         $oProvider = new $providerClass();
         if (method_exists($oProvider, $method)) {
-            $response = $oProvider->$method();
+            if (!empty($input->ajaxRequestMessage)) {
+                $response = $input->ajaxRequestMessage;
+            } else {
+                $response = $oProvider->$method();
+            }
             $output->data = $oProvider->processResponse($response);
         } else {
             $output->data = 'requested method does not exist';
