@@ -13,10 +13,6 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
         $session = $input->get('session');
         $timeout = !$session->updateIdle();
 
-        $req     = $input->getRequest();
-        $mgrName = $req->getManagerName();
-        $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($mgrName);
-
         //  test for anonymous session and rememberMe cookie
         if ($session->isAnonymous()
                 && !empty($this->conf['cookie']['rememberMeEnabled'])) {
@@ -30,23 +26,30 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
             }
         }
 
-        //  or if page requires authentication and we're not debugging
-        if (!empty($this->conf[$mgrName]['requiresAuth'])
-                && $this->conf['debug']['authorisationEnabled']) {
-            //  check that session is valid
-            if (!$session->isValid()) {
-                $input->ajaxRequestMessage = array(
-                    'type'    => 'error',
-                    'message' => SGL_Output::translate('authentication required')
-                );
+        $req = $input->getRequest();
+        $actionName = $req->getActionName();
+        $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
 
-            //  or timed out
-            } elseif ($timeout) {
-                $session->destroy();
-                $input->ajaxRequestMessage = array(
-                    'type'    => 'error',
-                    'message' => SGL_Output::translate('session timeout')
-                );
+        //  or if page requires authentication and we're not debugging
+        if (!empty($this->conf[$providerContainer]['requiresAuth'])
+                && $this->conf['debug']['authorisationEnabled']) {
+            $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
+            $aMethods = array_map('trim', $aMethods);
+            if (in_array($actionName, $aMethods)) {
+                //  check that session is valid
+                if (!$session->isValid()) {
+                    $input->ajaxRequestMessage = array(
+                        'type'    => 'error',
+                        'message' => SGL_Output::translate('authentication required')
+                    );
+                //  or timed out
+                } elseif ($timeout) {
+                    $session->destroy();
+                    $input->ajaxRequestMessage = array(
+                        'type'    => 'error',
+                        'message' => SGL_Output::translate('session timeout')
+                    );
+                }
             }
         }
 
