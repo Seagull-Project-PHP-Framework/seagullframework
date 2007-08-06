@@ -101,6 +101,7 @@ class SGL_Config
      */
     function get($key)
     {
+        //  instance call with 2 keys: $c->get(array('foo' => 'bar'));
         if (is_array($key)) {
             $key1 = key($key);
             $key2 = $key[$key1];
@@ -109,12 +110,18 @@ class SGL_Config
             } else {
                 $ret = false;
             }
+        //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
-            //  get Config singleton
             $c = &SGL_Config::singleton();
             $aKeys = split('\.', trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
+
+    	    // instance call with 1 key: $c->get('foo');
+            } elseif (isset($this->aProps[$key])){
+                $ret = $this->aProps[$key];
+
+            //  else set defaults
             } else {
                 $key1 = isset($aKeys[0]) ? $aKeys[0] : 'no value' ;
                 $key2 = isset($aKeys[1]) ? $aKeys[1] : 'no value' ;
@@ -122,7 +129,8 @@ class SGL_Config
             }
         }
         if (!isset($ret)) {
-            SGL::logMessage("Config key '[$key1][$key2]' does not exist", PEAR_LOG_DEBUG);
+            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
+                PEAR_LOG_DEBUG);
         }
         return $ret;
     }
