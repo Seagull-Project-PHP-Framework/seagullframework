@@ -22,7 +22,7 @@ class SGL_UrlParser_SimpleStrategy extends SGL_UrlParserStrategy
      * @param SGL_Url $url
      * @return array        An array to be assigned to SGL_Url::aQueryData
      */
-    function parseQueryString(/*SGL_Url*/$url, $conf)
+    function parseQueryString(/*SGL_Url*/$url)
     {
         $ret = array();
 
@@ -84,14 +84,14 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
      * @return array        An array to be assigned to SGL_Url::aQueryData
      * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
      */
-    function parseQueryString(/*SGL_Url*/$url, $conf)
+    function parseQueryString(/*SGL_Url*/$url)
     {
         $aUriAliases = $this->da->getAllAliases();
-        $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
+        $aUriParts = SGL_Url::toPartialArray($url->url, SGL_Config::get('site.frontScriptName'));
 
         //    The alias will always be the second uri part in the array
         //    FIXME: needs to be more flexible
-        $countUriParts = (empty($conf['site']['frontScriptName'])) ? 0 : 1;
+        $countUriParts = SGL_Config::get('site.frontScriptName') ? 1 : 0;
         $ret = array();
         if (count($aUriParts) > $countUriParts) {
             $alias = array_shift($aUriParts);
@@ -117,7 +117,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 
                     $tmp = new stdClass();
                     $tmp->url = $aliasUri . '/' . implode('/', $aUriParts);
-                    $ret = parent::parseQueryString($tmp, $conf);
+                    $ret = parent::parseQueryString($tmp);
                 }
             }
         }

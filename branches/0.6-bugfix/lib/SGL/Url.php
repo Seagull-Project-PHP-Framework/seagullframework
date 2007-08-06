@@ -158,7 +158,7 @@ class SGL_URL
     *
     * @todo the main URL attributes always get set twice, this needs to be optimised
     */
-    function __construct($url = null, $useBrackets = true, $parserStrategy = null, $conf = null)
+    function __construct($url = null, $useBrackets = true, $parserStrategy = null)
     {
         $this->useBrackets = $useBrackets;
         $this->url         = $url;
@@ -169,13 +169,6 @@ class SGL_URL
         $this->path        = '';
         $this->aQueryData = array();
         $this->anchor      = '';
-        //  get default config
-        if (is_null($conf)) {
-            $c = &SGL_Config::singleton();
-            $this->conf = $c->getAll();
-        } else {
-            $this->conf = $conf;
-        }
         //  setup strategies array
         //  if no strats are provided, use native SEF strategy
         if (is_null($parserStrategy)) {
@@ -190,7 +183,7 @@ class SGL_URL
         } else {
             SGL::raiseError('unrecognised url strategy');
         }
-        $this->frontScriptName = $this->conf['site']['frontScriptName'];
+        $this->frontScriptName = SGL_Config::get('site.frontScriptName');
     }
 
     /**
@@ -205,7 +198,7 @@ class SGL_URL
 
             // FIXME: get rid of this
             if (is_a($this->aStrategies[0], 'SGL_UrlParser_SimpleStrategy')) {
-                $this->aQueryData = $this->parseQueryString($this->conf);
+                $this->aQueryData = $this->parseQueryString();
                 return;
             }
 
@@ -319,7 +312,7 @@ class SGL_URL
                     if (isset($urlinfo['query']) && empty($this->querystring)) {
                         $this->querystring = $urlinfo['query'];
                     }
-                    $ret = $this->parseQueryString($this->conf);
+                    $ret = $this->parseQueryString();
 
                     if (PEAR::isError($ret)) {
                         return $ret;
@@ -338,7 +331,7 @@ class SGL_URL
                 }
             }
             if (!array_key_exists('query', $urlinfo)) {
-                $ret = $this->parseQueryString($this->conf);
+                $ret = $this->parseQueryString();
 
                 if (PEAR::isError($ret)) {
                     return $ret;
@@ -364,9 +357,7 @@ class SGL_URL
     {
         static $instance;
         if (!isset($instance)) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $parserStrategy = $conf['site']['outputUrlHandler'];
+            $parserStrategy = SGL_Config::get('site.outputUrlHandler');
             $class = __CLASS__;
             $instance = new $class(null, true, new $parserStrategy());
         }
@@ -438,13 +429,13 @@ class SGL_URL
      * @param array $conf
      * @return array
      */
-    function parseQueryString($conf)
+    function parseQueryString()
     {
         foreach ($this->aStrategies as $strategy) {
 
             //  all strategies will attempt to parse url, overwriting
             //  previous results as they do
-            $res = $strategy->parseQueryString($this, $conf);
+            $res = $strategy->parseQueryString($this);
             if (PEAR::isError($res)) {
                 return $res;
             } else {
@@ -452,8 +443,8 @@ class SGL_URL
             }
         }
         //  reverse order of strats so Classic comes last in array and overrides SEF
-        if (!empty($conf['site']['outputUrlHandler'])
-                && $conf['site']['outputUrlHandler'] == 'SGL_UrlParser_ClassicStrategy') {
+        if (SGL_Config::get('site.outputUrlHandler')
+                && SGL_Config::get('site.outputUrlHandler') == 'SGL_UrlParser_ClassicStrategy') {
             $tmp = array_reverse($this->aRes);
             $this->aRes = $tmp;
         }
@@ -602,7 +593,7 @@ class SGL_URL
      *
      * @abstract
      */
-    function resolveServerVars($conf = null)
+    function resolveServerVars()
     {
         //  cgi SERVER vars hack causes probs w/quickform
         if (!is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
@@ -618,11 +609,11 @@ class SGL_URL
             //  a ? is part of $conf['site']['frontScriptName'] and REQUEST_URI has more info
             } elseif ((strlen($_SERVER['REQUEST_URI']) > strlen($_SERVER['PHP_SELF'])
                     && strstr($_SERVER['REQUEST_URI'], '?')
-                    && !isset($conf['setup']))) {
+                    && ! SGL_Config::get('site.setup'))) {
                 $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
 
             // we don't want to have index.php in our url, so REQUEST_URI as more info
-            } elseif ($conf['site']['frontScriptName'] == false) {
+            } elseif (!SGL_Config::get('site.frontScriptName')) {
                 $_SERVER['PHP_SELF'] = $_SERVER['REQUEST_URI'];
             } else {
                 //  do nothing, PHP_SELF is valid
@@ -630,13 +621,14 @@ class SGL_URL
 
         //  it's IIS
         } else {
-            $frontScriptName = is_null($conf) ? 'index.php' : $conf['site']['frontScriptName'];
+            $frontScriptName = SGL_Config::get('site.frontScriptName')
+                ? SGL_Config::get('site.frontScriptName')
+                : 'index.php';
             if (substr($_SERVER['SCRIPT_NAME'], -1, 1) != substr($frontScriptName, -1, 1)) {
                 $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . '?' . @$_SERVER['QUERY_STRING'];
             } else {
                 $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] . @$_SERVER['QUERY_STRING'];
             }
-
         }
     }
 
@@ -692,10 +684,10 @@ class SGL_URL
         }
 
         $retUrl = $this->protocol . '://'
-                   . $this->user . (!empty($this->pass) ? ':' : '')
-                   . $this->pass . (!empty($this->user) ? '@' : '')
-                   . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
-                   . $this->path;
+           . $this->user . (!empty($this->pass) ? ':' : '')
+           . $this->pass . (!empty($this->user) ? '@' : '')
+           . $this->host . ($this->port == $this->getStandardPort($this->protocol) ? '' : ':' . $this->port)
+           . $this->path;
 
         //  handle case for user's homedir, ie, presence of tilda: example.com/~seagull
         if (preg_match('/~/', $retUrl)) {
@@ -778,9 +770,7 @@ class SGL_URL
      */
     function addSessionInfo(&$url)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        if ($conf['session']['allowedInUri']) {
+        if (SGL_Config::get('session.allowedInUri')) {
 
             //  determine is session propagated in cookies or URL
             $sessionInfo = defined('SID') ? SID : '';
@@ -800,9 +790,7 @@ class SGL_URL
      */
     function removeSessionInfo(&$aUrl)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $key = array_search($conf['cookie']['name'], $aUrl);
+        $key = array_search(SGL_Config::get('cookie.name'), $aUrl);
         if ($key !== false) {
             unset($aUrl[$key], $aUrl[$key + 1]);
         }

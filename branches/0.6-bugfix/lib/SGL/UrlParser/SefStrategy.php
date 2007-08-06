@@ -59,18 +59,18 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
      * @return array        An array to be assigned to SGL_Url::aQueryData
      * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
      */
-    function parseQueryString(/*SGL_Url*/$url, $conf)
+    function parseQueryString(/*SGL_Url*/$url)
     {
-        $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
+        $aUriParts = SGL_Url::toPartialArray($url->url, SGL_Config::get('site.frontScriptName'));
 
         //  remap
-        if ($conf['site']['frontScriptName'] != false) {
+        if (SGL_Config::get('site.frontScriptName')) {
             $aParsedUri['frontScriptName'] = array_shift($aUriParts);
 
             //  if frontScriptName empty, get from config
             if (empty($aParsedUri['frontScriptName'])
-                    || $aParsedUri['frontScriptName'] != $conf['site']['frontScriptName']) {
-                $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
+                    || $aParsedUri['frontScriptName'] != SGL_Config::get('site.frontScriptName')) {
+                $aParsedUri['frontScriptName'] = SGL_Config::get('site.frontScriptName');
             }
         }
 
@@ -82,11 +82,11 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $mgrCopy = array_shift($aUriParts);
             $aParsedUri['managerName'] = strtolower($mgrCopy);
         } else {
-            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
-            $aParsedUri['managerName'] = $mgrCopy = $conf['site']['defaultManager'];
-            if (!empty($conf['site']['defaultParams'])) {
+            $aParsedUri['moduleName'] = SGL_Config::get('site.defaultModule');
+            $aParsedUri['managerName'] = $mgrCopy = SGL_Config::get('site.defaultManager');
+            if (SGL_Config::get('site.defaultParams')) {
                 $aParams = SGL_Url::querystringArrayToHash(
-                    explode('/', $conf['site']['defaultParams']));
+                    explode('/', SGL_Config::get('site.defaultParams')));
                 foreach ($aParams as $k => $v) {
                     $aParsedUri[$k] = $v;
                 }
@@ -106,14 +106,13 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $aParsedUri['moduleName'] = $url->aRes[1]['moduleName'];
             $aParsedUri['managerName'] = $url->aRes[1]['managerName'];
         }
-
         //  we've got module name so load and merge local and global configs
         //  unless we're running the setup wizard
-        if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
-            $c = &SGL_Config::singleton();
+        if (!SGL_Config::get('site.setup')  && !empty($aParsedUri['moduleName'])) {
             $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
             $path = realpath($testPath);
             if ($path) {
+                $c = &SGL_Config::singleton();
                 $aModuleConfig = $c->load($path);
 
                 if (PEAR::isError($aModuleConfig)) {
@@ -135,14 +134,14 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
         //  catch case where when manager + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
-        if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
+        if (preg_match('/'.strtolower(SGL_Config::get('cookie.name')).'/', $aParsedUri['managerName'])) {
             $cookieValue = isset($aParsedUri['managerName'][1])
                 ? $aParsedUri['managerName'][1]
                 : '';
             $cookieValue = substr($cookieValue, 0, -1);
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
             array_unshift($aUriParts, $cookieValue);
-            array_unshift($aUriParts, $conf['cookie']['name']);
+            array_unshift($aUriParts, SGL_Config::get('cookie.name'));
         }
         //  if 'action' is in manager slot, move it to querystring array, and replace
         //  manager name with default mgr name, ie, that of the module

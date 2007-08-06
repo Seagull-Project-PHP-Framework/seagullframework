@@ -46,21 +46,25 @@ class SGL_Task_SetBaseUrlMinimal extends SGL_Task
 {
     function run($data = array())
     {
-        $conf = array(
-            'setup' => true,
-            'site' =>   array(
-                'frontScriptName' => 'index.php',
-                'defaultModule' => 'default',
-                'defaultManager' => 'default',
-                ),
-            'cookie' => array(  'name' => ''),
-            );
-
+        // no data if we're running installer
+        if (!defined('SGL_INSTALLED')) {
+            $conf = array(
+                'site' =>   array(
+                    'setup' => true,
+                    'frontScriptName' => 'index.php',
+                    'defaultModule' => 'default',
+                    'defaultManager' => 'default',
+                    ),
+                'cookie' => array('name' => ''),
+                );
+            //  create default config values for install
+            $c = &SGL_Config::singleton($autoLoad = false);
+            $c->merge($conf);
+        }
         //  resolve value for $_SERVER['PHP_SELF'] based in host
-        SGL_URL::resolveServerVars($conf);
+        SGL_URL::resolveServerVars();
 
-        $url = new SGL_URL($_SERVER['PHP_SELF'], true,
-            new SGL_UrlParser_SefStrategy(), $conf);
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new SGL_UrlParser_SefStrategy());
         $err = $url->init();
         define('SGL_BASE_URL', $url->getBase());
     }
@@ -318,6 +322,10 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
                 || $this->conf['db']['type'] == 'mysqli_SGL') {
 
             $dbh = & SGL_DB::singleton();
+            if (PEAR::isError($dbh)) {
+                SGL_Install_Common::errorPush($dbh);
+                return false;
+            }
             $query = 'SET FOREIGN_KEY_CHECKS=0;';
             $res = $dbh->query($query);
             if (PEAR::isError($res)) {
@@ -623,7 +631,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             }
 
             //  catch 'table already exists' error
-            if (isset($result) && DB::isError($result, DB_ERROR_ALREADY_EXISTS)) {
+            if (isset($result) && PEAR::isError($result, DB_ERROR_ALREADY_EXISTS)) {
                 if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
                     die('Tables already exist, DB error');
                 } else {
@@ -851,7 +859,7 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                     require_once $navigationPath;
                     if (isset($aSections)) {
                         foreach ($aSections as $aSection) {
-    
+
                             //  check if section is designated as child to last insert
                             if ($aSection['parent_id'] == SGL_NODE_GROUP) {
                                 $aSection['parent_id'] = $this->groupId;
