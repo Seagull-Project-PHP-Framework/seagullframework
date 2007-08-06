@@ -1,19 +1,24 @@
 <div id="manager-actions">
     <span>{translate(#Action#)}:&nbsp;</span>
-    <a class="action cancel" href="{makeUrl(##,#translation#,#default#)}">{translate(#Cancel#)}</a>
+    <a class="action cancel"
+       href="{makeUrl(##,#translation#,#translation#)}">{translate(#Cancel#)}</a>
 </div>
 <div id="content">
     <div id="content-header">
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
-    <form name="translation_list" action="" method="post" id="translation_list" flexy:ignore>
+    <form id="translation_list" name="translation_list" method="post" action=""
+          flexy:ignore>
         <h3>{translate(#Check all modules for#)} {currentLangName}</h3>
         <fieldset class="noBorder">
             <input type="hidden" name="action" value="checkAllModules" />
             <p>
-                <select name="frmCurrentLang">{generateSelect(aLangs,currentLang):h}</select>
-                <input type="submit" class="sgl-button" name="submitted" value="{translate(#check all modules#)}" />
+                <select name="frmCurrentLang">
+                    {generateSelect(aLangs,currentLang):h}
+                </select>
+                <input class="sgl-button" type="submit" name="submitted"
+                       value="{translate(#check all modules#)}" />
             </p>
             <table class="medium">
                 <thead>
@@ -29,16 +34,19 @@
                         <td class="left">{translate(v[status])}</td>
                         <td class="left">
                         {if:v[diff]}
-                            <input type="button" class="sgl-button narrow" value="{translate(#update#)}" 
-                                onclick="javascript:document.location.href='{makeUrl(#verify#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
+                            <input class="sgl-button narrow" type="button"
+                                   value="{translate(#update#)}"
+                                   onclick="document.location.href='{makeUrl(#verify#,#translation#,#translation#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
                         {end:}
                         {if:v[edit]}
-                            <input type="button" class="sgl-button narrow" value="{translate(#edit#)}" 
-                                onclick="javascript:document.location.href='{makeUrl(#edit#,#translation#,#default#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
+                            <input class="sgl-button narrow" type="button"
+                                   value="{translate(#edit#)}"
+                                   onclick="javascript:document.location.href='{makeUrl(#edit#,#translation#,#translation#)}frmCurrentModule/{k}/frmCurrentLang/{currentLang}/'" />
                         {end:}
                         {if:v[msg]}
                             {translate(v[msg])}
-                        {else}&nbsp;
+                        {else}
+                            &nbsp;
                         {end:}
                         </td>
                     </tr>

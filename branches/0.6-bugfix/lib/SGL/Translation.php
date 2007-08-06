@@ -194,11 +194,13 @@ class SGL_Translation
         $cache = & SGL_Cache::singleton();
         $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
 
+        $ret = array();
+
         //  returned cached translations else fetch from db and cache
         if ($serialized = $cache->get($module, 'translation_'. $lang)) {
             $words = unserialize($serialized);
             SGL::logMessage('translations from cache', PEAR_LOG_DEBUG);
-            return $words;
+            $ret = $words;
 
         } else {
 
@@ -219,16 +221,16 @@ class SGL_Translation
                     $serialized = serialize($words);
                     $cache->save($serialized, $module, 'translation_'. $lang);
                     SGL::logMessage('translations from file', PEAR_LOG_DEBUG);
-                    return $words;
-                } else {
-                    return array();
+                }
+                if (isset($words)) {
+                    $ret = $words;
                 }
             } elseif ($module == 'default') {
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
-            } else {
-                return array();
             }
         }
+
+        return self::removeMetaData($ret);
     }
 
     /**
@@ -262,18 +264,18 @@ class SGL_Translation
             return true;
         case 'file':
         default:
+            $aTrans = SGL_Translation::updateMetaData($aTrans);
+
             //  read translation data and get reference to root
             $c = new Config();
-            foreach ($aTrans as $key => $value) {
-                $aTransStrip[stripslashes($key)] = $value;
-            }
+
+            $aTransStrip = SGL_Translation::escapeSingleQuoteInArrayKeys($aTrans);
             $root = & $c->parseConfig($aTransStrip, 'phparray');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
             //  write translation to file
-            $filename = SGL_MOD_DIR . '/' . $module . '/lang/' .
-                $GLOBALS['_SGL']['LANGUAGE'][$langID][1] . '.php';
+            $filename = SGL_Translation::getFileName($module, $langID);
             $arrayName = ($module == 'default') ? 'defaultWords' : 'words';
             $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
             if (is_a($result, 'PEAR_Error')) {
@@ -281,6 +283,14 @@ class SGL_Translation
             }
             return true;
         }
+    }
+
+    function getFileName($module, $langId, $path = SGL_MOD_DIR)
+    {
+
+        $fileName = $path . '/' . $module . '/lang/' .
+                $GLOBALS['_SGL']['LANGUAGE'][$langId][1] . '.php';
+        return $fileName;
     }
 
     /**
@@ -438,6 +448,236 @@ class SGL_Translation
             }
         }
         return true;
+    }
+
+
+    /**
+     * Add/update meta keys to translation array.
+     *
+     * @param array $aConfigs
+     *
+     * @return array
+     *
+     * @static
+     */
+    function updateMetaData($aConfigs)
+    {
+        $aMetaData = array(
+            '__SGL_UPDATED_BY'   => SGL_Session::getUsername(),
+            '__SGL_LAST_UPDATED' => SGL_Date::getTime()
+        );
+        // we do it in this way to put meta data first in array
+        foreach ($aMetaData as $k => $v) {
+            if (isset($aConfigs[$k])) {
+                unset($aConfigs[$k]);
+            }
+        }
+        $aRet = $aMetaData + $aConfigs;
+        return $aRet;
+        //return array_merge($aConfigs, $aMetaData);
+    }
+
+    /**
+     * Remove meta data from translation array.
+     *
+     * @param array $aConfigs
+     *
+     * @return array
+     *
+     * @static
+     */
+    function removeMetaData($aConfigs)
+    {
+        foreach ($aConfigs as $k => $v) {
+            if (strpos($k, '__SGL_') === 0) {
+                unset($aConfigs[$k]);
+            }
+        }
+        return $aConfigs;
+    }
+
+    /**
+     * Lock translation file.
+     *
+     * @param string $moduleName
+     * @param string $lang
+     *
+     * @return void
+     *
+     * @static
+     */
+    function lockTranslationFile($moduleName, $lang)
+    {
+        $fileName  = $moduleName . '_' . $lang . '.lock.txt';
+        $targetDir = SGL_VAR_DIR . '/translation';
+
+        $ok = SGL_Translation::ensureDirIsWrirable($targetDir);
+        if (PEAR::isError($ok)) {
+            return $ok;
+        }
+        $ok = touch($targetDir . '/' . $fileName);
+        if ($ok === false) {
+            return SGL::raiseError(__CLASS__ . ': error creating transation '
+                . 'locking file', SGL_ERROR_INVALIDFILEPERMS);
+        }
+        file_put_contents($targetDir . '/' . $fileName,
+            SGL_Session::getUsername());
+    }
+
+    /**
+     * Check if translation is locked.
+     *
+     * @param string $moduleName
+     * @param string $lang
+     *
+     * @return boolean
+     *
+     * @static
+     */
+    function translationFileIsLocked($moduleName, $lang)
+    {
+        $ret = false;
+        $fileName = SGL_VAR_DIR . "/translation/{$moduleName}_{$lang}.lock.txt";
+        if (file_exists($fileName)) {
+            $period = time() - filemtime($fileName);
+            if ($period < 15 * 60) { // minutes
+                $currentUser = file_get_contents($fileName);
+                if ($currentUser != SGL_Session::getUsername()) {
+                    $ret = true;
+                }
+            } else {
+                SGL_Translation::removeTranslationLock($moduleName, $lang);
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Remove translation lock.
+     *
+     * @param string $moduleName
+     * @param string $lang
+     *
+     * @return void
+     *
+     * @static
+     */
+    function removeTranslationLock($moduleName, $lang)
+    {
+        $fileName = SGL_VAR_DIR . "/translation/{$moduleName}_{$lang}.lock.txt";
+        if (file_exists($fileName)) {
+            $ok = unlink($fileName);
+            if ($ok === false) {
+                return SGL::raiseError(__CLASS__ . ': error removing transation '
+                    . 'locking file', SGL_ERROR_INVALIDFILEPERMS);
+            }
+        }
+    }
+
+    /**
+     * Remove locks set by $username.
+     *
+     * @param string $userName
+     *
+     * @return void
+     *
+     * @static
+     */
+    function removeTranslationLocksByUser($username)
+    {
+        $targetDir = SGL_VAR_DIR . '/translation';
+        if (file_exists($targetDir) && is_readable($targetDir)) {
+            $dh = opendir($targetDir);
+            while (($fileName = readdir($dh)) !== false) {
+                if ($fileName == '..' || $fileName == '.') {
+                    continue;
+                }
+                $configFile = $targetDir . '/' . $fileName;
+                $lockedUser = file_get_contents($configFile);
+                if ($lockedUser == $username) {
+                    $ok = unlink($configFile);
+                    if ($ok === false) {
+                        return SGL::raiseError(__CLASS__ . ': error removing '
+                            . 'transation locking file',
+                            SGL_ERROR_INVALIDFILEPERMS);
+                    }
+                }
+            }
+            closedir($dh);
+        }
+    }
+
+    /**
+     * Ensure that target dir exist and is writable.
+     *
+     * @param string $dirName
+     *
+     * @return boolean
+     *
+     * @static
+     *
+     * @todo move to SGL_File
+     */
+    function ensureDirIsWrirable($dirName)
+    {
+        if (!is_writable($dirName)) {
+            require_once 'System.php';
+            $ok = System::mkDir(array('-p', $dirName));
+            if (PEAR::isError($ok)) {
+                return $ok;
+            }
+            if (!$ok) {
+                return SGL::raiseError("Error making directory
+                    '$dirName' writable");
+            }
+            $mask = umask(0);
+            $ok   = @chmod($dirName, 0777);
+            if (!$ok) {
+                return SGL::raiseError("Error performing chmod on
+                    directory '$dirName'");
+            }
+            umask($mask);
+        }
+        return true;
+    }
+
+    /**
+     * Esacape single quote.
+     *
+     * @param string $string
+     *
+     * @return string
+     *
+     * @static
+     *
+     * @todo move to SGL_String
+     */
+    function escapeSingleQuote($string)
+    {
+        $ret = str_replace('\\', '\\\\', $string);
+        $ret = str_replace("'", '\\\'', $ret);
+        return $ret;
+    }
+
+    /**
+     * Escape single quotes in every key of given array.
+     *
+     * @param array $array
+     *
+     * @return array
+     *
+     * @static
+     */
+    function escapeSingleQuoteInArrayKeys($array)
+    {
+        $ret = array();
+        foreach ($array as $key => $value) {
+            $k = SGL_Translation::escapeSingleQuote($key);
+            $ret[$k] = is_array($value)
+                ? SGL_Translation::escapeSingleQuoteInArrayKeys($value)
+                : $value;
+        }
+        return $ret;
     }
 }
 ?>

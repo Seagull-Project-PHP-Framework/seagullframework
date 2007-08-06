@@ -38,77 +38,71 @@
 // |         Werner M. Krauss <werner.krauss@hallstatt.net>                    |
 // |         Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
 // +---------------------------------------------------------------------------+
-// $Id: TranslationMgr. v 1.0 2005/04/17 02:15:02 demian Exp $
 
 require_once 'Config.php';
+require_once SGL_CORE_DIR  . '/Translation.php';
 require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 
 /**
  * Provides tools preform translation maintenance.
  *
- * @package default
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.56 $
- * @since   PHP 4.1
+ * @package    seagull
+ * @subpackage default
+ * @author     Demian Turner <demian@phpkitchen.com>
  */
-
 class TranslationMgr extends SGL_Manager
 {
+    // by default we redirect
+    var $redirect = true;
+    // file or db
+    var $container;
+
     function TranslationMgr()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_Manager();
 
-        $this->pageTitle    = 'Translation Maintenance';
-        $this->template     = 'translationMgr.html';
-        $this->redirect     = true;
-        $this->da           = & DefaultDAO::singleton();
+        $this->pageTitle = 'Translation Maintenance';
+        $this->template  = 'translationList.html';
 
-        $this->_aActionsMapping =  array(
-            'verify'    => array('verify', 'redirectToDefault'),
-            'edit'      => array('edit'),
-            'update'    => array('update', 'redirectToDefault'),
-            'append'    => array('append', 'redirectToDefault'),
+        $this->_aActionsMapping = array(
+            'list'            => array('list'),
             'checkAllModules' => array('checkAllModules'),
-            'list'      => array('list'),
+            'edit'            => array('edit'),
+            'verify'          => array('verify', 'redirectToDefault'),
+            'update'          => array('update', 'redirectToDefault'),
+            'append'          => array('append', 'redirectToDefault'),
         );
+
+        $this->da        = &DefaultDAO::singleton();
+        $this->container = SGL_Config::get('translation.container');
     }
 
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->validated    = true;
-        $input->pageTitle   = $this->pageTitle;
+        $this->validated       = true;
+        $input->pageTitle      = $this->pageTitle;
+        $input->template       = $this->template;
         $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->submit      = $req->get('submitted');
-        $input->action      = ($req->get('action'))
-            ? $req->get('action')
-            : 'list';
-        $input->aTranslation = $req->get('translation');
+        $input->action         = $req->get('action')
+            ? $req->get('action') : 'list';
 
-        //  get current module, check session
-        $input->currentModule = $req->get('frmCurrentModule');
-        $sessLastModuleSelected = SGL_Session::get('lastModuleSelected');
-        if (!$input->currentModule && !$sessLastModuleSelected) {
-            $input->currentModule = 'default';
-        } elseif (!$input->currentModule) {
-            $input->currentModule = $sessLastModuleSelected;
-        } elseif ($input->action == 'checkAllModules') {
+        //  get current module
+        $input->currentModule = $req->get('frmCurrentModule')
+            ? $req->get('frmCurrentModule')
+            : SGL_Session::get('lastModuleSelected');
+        $input->currentModule = !empty($input->currentModule)
+            ? $input->currentModule
+            : 'default';
 
-            //  this one should be always ok. to avoid bad "file doesn't exist
-            //  messages from process()
-            $input->currentModule = 'default';
-        }
-
-        // get current lang, check session
-        $input->currentLang = ($req->get('frmCurrentLang'))
+        //  get current lang
+        $input->currentLang = $req->get('frmCurrentLang')
             ? $req->get('frmCurrentLang')
             : SGL_Session::get('lastLanguageSelected');
-
         //  if both are empty get language from prefs
-        $input->currentLang = ($input->currentLang)
+        $input->currentLang = !empty($input->currentLang)
             ? $input->currentLang
             : $_SESSION['aPrefs']['language'];
 
@@ -116,74 +110,47 @@ class TranslationMgr extends SGL_Manager
         SGL_Session::set('lastModuleSelected', $input->currentModule);
         SGL_Session::set('lastLanguageSelected', $input->currentLang);
 
-        //  catch any single quotes
-        //  note: this is done by PEAR::Config automatically!
-        if (($req->get('action') !='update')
-            && ($req->get('action') !='append')) {
-            if (is_array($input->aTranslation)) {
-                foreach ($input->aTranslation as $k => $v) {
-                    if (is_array($v)) {
-                        array_map('addslashes', $v);
+        //  submit action
+        $input->submitted = $req->get('submitted');
+
+        if ($input->submitted) {
+            if ($input->action == 'list') {
+                $aErrors['noSelection'] = 'please specify an option';
+            } elseif ($input->action != 'checkAllModules') {
+                if ($this->container == 'file') {
+                    $curLang  = SGL_Translation::transformLangID(
+                        $input->currentLang, SGL_LANG_ID_SGL);
+                    $filename = SGL_MOD_DIR . '/' . $input->currentModule
+                        . '/lang/' . $GLOBALS['_SGL']['LANGUAGE'][$curLang][1]
+                        . '.php';
+                    if (is_file($filename)) {
+                        if (!is_writeable($filename)) {
+                            $aErrors['file'] =
+                                SGL_String::translate('the target lang file')
+                                . ' ' . $filename
+                                . ' ' . SGL_String::translate('is not writeable.')
+                                . ' ' . SGL_String::translate('Please change file'
+                                . ' permissions before editing.');
+                        }
                     } else {
-                        $input->aTranslation[$k] = addslashes($v);
+                        $aErrors['file'] =
+                            SGL_String::translate('the target lang file')
+                            . ' ' . $filename
+                            . ' ' . SGL_String::translate('does not exist.')
+                            . ' ' . SGL_String::translate('Please create it.');
                     }
                 }
             }
         }
 
-        if ($input->submit) {
-            if ($req->get('action') =='' || $req->get('action') =='list') {
-                $aErrors['noSelection'] = SGL_Output::translate('please specify an option');
-            }
-        }
+        // after append/update
+        $input->aTranslation = $req->get('translation');
 
         //  if errors have occured
-        if (isset($aErrors) && count($aErrors)) {
+        if (!empty($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $this->validated = false;
-        }
-        //  retrieve source translations
-        $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
-            // default language to compare with is always English
-            SGL_Translation::transformLangID('en-iso-8859-15'));
-        //  retrieve target translations
-        $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
-            $input->currentLang);
-
-        //  if the target lang file does not exist
-        if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
-            $target = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-                $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
-
-            if (!is_file($target)) {
-                $errMsg = SGL_String::translate('the target lang file') .
-                            ' '. $target .
-                            ' '. SGL_String::translate('does not exist.') .
-                            ' '. SGL_String::translate('Please create it.');
-                SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
-            }
-        }
-        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
-
-        if ($input->action != 'checkAllModules') {
-            //  if target has more keys than source
-            if (count($aSourceLang) && count($aTargetLang)
-                    && count($aTargetLang) > count($aSourceLang)) {
-                $error = 'source trans has ' . count($aSourceLang) . ' keys<br />';
-                $error .= 'target trans has ' . count($aTargetLang) . ' keys<br />';
-                $error .= 'extra keys are:<br />';
-                $aDiff = array_diff(array_keys($aTargetLang), array_keys($aSourceLang));
-                foreach ($aDiff as $key => $value) {
-                    $error .= '['.$key.'] => '.$value.'<br />';
-                }
-                $error .= 'The translation file is probably contains more keys than the source';
-                SGL::raiseMsg($error);
-            }
-            //  map to input for further processing
-            $input->aSourceLang = &$aSourceLang;
-            $input->aTargetLang = &$aTargetLang;
         }
     }
 
@@ -194,10 +161,7 @@ class TranslationMgr extends SGL_Manager
         //  get hash of all modules;
         $output->aModules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
 
-        $output->isValidate = ($output->action == 'validate')? 'checked' : '';
-        $output->isEdit = ($output->action == 'edit')? 'checked' : '';
-
-        if ($this->conf['translation']['container'] == 'file') {
+        if ($this->container == 'file') {
             $aLangs      = SGL_Util::getLangsDescriptionMap();
             $currentLang = $output->currentLang;
         } else {
@@ -205,66 +169,77 @@ class TranslationMgr extends SGL_Manager
             $currentLang = SGL_Translation::transformLangID($output->currentLang,
                 SGL_LANG_ID_TRANS2);
         }
-        $output->aLangs          = $aLangs;
-        $output->currentLang     = $currentLang;
-        $output->currentLangName = $aLangs[$currentLang];
+        $output->aLangs            = $aLangs;
+        $output->currentLang       = $currentLang;
+        $output->currentLangName   = $aLangs[$currentLang];
+        $output->currentModuleName = ucfirst($output->currentModule);
     }
 
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        SGL_Translation::removeTranslationLocksByUser(SGL_Session::getUsername());
     }
 
     function _cmd_verify(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
-            $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-                $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
+        //  retrieve source translations
+        $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
+            // default language to compare with is always English
+            SGL_Translation::transformLangID('en-iso-8859-15'));
+        //  retrieve target translations
+        $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
+            $input->currentLang);
+        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
 
-            if (is_file($filename)) {
-                if (!is_writeable($filename)) {
-                    $errMsg = SGL_String::translate('the target lang file') .
-                        ' '. $filename .
-                        ' '. SGL_String::translate('is not writeable.') .
-                        ' '. SGL_String::translate('Please change file permissions before editing.');
-                    SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
-                    $this->redirect = true;
-                }
-            } else {
-                $errMsg = SGL_String::translate('the target lang file') .
-                            ' '. $filename .
-                            ' '. SGL_String::translate('does not exist.') .
-                            ' '. SGL_String::translate('Please create it.');
-                SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
-                $this->redirect = false;
+        if (empty($aTargetLang) && empty($aSourceLang)) {
+            // no words - nothing to compare
+            return true;
+        }
+        $aDiff = array_diff(
+            array_keys($aSourceLang),
+            array_keys($aTargetLang)
+        );
+        if (count($aDiff)) {
+            $this->redirect = false;
+
+            foreach ($aDiff as $key) {
+                // provide original string
+                $aLangDiff[$key] = $aSourceLang[$key];
             }
+
+            // access check
+            $isLocked = SGL_Translation::translationFileIsLocked(
+                $input->currentModule, $input->currentLang);
+            if ($isLocked) {
+                SGL::raiseMsg('This translation is being editted by somebody else. '
+                    . 'You can view translation data, but are not be able to '
+                    . 'save it.', true, SGL_MESSAGE_WARNING);
+            } else {
+                $ok = SGL_Translation::lockTranslationFile(
+                    $input->currentModule, $input->currentLang);
+            }
+
+            $output->translationIsLocked = $isLocked;
+            $output->aSourceLang         = $aSourceLang;
+            $output->aTargetLang         = $aLangDiff;
+            $output->template            = 'translationEdit.html';
+            $output->action              = 'append';
+
+        } else {
+            SGL::raiseMsg('Congratulations, the target translation' .
+                ' appears to be up to date', true, SGL_MESSAGE_INFO);
         }
 
-        if (count($input->aSourceLang) && count($input->aTargetLang)) {
-            $aDiff = array_diff(array_keys($input->aSourceLang), array_keys($input->aTargetLang));
-
-            if (count($aDiff)) {
-                $output->sourceElements = count($input->aSourceLang);
-                $output->targetElements = count($input->aTargetLang);
-                $output->template = 'langDiff.html';
-
-                foreach($aDiff as $key) {
-                    //provide original string
-                    $aLangDiff[$key] = $input->aSourceLang[$key];
-                }
-
-                $output->aTargetLang = $aLangDiff;
-                $output->currentModuleName = ucfirst($output->currentModule);
-
-                //  bypass redirection
-                $this->redirect = false;
-            } else {
-                SGL::raiseMsg('Congratulations, the target translation' .
-                    ' appears to be up to date', true, SGL_MESSAGE_INFO);
-            }
+        // check for old entries
+        $output->sourceElements = count($aSourceLang);
+        $output->targetElements = count($aTargetLang);
+        if ($output->targetElements > $output->sourceElements) {
+            $msg = $this->_getExtraKeysMessage($aSourceLang, $aTargetLang);
+            SGL::raiseMsg($msg, false);
         }
     }
 
@@ -272,42 +247,61 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($this->conf['translation']['container'] == 'file') {
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
-            $filename = SGL_MOD_DIR . '/' . $input->currentModule . '/lang/' .
-                $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
+        $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
+            SGL_Translation::transformLangID('en-iso-8859-15'));
+        $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
+            $input->currentLang);
+        $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
 
-            if (is_file($filename)) {
-                if (!is_writeable($filename)) {
-                    $errMsg = SGL_String::translate('the target lang file') .
-                        ' '. $filename .
-                        ' '. SGL_String::translate('is not writeable.') .
-                        ' '. SGL_String::translate('Please change file permissions before editing.');
-                    SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
-                }
-            } else {
-                $errMsg = SGL_String::translate('the target lang file') .
-                            ' '. $filename .
-                            ' '. SGL_String::translate('does not exist.') .
-                            ' '. SGL_String::translate('Please create it.');
-                SGL::raiseMsg($errMsg, false, SGL_ERROR_NOFILE);
-            }
+        // access check
+        $isLocked = SGL_Translation::translationFileIsLocked(
+            $input->currentModule, $input->currentLang);
+        if ($isLocked) {
+            SGL::raiseMsg('This translation is being editted by somebody else. '
+                . 'You can view translation data, but are not be able to '
+                . 'save it.', true, SGL_MESSAGE_WARNING);
+
+        // lock translation file
+        } else {
+            $ok = SGL_Translation::lockTranslationFile($input->currentModule,
+                $input->currentLang);
         }
 
-        $output->template = 'langEdit.html';
-        $output->currentModuleName = ucfirst($output->currentModule);
+        $output->translationIsLocked = $isLocked;
+        $output->aSourceLang         = $aSourceLang;
+        $output->aTargetLang         = $aTargetLang;
+        $output->template            = 'translationEdit.html';
+        $output->action              = 'update';
     }
 
     function _cmd_update(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        // access check
+        $isLocked = SGL_Translation::translationFileIsLocked(
+            $input->currentModule, $input->currentLang);
+        if ($isLocked) {
+            SGL::raiseMsg('This translation is being editted by somebody else. '
+                . 'You can view translation data, but are not be able to '
+                . 'save it.', true, SGL_MESSAGE_WARNING);
+            return false;
+        } else {
+            SGL_Translation::removeTranslationLock($input->currentModule,
+                $input->currentLang);
+        }
+
+        $input->aTranslation = SGL_Array::removeBlanks($input->aTranslation);
+
         //  update translations
-        $curLang = $input->currentLang;
-        $ok      = SGL_Translation::updateGuiTranslations($input->currentModule,
-                        $curLang, $input->aTranslation);
-        if (!is_a($ok, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated', true, SGL_MESSAGE_INFO);
+        $ok = SGL_Translation::updateGuiTranslations(
+            $input->currentModule,
+            $input->currentLang,
+            $input->aTranslation
+        );
+        if (!PEAR::isError($ok)) {
+            SGL::raiseMsg('translation successfully updated', true,
+                SGL_MESSAGE_INFO);
         } else {
             SGL::raiseMsg('There was a problem updating the translation',
                 SGL_ERROR_FILEUNWRITABLE);
@@ -318,16 +312,33 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        // remove blanks and merge
+        // access check
+        $isLocked = SGL_Translation::translationFileIsLocked(
+            $input->currentModule, $input->currentLang);
+        if ($isLocked) {
+            SGL::raiseMsg('This translation is being editted by somebody else. '
+                . 'You can view translation data, but are not be able to '
+                . 'save it.', true, SGL_MESSAGE_WARNING);
+            return false;
+        } else {
+            SGL_Translation::removeTranslationLock($input->currentModule,
+                $input->currentLang);
+        }
+
+        $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
+            $input->currentLang);
+
+        //  remove blanks and merge
         $input->aTranslation = SGL_Array::removeBlanks($input->aTranslation);
-        $aTrans = array_merge($input->aTranslation,$input->aTargetLang);
+        $aTrans = array_merge($input->aTranslation, $aTargetLang);
 
         //  update translations
         $ok = SGL_Translation::updateGuiTranslations($input->currentModule,
                 $input->currentLang, $aTrans);
 
-        if (!is_a($ok, 'PEAR_Error')) {
-            SGL::raiseMsg('translation successfully updated', true, SGL_MESSAGE_INFO);
+        if (!PEAR::isError($ok)) {
+            SGL::raiseMsg('translation successfully updated', true,
+                SGL_MESSAGE_INFO);
         } else {
             SGL::raiseMsg('There was a problem updating the translation',
                 SGL_ERROR_FILEUNWRITABLE);
@@ -337,7 +348,6 @@ class TranslationMgr extends SGL_Manager
     function _cmd_checkAllModules(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'langCheckAll.html';
 
         //  get hash of all modules
         $modules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
@@ -348,95 +358,72 @@ class TranslationMgr extends SGL_Manager
         $status['3'] = 'new strings';
         $status['4'] = 'old strings';
 
-        // the default language to compare with is always English
+        //  the default language to compare with is always English
         $fallbackLang = 'en-iso-8859-15';
         foreach ($modules as $name => $title) {
             $aModules[$name]['title'] = $title;
 
-            //reset arrays
-            unset($aSourceLang);
-            unset($aTargetLang);
-            unset($words);
-            unset($defaultWords);
-
-            //get source array
-            $fbackLang = SGL_Translation::transformLangID($fallbackLang, SGL_LANG_ID_SGL);
+            //  get source array
             $aModules[$name]['orig'] = SGL_MOD_DIR . '/' . $name . '/lang/' .
-                    $GLOBALS['_SGL']['LANGUAGE'][$fbackLang][1] . '.php';
-
-            $aSourceLang = ($words = SGL_Translation::getTranslations($name, $fallbackLang))
-                            ? $words
-                            : array();
-
-            //  hack to remove sub arrays from translations which cannot be handled by current system
-            unset($defaultWords, $words);
+                $GLOBALS['_SGL']['LANGUAGE'][$fallbackLang][1] . '.php';
+            $aSourceLang =
+                ($words = SGL_Translation::getTranslations($name, $fallbackLang))
+                    ? $words
+                    : array();
 
             //  get target array
-            $curLang = SGL_Translation::transformLangID($input->currentLang, SGL_LANG_ID_SGL);
+            $curLang = SGL_Translation::transformLangID($input->currentLang,
+                SGL_LANG_ID_SGL);
             $aModules[$name]['src'] = SGL_MOD_DIR . '/' . $name. '/lang/' .
-                    $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
-
-            $aTargetLang = ($words = SGL_Translation::getTranslations($name, $curLang))
-                            ? $words
-                            : array();
+                $GLOBALS['_SGL']['LANGUAGE'][$curLang][1] . '.php';
+            $aTargetLang =
+                ($words = SGL_Translation::getTranslations($name, $curLang))
+                    ? $words
+                    : array();
 
             //  check status of target file
-            // 1: ok, all fields ok
-            // 2: targetfile doesn't exist
-            // 3: target has less entries than source
-            // 4: target has more entries than source
+            //    1: ok, all fields ok
+            //    2: targetfile doesn't exist
+            //    3: target has less entries than source
+            //    4: target has more entries than source
 
             //  if the target lang file does not exist
-
             if (!is_file($aModules[$name]['src'])){
                 $aModules[$name]['status'] = $status['2'];
-            }
 
             //  if target has less keys than source
-            elseif (array_diff(array_keys($aSourceLang),array_keys($aTargetLang))) {
+            } elseif (array_diff(array_keys($aSourceLang), array_keys($aTargetLang))) {
                 $aModules[$name]['status'] = $status['3'];
-                $aModules[$name]['action'] = 'verify';
-                $aModules[$name]['actionTitle'] = 'Validate';
-                if ($this->conf['translation']['container'] == 'file'
-                    && !is_writeable($aModules[$name]['src'])) {
+                if ($this->container == 'file'
+                        && !is_writeable($aModules[$name]['src'])) {
                     $aModules[$name]['msg'] = "File not writeable";
                 } else {
                     $aModules[$name]['diff'] = true;
                 }
-            }
 
             //  if target has more keys than source
-            elseif (array_diff(array_keys($aTargetLang),array_keys($aSourceLang) )) {
+            } elseif (array_diff(array_keys($aTargetLang), array_keys($aSourceLang))) {
                 $aModules[$name]['status'] = $status['4'];
-                $aModules[$name]['action']= 'edit';
-                if ($this->conf['translation']['container'] == 'file'
-                    && !is_writeable($aModules[$name]['src'])) {
+                if ($this->container == 'file'
+                        && !is_writeable($aModules[$name]['src'])) {
                     $aModules[$name]['msg'] = "File not writeable";
                 } else {
                     $aModules[$name]['edit'] = true;
                 }
 
-             }
             //  so if there are no differences, everything should be ok
-            else {
+            } else {
                 $aModules[$name]['status'] = $status['1'];
-                $aModules[$name]['action']= 'edit';
-                if ($this->conf['translation']['container'] == 'file'
-                    && !is_writeable($aModules[$name]['src'])) {
+                if ($this->container == 'file'
+                        && !is_writeable($aModules[$name]['src'])) {
                     $aModules[$name]['msg'] = "File not writeable";
                 } else {
                     $aModules[$name]['edit'] = true;
                 }
             }
-
-            //  remove empty array elements
-            $aTargetLang = @array_filter($aTargetLang, 'strlen');
-            $aSourceLang = @array_filter($aSourceLang, 'strlen');
-
-            $aSourceLang = array_keys($aSourceLang);
-            $aTargetLang = array_keys($aTargetLang);
         }
-        $output->modules = $aModules;
+        $output->modules  = $aModules;
+        $output->template = 'translationCheckAll.html';
     }
 
     function _cmd_redirectToDefault(&$input, &$output)
@@ -457,5 +444,21 @@ class TranslationMgr extends SGL_Manager
         }
     }
 
+    function _getExtraKeysMessage($aSourceLang, $aTargetLang)
+    {
+        $message = 'source trans has ' . count($aSourceLang) . ' keys<br />'
+            . 'target trans has ' . count($aTargetLang) . ' keys<br />'
+            . 'extra keys are:<br />';
+        $aExtra = array_diff(
+            array_keys($aTargetLang),
+            array_keys($aSourceLang)
+        );
+        foreach ($aExtra as $key => $value) {
+            $message .= '[' . $key . '] => ' . $value . '<br />';
+        }
+        $message .= 'The translation file is probably contains more '
+            . 'keys than the source';
+        return $message;
+    }
 }
 ?>

@@ -410,6 +410,7 @@ $defaultWords['Site under maintenance'] = 'Site under maintenance';
 $defaultWords['This site is currently under maintenance'] = 'This site is currently under maintenance. We are planning some admin operations. Try to connect later.';
 $defaultWords['Congratulations, the target translation appears to be up to date'] = 'Congratulations, the target translation appears to be up to date';
 $defaultWords['translation successfully updated'] = 'translation successfully updated';
+$defaultWords['This translation is being editted by somebody else. You can view translation data, but are not be able to save it.'] = 'This translation is being editted by somebody else. You can view translation data, but are not be able to save it.';
 $defaultWords['There was a problem updating the translation'] = 'There was a problem updating the translation';
 $defaultWords['Data Objects rebuilt successfully'] = 'Data Objects rebuilt successfully';
 $defaultWords['Cache files successfully deleted'] = 'Cache files successfully deleted';

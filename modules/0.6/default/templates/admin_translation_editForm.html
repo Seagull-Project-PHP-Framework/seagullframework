@@ -1,0 +1,60 @@
+    <form id="translations" name="translations" method="post" action=""
+          flexy:ignore>
+        <input type="hidden" name="action" value="{action}" />
+        <input type="hidden" name="frmCurrentLang" value="{currentLang}" />
+        <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
+
+        <h3>{translate(#You are editing: Module#)} "{currentModuleName}"</h3>
+        <fieldset class="noBorder">
+            <table class="full">
+                <thead>
+                    <tr>
+                        <th width="50%" class="left">{translate(#Master Value#)}</th>
+                        <th width="50%" class="left">{translate(#Translated Value#)}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr flexy:foreach="aTargetLang,k,v">
+                    {if:GLOBALS.is_array(v)}
+                        <td colspan="2">
+                            <table class="full noBorder">
+                                <tr flexy:foreach="v,kk,vv">
+                                    <td class="left" width="50%">{k}[{kk}]</td>
+                                    <td class="left" width="50%">
+                                        <input flexy:if="isEqual(action,#update#)" type="text"
+                                               name="translation[{this.plugin(#getTransKey#,k):h}][{this.plugin(#getTransKey#,kk):h}]"
+                                               value="{this.plugin(#getTransKey#,vv):h}" size="50" />
+                                        <input flexy:if="isEqual(action,#append#)" type="text"
+                                               name="translation[{this.plugin(#getTransKey#,k):h}][{this.plugin(#getTransKey#,kk):h}]"
+                                               value="" size="50" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    {else:}
+                        <td class="left">
+                        {if:this.plugin(#getArrayValue#,aSourceLang,k)}
+                            {this.plugin(#getArrayValue#,aSourceLang,k)}
+                        {else:}
+                            {translate(#Warning! Old key!#)}
+                        {end:}
+                        </td>
+                        <td class="left">
+                            <input flexy:if="isEqual(action,#update#)"
+                                   type="text" name="translation[{this.plugin(#getTransKey#,k):h}]"
+                                   value="{this.plugin(#getTransKey#,v):h}" size="50" />
+                            <input flexy:if="isEqual(action,#append#)"
+                                   type="text" name="translation[{this.plugin(#getTransKey#,k):h}]"
+                                   value="" size="50" />
+                        </td>
+                    {end:}
+                    </tr>
+                </tbody>
+            </table>
+            <input class="sgl-button" type="submit" name="save"
+                   value="{translate(#Save Translation#)}" />
+            <input class="sgl-button" type="button" name="back"
+                   value="{translate(#Cancel#)}"
+                   onclick="document.location.href='{makeUrl(##,#translation#,#translation#)}'" />
+        </fieldset>
+    </form>

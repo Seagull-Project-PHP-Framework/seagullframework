@@ -96,5 +96,17 @@ class DefaultOutput
     {
         return $array[$value];
     }
+
+    function actionToRadioState($radioAction)
+    {
+        $req = &SGL_Request::singleton();
+        $action = $req->get('action');
+        return ($radioAction == $action) ? ' checked="checked"' : '';
+    }
+
+    function getTransKey($k)
+    {
+        return htmlspecialchars($k, ENT_QUOTES);
+    }
 }
 ?>
