@@ -14,13 +14,13 @@ class SGL_Task_CustomHeaders extends SGL_DecorateProcess
         $this->processRequest->process($input, $output);
 
             //  build P3P headers
-        if ($this->conf['p3p']['policies']) {
+        if (SGL_Config::get('p3p.policies')) {
             $p3pHeader = '';
-            if ($this->conf['p3p']['policyLocation'] != '') {
-                $p3pHeader .= " policyref=\"" . $this->conf['p3p']['policyLocation']."\"";
+            if (SGL_Config::get('p3p.policyLocation')) {
+                $p3pHeader .= " policyref=\"" . SGL_Config::get('p3p.policyLocation')."\"";
             }
-            if ($this->conf['p3p']['compactPolicy'] != '') {
-                $p3pHeader .= " CP=\"" . $this->conf['p3p']['compactPolicy']."\"";
+            if (SGL_Config::get('p3p.compactPolicy')) {
+                $p3pHeader .= " CP=\"" . SGL_Config::get('p3p.compactPolicy')."\"";
             }
             if ($p3pHeader != '') {
                 header("P3P: $p3pHeader");

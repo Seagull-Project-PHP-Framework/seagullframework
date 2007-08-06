@@ -15,7 +15,7 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
 
         //  test for anonymous session and rememberMe cookie
         if ($session->isAnonymous()
-                && !empty($this->conf['cookie']['rememberMeEnabled'])) {
+                && SGL_Config::get('cookie.rememberMeEnabled')) {
             $aCookieData = $this->getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
                 $this->doLogin($aCookieData['uid'], $input);
@@ -31,9 +31,9 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
         $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
 
         //  or if page requires authentication and we're not debugging
-        if (!empty($this->conf[$providerContainer]['requiresAuth'])
-                && $this->conf['debug']['authorisationEnabled']) {
-            $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
+        if (SGL_Config::get("$providerContainer.requiresAuth")
+                && SGL_Config::get('debug.authorisationEnabled')) {
+            $aMethods = explode(',', SGL_Config::get("$providerContainer.requiresAuth")]);
             $aMethods = array_map('trim', $aMethods);
             if (in_array($actionName, $aMethods)) {
                 //  check that session is valid
