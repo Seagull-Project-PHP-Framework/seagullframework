@@ -394,7 +394,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
  */
 class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
-    function run($conf = array())
+    function run()
     {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
@@ -403,7 +403,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
             'class_location'        => SGL_ENT_DIR,
             'require_prefix'        => SGL_ENT_DIR . '/',
             'class_prefix'          => 'DataObjects_',
-            'debug'                 => $conf['debug']['dataObject'],
+            'debug'                 => SGL_Config::get('debug.dataObject'),
             'production'            => 0,
             'ignore_sequence_keys'  => 'ALL',
             'generator_strip_schema'=> 1,
@@ -694,8 +694,6 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
     function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
     {
         $this->processRequest = $pr;
-        $this->c = &SGL_Config::singleton();
-        $this->conf = $this->c->getAll();
     }
 }
 
