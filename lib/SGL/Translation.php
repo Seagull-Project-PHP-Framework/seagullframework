@@ -230,7 +230,7 @@ class SGL_Translation
             }
         }
 
-        return self::removeMetaData($ret);
+        return SGL_Translation::removeMetaData($ret);
     }
 
     /**
