@@ -87,19 +87,19 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($this->conf['site']['banIpEnabled']) {
+        if (SGL_Config::get('site.banIpEnabled')) {
 
-            if (!empty($this->conf['site']['allowList'])) {
-                $allowList = explode( ' ', $this->conf['site']['allowList']);
-                if ( !in_array( $_SERVER['REMOTE_ADDR'], $allowList)) {
+            if (SGL_Config::get('site.allowList')) {
+                $allowList = explode( ' ', SGL_Config::get('site.allowList'));
+                if (!in_array($_SERVER['REMOTE_ADDR'], $allowList)) {
                     $msg = SGL_String::translate('You have been banned');
                     SGL::raiseError($msg, SGL_ERROR_BANNEDUSER, PEAR_ERROR_DIE);
                 }
             }
 
-            if (!empty($this->conf['site']['denyList'])) {
-                $denyList = explode( ' ', $this->conf['site']['denyList']);
-                if ( in_array( $_SERVER['REMOTE_ADDR'], $denyList)) {
+            if (SGL_Config::get('site.denyList')) {
+                $denyList = explode( ' ', SGL_Config::get('site.denyList'));
+                if (in_array($_SERVER['REMOTE_ADDR'], $denyList)) {
                     $msg = SGL_String::translate('You have been banned');
                     SGL::raiseError($msg, SGL_ERROR_BANNEDUSER, PEAR_ERROR_DIE);
                 }
@@ -144,8 +144,7 @@ class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
         //  set adminMode session if allowed
         $req = SGL_Request::singleton();
         $adminKey = $req->get('adminKey');
-        if (SGL_Config::get('site.adminKey') &&
-                $adminKey == SGL_Config::get('site.adminKey')) {
+        if (SGL_Config::get('site.adminKey') && $adminKey == SGL_Config::get('site.adminKey')) {
             SGL_Session::set('adminMode', true);
         }
 
@@ -215,7 +214,9 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 
         //  don't send headers according to config
         $currentMgr = SGL_Inflector::caseFix(get_class($output->manager));
-        if (!SGL_Config::get("$currentMgr.setHeaders")) {
+        $c = &SGL_Config::singleton(); $conf = $c->getAll();
+        if (!isset($conf[$currentMgr]['setHeaders'])
+                || $conf[$currentMgr]['setHeaders'] == true) {
 
             //  set compression as specified in init, can only be done here :-)
             @ini_set('zlib.output_compression', (int)SGL_Config::get('site.compression'));
@@ -352,7 +353,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
             }
         }
         //  if page requires authentication and we're not debugging
-        if (   SGL_Config::get("$mgrName.requiresAuth") == true
+        if (   SGL_Config::get("$mgrName.requiresAuth")
             && SGL_Config::get('debug.authorisationEnabled'))
         {
             //  check that session is valid or timed out
@@ -604,9 +605,6 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             return false;
         }
 
-        //  set $this->conf to contain global and default module config.
-//        $this->conf = $conf;
-
         $mgrName = SGL_Inflector::caseFix(
             SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
@@ -781,8 +779,8 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->currUrl          = $_SERVER['PHP_SELF'];
         $output->currLang         = SGL::getCurrentLang();
         $output->theme            = isset($_SESSION['aPrefs']['theme'])
-                                    ? $_SESSION['aPrefs']['theme']
-                                    : 'default';
+            ? $_SESSION['aPrefs']['theme']
+            : 'default';
         // check if theme is affected by the current manager
         $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
         if (SGL_Config::get("$mgrName.theme")) {
@@ -866,8 +864,8 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
         if (SGL_Config::get('navigation.enabled') && !SGL::runningFromCli()) {
 
             //  prepare navigation driver
-            $navDriver    = SGL_Config::get('navigation.driver');
-            $navDrvFile   = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
+            $navDriver = SGL_Config::get('navigation.driver');
+            $navDrvFile = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
             if (is_file($navDrvFile)) {
                 require_once $navDrvFile;
             } else {
@@ -1060,7 +1058,6 @@ class SGL_Void extends SGL_ProcessRequest
     function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        //  do nothing
     }
 }
 ?>
