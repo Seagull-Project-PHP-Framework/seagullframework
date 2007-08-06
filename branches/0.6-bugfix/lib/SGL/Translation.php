@@ -450,7 +450,6 @@ class SGL_Translation
         return true;
     }
 
-
     /**
      * Add/update meta keys to translation array.
      *

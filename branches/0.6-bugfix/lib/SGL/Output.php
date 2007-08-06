@@ -69,9 +69,45 @@ class SGL_Output
      * @return  string          translated text
      * @see     setLanguage()
      */
-    function translate($key, $filter = false, $aParams = array())
+    function translate($key, $filter = false, $aParams = array(), $output = null)
     {
+        // in case translation params are specified as a string
+        // e.g. {translate(#my string to translate#,#vprintf#,#param1|value1||param2||value2#)}
+        if (!empty($aParams) && is_string($aParams)) {
+            $aResultParams = array();
+            $aStringParams = explode('||', $aParams);
+            foreach ($aStringParams as $stringPair) {
+                $aStringValues = explode('|', $stringPair);
+                if (isset($aStringValues[1])) {
+                    if (isset($output) && is_a($output, 'SGL_Output')) {
+                        $aResultParams[$aStringValues[0]] = isset($output->{$aStringValues[1]})
+                            ? $output->{$aStringValues[1]}
+                            : null;
+                    } elseif (is_a($this, 'SGL_Output')) {
+                        $aResultParams[$aStringValues[0]] = isset($this->{$aStringValues[1]})
+                            ? $this->{$aStringValues[1]}
+                            : null;
+                    }
+                } else {
+                    if (isset($output) && is_a($output, 'SGL_Output')) {
+                        $aResultParams[] = isset($output->{$aStringValues[0]})
+                            ? $output->{$aStringValues[0]}
+                            : null;
+                    } elseif (is_a($this, 'SGL_Output')) {
+                        $aResultParams[] = isset($this->{$aStringValues[0]})
+                            ? $this->{$aStringValues[0]}
+                            : null;
+                    }
+                }
+            }
+            $aParams = $aResultParams;
+        }
         return SGL_String::translate($key, $filter, $aParams);
+    }
+
+    function tr($key, $filter, $aParams = array(), $output = null)
+    {
+        return SGL_Output::translate($key, $filter, $aParams, $output);
     }
 
     /**
