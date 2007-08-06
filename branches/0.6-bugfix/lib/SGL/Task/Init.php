@@ -454,7 +454,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         //  set PEAR error handler
         #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
-        if (empty($conf['debug']['showBacktrace'])) {
+        if (!SGL_Config::get('debug.showBacktrace')) {
            $options = &PEAR::getStaticProperty('PEAR_Error', 'skiptrace');
            $options = true;
         }
@@ -480,7 +480,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
 
         //  send error info to screen
         SGL_Error::push($oError);
-        if (!empty($conf['debug']['showBacktrace'])) {
+        if (SGL_Config::get('debug.showBacktrace')) {
             echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }
     }
@@ -791,9 +791,7 @@ class SGL_HtmlSimpleView extends SGL_View
     {
         //  prepare renderer class
         if (!$templateEngine) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $templateEngine = $conf['site']['templateEngine'];
+            $templateEngine = SGL_Config::get('site.templateEngine');
         }
         $templateEngine = ucfirst($templateEngine);
         $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
