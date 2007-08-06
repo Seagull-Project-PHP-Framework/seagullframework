@@ -18,7 +18,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $req = $input->getRequest();
-            $entityName = $this->conf['REST']['entityName'];
+            $entityName = SGL_Config::get('REST.entityName');
             $xml = $req->get($entityName, $allowTags = true);
         	$unserializer = &new XML_Unserializer();
         	$unserializer->setOption('tagAsClass', true);
@@ -42,7 +42,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
      */
     function getKeysToIgnore()
     {
-        $keys = $this->conf['REST']['keysToIgnore'];
+        $keys = SGL_Config::get('REST.keysToIgnore');
         $aKeys = explode(',', $keys);
         return $aKeys;
     }
@@ -56,7 +56,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
      */
     function getComplexTypes()
     {
-        $keys = $this->conf['REST']['complexType'];
+        $keys = SGL_Config::get('REST.complexType');
         $aKeys = explode(',', $keys);
         $aRet = array();
         foreach ($aKeys as $key) {
