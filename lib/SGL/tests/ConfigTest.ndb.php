@@ -84,18 +84,32 @@ class ConfigTest extends UnitTestCase {
         $this->assertTrue(array_key_exists('foo', $this->c->getAll()));
     }
 
-    function testGetProperty()
-    {
-        $var = $this->c->get(array('cache' => 'lifetime'));
-        $this->assertEqual($var, 86400);
-    }
-
     function testSetArrayProperty()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
         $conf = $this->c->load($file);
         $this->c->set('quux', array('foo' => 'bar'));
         $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
+    }
+
+    function testGetArrayProperty()
+    {
+        $var = $this->c->get(array('cache' => 'lifetime'));
+        $this->assertEqual($var, 86400);
+    }
+
+    function testConfigGetScalarProperty()
+    {
+        $var = $this->c->get('cache');
+        $expected = array (
+          'enabled' => '0',
+          'libCacheEnabled' => '0',
+          'lifetime' => '86400',
+          'cleaningFactor' => '0',
+          'readControl' => '1',
+          'writeControl' => '1',
+        );
+        $this->assertEqual($var, $expected);
     }
 
     function testImprovedConfigGet()
