@@ -298,7 +298,7 @@ class SGL_String
                 $ret = $trans[$key];
             }
             if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
-                if (!empty($aParams) && is_array($aParams) && $filter = 'vprintf') {
+                if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
                     $i = 1;
                     foreach ($aParams as $key => $value) {
                         $ret = str_replace("%$i", $value, $ret);
