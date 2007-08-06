@@ -139,7 +139,7 @@ class SGL_DB
         return $dsn;
     }
 
-    function _getDsnAsArray($conf,$excludeDbName = false)
+    function _getDsnAsArray($conf, $excludeDbName = false)
     {
         $dsn = array(
             'phptype'  => $conf['db']['type'],
@@ -156,7 +156,7 @@ class SGL_DB
         return $dsn;
     }
 
-    function _getDsnAsString($conf,$excludeDbName = false)
+    function _getDsnAsString($conf, $excludeDbName = false)
     {
         $socket = (isset($conf['db']['protocol'])
                 && $conf['db']['protocol'] == 'unix'
@@ -166,18 +166,22 @@ class SGL_DB
         $protocol = isset($conf['db']['protocol'])
             ? $conf['db']['protocol'] . $socket
             : '';
-        $host = empty($conf['db']['socket']) ? '+' . $conf['db']['host'] : '';
+        $host = !empty($conf['db']['host']) ? $conf['db']['host'] : '';
+        $host = empty($conf['db']['socket']) ? '+' . $host : '';
         $port = (!empty($conf['db']['port'])
                 && isset($conf['db']['protocol'])
                 && ($conf['db']['protocol'] == 'tcp'))
             ? ':' . $conf['db']['port']
             : '';
-        $dsn = $conf['db']['type'] . '://' .
-            $conf['db']['user'] . ':' .
-            $conf['db']['pass'] . '@' .
+        $type = !empty($conf['db']['type']) ? $conf['db']['type'] : '';
+        $user = !empty($conf['db']['user']) ? $conf['db']['user'] : '';
+        $passwd = !empty($conf['db']['pass']) ? $conf['db']['pass'] : '';
+        $dsn = $type . '://' .
+            $user . ':' .
+            $passwd . '@' .
             $protocol .
             $host . $port;
-        if (!$excludeDbName) {
+        if (!$excludeDbName && isset($conf['db']['name'])) {
             $dsn .= '/' . $conf['db']['name'];
         }
         return $dsn;
