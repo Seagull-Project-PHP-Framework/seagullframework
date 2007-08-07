@@ -397,6 +397,16 @@ class SGL_Session
         return $_SESSION['uid'] == $ownerId;
     }
 
+    function hasAdminGui()
+    {
+        $aRoles = explode(',', SGL_Config::get('site.rolesHaveAdminGui'));
+        foreach ($aRoles as $k => $role) {
+            $aRoles[$k] = SGL_String::pseudoConstantToInt($role);
+        }
+        $ret = in_array($_SESSION['rid'], $aRoles);
+        return $ret;
+    }
+
     /**
      * Returns the current user's id.
      *
