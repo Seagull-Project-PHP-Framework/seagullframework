@@ -108,6 +108,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
         //  we've got module name so load and merge local and global configs
         //  unless we're running the setup wizard
+        $a = SGL_Config::get('site.setup');
         if (!SGL_Config::get('site.setup')  && !empty($aParsedUri['moduleName'])) {
             $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
             $path = realpath($testPath);

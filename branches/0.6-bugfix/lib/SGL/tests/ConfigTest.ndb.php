@@ -102,8 +102,8 @@ class ConfigTest extends UnitTestCase {
     {
         $var = $this->c->get('cache');
         $expected = array (
-          'enabled' => '0',
-          'libCacheEnabled' => '0',
+          'enabled' => '',
+          'libCacheEnabled' => '',
           'lifetime' => '86400',
           'cleaningFactor' => '0',
           'readControl' => '1',
