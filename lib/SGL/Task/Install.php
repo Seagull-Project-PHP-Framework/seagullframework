@@ -1805,13 +1805,34 @@ PHP;
 if (strpos(PHP_OS, 'WIN') !== false) {
     if (!function_exists('symlink')) {
         function symlink($target, $link) {
-            exec("linkd " . $link . " " . $target, $ret);
+            // it's Vista
+            if (isset($_SERVER['HTTP_USER_AGENT'])
+                    && strpos($_SERVER['HTTP_USER_AGENT'], 'Windows NT 6') !== false) {
+
+                // mklink utility doesn't understand ".."
+                $ds        = DIRECTORY_SEPARATOR;
+                $linkDir   = realpath(dirname($link)) . $ds . basename($link);
+                $targetDir = realpath(dirname($target)) . $ds . basename($target);
+
+                exec('mklink /D '  . $linkDir . ' ' . $targetDir, $ret);
+            // other Windows version
+            } else {
+                exec('linkd ' . $link . ' ' . $target, $ret);
+            }
             return $ret;
         }
     }
     if (!function_exists('readlink')) {
         function readlink($link) {
-            exec('linkd ' . $link, $ret);
+            // it's Vista
+            if (isset($_SERVER['HTTP_USER_AGENT'])
+                    && strpos($_SERVER['HTTP_USER_AGENT'], 'Windows NT 6') !== false) {
+                // todo: find linkd native equivalent for reading links
+                $ret = true;
+            // other Windows version
+            } else {
+                exec('linkd ' . $link, $ret);
+            }
             return $ret;
         }
     }
