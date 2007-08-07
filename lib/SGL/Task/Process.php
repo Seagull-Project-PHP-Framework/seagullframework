@@ -597,7 +597,8 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         $defaultMgr = SGL_Config::get('site.defaultManager');
 
         //  load default module's config if not present
-        $conf = $this->c->ensureModuleConfigLoaded($defaultModule);
+        $c = &SGL_Config::singleton();
+        $conf = $c->ensureModuleConfigLoaded($defaultModule);
 
         if (PEAR::isError($conf)) {
             SGL::raiseError('could not locate module\'s config file',
