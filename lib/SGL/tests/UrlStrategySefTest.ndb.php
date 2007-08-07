@@ -41,7 +41,7 @@ class UrlStrategySefTest extends UnitTestCase
           6 => 'Hosting+info',
         );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -69,7 +69,7 @@ class UrlStrategySefTest extends UnitTestCase
         );
 
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -95,7 +95,7 @@ class UrlStrategySefTest extends UnitTestCase
 
         );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -115,7 +115,7 @@ class UrlStrategySefTest extends UnitTestCase
             '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
           );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present, default module + mgr values
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -133,7 +133,7 @@ class UrlStrategySefTest extends UnitTestCase
             '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
           );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(!array_key_exists('moduleName', $ret));
@@ -152,7 +152,7 @@ class UrlStrategySefTest extends UnitTestCase
             '?start_debug=1&debug_port=10000&debug_host=192.168.1.23,127.0.0.1&send_sess_end=1&debug_no_cache=1123518013790&debug_stop=1&debug_url=1&debug_start_session=1',
           );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -172,7 +172,7 @@ class UrlStrategySefTest extends UnitTestCase
             '1',
           );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));
@@ -198,7 +198,7 @@ class UrlStrategySefTest extends UnitTestCase
             'quux2',
           );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
-        $ret = $this->strategy->parseQueryString($this->obj, $this->conf);
+        $ret = $this->strategy->parseQueryString($this->obj);
 
         //  assert expected keys present
         $this->assertTrue(array_key_exists('moduleName', $ret));

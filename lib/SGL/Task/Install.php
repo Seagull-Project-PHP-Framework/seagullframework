@@ -178,6 +178,9 @@ class SGL_Task_CreateConfig extends SGL_Task
                 }
             }
         }
+        //  remove setup key before writing out file
+        $ok = $c->remove(array('site', 'setup'));
+
         //  save
         $configFile = SGL_VAR_DIR . '/' . SGL_SERVER_NAME . '.conf.php';
         $ok = $c->save($configFile);

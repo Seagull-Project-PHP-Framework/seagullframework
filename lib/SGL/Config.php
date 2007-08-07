@@ -94,7 +94,7 @@ class SGL_Config
      * Returns a config key
      *
      * @since Seagull 0.6.3 easier access with static calls, ie
-     * $c = SGL_Config::get('cache.lifetime');
+     * $lifetime = SGL_Config::get('cache.lifetime');
      *
      * @param mixed $key array or string
      * @return string the value of the config key
@@ -156,6 +156,7 @@ class SGL_Config
      * @param array $aKey   A 2 element array: element one for the section, element
      *                      2 for the section key.
      * @return mixed
+     * @todo in 0.7 make this consistent with $c->get()
      */
     function remove($aKey)
     {
