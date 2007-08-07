@@ -907,14 +907,13 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
 
         if (!SGL::runningFromCLI()) {
             $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
-            $userRid = SGL_Session::getRoleId();
             $adminGuiAllowed = $adminGuiRequested = false;
 
             //  setup which GUI to load depending on user and manager
             $output->adminGuiAllowed = false;
 
             // first check if userRID allows to switch to adminGUI
-            if ($userRid == SGL_ADMIN) {
+            if (SGL_Session::hasAdminGui()) {
                 $adminGuiAllowed = true;
             }
 

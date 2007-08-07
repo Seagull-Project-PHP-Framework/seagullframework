@@ -195,6 +195,13 @@ class VariousTest extends UnitTestCase {
         $this->assertEqual($ret, true);
     }
 
+    function test_hasAdminGui()
+    {
+        define('SGL_TRANSLATOR', 3);
+        $ret = SGL_Session::hasAdminGui();
+        $this->assertEqual($ret, SGL_ADMIN); // tests run as SGL_ADMIN
+    }
+
     function getNextKey($aKeys)
     {
         $keys = array_keys($aKeys);
