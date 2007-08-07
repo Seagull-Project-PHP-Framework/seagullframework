@@ -114,6 +114,12 @@ function toggleTransElements() {
                 {generateRadioPair(#conf[site][blocksEnabled]#,conf[site][blocksEnabled]):h}
             </p>
             <p>
+                <label class="tipOwner" for="conf[site][rolesHaveAdminGui]">{translate(#Roles that can access the admin GUI#)}
+                <span class="tipText">{translate(#List role constants separated by commas, ie, SGL_ADMIN,SGL_FOO#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][rolesHaveAdminGui]" id="conf[site][rolesHaveAdminGui]" value="{conf[site][rolesHaveAdminGui]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[site][defaultArticleViewType]">{translate(#Default article view type#)}
                 <span class="tipText">{translate(#This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)#)}</span>
                 </label>
