@@ -33,7 +33,7 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
         //  or if page requires authentication and we're not debugging
         if (SGL_Config::get("$providerContainer.requiresAuth")
                 && SGL_Config::get('debug.authorisationEnabled')) {
-            $aMethods = explode(',', SGL_Config::get("$providerContainer.requiresAuth")]);
+            $aMethods = explode(',', SGL_Config::get("$providerContainer.requiresAuth"));
             $aMethods = array_map('trim', $aMethods);
             if (in_array($actionName, $aMethods)) {
                 //  check that session is valid
