@@ -62,7 +62,7 @@ class SGL
         $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
         $sessLang = isset($_SESSION['aPrefs']['language'])
             ? $_SESSION['aPrefs']['language']
-            : 'en-iso-8859-15';
+            : SGL_Config::get('translation.fallbackLang');
         return $aLangs[$sessLang][2];
     }
 
