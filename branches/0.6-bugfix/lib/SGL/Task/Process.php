@@ -442,7 +442,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
 
         //  set english as default language
         } else {
-            $lang = $_SESSION['aPrefs']['language'] = 'en-iso-8859-15';
+            $lang = $_SESSION['aPrefs']['language'] = SGL_Config::get('translation.fallbackLang');
         }
         //  resolve current language from GET or session, assign to $language
         $language = $aLanguages[$lang][1];
