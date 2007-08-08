@@ -301,7 +301,9 @@ class SGL_String
                 if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
                     $i = 1;
                     foreach ($aParams as $key => $value) {
+                        $ret = str_replace("%$i%", $value, $ret);
                         $ret = str_replace("%$i", $value, $ret);
+                        $ret = str_replace("%$key%", $value, $ret);
                         $ret = str_replace("%$key", $value, $ret);
                         $i++;
                     }
