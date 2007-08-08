@@ -186,10 +186,11 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $fallbackLang = SGL_Config::get('translation.fallbackLang');
         //  retrieve source translations
         $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
             // default language to compare with is always English
-            SGL_Translation::transformLangID('en-iso-8859-15'));
+            SGL_Translation::transformLangID($fallbackLang));
         //  retrieve target translations
         $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
             $input->currentLang);
@@ -247,8 +248,9 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $fallbackLang = SGL_Config::get('translation.fallbackLang');
         $aSourceLang = SGL_Translation::getTranslations($input->currentModule,
-            SGL_Translation::transformLangID('en-iso-8859-15'));
+            SGL_Translation::transformLangID($fallbackLang));
         $aTargetLang = SGL_Translation::getTranslations($input->currentModule,
             $input->currentLang);
         $aTargetLang = SGL_Array::removeBlanks($aTargetLang);
@@ -359,7 +361,7 @@ class TranslationMgr extends SGL_Manager
         $status['4'] = 'old strings';
 
         //  the default language to compare with is always English
-        $fallbackLang = 'en-iso-8859-15';
+        $fallbackLang = SGL_Config::get('translation.fallbackLang');
         foreach ($modules as $name => $title) {
             $aModules[$name]['title'] = $title;
 
