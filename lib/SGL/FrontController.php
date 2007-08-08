@@ -192,6 +192,7 @@ class SGL_FrontController
                 'SGL_Task_Init',
                 'SGL_Task_SetupORM',
                 'SGL_Task_CreateSession',
+                'SGL_Task_SetupLangSupport',
                 'SGL_Task_ExecuteAmfAction',
                 );
             $input->setFilters($aFilters);
