@@ -146,6 +146,38 @@ class StringTest extends UnitTestCase {
         );
         $this->assertEqual($cleanArray, $expectedArray);
     }
+
+    function testTranslate()
+    {
+        $GLOBALS['_SGL']['TRANSLATION'] = array(
+            '%foo% is my %bar%' => '%foo% is my %bar%',
+            '%1% is my %2%'     => '%1% is my %2%',
+        );
+        $trans = new stdClass();
+        $trans->foo = 'Dmitri';
+        $trans->bar = 'friend';
+
+        // params is an object
+        $expected = 'Dmitri is my friend';
+        $ret = SGL_String::translate('%foo% is my %bar%', 'vprintf', $trans);
+        $this->assertEqual($ret, $expected);
+
+        // params is an assoc array
+        $trans = array();
+        $trans['foo'] = 'Dmitri';
+        $trans['bar'] = 'friend';
+
+        $ret = SGL_String::translate('%foo% is my %bar%', 'vprintf', $trans);
+        $this->assertEqual($ret, $expected);
+
+        // params is array
+        $trans = array();
+        $trans[] = 'Dmitri';
+        $trans[] = 'friend';
+
+        $ret = SGL_String::translate('%1% is my %2%', 'vprintf', $trans);
+        $this->assertEqual($ret, $expected);
+    }
 }
 
 ?>
