@@ -298,6 +298,9 @@ class SGL_String
                 $ret = $trans[$key];
             }
             if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
+                if (is_object($aParams)) {
+                    $aParams = (array)$aParams;
+                }
                 if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
                     $i = 1;
                     foreach ($aParams as $key => $value) {
