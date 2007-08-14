@@ -122,8 +122,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('db', array('socket' => $data['socket']));
         $c->set('db', array('type' => $data['dbType']['type']));
         $c->set('db', array('postConnect' => $data['postConnect']));
-        $mysqlCluster = isset($data['mysqlCluster']) ? '1' : '0';
-        $c->set('db', array('mysqlCluster' => $mysqlCluster));
+        $c->set('db', array('mysqlDefaultStorageEngine' => $data['dbMysqlDefaultStorageEngine']));
 
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));

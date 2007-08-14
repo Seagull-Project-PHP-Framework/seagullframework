@@ -132,7 +132,7 @@ class ConfigTest extends UnitTestCase {
 
     function testConfigGetStrictFalseValue()
     {
-        $res = SGL_Config::get('db.mysqlCluster');
+        $res = SGL_Config::get('db.mysqlDefaultStorageEngine');
         $this->assertNotIdentical($res, false); // returns a string of zero length
     }
 
