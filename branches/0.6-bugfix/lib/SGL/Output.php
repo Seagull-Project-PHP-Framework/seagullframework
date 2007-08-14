@@ -105,7 +105,7 @@ class SGL_Output
         return SGL_String::translate($key, $filter, $aParams);
     }
 
-    function tr($key, $filter, $aParams = array(), $output = null)
+    function tr($key, $filter = false, $aParams = array(), $output = null)
     {
         return SGL_Output::translate($key, $filter, $aParams, $output);
     }
