@@ -4,6 +4,8 @@ require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
 require_once dirname(__FILE__)  . '/../lib/SGL/Sql.php';
 require_once dirname(__FILE__)  . '/../tests/classes/DB.php';
 
+define('SGL_INSTALLED', true);
+
 class TestRunnerInit extends SGL_FrontController
 {
     function run()
