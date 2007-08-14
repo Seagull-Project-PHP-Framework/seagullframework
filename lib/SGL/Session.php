@@ -330,7 +330,9 @@ class SGL_Session
         //  check for session timeout
         $currentTime = mktime();
         $lastPageRefreshTime = $_SESSION['lastRefreshed'];
-        $timeout = $_SESSION['aPrefs']['sessionTimeout'];
+        $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+            ? $_SESSION['aPrefs']['sessionTimeout']
+            : '';
         //  if timeout is set to zero session never expires
         if (empty($timeout)) {
             return false;
