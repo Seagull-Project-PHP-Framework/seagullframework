@@ -137,14 +137,19 @@ class SGL_Sql
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
 
-            // support for mysql cluster
-            if ($conf['db']['type'] == 'mysql_SGL'
-                    && $conf['db']['mysqlCluster'] == true
-                    && preg_match('/create table/i', $sql)) {
-                if (preg_match('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', $sql)) {
-                    $sql = preg_replace('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', 'engine=ndbcluster', $sql);
-                } elseif (preg_match('/\)\s*;\s*$/', $sql)) {
-                    $sql = preg_replace('/;\s*$/', 'engine=ndbcluster;', $sql);
+            // support for custom mysql engine
+            if (in_array($conf['db']['type'], array('mysql', 'mysql_SGL', 'mysqli_SGL'))) {
+                if (SGL_Config::get('db.mysqlDefaultStorageEngine')
+                        && preg_match('/create table/i', $sql)) {
+                    $engine = SGL_Config::get('db.mysqlDefaultStorageEngine');
+                    // we only change default storage engine for tables,
+                    // which doesn't have explicit storage specified in
+                    // create table statement
+                    if (!preg_match('/(type|engine)(\s*)=(\s*)([a-z]+)/i', $sql)) {
+                        if (preg_match('/\)\s*;\s*$/', $sql)) {
+                            $sql = preg_replace('/;\s*$/', 'engine = ' . $engine . ';', $sql);
+                        }
+                    }
                 }
             }
 

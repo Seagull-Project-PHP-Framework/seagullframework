@@ -467,10 +467,13 @@ function toggleTransElements() {
                 </select>
             </p>
             <p>
-                <label class="tipOwner" for="conf[db][mysqlCluster]">{translate(#MySQL Cluster#)}
-                <span class="tipText">{translate(#Only future table creation will be affected, manually edit existing tables#)}</span>
+                <label class="tipOwner" for="conf[db][mysqlDefaultStorageEngine]">
+                    {translate(#MySQL Default Storage Engine#)}
+                    <span class="tipText">{translate(#Default MySQL storage engine for all tables in database#)}</span>
                 </label>
-                {generateRadioPair(#conf[db][mysqlCluster]#,conf[db][mysqlCluster]):h}
+                <select name="conf[db][mysqlDefaultStorageEngine]" id="conf[db][mysqlDefaultStorageEngine]">
+                    {generateSelect(aMysqlEngines,conf[db][mysqlDefaultStorageEngine]):h}
+                </select>
             </p>
             <p>
                 <label for="conf">{translate(#Host#)}</label>

@@ -100,6 +100,12 @@ class ConfigMgr extends SGL_Manager
             3 => 'word fragment',
             );
         $this->aDbDoDebugLevels = range(0, 5);
+        $this->aMysqlEngines = array(
+            0            => 'server default',
+            'myisam'     => 'MyISAM',
+            'innodb'     => 'InnoDB',
+            'ndbcluster' => 'MySQL Cluster'
+        );
 
         //  any files where the last 3 letters are 'Nav' in the modules/navigation/classes will be returned
         $navDir = SGL_MOD_DIR . '/navigation/classes';
@@ -250,6 +256,8 @@ class ConfigMgr extends SGL_Manager
         $output->aTemplateEngines       = $this->aTemplateEngines;
         $output->aTranslationContainers = $this->aTranslationContainers;
         $output->aDbDoDebugLevels = $this->aDbDoDebugLevels;
+        $output->aMysqlEngines    = $this->aMysqlEngines;
+        $output->aMysqlEngines[0] = SGL_Output::translate($output->aMysqlEngines[0]);
 
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
