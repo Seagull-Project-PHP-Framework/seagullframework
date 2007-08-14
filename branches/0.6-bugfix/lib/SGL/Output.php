@@ -288,7 +288,7 @@ class SGL_Output
                 $i = $i + 1;
                 $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
                 if ($selected == $k ){
-                    $html .= " checked";
+                    $html .= " checked='checked'";
                 }
                 $html .= " />$v ";
                 if ($newline) {
