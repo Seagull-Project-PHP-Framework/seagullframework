@@ -308,12 +308,11 @@ class SGL_Translation
         $conf = $c->getAll();
 
         if (!empty($module) && !empty($lang)) {
+
             $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_TRANS2);
             $installedLangs = explode(',', $conf['translation']['installedLanguages']);
-
             if ($conf['translation']['container'] == 'db'
-                && in_array($lang, $installedLangs)) {
-                //  instantiate translation2 object
+                    && in_array($lang, $installedLangs)) {
                 $translation = &SGL_Translation::singleton();
 
                 //  set language
@@ -327,7 +326,6 @@ class SGL_Translation
                     $fallbackLang = (is_string($fallbackLang))
                         ? $fallbackLang
                         : $conf['translation']['fallbackLang'];
-
                     $translation = & $translation->getDecorator('Lang');
                     $translation->setOption('fallbackLang', $fallbackLang);
                 }
@@ -386,7 +384,7 @@ class SGL_Translation
     }
 
     /**
-     * Transform langID to opposite format
+     * Toggle langID format
      *
      * SGL_LANG_ID_SGL - en-iso-8859-15
      * SGL_LANG_ID_TRANS2 - en_iso_8859_15
@@ -398,9 +396,6 @@ class SGL_Translation
      */
      function transformLangID($langID, $format = null)
      {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
         if (isset($format)) {
             $langID = ($format == SGL_LANG_ID_SGL)
                 ? str_replace('_', '-', $langID)
