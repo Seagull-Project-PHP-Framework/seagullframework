@@ -55,10 +55,12 @@ class SGL_Request
 {
     var $aProps;
 
-    function init()
+    function init($type = null)
     {
         if ($this->isEmpty()) {
-            $type = $this->getRequestType();
+            $type = (is_null($type))
+                ? $this->getRequestType()
+                : $type;
             $typeName = $this->constantToString($type);
             $file = SGL_CORE_DIR . '/Request/' . $typeName . '.php';
             if (!is_file($file)) {
@@ -134,13 +136,13 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function &singleton($forceNew = false)
+    function &singleton($forceNew = false, $type = null)
     {
         static $instance;
 
         if (!isset($instance) || $forceNew) {
             $obj = new SGL_Request();
-            $instance = $obj->init();
+            $instance = $obj->init($type);
         }
         return $instance;
     }
