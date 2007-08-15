@@ -135,16 +135,38 @@ class SGL_Config
         return $ret;
     }
 
+    /**
+     * Sets a config property.
+     *
+     * Using new shorthand method you can do $ok = SGL_Config::set('river.boat', 'green');
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return boolean
+     * @todo define add() and remove() methods, set() should only set existing keys
+     */
     function set($key, $value)
     {
-        if (isset($this->aProps[$key])
-                && is_array($this->aProps[$key])
-                && is_array($value)) {
+        $ret = false;
+        if (is_string($key) && is_string($value)) {
+            $aKeys = split('\.', trim($key));
+
+            //  it's a static call
+            if (isset($aKeys[0]) && isset($aKeys[1])) {
+                $c = &SGL_Config::singleton();
+                $ret = $c->set($aKeys[0], array($aKeys[1] => $value));
+            //  else it's an object call with scalar second arg
+            } else {
+                $this->aProps[$key] = $value;
+                $ret = true;
+            }
+        //  else it's an object call with array second arg
+        } elseif (is_string($key) && is_array($value)) {
             $key2 = key($value);
             $this->aProps[$key][$key2] = $value[$key2];
-        } else {
-            $this->aProps[$key] = $value;
+            $ret = true;
         }
+        return $ret;
     }
 
     /**
@@ -193,20 +215,23 @@ class SGL_Config
      * Reads in data from supplied $file.
      *
      * @param string $file
+     * @param boolean $force If force is true, master  config file is read, not cached one
      * @return mixed An array of data on success, PEAR error on failure.
      */
-    function load($file)
+    function load($file, $force = false)
     {
         //  create cached copy if module config and cache does not exist
         //  if file has php extension it must be global config
         if (defined('SGL_INSTALLED')) {
             if (substr($file, -3, 3) != 'php') {
-                $cachedFileName = $this->getCachedFileName($file);
-                if (!is_file($cachedFileName)) {
-                    $ok = $this->createCachedFile($cachedFileName);
+                if (!$force) {
+                    $cachedFileName = $this->getCachedFileName($file);
+                    if (!is_file($cachedFileName)) {
+                        $ok = $this->createCachedFile($cachedFileName);
+                    }
+                    //  ensure module config reads are done from cached copy
+                    $file = $cachedFileName;
                 }
-                //  ensure module config reads are done from cached copy
-                $file = $cachedFileName;
             }
         }
         $ph = &SGL_ParamHandler::singleton($file);
