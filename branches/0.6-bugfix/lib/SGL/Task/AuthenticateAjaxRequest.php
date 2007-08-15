@@ -38,8 +38,7 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
             $aMethods = array_map('trim', $aMethods);
             if (in_array($actionName, $aMethods)) {
                 //  check that session is valid
-                if (true) {
-                //if (!$session->isValid()) {
+                if (!$session->isValid()) {
                     SGL::raiseError('authentication required');
                 //  or timed out
                 } elseif ($timeout) {
