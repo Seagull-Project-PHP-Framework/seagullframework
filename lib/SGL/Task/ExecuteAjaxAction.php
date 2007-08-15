@@ -24,7 +24,7 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
         }
 
         if (SGL_Error::count()) {
-            $ret = SGL_AjaxProvider::handleError(SGL_Error::getLast());
+            return;
         } else {
             //  execute action method
             $oProvider = new $providerClass();
