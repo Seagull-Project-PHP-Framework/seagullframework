@@ -9,6 +9,7 @@ class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (SGL_Error::count()) {
+            $output->data = SGL_AjaxProvider::handleError(SGL_Error::getLast());
             header('HTTP/1.0 500 text/json');
             header('Cache-Control: no-store, no-cache');
             return;
