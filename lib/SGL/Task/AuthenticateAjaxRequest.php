@@ -10,6 +10,8 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
 {
     function process(&$input, &$output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $session = $input->get('session');
         $timeout = !$session->updateIdle();
 
@@ -25,7 +27,6 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
                 $timeout = !$session->updateIdle();
             }
         }
-
         $req = $input->getRequest();
         $actionName = $req->getActionName();
         $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
@@ -38,17 +39,11 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
             if (in_array($actionName, $aMethods)) {
                 //  check that session is valid
                 if (!$session->isValid()) {
-                    $input->ajaxRequestMessage = array(
-                        'type'    => 'error',
-                        'message' => SGL_Output::translate('authentication required')
-                    );
+                    SGL::raiseError('authentication required');
                 //  or timed out
                 } elseif ($timeout) {
                     $session->destroy();
-                    $input->ajaxRequestMessage = array(
-                        'type'    => 'error',
-                        'message' => SGL_Output::translate('session timeout')
-                    );
+                    SGL::raiseError('session timeout');
                 }
             }
         }

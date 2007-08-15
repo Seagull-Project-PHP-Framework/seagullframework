@@ -4,6 +4,8 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
 {
     function process(&$input, &$output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $req        = $input->getRequest();
         $moduleName = $req->getModuleName();
         $method     = $req->getActionName();
@@ -12,17 +14,22 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
             ucfirst($moduleName) . 'AjaxProvider.php';
 
         if (!is_file($providerFile)) {
-            return PEAR::raiseError('Ajax provider file could not be located',
-                SGL_ERROR_NOFILE);
+            SGL::raiseError('Ajax provider file could not be located', SGL_ERROR_NOFILE);
+        } else {
+            require_once $providerFile;
+            $providerClass = ucfirst($moduleName) . 'AjaxProvider';
+            if (!class_exists($providerClass)) {
+                SGL::raiseError('Ajax provider class does not exist', SGL_ERROR_NOCLASS);
+            }
         }
-        require_once $providerFile;
-        $providerClass = ucfirst($moduleName) . 'AjaxProvider';
-        if (!class_exists($providerClass)) {
-            return PEAR::raiseError('Ajax provider class does not exist',
-                SGL_ERROR_NOCLASS);
+
+        if (SGL_Error::count()) {
+            $ret = SGL_AjaxProvider::handleError(SGL_Error::getLast());
+        } else {
+            //  execute action method
+            $oProvider = new $providerClass();
+            $oProvider->process($input, $output);
         }
-        $oProvider = new $providerClass();
-        $output->data = $oProvider->process($input, $output);
     }
 }
 ?>
