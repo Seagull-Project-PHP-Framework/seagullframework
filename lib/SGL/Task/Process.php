@@ -437,7 +437,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         //  if lang var passed in request
         if (isset($lang) && array_key_exists($lang, $aLanguages)) {
             $_SESSION['aPrefs']['language'] = $lang;
-        } elseif (isset($_SESSION['aPrefs']['language'])) {
+        } elseif (!empty($_SESSION['aPrefs']['language'])) {
             $lang = $_SESSION['aPrefs']['language'];
 
         //  set fallback lang as default language
