@@ -348,7 +348,7 @@ class SGL_Translation
                 return array();
             }
         } else {
-            return SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
+            SGL::raiseError('Incorrect parameter passed to '.__CLASS__.'::'.__FUNCTION__,
                 SGL_ERROR_INVALIDARGS);
         }
     }
