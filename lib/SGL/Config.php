@@ -148,7 +148,7 @@ class SGL_Config
     function set($key, $value)
     {
         $ret = false;
-        if (is_string($key) && is_string($value)) {
+        if (is_string($key) && is_scalar($value)) {
             $aKeys = split('\.', trim($key));
 
             //  it's a static call
