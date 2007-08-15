@@ -28,7 +28,7 @@ class ConfigTest extends UnitTestCase {
     function testLoadIniFile()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
-        $ret = $this->c->load($file);
+        $ret = $this->c->load($file, $force = true);
         $this->assertTrue(is_array($ret));
         $this->assertEqual(count($ret), 14);
     }
@@ -44,7 +44,7 @@ class ConfigTest extends UnitTestCase {
     function testWriteIniFile()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
-        $ret = $this->c->load($file);
+        $ret = $this->c->load($file, $force = true);
         $this->assertTrue(is_array($ret));
         $this->assertEqual(count($ret), 14);
 
@@ -59,7 +59,7 @@ class ConfigTest extends UnitTestCase {
     function testWritePhpArrayFile()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
-        $ret = $this->c->load($file);
+        $ret = $this->c->load($file, $force = true);
         $this->assertTrue(is_array($ret));
         $this->assertEqual(count($ret), 14);
 
@@ -79,17 +79,30 @@ class ConfigTest extends UnitTestCase {
     function testSetScalarProperty()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
-        $conf = $this->c->load($file);
+        $conf = $this->c->load($file, $force = true);
         $this->c->set('foo', 'bar');
-        $this->assertTrue(array_key_exists('foo', $this->c->getAll()));
+        $aRes = $this->c->getAll();
+        $this->assertTrue(array_key_exists('foo', $aRes));
     }
 
     function testSetArrayProperty()
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
-        $conf = $this->c->load($file);
-        $this->c->set('quux', array('foo' => 'bar'));
-        $this->assertTrue(array_key_exists('quux', $this->c->getAll()));
+        $conf = $this->c->load($file, $force = true);
+        $this->c->set('site', array('showLogo' => 'quux'));
+        $var = $this->c->get(array('site' => 'showLogo'));
+        $this->assertEqual('quux', $var);
+    }
+
+    function testSetStaticArrayProperty()
+    {
+        $file = dirname(__FILE__) . '/test.conf.ini';
+        $conf = $this->c->load($file, $force = true);
+        $ok = SGL_Config::set('river.boat', 'green');
+        $aRes = $this->c->getAll();
+        $this->assertTrue(array_key_exists('river', $aRes));
+        $this->assertTrue($ok);
+        $this->assertEqual(SGL_Config::get('river.boat'), 'green');
     }
 
     function testGetArrayProperty()
@@ -128,12 +141,6 @@ class ConfigTest extends UnitTestCase {
     {
         $res = SGL_Config::get('db.collation');
         $this->assertTrue(!($res));
-    }
-
-    function testConfigGetStrictFalseValue()
-    {
-        $res = SGL_Config::get('db.mysqlDefaultStorageEngine');
-        $this->assertNotIdentical($res, false); // returns a string of zero length
     }
 
     function testConfigGetNonExistentValue()

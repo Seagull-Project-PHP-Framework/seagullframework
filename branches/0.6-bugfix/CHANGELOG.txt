@@ -12,6 +12,8 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+15-08-07    Static SGL_Config::set() call implemented, eg:
+                SGL_Config::set('cache.lifetime', 123)
 14-08-07    Request types can now be preset
 07-08-07    Implemented Config option so roles other than SGL_ADMIN can use the admin GUI
 07-08-07    Symbolic links support for Windows Vista
