@@ -111,38 +111,37 @@ class SGL_AjaxProvider
      */
     function process(&$input, &$output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $req = $input->getRequest();
         $actionName = $req->getActionName();
 
-        // in case some filters already sent response, use it
-        if (!empty($input->ajaxRequestMessage)) {
-            $ret = $input->ajaxRequestMessage;
+        // handle errors
+        if (SGL_Error::count()) { // eg, authentication failure
+            return;
         } elseif (!method_exists($this, $actionName)) {
-            $ret = 'requested method does not exist';
-        } else {
-
-            // by default request is authorised
-            $ok = true;
-
-            // only implement on demand
-            $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
-            if (!empty($this->conf[$providerContainer]['requiresAuth'])
-                    && $this->conf['debug']['authorisationEnabled']) {
-                $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
-                $aMethods = array_map('trim', $aMethods);
-                if (in_array($actionName, $aMethods)) {
-                    $resourseId = $this->getAuthResourceId();
-                    $ok = $this->isOwner($resourseId, SGL_Session::getUid());
-                }
-            }
-            $ret = $ok
-                ? $this->$actionName()
-                : array(
-                      'type'    => 'error',
-                      'message' => SGL_Output::translate('authorisation failed')
-                  );
+            SGL::raiseError('requested method does not exist');
+            return;
         }
-        return $this->processResponse($ret);
+        // by default request is authorised
+        $ok = true;
+
+        // only implement on demand
+        $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
+        if (!empty($this->conf[$providerContainer]['requiresAuth'])
+                && $this->conf['debug']['authorisationEnabled']) {
+            $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
+            $aMethods = array_map('trim', $aMethods);
+            if (in_array($actionName, $aMethods)) {
+                $resourseId = $this->getAuthResourceId();
+                $ok = $this->isOwner($resourseId, SGL_Session::getUid());
+            }
+        }
+        if (!$ok) {
+            SGL::raiseError('authorisation failed');
+            return;
+        }
+        $this->$actionName();
     }
 
     /**
@@ -172,58 +171,28 @@ class SGL_AjaxProvider
         return 'resourceId';
     }
 
-    /**
-     * Procces result of ajax method and send appropriate headers.
-     *
-     * @param mixed $response
-     *
-     * @return mixed
-     */
-    function processResponse($response = null)
+    function jsonEncode($data)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (is_null($response)) {
-            return;
-        }
-        // handle errors
-        if (PEAR::isError($response)) {
-            $response = SGL_Error::toString($response);
-            header('HTTP/1.1 404 Not found');
-        }
-        // return encoded response with appropriate headers
-        switch (strtoupper($this->responseFormat)) {
-        case SGL_RESPONSEFORMAT_JSON:
+        if (function_exists('json_encode')) {
+            $ret = json_encode($data);
+        } else {
             require_once 'HTML/AJAX/JSON.php';
             $json = new HTML_AJAX_JSON();
-            $ret = $json->encode($response);
-            header('Content-Type: text/plain');
-            break;
-
-        case SGL_RESPONSEFORMAT_HTML:
-            $ret = $response;
-            header('Content-Type: text/html');
-            break;
-
-        case SGL_RESPONSEFORMAT_PLAIN:
-            $ret = $response;
-            header('Content-Type: text/plain');
-            break;
-
-        case SGL_RESPONSEFORMAT_JAVASCRIPT:
-            $ret = $response;
-            header('Content-Type: text/javascript');
-            break;
-
-        case SGL_RESPONSEFORMAT_XML:
-            $ret = $response;
-            header('Content-Type: text/xml');
-            break;
-
-        default:
-            $ret = 'You haven\'t defined your response format, '
-                . 'see SGL_AjaxProvider::processResponse';
+            $ret = $json->encode($data);
         }
+        return $ret;
+    }
+
+    function handleError($oError)
+    {
+        $aResponse = array(
+            'message'   => $oError->getMessage(),
+            'debugInfo' => $oError->getDebugInfo(),
+            'level'     => $oError->getCode(),
+            'errorType' => SGL_Error::constantToString($oError->getCode())
+        );
+
+        $ret = SGL_AjaxProvider::jsonEncode($aResponse);
         return $ret;
     }
 }
