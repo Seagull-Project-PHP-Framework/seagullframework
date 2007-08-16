@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+16-08-07    Added support for RTL languages
 15-08-07    Static SGL_Config::set() call implemented, eg:
                 SGL_Config::set('cache.lifetime', 123)
 14-08-07    Request types can now be preset
