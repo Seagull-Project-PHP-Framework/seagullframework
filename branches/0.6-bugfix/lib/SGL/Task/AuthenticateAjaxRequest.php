@@ -43,7 +43,7 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
                 //  or timed out
                 } elseif ($timeout) {
                     $session->destroy();
-                    SGL::raiseError('session timeout');
+                    SGL::raiseError('session timeout', SGL_ERROR_SESSIONTIMEOUT);
                 }
             }
         }
