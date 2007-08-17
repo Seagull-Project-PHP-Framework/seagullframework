@@ -244,17 +244,21 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          */
         define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
         /**
+         * Authorisation is invalid.
+         */
+        define('SGL_ERROR_INVALIDAUTHORISATION',  -121);
+        /**
          * Request was invalid.
          */
-        define('SGL_ERROR_INVALIDREQUEST',      -121);
+        define('SGL_ERROR_INVALIDREQUEST',      -122);
         /**
          * Type invalid.
          */
-        define('SGL_ERROR_INVALIDTYPE',         -122);
+        define('SGL_ERROR_INVALIDTYPE',         -123);
         /**
          * Excessive recursion occured.
          */
-        define('SGL_ERROR_RECURSION',           -123);
+        define('SGL_ERROR_RECURSION',           -124);
         /**
          * Resource could not be found.
          */

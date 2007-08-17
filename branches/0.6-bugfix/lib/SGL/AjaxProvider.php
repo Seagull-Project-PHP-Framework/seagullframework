@@ -138,7 +138,7 @@ class SGL_AjaxProvider
             }
         }
         if (!$ok) {
-            SGL::raiseError('authorisation failed');
+            SGL::raiseError('authorisation failed', SGL_ERROR_INVALIDAUTHORISATION);
             return;
         }
         $output->data = $this->$actionName();
