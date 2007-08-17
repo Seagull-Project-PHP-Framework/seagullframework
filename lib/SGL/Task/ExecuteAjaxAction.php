@@ -29,6 +29,10 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
             //  execute action method
             $oProvider = new $providerClass();
             $oProvider->process($input, $output);
+            //  BC
+            if (!empty($oProvider->responseFormat)) {
+                $output->responseFormat = $oProvider->responseFormat;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__) . '/../AjaxProvider.php';
 
 class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
 {
