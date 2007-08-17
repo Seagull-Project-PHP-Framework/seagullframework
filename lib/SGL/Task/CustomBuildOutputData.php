@@ -10,7 +10,7 @@ class SGL_Task_CustomBuildOutputData extends SGL_DecorateProcess
     function process(&$input, &$output)
     {
         $this->processRequest->process($input, $output);
-SGL::logMessage(print_r($output), PEAR_LOG_DEBUG);
+
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->theme      = SGL_Config::get('site.defaultTheme');
         $output->webRoot    = SGL_BASE_URL;

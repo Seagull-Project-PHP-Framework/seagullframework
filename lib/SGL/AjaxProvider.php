@@ -141,7 +141,7 @@ class SGL_AjaxProvider
             SGL::raiseError('authorisation failed');
             return;
         }
-        $this->$actionName();
+        $output->data = $this->$actionName();
     }
 
     /**
