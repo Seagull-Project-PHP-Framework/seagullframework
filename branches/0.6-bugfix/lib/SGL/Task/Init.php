@@ -224,7 +224,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          */
         define('SGL_ERROR_INVALIDFILEPERMS',    -115);
         /**
-         * Session was invalild.
+         * Session was invalid.
          */
         define('SGL_ERROR_INVALIDSESSION',      -116);
         /**
@@ -255,10 +255,6 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          * Excessive recursion occured.
          */
         define('SGL_ERROR_RECURSION',           -123);
-        /**
-         * The session timed out.
-         */
-        define('SGL_ERROR_SESSIONTIMEOUT',      -124);
         /**
          * Resource could not be found.
          */
