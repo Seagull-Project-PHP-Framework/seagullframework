@@ -256,6 +256,10 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          */
         define('SGL_ERROR_RECURSION',           -123);
         /**
+         * The session timed out.
+         */
+        define('SGL_ERROR_SESSIONTIMEOUT',      -124);
+        /**
          * Resource could not be found.
          */
         define('SGL_ERROR_RESOURCENOTFOUND',    -404);
