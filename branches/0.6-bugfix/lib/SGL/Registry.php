@@ -69,6 +69,12 @@ class SGL_Registry
         return $ret;
     }
 
+    /**
+     * Add or modify registry data.
+     *
+     * @param string $key
+     * @param mixed $value
+     */
     function set($key, &$value)
     {
         $this->aProps[$key] = &$value;
