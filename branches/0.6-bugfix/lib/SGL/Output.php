@@ -79,30 +79,55 @@ class SGL_Output
             foreach ($aStringParams as $stringPair) {
                 $aStringValues = explode('|', $stringPair);
                 if (isset($aStringValues[1])) {
-                    if (isset($output) && is_a($output, 'SGL_Output')) {
-                        $aResultParams[$aStringValues[0]] = isset($output->{$aStringValues[1]})
-                            ? $output->{$aStringValues[1]}
-                            : null;
-                    } elseif (is_a($this, 'SGL_Output')) {
-                        $aResultParams[$aStringValues[0]] = isset($this->{$aStringValues[1]})
-                            ? $this->{$aStringValues[1]}
-                            : null;
+                    if ($var = SGL_Output::_extractVariableValue($aStringValues[1], $output)) {
+                        $aResultParams[$aStringValues[0]] = $var;
+                    } else {
+                        if (isset($output) && is_a($output, 'SGL_Output')) {
+                            $aResultParams[$aStringValues[0]] = isset($output->{$aStringValues[1]})
+                                ? $output->{$aStringValues[1]}
+                                : null;
+                        } elseif (is_a($this, 'SGL_Output')) {
+                            $aResultParams[$aStringValues[0]] = isset($this->{$aStringValues[1]})
+                                ? $this->{$aStringValues[1]}
+                                : null;
+                        }
                     }
                 } else {
-                    if (isset($output) && is_a($output, 'SGL_Output')) {
-                        $aResultParams[] = isset($output->{$aStringValues[0]})
-                            ? $output->{$aStringValues[0]}
-                            : null;
-                    } elseif (is_a($this, 'SGL_Output')) {
-                        $aResultParams[] = isset($this->{$aStringValues[0]})
-                            ? $this->{$aStringValues[0]}
-                            : null;
+                    if ($var = SGL_Output::_extractVariableValue($aStringValues[0], $output)) {
+                        $aStringValues[] = $var;
+                    } else {
+                        if (isset($output) && is_a($output, 'SGL_Output')) {
+                            $aResultParams[] = isset($output->{$aStringValues[0]})
+                                ? $output->{$aStringValues[0]}
+                                : null;
+                        } elseif (is_a($this, 'SGL_Output')) {
+                            $aResultParams[] = isset($this->{$aStringValues[0]})
+                                ? $this->{$aStringValues[0]}
+                                : null;
+                        }
                     }
                 }
             }
             $aParams = $aResultParams;
         }
         return SGL_String::translate($key, $filter, $aParams);
+    }
+
+    function _extractVariableValue($varString, $output = null)
+    {
+        $ret = false;
+        if (strpos($varString, '.') !== false) {
+            $aVar = explode('.', $varString);
+            if (isset($output) && is_a($output, 'SGL_Output')) {
+                $var = &$output->{$aVar[0]};
+            } else {
+                $var = &$this->{$aVar[0]};
+            }
+            if (isset($var) && is_object($var) && isset($var->{$aVar[1]})) {
+                $ret = $var->{$aVar[1]};
+            }
+        }
+        return $ret;
     }
 
     function tr($key, $filter = false, $aParams = array(), $output = null)
