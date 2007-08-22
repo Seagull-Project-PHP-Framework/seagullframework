@@ -484,6 +484,7 @@ $defaultWords['Translation options'] = 'Translation options';
 $defaultWords['Container'] = 'Container';
 $defaultWords['Fallback Language'] = 'Fallback Language';
 $defaultWords['Add Missing Translations'] = 'Add Missing Translations';
+$defaultWords['Language auto discover'] = 'Language auto discover';
 $defaultWords['General'] = 'General';
 $defaultWords['Navigation'] = 'Navigation';
 $defaultWords['Debug'] = 'Debug';

@@ -88,6 +88,122 @@ class TasksProcessTest extends UnitTestCase {
         $oError = SGL_Error::getLast();
         $this->assertEqual($oError->getCode(), SGL_ERROR_RESOURCENOTFOUND);
     }
+
+    function testProcessSetupLangSupport()
+    {
+        $req   = &SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+
+        $input->setRequest($req);
+        $output = new SGL_Output();
+
+        // stop decorator chain
+        $foo = new ProcFoo();
+        $host = $_SERVER['HTTP_HOST'];
+
+        $_SESSION['aPrefs']['language'] = 'en-utf-8';
+        SGL_Config::set('translation.languageAutoDiscover', true);
+
+        // 1. resolve language from request
+        $req->set('lang', 'ru-windows-1251');
+
+        // run the task
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'ru-windows-1251');
+
+
+        // 2. resolve language from request 2
+        $req->set('lang', 'ru-utf-8');
+
+        // run the task
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'ru-utf-8');
+
+        // clean request
+        $req->set('lang', null);
+        // clean first launch
+        unset($_SESSION['sglFirstLaunch']);
+        // clean settings
+        unset($_SESSION['aPrefs']['language']);
+
+
+        // 3. test language from browser
+        SGL_Config::set('translation.fallbackLang', 'en_utf_8');
+        $_SERVER["HTTP_ACCEPT_LANGUAGE"] = 'ru,lv';
+
+        // run the task
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'ru-utf-8');
+
+        // clean first launch
+        unset($_SESSION['sglFirstLaunch']);
+        // clean settings
+        unset($_SESSION['aPrefs']['language']);
+
+
+        // 4. test language from browser 2
+        $_SERVER["HTTP_ACCEPT_LANGUAGE"] = 'fr';
+
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'fr-utf-8');
+
+        // clean first launch
+        unset($_SESSION['sglFirstLaunch']);
+        // clean settings
+        unset($_SESSION['aPrefs']['language']);
+
+
+        // 5. test resolving from domain
+        $_SERVER['HTTP_HOST'] = 'domain.tr';
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = '';
+
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'tr-utf-8');
+
+        // change domain
+        $_SERVER['HTTP_HOST'] = 'domain.lv';
+
+
+        // 6. test settings
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'tr-utf-8');
+
+        // clean first launch
+        unset($_SESSION['sglFirstLaunch']);
+        // clean settings
+        unset($_SESSION['aPrefs']['language']);
+
+
+        // 7. test default language resolval
+        $proc = new SGL_Task_SetupLangSupport($foo);
+        $proc->processRequest = $foo;
+        $proc->process($input, $output);
+
+        $this->assertEqual($_SESSION['aPrefs']['language'], 'en-utf-8');
+
+        // restore env
+        unset($_SESSION['sglFirstLaunch']);
+        unset($_SESSION['aPrefs']['language']);
+        $_SERVER['HTTP_HOST'] = $host;
+    }
 }
 
 class ProcFoo
