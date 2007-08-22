@@ -1,0 +1,47 @@
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+<script type="text/javascript">
+function randomPassword(length)
+{
+  chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+  pass = "";
+  for(x=0;x<length;x++)
+  {
+    i = Math.floor(Math.random() * 36);
+    pass += chars.charAt(i);
+  }
+  return pass;
+}
+</script>
+
+
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action" value="updateList" />
+    <input type="hidden" name="oUser[newsletter_id]" value="{oUser[newsletter_id]}" />
+    <table>
+        <tr>
+            <td><strong>{translate(#List name#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[list]">
+                    {translate(error[list])}
+                </div>
+                 <input type="text" name="oUser[list]" size="80" maxlengthh="32" value="{oUser[list]}" />
+             </td>
+        </tr>
+        <tr>
+            <td><strong>{translate(#Description#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[name]">
+                    {translate(error[name])}
+                </div>
+                <textarea name="oUser[name]" cols="60" maxlengthh="128">{oUser[name]}</textarea>
+             </td>
+        </tr>
+        <td align="center" colspan="2">
+          <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />
+          <input class="wideButton"  type="button" name="cancel" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(#listLists#,#list#,#newsletter#)}'" />
+        </td>
+        </tr>
+    </table>
+</form>

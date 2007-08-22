@@ -1,0 +1,42 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('main_form')">{translate(#Save#)}</a>
+    <a class="action undo" href="javascriptformReset('main_form')">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#role#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" action="" name="main_form" id="main_form" flexy:ignore>
+        <h3>{translate(#Changing permission assignments for#)} "{role.name}" (#{role.role_id})</h3>
+        <fieldset class="inside">
+            <input type="hidden" name="action" value="updatePerms" />
+            <input type="hidden" name="frmRoleID" value="{role.role_id}" />
+            <input type="hidden" name="AddfrmRolePerms" />
+            <input type="hidden" name="RemovefrmRolePerms" /> 
+            <input type="hidden" name="AddfrmRemainingPerms" /> 
+            <input type="hidden" name="RemovefrmRemainingPerms" />
+
+            <div class="floatLeft" id="remainingPerms">
+                <h4>{translate(#Remaining permissions#)}</h4>
+                <select name="frmRemainingPerms" id="frmRemainingPerms" size="10" multiple="multiple">
+                    {generateSelect(aRemainingPerms):h}
+                </select>
+            </div>
+            <div class="floatLeft" id="addRemovePerms">
+                <a href="#" class="moveRight" onclick="MoveOption('frmRemainingPerms','frmRolePerms','Add');">{translate(#add#)}</a>
+                <a href="#" class="moveLeft" onclick="MoveOption('frmRolePerms','frmRemainingPerms','Remove');">{translate(#remove#)}</a>
+            </div>
+            <div class="floatLeft" id="selectedPerms">
+                <h4>{translate(#Selected permissions for#)} "{role.name}"</h4>
+                <select name="frmRolePerms" id="frmRolePerms" size="10" multiple="multiple">
+                    {generateSelect(aRolePerms):h}
+                </select>
+            </div>
+            <div class="spacer">&nbsp;</div>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

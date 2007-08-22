@@ -1,0 +1,28 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('NewsletterMgr','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" onClick="javascript:document.location.href='{makeUrl(#listLists#,#list#,#newsletter#)}'">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+	<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+		<fieldset class="inside">
+		    <input type="hidden" name="action" value="authorize" />
+	        <h3>{translate(#Please enter your e-mail address and select the newsletters that you want to subscribe.#)}</h3>	    
+		     <p>
+		         <label for="frmEmail"><span class="required">*</span>{translate(#E-mail#)}</label>
+		         <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+		         <input id="frmEmail" type="text" name="frmEmail" size="80" value="{email}" />
+		     </p>
+		     <p>
+		         <label for="frmKey"><span class="required">*</span>{translate(#Authorization code#)}</label>
+		         <span class="error" flexy:if="error[actionKey]">{translate(error[actionKey])}</span>
+	             <input type="text" name="frmKey" size="80" value="{frmKey}" />
+		     </p>
+	     </fieldset>
+	</form>
+	<div class="clear"></div>
+</div>

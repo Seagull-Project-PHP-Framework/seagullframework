@@ -1,0 +1,22 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action validate" href="javascript:formSubmit('frmTestKey','submitted',1,1)">{translate(#Test Key#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmTestKey" flexy:ignore id="frmTestKey">
+        <fieldset class="inside">
+            <input type="hidden" name="submitted" value="true" />
+            <input type="hidden" name="action" value="testAkismetAPIKey" />
+            <p>
+                <label for="akismetKey"><span class="required">*</span> {translate(#Akismet API Key#)}</label>
+                <span class="error" flexy:if="error[akismetKey]">{translate(error[akismetKey])}</span>
+                <input type="text" name="akismetKey" id="akismetKey" value="{akismetKey}" />
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

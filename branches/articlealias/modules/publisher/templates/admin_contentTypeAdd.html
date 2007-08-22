@@ -1,0 +1,43 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('addContentType')" accesskey="s">{translate(#Save#)}</a>
+    {if:redir}
+        <a class="action cancel" href="javascript:document.location.href='{redir}'" accesskey="c">{translate(#Cancel#)}</a>
+    {else:}
+        <a class="action cancel" href="{makeUrl(#list#,#contenttype#,#publisher#)}" accesskey="c">{translate(#Cancel#)}</a>
+    {end:}
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form name="addContentType" method="post" flexy:ignore id="addContentType">
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="type[item_type_name]" value="{type[item_type_name]}" />
+        </fieldset>
+        <h3>{translate(#Editing Content Type#)} '{type[item_type_name]}'</h3>
+        <fieldset class="inside">
+            <p>
+                <label for="type[item_type_name]">
+                    <span class="error" flexy:if="error[name]">{error}</span>
+                    {translate(#Name#)}*&nbsp;
+                </label>
+                <input class="longText" type="text" name="type[item_type_name]" value="{type[item_type_name]}" />
+            </p>
+            {foreach:totalFields,key}
+            <p>
+                <span><input class="longText" type="text" name="type[field_name][{key}]" /></span>
+                <span><select name="type[field_type][{key}]">
+                {generateSelect(fieldTypes):h}</select></span>
+            </p>
+            {end:}
+        </fieldset>
+    </form>
+    <span class="error">*</span> 
+    <span>{translate(#denotes required field#)}</span>
+
+    <div class="spacer"></div>
+</div>

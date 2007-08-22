@@ -1,0 +1,32 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+<br />
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+<form name="rndmsgs" method="post" flexy:ignore id="rndmsgs">
+    <input type="hidden" name="action" value="delete" />
+    <table class="wide">
+        <tr>
+            <td colspan="2">
+                <input type="button" onclick="javascript:document.location.href='{makeUrl(#add#,#rndmsg#)}'" value="{translate(#Add messages#)}" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>{translate(#Select#)}</th>
+            <th width="100%">{translate(#Message#)}</th>
+        </tr>
+
+        <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+            <td align="center"><input type="checkbox" name="frmMsgDelete[]" value="{aValue[rndmsg_message_id]}" /></td>
+            <td width="100%">{aValue[msg]}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                {translate(#With selected message(s)#)}: 
+                <input type="submit" name="delete" value="{translate(#Delete#)}" onclick="return confirmSubmit('message', 'rndmsgs')" />
+            </td>
+        </tr>
+    </table>
+</form>

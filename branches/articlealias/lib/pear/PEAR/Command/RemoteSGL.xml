@@ -1,0 +1,92 @@
+<commands version="1.0">
+ <sgl-remote-info>
+  <summary>Information About Remote Packages</summary>
+  <function>doRemoteInfoSGL</function>
+  <shortcut>x1</shortcut>
+  <options />
+  <doc>&lt;package&gt;
+Get details on a package from the server.</doc>
+ </sgl-remote-info>
+ <sgl-list-upgrades>
+  <summary>List Available Upgrades</summary>
+  <function>doListUpgradesSGL</function>
+  <shortcut>x2</shortcut>
+  <options />
+  <doc>[preferred_state]
+List releases on the server of packages you have installed where
+a newer version is available with the same release state (stable etc.)
+or the state passed as the second parameter.</doc>
+ </sgl-list-upgrades>
+ <sgl-remote-list>
+  <summary>List Remote Packages</summary>
+  <function>doRemoteListSGL</function>
+  <shortcut>x3</shortcut>
+  <options>
+   <channel>
+    <shortopt>c</shortopt>
+    <doc>specify a channel other than the default channel</doc>
+    <arg>CHAN</arg>
+   </channel>
+  </options>
+  <doc>
+Lists the packages available on the configured server along with the
+latest stable release of each package.</doc>
+ </sgl-remote-list>
+ <sgl-search>
+  <summary>Search remote package database</summary>
+  <function>doSearchSGL</function>
+  <shortcut>x4</shortcut>
+  <options>
+   <channel>
+    <shortopt>c</shortopt>
+    <doc>specify a channel other than the default channel</doc>
+    <arg>CHAN</arg>
+   </channel>
+  </options>
+  <doc>[packagename] [packageinfo]
+Lists all packages which match the search parameters.  The first
+parameter is a fragment of a packagename.  The default channel
+will be used unless explicitly overridden.  The second parameter
+will be used to match any portion of the summary/description</doc>
+ </sgl-search>
+ <sgl-list-all>
+  <summary>List All Packages</summary>
+  <function>doListAllSGL</function>
+  <shortcut>x5</shortcut>
+  <options>
+   <channel>
+    <shortopt>c</shortopt>
+    <doc>specify a channel other than the default channel</doc>
+    <arg>CHAN</arg>
+   </channel>
+  </options>
+  <doc>
+Lists the packages available on the configured server along with the
+latest stable release of each package.</doc>
+ </sgl-list-all>
+ <sgl-download>
+  <summary>Download Package</summary>
+  <function>doDownloadSGL</function>
+  <shortcut>x6</shortcut>
+  <options>
+   <nocompress>
+    <shortopt>Z</shortopt>
+    <doc>download an uncompressed (.tar) file</doc>
+   </nocompress>
+  </options>
+  <doc>&lt;package&gt;...
+Download package tarballs.  The files will be named as suggested by the
+server, for example if you download the DB package and the latest stable
+version of DB is 1.6.5, the downloaded file will be DB-1.6.5.tgz.</doc>
+ </sgl-download>
+ <sgl-clear-cache>
+  <summary>Clear Web Services Cache</summary>
+  <function>doClearCacheSGL</function>
+  <shortcut>x7</shortcut>
+  <options />
+  <doc>
+Clear the XML-RPC/REST cache.  See also the cache_ttl configuration
+parameter.
+</doc>
+ </sgl-clear-cache>
+</commands>

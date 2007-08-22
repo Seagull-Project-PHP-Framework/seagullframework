@@ -1,0 +1,64 @@
+<form name="messages" method="post" flexy:ignore id="messages">
+    <input type="hidden" name="action" value="delete" />
+    <input type="hidden" name="frmDelete[]" value="{instantMessage.instant_message_id}" />
+
+    <h1 class="pageTitle">{translate(sectionTitle)}</h1>
+    <div class="message">{msgGet()}</div>
+    {if:instantMessage}
+
+    <table class="wide">
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirm('Are you sure you want to delete this message?');" />
+                {if:instantMessage.disableReply}
+                {else:}
+                <input type="button" value="reply" onclick="javascript:document.location.href='{makeUrl(#reply#,#instantmessage#,#messaging#)}frmMsgFromID/{instantMessage.user_id_from}/frmMessageID/{instantMessage.instant_message_id}/';" />
+                {end:}
+                <input type="button" value="cancel" onclick="javascript:document.location.href='{makeUrl(cancelRedirect,#instantmessage#,#messaging#)}';" />
+            </td>
+        </tr>
+    </table>
+
+    <table id="imRead" class="wide">
+        <tr>
+            <td class="fieldName" width="20%">{translate(#From#)}:</td>
+            <td class="fieldValue" width="80%">
+                {if:instantMessage.link_user_id_from.first_name}
+                {instantMessage.link_user_id_from.first_name} {instantMessage.link_user_id_from.last_name}
+                {else:}
+                {instantMessage.link_user_id_from.username}
+                {end:}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#To#)}:</td>
+            <td class="fieldValue">
+                {if:instantMessage.link_user_id_to.first_name}
+                {instantMessage.link_user_id_to.first_name} {instantMessage.link_user_id_to.last_name}
+                {else:}
+                {instantMessage.link_user_id_to.username}
+                {end:}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Subject#)}:</td>
+            <td class="fieldValue">{instantMessage.subject}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Date#)}:</td>
+            <td class="fieldValue">{formatDatePretty(instantMessage.msg_time)}</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" bgcolor="#ffffff">{instantMessage.body:h}</td>
+        </tr>
+    {else:}
+        <tr>
+            <td colspan="2" align="center" class="fieldValue">{translate(#message could not be retrieved#)}</td>
+        </tr>
+    {end:}
+    </table>
+</form>

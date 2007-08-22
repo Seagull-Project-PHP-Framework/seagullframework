@@ -1,0 +1,133 @@
+<?php
+/*
+  Language-file polish-iso-8859-2.php
+  Author: Tomasz Osmialowski <ichtis@gmail.com>
+*/
+    $words = array(
+/*  ARTICLE MGR */
+        'Article Manager' => 'Menad¿er Artyku³ów',
+        'Article Manager :: Add' => 'Menad¿er Artyku³ów :: Dodaj',
+        'Article Manager :: Edit' => 'Menad¿er Artyku³ów :: Edytuj',
+        'Current Category' => 'Wybrana kategoria',
+        'Change Category' => 'Zmieñ kategoriê',
+        'article' => 'artyku³',
+        'Article Name' => 'Nazwa artyku³u',
+        'New Article' => 'Nowy artyku³',
+        'Please select an article type' => 'Proszê wybraæ typ artyku³u',
+        'Start Date' => 'Pocz±tek',
+        'Expiry Date' => 'Wygasa',
+        'Modif. By' => 'Modyfikowany przez',
+        'preview' => 'podgl±d',
+        'approve' => 'zatwierd¼',
+        'publish' => 'publikuj',
+        'archive' => 'zarchiwizuj',
+        'For Approval' => 'Dla aprobaty',
+        'Being Edited' => 'W trakcie edycji',
+        'Approved' => 'Zatwierdzony',
+        'Published' => 'Publikowany',
+        'Archived' => 'Zarchiwizowany',
+        'Deleted' => 'Usuniêty',
+        'select a type to create a new article' => 'zaznacz typ nowego artyku³u',
+        'Article successfully added' => 'Artyku³ zosta³ dodany',
+        'Article successfully updated' => 'Artyku³ zosta³ zmieniony',
+        'Article status has been successfully changed' => 'Status artyku³u zosta³ zmieniony',
+        'The selected article(s) have successfully been deleted' => 'Zaznaczone artyku³y zosta³y usuniête',
+        'asset' => 'za³±cznik',
+        'No other text entered' => 'Brak tekstu',
+        'Current View Wysiwyg' => 'Bie¿±cy widok Wysiwyg',
+        'View Wysiwyg' => 'Podgl±d Wysiwyg',
+        'Current View Html' => 'Bie¿±cy widok Html',
+        'View Html' => 'Podgl±d Html',
+        'Select Font' => 'Zaznacz Font',
+        'Size' => 'Rozmiar',
+        'whole DB' => 'wszystkie kategorie',
+        'this category' => 'ta kategoria',
+        'showing results for' => 'poka¿ wyniki dla',
+        'Article list' => 'Lista artyku³ów',
+        'Article filter' => 'Filtr artyku³ów',
+        'Editing options' => 'Edycja opcji',
+        'No expire' => 'Nie wygasa',
+        'select a category' => 'zaznacz kategoriê',
+        'choose' => 'wybierz',
+        'close' => 'zamknij',
+        
+/* ArticleViewMgr */
+        'Article Browser' => 'Przegl±d artyku³ów',
+        'No lead article found'  => 'Nie znaleziono g³ównego artyku³u',
+        'Related Articles' => 'Artyku³y w tej kategorii',
+        'Related Documents' => 'Dokumenty w tej kategorii',
+        'No articles found' => 'Nie znaleziono artyku³ów',
+        'No documents found' => 'Nie znaleziono dokumentów',
+        
+/* ArticleView  */      
+        
+/* Article Add & Edit  */     
+        'Article type' => 'Typ artyku³u',
+        'Author' => 'Autor',
+        'Date created' => 'Data utworzenia',
+        'Flesch score' => 'Ocena',
+        'Content' => 'Zawarto¶æ',
+
+/*  DOCUMENT MGR    */
+        'Document Manager' => 'Menad¿er dokumentu',
+        'Document list' => 'Lista dokumentów',
+        'Document filter' => 'Filtr dokumentu',
+        'New Asset' => 'Nowy dokument',
+        'Editing Asset' => 'Edycja za³±cznika',
+        'Asset Name' => 'Nazwa',
+        'Date Added' => 'Dodany dnia',
+        'Description' => 'Opis',
+        'Category' => 'Kategoria',
+        'Locate' => 'Po³o¿enie',
+        'Upload' => 'Prze¶lij',
+        'Mime Type' => 'Typ pliku',
+        'Owner' => 'W³a¶ciciel',
+        'Type' => 'Typ',
+        'Document type' => 'Typ dokumentu',
+        'Download' => 'Pobierz',
+        'New Asset' => 'Nowy dokument',
+        'Error: Not a recognised file type' => 'B³±d: Nie rozpoznano typu pliku',
+        'Error: A file with this name already exists' => 'B³±d: Plik o tej samej nazwie ju¿ istnieje',
+        'The asset has successfully been added' => 'Dokument zosta³ dodany',
+        'The asset has successfully been updated' => 'Dokument zosta³ zmieniony',
+        'The asset has successfully been deleted' => 'Wybrane dokumenty zosta³y usuniête',
+        'Please wait while document uploads' => 'Trwa przesy³anie dokumentów, proszê czekaæ',
+        'Please wait until upload is finished' => 'Proszê czekaæ na zakoñczenie przesy³ania',
+        'You must select a file to upload' => 'Musisz zaznaczyæ pliki do przes³ania',
+        'There was an error attempting to download the file' => 'Wyst±pi³ b³±d podczas próby przes³ania pliku',
+        'The specified file does not appear to exist' => 'Wybrane pliki nie istniej±',
+        'Please select a file to upload' => 'Proszê wybraæ pliki do przes³ania',
+        
+/*  CONTENT TYPE MGR */
+        'Content Type Manager' => 'Menad¿er typu zawarto¶ci',
+        'Number of fields' => 'Ilo¶æ pól',
+        'field' => 'pole',
+        'New content type' => 'Nowy typ',
+        'Give a name to this field and select its type' => 'Proszê podaæ nazwê dla pola i zaznaczyæ jego typ',
+        'Add Type' => 'Dodaj typ',
+        'With selected content type(s)' => 'Z zaznaczonej zawarto¶ci typów',
+        'content type has successfully been added' => 'Typ zasta³ dodany',
+        'content type has successfully been deleted' => 'Typ zosta³ usuniêty',
+        'content type has successfully been updated' => 'Typ zosta³ zmieniony',
+        'Through the Publisher module Seagull allows you to create three types of content.This is easily customisable however only 3 types will be discussed here:'=>'Through the Publisher module Seagull allows you to create three types of content. This is easily customisable however only 3 types will be discussed here:',
+        'What you see when you click the Articles tab in the front end is a document collection. Creating articles of type Html Article allows you to place your content in a hierarchy that you build using the Categories button above.  This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the Related Articles box  on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the Related Documents box.'=>'What you see when you click the \'Articles\' tab in the front end is a document collection. Creating articles of type \'Html Article\' allows you to place your content in a hierarchy that you build using the \'Categories\' button above. This can be useful for intranet applications, or if you have a large body of work that needs to be categorised. Document collection articles will be displayed with all articles from the same category appearing in the \'Related Articles\' box on the right. Similarly, all files uploaded to the same category with the Document Manager will appear in the \'Related Documents\' box.',
+        'However, if you want to make standalone pages that will be linked to by their own tab, please use the Static Html Article type.  In order to create the navigation that will link to these static pages, please use the'=>'However, if you want to make standalone pages that will be linked to by their own tab, please use the \'Static Html Article\' type.  In order to create the navigation that will link to these static pages, please use the',
+        'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.'=>'Finally, you can create news items by choosing the News Item type, these will appear in the left hand column in the Site News box.  These articles (and all others) can be retired automatically according to the date constraints you set on the item.',
+        'You can also set permissions on who can view the content using the Permissions button above.'=>'Mo¿esz nadaæ uprawnienia do ogl±dania tre¶ci u¿ywaj±c przycisku \'Uprawnienia\'.',
+        'more info'=>'wiêcej',
+        'Contributed by' =>'Utworzony przez',
+        'contributed by' =>'utworzony przez',
+        'full story'=> 'pe³na tre¶æ',
+        
+        // types
+        'Title'    => 'Tytu³',
+        'BodyHtml' => 'Tekst HTML',
+        'NewsHtml' => 'Tekst',
+
+/* WIKISCRAPE MGR */
+        'WikiScrape Manager' => 'Menad¿er WikiScrape',
+         
+         'Header' => 'Nag³ówek',
+
+    );
+?>

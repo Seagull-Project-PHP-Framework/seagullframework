@@ -1,0 +1,39 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmPrefEdit','submitted',1,1);">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('frmPrefEdit');">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#preference#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmPrefEdit" flexy:ignore id="frmPrefEdit">
+        <h3 flexy:if="preferenceAdd">{translate(#New preference#)}</h3>
+        <h3 flexy:if="preferenceEdit">{translate(#Editing preference#)} "{pref.name}" (#{prefId})</h3>
+        <fieldset class="inside">
+            {if:preferenceAdd}
+            <input type="hidden" name="action" value="insert" />
+            {end:}
+            {if:preferenceEdit}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="pref[preference_id]" value="{prefId}" />
+            {end:}
+            <p>
+                <label for="pref[name]">{translate(#Name#)}<span class="required"> *</span></label>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+                <input type="text" class="longText" name="pref[name]" id="pref[name]" value="{pref.name}" />
+            </p>
+            <p>
+                <label for="pref[default_value]">{translate(#Default value#)}<span class="required"> *</span></label>
+                <span class="error" flexy:if="error[default_value]">{translate(error[default_value])}</span>
+                <input type="text" class="longText" name="pref[default_value]" id="pref[default_value]" value="{pref.default_value}" />
+            </p>
+            <p class="helpRequire">
+                <span class="required">*</span><span class="small"> {translate(#denotes required field#)}</span>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

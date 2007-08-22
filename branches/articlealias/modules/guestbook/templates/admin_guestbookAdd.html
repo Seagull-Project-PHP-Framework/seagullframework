@@ -1,0 +1,39 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmGuestbookAdd','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" onClick="document.location.href='{makeUrl(#list#,#guestbook#,#guestbook#)}'">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmGuestbookAdd" flexy:ignore id="frmGuestbookAdd">
+        <fieldset class="inside">
+            <h3>{translate(#Guestbook Details#)}</h3>
+            <input type="hidden" name="action" value="insert" />
+            <p>
+                <label for="guestbook[name]">{translate(#Name#)}</label>
+                <div class="error" flexy:if="error[name]">
+                    {translate(error[name])}
+                </div>
+                <input type="text" name="guestbook[name]" value="{guestbook.name}" />
+            </p>
+            <p>
+                <label for="guestbook[email]">{translate(#E-Mail#)}</label>
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                <input type="text" name="guestbook[email]" value="{guestbook.email}" />
+            </p>
+            <p>
+                <label for="guestbook[message]">{translate(#Message#)}</label>
+                <div class="error" flexy:if="error[message]">
+                    {translate(error[message])}
+                </div>
+                <textarea cols="40" rows="7" name="guestbook[message]">{guestbook.message}</textarea>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

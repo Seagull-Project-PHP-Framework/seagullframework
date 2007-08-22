@@ -1,0 +1,128 @@
+<div id="module_header">
+	<h1>Add Images &amp; Files</h1>
+	<div class="message">{msgGet()}</div>
+</div>
+
+<div id="alertNotFinished" class="hide">{translate(#Please wait until upload is finished#)}</div>
+<div id="alertNoFile" class="hide">{translate(#You must select a file to upload#)}</div>
+<div id="alertPleaseWait" class="hide">{translate(#Please wait while document uploads#)}</div>
+<script type='text/javascript'>
+//<![CDATA[
+<!--
+    /* alert messages: */
+    var alertNotFinished    = document.getElementById('alertNotFinished').innerHTML;
+    var alertNoFile         = document.getElementById('alertNoFile').innerHTML;
+    var alertPleaseWait     = document.getElementById('alertPleaseWait').innerHTML;
+
+    function doAttach()
+    {
+        var mediaFilename = document.getElementById('mediaFile');
+        if (mediaFilename.value == ""){
+            alert(alertNoFile);
+        return false;
+        } else {//Launch uploading document message
+            avoidDown();
+            msgUp();
+        }
+    }
+
+    var cteTxti = '<table>'
+                + '<tr><td align="left" width="250" nowrap><span class="error">'
+                + alertPleaseWait;
+    var cteTxtf = '<\/span><\/td><\/tr><\/table>';
+    var msgPts  = '';
+
+    function msgUp()
+    {
+        msgPts = (msgPts.length > 7) ? '.' : msgPts + '.';
+        uploadLayer = document.getElementById('uploadLayer');
+
+        uploadLayer.innerHTML = cteTxti + msgPts + cteTxtf;
+        identifier = setTimeout('msgUp()',100);
+    }
+
+    function avoidDown()
+    {
+        document.onmousedown = document.onkeydown = function () {alert(alertNotFinished);}
+    }
+
+//-->
+//]]>
+</script>
+
+<div id="add_edit_form">
+<form method="post" name="uploadMedia" enctype="multipart/form-data" action="" flexy:ignore id="uploadMedia">
+    {if:save}
+        <input type="hidden" name="action" value="insert" />
+    {else:}
+        <input type="hidden" name="action" value="add" />
+    {end:}
+    <input type="hidden" name="media[file_type_id]" value="{fileTypeID}" />
+    <input type="hidden" name="media[orig_name]" value="{mediaFileName}" />
+    <input type="hidden" name="media[mime_type]" value="{mediaFileType}" />
+    <input type="hidden" name="media[file_size]" value="{mediaFileSize}" />
+    <input type="hidden" name="media[file_name]" value="{mediaUniqueName}" />
+
+    <p class="errorMessage" flexy:if="error[unrecognised_type]">{error[unrecognised_type]}</p>
+    <p class="errorMessage" flexy:if="error[already_exists]">{error[already_exists]}</p>
+    <p class="errorMessage" flexy:if="error[disallowed_extension]">{error[disallowed_extension]}</p>
+
+<!--
+	<div class="form_section">
+		<div class="label_div"><label>{translate(#Owner#)}</label></div>
+		<span>{loggedOnUser}</span>
+	</div>
+-->
+
+{if:save}
+
+<!--
+{translate(#Type#)}
+{fileTypeName}
+-->
+
+<div class="form_section">
+	 <div class="label_div"><label>Name</label></div>
+	<input type="text" name="media[name]" value="{mediaFileName}" size="40" />
+</div>
+
+<div class="form_section">
+	<div class="label_div"><label>{translate(#Description#)}</label></div>
+	<textarea cols="40" rows="5" name="media[description]"></textarea>
+</div>
+
+<div class="form_section">
+	<div class="label_div">{translate(#Size#)}</div>
+	{formatBytes(mediaFileSize)} Kb
+</div>
+
+<div class="form_section">
+	<div class="label_div">{translate(#Mime Type#)}</div>
+	{mediaFileType}
+</div>
+
+
+<input class="wideButton" type="submit" name="submit" value="{translate(#Save#)}" />
+<input class="wideButton" type="button" value="{translate(#Cancel#)}"
+	   onclick="javascript:document.location.href='{makeUrl(##,#media#,#cms#)}'" />
+
+
+{else:}
+<h1>First, select the file you want to upload</h1>
+<br />
+<div class="form_section">
+	<div class="label_div"><label for="mediaFile">{translate(#Locate#)}</label></div>
+	<input type="file" name="mediaFile" id="mediaFile" size="20" />
+</div>
+<br />
+<div class="form_section">
+<input type="submit" name="submit" value="{translate(#Upload#)}" onclick="return doAttach();" />
+<input class="wideButton" type="button" value="{translate(#Cancel#)}"
+	onclick="javascript:document.location.href='{makeUrl(##,#media#,#media#)}'" />
+</div>
+<div id="uploadLayer"></div>
+
+{end:}
+</form>
+
+</div>

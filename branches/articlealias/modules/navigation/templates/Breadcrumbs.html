@@ -1,0 +1,12 @@
+
+{translate(#You are here#)}:
+{foreach:breadcrumbs,valueObj}
+    {if:valueObj.link}
+        <a href="{valueObj.link:h}" class="breadcrumbs">{valueObj.title}</a>
+    {else:}
+        <span>{valueObj.title}</span>
+    {end:}
+    {if:!valueObj.end}
+        >
+    {end:}
+{end:}

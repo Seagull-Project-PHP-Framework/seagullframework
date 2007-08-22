@@ -1,0 +1,101 @@
+*************************************
+* Random Messages for seagull       *
+* v0.4                              *
+*************************************
+Copyright (c) 2005, Michaël Willemot
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+DESCRIPTION
+***********
+After installing, you can create a new block using the block-manager with name "RndMsgBlock". 
+This will create a block on your site with a random message comming from  the database.
+
+
+INSTALLATION
+************
+Generate the table in your database using the provided sql-script.
+(use a new (= not existing) id for the record in the module-table)
+
+Run the pear DataObject creation script, to generate the new dataobject
+
+copy RndMsgBlock.php into seagull/app/modules/block/classes/blocks
+
+copy the rndmsg directory with classes, lang and templates subdirectory into seagull/app/modules
+
+copy rndmsgMgr.php into seagull/www
+
+
+
+If everything is done ok, you'll have run the dataobject-script
+and you'll have a directory-tree like this:
+
+Seagull
++---app
+|   +---entities
+|   |       Rndmsg_message.php
+|   |
+|   +---modules
+|   |   +---block
+|   |   |   \---classes
+|   |   |       \---blocks
+|   |   |              RndMsgBlock.php
+|   |   |              ...
+|   |   +---rndmsg
+|   |   |   |   conf.ini
+|   |   |   |   
+|   |   |   +---classes
+|   |   |   |       RndMsgMgr.php
+|   |   |   |       
+|   |   |   +---lang
+|   |   |   |       english-iso-8859-1.php
+|   |   |   |       
+|   |   |   \---templates
+|   |   |       +---basic
+|   |   |       |       rndMsgMsgAdd.html
+|   |   |       |       rndMsgMsgView.html
+|   |   |       |       
+|   |   |       \---basic-css
+|   |   |               rndMsgMsgAdd.html
+|   |   |               rndMsgMsgView.html
+|   |   | ...              
+\---www
+      rndmsgMgr.php
+      ...
+
+
+HISTORY
+*******
+v0.4
+----
+fixed upload <br /> bug
+centered interface
+removed design-checkbox-element
+updated basic template
+
+v0.3
+----
+Simplified the complete package
+Kicked out group-management (was overkill)
+Made it a block-element
+
+v0.2
+----
+Renewed interface
+Removed Auto_Increment on tables
+Cleaned up the code
+Updated to use database based module-manager
+Updated to the new seagull baseclass-names
+Added BSD license
+
+v0.1
+----
+Released my first module (for seagull) for review by seagull-developers.
+
