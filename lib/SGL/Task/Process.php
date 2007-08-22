@@ -431,23 +431,37 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $req = $input->getRequest();
+
+        // resolve language from request
         $lang = $req->get('lang');
-        $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
-        //  if lang var passed in request
-        if (isset($lang) && array_key_exists($lang, $aLanguages)) {
-            $_SESSION['aPrefs']['language'] = $lang;
-        } elseif (!empty($_SESSION['aPrefs']['language'])) {
-            $lang = $_SESSION['aPrefs']['language'];
+        $firstLaunch = $this->isFirstLaunch();
 
-        //  set fallback lang as default language
-        } else {
-            $fallback = SGL_Config::get('translation.fallbackLang');
-            $lang = $_SESSION['aPrefs']['language'] = SGL_Translation::transformLangID(
-                $fallback, SGL_LANG_ID_SGL);
+        // if language is not in request
+        if (!$this->languageExists($lang)) {
+            // see if it is in settings
+            if (!isset($_SESSION['aPrefs']['language'])
+                    || !$this->languageExists($_SESSION['aPrefs']['language'])
+                    // do not take into account settings on first launch
+                    || $firstLaunch) {
+                // if no, try to extract it from browser's env
+                if (!($lang = $this->resolveLanguageFromBrowser())) {
+                    // or from domain name
+                    if (!($lang = $this->resolveLanguageFromDomain())) {
+                        // if all above failed, use default one
+                        $lang = $this->getFallbackLanguage();
+                    }
+                }
+            } else {
+                $lang = $_SESSION['aPrefs']['language'];
+            }
         }
+
+        // save extracted language in settings
+        $_SESSION['aPrefs']['language'] = $lang;
+
         //  resolve current language from GET or session, assign to $language
-        $language = $aLanguages[$lang][1];
+        $language = $GLOBALS['_SGL']['LANGUAGE'][$lang][1];
 
         //  fetch default translation
         $defaultWords = SGL_Translation::getTranslations('default', $lang);
@@ -474,6 +488,104 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         $GLOBALS['_SGL']['CHARSET'] = join('-', $aTmp);
 
         $this->processRequest->process($input, $output);
+    }
+
+    /**
+     * Resolve language from browser.
+     *
+     * @return mixed
+     */
+    function resolveLanguageFromBrowser()
+    {
+        $ret = false;
+        if (SGL_Config::get('translation.languageAutoDiscover')
+                && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            $env = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $languages = preg_split(';[\s,]+;',
+                substr($env, 0, strpos($env . ';', ';')), -1,
+                PREG_SPLIT_NO_EMPTY);
+            foreach ($languages as $language) {
+                $lang = $language . '-' . $this->getFallbackCharset();
+                if ($this->languageExists($lang)) {
+                    $ret = $lang;
+                    break;
+                }
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Resolve language from domain name.
+     *
+     * @return mixed
+     */
+    function resolveLanguageFromDomain()
+    {
+        $ret = false;
+        if (SGL_Config::get('translation.languageAutoDiscover')
+                && isset($_SERVER['HTTP_HOST'])) {
+            // get host's country e.g. lv
+            $aHost = explode('.', $_SERVER['HTTP_HOST']);
+            $country = array_pop($aHost);
+
+            // if such language exists, then use it
+            $lang = $country . '-' . $this->getFallbackCharset();
+            if ($this->languageExists($lang)) {
+                $ret = $lang;
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Checks if language exists.
+     *
+     * @param string $lang
+     *
+     * @return boolean
+     */
+    function languageExists($lang)
+    {
+        return isset($GLOBALS['_SGL']['LANGUAGE'][$lang]);
+    }
+
+    /**
+     * Get default charset.
+     *
+     * @return string
+     */
+    function getFallbackCharset()
+    {
+        $aLang = explode('-', $this->getFallbackLanguage());
+        array_shift($aLang);
+
+        return implode('-', $aLang);
+    }
+
+    /**
+     * Get fallback language.
+     *
+     * @return string
+     */
+    function getFallbackLanguage()
+    {
+        $lang = SGL_Config::get('translation.fallbackLang');
+        return SGL_Translation::transformLangID($lang);
+    }
+
+    /**
+     * Detect if it is a first launch.
+     *
+     * @return boolean
+     */
+    function isFirstLaunch()
+    {
+        $ret = !isset($_SESSION['sglFirstLaunch']);
+        if (!isset($_SESSION['sglFirstLaunch'])) {
+            $_SESSION['sglFirstLaunch'] = true;
+        }
+        return $ret;
     }
 }
 
