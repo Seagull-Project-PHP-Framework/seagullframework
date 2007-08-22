@@ -203,28 +203,31 @@ class SGL_Translation
             $ret = $words;
 
         } else {
-
             //  fetch available languages
             $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
 
             //  build global lang file
-            $langID = str_replace('_', '-', $lang);
-            $language = @$aLanguages[$langID][1];
+            $language = @$aLanguages[$lang][1];
             $globalLangFile = $language .'.php';
             $path = SGL_MOD_DIR . '/' . $module . '/lang/';
+            if (!is_readable($path . $globalLangFile)) {
+                //  load default language
+                $fallbackLang = SGL_Config::get('translation.fallbackLang');
+                $fallbackLang = SGL_Translation::transformLangID($fallbackLang, SGL_LANG_ID_SGL);
+                $language = @$aLanguages[$fallbackLang][1];
+                $globalLangFile = $language .'.php';
+            }
             if (is_readable($path . $globalLangFile)) {
                 include $path . $globalLangFile;
                 if ($module == 'default') {
                     $words = &$defaultWords;
                 }
-                if (isset($words) && !empty($words)) {
+                if (!empty($words)) {
                     $serialized = serialize($words);
                     $cache->save($serialized, $module, 'translation_'. $lang);
                     SGL::logMessage('translations from file', PEAR_LOG_DEBUG);
                 }
-                if (isset($words)) {
-                    $ret = $words;
-                }
+                $ret = $words;
             } elseif ($module == 'default') {
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
             }
