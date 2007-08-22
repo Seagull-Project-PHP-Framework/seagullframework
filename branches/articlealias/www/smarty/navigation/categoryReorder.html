@@ -1,0 +1,50 @@
+<h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+<p><span flexy:if="msgGet()">{$result->msgGet()}</span></p>
+
+<form name="frmCategoryMgr" method="post" flexy:ignore id="frmCategoryMgr">
+    <input type="hidden" name="action" value="delete" />
+
+    <table class="wide">
+
+        <tr>
+            <td align="center" colspan="5">
+                <input type="button" value="{$result->translate('return to category manager')}" 
+                    onclick="javascript:document.location.href='{$result->makeUrl('list','category','navigation')}'" />
+            </td>
+        </tr>
+    
+        <tr>
+            <th>{$result->translate('ID')}</th>
+            <th>{$result->translate('Label')}</th>
+            <th>{$result->translate('Move/Edit')}</th>
+            <th>{$result->translate('Parent ID')}</th>
+            <th>{$result->translate('Order')}</th>
+        </tr>
+
+        <tr class="{$result->switchRowClass()}" flexy:foreach="categoryTree,k,category">
+            <td align="center">{$result->category[category_id]}</td>
+            <td width="1%"><nobr>{$result->foreach:category[images][treePad],image}<img src="{$result->webRoot}/themes/{$result->theme}/{$result->image:h}" border="0" alt="{$result->category[label]}" />{$result->end:} <strong>{$result->category[label]}</strong></nobr></td>
+            <td align="center">&nbsp; 
+                {$result->if:category[images][moveDownTarget]}
+                <a href="{$result->makeUrl('reorderUpdate','category','navigation')}frmCatID/{$result->category[category_id]}/targetId/{$result->category[images][moveDownTarget]}/move/down/">
+                    <img src="{$result->webRoot}/themes/{$result->theme}/{$result->category[images][moveDownImg]:h}" width="10" height="9" border="0" alt="Move {$result->category[label]} down" />
+                </a> 
+                {$result->else:} <img src="{$result->webRoot}/themes/{$result->theme}/{$result->category[images][moveDownImg]:h}" width="10" height="9" border="0" /> 
+                {$result->end:} 
+                
+                {$result->if:category[images][moveUpTarget]} 
+                <a href="{$result->makeUrl('reorderUpdate','category','navigation')}frmCatID/{$result->category[category_id]}/targetId/{$result->category[images][moveUpTarget]}/move/up/">
+                    <img src="{$result->webRoot}/themes/{$result->theme}/{$result->category[images][moveUpImg]:h}" width="10" height="9" border="0" alt="Move {$result->category[label]} up" />
+                </a> 
+                {$result->else:} <img src="{$result->webRoot}/themes/{$result->theme}/{$result->category[images][moveUpImg]:h}" width="10" height="9" border="0" /> 
+                {$result->end:}
+                
+                &nbsp;&nbsp; 
+                <a href="{$result->makeUrl('list','category','navigation',categoryTree,'frmCatID|category_id',k)}">{$result->translate('Edit')}</a>
+            </td>
+            <td align="center">{$result->category[parent_id]}</td>
+            <td align="center">{$result->category[order_id]}</td>
+        </tr>
+
+    </table>
+</form>

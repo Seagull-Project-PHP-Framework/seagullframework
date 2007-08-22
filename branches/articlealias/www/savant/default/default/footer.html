@@ -1,0 +1,16 @@
+<?php $result = $this->result ?>
+</div> <!-- close sgl-main -->
+
+<div id="footer">
+    Powered by <a href="http://seagull.phpkitchen.com" title="Seagull framework homepage">Seagull Framework</a> v<?php $this->_($result->versionAPI) ?><br />
+    <?php if (isset($result->executionTime)) { ?>
+        Execution Time = <?php $this->_($result->executionTime) ?> ms 
+	<?php if ($result->queryCount) { ?>, <?php $this->_($result->queryCount) ?> queries <?php } //if ?>
+    <?php } //if ?>
+
+    <?php if ($result->conf['debug']['profiling']) { ?>
+    <p><?php $this->_($result->memoryUsage) ?> kb allocated</p>
+    <?php } //if ?>
+</div>
+</body>
+</html>

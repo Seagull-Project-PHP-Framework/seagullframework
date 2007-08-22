@@ -1,0 +1,45 @@
+<h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+{if $result->msgGet()}
+<span>{$result->msgGet()}</span>
+{/if}
+
+<form name="modules" id="modules" method="post">
+    <p><input type="hidden" name="action" value="delete" /></p><br />
+    {if $result->pager}{include file="default/pager.html"}{/if}
+
+    <div class="pinstripe">
+        <table>
+            <tr>
+                <td colspan="7">
+                    <input type="button" value="{$result->translate('Add a module')}" 
+                        onclick="javascript:document.location.href='{$result->makeUrl('add','module','default')}'" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>{$result->translate('Module')}</th>
+                <th>{$result->translate('Active')}</th>
+                <th>{$result->translate('Name')}</th>
+                <th>{$result->translate('Description')}</th>
+                <th>{$result->translate('Action')}</th>
+            </tr>
+            {foreach from=$result->aPagedData.data key=key item=aValue}
+            <tr>
+                <td align="center">
+                    <a href="{$result->makeUrl('edit','module','default',aPagedData[data],'frmModuleId|module_id',key)}">
+                        <img src="{$result->webRoot}/themes/{$result->theme}/images/sm_{$result->aValue[icon]}" alt="" />
+                    </a>
+                </td>
+                <td align="center">
+                    <img src="{$result->webRoot}/themes/{$result->theme}/images/enabled.gif" alt="enabled" />
+                </td>
+                <td>{$aValue.title}</td>
+                <td>{$aValue.description}</td>
+                <td>
+                    <button name="activate" value="Rich button" type="button" onClick="alert('coming soon')">uninstall</button>
+                </td>
+            </tr>
+            {/foreach}
+        </table>
+    </div>
+</form>

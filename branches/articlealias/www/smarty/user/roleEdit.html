@@ -1,0 +1,36 @@
+
+<form action="" method="post" name="frmOrg" flexy:ignore>
+<input type="hidden" name="action" value="update" />
+<input type="hidden" name="role[role_id]" value="{roleId}" />
+<h1 class="$result->pageTitle">{$result->translate($result->pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+<table class="narrow">
+    <tr>
+	    <th colspan="2">{$result->translate('Details')}</th>
+    </tr>
+    <tr>
+    	<td class="fieldName" width="50%"><span class="error">*</span>{$result->translate('Name')}</td>
+    	<td valign="top" align="left" width="50%">
+            <div class="error" flexy:if="error[name]">{$result->translate(error[name])}</div>
+            <input name="role[name]" type="text" value="{role.name}" />
+        </td>
+    </tr>
+    <tr>
+    	<td class="fieldName"><strong>{$result->translate('Description')}</strong></td>
+    	<td valign="top" align="left">
+            <textarea cols="19" rows="5" name="role[description]">{role.description}</textarea>
+        </td>
+    </tr>
+    <tr>
+    	<td align="center" colspan="2">
+            <input class="wideButton" name="submitted" value="{$result->translate('Submit')}" type="submit" />
+    	    <input class="wideButton" type="button" value="{$result->translate('Cancel')}" onClick="javascript:document.location.href='{$result->makeUrl('','role','user')}'" />
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" align="center" colspan="2">
+            <span class="small"><span class="error">*</span> {$result->translate('denotes required field')}</span>
+        </td>
+    </tr>
+</table>
+</form>

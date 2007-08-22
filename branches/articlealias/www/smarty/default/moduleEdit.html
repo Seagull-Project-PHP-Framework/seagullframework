@@ -1,0 +1,77 @@
+<form method="post" name="module" flexy:ignore>
+<p><input type="hidden" name="action" value="{action}" />
+{if:module.module_id}
+<input type="hidden" name="module[module_id]" value="{module.module_id}" />
+{end:}
+</p>
+<h1 class="pageTitle">{pageTitle}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<table class="narrow">
+    <tr>
+        <th>{translate(#Name#)}: </th>
+        <td>
+            <div class="error" flexy:if="error[name]">
+                {translate(error[name])}
+            </div>
+            <input type="text" size="40" name="module[name]" value="{module.name}" />
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Title#)}: </th>
+        <td>
+            <div class="error" flexy:if="error[title]">
+                {translate(error[title])}
+            </div>
+            <input type="text" size="40" name="module[title]" value="{module.title}" />
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Configurable#)}: </th>
+        <td>
+            <input type="checkbox" name="module[is_configurable]" flexy:raw="{isConfigurable}" />
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Description#)}: </th>
+        <td>
+            <div class="error" flexy:if="error[description]">
+                {translate(error[description])}
+            </div>
+            <textarea cols="37" rows="7" name="module[description]">{module.description}</textarea>
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Admin URI#)}: </th>
+        <td>
+            <div class="error" flexy:if="error[admin_uri]">
+                {error[admin_uri]}
+            </div>
+            <select name="module[admin_uri]">
+                <option value=""> n/a</option>
+                    {generateSelect(aAdminUris,module.admin_uri):h}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>{translate(#Icon#)}: </th>
+        <td>
+            <div class="error" flexy:if="error[icon]">
+                {translate(error[icon])}
+            </div>
+            <input type="text" size="40" name="module[icon]" value="{module.icon}" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center">
+            {if:module.module_id}
+            <input type="submit" name="cancel" value="{translate(#delete#)}" 
+                onClick="self.document.module.action.value='delete';" />
+            {end:}
+            <input class="wideButton" type="submit" name="submitted" value="{translate(#Save#)}" />&nbsp;
+            <input class="wideButton" type="button" name="cancel" value="{translate(#Cancel#)}" 
+                onClick="document.location.href='{makeUrl(##,#module#,#default#)}'" />
+        </td>
+    </tr>
+</table>
+</form>

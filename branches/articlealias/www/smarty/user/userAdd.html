@@ -1,0 +1,246 @@
+<form action="" method="post" name="frmUser" id="frmUser">
+    <p>
+    {if $result->isAdd}
+    <input name="action" type="hidden" value="insert" />
+    {if $result->redir}
+    <input type="hidden" name="redir" value="{$result->redir}" />
+    {/if}
+    {else}
+    <input name="action" type="hidden" value="update" />
+    <input name="user[usr_id]" type="hidden" value="{$result->user->usr_id}" />
+    <input name="user[role_id_orig]" type="hidden" value="{$result->user->role_id}" />
+    <input name="user[organisation_id_orig]" type="hidden" value="{$result->user->organisation_id}" />
+    {/if}
+    </p>
+    <h1 class="pageTitle">{$result->translate($result->pageTitle)}</h1>
+    {if $result->msgGet()}
+    <span>{$result->msgGet()}</span>
+    {/if}
+
+    <table class="narrow">
+        <tr>
+            <th colspan="2">{$result->translate('Personal Details')}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="50%"><span class="error">*</span>{$result->translate('Username')}</td>
+            <td align="left" width="50%">
+            {if $result->error.username}
+                <div class="error">
+                    {$result->translate($result->error.username)}
+                </div>
+                {/if}
+                <input name="user[username]" type="text" value="{$result->user->username}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('First Name')}</td>
+            <td align="left"><input name="user[first_name]" type="text" value="{$result->user->first_name}" /></td>
+        </tr>
+        <tr>
+            <td class="fieldName">{$result->translate('Last Name')}</td>
+            <td align="left"><input name="user[last_name]" type="text" value="{$result->user->last_name}" /></td>
+        </tr>
+
+    {if $result->isAdd}
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Password')}</td>
+            <td align="left">
+                {if $result->error.passwd}
+                <div class="error">
+                    {$result->translate($result->error.passwd)}
+                </div>
+                {/if}
+                <input name="user[passwd]" type="password" value="{$result->user->passwd}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Confirm Password')}</td>
+            <td align="left">
+                {if $result->error.password_confirm}
+                <div class="error">
+                    {$result->translate($result->error.password_confirm)}
+                </div>
+                {/if}
+                <input name="user[password_confirm]" type="password" value="{$result->user->password_confirm}" />
+            </td>
+        </tr>
+    {/if}
+        {if $result->isAdmin()}
+            {if $result->conf.OrgMgr.enabled}
+        	<tr>
+        		<td class="fieldName">Organisation Name</td>
+        		<td align="left">
+                	<select name="user[organisation_id]">
+                        {$result->generateSelect($result->aOrgs,$result->user->organisation_id)}
+                	</select>
+               </td>
+        	</tr>
+            {/if}
+        {/if}
+
+        <tr>
+            <th colspan="2">{$result->translate('Location')}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Address 1')}</td>
+            <td align="left">
+                {if $result->error.addr_1}
+                <div class="error">
+                    {$result->translate($result->error.addr_1)}
+                </div>
+                {/if}
+                <input name="user[addr_1]" type="text" value="{$result->user->addr_1}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('Address 2')}</td>
+            <td align="left"><input name="user[addr_2]" type="text" value="{$result->user->addr_2}" /></td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('Address 3')}</td>
+            <td align="left"><input name="user[addr_3]" type="text" value="{$result->user->addr_3}" /></td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('City')}</td>
+            <td align="left">
+                {if $result->error.city}
+                <div class="error">
+                    {$result->translate($result->error.city)}
+                </div>
+                {/if}
+                <input name="user[city]" type="text" value="{$result->user->city}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('State/Province')}</td>
+            <td align="left">
+                <select name="user[region]">
+                    {$result->generateSelect($result->states,$result->user->region)}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('ZIP/Postal Code')}</td>
+            <td align="left">
+                {if $result->error.post_code}
+                <div class="error">
+                    {$result->translate($result->error.post_code)}
+                </div>
+                {/if}
+                <input name="user[post_code]" type="text" value="{$result->user->post_code}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Country')}</td>
+            <td align="left">
+                {if $result->error.country}
+                <div class="error">
+                    {$result->translate($result->error.country)}
+                </div>
+                {/if}
+                <select name="user[country]">
+                    {$result->generateSelect($result->countries,$result->user->country)}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <th colspan="2">{$result->translate('Contact')}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Email')}</td>
+            <td align="left">
+                {if $result->error.email}
+                <div class="error">
+                    {$result->translate($result->error.email)}
+                </div>
+                {/if}
+                <input name="user[email]" type="text" value="{$result->user->email}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('Telephone')}</td>
+            <td align="left"><input name="user[telephone]" type="text" value="{$result->user->telephone}" /></td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{$result->translate('Mobile')}</td>
+            <td align="left"><input name="user[mobile]" type="text" value="{$result->user->mobile}" /></td>
+        </tr>
+        {if $result->isAdmin()}
+        <tr>
+            <td class="fieldName">{$result->translate('Is Active?')}</td>
+            <td align="left"><input name="user[is_acct_active]" flexy:raw="{isAcctActive}" type="checkbox" value="1" /> {$result->translate('check if active')}</td>
+        </tr>
+        {/if}
+        <tr>
+            <th colspan="2">{$result->translate('Security')}</th>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Security question')}</td>
+            <td align="left">
+                {if $result->error.security_question}
+                <div class="error">
+                    {$result->translate($result->error.security_question)}
+                </div>
+                {/if}
+                <select name="user[security_question]">
+                    {$result->generateSelect($result->aSecurityQuestions,$result->user->security_question)}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="fieldName"><span class="error">*</span>{$result->translate('Answer')}</td>
+            <td align="left">
+                {if $result->error->security_answer}
+                <div class="error">
+                    {$result->translate($result->error.security_answer)}
+                </div>
+                {/if}
+                <input name="user[security_answer]" type="text" value="{$result->user->security_answer}" />
+            </td>
+        </tr>
+        {if $result->isAdmin()}
+    	<tr>
+    		<td class="fieldName">{$result->translate('Role')}</td>
+    		<td align="left">
+                <select name="user[role_id]">
+                    {$result->generateSelect($result->aRoles,$result->user->role_id)}
+                </select>
+            </td>
+    	</tr>
+        {/if}
+        <tr>
+            <td valign="top" align="center" colspan="2">
+                <input class="wideButton" name="submitted" value="{$result->translate('Submit')}" type="submit" />&nbsp;
+                {if $result->isAdmin()}
+                    <input class="wideButton" type="button" value="{$result->translate('Cancel')}"
+                        onclick="javascript:document.location.href='{makeUrl('','user','user')}'" />
+                {else}
+                    <input class="wideButton" value="{$result->translate('Reset')}" type="reset" />
+                {/if}
+            </td>
+        </tr>
+
+        <tr>
+            <td valign="top" align="center" colspan="2">
+                <span class="error">*</span>
+                <span>{$result->translate('denotes required field')}</span>
+            </td>
+        </tr>
+    </table>
+</form>
