@@ -980,5 +980,17 @@ class SGL_Output
     {
         return $this->aHeaders;
     }
+
+    function makeJsOptimizerLink()
+    {
+        // remove base url from files
+        $aFiles = array();
+        foreach ($this->aJavascriptFiles as $fileName) {
+            $aFiles[] = substr($fileName, strlen(SGL_BASE_URL . '/'));
+        }
+
+        $jsString = implode(',', $aFiles);
+        return SGL_BASE_URL . '/optimizer.php?files=' . $jsString;
+    }
 }
 ?>
