@@ -305,6 +305,10 @@ function toggleTransElements() {
                 <span class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</span>
                 {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
             </p>
+            <p>
+                <label for="conf[session][savePath]">{translate(#Save path for session file#)}</label>
+                <input type="text" name="conf[session][savePath]" id="conf[session][savePath]" value="{conf[session][savePath]}" />
+            </p>
         </fieldset>
         <fieldset class="main options" id="navigationOptions">
             <h3>{translate(#Navigation#)}</h3>

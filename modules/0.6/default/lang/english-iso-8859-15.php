@@ -376,6 +376,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Custom output class' => 'Custom output class',
         'Show errors' => 'Show errors',
         'Select No if you do not want errors displayed in the logs' => 'Select No if you do not want errors displayed in the logs',
+        'Save path for session file' => 'Save path for session file',
 
 /*
  ConfigMgr: MTA options
