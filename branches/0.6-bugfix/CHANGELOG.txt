@@ -12,12 +12,14 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+23-08-07    Added language detection from user agent (Dmitri Lakachauskis)
+23-08-07    Added config option to set storage engine for MySQL (Dmitri Lakachauskis)
 16-08-07    Added support for RTL languages
 15-08-07    Static SGL_Config::set() call implemented, eg:
                 SGL_Config::set('cache.lifetime', 123)
 14-08-07    Request types can now be preset
 07-08-07    Implemented Config option so roles other than SGL_ADMIN can use the admin GUI
-07-08-07    Symbolic links support for Windows Vista
+07-08-07    Symbolic links support for Windows Vista (Dmitri Lakachauskis)
 25-07-07    Added create{Left|Right}Node to SGL_NestedSet (biggs)
 24-07-07    Better error handling for stored proc multiple resultsets (mysqli_SGL.php)
 18-07-07    Improved customising of block layouts, for details see
@@ -35,7 +37,7 @@ IMPROVEMENTS
 29-06-07    Implemented ability to set Seagull into maintenance mode (Julien Casanova)
 27-06-07    Implemented ability to rebuild Seagull for Postgresql (ajmixto)
 13-06-07    Added ability to suppress errors in logs, useful for Ajax debugging
-12-06-07    Implemented persistent logins (Dmitri Lakachauskis)
+12-06-07    Implemented persistent logins
 07-06-07    Added ability to set theme on a per-module basis (Thomas Goetz)
 04-06-07    Improved dynamic navigation, see http://trac.seagullproject.org/ticket/1470
             (Dmitri Lakachauskis)
