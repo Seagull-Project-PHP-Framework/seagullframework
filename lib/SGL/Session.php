@@ -132,7 +132,10 @@ class SGL_Session
                 array(& $this, 'dbGc')
                 );
         } else {
-            session_save_path(SGL_TMP_DIR);
+            $path = SGL_Config::get('session.savePath')
+                ? SGL_Config::get('session.savePath')
+                : SGL_TMP_DIR;
+            session_save_path($path);
         }
 
         //  start PHP session handler
