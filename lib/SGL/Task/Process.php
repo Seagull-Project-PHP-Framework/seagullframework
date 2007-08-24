@@ -208,9 +208,9 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  don't send headers according to config
         $currentMgr = SGL_Inflector::caseFix(get_class($output->manager));
@@ -878,9 +878,10 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
+        $this->processRequest->process($input, $output);
+
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->processRequest->process($input, $output);
         //  setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
             $output->loggedOnUser = $_SESSION['username'];
@@ -927,9 +928,9 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         // set the default WYSIWYG editor
         if (isset($output->wysiwyg) && $output->wysiwyg == true && !SGL::runningFromCLI()) {
@@ -973,9 +974,9 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (SGL_Session::hasAdminGui()
             || (SGL_Config::get('navigation.enabled')
@@ -1018,9 +1019,9 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!SGL::runningFromCLI()) {
             $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
@@ -1084,9 +1085,9 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  load blocks
         if (SGL_Config::get('site.blocksEnabled')
@@ -1114,9 +1115,10 @@ class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
+        $this->processRequest->process($input, $output);
+
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->processRequest->process($input, $output);
         if (SGL_Config::get('debug.infoBlock')) {
             $output->debug_request = $output->request;
             $output->debug_session = $_SESSION;
@@ -1141,9 +1143,9 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $this->processRequest->process($input, $output);
+
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get all html onLoad events and js files
         $output->onLoad = $output->getOnLoadEvents();
