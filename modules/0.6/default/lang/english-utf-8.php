@@ -234,6 +234,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'You have multiple sessions on this site!' => 'You have multiple sessions on this site!',
         'Enables extended session API when using database sessions. This allows the site to enforce one session per user.' => 'Enables extended session API when using database sessions. This allows the site to enforce one session per user.',
         'Enforces one session per user on this site (requires database session handling, and extended session to be on).' => 'Enforces one session per user on this site (requires database session handling, and extended session to be on).',
+        'Permissions retrieval method' => 'Permissions retrieval method',
         'Guests' => 'Guests',
         'Members' => 'Members',
         'Total' => 'Total',
