@@ -107,23 +107,10 @@ class SGL_String
     function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (defined(PHP_EOL)) {
-            $crlf = PHP_EOL;
-        } elseif (defined('SGL_CLIENT_OS')) {
-            // Win case
-            if (SGL_CLIENT_OS == 'Win') {
-                $crlf = "\r\n";
-            }
-            // Mac case
-            elseif (SGL_CLIENT_OS == 'Mac') {
-                $crlf = "\r";
-            } else {
-                $crlf = "\n";
-            }
-        } else {
-            $crlf = "\n";
-        }
+        // TODO: deal with Mac OS Classic i.e. < OS X when line ending is CR
+        $crlf = (substr(PHP_OS, 0, 3) == 'WIN')
+            ? "\r\n"
+            : "\n";
         return $crlf;
     }
 
