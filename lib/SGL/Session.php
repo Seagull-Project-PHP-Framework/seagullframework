@@ -203,16 +203,25 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => $oUser->usr_id,
                 'rid'               => $oUser->role_id,
-                'oid'               => !empty($oUser->organisation_id) ? $oUser->organisation_id : 0,
                 'username'          => $oUser->username,
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
-                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id),
-                'aPerms'            => ($oUser->role_id == SGL_ADMIN)
-                    ? array()
-                    : $da->getPermsByUserId($oUser->usr_id),
+                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id)
             );
+
+            // for admin we don't need any perms
+            if ($oUser->role_id == SGL_ADMIN) {
+                $aPerms = array();
+            // check for customized perms
+            } elseif (($method = SGL_Config::get('session.permsRetrievalMethod'))
+                    && is_callable(array($da, $method))) {
+                $aPerms = $da->$method($oUser);
+            // get permissions by user
+            } else {
+                $aPerms = $da->getPermsByUserId($oUser->usr_id);
+            }
+            $aSessVars['aPerms'] = $aPerms;
 
             //  check for rememberMe cookie
             list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
@@ -235,7 +244,6 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => 0,
                 'rid'               => 0,
-                'oid'               => 0,
                 'username'          => 'guest',
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
@@ -246,6 +254,13 @@ class SGL_Session
                 'aPerms'            => $da->getPermsByRoleId(),
             );
         }
+
+        if (SGL_Config::get('OrgMgr.enabled')) {
+            $aSessVars['oid'] = !empty($oUser->organisation_id)
+                ? $oUser->organisation_id
+                : 0;
+        }
+
         //  set vars in session
         if (isset($_SESSION)) {
             foreach ($aSessVars as $k => $v) {
