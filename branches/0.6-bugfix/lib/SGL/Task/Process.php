@@ -977,8 +977,10 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 
         $this->processRequest->process($input, $output);
 
-        if (SGL_Config::get('navigation.enabled') && !SGL::runningFromCli()) {
-
+        if (SGL_Session::hasAdminGui()
+            || (SGL_Config::get('navigation.enabled')
+            && !SGL::runningFromCli()))
+        {
             //  prepare navigation driver
             $navDriver = SGL_Config::get('navigation.driver');
             $navDrvFile = SGL_MOD_DIR . '/navigation/classes/' . $navDriver . '.php';
@@ -1088,7 +1090,6 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
 
         //  load blocks
         if (SGL_Config::get('site.blocksEnabled')
-                && SGL_Config::get('navigation.enabled')
                 && !SGL::runningFromCli()) {
             $output->sectionId = empty($output->sectionId)
                 ? 0
