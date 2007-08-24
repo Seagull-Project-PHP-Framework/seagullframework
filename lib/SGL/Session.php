@@ -423,6 +423,10 @@ class SGL_Session
         foreach ($aRoles as $k => $role) {
             $aRoles[$k] = SGL_String::pseudoConstantToInt($role);
         }
+        //  at least admin must have admin gui rights
+        if (!in_array(SGL_ADMIN, $aRoles)) {
+            $aRoles[] = SGL_ADMIN;
+        }
         $ret = in_array($_SESSION['rid'], $aRoles);
         return $ret;
     }
