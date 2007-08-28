@@ -248,6 +248,9 @@ class User_DoLogin extends SGL_Observable
             if (array_key_exists(1, $aSplitResult)) {
                 $aParams['managerName'] = $aSplitResult[1];
             }
+            if (array_key_exists(2, $aSplitResult)) {
+                $aParams['action'] = $aSplitResult[2];
+            }
             SGL_HTTP::redirect($aParams);
 
         } else {
