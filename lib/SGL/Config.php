@@ -393,5 +393,27 @@ class SGL_Config
         }
         return $ret;
     }
+
+    function getCommandTarget($str)
+    {
+        if (empty($str)) {
+            return false;
+        }
+        $aSplitResult = split('\^', $str);
+        $aParams = array(
+            'moduleName'    => null,
+            'managerName'   => null,
+            );
+        if (array_key_exists(0, $aSplitResult)) {
+            $aParams['moduleName'] = $aSplitResult[0];
+        }
+        if (array_key_exists(1, $aSplitResult)) {
+            $aParams['managerName'] = $aSplitResult[1];
+        }
+        if (array_key_exists(2, $aSplitResult)) {
+            $aParams['action'] = $aSplitResult[2];
+        }
+        return $aParams;
+    }
 }
 ?>
