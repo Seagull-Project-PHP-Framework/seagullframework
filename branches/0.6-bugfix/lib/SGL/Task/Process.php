@@ -893,6 +893,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         }
         $output->currUrl          = $_SERVER['PHP_SELF'];
         $output->currLang         = SGL::getCurrentLang();
+        $output->currFullLang     = $_SESSION['aPrefs']['language'];
         $output->langDir          = ($output->currLang == 'ar' || $output->currLang == 'he')
             ? 'rtl' : 'ltr';
         $output->theme            = isset($_SESSION['aPrefs']['theme'])
