@@ -568,6 +568,9 @@ $defaultWords['Enter Captcha'] = 'Please enter the number shown below in the rel
 $defaultWords['You must enter the number in this field'] = 'You must enter the number in this field';
 $defaultWords['prefixes not supported'] = 'Currently the module generator only works when there are no prefixes set on the db tables';
 $defaultWords['Enable persistent logins'] = 'Enable persistent logins';
+$defaultWords['Logout target'] = 'Logout target';
+$defaultWords['Roles that can access the admin GUI'] = 'Roles that can access the admin GUI';
+$defaultWords['logout target comment'] = 'when a user is logged out, they will be redirect here, ie module^manager^action';
 
 /* --- PEAR::Pager --- */
 $defaultWords['altPrev'] = 'Previous';

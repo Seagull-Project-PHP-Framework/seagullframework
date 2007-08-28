@@ -237,21 +237,10 @@ class User_DoLogin extends SGL_Observable
                 SGL_HTTP::redirect(urldecode($this->input->redir));
             }
             $type = ($res['role_id'] == SGL_ADMIN) ? 'logonAdminGoto' : 'logonUserGoto';
-            $aSplitResult = split('\^', $this->conf['LoginMgr'][$type]);
-            $aParams = array(
-                'moduleName'    => null,
-                'managerName'   => null
-                );
-            if (array_key_exists(0, $aSplitResult)) {
-                $aParams['moduleName'] = $aSplitResult[0];
-            }
-            if (array_key_exists(1, $aSplitResult)) {
-                $aParams['managerName'] = $aSplitResult[1];
-            }
-            if (array_key_exists(2, $aSplitResult)) {
-                $aParams['action'] = $aSplitResult[2];
-            }
-            SGL_HTTP::redirect($aParams);
+            $target = !empty($this->conf['LoginMgr'][$type])
+                ? SGL_Config::getCommandTarget($this->conf['LoginMgr'][$type])
+                : '';
+            SGL_HTTP::redirect($target);
 
         } else {
             SGL::raiseMsg('username/password not recognized');
