@@ -57,17 +57,6 @@ $aSections = array(
       'is_enabled'      => 1,
       'perms'           => SGL_ADMIN,
         ),
-    array (
-      'title'           => 'Translation',
-      'parent_id'       => SGL_NODE_GROUP,
-      'uriType'         => 'dynamic',
-      'module'          => 'default',
-      'manager'         => 'TranslationMgr.php',
-      'actionMapping'   => '',
-      'add_params'      => '',
-      'is_enabled'      => 1,
-      'perms'           => SGL_ADMIN,
-        ),
     );
 //  dynamically add PEAR navigation if it's not a minimal install
 if (!SGL::isMinimalInstall()) {
