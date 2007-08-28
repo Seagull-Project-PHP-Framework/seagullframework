@@ -115,8 +115,8 @@ class ConfigTest extends UnitTestCase {
     {
         $var = $this->c->get('cache');
         $expected = array (
-          'enabled' => '',
-          'libCacheEnabled' => '',
+          'enabled' => 0,
+          'libCacheEnabled' => 0,
           'lifetime' => '86400',
           'cleaningFactor' => '0',
           'readControl' => '1',
@@ -175,5 +175,16 @@ class ConfigTest extends UnitTestCase {
         $this->assertFalse(SGL_Config::get("$mgr.filterChain"));
     }
 
+    function test_getCommandTarget()
+    {
+        $str = 'module^manager^action';
+        $aExpected = array(
+            'moduleName'    => 'module',
+            'managerName'   => 'manager',
+            'action'        => 'action',
+            );
+        $aRet = SGL_Config::getCommandTarget($str);
+        $this->assertEqual($aExpected, $aRet);
+    }
 }
 ?>
