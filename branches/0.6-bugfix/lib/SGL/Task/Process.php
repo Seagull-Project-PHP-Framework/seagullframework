@@ -166,9 +166,9 @@ class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
 
         $adminMode = SGL_Session::get('adminMode');
         //  if not in admin mode, but session debug was allowed
-        if (!$adminMode && SGL_Session::get('debug.sessionDebugAllowed')) {
+        if (!$adminMode && SGL_Config::get('debug.sessionDebugAllowed')) {
             //  flag it as not allowed
-            SGL_Session::set('debug.sessionDebugAllowed', false);
+            SGL_Config::set('debug.sessionDebugAllowed', false);
         }
 
         $this->processRequest->process($input, $output);
