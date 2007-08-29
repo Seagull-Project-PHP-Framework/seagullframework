@@ -110,5 +110,20 @@ class TranslationOutput
     {
         return strpos($k, '__SGL_COMMENT_') !== false;
     }
+
+    function renderEditField($k, $aTargetLang)
+    {
+        $value = TranslationOutput::getArrayValueQuoted($aTargetLang,$k);
+        if (strlen($value) < 65) {
+            $html = '
+                <input type="text" name="translation[' . TranslationOutput::getTransKey($k) . ']"
+                       value="' . $value . '" size="50" />
+            ';
+        } else {
+            $html = '
+                <textarea cols="56" name="translation[' . TranslationOutput::getTransKey($k) . ']">' . $value . '</textarea>';
+        }
+        return $html;
+    }
 }
 ?>

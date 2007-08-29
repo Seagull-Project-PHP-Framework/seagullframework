@@ -1,0 +1,33 @@
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form id="translations" name="translations" method="post" action="" flexy:ignore>
+        <h3>{translate(#Translation Summary#)}</h3>
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="summary" />
+        </fieldset>
+        <fieldset class="inside">
+            <p>
+                <select name="frmCurrentLang">
+                    {generateSelect(aLangs,currentLang):h}
+                </select>
+            </p>
+            {foreach:aData,moduleName,ratio}
+            <p>
+                <strong>{moduleName}</strong>: {ratio}%
+            </p>
+            {end:}
+            <hr />
+            <p>
+                <strong>{tr(#Total#)}</strong>: {totalRatio}%
+            </p>
+            <p>
+                <input class="sgl-button" type="submit" name="submitted"
+                       value="{translate(#Update#)}" />
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

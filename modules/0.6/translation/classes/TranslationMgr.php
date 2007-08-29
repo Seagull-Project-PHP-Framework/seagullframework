@@ -111,13 +111,11 @@ class TranslationMgr extends SGL_Manager
         if ($input->submitted) {
             if ($input->action == 'list') {
                 $aErrors['noSelection'] = 'please specify an option';
-            } elseif ($input->action != 'checkAllModules') {
+            } elseif ($input->action != 'summary') {
                 if ($this->container == 'file') {
                     $curLang  = SGL_Translation2::transformLangID(
                         $input->currentLang, SGL_LANG_ID_SGL);
-                    $filename = SGL_MOD_DIR . '/' . $input->currentModule
-                        . '/lang/' . $GLOBALS['_SGL']['LANGUAGE'][$curLang][1]
-                        . '.php';
+                    $filename = SGL_Translation2::getFileName($input->currentModule, $curLang);
                     if (is_file($filename)) {
                         if (!is_writeable($filename)) {
                             $aErrors['file'] =
@@ -265,6 +263,45 @@ class TranslationMgr extends SGL_Manager
             SGL::raiseMsg('There was a problem updating the translation',
                 SGL_ERROR_FILEUNWRITABLE);
         }
+    }
+
+    function _cmd_summary(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $aModules        = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
+        $totalSizeMaster = 0;
+        $totalSizeSlave  = 0;
+        $fallLang        = SGL_Translation2::getFallbackLangID();
+        $fallLang        = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
+
+        $aRet = array();
+        foreach ($aModules as $moduleName => $foo) {
+
+            // get sizes
+            $sizeSlave = SGL_Translation2::getTranslationStorageSize(
+                $moduleName, $input->currentLang);
+            $sizeMaster = SGL_Translation2::getTranslationStorageSize(
+                $moduleName, $fallLang);
+
+            // completed ration
+            $ratio = $sizeMaster
+                ? round($sizeSlave / $sizeMaster, 2) * 100
+                : $sizeMaster;
+            $aRet[$moduleName] = $ratio;
+
+            // calculate total size
+            $totalSizeSlave  += $sizeSlave;
+            $totalSizeMaster += $sizeMaster;
+        }
+
+        // overall ration
+        $output->totalRatio = $totalSizeMaster
+            ? round($totalSizeSlave / $totalSizeMaster, 2) * 100
+            : $totalSizeMaster;
+
+        $output->aData    = $aRet;
+        $output->template = 'translationSummary.html';
     }
 }
 ?>
