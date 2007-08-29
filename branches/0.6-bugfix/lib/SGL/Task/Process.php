@@ -494,15 +494,16 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         //  resolve current language from GET or session, assign to $language
         $language = $GLOBALS['_SGL']['LANGUAGE'][$lang][1];
 
-        //  fetch default translation
-        $defaultWords = SGL_Translation::getTranslations('default', $lang);
+        //  fetch default translations
+        $defaulModule = SGL_Config::get('site.defaultModule');
+        $defaultWords = SGL_Translation::getTranslations($defaulModule, $lang);
 
         //  fetch module translations
         $moduleName = ($req->get('moduleName'))
             ? $req->get('moduleName')
-            : SGL_Config::get('site.defaultManager');
+            : $defaulModule;
 
-        if ($moduleName != 'default') {
+        if ($moduleName != $defaulModule) {
             $words = SGL_Translation::getTranslations($moduleName, $lang);
         }
         //  if current module is not the default module
