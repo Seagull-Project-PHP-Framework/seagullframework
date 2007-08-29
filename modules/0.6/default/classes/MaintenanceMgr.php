@@ -181,7 +181,8 @@ class MaintenanceMgr extends SGL_Manager
         //  retrieve admin user
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
         $oUserDao    = &UserDAO::singleton();
-        $oAdmin      = $oUserDao->getUserById(SGL_ADMIN);
+        $aAdminUserIds = $oUserDao->getUsersByRoleId(SGL_ADMIN);
+        $oAdmin      = $oUserDao->getUserById($aAdminUserIds[0]); // get first admin user
         $aMasterPrefs= $oUserDao->getMasterPrefs();
 
         $data = array(
