@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+29-08-07    Default language comes from Config [3366]
 28-08-07    Added ability to specify custom logout screen [3356]
 23-08-07    Session files can now be saved whereever you like, /tmp recommended
             for auto-cleanup, esp. on busy sites but not for shared hosts
