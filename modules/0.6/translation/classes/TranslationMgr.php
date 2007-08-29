@@ -64,9 +64,10 @@ class TranslationMgr extends SGL_Manager
         $this->template  = 'translationList.html';
 
         $this->_aActionsMapping = array(
-            'list'            => array('list'),
-            'edit'            => array('edit'),
-            'update'          => array('update', 'redirectToDefault'),
+            'list'              => array('list'),
+            'edit'              => array('edit'),
+            'update'            => array('update', 'redirectToDefault'),
+            'summary'           => array('summary')
         );
 
         $this->da        = &DefaultDAO::singleton();
