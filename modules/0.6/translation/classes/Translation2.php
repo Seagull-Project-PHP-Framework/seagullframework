@@ -732,5 +732,28 @@ class SGL_Translation2
         }
         return $ret;
     }
+
+    function getTranslationStorageSize($moduleName, $langId)
+    {
+        $errorsBefore = SGL_Error::count();
+
+        $aTrans   = SGL_Translation2::getTranslations($moduleName, $langId);
+        $fallLang = SGL_Translation2::getFallbackLangID();
+        $fallLang = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
+        if ($langId != $fallLang) {
+            $aFallbackTrans = SGL_Translation2::getTranslations($moduleName,
+                $fallLang);
+            $aTrans = array_intersect(array_keys($aFallbackTrans), array_keys($aTrans));
+        }
+
+        $errorsAfter = SGL_Error::count();
+        // remove the error in case language file was not found
+        // we assume it has zero strings
+        if ($errorsAfter > $errorsBefore) {
+            SGL_Error::pop();
+        }
+
+        return count($aTrans);
+    }
 }
 ?>
