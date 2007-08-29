@@ -154,6 +154,13 @@ class TranslationMgr extends SGL_Manager
 
         //  get hash of all modules;
         $output->aModules = $this->da->getModuleHash(SGL_RET_NAME_VALUE);
+        // looking for email translation files
+        foreach ($aModules as $module) {
+            if (is_dir(SGL_MOD_DIR . '/' . $module . '/lang/email')) {
+                $aModules[strtolower($module) . '_email'] = 'Mail: ' . $module;
+            }
+        }
+        $output->aModules = $aModules;
 
         if ($this->container == 'file') {
             $aLangs      = SGL_Util::getLangsDescriptionMap();

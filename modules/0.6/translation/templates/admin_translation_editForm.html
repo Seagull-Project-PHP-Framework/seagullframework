@@ -59,8 +59,7 @@
                             <span class="tipText">{k}</span></span>
                         </td>
                         <td class="left">
-                            <input type="text" name="translation[{this.plugin(#getTransKey#,k):h}]"
-                                   value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k):h}" size="50" />
+                            {this.plugin(#renderEditField#,k,aTargetLang):h}
                         </td>
                             {end:}
                         {end:}

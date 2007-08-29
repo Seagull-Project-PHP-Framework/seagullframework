@@ -211,7 +211,14 @@ class SGL_Translation2
             $langID = str_replace('_', '-', $lang);
             $language = @$aLanguages[$langID][1];
             $globalLangFile = $language .'.php';
-            $path = SGL_MOD_DIR . '/' . $module . '/lang/';
+            // making an alternative path for email translations
+            if (strstr($module, '_email')) {
+                $path = SGL_MOD_DIR . '/' . str_replace('_email', '', $module)
+                    . '/lang/email/';
+            } else {
+                $path = SGL_MOD_DIR . '/' . $module . '/lang/';
+            }
+
             if (is_readable($path . $globalLangFile)) {
                 include $path . $globalLangFile;
                 if ($module == 'default') {
@@ -287,9 +294,13 @@ class SGL_Translation2
 
     function getFileName($module, $langId, $path = SGL_MOD_DIR)
     {
-
-        $fileName = $path . '/' . $module . '/lang/' .
+        if (strstr($module, '_email')) {
+            $fileName = $path . '/' . str_replace('_email', '', $module) . '/lang' .
+                '/email/' . $GLOBALS['_SGL']['LANGUAGE'][$langId][1] . '.php';
+        } else {
+            $fileName = $path . '/' . $module . '/lang/' .
                 $GLOBALS['_SGL']['LANGUAGE'][$langId][1] . '.php';
+        }
         return $fileName;
     }
 
@@ -513,7 +524,7 @@ class SGL_Translation2
      */
     function getTranslationMetaData($moduleName, $langName)
     {
-        $fileName = SGL_Translation2::getFileName($moduleName, $langName);
+        $fileName = self::getFileName($moduleName, $langName);
         $words    = array();
         include $fileName;
         if (isset($defaultWords)) {
