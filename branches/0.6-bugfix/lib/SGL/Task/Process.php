@@ -153,6 +153,29 @@ class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
 }
 
 /**
+ * Detects if session debug is allowed.
+ *
+ * @package Task
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
+{
+    function process(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $adminMode = SGL_Session::get('adminMode');
+        //  if not in admin mode, but session debug was allowed
+        if (!$adminMode && SGL_Session::get('debug.sessionDebugAllowed')) {
+            //  flag it as not allowed
+            SGL_Session::set('debug.sessionDebugAllowed', false);
+        }
+
+        $this->processRequest->process($input, $output);
+    }
+}
+
+/**
  * Sets the current locale.
  *
  * @package Task

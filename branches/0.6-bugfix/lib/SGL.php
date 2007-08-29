@@ -173,21 +173,6 @@ class SGL
     }
 
     /**
-     * Determines if a debug session is permittetd for the current authenticated user.
-     *
-     * @access  public
-     * @static
-     * @return boolean   true if debug session allowed
-     */
-    function debugAllowed()
-    {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        return $conf['debug']['sessionDebugAllowed'] &&
-            in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['TRUSTED_IPS']);
-    }
-
-    /**
      * A static method to invoke errors.
      *
      * @static
