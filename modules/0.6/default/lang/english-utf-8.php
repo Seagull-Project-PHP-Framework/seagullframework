@@ -163,24 +163,6 @@
         'whats this?' => 'what\'s this?',
         'denotes required field' => 'denotes required field',
 
-/*  Date and Time  */
-/*  'at time' used at Output:showDateSelector  */
-        'at time' => 'at',
-
-        'aMonths' => array(
-            1 => 'January',
-            2 => 'February',
-            3 => 'March',
-            4 => 'April',
-            5 => 'May',
-            6 => 'June',
-            7 => 'July',
-            8 => 'August',
-            9 => 'September',
-            10 => 'October',
-            11 => 'November',
-            12 => 'December'
-        ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -576,5 +558,18 @@ $defaultWords['altNext'] = 'Next';
 $defaultWords['altPage'] = 'Page';
 $defaultWords['prevImg'] = '&laquo; previous';
 $defaultWords['nextImg'] = 'next &raquo;';
+
+$defaultWords['aMonths']['01'] = 'January';
+$defaultWords['aMonths']['02'] = 'February';
+$defaultWords['aMonths']['03'] = 'March';
+$defaultWords['aMonths']['04'] = 'April';
+$defaultWords['aMonths']['05'] = 'May';
+$defaultWords['aMonths']['06'] = 'June';
+$defaultWords['aMonths']['07'] = 'July';
+$defaultWords['aMonths']['08'] = 'August';
+$defaultWords['aMonths']['09'] = 'September';
+$defaultWords['aMonths']['10'] = 'October';
+$defaultWords['aMonths']['11'] = 'November';
+$defaultWords['aMonths']['12'] = 'December';
 
 ?>

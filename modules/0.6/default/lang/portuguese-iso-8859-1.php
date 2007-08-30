@@ -86,21 +86,6 @@
 /*  Date and Time  */
 /*  'at time' used at Output:showDateSelector  */
         'at time' => 'ás', 
-
-        'aMonths' => array(
-            13 => 'Janeiro',
-            14 => 'Fevereiro',
-            15 => 'Março',
-            16 => 'Abril',
-            17 => 'Maio',
-            18 => 'Junho',
-            19 => 'Julho',
-            20 => 'Agosto',
-            21 => 'Setembro',
-            22 => 'Outubro',
-            23 => 'Novembro',
-            24 => 'Dezembro'
-        ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -125,4 +110,19 @@
         'Please, specify the url to link to' => 'Por favor indique o url de ligação',
         'Please, specify the name of the icon-file' => 'Por favor indique o nome do ficheiro com o icone',
     );
+
+
+$defaultWords['aMonths']['01'] =  'Janeiro';
+$defaultWords['aMonths']['02'] =  'Fevereiro';
+$defaultWords['aMonths']['03'] =  'Março';
+$defaultWords['aMonths']['04'] =  'Abril';
+$defaultWords['aMonths']['05'] =  'Maio';
+$defaultWords['aMonths']['06'] =  'Junho';
+$defaultWords['aMonths']['07'] =  'Julho';
+$defaultWords['aMonths']['08'] =  'Agosto';
+$defaultWords['aMonths']['09'] =  'Setembro';
+$defaultWords['aMonths']['10'] =  'Outubro';
+$defaultWords['aMonths']['11'] =  'Novembro';
+$defaultWords['aMonths']['12'] =  'Dezembro';
+
 ?>

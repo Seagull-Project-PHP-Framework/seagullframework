@@ -217,19 +217,18 @@
       'Save' => 'Lagre',
         'Are you sure you want to delete this' => 'Er du sikker på at du vil slette dette?',
         'You must select an element to delete' => 'Du må velge et element å slette',
-        'aMonths' => array(
-            13 => 'January',
-            14 => 'February',
-            15 => 'March',
-            16 => 'April',
-            17 => 'May',
-            18 => 'June',
-            19 => 'July',
-            20 => 'August',
-            21 => 'September',
-            22 => 'October',
-            23 => 'November',
-            24 => 'December'
-        ),
     );
+$defaultWords['aMonths']['01'] =  'January';
+$defaultWords['aMonths']['02'] =  'February';
+$defaultWords['aMonths']['03'] =  'March';
+$defaultWords['aMonths']['04'] =  'April';
+$defaultWords['aMonths']['05'] =  'May';
+$defaultWords['aMonths']['06'] =  'June';
+$defaultWords['aMonths']['07'] =  'July';
+$defaultWords['aMonths']['08'] =  'August';
+$defaultWords['aMonths']['09'] =  'September';
+$defaultWords['aMonths']['10'] =  'October';
+$defaultWords['aMonths']['11'] =  'November';
+$defaultWords['aMonths']['12'] =  'December';
+
 ?>

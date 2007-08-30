@@ -83,24 +83,7 @@
         'whats this?' => 'co to je?',
         'denotes required field' => 'Povinn� �daje',
 
-/*  Date and Time  */
-/*  'at time' used at Output:showDateSelector  */
         'at time' => 'v',
-
-        'aMonths' => array(
-            13 => 'Leden',
-            14 => '�nor',
-            15 => 'B�ezen',
-            16 => 'Duben',
-            17 => 'Kv�ten',
-            18 => '�erven',
-            19 => '�ervenec',
-            20 => 'Srpen',
-            21 => 'Z���',
-            22 => '��jen',
-            23 => 'Listopad',
-            24 => 'Prosinec',
-            ),
         'Maintenance' => 'Nastaveni aplikace',
         'Congratulations, the target translation appears to be up to date' => 'Gratulujeme, p�eklad vypad� aktualn�',
         'translation successfully updated' => 'p�eklad ulo�en',
@@ -111,4 +94,18 @@
         'Navigation cache successfully deleted' => 'Naviga�n� chache byla smaz�na',
         'Template cache successfully deleted' => 'Cache p�edloh byla smaz�na',
     );
+
+$defaultWords['aMonths']['01'] =  'Leden';
+$defaultWords['aMonths']['02'] =  '�nor';
+$defaultWords['aMonths']['03'] =  'B�ezen';
+$defaultWords['aMonths']['04'] =  'Duben';
+$defaultWords['aMonths']['05'] =  'Kv�ten';
+$defaultWords['aMonths']['06'] =  '�erven';
+$defaultWords['aMonths']['07'] =  '�ervenec';
+$defaultWords['aMonths']['08'] =  'Srpen';
+$defaultWords['aMonths']['09'] =  'Z���';
+$defaultWords['aMonths']['10'] =  '��jen';
+$defaultWords['aMonths']['11'] =  'Listopad';
+$defaultWords['aMonths']['12'] =  'Prosinec';
+
 ?>

@@ -153,20 +153,6 @@
 /*  'at time' used at Output:showDateSelector  */
         'at time' => 'od',
 
-        'aMonths' => array(
-            1 => 'Styczeñ',
-            2 => 'Luty',
-            3 => 'Marzec',
-            4 => 'Kwiecieñ',
-            5 => 'Maj',
-            6 => 'Czerwiec',
-            7 => 'Lipiec',
-            8 => 'Sierpieñ',
-            9 => 'Wrzesieñ',
-            10 => 'Pa¼dziernik',
-            11 => 'Listopad',
-            12 => 'Grudzieñ'
-            ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -513,5 +499,18 @@ $defaultWords['altNext'] = 'Nastêpna';
 $defaultWords['altPage'] = 'Strona';
 $defaultWords['prevImg'] = '&laquo; poprzednia';
 $defaultWords['nextImg'] = 'nastêpna &raquo;';
+
+$defaultWords['aMonths']['01'] = 'Styczeñ';
+$defaultWords['aMonths']['02'] = 'Luty';
+$defaultWords['aMonths']['03'] = 'Marzec';
+$defaultWords['aMonths']['04'] = 'Kwiecieñ';
+$defaultWords['aMonths']['05'] = 'Maj';
+$defaultWords['aMonths']['06'] = 'Czerwiec';
+$defaultWords['aMonths']['07'] = 'Lipiec';
+$defaultWords['aMonths']['08'] = 'Sierpieñ';
+$defaultWords['aMonths']['09'] = 'Wrzesieñ';
+$defaultWords['aMonths']['10'] =  'Pa¼dziernik';
+$defaultWords['aMonths']['11'] =  'Listopad';
+$defaultWords['aMonths']['12'] =  'Grudzieñ';
 
 ?>

@@ -126,21 +126,6 @@
 /*  Date and Time  */
 /*  'at time' used at Output:showDateSelector  */
         'at time' => 'zamanýnda',
-
-        'aMonths' => array(
-            13 => 'Ocak',
-            14 => 'Þubat',
-            15 => 'Mart',
-            16 => 'Nisan',
-            17 => 'Mayýs',
-            18 => 'Haziran',
-            19 => 'Temmuz',
-            20 => 'Aðustos',
-            21 => 'Eylül',
-            22 => 'Ekim',
-            23 => 'Kasým',
-            24 => 'Aralýk'
-        ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -302,4 +287,18 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'SMTP password' => 'SMTP parola',
         'Mandatory if you use SMTP as Backend and SMTP authentication is enabled' => 'Arkaplanda \'SMTP\' seçtiyseniz ve \'SMTP kimlik denetimini\' etkinleþtirdiyseniz zorunlu',
     );
+
+$defaultWords['aMonths']['01'] =  'Ocak';
+$defaultWords['aMonths']['02'] =  'Þubat';
+$defaultWords['aMonths']['03'] =  'Mart';
+$defaultWords['aMonths']['04'] =  'Nisan';
+$defaultWords['aMonths']['05'] =  'Mayýs';
+$defaultWords['aMonths']['06'] =  'Haziran';
+$defaultWords['aMonths']['07'] =  'Temmuz';
+$defaultWords['aMonths']['08'] =  'Aðustos';
+$defaultWords['aMonths']['09'] =  'Eylül';
+$defaultWords['aMonths']['10'] =  'Ekim';
+$defaultWords['aMonths']['11'] =  'Kasým';
+$defaultWords['aMonths']['12'] =  'Aralýk';
+
 ?>

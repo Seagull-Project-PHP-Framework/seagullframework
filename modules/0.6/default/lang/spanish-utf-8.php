@@ -128,21 +128,6 @@
 /*  Date and Time  */
 /*  'at time' used at Output:showDateSelector  */
         'at time' => 'a las',
-
-        'aMonths' => array(
-            13 => 'Enero',
-            14 => 'Febrero',
-            15 => 'Marzo',
-            16 => 'Abril',
-            17 => 'Mayo',
-            18 => 'Junio',
-            19 => 'Julio',
-            20 => 'Agosto',
-            21 => 'Septiembre',
-            22 => 'Octubre',
-            23 => 'Noviembre',
-            24 => 'Diciembre'
-        ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -409,5 +394,17 @@ $defaultWords['Translation options']='Opciones traducción';
 $defaultWords['Container']='Container';
 $defaultWords['Fallback Language']='Language por defecto';
 $defaultWords['Add Missing Translations']='Añadir traducciones que falten';
+$defaultWords['aMonths']['01'] =  'Enero';
+$defaultWords['aMonths']['02'] =  'Febrero';
+$defaultWords['aMonths']['03'] =  'Marzo';
+$defaultWords['aMonths']['04'] =  'Abril';
+$defaultWords['aMonths']['05'] =  'Mayo';
+$defaultWords['aMonths']['06'] =  'Junio';
+$defaultWords['aMonths']['07'] =  'Julio';
+$defaultWords['aMonths']['08'] =  'Agosto';
+$defaultWords['aMonths']['09'] =  'Septiembre';
+$defaultWords['aMonths']['10'] =  'Octubre';
+$defaultWords['aMonths']['11'] =  'Noviembre';
+$defaultWords['aMonths']['12'] =  'Diciembre';
 
 ?>

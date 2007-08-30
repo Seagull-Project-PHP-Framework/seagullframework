@@ -136,21 +136,6 @@
 /*  Date and Time  */
 /*  'at time' used at Output:showDateSelector  */
         'at time' => 'at',
-
-        'aMonths' => array(
-            13 => '1月',
-            14 => '2月',
-            15 => '3月',
-            16 => '4月',
-            17 => '5月',
-            18 => '6月',
-            19 => '7月',
-            20 => '8月',
-            21 => '9月',
-            22 => '10月',
-            23 => '11月',
-            24 => '12月'
-        ),
 /*
   Author: Michael willemot <michael@sotto.be>
 */
@@ -481,5 +466,18 @@ $defaultWords['DataObject debug level'] = 'データオブジェクトのデバッグレベル';
 $defaultWords['Please choose a simple, single word'] = 'モジュール名はURIにも使われますので、シンプルな名前を選んでください。';
 $defaultWords['Please give the webserver write permissions to the modules directory'] = 'モジュールディレクトリには、Webサーバーが書き込み可能なパーミッションを設定してください。';
 $defaultWords['The manager, which can be'] = 'マネージャ（コントローラー）は、1つのモジュールにつき複数作ることが出来ますが、そのうちの1つをここで設定してください。ピザ（pizza）の配達を任せたいのならピザマネージャ（PizzaMgr）という名前にしてください。';
+$defaultWords['aMonths']['01'] =  '1月',
+$defaultWords['aMonths']['02'] =  '2月',
+$defaultWords['aMonths']['03'] =  '3月',
+$defaultWords['aMonths']['04'] =  '4月',
+$defaultWords['aMonths']['05'] =  '5月',
+$defaultWords['aMonths']['06'] =  '6月',
+$defaultWords['aMonths']['07'] =  '7月',
+$defaultWords['aMonths']['08'] =  '8月',
+$defaultWords['aMonths']['09'] =  '9月',
+$defaultWords['aMonths']['10'] =  '10月',
+$defaultWords['aMonths']['11'] =  '11月',
+$defaultWords['aMonths']['12'] =  '12月'
+
 
 ?>

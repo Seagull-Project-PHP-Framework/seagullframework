@@ -101,20 +101,6 @@ $defaultWords = array(
 
     /* 'at time' used at Output:showDateSelector */
     'at time' => 'в',
-    'aMonths' => array(
-        1  => 'Январь',
-        2  => 'Февраль',
-        3  => 'Март',
-        4  => 'Апрель',
-        5  => 'Май',
-        6  => 'Июнь',
-        7  => 'Июль',
-        8  => 'Август',
-        9  => 'Сентябрь',
-        10 => 'Октябрь',
-        11 => 'Ноябрь',
-        12 => 'Декабрь'
-    ),
 
 
 /* Layout: footer */
@@ -692,5 +678,19 @@ $defaultWords = array(
     'user profile'                => 'профиль пользователя',
     'Submit login'                => 'Вход',
 );
+
+$defaultWords['aMonths']['01'] =  'Январь';
+$defaultWords['aMonths']['02'] =  'Февраль';
+$defaultWords['aMonths']['03'] =  'Март';
+$defaultWords['aMonths']['04'] =  'Апрель';
+$defaultWords['aMonths']['05'] =  'Май';
+$defaultWords['aMonths']['06'] =  'Июнь';
+$defaultWords['aMonths']['07'] =  'Июль';
+$defaultWords['aMonths']['08'] =  'Август';
+$defaultWords['aMonths']['09'] =  'Сентябрь';
+$defaultWords['aMonths']['10'] =  'Октябрь';
+$defaultWords['aMonths']['11'] =  'Ноябрь';
+$defaultWords['aMonths']['12'] =  'Декабрь';
+
 
 ?>
