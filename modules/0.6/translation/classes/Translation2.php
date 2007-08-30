@@ -367,6 +367,23 @@ class SGL_Translation2
     }
 
     /**
+     * Loads a specific dictionary and merges it to the global SGL['TRANSLATION'] variable
+     *
+     * @param string $dictionary
+     * @param string $lang
+     */
+    function loadDictionary($dictionary, $lang = '')
+    {
+        if (empty($lang)) {
+            $lang = $_SESSION['aPrefs']['language'];
+        }
+        $aWords = SGL_Translation2::getTranslations($dictionary, $lang);
+        if (isset($aWords)) {
+            $GLOBALS['_SGL']['TRANSLATION'] = array_merge($GLOBALS['_SGL']['TRANSLATION'], $aWords);
+        }
+    }
+
+    /**
      * Returns language ID for currently active lang.
      *
      * @static
