@@ -9,3 +9,6 @@ DELETE FROM `block_role` WHERE block_id = @translatorNavBlockId;
 
 -- delete blocks
 DELETE FROM `block` WHERE block_id = @translatorNavBlockId;
+
+-- delete translator navigation root node
+DELETE FROM `section` WHERE section_id = 5;

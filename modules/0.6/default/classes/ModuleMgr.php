@@ -254,6 +254,7 @@ class ModuleMgr extends SGL_Manager
 
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
+        $runner->addTask(new SGL_Task_InitialiseModules()); // load any init.php file
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateTables());

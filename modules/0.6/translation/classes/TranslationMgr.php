@@ -161,7 +161,6 @@ class TranslationMgr extends SGL_Manager
             }
         }
         $output->aModules = $aModules;
-
         if ($this->container == 'file') {
             $aLangs      = SGL_Util::getLangsDescriptionMap();
             $currentLang = $output->currentLang;
