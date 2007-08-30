@@ -615,11 +615,18 @@ class SGL_Task_InitialiseModules extends SGL_Task
                 $dbh = & SGL_DB::singleton();
                 $locator->register('DB', $dbh);
             }
-            $query = "
-                SELECT  name
-                FROM    {$conf['table']['module']}
-                ";
-            $aRet = $dbh->getAll($query);
+            //  this task can be called when installing a new module
+            if (!empty($conf['aModuleList'])) {
+                $oMod = new stdClass();
+                $oMod->name = $conf['aModuleList'][0];
+                $aRet[] = $oMod;
+            } else {
+                $query = "
+                    SELECT  name
+                    FROM    {$conf['table']['module']}
+                    ";
+                $aRet = $dbh->getAll($query);
+            }
             if (is_array($aRet) && count($aRet)) {
                 foreach ($aRet as $oModule) {
                     $moduleInitFile = SGL_MOD_DIR . '/' . $oModule->name . '/init.php';
