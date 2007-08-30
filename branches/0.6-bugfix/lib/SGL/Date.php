@@ -256,7 +256,8 @@ class SGL_Date
             $selected = date('m', time());
         }
         foreach ($aMonths as $k => $v) {
-            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            $monthOptions .= "\n<option value=\"$k\" ";
             if ($k == $selected) {
                 $monthOptions .= 'selected="selected"';
             }
