@@ -466,18 +466,18 @@ $defaultWords['DataObject debug level'] = 'データオブジェクトのデバッグレベル';
 $defaultWords['Please choose a simple, single word'] = 'モジュール名はURIにも使われますので、シンプルな名前を選んでください。';
 $defaultWords['Please give the webserver write permissions to the modules directory'] = 'モジュールディレクトリには、Webサーバーが書き込み可能なパーミッションを設定してください。';
 $defaultWords['The manager, which can be'] = 'マネージャ（コントローラー）は、1つのモジュールにつき複数作ることが出来ますが、そのうちの1つをここで設定してください。ピザ（pizza）の配達を任せたいのならピザマネージャ（PizzaMgr）という名前にしてください。';
-$defaultWords['aMonths']['01'] =  '1月',
-$defaultWords['aMonths']['02'] =  '2月',
-$defaultWords['aMonths']['03'] =  '3月',
-$defaultWords['aMonths']['04'] =  '4月',
-$defaultWords['aMonths']['05'] =  '5月',
-$defaultWords['aMonths']['06'] =  '6月',
-$defaultWords['aMonths']['07'] =  '7月',
-$defaultWords['aMonths']['08'] =  '8月',
-$defaultWords['aMonths']['09'] =  '9月',
-$defaultWords['aMonths']['10'] =  '10月',
-$defaultWords['aMonths']['11'] =  '11月',
-$defaultWords['aMonths']['12'] =  '12月'
+$defaultWords['aMonths']['01'] =  '1月';
+$defaultWords['aMonths']['02'] =  '2月';
+$defaultWords['aMonths']['03'] =  '3月';
+$defaultWords['aMonths']['04'] =  '4月';
+$defaultWords['aMonths']['05'] =  '5月';
+$defaultWords['aMonths']['06'] =  '6月';
+$defaultWords['aMonths']['07'] =  '7月';
+$defaultWords['aMonths']['08'] =  '8月';
+$defaultWords['aMonths']['09'] =  '9月';
+$defaultWords['aMonths']['10'] =  '10月';
+$defaultWords['aMonths']['11'] =  '11月';
+$defaultWords['aMonths']['12'] =  '12月;
 
 
 ?>
