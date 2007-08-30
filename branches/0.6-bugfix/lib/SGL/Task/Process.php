@@ -377,7 +377,8 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         }
         //  if page requires authentication and we're not debugging
         if (   SGL_Config::get("$mgrName.requiresAuth")
-            && SGL_Config::get('debug.authorisationEnabled'))
+            && SGL_Config::get('debug.authorisationEnabled')
+            && !SGL::runningFromCLI())
         {
             //  check that session is valid or timed out
             if (!$session->isValid() || $timeout) {
