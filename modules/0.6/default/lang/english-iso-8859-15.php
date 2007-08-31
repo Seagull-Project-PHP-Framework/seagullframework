@@ -564,6 +564,8 @@ $defaultWords['altPage'] = 'Page';
 $defaultWords['prevImg'] = '&laquo; previous';
 $defaultWords['nextImg'] = 'next &raquo;';
 
+$defaultWords['__SGL_CATEGORY_months'] = 'Months';
+$defaultWords['__SGL_COMMENT_duplication'] = 'here is a comment example';
 $defaultWords['aMonths']['01'] = 'January';
 $defaultWords['aMonths']['02'] = 'February';
 $defaultWords['aMonths']['03'] = 'March';
