@@ -510,19 +510,21 @@ class SGL_Translation2
      * Remove meta data from translation array.
      *
      * @param array $aConfigs
+     * @param boolean $removeAll
      *
      * @return array
      *
      * @static
      */
-    function removeMetaData($aConfigs)
+    function removeMetaData($aConfigs, $removeAll = false)
     {
         foreach ($aConfigs as $k => $v) {
-            if (strpos($k, '__SGL_') === 0
-                    // ignore categories
-                    && strpos($k, '__SGL_CATEGORY_') === false
-                    // ignore comments
-                    && strpos($k, '__SGL_COMMENT_') === false) {
+            if (strpos($k, '__SGL_') === 0) {
+                if (((strpos($k, '__SGL_CATEGORY_') === 0)
+                        || (strpos($k, '__SGL_COMMENT_') === 0))
+                        && !$removeAll) {
+                    continue;
+                }
                 unset($aConfigs[$k]);
             }
         }
@@ -766,6 +768,7 @@ class SGL_Translation2
         $errorsBefore = SGL_Error::count();
 
         $aTrans   = SGL_Translation2::getTranslations($moduleName, $langId);
+        $aTrans   = SGL_Translation2::removeMetaData($aTrans, true);
         $fallLang = SGL_Translation2::getFallbackLangID();
         $fallLang = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
         if ($langId != $fallLang) {
