@@ -291,7 +291,7 @@ class SGL_String
                 if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
                     $i = 1;
                     foreach ($aParams as $key => $value) {
-                        if (!is_scalar($value)) {
+                        if (!empty($value) && !is_scalar($value)) {
                             continue;
                         }
                         $ret = str_replace("%$i%", $value, $ret);
