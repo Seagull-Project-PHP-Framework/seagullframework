@@ -492,6 +492,12 @@ function toggleTransElements() {
                 </select>
             </p>
             <p>
+                <label for="conf[db][sepTableForEachSequence]">
+                    {translate(#Separate table for each sequence#)}
+                </label>
+                {generateRadioPair(#conf[db][sepTableForEachSequence]#,conf[db][sepTableForEachSequence]):h}
+            </p>
+            <p>
                 <label for="conf">{translate(#Host#)}</label>
                 <input type="text" name="conf[db][host]" value="{conf[db][host]}" />
             </p>

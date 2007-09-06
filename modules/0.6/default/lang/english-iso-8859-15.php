@@ -261,6 +261,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'server default' => 'server default',
         'MySQL Default Storage Engine' => 'MySQL Default Storage Engine',
         'Default MySQL storage engine for all tables in database' => 'Default MySQL storage engine for all tables in database',
+        'Separate table for each sequence' => 'Separate table for each sequence',
         'Host'=>'Host',
         'Port'=>'Port',
         'Protocol'=>'Protocol',

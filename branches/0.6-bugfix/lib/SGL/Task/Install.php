@@ -123,6 +123,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('db', array('type' => $data['dbType']['type']));
         $c->set('db', array('postConnect' => $data['postConnect']));
         $c->set('db', array('mysqlDefaultStorageEngine' => $data['dbMysqlDefaultStorageEngine']));
+        $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
 
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));
@@ -1509,9 +1510,22 @@ class SGL_Task_SyncSequences extends SGL_Task
 
         $tables = null;
 
-        switch ($dbh->phptype) {
+        $phptype = $dbh->phptype;
+
+        // if it is SGL MySQL driver
+        if (strpos($dbh->phptype, 'mysql') === 0
+                && strpos($dbh->phptype, '_SGL')) {
+            // and all sequences should NOT be in one table
+            if (SGL_Config::get('db.sepTableForEachSequence')) {
+                // fake it as regual MySQL driver
+                $phptype = str_replace('_SGL', '', $dbh->phptype);
+            }
+        }
+
+        switch ($phptype) {
 
         case 'mysql':
+        case 'mysqli':
             $data = array();
             $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
 
@@ -1535,7 +1549,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     }
                 }
                 if ($primary_field != '') {
-                    $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $table . ' WHERE 1');
+                    $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $dbh->quoteIdentifier($table) . ' WHERE 1');
                     if (!is_null($maxId)) {
                         $data[] = array($table, $maxId);
                     }

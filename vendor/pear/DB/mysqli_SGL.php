@@ -1,67 +1,105 @@
 <?php
-require_once "DB/mysqli.php";
+require_once 'DB/mysqli.php';
 
+/**
+ * SGL mysqli driver. Extends sequences functionality and multiquering.
+ *
+ * @package seagull
+ * @subpackage pear
+ * @author Demian Turner <demian@phpkitchen.com>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
 class DB_mysqli_SGL extends DB_mysqli
 {
-
     function DB_mysqli_SGL()
     {
         $this->DB_mysqli();
         $this->phptype = 'mysqli_SGL';
     }
 
-    function nextId($name, $null=false)
+    function nextId($name, $ondemand = true)
     {
-      /*
-      ** Note that REPLACE query below correctly creates a new sequence
-      ** when needed
-      */
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $result = $this->getOne("SELECT GET_LOCK('sequence_lock',10)");
-        if (DB::isError($result)) {
-            return $this->raiseError($result);
+        if (SGL_Config::get('db.sepTableForEachSequence')) {
+            $ret = parent::nextId($name, $ondemand);
+        } else {
+            $ret = $this->_nextId($name);
         }
-        if ($result == 0) {
-            // Failed to get the lock, bail with a DB_ERROR_NOT_LOCKED error
+        return $ret;
+    }
+
+    /**
+     * Creates new sequence in SGL `sequence` table.
+     *
+     * Note that REPLACE query below correctly creates a new sequence
+     * when needed.
+     *
+     * @param string $name  sequence name
+     *
+     * @return integer
+     *
+     * @access private
+     */
+    function _nextId($name)
+    {
+        // try to get the 'sequence_lock' lock
+        $ok = $this->getOne("SELECT GET_LOCK('sequence_lock', 10)");
+        if (DB::isError($ok)) {
+            return $this->raiseError($ok);
+        }
+        if (empty($ok)) {
+            // failed to get the lock, bail with a DB_ERROR_NOT_LOCKED error
             return $this->mysqlRaiseError(DB_ERROR_NOT_LOCKED);
         }
 
-        $id = $this->getOne("SELECT id FROM {$conf['table']['sequence']} WHERE name = '$name'");
+        // get current value of sequence
+        $query = "
+            SELECT id
+            FROM   " . SGL_Config::get('table.sequence') . "
+            WHERE  name = '$name'
+        ";
+        $id = $this->getOne($query);
         if (DB::isError($id)) {
             return $this->raiseError($id);
         } else {
             $id += 1;
         }
 
-        $result = $this->query("REPLACE INTO {$conf['table']['sequence']} VALUES ('$name', '$id')");
-        if (!$result) {
-            return $this->raiseError($result);
+        // increment sequence value
+        $query = "
+            REPLACE
+            INTO    " . SGL_Config::get('table.sequence') . "
+            VALUES  ('$name', '$id')
+        ";
+        $ok = $this->query($query);
+        if (DB::isError($ok)) {
+            return $this->raiseError($ok);
         }
 
-        // Release the lock
-        $result = $this->getOne("SELECT RELEASE_LOCK('sequence_lock')");
-        if (DB::isError($result)) {
-            return $this->raiseError($result);
+        // release the lock
+        $ok = $this->getOne("SELECT RELEASE_LOCK('sequence_lock')");
+        if (DB::isError($ok)) {
+            return $this->raiseError($ok);
         }
+
         return $id;
     }
 
     /**
      * Overwritten method from parent class to allow logging facility.
      *
-     * @param the SQL query
-     * @access public
+     * @param string $query  the SQL query
+     *
      * @return mixed returns a valid MySQL result for successful SELECT
-     * queries, DB_OK for other successful queries.  A DB error is
-     * returned on failure.
+     *               queries, DB_OK for other successful queries.
+     *               A DB error is returned on failure.
+     *
+     * @access public
      */
     function simpleQuery($query)
     {
         @$GLOBALS['_SGL']['QUERY_COUNT'] ++;
         return parent::simpleQuery($query);
     }
-
 
     function multiQuery($query)
     {
