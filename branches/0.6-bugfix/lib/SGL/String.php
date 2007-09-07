@@ -667,6 +667,24 @@ class SGL_String
          return $s;
     }
 
+	function to7bit($text)
+	{
+	   $text = mb_convert_encoding($text,'HTML-ENTITIES',mb_detect_encoding($text));
+	   $text = preg_replace(
+		   array('/&szlig;/','/&(..)lig;/',
+				 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
+		   array('ss',"$1","$1".'e',"$1"),
+		   $text);
+	   return $text;
+	}
+
+
+	function replaceAccents($str)
+	{
+		$str = SGL_String::to7bit($str);
+		return preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
+	}
+
     /**
      * Removes chars that are illegal in ini files.
      *
