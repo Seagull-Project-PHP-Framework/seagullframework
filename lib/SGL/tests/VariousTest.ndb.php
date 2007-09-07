@@ -197,7 +197,9 @@ class VariousTest extends UnitTestCase {
 
     function test_hasAdminGui()
     {
-        define('SGL_TRANSLATOR', 3);
+        if (!defined('SGL_TRANSLATOR')) {
+            define('SGL_TRANSLATOR', 3);
+        }
         $ret = SGL_Session::hasAdminGui();
         $this->assertEqual($ret, SGL_ADMIN); // tests run as SGL_ADMIN
     }
