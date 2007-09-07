@@ -359,14 +359,12 @@ class SGL_Sql
     {
         if ($driver != 'pgsql') {
             $result = 'CREATE DATABASE ' . $dbname;
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-             if (!empty($conf['db']['charset'])) {
-                 $query .= ' CHARACTER SET ' . $conf['db']['charset'];
-             }
-             if (!empty($conf['db']['collation'])) {
-                 $query .= ' COLLATE ' . $conf['db']['collation'];
-             }
+            if (SGL_Config::get('db.charset')) {
+                $result .= ' CHARACTER SET ' . SGL_Config::get('db.charset');
+            }
+            if (SGL_Config::get('db.collation')) {
+                $result .= ' COLLATE ' . SGL_Config::get('db.collation');
+            }
         } else {
             $result = 'CREATE SCHEMA public';
         }
