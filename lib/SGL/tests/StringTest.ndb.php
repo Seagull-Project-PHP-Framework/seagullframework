@@ -178,6 +178,12 @@ class StringTest extends UnitTestCase {
         $ret = SGL_String::translate('%1% is my %2%', 'vprintf', $trans);
         $this->assertEqual($ret, $expected);
     }
+
+    function test_removeCharacters()
+    {
+        $str = "äöüßÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûüÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÖØÙÚÛÜÝàáâãäåæçèéêëìíîïðñòóôöøùúûüýĆćČčŁłŃńŘřŚśš";
+        $ret = SGL_String::replaceAccents($str);
+    }
 }
 
 ?>
