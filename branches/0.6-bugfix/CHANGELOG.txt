@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+11-09-07    Visual warning added to admin screen when site is in production mode
 29-08-07    Default language comes from Config [3366]
 28-08-07    Added ability to specify custom logout screen [3356]
 23-08-07    Session files can now be saved whereever you like, /tmp recommended
