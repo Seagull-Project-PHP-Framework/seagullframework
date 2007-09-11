@@ -12,6 +12,9 @@
     <meta name="generator" content="Seagull Framework v{versionAPI}" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
     <link rel="stylesheet" type="text/css" media="screen" href="{makeCssLink(theme,conf[navigation][stylesheet],moduleName)}&amp;isFormSubmitted={submitted}" />
+    {if:conf[debug][production]}
+    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/themes/default_admin/css/warning.css" />
+    {end:}
 
     {foreach:aCssFiles,file}
     <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/{file}" />
