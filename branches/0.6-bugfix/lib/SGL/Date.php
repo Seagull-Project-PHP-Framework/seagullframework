@@ -55,18 +55,14 @@ class SGL_Date
      * @access public
      * @static
      * @param boolean $gmt       is time GMT or locale offset
-     * @return string $instance  formatted current time
-     * @todo factor out Cache and Lang methods into their own objects
+     * @return string $time formatted current time
      */
     function getTime($gmt = false)
     {
         //  no logMessage allowed here
-        static $instance;
-        if (!isset($instance)) {
-            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                                : strftime("%Y-%m-%d %H:%M:%S", time());
-        }
-        return $instance;
+        $time = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
+                        : strftime("%Y-%m-%d %H:%M:%S", time());
+        return $time;
     }
 
     /**
