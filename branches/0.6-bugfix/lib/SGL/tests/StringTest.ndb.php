@@ -182,7 +182,24 @@ class StringTest extends UnitTestCase {
     function test_removeCharacters()
     {
         $str = "äöüßÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûüÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÖØÙÚÛÜÝàáâãäåæçèéêëìíîïðñòóôöøùúûüýĆćČčŁłŃńŘřŚśš";
+        $this->assertEqual(mb_detect_encoding($str), 'UTF-8');
         $ret = SGL_String::replaceAccents($str);
+        $pattern = '/[^A-Z^a-z^0-9()\s]/';
+        $this->assertNoUnwantedPattern($pattern, $ret);
+        $this->assertEqual(mb_detect_encoding($ret), 'ASCII');
+    }
+
+    function test_replaceAccentsFromAllChars()
+    {
+        $start  = 0x0;
+        $end    = 0xFF;
+        $str = '';
+        for ($i = $start; $i < $end; $i++) {
+            $str .= "&#$i;";
+        }
+        $ret = SGL_String::replaceAccents($str);
+        $pattern = '/[^A-Z^a-z^0-9()\s]/';
+        $this->assertNoUnwantedPattern($pattern, $ret);
     }
 }
 
