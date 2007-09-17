@@ -192,15 +192,21 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        if (SGL_Config::get('TranslationMgr.onlyModules')) {
+            $aOnlyModules = explode(',', SGL_Config::get('TranslationMgr.onlyModules'));
+        }
+
         // get hash of all modules;
         $aModules = SGL_Util::getAllModuleDirs(true);
         // looking for email translation files
         foreach ($aModules as $module) {
-            if (is_dir(SGL_MOD_DIR . '/' . $module . '/lang/email')) {
+            if (isset($aOnlyModules) && !in_array($module, $aOnlyModules)) {
+                unset($aModules[$module]);
+            } elseif (is_dir(SGL_MOD_DIR . '/' . $module . '/lang/email')) {
                 $aModules[strtolower($module) . '_email'] = 'Mail: ' . $module;
             }
         }
-        $output->aModules = $aModules;
+
         if ($this->container == 'file') {
             $aLangs      = SGL_Util::getLangsDescriptionMap();
             $currentLang = $output->currentLang;
@@ -209,6 +215,8 @@ class TranslationMgr extends SGL_Manager
             $currentLang = SGL_Translation2::transformLangID($output->currentLang,
                 SGL_LANG_ID_TRANS2);
         }
+
+        $output->aModules          = $aModules;
         $output->aLangs            = $aLangs;
         $output->currentLang       = $currentLang;
         $output->currentLangName   = $aLangs[$currentLang];
