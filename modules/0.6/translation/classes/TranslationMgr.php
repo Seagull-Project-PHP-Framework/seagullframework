@@ -122,15 +122,30 @@ class TranslationMgr extends SGL_Manager
 
                 $aMissingVars = array();
                 foreach ($aSourceLang as $k => $v) {
-                    $translatedString = $input->aTranslation[$k];
-                    if (empty($translatedString) || is_array($v)) {
+                    // no translation specified -> skip
+                    if (empty($input->aTranslation[$k])) {
                         continue;
                     }
-                    // see if source translation has some vars
-                    if (preg_match_all('/%([a-z0-9-_]+)%/i', $v, $aMatches)) {
-                        foreach ($aMatches[0] as $variable) {
-                            if (strpos($translatedString, $variable) === false) {
-                                $aMissingVars[$v][] = $variable;
+                    // treat value as array
+                    if (!is_array($v)) {
+                        $aTransArray = array($v);
+                    } else {
+                        $aTransArray = $v;
+                    }
+
+                    foreach ($aTransArray as $kk => $v) {
+                        $translatedString = !is_array($input->aTranslation[$k])
+                            ? $input->aTranslation[$k]
+                            : $input->aTranslation[$k][$kk];
+                        if (empty($translatedString)) {
+                            continue;
+                        }
+                        // see if source translation has some vars
+                        if (preg_match_all('/%([a-z0-9-_]+)%/i', $v, $aMatches)) {
+                            foreach ($aMatches[0] as $variable) {
+                                if (strpos($translatedString, $variable) === false) {
+                                    $aMissingVars[$v][] = $variable;
+                                }
                             }
                         }
                     }
