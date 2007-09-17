@@ -477,7 +477,5 @@ $defaultWords['aMonths']['08'] =  '8月';
 $defaultWords['aMonths']['09'] =  '9月';
 $defaultWords['aMonths']['10'] =  '10月';
 $defaultWords['aMonths']['11'] =  '11月';
-$defaultWords['aMonths']['12'] =  '12月;
-
-
+$defaultWords['aMonths']['12'] =  '12月';
 ?>
