@@ -62,12 +62,25 @@
         </fieldset>
     </form>
 
-    <form method="post" action="" flexy:ignore>
+    <form id="configCache" method="post" action="" flexy:ignore>
         <h3>{translate(#Delete cached configs#)}</h3>
         <fieldset class="hide">
             <input type="hidden" name="action" value="deleteConfigs" />
+            <input type="hidden" name="submitted" value="1" />
         </fieldset>
         <fieldset class="inside">
+            <p class="error" flexy:if="error[nothingChecked]">
+                {error[nothingChecked]}
+            </p>
+            <p class="center">
+            {foreach:aModules,moduleKey,moduleName}
+                <input type="checkbox" name="aModules[{moduleKey}]" value="1" />
+                {moduleName}
+            {end:}
+                <input type="checkbox" name="checkAll"
+                       onclick="applyToAllCheckboxes('configCache', false, this.checked)" />
+                {translate(#select all#,#ucfirst#)}
+            </p>
             <p class="center">
                 <input class="sgl-button" type="submit" name="submit" value="{translate(#Delete#)}" />
             </p>

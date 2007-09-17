@@ -84,6 +84,8 @@ class MaintenanceMgr extends SGL_Manager
         $input->cache          = ($req->get('frmCache')) ? $req->get('frmCache') : array();
         $input->useSampleData  = ($req->get('frmSampleData')) ? 1 : 0;
 
+        $input->aModules = $req->get('aModules');
+
         if ($input->submitted) {
             if ($req->get('action') == '' || $req->get('action') == 'list') {
                 $aErrors['noSelection'] = SGL_Output::translate('please specify an option');
@@ -91,13 +93,23 @@ class MaintenanceMgr extends SGL_Manager
             if ($input->action == 'clearCache' && !count($input->cache)) {
                 $aErrors['nothingChecked'] = SGL_Output::translate('please check at least one box');
             }
-        }
+            if ($input->action == 'deleteConfigs' && empty($input->aModules)) {
+                $aErrors['nothingChecked'] = SGL_Output::translate('please check at least one box');
+            }
+         }
         //  if errors have occured
         if (isset($aErrors) && count($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;
             $this->validated = false;
         }
+    }
+
+    function display(&$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $output->aModules = SGL_Util::getAllModuleDirs();
     }
 
     //  regenerate dataobject entity files
@@ -313,9 +325,14 @@ class MaintenanceMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        require_once SGL_CORE_DIR . '/File.php';
-        SGL_File::rmDir(SGL_VAR_DIR . '/config', '-r');
-        SGL::raiseMsg('Cached configs successfully deleted', true, SGL_MESSAGE_INFO);
+        foreach ($input->aModules as $moduleName => $foo) {
+            $fileName = SGL_VAR_DIR . '/config/' . $moduleName . '.ini';
+            if (file_exists($fileName)) {
+                unlink($fileName);
+            }
+        }
+        SGL::raiseMsg('Cached configs successfully deleted',
+            true, SGL_MESSAGE_INFO);
     }
 
     function _cmd_list(&$input, &$output)
