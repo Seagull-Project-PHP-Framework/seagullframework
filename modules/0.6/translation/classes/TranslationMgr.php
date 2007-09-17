@@ -276,43 +276,6 @@ class TranslationMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $aModules = SGL_Util::getAllModuleDirs(true);
-        foreach ($aModules as $module) {
-            if (is_dir(SGL_MOD_DIR . '/' . $module . '/lang/email')) {
-                $aModules[strtolower($module) . '_email'] = 'Mail: ' . $module;
-            }
-        }
-        $totalSizeMaster = 0;
-        $totalSizeSlave  = 0;
-        $fallLang        = SGL_Translation2::getFallbackLangID();
-        $fallLang        = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
-
-        $aRet = array();
-        foreach ($aModules as $moduleName => $foo) {
-
-            // get sizes
-            $sizeSlave = SGL_Translation2::getTranslationStorageSize(
-                $moduleName, $input->currentLang);
-            $sizeMaster = SGL_Translation2::getTranslationStorageSize(
-                $moduleName, $fallLang);
-
-            // completed ration
-            $ratio = $sizeMaster
-                ? round($sizeSlave / $sizeMaster, 2) * 100
-                : $sizeMaster;
-            $aRet[$moduleName] = $ratio;
-
-            // calculate total size
-            $totalSizeSlave  += $sizeSlave;
-            $totalSizeMaster += $sizeMaster;
-        }
-
-        // overall ration
-        $output->totalRatio = $totalSizeMaster
-            ? round($totalSizeSlave / $totalSizeMaster, 2) * 100
-            : $totalSizeMaster;
-
-        $output->aData    = $aRet;
         $output->template = 'translationSummary.html';
     }
 }

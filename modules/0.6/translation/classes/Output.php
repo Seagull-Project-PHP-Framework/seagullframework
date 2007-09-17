@@ -125,5 +125,43 @@ class TranslationOutput
         }
         return $html;
     }
+
+    function showLanguageStatus($aModules, $language)
+    {
+        $totalSizeMaster = 0;
+        $totalSizeSlave  = 0;
+        $fallLang        = SGL_Translation2::getFallbackLangID();
+        $fallLang        = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
+
+        $ret = '';
+        foreach ($aModules as $moduleName => $foo) {
+
+            // get sizes
+            $sizeSlave = SGL_Translation2::getTranslationStorageSize(
+                $moduleName, $language);
+            $sizeMaster = SGL_Translation2::getTranslationStorageSize(
+                $moduleName, $fallLang);
+
+            // completed ration
+            $ratio = $sizeMaster
+                ? round($sizeSlave / $sizeMaster, 2) * 100
+                : $sizeMaster;
+
+            // calculate total size
+            $totalSizeSlave  += $sizeSlave;
+            $totalSizeMaster += $sizeMaster;
+
+            $ret .= '<td class="left">' . $ratio . '%</td>';
+        }
+        // overall ratio
+        $totalRatio = $totalSizeMaster
+            ? round($totalSizeSlave / $totalSizeMaster, 2) * 100
+            : $totalSizeMaster;
+
+        // total
+        $ret .= '<td class="left"><strong>' . $totalRatio . '%</strong></td>';
+
+        return $ret;
+    }
 }
 ?>
