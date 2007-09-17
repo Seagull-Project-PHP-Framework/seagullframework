@@ -123,7 +123,7 @@ class TranslationMgr extends SGL_Manager
                 $aMissingVars = array();
                 foreach ($aSourceLang as $k => $v) {
                     $translatedString = $input->aTranslation[$k];
-                    if (empty($translatedString)) {
+                    if (empty($translatedString) || is_array($v)) {
                         continue;
                     }
                     // see if source translation has some vars
