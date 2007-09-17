@@ -12,6 +12,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+17-09-07    Added example deployment scripts [3406]
 17-09-07    Added abilityto show only pre-selected modules in translation manager
             (Dmitri Lakachauskis)
 17-09-07    Validation for variables in translation values (Dmitri Lakachauskis)
