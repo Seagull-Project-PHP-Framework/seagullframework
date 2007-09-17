@@ -106,39 +106,79 @@ class TranslationMgr extends SGL_Manager
         SGL_Session::set('lastModuleSelected', $input->currentModule);
         SGL_Session::set('lastLanguageSelected', $input->currentLang);
 
+        // after append/update
+        $input->aTranslation = $req->get('translation');
+
         //  submit action
         $input->submitted = $req->get('submitted');
 
         if ($input->submitted) {
-            if ($input->action == 'list') {
-                $aErrors['noSelection'] = 'please specify an option';
+            if ($input->action == 'update') {
+
+                // get source translation
+                $fallbackLang = SGL_Config::get('translation.fallbackLang');
+                $aSourceLang = SGL_Translation2::getTranslations(
+                    $input->currentModule, $fallbackLang);
+
+                $aMissingVars = array();
+                foreach ($aSourceLang as $k => $v) {
+                    $translatedString = $input->aTranslation[$k];
+                    if (empty($translatedString)) {
+                        continue;
+                    }
+                    // see if source translation has some vars
+                    if (preg_match_all('/%([a-z0-9-_]+)%/i', $v, $aMatches)) {
+                        foreach ($aMatches[0] as $variable) {
+                            if (strpos($translatedString, $variable) === false) {
+                                $aMissingVars[$v][] = $variable;
+                            }
+                        }
+                    }
+                }
+
+                // create error message
+                if (!empty($aMissingVars)) {
+                    $errorMessage = 'Missing the following variables in translation:<br />';
+                    foreach ($aMissingVars as $defaultValue => $aTransValues) {
+                        foreach ($aTransValues as $variable) {
+                            $errorMessage .= $defaultValue . ' => ' . $variable . '<br />';
+                        }
+                    }
+
+                    SGL::raiseMsg($errorMessage, false);
+                    $this->validated    = false;
+                    $input->aSourceLang = $aSourceLang;
+                    $input->aTargetLang = $input->aTranslation;
+                    $input->template    = 'translationEdit.html';
+                }
+
             } elseif ($input->action != 'summary') {
+
+                // check if needed file exists
                 if ($this->container == 'file') {
                     $curLang  = SGL_Translation2::transformLangID(
                         $input->currentLang, SGL_LANG_ID_SGL);
                     $filename = SGL_Translation2::getFileName($input->currentModule, $curLang);
                     if (is_file($filename)) {
                         if (!is_writeable($filename)) {
-                            $aErrors['file'] =
-                                SGL_String::translate('the target lang file')
-                                . ' ' . $filename
-                                . ' ' . SGL_String::translate('is not writeable.')
-                                . ' ' . SGL_String::translate('Please change file'
-                                . ' permissions before editing.');
+                            $aErrors['file'] = sprintf('%s %s %s %s',
+                                SGL_String::translate('the target lang file'),
+                                $filename,
+                                SGL_String::translate('is not writeable.'),
+                                SGL_String::translate('Please change file permissions before editing.')
+                            );
                         }
                     } else {
-                        $aErrors['file'] =
-                            SGL_String::translate('the target lang file')
-                            . ' ' . $filename
-                            . ' ' . SGL_String::translate('does not exist.')
-                            . ' ' . SGL_String::translate('Please create it.');
+                        $aErrors['file'] = sprintf('%s %s %s %s',
+                            SGL_String::translate('the target lang file'),
+                            $filename,
+                            SGL_String::translate('does not exist.'),
+                            SGL_String::translate('Please create it.')
+                        );
                     }
                 }
             }
         }
-
-        // after append/update
-        $input->aTranslation = $req->get('translation');
 
         //  if errors have occured
         if (!empty($aErrors)) {
