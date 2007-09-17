@@ -1517,7 +1517,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 && strpos($dbh->phptype, '_SGL')) {
             // and all sequences should NOT be in one table
             if (SGL_Config::get('db.sepTableForEachSequence')) {
-                // fake it as regual MySQL driver
+                // fake it as regular MySQL driver
                 $phptype = str_replace('_SGL', '', $dbh->phptype);
             }
         }
