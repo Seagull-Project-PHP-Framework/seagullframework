@@ -38,8 +38,8 @@
 // +---------------------------------------------------------------------------+
 // $Id: FrontController.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
-require dirname(__FILE__)  . '/../SGL.php';
-require dirname(__FILE__)  . '/Task/Init.php';
+require_once dirname(__FILE__)  . '/../SGL.php';
+require_once dirname(__FILE__)  . '/Task/Init.php';
 
 /**
  * Application controller.
@@ -66,7 +66,7 @@ class SGL_FrontController
         if (SGL_Config::get('site.customOutputClassName')) {
             $className = SGL_Config::get('site.customOutputClassName');
             $path = trim(preg_replace('/_/', '/', $className)) . '.php';
-            require $path;
+            require_once $path;
         } else {
             $className = 'SGL_Output';
         }
@@ -133,7 +133,7 @@ class SGL_FrontController
             $process->process($input, $output);
 
         } else {
-            require dirname(__FILE__)  . '/FilterChain.php';
+            require_once dirname(__FILE__)  . '/FilterChain.php';
             $chain = new SGL_FilterChain($input->getFilters());
             $chain->doFilter($input, $output);
         }
@@ -238,7 +238,7 @@ class SGL_FrontController
             ? true
             : false;
         if (is_file($cachedLibs) && $cachedLibsEnabled) {
-            require $cachedLibs;
+            require_once $cachedLibs;
         } else {
             $coreLibs = dirname(__FILE__);
             $aRequiredFiles = array(
@@ -267,7 +267,7 @@ class SGL_FrontController
             );
             $fileCache = '';
             foreach ($aRequiredFiles as $file) {
-                require $file;
+                require_once $file;
                 if ($cachedLibsEnabled) {
                     // 270kb vs 104kb
                     if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
@@ -281,8 +281,8 @@ class SGL_FrontController
                 $ok = file_put_contents($cachedLibs, $fileCache);
             }
         }
-        require 'PEAR.php';
-        require 'DB.php';
+        require_once 'PEAR.php';
+        require_once 'DB.php';
     }
 
     function setupMinimumEnv()
