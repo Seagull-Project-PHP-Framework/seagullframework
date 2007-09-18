@@ -77,10 +77,12 @@
                 <input type="checkbox" name="aModules[{moduleKey}]" value="1" />
                 {moduleName}
             {end:}
-                <input type="checkbox" name="checkAll"
-                       onclick="applyToAllCheckboxes('configCache', false, this.checked)" />
-                {translate(#select all#,#ucfirst#)}
             </p>
+            <div class="center">
+                <input id="checkAll_configCaches" type="checkbox" name="checkAll"
+                       onclick="applyToAllCheckboxes('configCache', false, this.checked)" />
+                <label for="checkAll_configCaches">{translate(#select all#,#ucfirst#)}</label>
+            </div>
             <p class="center">
                 <input class="sgl-button" type="submit" name="submit" value="{translate(#Delete#)}" />
             </p>
