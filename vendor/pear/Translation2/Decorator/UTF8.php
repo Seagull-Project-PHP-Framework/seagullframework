@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: UTF8.php,v 1.6 2005/09/08 17:27:38 quipo Exp $
+ * @version    CVS: $Id: UTF8.php,v 1.7 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -49,7 +49,7 @@ require_once 'Translation2/Decorator.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: UTF8.php,v 1.6 2005/09/08 17:27:38 quipo Exp $
+ * @version    CVS: $Id: UTF8.php,v 1.7 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_UTF8 extends Translation2_Decorator
@@ -71,6 +71,9 @@ class Translation2_Decorator_UTF8 extends Translation2_Decorator
     function get($stringID, $pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null, $defaultText=null)
     {
         $str = $this->translation2->get($stringID, $pageID, $langID);
+        if (PEAR::isError($str)) {
+            return $str;
+        }
         if (!empty($str)) {
             $str = utf8_decode($str); //decodes an UTF-8 string to ISO-8859-1
         }
@@ -93,6 +96,9 @@ class Translation2_Decorator_UTF8 extends Translation2_Decorator
     function getPage($pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null)
     {
         $data = $this->translation2->getPage($pageID, $langID);
+        if (PEAR::isError($data)) {
+            return $data;
+        }
         foreach ($data as $key => $val) {
             if (!empty($val)) {
                 $data[$key] = utf8_decode($val);

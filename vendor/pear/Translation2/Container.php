@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Container.php,v 1.17 2006/11/14 18:01:03 quipo Exp $
+ * @version    CVS: $Id: Container.php,v 1.18 2007/07/29 15:18:47 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -108,7 +108,7 @@ class Translation2_Container
     // {{{ _getLangID()
 
     /**
-     * Get a valid langID or raise an error when
+     * Get a valid langID or raise an error when no valid language is set
      *
      * @access private
      * @param  string $langID

@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: ErrorText.php,v 1.4 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: ErrorText.php,v 1.5 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -49,7 +49,7 @@ require_once 'Translation2/Decorator.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: ErrorText.php,v 1.4 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: ErrorText.php,v 1.5 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_ErrorText extends Translation2_Decorator
@@ -90,6 +90,9 @@ class Translation2_Decorator_ErrorText extends Translation2_Decorator
     function getPage($pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null)
     {
         $data = $this->translation2->getPage($pageID, $langID);
+        if (PEAR::isError($data)) {
+            return $data;
+        }
         $error_text = str_replace('"', '\"', $this->translation2->getLang(null, 'error_text'));
         array_walk(
             $data,

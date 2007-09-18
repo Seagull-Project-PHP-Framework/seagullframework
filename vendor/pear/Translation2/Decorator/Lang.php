@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Lang.php,v 1.11 2006/03/08 15:01:08 quipo Exp $
+ * @version    CVS: $Id: Lang.php,v 1.12 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -49,7 +49,7 @@ require_once 'Translation2/Decorator.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Lang.php,v 1.11 2006/03/08 15:01:08 quipo Exp $
+ * @version    CVS: $Id: Lang.php,v 1.12 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_Lang extends Translation2_Decorator
@@ -120,7 +120,13 @@ class Translation2_Decorator_Lang extends Translation2_Decorator
     function getPage($pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null, $defaultText='')
     {
         $data1 = $this->translation2->getPage($pageID, $langID);
+        if (PEAR::isError($data1)) {
+            return $data1;
+        }
         $data2 = $this->translation2->getPage($pageID, $this->fallbackLang);
+        if (PEAR::isError($data2)) {
+            return $data2;
+        }
         foreach ($data1 as $key => $val) {
             if (empty($val)) {
                 $data1[$key] = $data2[$key];

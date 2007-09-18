@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2005 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: mdb2.php,v 1.31 2006/09/27 10:24:34 quipo Exp $
+ * @version    CVS: $Id: mdb2.php,v 1.33 2007/06/30 15:38:54 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -110,10 +110,7 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
                 )
             );
             ++$this->_queries;
-            $res = $this->db->manager->alterTable($langData['table_name'], $table_changes, false);
-            if (PEAR::isError($res)) {
-                return $res;
-            }
+            return $this->db->manager->alterTable($langData['table_name'], $table_changes, false);
         }
 
         //table does not exist
@@ -142,6 +139,7 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
         if (PEAR::isError($res)) {
             return $res;
         }
+        $mysqlClause = ($this->db->phptype == 'mysql') ? '(255)' : '';
         
         $constraint_name = $langData['table_name']
             .'_'. $this->options['string_page_id_col']
@@ -149,8 +147,9 @@ class Translation2_Admin_Container_mdb2 extends Translation2_Container_mdb2
         $constraint_definition = array(
             'fields' => array(
                 $this->options['string_page_id_col'] => array(),
-                $this->options['string_id_col']      => array(),
-            )
+                $this->options['string_id_col'].$mysqlClause => array(),
+            ),
+            'unique' => true,
         );
         ++$this->_queries;
         $res = $this->db->manager->createConstraint($langData['table_name'], $constraint_name, $constraint_definition);

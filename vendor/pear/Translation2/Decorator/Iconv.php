@@ -33,7 +33,7 @@
  * @author     Sergey Korotkov <sergey@pushok.com>
  * @copyright  2004-2005 Lorenzo Alberton, Sergey Korotkov
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Iconv.php,v 1.9 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: Iconv.php,v 1.10 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -58,7 +58,7 @@ require_once 'Translation2/Decorator.php';
  * @author     Sergey Korotkov <sergey@pushok.com>
  * @copyright  2004-2005 Lorenzo Alberton, Sergey Korotkov
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: Iconv.php,v 1.9 2005/09/08 17:27:37 quipo Exp $
+ * @version    CVS: $Id: Iconv.php,v 1.10 2007/01/30 20:53:14 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  * @see http://www.php.net/htmlentities for a list of available encodings.
  */
@@ -117,11 +117,9 @@ class Translation2_Decorator_Iconv extends Translation2_Decorator
     function get($stringID, $pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null, $defaultText=null)
     {
         $str = $this->translation2->get($stringID, $pageID, $langID, $defaultText);
-        
         if (PEAR::isError($str) || empty($str)) {
             return $str;
         }
-
         return iconv($this->_getEncoding($langID), $this->encoding, $str);
     }
 
@@ -138,9 +136,10 @@ class Translation2_Decorator_Iconv extends Translation2_Decorator
     function getPage($pageID=TRANSLATION2_DEFAULT_PAGEID, $langID=null)
     {
         $data = $this->translation2->getPage($pageID, $langID);
-        
+        if (PEAR::isError($data)) {
+            return $data;
+        }
         $input_encoding = $this->_getEncoding($langID);
-        
         foreach (array_keys($data) as $k) {
             if (!empty($data[$k])) {
                 $data[$k] = iconv($input_encoding, $this->encoding, $data[$k]);

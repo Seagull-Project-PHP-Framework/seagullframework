@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2006 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: CacheLiteFunction.php,v 1.15 2006/11/14 18:51:18 quipo Exp $
+ * @version    CVS: $Id: CacheLiteFunction.php,v 1.16 2007/01/17 16:59:54 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 
@@ -51,7 +51,7 @@ require_once 'Cache/Lite/Function.php';
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2004-2006 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: CacheLiteFunction.php,v 1.15 2006/11/14 18:51:18 quipo Exp $
+ * @version    CVS: $Id: CacheLiteFunction.php,v 1.16 2007/01/17 16:59:54 quipo Exp $
  * @link       http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
@@ -163,6 +163,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
         //generate temp variable
         $translation2_storage_cachelitefunction_temp = $this->translation2->storage;
 
+        $this->_prepare();
         $res = $this->cacheLiteFunction->call(
             'translation2_storage_cachelitefunction_temp->setLang', $langID);
         if (PEAR::isError($res)) {
