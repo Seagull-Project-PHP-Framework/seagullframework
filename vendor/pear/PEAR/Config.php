@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Config.php,v 1.137 2006/11/19 21:33:00 cellog Exp $
+ * @version    CVS: $Id: Config.php,v 1.137.4.1 2007/09/08 15:07:16 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -235,7 +235,7 @@ if (getenv('PHP_PEAR_SIG_KEYDIR')) {
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -440,7 +440,7 @@ class PEAR_Config extends PEAR
             ),
         'download_dir' => array(
             'type' => 'directory',
-            'default' => PEAR_CONFIG_DEFAULT_CACHE_DIR,
+            'default' => PEAR_CONFIG_DEFAULT_DOWNLOAD_DIR,
             'doc' => 'directory which is used for all downloaded files',
             'prompt' => 'PEAR Installer download directory',
             'group' => 'File Locations (Advanced)',

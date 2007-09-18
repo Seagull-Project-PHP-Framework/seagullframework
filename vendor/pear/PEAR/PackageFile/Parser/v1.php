@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: v1.php,v 1.22 2006/03/27 05:25:48 cellog Exp $
+ * @version    CVS: $Id: v1.php,v 1.23 2007/08/18 21:28:47 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a1
  */
@@ -167,7 +167,7 @@ class PEAR_PackageFile_Parser_v1
                 if (array_key_exists('name', $attribs) && $attribs['name'] != '/') {
                     $attribs['name'] = preg_replace(array('!\\\\+!', '!/+!'), array('/', '/'),
                         $attribs['name']);
-                    if (strrpos($attribs['name'], '/') == strlen($attribs['name']) - 1) {
+                    if (strrpos($attribs['name'], '/') === strlen($attribs['name']) - 1) {
                         $attribs['name'] = substr($attribs['name'], 0,
                             strlen($attribs['name']) - 1);
                     }

@@ -17,7 +17,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.166 2007/06/16 18:41:59 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.167.2.1 2007/09/08 15:02:49 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -43,7 +43,7 @@ define('PEAR_REGISTRY_ERROR_CHANNEL_FILE', -6);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a1
  */
@@ -795,6 +795,7 @@ class PEAR_Registry extends PEAR
             }
 
             if (!is_resource($this->lock_fp)) {
+                $this->lock_fp = null;
                 return $this->raiseError("could not create lock file" .
                                          (isset($php_errormsg) ? ": " . $php_errormsg : ""));
             }
@@ -805,6 +806,9 @@ class PEAR_Registry extends PEAR
                     case LOCK_UN: $str = 'unlock';    break;
                     default:      $str = 'unknown';   break;
                 }
+                //is resource at this point, close it on error.
+                fclose($this->lock_fp);
+                $this->lock_fp = null;
                 return $this->raiseError("could not acquire $str lock ($this->lockfile)",
                                          PEAR_REGISTRY_ERROR_LOCK);
             }
@@ -1767,10 +1771,10 @@ class PEAR_Registry extends PEAR
             return $e;
         }
         $ret = &$this->_getChannel($channel, $noaliases);
+        $this->_unlock();
         if (!$ret) {
             return PEAR::raiseError('Unknown channel: ' . $channel);
         }
-        $this->_unlock();
         return $ret;
     }
 

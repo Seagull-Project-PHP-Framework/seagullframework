@@ -18,7 +18,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Installer.php,v 1.245 2007/06/10 04:16:51 cellog Exp $
+ * @version    CVS: $Id: Installer.php,v 1.248 2007/08/31 22:06:59 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -42,7 +42,7 @@ define('PEAR_INSTALLER_NOBINARY', -240);
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -396,7 +396,7 @@ class PEAR_Installer extends PEAR_Downloader
             }
             // {{{ check the md5
             if (isset($md5sum)) {
-                if (strtolower($md5sum) == strtolower($atts['md5sum'])) {
+                if (strtolower($md5sum) === strtolower($atts['md5sum'])) {
                     $this->log(2, "md5sum ok: $final_dest_file");
                 } else {
                     if (empty($options['force'])) {
@@ -440,8 +440,10 @@ class PEAR_Installer extends PEAR_Downloader
                 $atts['role'] == 'ext'));
         }
         // Store the full path where the file was installed for easy unistall
+        $loc = $this->config->get($atts['role'] . '_dir');
         $this->addFileOperation("installed_as", array($file, $installed_as,
-                                $save_destdir, dirname(substr($installedas_dest_file, strlen($save_destdir)))));
+                                $loc,
+                                dirname(substr($installedas_dest_file, strlen($loc)))));
 
         //$this->log(2, "installed: $dest_file");
         return PEAR_INSTALLER_OK;
@@ -565,7 +567,7 @@ class PEAR_Installer extends PEAR_Downloader
             }
             // {{{ check the md5
             if (isset($md5sum)) {
-                if (strtolower($md5sum) == strtolower($attribs['md5sum'])) {
+                if (strtolower($md5sum) === strtolower($attribs['md5sum'])) {
                     $this->log(2, "md5sum ok: $final_dest_file");
                 } else {
                     if (empty($options['force'])) {
@@ -608,8 +610,10 @@ class PEAR_Installer extends PEAR_Downloader
             $this->addFileOperation("rename", array($dest_file, $final_dest_file, $role->isExtension()));
         }
         // Store the full path where the file was installed for easy uninstall
+        $loc = $this->config->get($role->getLocationConfig(), null, $channel);
         $this->addFileOperation("installed_as", array($file, $installed_as,
-                            $save_destdir, dirname(substr($dest_file, strlen($save_destdir)))));
+                            $loc,
+                            dirname(substr($installed_as, strlen($loc)))));
 
         //$this->log(2, "installed: $dest_file");
         return PEAR_INSTALLER_OK;

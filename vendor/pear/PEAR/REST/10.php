@@ -15,7 +15,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: 10.php,v 1.48 2007/06/01 23:41:34 cellog Exp $
+ * @version    CVS: $Id: 10.php,v 1.50 2007/08/17 19:49:34 dufuz Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.4.0a12
  */
@@ -33,7 +33,7 @@ require_once 'PEAR/REST.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.4.0a12
  */
@@ -73,13 +73,8 @@ class PEAR_REST_10
         if (!$states) {
             return PEAR::raiseError('"' . $prefstate . '" is not a valid state');
         }
-        $state = $version = null;
-        if (isset($packageinfo['state'])) {
-            $state = $packageinfo['state'];
-        }
-        if (isset($packageinfo['version'])) {
-            $version = $packageinfo['version'];
-        }
+        $state   = isset($packageinfo['state'])   ? $packageinfo['state']   : null;
+        $version = isset($packageinfo['version']) ? $packageinfo['version'] : null;
         $info = $this->_rest->retrieveData($base . 'r/' . strtolower($package) . '/allreleases.xml');
         if (PEAR::isError($info)) {
             return PEAR::raiseError('No releases available for package "' .
@@ -88,8 +83,7 @@ class PEAR_REST_10
         if (!isset($info['r'])) {
             return false;
         }
-        $found = false;
-        $release = false;
+        $release = $found = false;
         if (!is_array($info['r']) || !isset($info['r'][0])) {
             $info['r'] = array($info['r']);
         }
@@ -134,13 +128,8 @@ class PEAR_REST_10
         if (!$states) {
             return PEAR::raiseError('"' . $prefstate . '" is not a valid state');
         }
-        $state = $version = null;
-        if (isset($packageinfo['state'])) {
-            $state = $packageinfo['state'];
-        }
-        if (isset($packageinfo['version'])) {
-            $version = $packageinfo['version'];
-        }
+        $state   = isset($dependency['state'])   ? $dependency['state']   : null;
+        $version = isset($dependency['version']) ? $dependency['version'] : null;
         $info = $this->_rest->retrieveData($base . 'r/' . strtolower($package) . '/allreleases.xml');
         if (PEAR::isError($info)) {
             return PEAR::raiseError('Package "' . $deppackage['channel'] . '/' . $deppackage['package']
@@ -188,8 +177,7 @@ class PEAR_REST_10
                 }
             }
         }
-        $found = false;
-        $release = false;
+        $release = $found = false;
         if (!is_array($info['r']) || !isset($info['r'][0])) {
             $info['r'] = array($info['r']);
         }

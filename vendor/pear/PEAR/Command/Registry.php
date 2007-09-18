@@ -16,7 +16,7 @@
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Registry.php,v 1.79 2007/05/29 16:38:16 cellog Exp $
+ * @version    CVS: $Id: Registry.php,v 1.80 2007/08/26 18:30:33 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 0.1
  */
@@ -35,7 +35,7 @@ require_once 'PEAR/Command/Common.php';
  * @author     Greg Beaver <cellog@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 0.1
  */
@@ -178,6 +178,10 @@ installed package.'
             );
         if ($channelinfo) {
             $data['headline'] = array('Channel', 'Package', 'Version', 'State');
+        }
+
+        if (count($installed) && !isset($data['data'])) {
+            $data['data'] = array();
         }
 
         foreach ($installed as $package) {

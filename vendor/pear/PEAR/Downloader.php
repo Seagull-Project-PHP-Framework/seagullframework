@@ -18,7 +18,7 @@
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: Downloader.php,v 1.132 2007/06/11 05:30:38 cellog Exp $
+ * @version    CVS: $Id: Downloader.php,v 1.135 2007/08/18 22:54:25 cellog Exp $
  * @link       http://pear.php.net/package/PEAR
  * @since      File available since Release 1.3.0
  */
@@ -45,7 +45,7 @@ define('PEAR_INSTALLER_ERROR_NO_PREF_STATE', 2);
  * @author     Martin Jansen <mj@php.net>
  * @copyright  1997-2006 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.6.1
+ * @version    Release: 1.6.2
  * @link       http://pear.php.net/package/PEAR
  * @since      Class available since Release 1.3.0
  */
@@ -679,7 +679,12 @@ class PEAR_Downloader extends PEAR_Common
             return $this->_downloadDir;
         }
         $downloaddir = $this->config->get('download_dir');
-        if (empty($downloaddir)) {
+        if (empty($downloaddir) || (is_dir($downloaddir) && !is_writable($downloaddir))) {
+            if  (is_dir($downloaddir) && !is_writable($downloaddir)) {
+                $this->log(0, 'WARNING: configuration download directory "' . $downloaddir .
+                    '" is not writeable.  Change download_dir config variable to ' .
+                    'a writeable dir to avoid this warning');
+            }
             if (!class_exists('System')) {
                 require_once 'System.php';
             }
@@ -783,8 +788,10 @@ class PEAR_Downloader extends PEAR_Common
         if (PEAR::isError($chan)) {
             return $chan;
         }
+        PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
         $version = $this->_registry->packageInfo($parr['package'], 'version',
             $parr['channel']);
+        PEAR::staticPopErrorHandling();
         $base2 = false;
         if ($chan->supportsREST($this->config->get('preferred_mirror')) &&
               (($base2 = $chan->getBaseURL('REST1.3', $this->config->get('preferred_mirror'))) ||
@@ -796,6 +803,7 @@ class PEAR_Downloader extends PEAR_Common
                 $rest = &$this->config->getREST('1.0', $this->_options);
             }
             if (!isset($parr['version']) && !isset($parr['state']) && $version
+                  && !PEAR::isError($version)
                   && !isset($this->_options['downloadonly'])) {
                 $url = $rest->getDownloadURL($base, $parr, $state, $version);
             } else {
@@ -816,15 +824,12 @@ class PEAR_Downloader extends PEAR_Common
                 return PEAR::raiseError('Invalid remote dependencies retrieved from REST - ' .
                     'this should never happen');
             }
-            PEAR::staticPushErrorHandling(PEAR_ERROR_RETURN);
-            $testversion = $this->_registry->packageInfo($url['package'], 'version',
-                $parr['channel']);
-            PEAR::staticPopErrorHandling();
             if (!isset($this->_options['force']) &&
                   !isset($this->_options['downloadonly']) &&
-                  !PEAR::isError($testversion) &&
+                  $version &&
+                  !PEAR::isError($version) &&
                   !isset($parr['group'])) {
-                if (version_compare($testversion, $url['version'], '>=')) {
+                if (version_compare($version, $url['version'], '>=')) {
                     return PEAR::raiseError($this->_registry->parsedPackageNameToString(
                         $parr, true) . ' is already installed and is newer than detected ' .
                         'release version ' . $url['version'], -976);
@@ -1528,6 +1533,7 @@ class PEAR_Downloader extends PEAR_Common
      * @param false|string|array $lastmodified header values to check against for caching
      *                           use false to return the header values from this download
      * @param false|array $accept Accept headers to send
+     * @param false|string $channel Channel to use for retrieving authentication
      * @return string|array  Returns the full path of the downloaded file or a PEAR
      *                       error on failure.  If the error is caused by
      *                       socket-related errors, the error object will
@@ -1538,7 +1544,7 @@ class PEAR_Downloader extends PEAR_Common
      * @access public
      */
     function downloadHttp($url, &$ui, $save_dir = '.', $callback = null, $lastmodified = null,
-                          $accept = false)
+                          $accept = false, $channel = false)
     {
         static $redirect = 0;
         // allways reset , so we are clean case of error
@@ -1630,11 +1636,11 @@ class PEAR_Downloader extends PEAR_Common
         } else {
             $ifmodifiedsince = ($lastmodified ? "If-Modified-Since: $lastmodified\r\n" : '');
         }
-        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.6.1/PHP/" .
+        $request .= $ifmodifiedsince . "User-Agent: PEAR/1.6.2/PHP/" .
             PHP_VERSION . "\r\n";
         if (isset($this)) { // only pass in authentication for non-static calls
-            $username = $config->get('username');
-            $password = $config->get('password');
+            $username = $config->get('username', null, $channel);
+            $password = $config->get('password', null, $channel);
             if ($username && $password) {
                 $tmp = base64_encode("$username:$password");
                 $request .= "Authorization: Basic $tmp\r\n";
