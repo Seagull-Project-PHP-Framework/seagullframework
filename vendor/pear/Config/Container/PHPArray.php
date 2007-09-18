@@ -15,7 +15,7 @@
 // | Authors: Bertrand Mansion <bmansion@mamasam.com>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: PHPArray.php,v 1.29 2006/10/20 03:13:35 aashley Exp $
+// $Id: PHPArray.php,v 1.32 2007/06/12 05:24:19 aashley Exp $
 
 /**
 * Config parser for common PHP configuration array
@@ -39,11 +39,15 @@ class Config_Container_PHPArray {
     *   Ex: $options['name'] = 'myconf';
     * - Whether to add attributes to the array
     *   Ex: $options['useAttr'] = false;
+    * - Whether to treat numbered arrays as duplicates of their parent directive
+    *   or as individual directives
+    *   Ex: $options['duplicateDirectives'] = false;
     *
     * @var  array
     */
     var $options = array('name' => 'conf',
-                         'useAttr' => true);
+                         'useAttr' => true,
+                         'duplicateDirectives' => true);
 
     /**
     * Constructor
@@ -76,7 +80,7 @@ class Config_Container_PHPArray {
             $this->_parseArray($datasrc, $obj->container);
         } else {
             if (!file_exists($datasrc)) {
-                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);        
+                return PEAR::raiseError("Datasource file does not exist.", null, PEAR_ERROR_RETURN);
             } else {
                 include($datasrc);
                 if (!isset(${$this->options['name']}) || !is_array(${$this->options['name']})) {
@@ -107,15 +111,8 @@ class Config_Container_PHPArray {
                     $container->setContent($value);
                     break;
                 default:
-/*                    if (is_array($value)) {
-                        $section =& $container->createSection($key);
-                        $this->_parseArray($value, $section);
-                    } else {
-                        $container->createDirective($key, $value);
-                    }*/
-
                     if (is_array($value)) {
-                        if (is_integer(key($value))) {
+                        if ($this->options['duplicateDirectives'] == true && is_integer(key($value))) {
                             foreach ($value as $nestedValue) {
                                 if (is_array($nestedValue)) {
                                     $section =& $container->createSection($key);
@@ -131,7 +128,6 @@ class Config_Container_PHPArray {
                     } else {
                         $container->createDirective($key, $value);
                     }
-                                                                                                                                                                
             }
         }
     } // end func _parseArray
@@ -163,14 +159,14 @@ class Config_Container_PHPArray {
                     $string .= $parentString."['#']";
                     foreach ($attributes as $attr => $val) {
                         $attrString .= $parentString."['@']"
-                                    ."['".$attr."'] = '".addslashes($val)."';\n";
+                                    ."['".$attr."'] = '".addcslashes($val, "\\'")."';\n";
                     }
                 } else {
                     $string .= $parentString;
                 }
                 $string .= ' = ';
                 if (is_string($obj->content)) {
-                    $string .= "'".addslashes($obj->content)."'";
+                    $string .= "'".addcslashes($obj->content, "\\'")."'";
                 } elseif (is_int($obj->content) || is_float($obj->content)) {
                     $string .= $obj->content;
                 } elseif (is_bool($obj->content)) {
@@ -186,7 +182,7 @@ class Config_Container_PHPArray {
                     $parentString = $this->_getParentString($obj);
                     foreach ($attributes as $attr => $val) {
                         $attrString .= $parentString."['@']"
-                                    ."['".$attr."'] = '".addslashes($val)."';\n";
+                                    ."['".$attr."'] = '".addcslashes($val, "\\'")."';\n";
                     }
                 }
                 $string .= $attrString;
