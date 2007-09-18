@@ -32,7 +32,7 @@
  * @author     Lorenzo Alberton <l dot alberton at quipo dot it>
  * @copyright  2003-2006 Lorenzo Alberton
  * @license    http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version    CVS: $Id: HtmlWidgets.php,v 1.2 2006/11/24 13:46:05 quipo Exp $
+ * @version    CVS: $Id: HtmlWidgets.php,v 1.3 2007/01/25 19:06:35 quipo Exp $
  * @link       http://pear.php.net/package/Pager
  */
 
@@ -130,7 +130,7 @@ class Pager_HtmlWidgets
             }
             $tmp .= '>'.sprintf($optionText, $i).'</option>';
         }
-        if ($showAllData && $last < $this->pager->_totalItems) {
+        if ($showAllData && $last != $this->pager->_totalItems) {
             $tmp .= '<option value="'.$this->pager->_totalItems.'"';
             if ($this->pager->_totalItems == $selected) {
                 $tmp .= ' selected="selected"';
