@@ -157,11 +157,13 @@ class UserDAO extends SGL_Manager
     {
 
         SGL_DB::setConnection();
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
 
         $ok = $oUser->update();
 
         if ($ok === false) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return PEAR::raiseError('Problem inserting user DataObject');
         }
         //  change perms if role is modified
@@ -169,6 +171,8 @@ class UserDAO extends SGL_Manager
 
             //  disallow usr_id(1) admin from changing role
             if ($oUser->usr_id == SGL_ADMIN) {
+                $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 return PEAR::raiseError('User with ID = 1 cannot change role');
             }
 
@@ -176,6 +180,8 @@ class UserDAO extends SGL_Manager
             //  first delete old perms
             $ok = $this->deletePermsByUserId($oUser->usr_id);
             if (PEAR::isError($ok)) {
+                $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
             //  assign permissions associated with role user has been moved to
@@ -185,6 +191,8 @@ class UserDAO extends SGL_Manager
             //  then assign them to the user_permission table
             $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
             if (PEAR::isError($ok)) {
+                $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
         }
@@ -195,6 +203,8 @@ class UserDAO extends SGL_Manager
             //  first delete old preferences
             $ok = $this->deletePrefsByUserId($oUser->usr_id);
             if (PEAR::isError($ok)) {
+                $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
             //  assign preferences associated with org user belongs to
@@ -204,15 +214,19 @@ class UserDAO extends SGL_Manager
             //  then assign them to the user_preference table
             $ok = $this->addPrefsByUserId($aOrgPrefs, $oUser->usr_id);
             if (PEAR::isError($ok)) {
+                $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
         }
 
         if ($ok !== false && !SGL_Error::count()) {
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
             return true;
         } else {
             $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return PEAR::raiseError('Problem encountered adding user');
         }
     }
@@ -250,7 +264,7 @@ class UserDAO extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (count($aPerms)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
 
             foreach ($aPerms as $k => $v) {
                 //  undelimit form value into perm name, moduleId
@@ -263,10 +277,12 @@ class UserDAO extends SGL_Manager
 
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -389,7 +405,7 @@ class UserDAO extends SGL_Manager
     {
         //  no logMessage allowed here
         if (count($aRolePerms)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aRolePerms as $permId) {
                 $ok = $this->dbh->query('
                     INSERT INTO ' . $this->conf['table']['user_permission'] . '
@@ -397,10 +413,12 @@ class UserDAO extends SGL_Manager
                     VALUES (' . $this->dbh->nextId($this->conf['table']['user_permission']) . ', ' . $userId . ", $permId)");
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -417,7 +435,7 @@ class UserDAO extends SGL_Manager
     function addMasterPerms($aPerms, $moduleId)
     {
         if (count($aPerms)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPerms as $name => $description) {
                 $query = "
                     INSERT INTO {$this->conf['table']['permission']}
@@ -427,10 +445,12 @@ class UserDAO extends SGL_Manager
                 $ok = $this->dbh->query($query);
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -446,16 +466,18 @@ class UserDAO extends SGL_Manager
     function deleteMasterPerms($aPerms)
     {
         if (count($aPerms)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPerms as $name) {
                 $query = "DELETE FROM {$this->conf['table']['permission']} WHERE name = '$name'";
                 $ok = $this->dbh->query($query);
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -700,12 +722,13 @@ class UserDAO extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
         $query1 = " DELETE FROM {$this->conf['table']['user_preference']}
                     WHERE usr_id = " . SGL_GUEST;
         $ok = $this->dbh->query($query1);
         if (PEAR::isError($ok)) {
             $this->dbh->rollBack();
+            $this->dbh->autocommit(true);
             return $ok;
         }
 
@@ -713,6 +736,7 @@ class UserDAO extends SGL_Manager
         $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
         if (PEAR::isError($aPrefs)) {
             $this->dbh->rollBack();
+            $this->dbh->autocommit(true);
             return $aPrefs;
         }
 
@@ -732,10 +756,12 @@ class UserDAO extends SGL_Manager
             $ok = $this->dbh->query($query2);
             if (PEAR::isError($ok)) {
                 $this->dbh->rollBack();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
         }
         $this->dbh->commit();
+        $this->dbh->autocommit(true);
         return true;
     }
 
@@ -750,7 +776,7 @@ class UserDAO extends SGL_Manager
     function addPrefsByUserId($aPrefs, $userId)
     {
         if (count($aPrefs)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPrefs as $prefId => $prefValue) {
                 $ok = $this->dbh->query("
                     INSERT INTO {$this->conf['table']['user_preference']}
@@ -758,10 +784,12 @@ class UserDAO extends SGL_Manager
                     VALUES (" . $this->dbh->nextId($this->conf['table']['user_preference']) . ', ' . $userId . ", $prefId, '$prefValue')");
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -776,7 +804,7 @@ class UserDAO extends SGL_Manager
     function updatePrefsByUserId($aPrefs, $userId)
     {
         if (count($aPrefs)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPrefs as $prefId => $prefValue) {
                 $ok = $this->dbh->query("
                     UPDATE {$this->conf['table']['user_preference']}
@@ -786,10 +814,12 @@ class UserDAO extends SGL_Manager
                     ");
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -812,7 +842,7 @@ class UserDAO extends SGL_Manager
         $aUsers = $this->getUsersByRoleId($roleId);
 
         //  update all users' prefs
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
         $sth = $this->dbh->prepare("
             UPDATE {$this->conf['table']['user_preference']}
             SET value = '$value'
@@ -824,10 +854,12 @@ class UserDAO extends SGL_Manager
 
             if (PEAR::isError($ok)) {
                 $this->dbh->rollBack();
+                $this->dbh->autocommit(true);
                 return $ok;
             }
         }
         $this->dbh->commit();
+        $this->dbh->autocommit(true);
         return true;
     }
 
@@ -843,7 +875,7 @@ class UserDAO extends SGL_Manager
     function addMasterPrefs($aPrefs)
     {
         if (count($aPrefs)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPrefs as $prefName => $prefValue) {
                 $ok = $this->dbh->query("
                     INSERT INTO {$this->conf['table']['preference']}
@@ -852,10 +884,12 @@ class UserDAO extends SGL_Manager
                     '$prefName', '$prefValue')");
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -870,7 +904,7 @@ class UserDAO extends SGL_Manager
     function updateMasterPrefs($aPrefs)
     {
         if (count($aPrefs)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPrefs as $prefName => $prefValue) {
                 $ok = $this->dbh->query("
                     UPDATE {$this->conf['table']['preference']}
@@ -878,10 +912,12 @@ class UserDAO extends SGL_Manager
                     WHERE name = '$prefName'");
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
@@ -895,16 +931,18 @@ class UserDAO extends SGL_Manager
     function deleteMasterPrefs($aPrefs)
     {
         if (count($aPrefs)) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             foreach ($aPrefs as $pref) {
                 $query = "DELETE FROM {$this->conf['table']['preference']} WHERE name = '$pref'";
                 $ok = $this->dbh->query($query);
                 if (PEAR::isError($ok)) {
                     $this->dbh->rollBack();
+                    $this->dbh->autocommit(true);
                     return $ok;
                 }
             }
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
         }
         return true;
     }
