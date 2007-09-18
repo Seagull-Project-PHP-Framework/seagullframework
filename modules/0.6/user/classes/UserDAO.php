@@ -93,25 +93,31 @@ class UserDAO extends SGL_Manager
     function addUser($oUser)
     {
         SGL_DB::setConnection();
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
 
         $userId = $this->dbh->nextId($this->conf['table']['user']);
         $oUser->usr_id = $userId;
         $ok = $oUser->insert();
 
         if (!$ok) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return PEAR::raiseError('Problem inserting user DataObject');
         }
         //  assign permissions associated with role user belongs to
         //  first get all perms associated with user's role
         $aRolePerms = $this->getPermsByRoleId($oUser->role_id);
         if (PEAR::isError($aRolePerms)) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return $aRolePerms;
         }
 
         //  then assign them to the user_permission table
         $ok = $this->addPermsByUserId($aRolePerms, $oUser->usr_id);
         if (PEAR::isError($ok)) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return $ok;
         }
         //  assign preferences associated with org user belongs to
@@ -123,20 +129,26 @@ class UserDAO extends SGL_Manager
             $aPrefs = $this->getMasterPrefs(SGL_RET_ID_VALUE);
         }
         if (PEAR::isError($aPrefs)) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return $aPrefs;
         }
 
         //  then assign them to the user_preference table
         $ok = $this->addPrefsByUserId($aPrefs, $oUser->usr_id);
         if (PEAR::isError($ok)) {
+            $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return $ok;
         }
 
         if ($ok && !SGL_Error::count()) {
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
             return $userId;
         } else {
             $this->dbh->rollback();
+            $this->dbh->autocommit(true);
             return SGL_Error::getLast();
         }
     }

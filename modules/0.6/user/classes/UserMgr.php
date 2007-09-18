@@ -505,7 +505,7 @@ class UserMgr extends RegisterMgr
         //  delete existing perms
         //  if we're dealing with a single view of all perms
         if (!$input->moduleId) {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
 
             //  first delete old perms
             $res1 = $this->da->deletePermsByUserId($input->user->usr_id);
@@ -515,16 +515,18 @@ class UserMgr extends RegisterMgr
 
             if (DB::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
+                $this->dbh->autocommit(true);
                 SGL::raiseMsg('perm successfully updated', true, SGL_MESSAGE_INFO);
             }
 
         //  else we're dealing with one module's perms
         } else {
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
 
             //  generate list of the superset of perms for given module id
             $aPermsSuperset = $this->da->getPermsByModuleId($input->moduleId);
@@ -536,10 +538,12 @@ class UserMgr extends RegisterMgr
 
             if (DB::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
+                $this->dbh->autocommit(true);
                 SGL::raiseMsg('perm successfully updated', true, SGL_MESSAGE_INFO);
             }
         }
@@ -633,7 +637,7 @@ class UserMgr extends RegisterMgr
 
         $results = array();
         foreach ($aUsers as $userId) {
-            $this->dbh->autocommit(); //  a transaction for each user
+            $this->dbh->autocommit(false); //  a transaction for each user
 
             //  get user's roleId, if null
             if ($roleId == null) {
@@ -641,6 +645,7 @@ class UserMgr extends RegisterMgr
                 $userRoleId = $this->dbh->getOne($query);
                 if (is_a($userRoleId, 'PEAR_Error')) {
                     $this->dbh->rollback();
+                    $this->dbh->autocommit(true);
                     $results[$userId] = 0; //   log result for user
                     continue;
                 }
@@ -653,6 +658,7 @@ class UserMgr extends RegisterMgr
                 $aRolesPerms[$userRoleId] = $this->da->getPermsByRoleId($userRoleId);
                 if (is_a($aRolesPerms[$userRoleId], 'PEAR_Error')) {
                     $this->dbh->rollback();
+                    $this->dbh->autocommit(true);
                     $results[$userId] = 0; //log result for user
                     continue;
                 }
@@ -663,6 +669,7 @@ class UserMgr extends RegisterMgr
             $userPerms = $this->da->getPermsByUserId($userId);
             if (is_a($userPerms, 'PEAR_Error')) {
                 $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 $results[$userId] = 0; //log result for user
                 continue;
             }
@@ -675,6 +682,7 @@ class UserMgr extends RegisterMgr
 
                     if (is_a($res, 'PEAR_Error')) {
                         $this->dbh->rollback();
+                        $this->dbh->autocommit(true);
                         $results[$userId] = 0; //log result for user
                         continue 2;
                     }
@@ -689,12 +697,14 @@ class UserMgr extends RegisterMgr
 
                 if (is_a($res, 'PEAR_Error')) {
                     $this->dbh->rollback();
+                    $this->dbh->autocommit(true);
                     $results[$userId] = 0; //log result for user
                     continue;
                 }
             }
             //  if we make it here, we're all good (for this user)
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
             $results[$userId] = 1;
         }
         return $results;

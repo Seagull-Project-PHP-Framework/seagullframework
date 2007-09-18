@@ -233,7 +233,7 @@ class Block
         // DataObject assumes that, if you use mysql, you are going
         // to use auto_increment which is not our case, so we have
         // to manually find the next available block id
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
         $block_id = $this->dbh->nextId($this->conf['table']['block']);
         $this->block->block_id = $block_id;
 
@@ -273,6 +273,7 @@ class Block
             unset($block_roles);
         }
         $this->dbh->commit();
+        $this->dbh->autocommit(true);
 
         return $block_id;
     }

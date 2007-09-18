@@ -216,7 +216,7 @@ class PermissionMgr extends SGL_Manager
             return false;
         }
         $input->template = 'permScan.html';
-        $this->dbh->autocommit();
+        $this->dbh->autocommit(false);
 
         $errors = 0;
         foreach ($input->scannedPerms as $k=>$v) {
@@ -232,10 +232,12 @@ class PermissionMgr extends SGL_Manager
         }
         if ($errors > 0) {
             $this->dbh->rollBack();
+            $this->dbh->autocommit(true);
             SGL::raiseError('There was a problem inserting the record(s)',
                 SGL_ERROR_NOAFFECTEDROWS);
         } else {
             $this->dbh->commit();
+            $this->dbh->autocommit(true);
 
             //  update perms superset cache
             SGL_Cache::clear('perms');

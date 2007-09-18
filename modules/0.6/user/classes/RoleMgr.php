@@ -268,7 +268,7 @@ class RoleMgr extends SGL_Manager
             $duplicateName = $name . ' (duplicate)';
 
             //  insert new role duplicate, wrap in transaction
-            $this->dbh->autocommit();
+            $this->dbh->autocommit(false);
             $newRoleId = $this->dbh->nextId($this->conf['table']['role']);
             $res1 = $this->dbh->query('
                 INSERT INTO ' . $this->conf['table']['role'] . "
@@ -290,10 +290,12 @@ class RoleMgr extends SGL_Manager
             }
             if (PEAR::isError($res1) || $isError) {
                 $this->dbh->rollback();
+                $this->dbh->autocommit(true);
                 SGL::raiseError('There was a problem inserting the record',
                     SGL_ERROR_DBTRANSACTIONFAILURE);
             } else {
                 $this->dbh->commit();
+                $this->dbh->autocommit(true);
                 SGL::raiseMsg('role successfully duplicated', true, SGL_MESSAGE_INFO);
             }
         }
