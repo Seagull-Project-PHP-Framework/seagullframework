@@ -8,6 +8,3 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'translationmgr', '', @moduleId);
 -- add assignments
 SELECT @permissionId := permission_id FROM permission WHERE name = 'translationmgr';
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 3, @permissionId);
-
--- add root node for navigation that appears for 'translator' role, SGL_TRANSLATOR
-INSERT INTO `section` VALUES (5, 'Translator menu', 'uriEmpty:', '-2', 5, 0, 5, 1, 2, 3, 1, 1, 0, '', '');

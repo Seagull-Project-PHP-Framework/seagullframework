@@ -21,19 +21,6 @@ $aSections = array(
         'add_params'    => '',
         'is_enabled'    => 1,
         'perms'         => 'SGL_ADMIN',
-    ),
-    /*
-    array(
-       'title'          => 'Edit Preferences',
-       'parent_id'      => SGL_NODE_ADMIN,
-       'uriType'        => 'dynamic',
-       'module'         => 'user',
-       'manager'        => 'UserPreferenceMgr.php',
-       'actionMapping'  => '',
-       'add_params'     => '',
-       'is_enabled'     => 1,
-       'perms'          => 'SGL_ADMIN',
     )
-    */
 );
 ?>
