@@ -1,4 +1,11 @@
 <?php
+/* EXAMPLE USAGE
+
+php tests/cli.php --type=unit --level=all
+php tests/cli.php --type=unit --level=layer --layer=ndb
+php tests/cli.php --type=unit --level=folder --layer=ndb --folder=lib/SGL
+php tests/cli.php --type=unit --level=file --layer=wdd --folder=lib/SGL --file=UrlStrategyAliasTest.wdd.php
+*/
 
 /**
  * Put default arguments.
