@@ -96,7 +96,11 @@ class STR_TestRunner
                 }
             }
         }
-        $test->run(new HtmlReporter());
+
+        $reporter = !SGL::runningFromCLI()
+            ? new HtmlReporter()
+            : new TextReporter();
+        $test->run($reporter);
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
@@ -129,7 +133,11 @@ class STR_TestRunner
                                    constant($type . '_TEST_STORE') . '/' . $file);
             }
         }
-        $test->run(new HtmlReporter());
+
+        $reporter = !SGL::runningFromCLI()
+            ? new HtmlReporter()
+            : new TextReporter();
+        $test->run($reporter);
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
@@ -154,7 +162,11 @@ class STR_TestRunner
         $test = &new GroupTest($testName);
         $test->addTestFile(STR_PATH . '/' . $folder . '/' .
                            constant($type . '_TEST_STORE') . '/' . $file);
-        $test->run(new HtmlReporter());
+
+        $reporter = !SGL::runningFromCLI()
+            ? new HtmlReporter()
+            : new TextReporter();
+        $test->run($reporter);
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
