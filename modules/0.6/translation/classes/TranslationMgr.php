@@ -39,7 +39,7 @@
 // |         Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_LIB_PEAR_DIR . '/Config.php';
+require_once 'Config.php';
 require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR  . '/translation/classes/Translation2.php';
 
