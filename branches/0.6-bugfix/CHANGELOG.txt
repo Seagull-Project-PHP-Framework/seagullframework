@@ -5,6 +5,8 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+19-09-07    Transaction integrity in the User DAO was fixed, ie better error recovery
+            (Dmitri Lakachauskis)
 03-07-07    Fixed SMTP authentication driver choice in Config (mburkardt)
 11-06-07    Correctly initialised charset global
 04-06-07    Fixed parsing of multiple roles for navigation [3117]
@@ -12,6 +14,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+19-09-07    Config cache can be cleared at the module level (Dmitri Lakachauskis)
 17-09-07    Added example deployment scripts [3406]
 17-09-07    Added abilityto show only pre-selected modules in translation manager
             (Dmitri Lakachauskis)
