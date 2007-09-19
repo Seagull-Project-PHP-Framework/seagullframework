@@ -39,7 +39,7 @@
 // |         Alexander J. Tarachanowicz II <ajt@localhype.net>                 |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_LIB_PEAR_DIR . '/Config.php';
+//require_once SGL_LIB_PEAR_DIR . '/Config.php';
 require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR  . '/translation/classes/Translation2.php';
 
@@ -72,6 +72,8 @@ class TranslationMgr extends SGL_Manager
 
         $this->da        = &DefaultDAO::singleton();
         $this->container = SGL_Config::get('translation.container');
+
+        $this->_setupExtraLanguages();
     }
 
     function validate($req, &$input)
@@ -236,6 +238,29 @@ class TranslationMgr extends SGL_Manager
         $output->currentLang       = $currentLang;
         $output->currentLangName   = $aLangs[$currentLang];
         $output->currentModuleName = ucfirst($output->currentModule);
+    }
+
+    function _setupExtraLanguages()
+    {
+        if (SGL_Config::get('TranslationMgr.extraLanguages')) {
+            $aLangs = &$GLOBALS['_SGL']['LANGUAGE'];
+            $aExtra = explode(',', SGL_Config::get('TranslationMgr.extraLanguages'));
+            $aExtra = array_map('trim', $aExtra);
+            foreach ($aExtra as $v) {
+            	$aLang = array_map('trim', explode(':', $v));
+            	if (!array_key_exists($aLang[0], $aLangs)) {
+                    // get language code
+            	    $code = reset(explode('-', $aLang[0]));
+            	    // add language to global array
+            	    $aLangs[$aLang[0]] = array(
+            	        $code . '|' . $aLang[1], // ar|arabic
+            	        $aLang[2],               // arabic-utf-8
+            	        $code                    // ar
+            	    );
+            	}
+            }
+            ksort($aLangs);
+        }
     }
 
     function _cmd_list(&$input, &$output)
