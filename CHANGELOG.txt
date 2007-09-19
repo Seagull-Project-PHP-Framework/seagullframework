@@ -14,6 +14,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+19-09-07    Implemented ability to run unit tests by CLI (Dmitri Lakachauskis)
 19-09-07    Config cache can be cleared at the module level (Dmitri Lakachauskis)
 17-09-07    Added example deployment scripts [3406]
 17-09-07    Added abilityto show only pre-selected modules in translation manager
