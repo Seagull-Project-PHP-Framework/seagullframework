@@ -669,13 +669,16 @@ class SGL_String
 
 	function to7bit($text)
 	{
-	   $text = mb_convert_encoding($text,'HTML-ENTITIES',mb_detect_encoding($text));
-	   $text = preg_replace(
-		   array('/&szlig;/','/&(..)lig;/',
-				 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
-		   array('ss',"$1","$1".'e',"$1"),
-		   $text);
-	   return $text;
+	    if (!function_exists('mb_convert_encoding')) {
+	        return $text;
+	    }
+        $text = mb_convert_encoding($text,'HTML-ENTITIES',mb_detect_encoding($text));
+        $text = preg_replace(
+           array('/&szlig;/','/&(..)lig;/',
+        		 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
+           array('ss',"$1","$1".'e',"$1"),
+           $text);
+        return $text;
 	}
 
 
