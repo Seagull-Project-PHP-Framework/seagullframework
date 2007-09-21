@@ -127,10 +127,18 @@ class STR_TestEnv
         $conf = $GLOBALS['_STR']['CONF'];
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
-        $query1 = SGL_Sql::buildDbDropStatement($conf['db']['type'],$conf['db']['name']);
-        $query2 = SGL_Sql::buildDbCreateStatement($conf['db']['type'],$conf['db']['name']);
-        $dbh->query($query1);
-        $dbh->query($query2);
+        $query = SGL_Sql::buildDbDropStatement($conf['db']['type'], $dbh->quoteIdentifier($conf['db']['name']));
+        $dbh->query($query);
+
+        if ($conf['db']['type'] == 'pgsql') {
+            $excludeDbName = false;
+        } else {
+            $excludeDbName = true;
+        }
+        $dsn = STR_DB::getDsn($excludeDbName);
+        $dbh = &STR_DB::singleton($dsn);
+        $query = SGL_Sql::buildDbCreateStatement($conf['db']['type'], $dbh->quoteIdentifier($conf['db']['name']));
+        $ok = $dbh->query($query);
     }
 
     /**
