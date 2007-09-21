@@ -85,11 +85,11 @@ class SGL_Output
                         if (isset($output) && is_a($output, 'SGL_Output')) {
                             $aResultParams[$aStringValues[0]] = isset($output->{$aStringValues[1]})
                                 ? $output->{$aStringValues[1]}
-                                : $aStringValues[1];
+                                : null;
                         } elseif (is_a($this, 'SGL_Output')) {
                             $aResultParams[$aStringValues[0]] = isset($this->{$aStringValues[1]})
                                 ? $this->{$aStringValues[1]}
-                                : $aStringValues[1];
+                                : null;
                         }
                     }
                 } else {
