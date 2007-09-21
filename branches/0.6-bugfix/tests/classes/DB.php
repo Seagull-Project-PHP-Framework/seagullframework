@@ -90,7 +90,7 @@ class STR_DB
      * @static
      * @return mixed A string or array containing the data source name.
      */
-    function getDsn()
+    function getDsn($excludeDbName = false)
     {
         $conf = $alternateConf = $GLOBALS['_STR']['CONF'];
         $dbType = $conf['db']['type'];
@@ -99,7 +99,7 @@ class STR_DB
         }
 
         require_once  dirname(__FILE__) . '/../../lib/SGL/DB.php';
-        $dsn = SGL_DB::_getDsnAsString($alternateConf);
+        $dsn = SGL_DB::_getDsnAsString($alternateConf, $excludeDbName);
 
         //   override SGL dsn with temporary testing one
         $GLOBALS['_SGL']['CONF']['db'] = $conf['db'];

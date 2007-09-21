@@ -62,8 +62,8 @@ class STR_TestRunner
     function runAll()
     {
         $type = $GLOBALS['_STR']['test_type'];
-        foreach ($GLOBALS['_STR'][$type . '_layers'] as $layer => $data) {
-
+        $aLayers = array_keys($GLOBALS['_STR'][$type . '_layers']);
+        foreach ($aLayers as $layer) {
             // Run each layer test in turn
             STR_TestRunner::runLayer($layer);
         }
