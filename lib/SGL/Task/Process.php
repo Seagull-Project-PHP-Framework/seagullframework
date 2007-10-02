@@ -157,6 +157,9 @@ class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
  *
  * @package Task
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ *
+ * @todo think something better than checking for action to avoid
+ *       saving config to file, when value was changed
  */
 class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
 {
@@ -165,8 +168,10 @@ class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $adminMode = SGL_Session::get('adminMode');
+        $req       = $input->getRequest();
         //  if not in admin mode, but session debug was allowed
-        if (!$adminMode && SGL_Config::get('debug.sessionDebugAllowed')) {
+        if (!$adminMode && SGL_Config::get('debug.sessionDebugAllowed')
+                && $req->get('action') != 'rebuildSeagull') {
             //  flag it as not allowed
             SGL_Config::set('debug.sessionDebugAllowed', false);
         }
