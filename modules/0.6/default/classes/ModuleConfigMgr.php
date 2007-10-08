@@ -185,19 +185,26 @@ class ModuleConfigMgr extends SGL_Manager
         foreach ($aParams as $key => $value) {
             $oParam = new stdClass();
             switch ($key) {
-                case 'requiresAuth':
-                case 'adminGuiAllowed':
-                case 'setHeaders':
-                case 'enabled':
-                case 'commentsEnabled':
-                case 'useAkismet':
-                case 'useCaptcha':
-                case 'moderationEnabled':
-                    $oParam->type = 'bool';
-                    break;
-                default:
+
+            case 'requiresAuth':
+                //  ajax providers accept list of method names
+                if ($value != 'true' || $value != 'false' || $value != '1' || $value != '0') {
                     $oParam->type = 'string';
-                    break;
+                } else {
+                    $oParam->type = 'bool';
+                }
+                break;
+            case 'adminGuiAllowed':
+            case 'setHeaders':
+            case 'enabled':
+            case 'commentsEnabled':
+            case 'useAkismet':
+            case 'useCaptcha':
+            case 'moderationEnabled':
+                $oParam->type = 'bool';
+                break;
+            default:
+                $oParam->type = 'string';
             }
             $oParam->value = $value;
             $aParams[$key] = $oParam;
@@ -211,12 +218,11 @@ class ModuleConfigMgr extends SGL_Manager
 
         foreach ($aParams as $key => $param) {
             switch ($param['type']) {
-                case 'bool':
-                    $value = ($param['value'] == 1) ? 'true' : 'false';
-                    break;
-                default:
-                    $value = $param['value'];
-                    break;
+            case 'bool':
+                $value = ($param['value'] == 1) ? 'true' : 'false';
+                break;
+            default:
+                $value = $param['value'];
             }
             $aParams[$key] = $value;
         }
