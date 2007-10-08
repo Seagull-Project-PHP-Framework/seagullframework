@@ -34,71 +34,112 @@
 // +---------------------------------------------------------------------------+
 // | Cache.php                                                                 |
 // +---------------------------------------------------------------------------+
-// | Author:   Demian Turner <demian@phpkitchen.com>                           |
+// | Author: Demian Turner <demian@phpkitchen.com>                             |
+// |         Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
 /**
- * A wrapper for PEAR's Cache_Lite.
+ * A wrapper for PEAR::Cache_Lite.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_Cache
 {
     /**
-     * Returns a singleton Cache_Lite instance.
+     * Returns one of Cache_Lite containers.
      *
-     * example usage:
-     * $cache = & SGL_Cache::singleton();
-     * warning: in order to work correctly, the cache
-     * singleton must be instantiated statically and
-     * by reference
+     * Example usage:
+     *   Default Cache_Lite instance.
+     *   1. $cache = &SGL_Cache::singleton();
+     *   Cache_Lite_Function instance with specified params on the fly.
+     *   2. $cache = &SGL_Cache::singleton('function', array(
+     *          'dontCacheWhenTheResultIsFalse' => true,
+     *          'dontCacheWhenTheResultIsNull'  => true,
+     *          'lifeTime'                      => 3,
+     *          'debugCacheLiteFunction'        => true,
+     *      ));
+     *   Cache_Lite_Function instance.
+     *   3. $cache = &SGL_Cache::singleton('output');
+     *   Force Cache_Lite_Function instance.
+     *   4. $cache = &SGL_Cache::singleton('function', array(), true);
+     *   BC way to force cache.
+     *   5. $cache = &SGL_Cache::singleton(true);
      *
      * @access public
-     * @param boolean $forceNew    If true and $SGL_Config::get('cache.enabled')is set to false,
-     *                              this will be ignored and caching enabled
+     *
+     * @param mixed $type        Cache_Lite container.
+     *                           In BC mode flag to force boolean mode.
+     * @param array $aOptions    Options to override config values on the fly.
+     * @param boolean $forceNew  Force cache even if not in caching mode.
+     *
      * @static
-     * @return  mixed reference to Cache_Lite object
+     *
+     * @return Cache_Lite
      */
-    function &singleton($forceNew = false)
+    function &singleton($type = 'default', $aOptions = array(), $forceNew = false)
     {
-        static $instance;
+        static $aInstances;
 
-        // If the instance doesn't exist, create one
-        if (!isset($instance) || $forceNew) {
-            require_once 'Cache/Lite.php';
+        // BC
+        if (is_bool($type) && $type) {
+            $forceNew = true;
+        }
 
-            $isEnabled = ($forceNew) ? true : SGL_Config::get('cache.enabled');
-            $options = array(
-                'cacheDir'  => SGL_TMP_DIR . '/',
-                'lifeTime'  => SGL_Config::get('cache.lifetime'),
-                'caching'   => $isEnabled);
+        if (!isset($aInstances[$type]) || $forceNew) {
+            $isEnabled = $forceNew ? true : SGL_Config::get('cache.enabled');
+            // basic options
+            $aDefaultOptions = array(
+                'cacheDir' => SGL_TMP_DIR . '/',
+                'lifeTime' => SGL_Config::get('cache.lifetime'),
+                'caching'  => $isEnabled
+            );
+            // additional options
             if (SGL_Config::get('cache.cleaningFactor')) {
-                $options['automaticCleaningFactor'] = SGL_Config::get('cache.cleaningFactor');
+                $aDefaultOptions['automaticCleaningFactor'] = SGL_Config::get('cache.cleaningFactor');
             }
             if (SGL_Config::get('cache.readControl')) {
-                $options['readControl'] = SGL_Config::get('cache.readControl');
+                $aDefaultOptions['readControl'] = SGL_Config::get('cache.readControl');
             }
             if (SGL_Config::get('cache.writeControl')) {
-                $options['writeControl'] = SGL_Config::get('cache.writeControl');
+                $aDefaultOptions['writeControl'] = SGL_Config::get('cache.writeControl');
             }
-            $instance = new Cache_Lite($options);
+            // override with specified options
+            $aOptions = array_merge($aDefaultOptions, $aOptions);
+            switch (strtolower($type)) {
+                case 'output':
+                    require_once 'Cache/Lite/Output.php';
+                    $className = 'Cache_Lite_Output';
+                    break;
+                case 'function':
+                    require_once 'Cache/Lite/Function.php';
+                    $className = 'Cache_Lite_Function';
+                    break;
+                default:
+                    require_once 'Cache/Lite.php';
+                    $className = 'Cache_Lite';
+            }
+            $aInstances[$type] = new $className($aOptions);
         }
-        return $instance;
+        return $aInstances[$type];
     }
 
     /**
-     * Clear cache directory of a specific module's cache files. A simple wrapper to
-     * PEAR::Cache_Lite's clean() method.
+     * Clear cache directory of a specific module's cache files.
+     * A simple wrapper to PEAR::Cache_Lite::clean() method.
      *
      * @access public
-     * @param  string $group name of the cache group (e.g. nav, blocks, etc.)
+     *
+     * @param  string $group  name of the cache group (e.g. nav, blocks, etc.)
+     *
      * @return boolean true on success
-     * @author  Andy Crain <apcrain@fuse.net>
+     *
+     * @author Andy Crain <apcrain@fuse.net>
      */
      function clear($group = false)
      {
-        $cache = & SGL_Cache::singleton();
+        $cache = &SGL_Cache::singleton();
         return $cache->clean($group);
      }
 }
