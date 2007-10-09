@@ -338,7 +338,7 @@ class SGL
 
         $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
         if (is_array($a)) {
-            asort($a);
+            ksort($a);
         }
         return $a;
     }

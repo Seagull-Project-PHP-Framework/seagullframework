@@ -59,7 +59,7 @@ class SGL_Request
     {
         if ($this->isEmpty()) {
             $type = (is_null($type))
-                ? $this->getRequestType()
+                ? $this->_getRequestType()
                 : $type;
             $typeName = $this->constantToString($type);
             $file = SGL_CORE_DIR . '/Request/' . $typeName . '.php';
@@ -104,7 +104,12 @@ class SGL_Request
         return $ret;
     }
 
-    function getRequestType()
+    /**
+     * Used internally to determine request type before Request strategy instantiated.
+     *
+     * @return integer
+     */
+    function _getRequestType()
     {
         if (SGL::runningFromCLI()) {
             $ret = SGL_REQUEST_CLI;
@@ -152,6 +157,11 @@ class SGL_Request
         return count($this->aProps) ? false : true;
     }
 
+    /**
+     * Returns constant representing request type.
+     *
+     * @return integer
+     */
     function getType()
     {
         return $this->type;
