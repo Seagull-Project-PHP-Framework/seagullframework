@@ -369,7 +369,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         $mgrName = SGL_Inflector::caseFix(get_class($mgr));
 
         //  test for anonymous session and rememberMe cookie
-        if ($session->isAnonymous()
+        if (($session->isAnonymous() || $timeout)
                 && SGL_Config::get('cookie.rememberMeEnabled')) {
             $aCookieData = $this->getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
