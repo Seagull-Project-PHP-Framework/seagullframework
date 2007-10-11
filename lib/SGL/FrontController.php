@@ -145,7 +145,7 @@ class SGL_FrontController
 
     function customFilterChain(&$input)
     {
-        $req  = $input->getRequest();
+        $req = $input->getRequest();
 
         switch ($req->getType()) {
         case SGL_REQUEST_BROWSER:
@@ -169,8 +169,8 @@ class SGL_FrontController
             break;
 
         case SGL_REQUEST_AJAX:
-            $moduleName     = ucfirst($req->getModuleName());
-            $providerName   = $moduleName . 'AjaxProvider';
+            $moduleName = ucfirst($req->getModuleName());
+            $providerName = $moduleName . 'AjaxProvider';
             if (SGL_Config::get("$providerName.filterChain")) {
                 $aFilters = explode(',', SGL_Config::get("$providerName.filterChain"));
             } else {
@@ -183,20 +183,26 @@ class SGL_FrontController
                     'SGL_Task_BuildAjaxHeaders',
                     'SGL_Task_CustomBuildOutputData',
                     'SGL_Task_ExecuteAjaxAction',
-                    );
+                );
             }
             $input->setFilters($aFilters);
             $ret = true;
             break;
 
         case SGL_REQUEST_AMF:
-            $aFilters = array(
-                'SGL_Task_Init',
-                'SGL_Task_SetupORM',
-                'SGL_Task_CreateSession',
-                'SGL_Task_SetupLangSupport',
-                'SGL_Task_ExecuteAmfAction',
+            $moduleName = ucfirst($req->getModuleName());
+            $providerName = $moduleName . 'AmfProvider';
+            if (SGL_Config::get("$providerName.filterChain")) {
+                $aFilters = explode(',', SGL_Config::get("$providerName.filterChain"));
+            } else {
+                $aFilters = array(
+                    'SGL_Task_Init',
+                    'SGL_Task_SetupORM',
+                    'SGL_Task_CreateSession',
+                    'SGL_Task_SetupLangSupport',
+                    'SGL_Task_ExecuteAmfAction',
                 );
+            }
             $input->setFilters($aFilters);
             $ret = true;
             break;
