@@ -3,9 +3,11 @@
 /**
  * @todo remove duplication
  */
-define('SGL_NODE_USER',  2); // nested set parent_id
-define('SGL_NODE_ADMIN', 4); // nested set parent_id
-define('SGL_NODE_GROUP', 1);
+if (!defined('SGL_NODE_USER')) {
+    define('SGL_NODE_USER',  2); // nested set parent_id
+    define('SGL_NODE_ADMIN', 4); // nested set parent_id
+    define('SGL_NODE_GROUP', 1);
+}
 
 /**
  * Navigation driver, which uses PHP arrays to build navigation.
@@ -51,11 +53,22 @@ class ArrayDriver
      */
     var $aCurrentTitles = array();
 
+    function &singleton(&$output)
+    {
+        static $instance;
+        if (!isset($instance)) {
+            $instance = new ArrayDriver($output);
+        }
+        return $instance;
+    }
+
     /**
      * Constructor:
      *   - creates initial array from navigation.php files
      *   - identifies current node
      *   - checks permissions
+     *
+     * NOTE: only two levels menu supported by now.
      *
      * @param SGL_Output $output
      *
@@ -63,28 +76,75 @@ class ArrayDriver
      */
     function ArrayDriver(&$output)
     {
-        $aConsts = get_defined_constants(true);
-        $aConsts = $aConsts['user'];
-
-        // define all root nodes
-        $aMenu = array();
-        foreach ($aConsts as $constName => $constValue) {
-            if (strpos($constName, 'SGL_NODE_') !== 0
-                    || $constName == 'SGL_NODE_GROUP') {
-                continue;
-            }
-            $aMenu[$constValue] = array();
-            $this->aCurrentIndexes[$constValue] = 0;
+        // get nodes
+        if (!($aNodes = $this->loadCachedNodes())) {
+            $aNodes = $this->createNavigationStructure();
+            $this->cacheNodes($aNodes);
         }
 
         // skip admin root if not allowed
         if (empty($output->adminGuiAllowed)) {
-            unset($aMenu[SGL_NODE_ADMIN]);
+            unset($aNodes[SGL_NODE_ADMIN]);
+
+            // set default root index
+            // it can be changed with ArrayDriver::setParams()
             $this->currentRootIndex = SGL_NODE_USER;
         } else {
             $this->currentRootIndex = SGL_NODE_ADMIN;
         }
 
+        foreach ($aNodes as $rootId => $aSections) {
+            $this->aCurrentIndexes[$rootId] = 0;
+            foreach ($aSections as $sectionId => $section) {
+                if (!$this->nodeAccessAllowed($section)) {
+                    unset($aNodes[$rootId][$sectionId]);
+                    continue;
+                }
+                $section['link']       = $this->makeLinkFromNode($section);
+                $section['url']        = $section['link'];
+                $section['is_current'] = $this->isCurrentNode($section);
+
+                if (!empty($section['is_current'])) {
+                    $this->aCurrentTitles[$rootId] = $section['title'];
+                    $this->aCurrentIndexes[$rootId] = $sectionId;
+                }
+
+                // save changes made to section
+                $aNodes[$rootId][$sectionId] = $section;
+
+                if (!empty($section['sub'])) {
+                    foreach ($section['sub'] as $subSectionId => $subSection) {
+                        if (!$this->nodeAccessAllowed($subSection)) {
+                            unset($aNodes[$rootId][$sectionId]['sub'][$subSectionId]);
+                            continue;
+                        }
+                        $subSection['link']       = $this->makeLinkFromNode($subSection);
+                        $subSection['url']        = $subSection['link'];
+                        $subSection['is_current'] = $this->isCurrentNode($subSection);
+
+                        if (!empty($subSection['is_current'])) {
+                            $this->aCurrentTitles[$rootId] = $subSection['title'];
+                            $this->aCurrentIndexes[$rootId] = $subSectionId;
+                        }
+
+                        // save changes made to subsection
+                        $aNodes[$rootId][$sectionId]['sub'][$subSectionId] = $subSection;
+                    }
+                }
+            }
+        }
+        $this->aSections = $aNodes;
+    }
+
+    /**
+     * Go through all modules and read navigation.php files.
+     * Combines all sections in one array ready for use with HTML_Menu.
+     *
+     * @return array
+     */
+    function createNavigationStructure()
+    {
+        $aMenu = array();
         $aDirs = SGL_Util::getAllModuleDirs(true);
         foreach ($aDirs as $dirName) {
             $structureFile = SGL_MOD_DIR . '/' . $dirName . '/data/navigation.php';
@@ -99,27 +159,37 @@ class ArrayDriver
 
             $sectionRootId = null;
             foreach ($aSections as $section) {
+                // find root ID
                 if (empty($sectionRootId) || $section['parent_id'] != SGL_NODE_GROUP) {
                     $sectionRootId = $section['parent_id'];
+                    if (empty($aMenu[$sectionRootId])) {
+                        $aMenu[$sectionRootId] = array();
+                    }
                 }
 
-                // skip node if root ID is not known
-                if (!array_key_exists($sectionRootId, $aMenu)) {
-                    continue;
+                // simplify node
+                $section['manager'] = SGL_Inflector::getSimplifiedNameFromManagerName($section['manager']);
+                if (!empty($section['uriType']) && $section['uriType'] == 'dynamic') {
+                    unset($section['uriType']);
                 }
-                if (!$this->nodeAccessAllowed($section)) {
-                    continue;
+                if (isset($section['actionMapping']) && empty($section['actionMapping'])) {
+                    unset($section['actionMapping']);
+                }
+                if (isset($section['add_params']) && empty($section['add_params'])) {
+                    unset($section['add_params']);
+                }
+                if (!empty($section['is_enabled'])) {
+                    unset($section['is_enabled']);
                 }
 
-                $section['manager']    = SGL_Inflector::getSimplifiedNameFromManagerName($section['manager']);
-                $section['link']       = $this->makeLinkFromNode($section);
-                $section['url']        = $section['link'];
-                $section['is_current'] = $this->isCurrentNode($section);
+                $parentId = $section['parent_id'];
+                unset($section['parent_id']);
 
                 // create first level item
-                if ($section['parent_id'] != SGL_NODE_GROUP) {
-                    $nextId = $currentIndex = $currentNodeId = $section['parent_id'] * 10 + count($aMenu[$sectionRootId]) + 1;
+                if ($parentId != SGL_NODE_GROUP) {
+                    $nextId = $currentIndex = $currentNodeId = $parentId * 10 + count($aMenu[$sectionRootId]) + 1;
                     $aMenu[$sectionRootId][$nextId] = $section;
+
                 // create second level item
                 } else {
                     $subNav = &$aMenu[$sectionRootId][$currentNodeId]['sub'];
@@ -129,13 +199,40 @@ class ArrayDriver
                     $currentIndex = $nextId * 10 + count($subNav) + 1;
                     $subNav[$currentIndex] = $section;
                 }
-                if ($section['is_current']) {
-                    $this->aCurrentIndexes[$sectionRootId] = $currentIndex;
-                    $this->aCurrentTitles[$sectionRootId] = $section['title'];
-                }
             }
         }
-        $this->aSections = $aMenu;
+        return $aMenu;
+    }
+
+    /**
+     * Load nodes from cached file.
+     *
+     * @return array
+     */
+    function loadCachedNodes()
+    {
+        $fileName = SGL_VAR_DIR . '/navigation.php';
+        if (file_exists($fileName)) {
+            include $fileName;
+        }
+        return !empty($aSections) && is_array($aSections)
+            ? $aSections
+            : false;
+    }
+
+    /**
+     * Cache nodes to file.
+     *
+     * @param array $aNodes
+     *
+     * @return boolean
+     */
+    function cacheNodes($aNodes)
+    {
+        $data = var_export($aNodes, true);
+        $data = "<?php\n\$aSections = $data;\n?>";
+        $ok = file_put_contents(SGL_VAR_DIR . '/navigation.php', $data);
+        return $ok;
     }
 
     /**
@@ -147,14 +244,16 @@ class ArrayDriver
      */
     function nodeAccessAllowed($aNode)
     {
-        $aPerms = explode(',', $aNode['perms']);
         $ret = false;
-        foreach ($aPerms as $permId) {
-            $permValue = SGL_String::pseudoConstantToInt($permId);
-            if ($permValue == SGL_Session::getRoleId()
-                    || $permValue == SGL_ANY_ROLE) {
-                $ret = true;
-                break;
+        if (!isset($aNode['is_enabled']) || !empty($aNode['is_enabled'])) {
+            $aPerms = explode(',', $aNode['perms']);
+            foreach ($aPerms as $permId) {
+                $permValue = SGL_String::pseudoConstantToInt($permId);
+                if ($permValue == SGL_Session::getRoleId()
+                        || $permValue == SGL_ANY_ROLE) {
+                    $ret = true;
+                    break;
+                }
             }
         }
         return $ret;
