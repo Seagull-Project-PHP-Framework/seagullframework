@@ -267,7 +267,7 @@ class SGL_Config
 
         //  if file is called conf.ini, it's a template from root of module
         //  dir and needs to be cached
-        if (!basename($path) == 'conf.ini') {
+        if (basename($path) != 'conf.ini') {
             return $path;
         }
 
