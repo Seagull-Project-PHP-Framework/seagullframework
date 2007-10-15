@@ -18,7 +18,7 @@
 // |          Jason Rust <jrust@php.net>                                  |
 // +----------------------------------------------------------------------+
 
-// $Id: Detect.php,v 1.24 2007/04/23 20:47:39 jrust Exp $
+// $Id: Detect.php,v 1.26 2007/09/19 21:31:54 jrust Exp $
 
 // }}}
 // {{{ constants
@@ -71,7 +71,7 @@ class Net_UserAgent_Detect {
      * @return object Net_UserAgent_Detect instance
      */
     function &singleton($in_userAgent = null, $in_detect = null) 
-    { 
+    {
         static $instance;
        
         if (!isset($instance)) { 
@@ -113,8 +113,8 @@ class Net_UserAgent_Detect {
         $hasRun = true;
         // {{{ set up static properties
 
-        $in_userAgent = isset($options['userAgent']) && is_null($in_userAgent) ? $options['userAgent'] : null;
-        $in_detect = isset($options['detectOptions']) && is_null($in_detect) ? $options['detectOptions'] : null;
+        $in_userAgent = isset($options['userAgent']) && is_null($in_userAgent) ? $options['userAgent'] : $in_userAgent;
+        $in_detect = isset($options['detectOptions']) && is_null($in_detect) ? $options['detectOptions'] : $in_detect;
 
         // User agent string that is being analyzed
         $userAgent = &Net_UserAgent_Detect::_getStaticProperty('userAgent');
@@ -127,7 +127,7 @@ class Net_UserAgent_Detect {
         // Array that stores all of the flags for the operating systems,
         // and in some cases the versions of those operating systems (windows)
         $os = &Net_UserAgent_Detect::_getStaticProperty('os');
-        $os = array_flip(array('win', 'win95', 'win16', 'win31', 'win9x', 'win98', 'winme', 'win2k', 'winxp', 'winnt', 'win2003', 'os2', 'mac', 'mac68k', 'macppc', 'linux', 'unix', 'vms', 'sun', 'sun4', 'sun5', 'suni86', 'irix', 'irix5', 'irix6', 'hpux', 'hpux9', 'hpux10', 'aix', 'aix1', 'aix2', 'aix3', 'aix4', 'sco', 'unixware', 'mpras', 'reliant', 'dec', 'sinix', 'freebsd', 'bsd'));
+        $os = array_flip(array('win', 'win95', 'win16', 'win31', 'win9x', 'win98', 'wince', 'winme', 'win2k', 'winxp', 'winnt', 'win2003', 'os2', 'mac', 'mac68k', 'macppc', 'linux', 'unix', 'vms', 'sun', 'sun4', 'sun5', 'suni86', 'irix', 'irix5', 'irix6', 'hpux', 'hpux9', 'hpux10', 'aix', 'aix1', 'aix2', 'aix3', 'aix4', 'sco', 'unixware', 'mpras', 'reliant', 'dec', 'sinix', 'freebsd', 'bsd'));
 
         // Array which stores known issues with the given client that can
         // be used for on the fly tweaking so that the client may recieve
@@ -269,7 +269,7 @@ class Net_UserAgent_Detect {
             $browser['opera6']  = strpos($agt, 'opera 6') !== false || strpos($agt, 'opera/6') !== false;
             $browser['opera7']  = strpos($agt, 'opera 7') !== false || strpos($agt, 'opera/7') !== false;
             $browser['opera8']  = strpos($agt, 'opera 8') !== false || strpos($agt, 'opera/8') !== false;
-            $browser['opera9']  = strpos($agt, 'opera 8') !== false || strpos($agt, 'opera/9') !== false;
+            $browser['opera9']  = strpos($agt, 'opera 9') !== false || strpos($agt, 'opera/9') !== false;
             $browser['opera5up'] = $browser['opera'] && !$browser['opera2'] && !$browser['opera3'] && !$browser['opera4'];
             $browser['opera6up'] = $browser['opera'] && !$browser['opera2'] && !$browser['opera3'] && !$browser['opera4'] && !$browser['opera5'];
             $browser['opera7up'] = $browser['opera'] && !$browser['opera2'] && !$browser['opera3'] && !$browser['opera4'] && !$browser['opera5'] && !$browser['opera6'];
@@ -288,6 +288,7 @@ class Net_UserAgent_Detect {
             $browser['hotjava'] = strpos($agt, 'hotjava') !== false;
             $browser['hotjava3'] = $browser['hotjava'] && $majorVersion == 3;
             $browser['hotjava3up'] = $browser['hotjava'] && $majorVersion >= 3;
+            $browser['iemobile'] = strpos($agt, 'iemobile') !== false || strpos($agt, 'windows ce') !== false && (strpos($agt, 'ppc') !== false || strpos($agt, 'smartphone') !== false);
         }
 
         if ($detectFlags[NET_USERAGENT_DETECT_ALL] || 
@@ -295,6 +296,9 @@ class Net_UserAgent_Detect {
             // Javascript Check
             if ($browser['ns2'] || $browser['ie3']) {
                 Net_UserAgent_Detect::setFeature('javascript', 1.0);
+            }
+            elseif ($browser['iemobile']) {
+              // no javascript
             }
             elseif ($browser['opera5up']) {
                 Net_UserAgent_Detect::setFeature('javascript', 1.3);
@@ -324,6 +328,7 @@ class Net_UserAgent_Detect {
             $os['win16'] = strpos($agt, 'win16') !== false || strpos($agt, '16bit') !== false || strpos($agt, 'windows 3.1') !== false || strpos($agt, 'windows 16-bit') !== false;  
             $os['win31'] = strpos($agt, 'windows 3.1') !== false || strpos($agt, 'win16') !== false || strpos($agt, 'windows 16-bit') !== false;
             $os['winme'] = strpos($agt, 'win 9x 4.90') !== false;
+            $os['wince'] = strpos($agt, 'windows ce') !== false;
             $os['win2k'] = strpos($agt, 'windows nt 5.0') !== false;
             $os['winxp'] = strpos($agt, 'windows nt 5.1') !== false;
             $os['win2003'] = strpos($agt, 'windows nt 5.2') !== false;
@@ -404,7 +409,7 @@ class Net_UserAgent_Detect {
                 Net_UserAgent_Detect::setFeature('gecko', $matches[1]);
             }
 
-            if ($browser['gecko'] || $browser['ie5up'] || $browser['konq'] || $browser['opera8up']) {
+            if ($browser['gecko'] || ($browser['ie5up'] && !$browser['iemobile']) || $browser['konq'] || $browser['opera8up'] && !$os['wince']) {
                 Net_UserAgent_Detect::setFeature('ajax');
             }
 
@@ -683,6 +688,7 @@ class Net_UserAgent_Detect {
         if (is_null($in_osStrings)) {
             $in_osStrings = array(
                    'win'   => 'Microsoft Windows',
+                   'wince' => 'Microsoft Windows CE',
                    'win9x' => 'Microsoft Windows 9x',
                    'winme' => 'Microsoft Windows Millenium',
                    'win2k' => 'Microsoft Windows 2000',
