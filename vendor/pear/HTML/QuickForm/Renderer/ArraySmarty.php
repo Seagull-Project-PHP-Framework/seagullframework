@@ -87,7 +87,7 @@ require_once 'HTML/QuickForm/Renderer/Array.php';
  * @author      Alexey Borzov <avb@php.net>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
  * @author      Thomas Schulz <ths@4bconsult.de>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.0
  */
 class HTML_QuickForm_Renderer_ArraySmarty extends HTML_QuickForm_Renderer_Array

@@ -46,7 +46,7 @@ require_once 'HTML/QuickForm/checkbox.php';
  * @package     HTML_QuickForm
  * @author      Jason Rust <jrust@php.net>
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       2.0
  */
 class HTML_QuickForm_advcheckbox extends HTML_QuickForm_checkbox

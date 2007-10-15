@@ -35,7 +35,7 @@ require_once 'HTML/QuickForm/Rule.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.2
  */
 class HTML_QuickForm_Rule_Compare extends HTML_QuickForm_Rule

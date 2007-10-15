@@ -27,7 +27,7 @@
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.2
  * @abstract
  */

@@ -19,7 +19,7 @@
  * @author      Alexey Borzov <avb@php.net>
  * @copyright   2001-2007 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id: QuickForm.php,v 1.163 2007/05/29 18:34:36 avb Exp $
+ * @version     CVS: $Id: QuickForm.php,v 1.164 2007/10/05 19:57:32 avb Exp $
  * @link        http://pear.php.net/package/HTML_QuickForm
  */
 
@@ -119,7 +119,7 @@ define('QUICKFORM_INVALID_DATASOURCE',     -9);
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  */
 class HTML_QuickForm extends HTML_Common
 {
@@ -1526,6 +1526,11 @@ class HTML_QuickForm extends HTML_Common
                     // Fix for bug #3501: we shouldn't validate not uploaded files, either.
                     // Unfortunately, we can't just use $element->isUploadedFile() since
                     // the element in question can be buried in group. Thus this hack.
+                    // See also bug #12014, we should only consider a file that has
+                    // status UPLOAD_ERR_NO_FILE as not uploaded, in all other cases
+                    // validation should be performed, so that e.g. 'maxfilesize' rule
+                    // will display an error if status is UPLOAD_ERR_INI_SIZE 
+                    // or UPLOAD_ERR_FORM_SIZE
                     } elseif (is_array($submitValue)) {
                         if (false === ($pos = strpos($target, '['))) {
                             $isUpload = !empty($this->_submitFiles[$target]);
@@ -1540,7 +1545,7 @@ class HTML_QuickForm extends HTML_Common
                                     ) . "']";
                             eval("\$isUpload = isset(\$this->_submitFiles['{$base}']['name']{$idx});");
                         }
-                        if ($isUpload && (!isset($submitValue['error']) || 0 != $submitValue['error'])) {
+                        if ($isUpload && (!isset($submitValue['error']) || UPLOAD_ERR_NO_FILE == $submitValue['error'])) {
                             continue 2;
                         }
                     }
@@ -2016,7 +2021,7 @@ class HTML_QuickForm extends HTML_Common
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  */
 class HTML_QuickForm_Error extends PEAR_Error {
 

@@ -34,7 +34,7 @@ require_once 'HTML/QuickForm/element.php';
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       1.0
  * @abstract
  */

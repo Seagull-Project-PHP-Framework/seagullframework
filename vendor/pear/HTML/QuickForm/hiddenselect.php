@@ -38,7 +38,7 @@ require_once 'HTML/QuickForm/select.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Isaac Shepard <ishepard@bsiweb.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       2.1
  */
 class HTML_QuickForm_hiddenselect extends HTML_QuickForm_select

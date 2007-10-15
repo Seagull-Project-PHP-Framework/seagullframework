@@ -47,7 +47,7 @@ require_once 'HTML/QuickForm/text.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Matteo Di Giovinazzo <matteodg@infinito.it>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.2
  */
 class HTML_QuickForm_autocomplete extends HTML_QuickForm_text

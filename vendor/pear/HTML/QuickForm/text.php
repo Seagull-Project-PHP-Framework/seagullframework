@@ -34,7 +34,7 @@ require_once 'HTML/QuickForm/input.php';
  * @package     HTML_QuickForm
  * @author      Adam Daniel <adaniel1@eesus.jnj.com>
  * @author      Bertrand Mansion <bmansion@mamasam.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       1.0
  */
 class HTML_QuickForm_text extends HTML_QuickForm_input

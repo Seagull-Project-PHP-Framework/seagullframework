@@ -32,7 +32,7 @@ require_once 'HTML/QuickForm/element.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Wojciech Gdela <eltehaem@poczta.onet.pl>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       2.7
  */
 class HTML_QuickForm_static extends HTML_QuickForm_element {

@@ -34,7 +34,7 @@ require_once 'HTML/QuickForm/Renderer.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Ron McClain <ron@humaniq.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.1.1
  */
 class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer
@@ -270,7 +270,7 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Ron McClain <ron@humaniq.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.1.1
  */
 class QuickformForm
@@ -359,7 +359,7 @@ class QuickformForm
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Ron McClain <ron@humaniq.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.1.1
  */
 class QuickformElement

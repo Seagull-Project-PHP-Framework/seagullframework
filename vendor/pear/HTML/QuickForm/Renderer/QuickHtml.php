@@ -38,7 +38,7 @@ require_once 'HTML/QuickForm/Renderer/Default.php';
  * @category    HTML
  * @package     HTML_QuickForm
  * @author      Jason Rust <jrust@rustyparts.com>
- * @version     Release: 3.2.9
+ * @version     Release: 3.2.10
  * @since       3.1.1
  */
 class HTML_QuickForm_Renderer_QuickHtml extends HTML_QuickForm_Renderer_Default {
