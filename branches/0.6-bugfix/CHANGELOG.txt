@@ -32,6 +32,7 @@ IMPROVEMENTS
 23-08-07    Added language detection from user agent (Dmitri Lakachauskis)
 23-08-07    Added config option to set storage engine for MySQL (Dmitri Lakachauskis)
 16-08-07    Added support for RTL languages
+                http://trac.seagullproject.org/wiki/Howto/Internationalisation/HebrewAndRtlLanguages#newinSeagull0.6.3
 15-08-07    Static SGL_Config::set() call implemented, eg:
                 SGL_Config::set('cache.lifetime', 123)
 14-08-07    Request types can now be preset
