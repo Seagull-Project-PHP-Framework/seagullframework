@@ -5,14 +5,15 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
-15-10-07    Fix rebuild sequences when database session storage is used (mrhov)
+16-10-07    Fixed bug where TinyFCK connector was broken [3447]
+15-10-07    Fixed rebuild sequences when database session storage is used (mrhov)
 19-09-07    Fixed bug where enabling caching killed Ajax requests #1530
 19-09-07    Transaction integrity in the User DAO was fixed, ie better error recovery
             (Dmitri Lakachauskis)
 03-07-07    Fixed SMTP authentication driver choice in Config (mburkardt)
 11-06-07    Correctly initialised charset global
 04-06-07    Fixed parsing of multiple roles for navigation [3117]
-26-05-07    Fixed Classic URI parsing see http://trac.seagullproject.org/changeset/3105
+26-05-07    Fixed Classic URI parsing [3105]
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
