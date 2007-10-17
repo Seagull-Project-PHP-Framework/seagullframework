@@ -74,7 +74,7 @@ class Default_Block_LangSwitcher2
 
         $input = &SGL_Registry::singleton();
         $conf  = $input->getConfig();
-        $url   = $input->getCurrentUrl();
+        $req   = $input->getRequest();
 
         $aLangs          = SGL_Util::getLangsDescriptionMap();
         $aLangsDef       = $GLOBALS['_SGL']['LANGUAGE'];
@@ -95,8 +95,10 @@ class Default_Block_LangSwitcher2
 
             // the best way to build lang switching url found so far taking into
             // account UrlParser strategy, cleanUrls, session info etc
-            $url->aQueryData['lang'] = $langKey;
-            $aQueryData = $url->getQueryData(true);
+//$url->aQueryData['lang'] = $langKey;
+            $req->set('lang', $langKey);
+            $aQueryData = $req->getAll();
+//$aQueryData = $url->getQueryData(true);
             $action = '';
             $params = '';
             if (isset($aQueryData['action'])) {
@@ -113,7 +115,7 @@ class Default_Block_LangSwitcher2
             if (!empty($params)) {
                 $params = implode('||', $params);
             }
-            $aLangData[$langKey]['url'] = $url->makeLink($action, '', '',
+            $aLangData[$langKey]['url'] = SGL_Output::makeUrl($action, '', '',
                 array(), $params);
 
             $aLangData[$langKey]['is_current'] =
