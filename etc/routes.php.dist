@@ -1,0 +1,22 @@
+<?php
+        $m = new Horde_Routes_Mapper();
+        $m->connect(':moduleName/:managerName/*',
+                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
+                        'managerName'=> SGL_Config::get('site.defaultManager')));
+        $m->connect(':moduleName/:managerName',
+                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
+                        'managerName'=> SGL_Config::get('site.defaultManager')));
+        $m->connect(':moduleName',
+                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
+                        'managerName'=> SGL_Config::get('site.defaultManager')));
+        $qs = isset($_SERVER['PATH_INFO'])
+            ? $_SERVER['PATH_INFO']
+            : '/';
+        $aQueryData = $m->match($qs);
+#tmp hacks
+        unset($aQueryData['controller']);
+        if (isset($aQueryData['action']) && $aQueryData['action'] == 'index') {
+            unset($aQueryData['action']);
+        }
+#end hacks
+?>

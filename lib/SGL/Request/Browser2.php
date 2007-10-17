@@ -16,26 +16,19 @@ class SGL_Request_Browser2 extends SGL_Request
 {
     function init()
     {
-        $m = new Horde_Routes_Mapper();
-        $m->connect(':moduleName/:managerName/*',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $m->connect(':moduleName/:managerName',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $m->connect(':moduleName',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $qs = isset($_SERVER['PATH_INFO'])
-            ? $_SERVER['PATH_INFO']
-            : '/';
-        $aQueryData = $m->match($qs);
-#tmp hacks
-        unset($aQueryData['controller']);
-        if (isset($aQueryData['action']) && $aQueryData['action'] == 'index') {
-            unset($aQueryData['action']);
+        //  load routes
+        if (file_exists(SGL_VAR_DIR . '/routes.php')) {
+            include_once SGL_VAR_DIR . '/routes.php';
+        } else {
+            // copy the default configuration file to the users tmp directory
+            if (!copy(SGL_ETC_DIR . '/routes.php.dist', SGL_VAR_DIR . '/routes.php')) {
+                die('error copying routes file');
+            }
+            @chmod(SGL_VAR_DIR . '/routes.php', 0666);
+            include_once SGL_VAR_DIR . '/routes.php';
         }
-#end hacks
+
+
         $aParams = array();
         if (isset($aQueryData[''])) {
             $aParts = explode('/', $aQueryData['']);
