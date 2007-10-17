@@ -196,7 +196,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
 
         //  allow for default managers, ie, in faqMgr, don't
         //  return http://localhost.localdomain/seagull/www/index.php/faq/faq/action/edit/
-        if ($mgr != $mod) {
+        if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes' || $mgr != $mod) {
             $url .= $mod . '/';
         }
         $url .= $mgr;

@@ -87,6 +87,9 @@ class SGL_Request
         switch($constant) {
         case SGL_REQUEST_BROWSER:
             $ret = 'Browser';
+            if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
+                $ret = 'Browser2';
+            }
             break;
 
         case SGL_REQUEST_CLI:
