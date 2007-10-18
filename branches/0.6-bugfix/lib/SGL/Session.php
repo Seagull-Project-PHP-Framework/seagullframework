@@ -333,6 +333,27 @@ class SGL_Session
         return $ret;
     }
 
+    /**
+     * Run session as specified user.
+     *
+     *   1. SGL_Session::runAs(3);
+     *      run as user with ID = 3
+     *   2. SGL_Session::runAs(4);
+     *      run as user with ID = 4
+     *   3. SGL_Session::runAs('prev');
+     *      run as user with ID = 3 (taken fromn stack)
+     *   4. SGL_Session::runAs(5, 'prev');
+     *      if stack is e.g. array(2, 5, 3, 6, 7)
+     *      after running above command it will become array(2).
+     *
+     * @access public
+     *
+     * @param mixed  $runAs      user ID or 'prev'
+     * @param string $direction  only needs to be specified, when running
+     *                           certain session from stack
+     *
+     * @return void
+     */
     function runAs($runAs, $direction = null)
     {
         $aStack = SGL_Session::get('sessionStack');
