@@ -77,8 +77,6 @@ define('SGL_SESSION_UPDATE_WINDOW', 10);
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.36 $
- * @since   PHP 4.1
  */
 class SGL_Session
 {
@@ -333,6 +331,39 @@ class SGL_Session
     {
         $ret = !((bool) $_SESSION['uid']);
         return $ret;
+    }
+
+    function runAs($runAs, $direction = null)
+    {
+        $aStack = SGL_Session::get('sessionStack');
+        if (!is_array($aStack)) {
+            $aStack = array();
+        }
+
+        // user ID specified and no direction
+        if (is_numeric($runAs) && empty($direction)) {
+            // put current user ID to stack
+            array_push($aStack, SGL_Session::getUid());
+
+        // restore previous session
+        } elseif ($runAs == 'prev') {
+            // pop previous user ID from stack
+            $runAs = array_pop($aStack);
+
+        // restore specified session from stack
+        } else {
+            do {
+                // pop user ID from stack
+                $userId = array_pop($aStack);
+            // until user ID found or stack is empty
+            } while ($userId != $runAs && !is_null($userId));
+        }
+
+        // update stack
+        SGL_Session::set('sessionStack', $aStack);
+
+        // start new session
+        new SGL_Session($runAs);
     }
 
     /**
