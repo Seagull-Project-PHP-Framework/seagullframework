@@ -171,7 +171,8 @@ class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
         $req       = $input->getRequest();
         //  if not in admin mode, but session debug was allowed
         if (!$adminMode && SGL_Config::get('debug.sessionDebugAllowed')
-                && $req->get('action') != 'rebuildSeagull') {
+                && $req->get('action') != 'rebuildSeagull'
+                && $req->getManagerName() != 'config') {
             //  flag it as not allowed
             SGL_Config::set('debug.sessionDebugAllowed', false);
         }
