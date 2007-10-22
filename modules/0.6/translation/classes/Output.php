@@ -35,6 +35,7 @@
 // | TranslationOutput.php                                                     |
 // +---------------------------------------------------------------------------+
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
+// |         Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
 /**
@@ -47,23 +48,11 @@
  */
 class TranslationOutput
 {
-    function replaceSlashes($str)
-    {
-        return str_replace('/', '^',$str);
-    }
-
     function getArrayValue($array, $value, $value2 = null)
     {
         return isset($value2)
             ? $array[$value][$value2]
             : $array[$value];
-    }
-
-    function actionToRadioState($radioAction)
-    {
-        $req = &SGL_Request::singleton();
-        $action = $req->get('action');
-        return ($radioAction == $action) ? ' checked="checked"' : '';
     }
 
     function getTransKey($k)
@@ -109,6 +98,27 @@ class TranslationOutput
     function isSglComment($k)
     {
         return strpos($k, '__SGL_COMMENT_') !== false;
+    }
+
+    function showTranslationRow($untranslated, $aTargetLang, $k, $kk = null)
+    {
+        return TranslationOutput::isSglCategory($k)
+                || TranslationOutput::isSglComment($k)
+            // just check if we need to show current row
+            ? !$untranslated
+            // always show if not in "untranslated only" mode
+            // or when no target translation
+            : !$untranslated || !TranslationOutput::getArrayValue($aTargetLang, $k, $kk);
+    }
+
+    function showTranslationGroup($untranslated, $aTargetLang, $k)
+    {
+        $showGroup = true;
+        foreach ($aTargetLang[$k] as $kk => $tmp) {
+            $showGroup = $showGroup
+                && TranslationOutput::showTranslationRow($untranslated, $aTargetLang, $k, $kk);
+        }
+        return !$untranslated || $showGroup;
     }
 
     function renderEditField($k, $aTargetLang)

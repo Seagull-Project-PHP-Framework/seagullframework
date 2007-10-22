@@ -110,9 +110,10 @@ class TranslationMgr extends SGL_Manager
 
         // after append/update
         $input->aTranslation = $req->get('translation');
+        $input->untranslated = $req->get('untranslated');
 
-        //  submit action
-        $input->submitted = $req->get('submitted');
+        // submit action
+        $input->submitted    = $req->get('submitted');
 
         if ($input->submitted) {
             if ($input->action == 'update') {
@@ -197,7 +198,7 @@ class TranslationMgr extends SGL_Manager
             }
         }
 
-        //  if errors have occured
+        // if errors have occured
         if (!empty($aErrors)) {
             SGL::raiseMsg('Please fill in the indicated fields');
             $input->error = $aErrors;

@@ -3,7 +3,9 @@
         <h2>{translate(pageTitle)}</h2>
         <div class="message">{msgGet()}</div>
     </div>
-    <form id="translations" name="translations" method="post" action="" flexy:ignore>
+
+    <form id="translations" name="translations" method="post" action=""
+          flexy:ignore>
         <h3>{translate(#Manage Translations#)}</h3>
         <fieldset class="hide">
             <input type="hidden" name="action" value="edit" />
@@ -24,26 +26,11 @@
                 <div class="error" flexy:if="error[file]">
                     {error[file]}
                 </div>
-                <!--
-                <input type="radio" name="action" value="verify"
-                       flexy:raw="{this.plugin(#actionToRadioState#,#verify#)}" />
-                {translate(#validate#)}
-                -->
-
-                <!--
-                <input type="radio" name="action" value="edit"
-                       flexy:raw="{this.plugin(#actionToRadioState#,#edit#)}" checked="checked" />
-                {translate(#edit#)}
-                -->
-
-                <!--
-                <input type="radio" name="action" value="checkAllModules" />
-                {translate(#check all modules#)}
-                -->
                 <input class="sgl-button" type="submit" name="submitted"
                        value="{translate(#edit#)}" />
             </p>
         </fieldset>
     </form>
+
     <div class="spacer"></div>
 </div>
