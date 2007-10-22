@@ -111,6 +111,7 @@ class TranslationMgr extends SGL_Manager
         // after append/update
         $input->aTranslation = $req->get('translation');
         $input->untranslated = $req->get('untranslated');
+        $input->showWords    = $req->get('showWords');
 
         // submit action
         $input->submitted    = $req->get('submitted');

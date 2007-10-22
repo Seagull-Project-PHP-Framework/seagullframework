@@ -4,6 +4,13 @@
         <div class="message">{msgGet()}</div>
     </div>
 
+    <p flexy:if="!showWords">
+        <a href="{makeUrl(action,#translation#,#translation#,##,#showWords|1#)}">{tr(#Show words count#)}</a>
+    </p>
+    <p flexy:if="showWords">
+        <a href="{makeUrl(action,#translation#,#translation#)}">{tr(#Hide words count#)}</a>
+    </p>
+
     <table class="full">
     <thead>
         <tr>
@@ -18,7 +25,7 @@
         <tr class="{switchRowClass(##,#backHighlight#):h}"
             flexy:foreach="aLangs,langKey,langName">
             <td class="left">{langName}</td>
-            {this.plugin(#showLanguageStatus#,aModules,langKey):h}
+            {this.plugin(#showLanguageStatus#,aModules,langKey,showWords):h}
         </tr>
     </tbody>
     </table>

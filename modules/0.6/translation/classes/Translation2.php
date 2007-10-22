@@ -763,7 +763,7 @@ class SGL_Translation2
         return $ret;
     }
 
-    function getTranslationStorageSize($moduleName, $langId)
+    function getTranslationStorageSize($moduleName, $langId, $getWordsCount = false)
     {
         $errorsBefore = SGL_Error::count();
 
@@ -784,7 +784,23 @@ class SGL_Translation2
             SGL_Error::pop();
         }
 
-        return count($aTrans);
+        // get number for words
+        if ($getWordsCount) {
+            $words = 0;
+            if (!empty($aTrans)) {
+                $text   = trim(implode(' ', $aTrans)); // whole text
+                $aWords = explode(' ', $text);         // words
+                $words  = count($aWords);
+            }
+            $ret = array(
+                'strings' => count($aTrans),
+                'words'   => $words
+            );
+        } else {
+            $ret = count($aTrans);
+        }
+
+        return $ret;
     }
 }
 ?>

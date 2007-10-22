@@ -211,21 +211,33 @@ class TranslationOutput
         return $html;
     }
 
-    function showLanguageStatus($aModules, $language)
+    function showLanguageStatus($aModules, $language, $getWordsCount = true)
     {
-        $totalSizeMaster = 0;
-        $totalSizeSlave  = 0;
-        $fallLang        = SGL_Translation2::getFallbackLangID();
-        $fallLang        = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
+        $totalSizeMaster     = 0;
+        $totalSizeSlave      = 0;
+        $totalSizeSlaveWords = '';
+        $fallLang            = SGL_Translation2::getFallbackLangID();
+        $fallLang            = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
 
         $ret = '';
         foreach ($aModules as $moduleName => $foo) {
 
             // get sizes
             $sizeSlave = SGL_Translation2::getTranslationStorageSize(
-                $moduleName, $language);
+                $moduleName, $language, $getWordsCount);
             $sizeMaster = SGL_Translation2::getTranslationStorageSize(
-                $moduleName, $fallLang);
+                $moduleName, $fallLang, $getWordsCount);
+
+            $sizeSlaveWords = '';
+            if (is_array($sizeSlave)) {
+                $sizeSlaveWords = $sizeSlave['words'];
+                $sizeSlave      = $sizeSlave['strings'];
+                $sizeMaster     = $sizeMaster['strings'];
+            }
+            if (is_numeric($sizeSlaveWords)) {
+                $totalSizeSlaveWords += $sizeSlaveWords;
+                $sizeSlaveWords = ' [' . $sizeSlaveWords . ']';
+            }
 
             // completed ration
             $ratio = $sizeMaster
@@ -236,15 +248,21 @@ class TranslationOutput
             $totalSizeSlave  += $sizeSlave;
             $totalSizeMaster += $sizeMaster;
 
-            $ret .= '<td class="left">' . $ratio . '%</td>';
+            $ret .= '<td class="left">' . $ratio . '%' . $sizeSlaveWords . '</td>';
         }
+
         // overall ratio
         $totalRatio = $totalSizeMaster
             ? round($totalSizeSlave / $totalSizeMaster, 2) * 100
             : $totalSizeMaster;
 
+        // overall words
+        $totalWords = $totalSizeSlaveWords
+            ? ' [' . $totalSizeSlaveWords . ']'
+            : $totalSizeSlaveWords;
+
         // total
-        $ret .= '<td class="left"><strong>' . $totalRatio . '%</strong></td>';
+        $ret .= '<td class="left"><strong>' . $totalRatio . '%' . $totalWords . '</strong></td>';
 
         return $ret;
     }
