@@ -48,6 +48,19 @@
  */
 class TranslationOutput
 {
+    /**
+     * Get array's value. Supports max 2dim arrays for now.
+     *
+     * @todo should be generic and moved to SGL_Output
+     *
+     * @access public
+     *
+     * @param array $array   target array
+     * @param mixed $value   first key
+     * @param mixed $value2  second key
+     *
+     * @return string
+     */
     function getArrayValue($array, $value, $value2 = null)
     {
         return isset($value2)
@@ -55,15 +68,108 @@ class TranslationOutput
             : $array[$value];
     }
 
+    /**
+     * Quote translation key. Need this to keep xHTML code consistent
+     * in case keys have preserved xHTML characters.
+     *
+     * @access public
+     *
+     * @param string $k
+     *
+     * @return string
+     */
     function getTransKey($k)
     {
         return htmlspecialchars($k, ENT_QUOTES);
     }
 
+    /**
+     * Quote translation value for specified array.
+     *
+     * @todo should use generic function to get array value by certain keys.
+     *
+     * @param array $array
+     * @param mixed $value
+     * @param mixed $value2
+     *
+     * @return string
+     */
     function getArrayValueQuoted($array, $value, $value2 = null)
     {
         $ret = TranslationOutput::getArrayValue($array, $value, $value2);
         return TranslationOutput::getTransKey($ret);
+    }
+
+    /**
+     * Detect if current keyword is category's keyword.
+     *
+     * @access public
+     *
+     * @param mixed $k
+     *
+     * @return boolean
+     */
+    function isSglCategory($k)
+    {
+        return strpos($k, '__SGL_CATEGORY_') !== false;
+    }
+
+    /**
+     * Detect if current keyword is comment's keyword.
+     *
+     * @access public
+     *
+     * @param mixed $k
+     *
+     * @return boolean
+     */
+    function isSglComment($k)
+    {
+        return strpos($k, '__SGL_COMMENT_') !== false;
+    }
+
+    /**
+     * Detect if current row should be shown.
+     *
+     * @access public
+     *
+     * @param boolean $untranslated  if in "untranslated only" mode
+     * @param array $aTargetLang     target translation
+     * @param mixed $k               translation key
+     * @param mixed $kk              translation subkey if any
+     *
+     * @return boolean
+     */
+    function showTranslationRow($untranslated, $aTargetLang, $k, $kk = null)
+    {
+        return TranslationOutput::isSglCategory($k)
+                || TranslationOutput::isSglComment($k)
+            // just check if we need to show current row
+            ? !$untranslated
+            // always show if not in "untranslated only" mode
+            // or when no target translation
+            : !$untranslated || !TranslationOutput::getArrayValue($aTargetLang, $k, $kk);
+    }
+
+    /**
+     * Detect if current translation block (array) should be shown.
+     *
+     * @access public
+     *
+     * @param boolean $untranslated  if in "untranslated only" mode
+     * @param array $aTargetLang     target translation
+     * @param mixed $k               translation key
+     *
+     * @return boolean
+     */
+    function showTranslationGroup($untranslated, $aTargetLang, $k)
+    {
+        $showGroup = true;
+        foreach ($aTargetLang[$k] as $kk => $tmp) {
+            $showGroup = $showGroup
+                && TranslationOutput::showTranslationRow($untranslated, $aTargetLang, $k, $kk);
+        }
+        return !$untranslated || $showGroup;
     }
 
     function lastModifiedStatus($moduleName, $langName)
@@ -88,37 +194,6 @@ class TranslationOutput
                 'vprintf', $aTrans);
         }
         return $ret;
-    }
-
-    function isSglCategory($k)
-    {
-        return strpos($k, '__SGL_CATEGORY_') !== false;
-    }
-
-    function isSglComment($k)
-    {
-        return strpos($k, '__SGL_COMMENT_') !== false;
-    }
-
-    function showTranslationRow($untranslated, $aTargetLang, $k, $kk = null)
-    {
-        return TranslationOutput::isSglCategory($k)
-                || TranslationOutput::isSglComment($k)
-            // just check if we need to show current row
-            ? !$untranslated
-            // always show if not in "untranslated only" mode
-            // or when no target translation
-            : !$untranslated || !TranslationOutput::getArrayValue($aTargetLang, $k, $kk);
-    }
-
-    function showTranslationGroup($untranslated, $aTargetLang, $k)
-    {
-        $showGroup = true;
-        foreach ($aTargetLang[$k] as $kk => $tmp) {
-            $showGroup = $showGroup
-                && TranslationOutput::showTranslationRow($untranslated, $aTargetLang, $k, $kk);
-        }
-        return !$untranslated || $showGroup;
     }
 
     function renderEditField($k, $aTargetLang)
