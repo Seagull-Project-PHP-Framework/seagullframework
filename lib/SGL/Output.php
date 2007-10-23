@@ -769,7 +769,30 @@ class SGL_Output
      */
     function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(), $params = '', $idx = 0)
     {
-        return SGL_Url::makeLink($action, $mgr, $mod, $aList, $params, $idx, $this);
+        if (SGL_Config::get('site.inputUrlHandlers') != 'Horde_Routes') {
+            $ret = SGL_Url::makeLink($action, $mgr, $mod, $aList, $params, $idx, $this);
+        } else {
+            $aArgs = func_get_args();
+            // new style call
+            if (count($aArgs) == 1) {
+                $aVars = explode('||', $aArgs[0]);
+                $aArgs = array();
+                foreach ($aVars as $varString) {
+                    list($k, $v) = explode('|', $varString);
+                    $aArgs[$k] = $v;
+                }
+                if (isset($aArgs['module'])) {
+                    $aArgs['moduleName'] = $aArgs['module'];
+                    unset($aArgs['module']);
+                }
+                if (isset($aArgs['manager'])) {
+                    $aArgs['controller'] = $aArgs['manager'];
+                    unset($aArgs['manager']);
+                }
+            }
+            $ret = SGL_Registry::singleton()->getCurrentUrl()->makeLink($aArgs);
+        }
+        return $ret;
     }
 
     function getCurrentUrl()

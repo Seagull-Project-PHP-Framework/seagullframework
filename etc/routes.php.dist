@@ -17,9 +17,11 @@
 $aRoutes = array(
 
     // 1. index.php/profile -> index.php/user/account/
+    //    in template: <a href="{makeUrl(#module|user||manager|account#)}">admin_edit</a>
 //    array('/account', array('moduleName' => 'user', 'controller' => 'account')),
 
     // 2. index.php/admin_edit -> index.php/user/action/edit/frmUserID/1/
+    //    in template: <a href="{makeUrl(#module|user||action|edit||frmUserID|1#)}">admin_edit</a>
 //    array('/admin_edit', array('moduleName' => 'user', 'action' => 'edit', 'frmUserID' => 1)),
 
 );

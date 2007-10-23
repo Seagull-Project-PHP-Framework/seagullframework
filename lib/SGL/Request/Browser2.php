@@ -6,6 +6,8 @@ require_once 'Horde/Routes/Route.php';
 require_once 'Horde/Routes/Util.php';
 require_once 'Horde/Routes/Config.php';
 
+require_once SGL_CORE_DIR . '/Url2.php';
+
 /**
  * Browser2 request type, which uses Horder_Routes package
  * to resolve query data, instead SGL_Url heavy parsing used by Browser1.
@@ -99,11 +101,16 @@ class SGL_Request_Browser2 extends SGL_Request
             unset($aQueryData['params']);
         }
 
-        //  assign to registry
-        $input = &SGL_Registry::singleton();
-        $input->setCurrentUrl($m);
+        // SGL_URL2
+        Horde_Routes_Config::getInstance()->util = new Horde_Routes_Util();
+        $url = new SGL_URL2();
+        $url->setRoutes(Horde_Routes_Config::getInstance());
 
-        //  merge REQUEST AND FILES superglobal arrays
+        // assign to registry
+        $input = SGL_Registry::singleton();
+        $input->setCurrentUrl($url);
+
+        // merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
         $this->type = SGL_REQUEST_BROWSER;
 
