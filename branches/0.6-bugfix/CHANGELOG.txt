@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+23-10-07    Fixed bug where it was not possible for admin to receive emails for errors [3471]
 16-10-07    Fixed bug where TinyFCK connector was broken [3447]
 15-10-07    Fixed rebuild sequences when database session storage is used (mrhov)
 19-09-07    Fixed bug where enabling caching killed Ajax requests #1530
