@@ -775,19 +775,24 @@ class SGL_Output
             $aArgs = func_get_args();
             // new style call
             if (count($aArgs) == 1) {
-                $aVars = explode('||', $aArgs[0]);
-                $aArgs = array();
-                foreach ($aVars as $varString) {
-                    list($k, $v) = explode('|', $varString);
-                    $aArgs[$k] = $v;
-                }
-                if (isset($aArgs['module'])) {
-                    $aArgs['moduleName'] = $aArgs['module'];
-                    unset($aArgs['module']);
-                }
-                if (isset($aArgs['manager'])) {
-                    $aArgs['controller'] = $aArgs['manager'];
-                    unset($aArgs['manager']);
+                if (strpos($aArgs[0], '|') !== false) {
+                    $aVars = explode('||', $aArgs[0]);
+                    $aArgs = array();
+                    foreach ($aVars as $varString) {
+                        list($k, $v) = explode('|', $varString);
+                        $aArgs[$k] = $v;
+                    }
+                    if (isset($aArgs['module'])) {
+                        $aArgs['moduleName'] = $aArgs['module'];
+                        unset($aArgs['module']);
+                    }
+                    if (isset($aArgs['manager'])) {
+                        $aArgs['controller'] = $aArgs['manager'];
+                        unset($aArgs['manager']);
+                    }
+                // named route
+                } else {
+                    $aArgs = $aArgs[0];
                 }
             }
             $ret = SGL_Registry::singleton()->getCurrentUrl()->makeLink($aArgs);
