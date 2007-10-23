@@ -295,24 +295,21 @@ class ArrayDriver
      */
     function makeLinkFromNode($aNode)
     {
-        $sep = '/';
-        $urlManager = $aNode['manager'];
-        $uriAction = !empty($aNode['actionMapping'])
-                && $aNode['actionMapping'] != 'none'
-            ? 'action' . $sep . $aNode['actionMapping'] . $sep
-            : '';
-        $uriParams = !empty($aNode['add_params'])
-            ? $aNode['add_params']
-            : '';
-        $uriFc = SGL_Config::get('site.frontScriptName');
-        // create url
-        $ret = SGL_BASE_URL
-            . $sep . $uriFc . $sep . $aNode['module']
-            . $sep . $urlManager . $sep . $uriAction . $uriParams;
-        if ($ret[strlen($ret)-1] != $sep) {
-            $ret .= $sep;
+        $action = !empty($aNode['actionMapping']) ? $aNode['actionMapping'] : '';
+        $params = '';
+        if (!empty($aNode['add_params'])) {
+            $aVars = explode('/', $aNode['add_params']);
+            for ($i = 0, $cnt = count($aVars); $i < $cnt; $i += 2) {
+                if (isset($aVars[$i + 1])) {
+                    if (!empty($params)) {
+                        $params .= '||';
+                    }
+                    $params .= $aVars[$i] . '|' . $aVars[$i + 1];
+                }
+            }
         }
-        return $ret;
+        return SGL_Output::makeUrl($action,
+            $aNode['manager'], $aNode['module'], array(), $params);
     }
 
     /**
