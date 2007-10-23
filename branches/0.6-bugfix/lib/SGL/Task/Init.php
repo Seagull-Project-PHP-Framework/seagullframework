@@ -336,6 +336,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
     function run($conf)
     {
+        
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
             $c = &SGL_Config::singleton();
@@ -345,6 +346,21 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             }
         // On re-install or INSTALL_COMPLETE
         } elseif (count($conf)) {
+            //  include Log.php if logging enabled
+            if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
+                require_once 'Log.php';
+    
+            } else {
+                //  define log levels to avoid notices, since Log.php not included
+                define('PEAR_LOG_EMERG',    0);     /** System is unusable */
+                define('PEAR_LOG_ALERT',    1);     /** Immediately action */
+                define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
+                define('PEAR_LOG_ERR',      3);     /** Error conditions */
+                define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
+                define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
+                define('PEAR_LOG_INFO',     6);     /** Informational */
+                define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+            }
             //  set constant to represent profiling mode so it can be used in Controller
             define('SGL_PROFILING_ENABLED', ($conf['debug']['profiling']) ? true : false);
             define('SGL_SEAGULL_VERSION', $conf['tuples']['version']);
@@ -379,22 +395,6 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('SGL_UPLOAD_DIR', SGL_PATH . $conf['path']['uploadDirOverride']);
         } else {
             define('SGL_UPLOAD_DIR', SGL_VAR_DIR . '/uploads');
-        }
-
-        //  include Log.php if logging enabled
-        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
-            require_once 'Log.php';
-
-        } else {
-            //  define log levels to avoid notices, since Log.php not included
-            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
-            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
-            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
-            define('PEAR_LOG_ERR',      3);     /** Error conditions */
-            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
-            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
-            define('PEAR_LOG_INFO',     6);     /** Informational */
-            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
         }
     }
 }
