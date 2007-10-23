@@ -1,22 +1,27 @@
 <?php
-        $m = new Horde_Routes_Mapper();
-        $m->connect(':moduleName/:managerName/*',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $m->connect(':moduleName/:managerName',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $m->connect(':moduleName',
-                array(  'moduleName' => SGL_Config::get('site.defaultModule'),
-                        'managerName'=> SGL_Config::get('site.defaultManager')));
-        $qs = isset($_SERVER['PATH_INFO'])
-            ? $_SERVER['PATH_INFO']
-            : '/';
-        $aQueryData = $m->match($qs);
-#tmp hacks
-        unset($aQueryData['controller']);
-        if (isset($aQueryData['action']) && $aQueryData['action'] == 'index') {
-            unset($aQueryData['action']);
-        }
-#end hacks
+
+/**
+ * Example routes. Uncomment to see it in action.
+ *
+ * Every route specification is an array consisting of max three elements.
+ *
+ * Possible usage.
+ *   1. First element (@string) - route (alias) to connect
+ *   2. Second element (@array)
+ *      a) moduleName index - name of module to map
+ *      b) contoller index  - name of manager to map (NB! don't use managerName)
+ *      c) k/v pairs        - optional variable name and it's value pairs
+ *
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+$aRoutes = array(
+
+    // 1. index.php/profile -> index.php/user/account/
+//    array('/account', array('moduleName' => 'user', 'controller' => 'account')),
+
+    // 2. index.php/admin_edit -> index.php/user/action/edit/frmUserID/1/
+//    array('/admin_edit', array('moduleName' => 'user', 'action' => 'edit', 'frmUserID' => 1)),
+
+);
+
 ?>
