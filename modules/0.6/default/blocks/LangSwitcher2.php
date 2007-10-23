@@ -74,7 +74,6 @@ class Default_Block_LangSwitcher2
 
         $input = &SGL_Registry::singleton();
         $conf  = $input->getConfig();
-        $req   = $input->getRequest();
 
         $aLangs          = SGL_Util::getLangsDescriptionMap();
         $aLangsDef       = $GLOBALS['_SGL']['LANGUAGE'];
@@ -95,10 +94,18 @@ class Default_Block_LangSwitcher2
 
             // the best way to build lang switching url found so far taking into
             // account UrlParser strategy, cleanUrls, session info etc
-//$url->aQueryData['lang'] = $langKey;
-            $req->set('lang', $langKey);
-            $aQueryData = $req->getAll();
-//$aQueryData = $url->getQueryData(true);
+            if (SGL_Config::get('site.inputUrlHandlers') != 'Horde_Routes') {
+                $url = $input->getCurrentUrl();
+                $url->aQueryData['lang'] = $langKey;
+                $aQueryData = $url->getQueryData(true);
+            } else {
+                $req = $input->getRequest();
+                $req->set('lang', $langKey);
+                $aQueryData = $req->getAll();
+                unset($aQueryData['moduleName']);
+                unset($aQueryData['managerName']);
+            }
+
             $action = '';
             $params = '';
             if (isset($aQueryData['action'])) {
