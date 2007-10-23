@@ -103,10 +103,8 @@ class SGL_URL2
         if (!isset($aParams['host'])) {
             $aParams['host'] = $this->getBaseUrl();
         }
+        $this->_routes->mapper->appendSlash = true;
         $url = $this->_routes->util->urlFor($aParams);
-        if ($url[strlen($url) -1] != '/') {
-            $url .= '/';
-        }
         return $url;
     }
 
