@@ -103,6 +103,16 @@ class SGL_URL2
         if (!isset($aParams['host'])) {
             $aParams['host'] = $this->getBaseUrl();
         }
+
+        // use current module if nothing specified
+        if (!isset($aParams['moduleName'])) {
+            $aParams['moduleName'] = $this->aQueryData['moduleName'];
+        // user current manager if nothing specified
+        } elseif (!isset($aParams['controller'])
+                && $this->aQueryData['moduleName'] != $this->aQueryData['managerName']) {
+            $aParams['controller'] = $this->aQueryData['managerName'];
+        }
+
         $this->_routes->mapper->appendSlash = true;
         $url = $this->_routes->util->urlFor($aParams);
         return $url;
