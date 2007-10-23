@@ -105,6 +105,7 @@ class SGL_Request_Browser2 extends SGL_Request
         Horde_Routes_Config::getInstance()->util = new Horde_Routes_Util();
         $url = new SGL_URL2();
         $url->setRoutes(Horde_Routes_Config::getInstance());
+        $url->aQueryData = $aQueryData;
 
         // assign to registry
         $input = SGL_Registry::singleton();
