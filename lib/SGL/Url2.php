@@ -41,7 +41,7 @@ class SGL_URL2
         $aNewParams   = array();
         $aQueryParams = array();
         if (!empty($aParams[0])) {
-            $aVars[] = 'action/' . $aParams[0];
+            $aQueryParams[] = 'action/' . $aParams[0];
         }
         if (!empty($aParams[1])) {
             $aNewParams['controller'] = $aParams[1];
