@@ -89,33 +89,36 @@ class SGL_URL2
      *
      * @todo add https support.
      *
-     * @param array $aParams
+     * @param array mixed
      *
      * @return string
      */
     public function makeLink($aParams = array())
     {
-        // resolve params in old style
-        if (isset($aParams[0])) {
-            $aParams = $this->_resolveOldStyleParams($aParams);
+        if (is_array($aParams)) {
+            // resolve params in old style
+            if (isset($aParams[0])) {
+                $aParams = $this->_resolveOldStyleParams($aParams);
+            }
+            // set host without protocol
+            if (!isset($aParams['host'])) {
+                $aParams['host'] = $this->getBaseUrl(true);
+            }
+            // use current module if nothing specified
+            if (!isset($aParams['moduleName'])) {
+                $aParams['moduleName'] = $this->aQueryData['moduleName'];
+            // use current manager if nothing specified
+            } elseif (!isset($aParams['controller'])
+                    && $this->aQueryData['moduleName'] != $this->aQueryData['managerName']) {
+                $aParams['controller'] = $this->aQueryData['managerName'];
+            }
+        // named route
+        } else {
+            $namedRoute = true;
         }
-        // set host without protocol
-        if (!isset($aParams['host'])) {
-            $aParams['host'] = $this->getBaseUrl();
-        }
-
-        // use current module if nothing specified
-        if (!isset($aParams['moduleName'])) {
-            $aParams['moduleName'] = $this->aQueryData['moduleName'];
-        // user current manager if nothing specified
-        } elseif (!isset($aParams['controller'])
-                && $this->aQueryData['moduleName'] != $this->aQueryData['managerName']) {
-            $aParams['controller'] = $this->aQueryData['managerName'];
-        }
-
         $this->_routes->mapper->appendSlash = true;
         $url = $this->_routes->util->urlFor($aParams);
-        return $url;
+        return empty($namedRoute) ? $url : $this->getBaseUrl() . $url;
     }
 
     /**
@@ -123,9 +126,13 @@ class SGL_URL2
      *
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUrl($skipProtocol = false)
     {
-        $baseUrl = substr(SGL_BASE_URL, strpos(SGL_BASE_URL, '://') + 3);
+        if ($skipProtocol) {
+            $baseUrl = substr(SGL_BASE_URL, strpos(SGL_BASE_URL, '://') + 3);
+        } else {
+            $baseUrl = SGL_BASE_URL;
+        }
         $fcName  = SGL_Config::get('site.frontScriptName');
         if (!empty($fcName)) {
             $baseUrl .= '/' . $fcName;
