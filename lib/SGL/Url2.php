@@ -30,6 +30,11 @@ class SGL_URL2
      * @param array $aParams
      *
      * @return array
+     *   Array (
+     *     moduleName => name of module
+     *     controller => name of manager
+     *     params     => action/actionName/k1/v1/k2/v2
+     *   )
      */
     private function _resolveOldStyleParams($aParams)
     {
