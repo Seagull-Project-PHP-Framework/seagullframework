@@ -415,6 +415,7 @@ $defaultWords['validate'] = 'validate';
 $defaultWords['Process'] = 'Process';
 $defaultWords['Manage Caches'] = 'Manage Caches';
 $defaultWords['Templates'] = 'Templates';
+$defaultWords['functions'] = 'Functions';
 $defaultWords['navigation'] = 'navigation';
 $defaultWords['blocks'] = 'blocks';
 $defaultWords['categories'] = 'categories';
