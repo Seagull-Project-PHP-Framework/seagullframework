@@ -60,7 +60,7 @@ class SGL_Cache
      *          'lifeTime'                      => 3,
      *          'debugCacheLiteFunction'        => true,
      *      ));
-     *   Cache_Lite_Function instance.
+     *   Cache_Lite_Output instance.
      *   3. $cache = &SGL_Cache::singleton('output');
      *   Force Cache_Lite_Function instance.
      *   4. $cache = &SGL_Cache::singleton('function', array(), true);
@@ -137,10 +137,10 @@ class SGL_Cache
      *
      * @author Andy Crain <apcrain@fuse.net>
      */
-     function clear($group = false)
+     function clear($group = false, $mode = 'ingroup')
      {
         $cache = &SGL_Cache::singleton();
-        return $cache->clean($group);
+        return $cache->clean($group, $mode);
      }
 }
 ?>
