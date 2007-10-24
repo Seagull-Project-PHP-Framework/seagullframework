@@ -38,6 +38,8 @@
 // |         Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
+require_once 'Cache/Lite.php';
+
 /**
  * A wrapper for PEAR::Cache_Lite.
  *
@@ -117,8 +119,7 @@ class SGL_Cache
                     $className = 'Cache_Lite_Function';
                     break;
                 default:
-                    require_once 'Cache/Lite.php';
-                    $className = 'Cache_Lite';
+                    $className = 'SGL_Cache_Lite';
             }
             $aInstances[$type] = new $className($aOptions);
         }
@@ -137,10 +138,100 @@ class SGL_Cache
      *
      * @author Andy Crain <apcrain@fuse.net>
      */
-     function clear($group = false, $mode = 'ingroup')
+     function clear($group = false, $mode = 'ingroup', $options = array())
      {
         $cache = &SGL_Cache::singleton();
-        return $cache->clean($group, $mode);
+        return $cache->clean($group, $mode, $options);
      }
+}
+
+
+/**
+ * Overridden to allow object callbacks.
+ *
+ */
+class SGL_Cache_Lite extends Cache_Lite
+{
+    function clean($group = false, $mode = 'ingroup', $options = array())
+    {
+        return $this->_cleanDir($this->_cacheDir, $group, $mode, $options);
+    }
+
+    function _cleanDir($dir, $group = false, $mode = 'ingroup', $options = array())
+    {
+        if ($this->_fileNameProtection) {
+            $motif = ($group) ? 'cache_'.md5($group).'_' : 'cache_';
+        } else {
+            $motif = ($group) ? 'cache_'.$group.'_' : 'cache_';
+        }
+        if ($this->_memoryCaching) {
+            while (list($key, ) = each($this->_memoryCachingArray)) {
+                if (strpos($key, $motif, 0)) {
+                    unset($this->_memoryCachingArray[$key]);
+                    $this->_memoryCachingCounter = $this->_memoryCachingCounter - 1;
+                }
+            }
+            if ($this->_onlyMemoryCaching) {
+                return true;
+            }
+        }
+        if (!($dh = opendir($dir))) {
+            return $this->raiseError('Cache_Lite : Unable to open cache directory !', -4);
+        }
+        $objectCallback = false;
+        if (!is_string($mode) && is_callable($mode)) {
+            $objectCallback = true;
+        }
+        $result = true;
+        while ($file = readdir($dh)) {
+            if (($file != '.') && ($file != '..')) {
+                if (substr($file, 0, 6)=='cache_') {
+                    $file2 = $dir . $file;
+                    if (is_file($file2)) {
+                        $match = ($objectCallback)
+                            ? 'callback_'
+                            : substr($mode, 0, 9);
+                        switch ($match) {
+                            case 'old':
+                                // files older than lifeTime get deleted from cache
+                                if (!is_null($this->_lifeTime)) {
+                                    if ((mktime() - @filemtime($file2)) > $this->_lifeTime) {
+                                        $result = ($result and ($this->_unlink($file2)));
+                                    }
+                                }
+                                break;
+                            case 'notingrou':
+                                if (!strpos($file2, $motif, 0)) {
+                                    $result = ($result and ($this->_unlink($file2)));
+                                }
+                                break;
+                            case 'callback_':
+                                if ($objectCallback) {
+                                    if (call_user_func_array($mode, $options)) {
+                                        $result = ($result and ($this->_unlink($file2)));
+                                    }
+                                } else {
+                                    $func = substr($mode, 9, strlen($mode) - 9);
+                                    if ($func($file2, $group)) {
+                                        $result = ($result and ($this->_unlink($file2)));
+                                    }
+                                }
+                                break;
+                            case 'ingroup':
+                            default:
+                                if (strpos($file2, $motif, 0)) {
+                                    $result = ($result and ($this->_unlink($file2)));
+                                }
+                                break;
+                        }
+                    }
+                    if ((is_dir($file2)) and ($this->_hashedDirectoryLevel>0)) {
+                        $result = ($result and ($this->_cleanDir($file2 . '/', $group, $mode)));
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 }
 ?>
