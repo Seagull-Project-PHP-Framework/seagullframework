@@ -59,20 +59,21 @@ $aSections = array(
         ),
     );
 //  dynamically add PEAR navigation if it's not a minimal install
-if (!SGL::isMinimalInstall()) {
-    $aSections[] =
-    array (
-      'title'           => 'PEAR Packages',
-      'parent_id'       => SGL_NODE_GROUP,
-      'uriType'         => 'dynamic',
-      'module'          => 'default',
-      'manager'         => 'PearMgr.php',
-      'actionMapping'   => '',
-      'add_params'      => '',
-      'is_enabled'      => 1,
-      'perms'           => SGL_ADMIN,
-        );
-}
+#disabled until fixed
+//if (!SGL::isMinimalInstall()) {
+//    $aSections[] =
+//    array (
+//      'title'           => 'PEAR Packages',
+//      'parent_id'       => SGL_NODE_GROUP,
+//      'uriType'         => 'dynamic',
+//      'module'          => 'default',
+//      'manager'         => 'PearMgr.php',
+//      'actionMapping'   => '',
+//      'add_params'      => '',
+//      'is_enabled'      => 1,
+//      'perms'           => SGL_ADMIN,
+//        );
+//}
 //  then add rest of sections
 $ok = array_push($aSections,
     array (
