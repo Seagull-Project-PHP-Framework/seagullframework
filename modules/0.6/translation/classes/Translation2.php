@@ -492,7 +492,7 @@ class SGL_Translation2
         $aMetaData = array(
             '__SGL_UPDATED_BY'    => SGL_Session::getUsername(),
             '__SGL_UPDATED_BY_ID' => SGL_Session::getUid(),
-            '__SGL_LAST_UPDATED'  => SGL_Date::getTime()
+            '__SGL_LAST_UPDATED'  => SGL_Date::getTime(true)
         );
         // we do it in this way to put meta data first in array
         foreach ($aMetaData as $k => $v) {

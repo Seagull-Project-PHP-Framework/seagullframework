@@ -272,6 +272,10 @@ function toggleTransElements() {
                 <span class="tipText">If you want to include a custom config file for constants, etc, do it here</span></label>
                 <input type="text" class="longText" name="conf[path][pathToCustomConfigFile]" id="conf[path][pathToCustomConfigFile]" value="{conf[path][pathToCustomConfigFile]}" />
             </p>
+            <p>
+                <label for="conf[path][tmpDirOverride]">{translate(#Temp directory override#)}</label>
+                <input type="text" name="conf[path][tmpDirOverride]" id="conf[path][tmpDirOverride]" value="{conf[path][tmpDirOverride]}" />
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="sessionOptions">
@@ -310,10 +314,6 @@ function toggleTransElements() {
                 </label>
                 <span class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</span>
                 {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
-            </p>
-            <p>
-                <label for="conf[session][savePath]">{translate(#Save path for session file#)}</label>
-                <input type="text" name="conf[session][savePath]" id="conf[session][savePath]" value="{conf[session][savePath]}" />
             </p>
             <p>
                 <label for="conf[session][permsRetrievalMethod]">
