@@ -173,6 +173,7 @@ class SGL_Translation
 
             $success = true;
             foreach ($aLangs as $group) {
+                $group = SGL_Translation::transformLangID($group, SGL_LANG_ID_SGL);
                 $result = SGL_Cache::clear('translation_'. $group);
                 $success = $success && $result;
             }
