@@ -2,9 +2,9 @@
 /**
  * Library to deal with cookies.
  *
- * @package    seagull
+ * @package seagull
  * @subpackage cookie
- * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 SGL.Cookie =
 {
