@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Js optimizer.
+ * Optimizer.
  *
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_JsOptimizer
+class SGL_Optimizer
 {
     /**
      * Was any js file modified since last request
@@ -26,11 +26,24 @@ class SGL_JsOptimizer
      *
      * @var string
      */
-    var $hash   = null;
+    var $hash = null;
 
-    function SGL_JsOptimizer()
+    /**
+     * Content type.
+     *
+     * @var string
+     */
+    var $type = 'javascript';
+
+    function SGL_Optimizer()
     {
         $lastMod = 0;
+
+        // get content type to optimize
+        if (isset($_GET['type'])
+                && in_array($_GET['type'], array('css', 'javascript'))) {
+            $this->type = $_GET['type'];
+        }
 
         // get files and it's mod time
         if (!empty($_GET['files'])) {
@@ -64,13 +77,17 @@ class SGL_JsOptimizer
         } else {
             header('Pragma: cache');
             header('Cache-Control: public');
-            header('Content-Type: text/javascript');
+            header('Content-Type: text/' . $this->type);
             header('Etag: ' . $this->hash);
             //header('Last-Modified: ' . $this->modifiedDate);
             header('Expires: Thu, 15 Apr 2010 20:00:00 GMT');
 
-            $content  = $this->getFilesContent();
-            //$content  = $this->optimizeJavascript($content);
+            if ($this->type == 'css') {
+                $content = $this->getCssContent();
+            } else {
+                $content = $this->getFilesContent();
+                $content = $this->optimizeJavascript($content);
+            }
             $encoding = $this->detectAvailableEncoding();
 
             if ($encoding) {
@@ -160,6 +177,17 @@ class SGL_JsOptimizer
         return $script;
     }
 
+    function getCssContent()
+    {
+        include dirname(__FILE__) . '/themes/csshelpers.php';
+        ob_start();
+        foreach ($this->aFiles as $fileName) {
+            include $fileName;
+        }
+        $ret = ob_get_clean();
+        return $ret;
+    }
+
     // copied from PEAR HTTP.php Date function (comments stripped)
     // Author: Stig Bakken <ssb@fast.no>
     function timestampToDate($time)
@@ -172,7 +200,7 @@ class SGL_JsOptimizer
     }
 }
 
-$optimizer = new SGL_JsOptimizer();
+$optimizer = new SGL_Optimizer();
 $optimizer->send();
 
 ?>
