@@ -140,7 +140,7 @@ class UserImportMgr extends UserMgr
             $user->role_id = $input->role;
             $user->organisation_id = $input->organisation;
             $user->username = strtolower($user->first_name);
-            $user->passwd = md5('password');
+            $user->passwd = 'password';
 
             //  assign to input object
             $input->user = $user;
