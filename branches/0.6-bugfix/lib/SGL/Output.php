@@ -1080,6 +1080,8 @@ class SGL_Output
         $masterLayout = $req->get('masterLayout')
             ? $req->get('masterLayout')
             : $masterLayout;
+        // make sure we pass layout to output
+        $this->masterLayout = $masterLayout;
 
         // default files loaded
         $aDefaultThemeFiles = array( // we need to be able to customize it
