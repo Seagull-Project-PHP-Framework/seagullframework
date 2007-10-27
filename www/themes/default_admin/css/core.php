@@ -74,7 +74,6 @@ a.narrow, input.narrow {
 /*
 ======================Global layaout==========================*/
 #outer-wrapper {
-    min-width: 740px;
     margin: 0 auto;
     text-align: left;
 <?php if (isBrowserFamily('MSIE7', '<')) { ?>
