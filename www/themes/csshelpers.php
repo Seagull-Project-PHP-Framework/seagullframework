@@ -1,18 +1,53 @@
 <?php
 
+// base url
+$baseUrl = resolveBaseUrl(resolveTheme());
+
+function resolveTheme()
+{
+    return isset($_GET['aParams']['theme']) ? $_GET['aParams']['theme'] : 'default';
+}
+
+function resolveBaseUrl($theme)
+{
+    // get base path
+    $path       = dirname($_SERVER['PHP_SELF']);
+    $aPath      = explode('/', $path);
+    $aPath      = array_filter($aPath);
+    $webRootUrl = implode('/', $aPath);
+    $baseUrl    = $webRootUrl . '/themes/' . $theme;
+    if ($baseUrl[0] != '/') {
+        $baseUrl = '/' . $baseUrl;
+    }
+
+    $proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on'
+        ? 'https'
+        : 'http';
+    return "$proto://{$_SERVER['HTTP_HOST']}{$baseUrl}";
+}
+
+function getLangDirection()
+{
+    return isset($_GET['aParams']['langDir'])
+            && $_GET['aParams']['langDir'] == 'rtl'
+        ? 'rtl'
+        : 'ltr';
+}
+
 /**
  * Compares the specified version of browser with current one.
  *
  * Examples:
- *   browser('MSIE7', 'ge') - all 7.x family and younger,
- *   browser('Gecko') - gecko family,
- *   browser('MSIE') - MSIE family,
- *   browser('MSIE6', '<') - MSIE 5.x and older
- *   browser('MSIE6.0', 'eq') - exactly MSIE 6.0
- *   browser('MSIE5.5', 'ge') && browser('MSIE6', '<') - MSIE 5.5
+ *   isBrowserFamily('MSIE7', 'ge') - all 7.x family and younger,
+ *   isBrowserFamily('Gecko') - gecko family,
+ *   isBrowserFamily('MSIE') - MSIE family,
+ *   isBrowserFamily('MSIE6', '<') - MSIE 5.x and older
+ *   isBrowserFamily('MSIE6.0', 'eq') - exactly MSIE 6.0
+ *   isBrowserFamily('MSIE5.5', 'ge') && browser('MSIE6', '<') - MSIE 5.5
  *
- * @param  string  $currentVersion  version to compare e.g. 'MSIE5.5'
- * @param  string  $operator        comparison operator
+ * @param string $currentVersion  version to compare e.g. 'MSIE5.5'
+ * @param string $operator        comparison operator
+ *
  * @return boolean
  */
 function isBrowserFamily($currentVersion, $operator = null, $reload = false)
