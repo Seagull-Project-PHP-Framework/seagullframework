@@ -1,8 +1,8 @@
-var sgl = {
+var SGL = {
     isReady: false,
     ready: function(f) {
         // If the DOM is already ready
-        if (sgl.isReady) {
+        if (SGL.isReady) {
             // Execute the function immediately
             if (typeof f == 'string') {
                 eval(f);
@@ -11,26 +11,26 @@ var sgl = {
             }
         // Otherwise add the function to the wait list
         } else {
-            sgl.onReadyDomEvents.push(f);
+            SGL.onReadyDomEvents.push(f);
         }
     },
     onReadyDomEvents: [],
     onReadyDom: function() {
         // make sure that the DOM is not already loaded
-        if (!sgl.isReady) {
+        if (!SGL.isReady) {
             // Flag the DOM as ready
-            sgl.isReady = true;
+            SGL.isReady = true;
 
-            if (sgl.onReadyDomEvents) {
-                for (var i = 0, j = sgl.onReadyDomEvents.length; i < j; i++) {
-                    if (typeof sgl.onReadyDomEvents[i] == 'string') {
-                        eval(sgl.onReadyDomEvents[i]);
-                    } else if (typeof sgl.onReadyDomEvents[i] == 'function') {
-                        sgl.onReadyDomEvents[i].apply(document);
+            if (SGL.onReadyDomEvents) {
+                for (var i = 0, j = SGL.onReadyDomEvents.length; i < j; i++) {
+                    if (typeof SGL.onReadyDomEvents[i] == 'string') {
+                        eval(SGL.onReadyDomEvents[i]);
+                    } else if (typeof SGL.onReadyDomEvents[i] == 'function') {
+                        SGL.onReadyDomEvents[i].apply(document);
                     }
                 }
                 // Reset the list of functions
-				sgl.onReadyDomEvents = null;
+				SGL.onReadyDomEvents = null;
             }
         }
     }
@@ -43,7 +43,7 @@ var sgl = {
 new function() {
     /* for Mozilla/Opera9 */
     if (document.addEventListener) {
-        document.addEventListener("DOMContentLoaded", sgl.onReadyDom, false);
+        document.addEventListener("DOMContentLoaded", SGL.onReadyDom, false);
     }
 
     /* for Internet Explorer */
@@ -53,20 +53,20 @@ new function() {
         var script = document.getElementById("__ie_onload");
         script.onreadystatechange = function() {
             if (this.readyState == "complete") {
-                sgl.onReadyDom(); // call the onload handler
+                SGL.onReadyDom(); // call the onload handler
             }
         };
     /*@end @*/
 
     /* for Safari */
     if (/WebKit/i.test(navigator.userAgent)) { // sniff
-        sgl.webkitTimer = setInterval(function() {
+        SGL.webkitTimer = setInterval(function() {
             if (/loaded|complete/.test(document.readyState)) {
                 // Remove the timer
-                clearInterval(sgl.webkitTimer);
-                sgl.webkitTimer = null;
+                clearInterval(SGL.webkitTimer);
+                SGL.webkitTimer = null;
                 // call the onload handler
-                sgl.onReadyDom();
+                SGL.onReadyDom();
             }
         }, 10);
     }
@@ -77,7 +77,7 @@ new function() {
         if (oldWindowOnload) {
             oldWindowOnload();
         }
-        sgl.onReadyDom();
+        SGL.onReadyDom();
     }
 }
 /** -------------------------------------------------------------*/
