@@ -14,7 +14,7 @@ html { /* inforces screen to show scrollbar */
 }
 body {
     padding-bottom: 10px;
-    background: #bbb url(<?php echo $themeRootUrl ?>/images/bg/body.gif) repeat left top;
+    background: #bbb url(<?php echo $baseUrl ?>/images/bg/body.gif) repeat left top;
 }
 
 
@@ -33,23 +33,23 @@ div#wrapper-inner {
 div#header {
     border-bottom: 2px solid #fff;
     padding-right: 20px;
-    background: url(<?php echo $themeRootUrl ?>/images/bg/header_tr.gif) no-repeat right top;
+    background: url(<?php echo $baseUrl ?>/images/bg/header_tr.gif) no-repeat right top;
 }
     div#header div.wrap-left {
         padding-left: 20px;
-        background: url(<?php echo $themeRootUrl ?>/images/bg/header_tl.gif) no-repeat left top;
+        background: url(<?php echo $baseUrl ?>/images/bg/header_tl.gif) no-repeat left top;
     }
     div#header div.wrap-right {
         position: relative;
         height: 70px;
-        background: #99CC00 url(<?php echo $themeRootUrl ?>/images/bg/header_tm.gif) repeat-x center top;
+        background: #99CC00 url(<?php echo $baseUrl ?>/images/bg/header_tm.gif) repeat-x center top;
     }
 
     div#header h1 {
         position: absolute;
         top: 7px;
         padding-top: 20px;
-        background: url(<?php echo $themeRootUrl ?>/images/logo.gif) no-repeat left top;
+        background: url(<?php echo $baseUrl ?>/images/logo.gif) no-repeat left top;
 
         font-size: 30px;
         font-family: "Trebuchet MS";
@@ -75,7 +75,7 @@ div#header {
         width: 100px;
         min-height: 10px;
         _height: 10px; /* min-height for ie6 */
-        background: url(<?php echo $themeRootUrl ?>/images/bug.gif) no-repeat right center;
+        background: url(<?php echo $baseUrl ?>/images/bug.gif) no-repeat right center;
     }
 /* END header */
 
@@ -83,15 +83,15 @@ div#header {
 /* Footer */
 div#footer {
     padding-right: 20px;
-    background: url(<?php echo $themeRootUrl ?>/images/bg/footer_br.gif) no-repeat right bottom;
+    background: url(<?php echo $baseUrl ?>/images/bg/footer_br.gif) no-repeat right bottom;
 }
     div#footer div.wrap-left {
         padding-left: 20px;
-        background: url(<?php echo $themeRootUrl ?>/images/bg/footer_bl.gif) no-repeat left bottom;
+        background: url(<?php echo $baseUrl ?>/images/bg/footer_bl.gif) no-repeat left bottom;
     }
     div#footer div.wrap-right {
         padding: 0.8em 0 0.5em;
-        background: #99CC00 url(<?php echo $themeRootUrl ?>/images/bg/footer_bm.gif) repeat-x left bottom;
+        background: #99CC00 url(<?php echo $baseUrl ?>/images/bg/footer_bm.gif) repeat-x left bottom;
         text-align: center;
     }
     div#footer p {
@@ -105,7 +105,7 @@ div#footer {
 /* Content */
 div#content {
     background-color: #fff;
-    background-image: url(<?php echo $themeRootUrl ?>/images/bg/column_tm.gif);
+    background-image: url(<?php echo $baseUrl ?>/images/bg/column_tm.gif);
     background-repeat: repeat-x;
 }
 

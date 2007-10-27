@@ -518,10 +518,11 @@ class SGL_Output
 
     /**
      * Prints formatted error message to standard out.
+     * (For default_admin theme)
      *
      * @return mixed
      */
-    function msgGet()
+    function msgGetAdmin()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -1009,16 +1010,181 @@ class SGL_Output
         return $this->aHeaders;
     }
 
+    /**
+     * Makes optimizer link for JavaScript files.
+     *
+     * How to use:
+     *  1. in your template you need to add the following line
+     *     <script type="text/javascript" src="{makeJsOptimizerLink():h}" />
+     *  2. specify global js files in $conf['site']['globalJavascriptFiles']
+     *     separated by comma e.g. 'js/SGL.js,js/SGL/Util/String.js'
+     *  3. to add module/manager specific js files just use
+     *     $output->addJavascriptFile('path/to/custom/js/file.js')
+     *
+     * @access public
+     *
+     * @return string
+     */
     function makeJsOptimizerLink()
     {
+        // save currently loaded files
+        $aCurrentFiles = $this->aJavascriptFiles;
+        $this->aJavascriptFiles = array();
+
+        // javascript files, which always are loaded
+        $this->addJavascriptFile(
+            SGL_Config::get('site.globalJavascriptFiles')
+                ? explode(',', SGL_Config::get('site.globalJavascriptFiles'))
+                : array()
+        );
+
+        // merge default js files with custom ones
+        // default js files will be loaded first
+        $this->aJavascriptFiles = array_merge($this->aJavascriptFiles, $aCurrentFiles);
+
         // remove base url from files
+        // NB! this hack should be removed
         $aFiles = array();
         foreach ($this->aJavascriptFiles as $fileName) {
             $aFiles[] = substr($fileName, strlen(SGL_BASE_URL . '/'));
         }
 
+        // actualy we should add revision number instead
+        $rev      = SGL_Output::_getFilesModifiedTime($aFiles);
         $jsString = implode(',', $aFiles);
-        return SGL_BASE_URL . '/optimizer.php?files=' . $jsString;
+        // make optimizer link
+        //  - type: javascript
+        //  - rev: current revision number (still to be implemented)
+        //  - files: loaded js files
+        $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&rev='
+            . $rev . '&files=' . $jsString;
+        return $link;
+    }
+
+    /**
+     * Makes CSS optimizer link.
+     *
+     * @return string
+     */
+    function makeCssOptimizerLink()
+    {
+        $theme = $_SESSION['aPrefs']['theme'];
+
+        // get master layout
+        $masterLayout = !empty($this->masterLayout)
+            ? $this->masterLayout
+            : 'layout-navtop-3col.css'; // needs to be customized
+
+        // layout is specified in request for demo purposed on home page
+        $req = &SGL_Request::singleton();
+        $masterLayout = $req->get('masterLayout')
+            ? $req->get('masterLayout')
+            : $masterLayout;
+
+        // default files loaded
+        $aDefaultThemeFiles = array( // we need to be able to customize it
+            "themes/$theme/css/reset.css",
+            "themes/$theme/css/tools.css",
+            "themes/$theme/css/typo.css",
+            "themes/$theme/css/forms.css",
+            "themes/$theme/css/layout.css",
+            "themes/$theme/css/blocks.css",
+            "themes/$theme/css/common.css",
+            "themes/$theme/css/$masterLayout",
+        );
+
+        // custom loaded files
+        $aCurrentFiles = $this->aCssFiles;
+        $this->aCssFiles = array();
+
+        // add common css files
+        $this->addCssFile($aDefaultThemeFiles);
+        // add custom files
+        $this->addCssFile($aCurrentFiles);
+
+        // params passed to csshelper
+        $aParams['theme']           = $theme;
+        $aParams['langDir']         = $this->langDir;
+        $aParams['isFormSubmitted'] = !empty($this->submitted);
+
+        $params = '';
+        foreach ($aParams as $k => $v) {
+            $params .= '&aParams[' . urlencode($k) . ']=' . urlencode($v);
+        }
+
+        $rev       = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
+        $cssString = implode(',', $this->aCssFiles);
+        $link      = SGL_BASE_URL . '/optimizer.php?type=css&rev='
+            . $rev . '&files=' . $cssString . $params;
+        return $link;
+    }
+
+    /**
+     * Identifies latest mod time for specified files array.
+     * Is used to get "revision" number for optimizer link.
+     *
+     * @access private
+     *
+     * @param array $aFiles
+     *
+     * @return integer
+     */
+    function _getFilesModifiedTime($aFiles)
+    {
+        $lastMod = 0;
+        foreach ($aFiles as $fileName) {
+            if (is_file(SGL_WEB_ROOT . '/' . $fileName)) {
+                $lastMod = max($lastMod, filemtime(SGL_WEB_ROOT . '/' . $fileName));
+            }
+        }
+        return $lastMod;
+    }
+
+    /**
+     * Get message, which outputs html in default2 style.
+     *
+     * @return void
+     */
+    function msgGet()
+    {
+        // BC for admin GUI
+        if ($this->adminGuiAllowed) {
+            return SGL_Output::msgGetAdmin();
+        }
+
+        $message     = SGL_Session::get('message');
+        $messageType = SGL_Session::get('messageType');
+        $html        = '';
+
+        // get html for SGL messages
+        if (!empty($message)) {
+            SGL_Session::remove('message');
+            SGL_Session::remove('messageType');
+
+            switch ($messageType) {
+                case SGL_MESSAGE_INFO:    $class = 'info';    break;
+                case SGL_MESSAGE_WARNING: $class = 'warning'; break;
+                default:                  $class = 'error';   break;
+            }
+            $html .= "<p class=\"message-{$class}\">$message</p>";
+
+            // required to remove message that persists
+            // when register_globals = on
+            unset($GLOBALS['message']);
+            unset($GLOBALS['messageType']);
+        }
+        // get html for SGL errors
+        if (SGL_Error::count()) {
+            // get all errors from stack
+            while ($msg = SGL_Error::pop()) {
+                $msg   = SGL_Error::toString($msg);
+                $html .= "<h4>Error</h4><p class=\"pear\">$msg</p>";
+            }
+        }
+        if (empty($html)) {
+            $html = '<!-- Do not remove, MSIE fix -->';
+        }
+        echo $html; // we need to echo, do not replace to return
     }
 }
 ?>

@@ -1,17 +1,42 @@
 <?php
 
-// base url
-$baseUrl = resolveBaseUrl(resolveTheme());
+// css vars
+$baseUrl         = resolveBaseUrl(resolveTheme());
+$isFormSubmitted = resolveFormStatus();
 
+/**
+ * Get current theme name.
+ *
+ * @return string
+ */
 function resolveTheme()
 {
-    return isset($_GET['aParams']['theme']) ? $_GET['aParams']['theme'] : 'default';
+    return isset($_GET['aParams']['theme'])
+        ? $_GET['aParams']['theme']
+        : 'default';
 }
 
+/**
+ * Get current status of form submission.
+ *
+ * @return boolean
+ */
+function resolveFormStatus()
+{
+    return !empty($_GET['aParams']['isFormSubmitted']);
+}
+
+/**
+ * Get current base url.
+ *
+ * @param string $theme
+ *
+ * @return string
+ */
 function resolveBaseUrl($theme)
 {
     // get base path
-    $path       = dirname($_SERVER['PHP_SELF']);
+    $path       = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
     $aPath      = explode('/', $path);
     $aPath      = array_filter($aPath);
     $webRootUrl = implode('/', $aPath);
@@ -26,12 +51,35 @@ function resolveBaseUrl($theme)
     return "$proto://{$_SERVER['HTTP_HOST']}{$baseUrl}";
 }
 
-function getLangDirection()
+/**
+ * Get language direction. Return or output 'left' or 'right'.
+ *
+ * Usage example:
+ *   1. getLangDirection() -> prints current language direction
+ *   2. getLangDirection(true) -> prints opposit language direction
+ *   3. getLangDirection(false, true) -> returns current language direction
+ *   4. getLangDirection(true, true) -> returns opposit language direction
+ *
+ * @param unknown_type $reverse
+ * @param unknown_type $return
+ * @return unknown
+ */
+function getLangDirection($reverse = false, $return = false)
 {
-    return isset($_GET['aParams']['langDir'])
+    $ret = isset($_GET['aParams']['langDir'])
             && $_GET['aParams']['langDir'] == 'rtl'
-        ? 'rtl'
-        : 'ltr';
+        ? 'right'
+        : 'left';
+    if ($reverse) {
+        $ret = $ret == 'left'
+            ? 'right'
+            : 'left';
+    }
+    if ($return) {
+        return $ret;
+    } else {
+        echo $ret;
+    }
 }
 
 /**
