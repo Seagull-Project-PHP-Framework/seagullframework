@@ -83,7 +83,7 @@ h6 {
 /* Lists */
 ul {
 	margin: 0 0 0.7em 1em;
-    list-style: none outside url(<?php echo $themeRootUrl ?>/images/bullets/default.gif);
+    list-style: none outside url(<?php echo $baseUrl ?>/images/bullets/default.gif);
     line-height: 1.3em;
 }
     ul li {

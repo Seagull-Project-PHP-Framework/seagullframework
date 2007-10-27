@@ -42,7 +42,7 @@ input.text, select, textarea {
     border-color: #7c7c7c #c3c3c3 #ddd #c3c3c3;
     width: 170px;
     padding: 2px;
-    background: #fff url(../images/bg/form_input_m.gif) repeat-x left top;
+    background: #fff url(<?php echo $baseUrl ?>/images/bg/form_input_m.gif) repeat-x left top;
     font-size: 0.9em;
     color: #666;
 }
