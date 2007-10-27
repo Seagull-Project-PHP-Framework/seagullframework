@@ -1,3 +1,10 @@
+
+/**
+ * Main Seagull JavaScript library.
+ *
+ * @package seagull
+ * @subpackage SGL
+ */
 var SGL = {
     isReady: false,
     ready: function(f) {
