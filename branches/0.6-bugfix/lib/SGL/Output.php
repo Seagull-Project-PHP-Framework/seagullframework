@@ -1031,6 +1031,12 @@ class SGL_Output
         $aCurrentFiles = $this->aJavascriptFiles;
         $this->aJavascriptFiles = array();
 
+        // bc for global javascript
+        if (!SGL_Config::get('site.globalJavascriptFiles')
+                && $_SESSION['aPrefs']['theme'] == 'default') {
+            SGL_Config::set('site.globalJavascriptFiles', 'js/SGL.js');
+        }
+
         // javascript files, which always are loaded
         $this->addJavascriptFile(
             SGL_Config::get('site.globalJavascriptFiles')
@@ -1064,9 +1070,13 @@ class SGL_Output
     /**
      * Makes CSS optimizer link.
      *
+     * @access public
+     *
+     * @param array  $aCssHelperParams  additional params passed to css helper
+     *
      * @return string
      */
-    function makeCssOptimizerLink()
+    function makeCssOptimizerLink($aCssHelperParams = array())
     {
         $theme = $_SESSION['aPrefs']['theme'];
 
@@ -1105,12 +1115,12 @@ class SGL_Output
         $this->addCssFile($aCurrentFiles);
 
         // params passed to csshelper
-        $aParams['theme']           = $theme;
-        $aParams['langDir']         = $this->langDir;
-        $aParams['isFormSubmitted'] = !empty($this->submitted);
+        $aCssHelperParams['theme']           = $theme;
+        $aCssHelperParams['langDir']         = $this->langDir;
+        $aCssHelperParams['isFormSubmitted'] = !empty($this->submitted);
 
         $params = '';
-        foreach ($aParams as $k => $v) {
+        foreach ($aCssHelperParams as $k => $v) {
             $params .= '&aParams[' . urlencode($k) . ']=' . urlencode($v);
         }
 
@@ -1144,6 +1154,8 @@ class SGL_Output
 
     /**
      * Get message, which outputs html in default2 style.
+     *
+     * @access public
      *
      * @return void
      */
