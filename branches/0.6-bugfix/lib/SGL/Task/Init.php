@@ -335,7 +335,21 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
     function run($conf)
     {
+        //  include Log.php if logging enabled
+        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
+            require_once 'Log.php';
 
+        } else {
+            //  define log levels to avoid notices, since Log.php not included
+            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
+            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
+            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
+            define('PEAR_LOG_ERR',      3);     /** Error conditions */
+            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
+            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
+            define('PEAR_LOG_INFO',     6);     /** Informational */
+            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+        }
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
             $c = &SGL_Config::singleton();
@@ -384,22 +398,6 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             define('SGL_TMP_DIR', $conf['path']['tmpDirOverride']);
         } else {
             define('SGL_TMP_DIR', SGL_VAR_DIR . '/tmp');
-        }
-
-        //  include Log.php if logging enabled
-        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
-            require_once 'Log.php';
-
-        } else {
-            //  define log levels to avoid notices, since Log.php not included
-            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
-            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
-            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
-            define('PEAR_LOG_ERR',      3);     /** Error conditions */
-            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
-            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
-            define('PEAR_LOG_INFO',     6);     /** Informational */
-            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
         }
     }
 }

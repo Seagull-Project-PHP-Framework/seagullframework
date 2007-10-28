@@ -330,9 +330,6 @@ class SGL_Config
             if (stristr($file, $modDir) || stristr($file, 'modules')) {
                 $this->ensureCacheDirExists();
                 $file = $this->getCachedFileName($file);
-            } else {
-                return SGL::raiseError('cannot find config file ' .$file,
-                    SGL_ERROR_NOFILE);
             }
         }
         $ph = &SGL_ParamHandler::singleton($file);
