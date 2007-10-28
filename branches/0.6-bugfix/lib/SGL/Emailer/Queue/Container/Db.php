@@ -129,7 +129,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
         if (PEAR::isError($ok)) {
             return $ok;
         }
-        $this->preloadResult = $ok;
+        $this->_preloadResult = $ok;
     }
 
     /**
