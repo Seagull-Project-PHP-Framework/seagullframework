@@ -169,8 +169,26 @@ class SGL_Emailer
         ));
         $headers = $mime->headers($this->headers);
         $headers = $this->cleanMailInjection($headers);
-        $mail = & SGL_Emailer::factory();
-        return $mail->send($this->options['toEmail'], $headers, $body);
+
+        // if queue is enabled put email to queue
+        if (SGL_Config::get('emailQueue.enabled')) {
+            static $queue;
+            if (!isset($queue)) { // init queue
+                require_once 'SGL/Emailer/Queue.php';
+                $conf = SGL_Config::get('emailQueue')
+                    ? SGL_Config::get('emailQueue')
+                    : array();
+                $queue = new SGL_Emailer_Queue($conf);
+            }
+            // put email to queue
+            $ok = $queue->push($headers, $this->options['toEmail'], $body, $headers['Subject']);
+
+        // else send email straight away
+        } else {
+            $mail = &SGL_Emailer::factory();
+            $ok = $mail->send($this->options['toEmail'], $headers, $body);
+        }
+        return $ok;
     }
 
     // PEAR Mail::factory wrapper
