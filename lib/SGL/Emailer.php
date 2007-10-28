@@ -174,7 +174,7 @@ class SGL_Emailer
         if (SGL_Config::get('emailQueue.enabled')) {
             static $queue;
             if (!isset($queue)) { // init queue
-                require_once 'SGL/Emailer/Queue.php';
+                require_once SGL_CORE_DIR .  '/Emailer/Queue.php';
                 $conf = SGL_Config::get('emailQueue')
                     ? SGL_Config::get('emailQueue')
                     : array();

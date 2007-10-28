@@ -132,7 +132,7 @@ class SGL_Emailer_Queue
     {
         static $emailer;
         if (!isset($emailer)) {
-            require_once 'SGL/Emailer.php';
+            require_once SGL_CORE_DIR . '/Emailer.php';
             // hack to set $this->conf
             $this->conf = SGL_Config::singleton()->getAll();
             $emailer = SGL_Emailer::factory();

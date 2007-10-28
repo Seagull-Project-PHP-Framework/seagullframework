@@ -57,6 +57,10 @@ class SGL_EmailQueueController extends SGL_FrontController
         $input->setRequest($req);
         $output = new stdClass();
 
+        if (!SGL::runningFromCLI()) {
+            return false;
+        }
+
         $process =
             new SGL_Task_Init(
             new SGL_Task_SetupORM(
@@ -86,7 +90,7 @@ class SGL_Task_ProcessEmailQueue extends SGL_ProcessRequest
             ? SGL_Config::get('emailQueue')
             : array();
 
-        require_once 'SGL/Emailer/Queue.php';
+        require_once SGL_CORE_DIR . '/Emailer/Queue.php';
         $queue = new SGL_Emailer_Queue($aOptions);
         $queue->processQueue();
 
