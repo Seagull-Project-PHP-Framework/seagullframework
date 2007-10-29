@@ -1015,7 +1015,7 @@ class SGL_Output
      *
      * How to use:
      *  1. in your template you need to add the following line
-     *     <script type="text/javascript" src="{makeJsOptimizerLink():h}" />
+     *     <script type="text/javascript" src="{makeJsOptimizerLink()}" />
      *  2. specify global js files in $conf['site']['globalJavascriptFiles']
      *     separated by comma e.g. 'js/SGL.js,js/SGL/Util/String.js'
      *  3. to add module/manager specific js files just use
@@ -1114,10 +1114,20 @@ class SGL_Output
         // add custom files
         $this->addCssFile($aCurrentFiles);
 
+        $module = !empty($this->moduleName) ? $this->moduleName : 'default';
+
         // params passed to csshelper
         $aCssHelperParams['theme']           = $theme;
         $aCssHelperParams['langDir']         = $this->langDir;
         $aCssHelperParams['isFormSubmitted'] = !empty($this->submitted);
+        $aCssHelperParams['module']          = $module;
+
+        // autoload module's css file
+        if (is_file(SGL_WEB_ROOT . "/$module/css/$module.css")) {
+            $this->addCssFile("$module/css/$module.css");
+        } elseif (is_file(SGL_WEB_ROOT . "/themes/$theme/css/$module.css")) {
+            $this->addCssFile("themes/$theme/css/$module.css");
+        }
 
         $params = '';
         foreach ($aCssHelperParams as $k => $v) {
