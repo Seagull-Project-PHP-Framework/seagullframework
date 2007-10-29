@@ -64,15 +64,21 @@ class DefaultOutput
             case 'string':
             default:
                 $ret .= "<input type='hidden' name='config[$section][$name][type]' value='string' />";
-                if (strlen($field->value) < 10 && is_numeric($field->value)) {
+                switch (true) {
+                case strlen($field->value) < 10 && is_numeric($field->value):
                     $ret .= "<input type='text' class='smallText' name='config[$section][$name][value]' value='$field->value' />";
-                } elseif (strlen($field->value) < 60) {
+                    break;
+
+                case strlen($field->value) < 60 && $name != 'extraLanguages':
                     $ret .= "<input type='text' class='longText altFont' name='config[$section][$name][value]' value='$field->value' />";
-                } else {
+                    break;
+
+                default:
                     $ret .= "<textarea class='longText' name='config[$section][$name][value]'>";
                     $ret .= "$field->value";
                     $ret .= "</textarea>";
                 }
+
                 break;
             case 'list':
                 $ret .= "<input type='hidden' name='config[$section][$name][type]' value='list' />";
