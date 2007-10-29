@@ -52,34 +52,26 @@ function resolveBaseUrl($theme)
 }
 
 /**
- * Get language direction. Return or output 'left' or 'right'.
+ * Get language direction. Returns 'left' or 'right'.
  *
- * Usage example:
- *   1. getLangDirection() -> prints current language direction
- *   2. getLangDirection(true) -> prints opposit language direction
- *   3. getLangDirection(false, true) -> returns current language direction
- *   4. getLangDirection(true, true) -> returns opposit language direction
- *
- * @param unknown_type $reverse
- * @param unknown_type $return
- * @return unknown
+ * @return string
  */
-function getLangDirection($reverse = false, $return = false)
+function getLangDirection()
 {
     $ret = isset($_GET['aParams']['langDir'])
             && $_GET['aParams']['langDir'] == 'rtl'
         ? 'right'
         : 'left';
-    if ($reverse) {
-        $ret = $ret == 'left'
-            ? 'right'
-            : 'left';
-    }
-    if ($return) {
-        return $ret;
-    } else {
-        echo $ret;
-    }
+    return $ret;
+}
+
+function getLangDirectionOpposite()
+{
+    $ret = isset($_GET['aParams']['langDir'])
+            && $_GET['aParams']['langDir'] == 'rtl'
+        ? 'left'
+        : 'right';
+    return $ret;
 }
 
 /**

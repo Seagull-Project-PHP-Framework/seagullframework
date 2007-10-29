@@ -1200,5 +1200,21 @@ class SGL_Output
         }
         echo $html; // we need to echo, do not replace to return
     }
+
+    function getLangDirection()
+    {
+        $ret = $this->langDir == 'rtl'
+            ? 'right'
+            : 'left';
+        return $ret;
+    }
+
+    function getLangDirectionOpposite()
+    {
+        $ret = $this->langDir == 'rtl'
+            ? 'left'
+            : 'right';
+        return $ret;
+    }
 }
 ?>
