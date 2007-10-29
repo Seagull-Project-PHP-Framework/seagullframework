@@ -1,19 +1,29 @@
-<form id="loginBlock" method="post" action="{makeUrl(#login#,#login#,#user#)}" flexy:ignore>
-    <dl class="onTop">
-        <dt><label for="frm_username_block">{translate(#Username#)}</label></dt>
-        <dd><input type="text" name="frmUsername" id="frm_username_block" size="15" value="{username}" maxlength="20" /></dd>
-        <dt><label for="frm_password_block">{translate(#Password#)}</label></dt>
-        <dd><input type="password" name="frmPassword" id="frm_password_block" size="15" value="{password}" maxlength="10" /></dd>
-    </dl>
-    {if:conf[cookie][rememberMeEnabled]}
+<form id="block-login" method="post"
+      action="{makeUrl(#login#,#login#,#user#)}" flexy:ignore>
+    <fieldset class="lastChild noLegend">
+        <ol class="onTop">
+            <li>
+                <label for="frm_username_block">
+                    {translate(#Username#)}
+                </label>
+                <input id="frm_username_block" class="text" type="text"
+                       name="frmUsername" value="{username}" />
+            </li>
+            <li>
+                <label for="frm_password_block">{translate(#Password#)}</label>
+                <input id="frm_password_block" class="text" type="password"
+                       name="frmPassword" value="{password}" />
+            </li>
+        </ol>
+    </fieldset>
     <p>
-        <input type="checkbox" name="frmExtendedLifetime" value="1" />
-        {translate(#Remember me#)}
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#login#)}" />
     </p>
-    {end:}
-    <p><input type="submit" class="button" name="submitted" value="{translate(#Submit login#)}" /></p>
-    {if:conf[RegisterMgr][enabled]}
-    <p><a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a></p>
-    {end:}
-    <p><a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a></p>
+    <p flexy:if="conf[RegisterMgr][enabled]">
+        <a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>
+    </p>
+    <p>
+        <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a>
+    </p>
 </form>

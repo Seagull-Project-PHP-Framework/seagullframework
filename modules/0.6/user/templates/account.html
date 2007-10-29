@@ -1,25 +1,23 @@
-<h1 class="pageTitle">{translate(pageTitle)}</h1>
-<div class="message">{msgGet()}</div>
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
 
 <div class="fieldsetlike">
     <h3>{translate(#Personal Details#)}</h3>
-    <dl class="onSide">
+    <dl>
         <dt>{translate(#Username#)}</dt>
-        <dd>{user.username}&nbsp;</dd>
+        <dd>{user.username}</dd>
         <dt>{translate(#First Name#)}</dt>
         <dd>{user.first_name}&nbsp;</dd>
         <dt>{translate(#Last Name#)}</dt>
         <dd>{user.last_name}&nbsp;</dd>
-        <!--dt>{translate(#Company#)}</dt>
-        <dd>{user.company_name}&nbsp;</dd-->
     </dl>
 </div>
 
 <div class="fieldsetlike">
     <h3>{translate(#Contact#)}</h3>
-    <dl class="onSide">
+    <dl>
         <dt>{translate(#Email#)}</dt>
-        <dd>{user.email}&nbsp;</dd>
+        <dd>{user.email}</dd>
         <dt>{translate(#Telephone#)}</dt>
         <dd>{user.telephone}&nbsp;</dd>
         <dt>{translate(#Mobile#)}</dt>
@@ -29,7 +27,7 @@
 
 <div class="fieldsetlike">
     <h3>{translate(#Location#)}</h3>
-    <dl class="onSide">
+    <dl>
         <dt>{translate(#Address 1#)}</dt>
         <dd>{user.addr_1}&nbsp;</dd>
         <dt>{translate(#Address 2#)}</dt>
