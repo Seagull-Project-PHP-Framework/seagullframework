@@ -87,4 +87,78 @@ new function() {
         SGL.onReadyDom();
     }
 }
-/** -------------------------------------------------------------*/
+
+// ----------
+// --- BC ---
+// ----------
+
+/**
+ * Used for async load of sourcefourge bloody button,
+ */
+function async_load()
+{
+    var node;
+    try {
+        // variable _asyncDom is set from JavaScript in the iframe
+        // node = top._asyncDom.cloneNode(true); // kills Safari 1.2.4
+        node = top._asyncDom;
+        // try to remove the first script element, the one that
+        // executed all document.writes().
+        node.removeChild(node.getElementsByTagName('script')[0]);
+    } catch (e) {}
+    try {
+        // insert DOM fragment at a DIV with id "async_demo" on current page
+        document.getElementById('async_demo').appendChild(node);
+    } catch (e) {
+        try {
+            // fallback for some non DOM compliant browsers
+            document.getElementById('async_demo').innerHTML = node.innerHTML;
+        } catch (e2) {};
+    }
+}
+
+/**
+ * Make Seagull SEF URL.
+ *
+ * @param object params
+ *
+ * @return string
+ */
+function makeUrl(params)
+{
+    var ret = SGL_JS_FRONT_CONTROLLER != ''
+        ? SGL_JS_WEBROOT + '/' + SGL_JS_FRONT_CONTROLLER
+        : SGL_JS_WEBROOT;
+    var moduleName = params.module ? params.module : '';
+    var managerName = params.manager ? params.manager : moduleName;
+
+    switch (SGL_JS_URL_STRATEGY) {
+
+    // make classic URL
+    case 'SGL_UrlParser_ClassicStrategy':
+        if (ret.charAt(ret.length - 1) != '?') {
+            ret = ret + '?';
+        }
+        ret = ret + 'moduleName=' + escape(moduleName) + '&managerName=' + escape(managerName);
+        for (x in params) {
+            if (x == 'module' || x == 'manager') {
+                continue;
+            }
+            // add param
+            ret = '&' + ret + escape(x) + '=' + escape(params[x]);
+        }
+        break;
+
+    // make default Seagull SEF URL
+    default:
+        ret = ret + '/' + escape(moduleName) + '/' + escape(managerName) + '/';
+        for (x in params) {
+            if (x == 'module' || x == 'manager') {
+                continue;
+            }
+            ret = ret + escape(x) + '/' + escape(params[x]) + '/';
+        }
+        break;
+    }
+    return ret;
+}
