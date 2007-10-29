@@ -65,17 +65,11 @@ form fieldset ol {
         margin: 0;
         padding-bottom: 0.6em;
         padding-left: 160px;
-
-        <?php if ($isFormSubmitted) { ?>
-        #margin-bottom: 0.6em; /* fix MSIE behaviour on submit */
-        <? } ?>
+        <?php if ($isFormSubmitted) { echo "#margin-bottom: 0.6em; /* fix MSIE behaviour on submit */"; } ?>
     }
         form fieldset ol li div {
-            <?php if ($isFormSubmitted) { ?>
-            #float: left; /* fix MSIE behaviour on submit */
-            <? } ?>
+            <?php if ($isFormSubmitted) { echo "#float: left; /* fix MSIE behaviour on submit */"; } ?>
             #display: inline; /* fix MSIE */
-
             margin-bottom: 0;
         }
         form fieldset ol li label {
@@ -102,16 +96,10 @@ form fieldset ol.onTop {
     form fieldset ol.onTop li {
         clear: none;
         padding-left: 0;
-
-        <?php if ($isFormSubmitted) { ?>
-        #margin-bottom: 0; /* restore behaviour */
-        <?php } ?>
+        <?php if ($isFormSubmitted) { echo "#margin-bottom: 0; /* restore behaviour */"; } ?>
     }
-        <?php if ($isFormSubmitted) { ?>
-        form fieldset ol.onTop li div {  /* restore behaviour */
-            #float: none;
-        }
-        <?php } ?>
+        <?php if ($isFormSubmitted) { echo "form fieldset ol.onTop li div {  /* restore behaviour */ #float: none; }"; } ?>
+
         form fieldset ol.onTop li label {
             float: none;
             display: block;
