@@ -1123,9 +1123,9 @@ class SGL_Output
         $aCssHelperParams['module']          = $module;
 
         // autoload module's css file
-        if (is_file(SGL_WEB_ROOT . "/$module/css/$module.css")) {
+        if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.css"))) {
             $this->addCssFile("$module/css/$module.css");
-        } elseif (is_file(SGL_WEB_ROOT . "/themes/$theme/css/$module.css")) {
+        } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.css"))) {
             $this->addCssFile("themes/$theme/css/$module.css");
         }
 
@@ -1155,7 +1155,7 @@ class SGL_Output
     {
         $lastMod = 0;
         foreach ($aFiles as $fileName) {
-            if (is_file(SGL_WEB_ROOT . '/' . $fileName)) {
+            if (is_file(realpath(SGL_WEB_ROOT . '/' . $fileName))) {
                 $lastMod = max($lastMod, filemtime(SGL_WEB_ROOT . '/' . $fileName));
             }
         }

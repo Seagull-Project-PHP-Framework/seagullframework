@@ -50,7 +50,7 @@ class SGL_Optimizer
             $filesString = $_GET['files'];
             $aFiles = explode(',', $_GET['files']);
             foreach ($aFiles as $fileName) {
-                if (is_file($jsFile = dirname(__FILE__) . '/' . $fileName)) {
+                if (is_file($jsFile = realpath(dirname(__FILE__) . '/' . $fileName))) {
                     $this->aFiles[] = $jsFile;
                     $lastMod = max($lastMod, filemtime($jsFile));
                 }
