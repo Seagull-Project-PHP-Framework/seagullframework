@@ -2,7 +2,9 @@
 
 // css vars
 $baseUrl         = resolveBaseUrl(resolveTheme());
+$baseUrl2        = resolveBaseUrl(resolveDefaultModule(), true);
 $isFormSubmitted = resolveFormStatus();
+
 
 /**
  * Get current theme name.
@@ -26,6 +28,13 @@ function resolveFormStatus()
     return !empty($_GET['aParams']['isFormSubmitted']);
 }
 
+function resolveDefaultModule()
+{
+    return isset($_GET['aParams']['defaultModule'])
+        ? $_GET['aParams']['defaultModule']
+        : 'default';
+}
+
 /**
  * Get current base url.
  *
@@ -33,14 +42,18 @@ function resolveFormStatus()
  *
  * @return string
  */
-function resolveBaseUrl($theme)
+function resolveBaseUrl($arg, $byDefaultModule = false)
 {
     // get base path
     $path       = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
     $aPath      = explode('/', $path);
     $aPath      = array_filter($aPath);
     $webRootUrl = implode('/', $aPath);
-    $baseUrl    = $webRootUrl . '/themes/' . $theme;
+    if ($byDefaultModule) {
+        $baseUrl    = $webRootUrl . "/$arg";
+    } else {
+        $baseUrl    = $webRootUrl . '/themes/' . $arg;
+    }
     if ($baseUrl[0] != '/') {
         $baseUrl = '/' . $baseUrl;
     }

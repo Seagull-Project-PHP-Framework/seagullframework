@@ -1120,12 +1120,16 @@ class SGL_Output
         $this->addCssFile($aCurrentFiles);
 
         $module = !empty($this->moduleName) ? $this->moduleName : 'default';
+        $defaultModule = SGL_Config::get('site.defaultModule')
+            ? SGL_Config::get('site.defaultModule')
+            : $module;
 
         // params passed to csshelper
         $aCssHelperParams['theme']           = $theme;
         $aCssHelperParams['langDir']         = $this->langDir;
         $aCssHelperParams['isFormSubmitted'] = !empty($this->submitted);
         $aCssHelperParams['module']          = $module;
+        $aCssHelperParams['defaultModule']   = $defaultModule;
 
         // autoload module's css file
         if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.css"))) {
