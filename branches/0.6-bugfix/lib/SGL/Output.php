@@ -1072,11 +1072,14 @@ class SGL_Output
      *
      * @access public
      *
-     * @param array  $aCssHelperParams  additional params passed to css helper
+     * @param array $aCssHelperParams    additional params passed to css helper
+     * @param mixed $aDefaultThemeFiles  if null default css files are loaded
+     *                                   otherwise custom files specified as array
      *
      * @return string
      */
-    function makeCssOptimizerLink($aCssHelperParams = array())
+    function makeCssOptimizerLink($aCssHelperParams = array(),
+            $aDefaultThemeFiles = null)
     {
         $theme = $_SESSION['aPrefs']['theme'];
 
@@ -1093,17 +1096,19 @@ class SGL_Output
         // make sure we pass layout to output
         $this->masterLayout = $masterLayout;
 
-        // default files loaded
-        $aDefaultThemeFiles = array( // we need to be able to customize it
-            "themes/$theme/css/reset.css",
-            "themes/$theme/css/tools.css",
-            "themes/$theme/css/typo.css",
-            "themes/$theme/css/forms.css",
-            "themes/$theme/css/layout.css",
-            "themes/$theme/css/blocks.css",
-            "themes/$theme/css/common.css",
-            "themes/$theme/css/$masterLayout",
-        );
+        if (!is_array($aDefaultThemeFiles)) {
+            // default files loaded
+            $aDefaultThemeFiles = array( // we need to be able to customize it
+                "themes/$theme/css/reset.css",
+                "themes/$theme/css/tools.css",
+                "themes/$theme/css/typo.css",
+                "themes/$theme/css/forms.css",
+                "themes/$theme/css/layout.css",
+                "themes/$theme/css/blocks.css",
+                "themes/$theme/css/common.css",
+                "themes/$theme/css/$masterLayout",
+            );
+        }
 
         // custom loaded files
         $aCurrentFiles = $this->aCssFiles;
