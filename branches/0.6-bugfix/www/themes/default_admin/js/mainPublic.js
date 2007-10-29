@@ -259,40 +259,6 @@ function async_load()
     }
 }
 
-//  calling -> makeUrl({'module':'mymodule', 'action':'generateReport', 'param2': 'foo bar'});
-function makeUrl(params)
-{
-    var rslt = SGL_JS_WEBROOT + '/' + SGL_JS_FRONT_CONTROLLER;
-    var moduleName  =  (params.module) ? params.module : '';
-    var managerName =  (params.manager) ? params.manager : moduleName;
-
-    switch (SGL_JS_URL_STRATEGY) {
-    case 'SGL_UrlParser_ClassicStrategy':
-        if (rslt.charAt(rslt.length - 1) != '?') {
-          rslt = rslt + '?';
-        }
-        rslt = rslt + 'moduleName=' + escape(moduleName) + '&managerName=' + escape(managerName) + '&';
-        for (x in params) {
-            if ((x == 'module') || (x =='manager')) {
-                continue;
-            }
-            rslt = rslt + escape(x) + '=' + escape(params[x]) + '&';
-        }
-        break;
-
-    default:
-        rslt = rslt + '/' + escape(moduleName) + '/' + escape(managerName) + '/';
-        for (x in params) {
-            if ((x == 'module') || (x =='manager')) {
-                continue;
-            }
-            rslt = rslt + escape(x) + '/' + escape(params[x]) + '/';
-        }
-        break;
-    }
-    return rslt;
-}
-
 /**
  * Checks/unchecks all tables, modified from phpMyAdmin
  *
