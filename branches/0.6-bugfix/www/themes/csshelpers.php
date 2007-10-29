@@ -28,6 +28,11 @@ function resolveFormStatus()
     return !empty($_GET['aParams']['isFormSubmitted']);
 }
 
+/**
+ * Get default module name.
+ *
+ * @return string
+ */
 function resolveDefaultModule()
 {
     return isset($_GET['aParams']['defaultModule'])
@@ -38,21 +43,22 @@ function resolveDefaultModule()
 /**
  * Get current base url.
  *
- * @param string $theme
+ * @param string $arg
+ * @param boolean $byDefaultModule
  *
  * @return string
  */
 function resolveBaseUrl($arg, $byDefaultModule = false)
 {
     // get base path
-    $path       = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
-    $aPath      = explode('/', $path);
-    $aPath      = array_filter($aPath);
-    $webRootUrl = implode('/', $aPath);
+    $path        = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+    $aPath       = explode('/', $path);
+    $aPath       = array_filter($aPath);
+    $webRootUr   = implode('/', $aPath);
     if ($byDefaultModule) {
-        $baseUrl    = $webRootUrl . "/$arg";
+        $baseUrl = $webRootUrl . "/$arg";
     } else {
-        $baseUrl    = $webRootUrl . '/themes/' . $arg;
+        $baseUrl = $webRootUrl . '/themes/' . $arg;
     }
     if ($baseUrl[0] != '/') {
         $baseUrl = '/' . $baseUrl;
@@ -78,13 +84,14 @@ function getLangDirection()
     return $ret;
 }
 
+/**
+ * Get opposite language directive.
+ *
+ * @return string
+ */
 function getLangDirectionOpposite()
 {
-    $ret = isset($_GET['aParams']['langDir'])
-            && $_GET['aParams']['langDir'] == 'rtl'
-        ? 'left'
-        : 'right';
-    return $ret;
+    return getLangDirection() == 'left' ? 'right' : 'left';
 }
 
 /**
