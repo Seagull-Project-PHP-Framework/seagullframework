@@ -1,0 +1,97 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form id="frmUser" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
+        <input name="action" type="hidden" value="updateAll" />
+    </fieldset>
+    <fieldset>
+        <dl class="onSide">
+            <dt>
+                <label class="tipOwner" for="prefs_theme">
+                    {translate(#Theme#)}
+                    <span class="tipText">{translate(#Change what this site looks like#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <select id="prefs_theme" name="prefs[theme]">
+                    {generateSelect(aThemes,prefs[theme]):h}
+                </select>
+            </dd>
+            <dt>
+                <label class="tipOwner" for="prefs_date-format">
+                    {translate(#Date format#)}
+                    <span class="tipText">{translate(#UK format is dd/mm/yyyy and US is mm/dd/yyyy#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <select id="prefs_date-format" name="prefs[dateFormat]">
+                    {generateSelect(aDateFormats,prefs[dateFormat]):h}
+                </select>
+            </dd>
+            <dt>
+                <label for="prefs_language">{translate(#Interface language#)}</label>
+            </dt>
+            <dd>
+                <select id="prefs_language" name="prefs[language]">
+                    {generateSelect(aLangs,prefs[language]):h}
+                </select>
+            </dd>
+            <dt>
+                <label class="tipOwner" for="prefs_session-timeout">
+                    {translate(#Session timeout#)}
+                    <span class="tipText">{translate(#Session timeout tooltip#)}</span>
+                </label>
+            </dt>
+            <dd>
+                <select id="prefs_session-timeout" name="prefs[sessionTimeout]">
+                    {generateSelect(aTimeouts,prefs[sessionTimeout]):h}
+                </select>
+            </dd>
+            <dt>
+                <label for="prefs_locale">{translate(#Locale#)}</label>
+            </dt>
+            <dd>
+                {if:isWin()}
+                    <input id="prefs_locale" type="text" name="prefs[locale]" value="{prefs[locale]}" />
+                {else:}
+                    <select id="prefs_locale" name="prefs[locale]">
+                        {generateSelect(aLocales,prefs[locale]):h}
+                    </select>
+                {end:}
+            </dd>
+            <dt>
+                <label for="prefs_timezone">{translate(#Timezone#)}</label>
+            </dt>
+            <dd>
+                <select id="prefs_timezone" name="prefs[timezone]">
+                    {generateSelect(aTimezones,prefs[timezone]):h}
+                </select>
+            </dd>
+            <dt>
+                <label for="prefs_res-per-page">{translate(#Results per page#)}</label>
+            </dt>
+            <dd>
+                <select id="prefs_res-per-page" name="prefs[resPerPage]">
+                    {generateSelect(aResPerPage,prefs[resPerPage]):h}
+                </select>
+            </dd>
+            <dt>
+                <label>{translate(#Show execution times?#)}</label>
+            </dt>
+            <dd>
+                {generateRadioPair(#prefs[showExecutionTimes]#,prefs[showExecutionTimes]):h}
+                <!-- fixes display bug, remove when dl will be corrected -->
+                <br /><br />
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd>
+                <input class="button" type="submit" name="submitted" value="{translate(#Save#)}" />
+                <input class="button" type="button" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
+            </dd>
+        </dl>
+    </fieldset>
+    <p>
+        <span class="required">*</span> {translate(#denotes required field#)}
+    </p>
+</form>
