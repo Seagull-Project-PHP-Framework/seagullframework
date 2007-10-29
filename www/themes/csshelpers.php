@@ -54,7 +54,7 @@ function resolveBaseUrl($arg, $byDefaultModule = false)
     $path        = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
     $aPath       = explode('/', $path);
     $aPath       = array_filter($aPath);
-    $webRootUr   = implode('/', $aPath);
+    $webRootUrl  = implode('/', $aPath);
     if ($byDefaultModule) {
         $baseUrl = $webRootUrl . "/$arg";
     } else {
