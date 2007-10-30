@@ -33,15 +33,15 @@ class SGL_URL2
      *   Array (
      *     moduleName => name of module
      *     controller => name of manager
-     *     params     => action/actionName/k1/v1/k2/v2
+     *     k1         => v1
+     *     k2         => v2
      *   )
      */
     private function _resolveOldStyleParams($aParams)
     {
-        $aNewParams   = array();
-        $aQueryParams = array();
+        $aNewParams = array();
         if (!empty($aParams[0])) {
-            $aQueryParams[] = 'action/' . $aParams[0];
+            $aNewParams['action'] = $aParams[0];
         }
         if (!empty($aParams[1])) {
             $aNewParams['controller'] = $aParams[1];
@@ -63,12 +63,8 @@ class SGL_URL2
                         $v = $element[$v];
                     }
                 }
-                $aQueryParams[] = $k . '/' . $v;
+                $aNewParams[$k] = $v;
             }
-        }
-        // all params goes here
-        if (!empty($aQueryParams)) {
-            $aNewParams['params'] = implode('/', $aQueryParams);
         }
         // in case of SGL_Output(#edit#,#user#,##,..)
         if (isset($aNewParams['controller'])
@@ -82,6 +78,43 @@ class SGL_URL2
             unset($aNewParams['controller']);
         }
         return $aNewParams;
+    }
+
+    /**
+     * Make array suitable for default Routes.
+     *
+     * @param array $aParams
+     *
+     * @return array
+     */
+    private function _makeDefaultParamsArray($aParams)
+    {
+        $aVars = array();
+        foreach ($aParams as $k => $v) {
+            // skip "keywords"
+            if ($k == 'moduleName' || $k == 'controller'
+                    || $k == 'anchor' || $k == 'host') {
+                continue;
+            }
+            $aVars[] = $k . '/' . $v;
+            unset($aParams[$k]);
+        }
+        if (!empty($aVars)) {
+            $aParams['params'] = implode('/', $aVars);
+        }
+        return $aParams;
+    }
+
+    /**
+     * Identify if given URL is ok (i.e. was matched by Horde).
+     *
+     * @param string $url
+     *
+     * @return boolean
+     */
+    private function _urlIsMatched($url)
+    {
+        return strpos($url, '?') === false;
     }
 
     /**
@@ -117,7 +150,16 @@ class SGL_URL2
             $namedRoute = true;
         }
         $this->_routes->mapper->appendSlash = true;
+
+        // try to match URL in new style
         $url = $this->_routes->util->urlFor($aParams);
+        // if URL was not matched do it in old style
+        if (!$this->_urlIsMatched($url)) {
+            $aParams = $this->_makeDefaultParamsArray($aParams);
+            $url = $this->_routes->util->urlFor($aParams);
+            $namedRoute = false;
+        }
+
         return empty($namedRoute) ? $url : $this->getBaseUrl() . $url;
     }
 
@@ -133,7 +175,7 @@ class SGL_URL2
         } else {
             $baseUrl = SGL_BASE_URL;
         }
-        $fcName  = SGL_Config::get('site.frontScriptName');
+        $fcName = SGL_Config::get('site.frontScriptName');
         if (!empty($fcName)) {
             $baseUrl .= '/' . $fcName;
         }
