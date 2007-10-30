@@ -788,7 +788,7 @@ class SGL_Output
                         unset($aArgs['module']);
                     }
                     if (isset($aArgs['manager'])) {
-                        $aArgs['controller'] = $aArgs['manager'];
+                        $aArgs['managerName'] = $aArgs['manager'];
                         unset($aArgs['manager']);
                     }
                 // named route

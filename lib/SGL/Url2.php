@@ -14,6 +14,21 @@ class SGL_URL2
     private $_routes;
 
     /**
+     * @var array
+     */
+    private $_aQueryData;
+
+    /**
+     * Constructor.
+     *
+     * @param array $aQueryData
+     */
+    public function __construct($aQueryData = array())
+    {
+        $this->_aQueryData = $aQueryData;
+    }
+
+    /**
      * Set routes.
      *
      * @param Horde_Routes_Config $oRoutes
@@ -31,10 +46,10 @@ class SGL_URL2
      *
      * @return array
      *   Array (
-     *     moduleName => name of module
-     *     controller => name of manager
-     *     k1         => v1
-     *     k2         => v2
+     *     moduleName  => name of module
+     *     managerName => name of manager
+     *     k1          => v1
+     *     k2          => v2
      *   )
      */
     private function _resolveOldStyleParams($aParams)
@@ -44,7 +59,7 @@ class SGL_URL2
             $aNewParams['action'] = $aParams[0];
         }
         if (!empty($aParams[1])) {
-            $aNewParams['controller'] = $aParams[1];
+            $aNewParams['managerName'] = $aParams[1];
         }
         if (!empty($aParams[2])) {
             $aNewParams['moduleName'] = $aParams[2];
@@ -67,15 +82,15 @@ class SGL_URL2
             }
         }
         // in case of SGL_Output(#edit#,#user#,##,..)
-        if (isset($aNewParams['controller'])
+        if (isset($aNewParams['managerName'])
                 && !isset($aNewParams['moduleName'])) {
-            $aNewParams['moduleName'] = $aNewParams['controller'];
+            $aNewParams['moduleName'] = $aNewParams['managerName'];
         }
         // this allows to skip manager name if it is the same as module name
-        if (isset($aNewParams['controller'])
+        if (isset($aNewParams['managerName'])
                 && isset($aNewParams['moduleName'])
-                && $aNewParams['controller'] == $aNewParams['moduleName']) {
-            unset($aNewParams['controller']);
+                && $aNewParams['managerName'] == $aNewParams['moduleName']) {
+            unset($aNewParams['managerName']);
         }
         return $aNewParams;
     }
@@ -92,8 +107,8 @@ class SGL_URL2
         $aVars = array();
         foreach ($aParams as $k => $v) {
             // skip "keywords"
-            if ($k == 'moduleName' || $k == 'controller'
-                    || $k == 'anchor' || $k == 'host') {
+            if (in_array($k, array('moduleName', 'managerName',
+                    'controller', 'anchor', 'host'))) {
                 continue;
             }
             $aVars[] = $k . '/' . $v;
@@ -139,17 +154,27 @@ class SGL_URL2
             }
             // use current module if nothing specified
             if (!isset($aParams['moduleName'])) {
-                $aParams['moduleName'] = $this->aQueryData['moduleName'];
-            // use current manager if nothing specified
-            } elseif (!isset($aParams['controller'])
-                    && $this->aQueryData['moduleName'] != $this->aQueryData['managerName']) {
-                $aParams['controller'] = $this->aQueryData['managerName'];
+                $aParams['moduleName'] = $this->_aQueryData['moduleName'];
+            }
+            // use current manager only if
+            // 1. we are in same module
+            if ($aParams['moduleName'] == $this->_aQueryData['moduleName']
+                    // 2. it was not specified
+                    && !isset($aParams['managerName'])
+                    // 3. moduleName neq managerName
+                    && $this->_aQueryData['moduleName'] != $this->_aQueryData['managerName']) {
+                $aParams['managerName'] = $this->_aQueryData['managerName'];
             }
         // named route
         } else {
             $namedRoute = true;
         }
-        $this->_routes->mapper->appendSlash = true;
+
+        // rename managerName -> controller
+        if (isset($aParams['managerName'])) {
+            $aParams['controller'] = $aParams['managerName'];
+            unset($aParams['managerName']);
+        }
 
         // try to match URL in new style
         $url = $this->_routes->util->urlFor($aParams);
@@ -161,6 +186,28 @@ class SGL_URL2
         }
 
         return empty($namedRoute) ? $url : $this->getBaseUrl() . $url;
+    }
+
+    /**
+     * Make current link.
+     *
+     * @return string
+     */
+    public function makeCurrentLink()
+    {
+        return $this->makeLink($this->_aQueryData);
+    }
+
+    /**
+     * Alias for makeCurrentLink().
+     *
+     * @see self::makeCurrentLink()
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return $this->makeCurrentLink();
     }
 
     /**
