@@ -108,8 +108,7 @@ class SGL_Request_Browser2 extends SGL_Request
         $url->aQueryData = $aQueryData;
 
         // assign to registry
-        $input = SGL_Registry::singleton();
-        $input->setCurrentUrl($url);
+        SGL_Registry::singleton()->setCurrentUrl($url);
 
         // merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
