@@ -101,11 +101,13 @@ class SGL_Request_Browser2 extends SGL_Request
             unset($aQueryData['params']);
         }
 
+        // mapper options
+        $m->appendSlash = true;
+
         // SGL_URL2
         Horde_Routes_Config::getInstance()->util = new Horde_Routes_Util();
-        $url = new SGL_URL2();
+        $url = new SGL_URL2($aQueryData);
         $url->setRoutes(Horde_Routes_Config::getInstance());
-        $url->aQueryData = $aQueryData;
 
         // assign to registry
         SGL_Registry::singleton()->setCurrentUrl($url);
