@@ -184,8 +184,6 @@ class SGL
      */
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 

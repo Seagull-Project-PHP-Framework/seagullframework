@@ -94,6 +94,12 @@ class SGL_FrontController
         $outputClass = SGL_FrontController::getOutputClass();
         $output = &new $outputClass();
 
+        // test db connection
+        SGL_FrontController::testDbConnection($output);
+
+        // run module init tasks
+        SGL_Task_InitialiseModules::run();
+
         $setupNav = SGL::moduleIsEnabled('cms')
             ? 'SGL_Task_SetupNavigation2'
             : 'SGL_Task_SetupNavigation';
@@ -210,6 +216,22 @@ class SGL_FrontController
         return $ret;
     }
 
+    function testDbConnection($output)
+    {
+        $originalErrorLevel = error_reporting(0);
+
+        // test db connection
+        if (defined('SGL_INSTALLED')) {
+            $dbh = & SGL_DB::singleton();
+            if (PEAR::isError($dbh)) {
+                //  stop with error page
+                SGL::displayMaintenancePage($output);
+                //SGL::displayErrorPage($output);
+            }
+        }
+        error_reporting($originalErrorLevel);
+    }
+
 
     function init()
     {
@@ -232,7 +254,6 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_SetBaseUrl());
         $init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
-        $init->addTask(new SGL_Task_InitialiseModules());
         $init->main();
         define('SGL_INITIALISED', true);
     }
