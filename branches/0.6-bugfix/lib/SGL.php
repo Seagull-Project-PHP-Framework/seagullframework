@@ -357,7 +357,7 @@ class SGL
         exit();
     }
 
-    function displayMaintenancePage($output)
+    function displayMaintenancePage(&$output)
     {
         $c      = &SGL_Config::singleton();
         $conf   = $c->getAll();
@@ -381,6 +381,53 @@ class SGL
 
         exit();
     }
+
+    /**
+     * Display Seagull error page.
+     *
+     * @param SGL_Output $output
+     */
+    function displayErrorPage(&$output)
+    {
+        $c = &SGL_Config::singleton();
+
+        // basics to be able to render
+        $output->moduleName = SGL_Config::get('site.defaultModule');
+        $output->theme      = SGL_Config::get('site.defaultTheme')
+            ? SGL_Config::get('site.defaultTheme')
+            : 'default';
+
+        // templates
+        $output->masterTemplate = 'masterBlank.html';
+        $output->template       = 'error.html';
+
+        // lang prefs
+        $output->charset  = $GLOBALS['_SGL']['CHARSET'];
+        $output->currLang = SGL::getCurrentLang()
+            ? SGL::getCurrentLang()
+            : 'en';
+        $output->langDir  = in_array($output->currLang, array('ar', 'he'))
+            ? 'rtl'
+            : 'ltr';
+
+        // paths
+        $output->webRoot   = SGL_BASE_URL;
+        $output->imagesDir = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
+
+        // other
+        $output->versionAPI  = SGL_SEAGULL_VERSION;
+        $output->sessID      = SGL_Session::getId();
+        $output->scriptOpen  = "\n<script type='text/javascript'>\n//<![CDATA[\n";
+        $output->scriptClose = "\n//]]>\n</script>\n";
+        $output->conf        = $c->getAll();
+
+        // output rendered page
+        $view = new SGL_HtmlSimpleView($output);
+        echo $view->render();
+
+        exit;
+    }
+
      /**
       * Returns true if a minimal version of Seagull has been installed.
       *
