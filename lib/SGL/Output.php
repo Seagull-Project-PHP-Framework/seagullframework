@@ -1081,7 +1081,7 @@ class SGL_Output
     function makeCssOptimizerLink($aCssHelperParams = array(),
             $aDefaultThemeFiles = null)
     {
-        $theme = $_SESSION['aPrefs']['theme'];
+        $theme = $this->theme;
 
         // get master layout
         $masterLayout = !empty($this->masterLayout)
