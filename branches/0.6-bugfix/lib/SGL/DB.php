@@ -66,7 +66,7 @@ class SGL_DB
      */
     function &singleton($dsn = null)
     {
-        $msg = 'Cannot connect to DB, check your credentials, exiting ...';
+        $msg = 'Cannot connect to DB, check your credentials';
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         if (empty($dsn['phptype'])) {
             return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
@@ -81,14 +81,13 @@ class SGL_DB
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
             $conn = DB::connect($dsn);
-            $fatal = (defined('SGL_INSTALLED')) ? PEAR_ERROR_DIE : null;
-            if (DB::isError($conn)) {
+            if (PEAR::isError($conn)) {
                 if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php') && defined('SGL_INSTALLED')) {
                     $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be'.
                     ' able to run the setup again.';
                 }
-                $err = PEAR::raiseError($msg,
-                    SGL_ERROR_DBFAILURE, $fatal);
+                $err = SGL::raiseError($msg,
+                    SGL_ERROR_DBFAILURE);
                 return $err;
             }
             if (!empty($conf['db']['postConnect'])) {

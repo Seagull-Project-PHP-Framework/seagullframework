@@ -614,8 +614,11 @@ class SGL_Task_LoadCustomConfig extends SGL_Task
  */
 class SGL_Task_InitialiseModules extends SGL_Task
 {
-    function run($conf)
+    function run()
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         //  skip if we're in installer
         if (defined('SGL_INSTALLED')) {
             $locator = &SGL_ServiceLocator::singleton();
