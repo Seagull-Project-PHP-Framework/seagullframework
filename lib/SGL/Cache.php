@@ -109,6 +109,7 @@ class SGL_Cache
             }
             // override with specified options
             $aOptions = array_merge($aDefaultOptions, $aOptions);
+            $hash = md5(serialize($aOptions));
             switch (strtolower($type)) {
                 case 'output':
                     require_once 'Cache/Lite/Output.php';
@@ -121,9 +122,10 @@ class SGL_Cache
                 default:
                     $className = 'SGL_Cache_Lite';
             }
-            $aInstances[$type] = new $className($aOptions);
+            $key = $type .'-'.$hash;
+            $aInstances[$key] = new $className($aOptions);
         }
-        return $aInstances[$type];
+        return $aInstances[$key];
     }
 
     /**
