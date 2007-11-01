@@ -7,7 +7,9 @@ require_once SGL_LIB_DIR . '/amfphp/core/amf/app/Gateway.php';
 //You can set this constant appropriately to disable traces and debugging headers
 //You will also have the constant available in your classes, for changing
 //the mysql server info for example
-define("PRODUCTION_SERVER", false);
+if (!defined('PRODUCTION_SERVER')) {
+    define('PRODUCTION_SERVER', false);
+}
 
 class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
 {
