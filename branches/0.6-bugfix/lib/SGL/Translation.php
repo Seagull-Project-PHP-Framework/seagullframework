@@ -357,34 +357,120 @@ class SGL_Translation
         }
     }
 
+    // ----------------------------------
+    // --- Language retrieval methods ---
+    // ----------------------------------
+
     /**
-     * Returns language ID for currently active lang.
+     * Return current language ID format.
      *
      * @static
+     *
+     * @access public
+     *
+     * @param string $format
+     *
      * @return string
      */
-    function getLangID()
+    function getLangID($format = SGL_LANG_ID_TRANS2)
     {
-        if ($langID = str_replace('-', '_', SGL::getCurrentLang() .'_'. $GLOBALS['_SGL']['CHARSET'])) {
-            return $langID;
+        if (isset($_SESSION['aPrefs']['language'])) {
+            $ret = $_SESSION['aPrefs']['language'];
         } else {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            return $conf['translation']['fallbackLang'];
+            $ret = SGL_Translation::getFallbackLangID();
         }
+        return SGL_Translation::transformLangID($ret, $format);
     }
 
     /**
-     * Returns default lang as set in installer.
+     * Get current charset.
      *
      * @static
+     *
+     * @access public
+     *
+     * @param string $format
+     *
      * @return string
      */
-    function getFallbackLangID()
+    function getCharset($format = SGL_LANG_ID_SGL)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        return $conf['translation']['fallbackLang'];
+        $lang = SGL_Translation::getLangID($format);
+        return SGL_Translation::extractCharset($lang, $format);
+    }
+
+    /**
+     * Check if language is allowed.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @param string $lang
+     *
+     * @return boolean
+     */
+    function isAllowedLanguage($lang)
+    {
+        $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
+        return isset($GLOBALS['_SGL']['LANGUAGE'][$lang]);
+    }
+
+    /**
+     * Get charset from supplied language.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @param string $lang
+     * @param string $format
+     *
+     * @return string
+     */
+    function extractCharset($lang, $format = SGL_LANG_ID_SGL)
+    {
+        switch ($format) {
+            case SGL_LANG_ID_TRANS2:       $devider = '_'; break;
+            case SGL_LANG_ID_SGL: default: $devider = '-'; break;
+        }
+        $aLang = explode($devider, $lang);
+        array_shift($aLang);
+        return implode($devider, $aLang);
+    }
+
+    /**
+     * Get fallback language.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @param string $format
+     *
+     * @return string
+     */
+    function getFallbackLangID($format = SGL_LANG_ID_TRANS2)
+    {
+        $lang = SGL_Config::get('translation.fallbackLang');
+        return SGL_Translation::transformLangID($lang, $format);
+    }
+
+    /**
+     * Get default charset.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @param string $format
+     *
+     * @return string
+     */
+    function getFallbackCharset($format = SGL_LANG_ID_SGL)
+    {
+        $lang = SGL_Translation::getFallbackLangID($format);
+        return SGL_Translation::extractCharset($lang, $format);
     }
 
     /**
