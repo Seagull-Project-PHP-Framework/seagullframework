@@ -34,32 +34,33 @@
 // +---------------------------------------------------------------------------+
 // | LangSwitcher2.php                                                         |
 // +---------------------------------------------------------------------------+
-// | Authors: Dmitri Lakachauskis <dmitri at telenet dot lv>                   |
+// | Authors: Dmitri Lakachauskis <lakiboy83@gmail.com>                        |
 // +---------------------------------------------------------------------------+
 
 /**
  * Language switcher block.
  *
+ * @package seagull
  * @subpackage block
- * @package    seagull
- * @author     Dmitri Lakachauskis <dmitri at telenet dot lv>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class Default_Block_LangSwitcher2
 {
     var $templatePath = 'default';
 
-    function init(&$output, $block_id, &$aParams)
+    function init(&$output, $blockId, $aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        // only one language exists in minimal install
         if (SGL::isMinimalInstall()) {
-            // only one language exists in minimal install
             return false;
         }
+
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, &$aParams)
+    function getBlockContent(&$output, $aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -70,10 +71,20 @@ class Default_Block_LangSwitcher2
             'template'  => 'blockLangSwitcher.html',
             'extension' => 'png'
         );
+        // current params
         $aParams = array_merge($aDefaultParams, $aParams);
+
+        // current theme
+        $theme = isset($_SESSION['aPrefs']['theme'])
+            ? $_SESSION['aPrefs']['theme']
+            : 'default';
+        $imageDir = isset($output->imagesDir)
+            ? $output->imagesDir
+            : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
 
         $input = &SGL_Registry::singleton();
         $conf  = $input->getConfig();
+        $url   = $input->getCurrentUrl();
 
         $aLangs          = SGL_Util::getLangsDescriptionMap();
         $aLangsDef       = $GLOBALS['_SGL']['LANGUAGE'];
@@ -92,49 +103,27 @@ class Default_Block_LangSwitcher2
             $aLangData[$langKey]['code'] = $aLangsDef[$langKey][2];
             $aLangData[$langKey]['key']  = $langKey;
 
-            // the best way to build lang switching url found so far taking into
-            // account UrlParser strategy, cleanUrls, session info etc
             if (SGL_Config::get('site.inputUrlHandlers') != 'Horde_Routes') {
-                $url = $input->getCurrentUrl();
                 $url->aQueryData['lang'] = $langKey;
                 $aQueryData = $url->getQueryData(true);
+                $href = $this->_makeOldStyleUrl($aQueryData);
             } else {
-                $req = $input->getRequest();
-                $req->set('lang', $langKey);
-                $aQueryData = $req->getAll();
-                unset($aQueryData['moduleName']);
-                unset($aQueryData['managerName']);
+                $switch = SGL_Config::get('translation.langInUrl')
+                    ? $aLangData[$langKey]['code']
+                    : $langKey;
+                $aQueryData = array('lang' => $switch);
+                $href = $url->makeCurrentLink($aQueryData);
             }
 
-            $action = '';
-            $params = '';
-            if (isset($aQueryData['action'])) {
-                $action = $aQueryData['action'];
-                unset($aQueryData['action']);
-            }
-            foreach ($aQueryData as $key => $value) {
-                if (empty($value) && !is_numeric($value)
-                        || false !== strpos($key, $conf['cookie']['name'])) {
-                    continue;
-                }
-                $params[] = $key . '|' . $value;
-            }
-            if (!empty($params)) {
-                $params = implode('||', $params);
-            }
-            $aLangData[$langKey]['url'] = SGL_Output::makeUrl($action, '', '',
-                array(), $params);
+            $imageFile = SGL_WEB_ROOT . '/themes/' . $theme . '/images/flags/'
+                . $langKey . '.' . $aParams['extension'];
 
+            // link
+            $aLangData[$langKey]['url'] = $href;
+            // is current?
             $aLangData[$langKey]['is_current'] =
                 SGL::getCurrentLang() == $aLangData[$langKey]['code'];
-            $theme = isset( $_SESSION['aPrefs']['theme'])
-                ? $_SESSION['aPrefs']['theme']
-                : 'default';
-            $imageFile = SGL_WEB_ROOT . '/themes/' . $theme .
-                '/images/flags/' . $langKey . '.' . $aParams['extension'];
-            $imageDir = (isset($output->imagesDir))
-                ? $output->imagesDir
-                : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
+            // image
             $aLangData[$langKey]['image'] = file_exists($imageFile)
                 ? "$imageDir/flags/{$langKey}.{$aParams['extension']}"
                 : false;
@@ -148,6 +137,28 @@ class Default_Block_LangSwitcher2
         $blockOutput->aLangs         = $aLangData;
 
         return $this->process($blockOutput);
+    }
+
+    function _makeOldStyleUrl($aQueryData = array())
+    {
+        $action = '';
+        $params = '';
+        $cookie = SGL_Config::get('cookie.name');
+        if (isset($aQueryData['action'])) {
+            $action = $aQueryData['action'];
+            unset($aQueryData['action']);
+        }
+        foreach ($aQueryData as $key => $value) {
+            if (empty($value) && !is_numeric($value)
+                    || false !== strpos($key, $cookie)) {
+                continue;
+            }
+            $params[] = $key . '|' . $value;
+        }
+        if (!empty($params)) {
+            $params = implode('||', $params);
+        }
+        return SGL_Output::makeUrl($action, '', '', array(), $params);
     }
 
     function process(&$output)
