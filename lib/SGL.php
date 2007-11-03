@@ -34,48 +34,47 @@
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
-// | Authors:   Demian Turner <demian@phpkitchen.com>                          |
-// |            Gilles Laborderie <gillesl@users.sourceforge.net>              |
+// | Authors: Demian Turner <demian@phpkitchen.com>                            |
+// |          Gilles Laborderie <gillesl@users.sourceforge.net>                |
 // +---------------------------------------------------------------------------+
-// $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
 /**
  * Provides a set of static utility methods used by most modules.
  *
- * A set of utility methods used by most modules.
- *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.20 $
+ * @author Demian Turner <demian@phpkitchen.com>
  */
 class SGL
 {
     /**
      * Returns the 2 letter language code, ie, de for German.
      *
-     * @access  public
      * @static
-     * @return string    language abbreviation
+     *
+     * @access public
+     *
+     * @return string  language abbreviation
      */
     function getCurrentLang()
     {
-        $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
-        $sessLang = isset($_SESSION['aPrefs']['language'])
-            ? $_SESSION['aPrefs']['language']
-            : SGL_Config::get('translation.fallbackLang');
-        return $aLangs[$sessLang][2];
+        $aLangs   = $GLOBALS['_SGL']['LANGUAGE'];
+        $lang     = SGL_Translation::getLangID(SGL_LANG_ID_SGL);
+        $langCode = $aLangs[$lang][2];
+        return $langCode;
     }
 
     /**
      * Returns current encoding, ie, utf-8.
      *
-     * @access  public
      * @static
-     * @return string   charset codepage
+     *
+     * @access public
+     *
+     * @return string  charset codepage
      */
     function getCurrentCharset()
     {
-        return $GLOBALS['_SGL']['CHARSET'];
+        return SGL_Translation::getCharset();
     }
 
     /**
@@ -474,6 +473,22 @@ class SGL
             }
         }
         return ! is_null($aInstances[$moduleName]);
+    }
+
+    /**
+     * Detect if it is a first launch.
+     *
+     * @access public
+     *
+     * @return boolean
+     */
+    function isFirstLaunch()
+    {
+        $ret = !isset($_SESSION['sglFirstLaunch']);
+        if (!isset($_SESSION['sglFirstLaunch'])) {
+            $_SESSION['sglFirstLaunch'] = true;
+        }
+        return $ret;
     }
 }
 
