@@ -772,9 +772,16 @@ class SGL_Translation2
         $fallLang = SGL_Translation2::getFallbackLangID();
         $fallLang = SGL_Translation2::transformLangID($fallLang, SGL_LANG_ID_SGL);
         if ($langId != $fallLang) {
-            $aFallbackTrans = SGL_Translation2::getTranslations($moduleName,
-                $fallLang);
-            $aTrans = array_intersect(array_keys($aFallbackTrans), array_keys($aTrans));
+            $aFallbackTrans = SGL_Translation2::getTranslations($moduleName, $fallLang);
+            $aFallbackTrans = SGL_Translation2::removeMetaData($aFallbackTrans, true);
+            $aTrans2 = array_intersect(array_keys($aFallbackTrans), array_keys($aTrans));
+
+            // make sure we intersect correctly
+            foreach ($aTrans2 as $key) {
+                if (!array_key_exists($key, $aTrans)) {
+                    unset($aTrans[$key]);
+                }
+            }
         }
 
         $errorsAfter = SGL_Error::count();
