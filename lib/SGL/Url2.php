@@ -104,11 +104,14 @@ class SGL_URL2
      */
     private function _makeDefaultParamsArray($aParams)
     {
-        $aVars = array();
+        $aVars     = array();
+        $aKeywords = array('moduleName', 'managerName', 'controller',
+            'anchor', 'host');
+        if (SGL_Config::get('translation.langInUrl')) {
+            array_push($aKeywords, 'lang');
+        }
         foreach ($aParams as $k => $v) {
-            // skip "keywords"
-            if (in_array($k, array('moduleName', 'managerName',
-                    'controller', 'anchor', 'host'))) {
+            if (in_array($k, $aKeywords)) { // skip "keywords"
                 continue;
             }
             $aVars[] = $k . '/' . $v;
@@ -172,8 +175,15 @@ class SGL_URL2
 
         // rename managerName -> controller
         if (isset($aParams['managerName'])) {
-            $aParams['controller'] = $aParams['managerName'];
+            if ($aParams['moduleName'] != $aParams['managerName']) {
+                $aParams['controller'] = $aParams['managerName'];
+            }
             unset($aParams['managerName']);
+        }
+
+        // set current language if none specified
+        if (SGL_Config::get('translation.langInUrl') && empty($aParams['lang'])) {
+            $aParams['lang'] = SGL::getCurrentLang();
         }
 
         // try to match URL in new style
@@ -191,11 +201,13 @@ class SGL_URL2
     /**
      * Make current link.
      *
+     * @param array $aQueryData
+     *
      * @return string
      */
-    public function makeCurrentLink()
+    public function makeCurrentLink($aQueryData = array())
     {
-        return $this->makeLink($this->_aQueryData);
+        return $this->makeLink(array_merge($this->_aQueryData, $aQueryData));
     }
 
     /**
