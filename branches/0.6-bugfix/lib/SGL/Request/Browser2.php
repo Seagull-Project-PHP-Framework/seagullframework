@@ -12,8 +12,6 @@ require_once SGL_CORE_DIR . '/Url2.php';
  * Browser2 request type, which uses Horder_Routes package
  * to resolve query data, instead SGL_Url heavy parsing used by Browser1.
  *
- * @todo needs SGL_Url2 to be implemented to complete integration
- *
  * @package SGL
  * @subpackage request
  * @author Demian Turner <demian@phpkitchen.com>
@@ -36,16 +34,23 @@ class SGL_Request_Browser2 extends SGL_Request
         $defManager = SGL_Config::get('site.defaultManager');
         $defParams  = SGL_Config::get('site.defaultParams');
 
-        // create mapper
-        $m = new Horde_Routes_Mapper(array(
-            'explicit'       => true, // do not connect to Horder defaults
-            'controllerScan' => array('SGL_Request_Browser2', 'getAvailableManagers'),
-        ));
+        // show lang in URL
+        $prependLang  = SGL_Config::get('translation.langInUrl');
+        $prependRegex = $prependLang ? ':lang/' : '';
 
         // Connect to custom routes.
         // Custom routes have higher priority, thus connect to them before
         // default Seagull SEO routes.
         $aRoutes = $this->_getCustomRoutes();
+        if ($prependRegex) {
+            $aRoutes = $this->_prependRegex($aRoutes, $prependRegex);
+        }
+
+        // create mapper
+        $m = new Horde_Routes_Mapper(array(
+            'explicit'       => true, // do not connect to Horder defaults
+            'controllerScan' => array('SGL_Request_Browser2', 'getAvailableManagers'),
+        ));
         foreach ($aRoutes as $aRouteData) {
             call_user_func_array(array($m, 'connect'), $aRouteData);
         }
@@ -53,12 +58,23 @@ class SGL_Request_Browser2 extends SGL_Request
         // Seagull SEO routes connection
         //   *  all available routes variants are marked with numbers.
         //
+        if ($prependLang) {
+            // Step zero: connect to language
+            //   - index.php/ru
+            //   - index.php/ru/
+            $m->connect($prependRegex, array(
+                'moduleName' => $defModule,
+                // language is not resolved yet, thus default will be returned
+                'lang'       => SGL::getCurrentLang()
+            ));
+        }
+
         // Step one: connect to module
         //   1. index.php
         //   2. index.php/
         //   3. index.php/module
         //   4. index.php/module/
-        $m->connect(':moduleName', array(
+        $m->connect($prependRegex . ':moduleName', array(
             'moduleName' => $defModule,
         ));
         // Step two: connect to module and manager
@@ -67,13 +83,13 @@ class SGL_Request_Browser2 extends SGL_Request
         // NB: we specify :controller variable instead of :managerName
         //     to invoke controller scan, later in the code we rename
         //     contoller -> managerName
-        $m->connect(':moduleName/:controller');
+        $m->connect($prependRegex . ':moduleName/:controller');
         // Step three: connect to module, manager and parameters
         //   7. index.php/module/manager/and/a/lot/of/params/here
-        $m->connect(':moduleName/:controller/*params');
+        $m->connect($prependRegex . ':moduleName/:controller/*params');
         // Step four: connect to module and parameters
         //   8. index.php/module/and/a/lot/of/params/here
-        $m->connect(':moduleName/*params');
+        $m->connect($prependRegex . ':moduleName/*params');
 
         $aQueryData = $m->match($qs);
         // resolve default manager
@@ -99,6 +115,12 @@ class SGL_Request_Browser2 extends SGL_Request
             $aQueryData = array_merge($aQueryData, $aParams);
 
             unset($aQueryData['params']);
+        }
+        if ($prependLang) {
+            $aQueryData['lang'] = $aQueryData['lang'] . '-' .
+                // language is not resolved yet, thus default will be returned
+                SGL::getCurrentCharset();
+//                'utf-8';
         }
 
         // mapper options
@@ -197,6 +219,28 @@ class SGL_Request_Browser2 extends SGL_Request
         $aRoutes = array();
         // $aRoutes variable should exist
         include $routesFile;
+        return $aRoutes;
+    }
+
+    /**
+     * Prepend regex to routes.
+     *
+     * @param array $aRoutes
+     * @param string $regex
+     *
+     * @return array
+     */
+    private function _prependRegex($aRoutes, $regex)
+    {
+        foreach ($aRoutes as $k => $v) {
+            $index = is_string($v[0]) ? 0 : 1;
+            $route = $v[$index];
+            if ($route[0] == '/' && $regex[strlen($regex)-1] == '/') {
+                $aRoutes[$k][$index] = $regex . substr($route, 1);
+            } else {
+                $aRoutes[$k][$index] = $regex . $aRoutes[$k][$index];
+            }
+        }
         return $aRoutes;
     }
 }

@@ -478,6 +478,8 @@ class SGL
     /**
      * Detect if it is a first launch.
      *
+     * @static
+     *
      * @access public
      *
      * @return boolean
