@@ -1,11 +1,7 @@
 <?php
-$words['Login template name'] = 'Login Sjabloon naam';
-$words['Logout template name'] = 'Logout Sjabloon naam';
-$words['RSS resource'] = 'RSS bron';
-$words['URI of RSS feed'] = 'URI van de RSS feed';
-$words['Items to show'] = 'Te tonen items';
-$words['Number of Items to show'] = 'Aantal te tonen items';
-$words['Html text'] = 'Html tekst';
+$words['__SGL_UPDATED_BY'] = 'admin';
+$words['__SGL_UPDATED_BY_ID'] = '1';
+$words['__SGL_LAST_UPDATED'] = '2007-10-17 14:59:37';
 $words['Blocks Manager'] = 'Blok Manager';
 $words['Browse'] = 'Bladeren';
 $words['Edit block'] = 'Wijzig blok';
@@ -69,4 +65,15 @@ $words['Breadcrumbs will be rendered with this template'] = '\'Broodkruimels\' w
 $words['Static Html article'] = '\'Static Html\' artikel';
 $words['Set id of static Html article'] = 'Geef  id van \'static Html\' artikel';
 $words['Article will be rendered with this template'] = 'Artikel wordt met dit sjabloon gebouwd';
+$words['Show unpublished article'] = 'Toon ongepubliceerd artikel';
+$words['Unpublished article will be not shown unless allowed'] = 'Ongepubliceerd artikel wordt niet getoond, tenzij toegestaan';
+$words['Html text'] = 'Html tekst';
+$words['Login template name'] = 'Login Sjabloon naam';
+$words['Logout template name'] = 'Logout Sjabloon naam';
+$words['RSS resource'] = 'RSS bron';
+$words['URI of RSS feed'] = 'URI van de RSS feed';
+$words['Items to show'] = 'Te tonen items';
+$words['Number of Items to show'] = 'Aantal te tonen items';
+$words['News list will be rendered with this template'] = 'Nieuws overzicht wordt gegenereerd met dit sjabloon';
+$words['Image extension for flags'] = 'Afbeelding extensie voor vlaggen';
 ?>
