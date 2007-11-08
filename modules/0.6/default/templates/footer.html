@@ -27,5 +27,13 @@
     {if:conf[debug][infoBlock]}
     <flexy:include src="debug.html" />
     {end:}
+
+    {if:conf[site][broadcastMessage]}
+    <div id="broadcastMessage">
+        {conf[site][broadcastMessage]}
+	    <a href="#" title="{tr(#close#)}">X</a>
+    </div>
+    {end:}
+
 </body>
 </html>
