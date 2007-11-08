@@ -114,7 +114,6 @@ class SGL_FrontController
                 new SGL_Task_DiscoverClientOs(
                 new SGL_Task_ResolveManager(
                 new SGL_Task_CreateSession(
-                new SGL_Task_SetSystemAlert(
                 new SGL_Task_SetupLangSupport(
                 new SGL_Task_DetectAdminMode(
                 new SGL_Task_MaintenanceModeIntercept(
@@ -135,7 +134,7 @@ class SGL_FrontController
 
                 //  target
                 new SGL_MainProcess()
-                ))))))))))))))))))))));
+                )))))))))))))))))))));
             $process->process($input, $output);
 
         } else {

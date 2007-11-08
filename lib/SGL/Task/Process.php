@@ -275,23 +275,6 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 }
 
 /**
- * @package Task
- */
-class SGL_Task_SetSystemAlert  extends SGL_DecorateProcess
-{
-    function process(&$input, &$output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if (SGL_Config::get('site.broadcastMessage')) {
-            SGL_Session::set('broadcastMessage', SGL_Config::get('site.broadcastMessage'));
-        }
-
-        $this->processRequest->process($input, $output);
-    }
-}
-
-/**
  * Initiates session check.
  *
  *      o global set of perm constants loaded from file cache

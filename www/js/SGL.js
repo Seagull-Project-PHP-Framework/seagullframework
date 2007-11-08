@@ -162,3 +162,12 @@ function makeUrl(params)
     }
     return ret;
 }
+
+SGL.ready(function() {
+    var msg = document.getElementById('broadcastMessage');
+    if (msg) {
+        msg.getElementsByTagName('a')[0].onclick = function() {
+            msg.style.display = 'none';
+        }
+    }
+});
