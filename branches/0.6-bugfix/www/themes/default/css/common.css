@@ -53,6 +53,21 @@ div.message {
         font-weight: bold;
         color: #f30;
     }
+div#broadcastMessage {
+    position: absolute;
+    z-index: 300;
+    left: 30px;
+    top: 30px;
+    width: 300px;
+    padding: 10px 20px;
+    background-color: #ffe9d9;
+    color: #333;
+}
+    div#broadcastMessage a {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+    }
 /* END messages & errors */
 
 
