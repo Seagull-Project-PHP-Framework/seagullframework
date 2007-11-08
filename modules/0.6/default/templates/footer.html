@@ -28,12 +28,10 @@
     <flexy:include src="debug.html" />
     {end:}
 
-    {if:conf[site][broadcastMessage]}
-    <div id="broadcastMessage">
+    <div flexy:if="conf[site][broadcastMessage]" id="broadcastMessage">
         {conf[site][broadcastMessage]}
-	    <a href="#" title="{tr(#close#)}">X</a>
+        <a href="#" title="{tr(#close#)}">X</a>
     </div>
-    {end:}
 
 </body>
 </html>
