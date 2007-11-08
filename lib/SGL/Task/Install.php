@@ -111,6 +111,11 @@ class SGL_Task_CreateConfig extends SGL_Task
             $data['prefix'] .= '_';
         }
 
+        // mysql storage
+        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
+            ? $data['dbMysqlDefaultStorageEngine']
+            : false;
+
         //  db details
         $c->set('db', array('prefix' => $data['prefix']));
         $c->set('db', array('host' => $data['host']));
@@ -122,7 +127,7 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('db', array('socket' => $data['socket']));
         $c->set('db', array('type' => $data['dbType']['type']));
         $c->set('db', array('postConnect' => $data['postConnect']));
-        $c->set('db', array('mysqlDefaultStorageEngine' => $data['dbMysqlDefaultStorageEngine']));
+        $c->set('db', array('mysqlDefaultStorageEngine' => $mysqlStorageEngine));
         $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
 
         //  version
