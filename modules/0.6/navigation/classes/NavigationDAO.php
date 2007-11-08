@@ -636,6 +636,8 @@ class NavigationDAO extends SGL_Manager
                 if ($section['lang'] != SGL_Translation::getFallbackLangID() && !empty($section['title_original'])) {
                     $section['title'] = $section['title_original'];
                 }
+            } elseif ($section['trans_id'] == '') {
+                unset($section['trans_id']);
             }
         }
 
