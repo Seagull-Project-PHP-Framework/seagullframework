@@ -59,6 +59,7 @@ class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
 		$gateway->service();
 		$output->data = ob_get_contents();
 		ob_end_clean();
+		SGL::logMessage('------ query count:'.SGL_Output::getQueryCount(), PEAR_LOG_DEBUG);
     }
 }
 
