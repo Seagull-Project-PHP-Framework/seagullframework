@@ -309,7 +309,9 @@ class ConfigMgr extends SGL_Manager
 
         // de-merge module config
         $moduleConf = new SGL_Config();
-        $aData = $moduleConf->load(SGL_MOD_DIR . '/default/conf.ini');
+        //$default = SGL_Config::get('site.defaultModule');
+        $default = 'default';
+        $aData = $moduleConf->load(SGL_MOD_DIR . "/$default/conf.ini");
         foreach ($aData as $k => $aValue) {
             if ($c->exists($k)) {
                 $c->remove($k);
