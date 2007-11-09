@@ -41,9 +41,7 @@ class SGL_FilterChain
         foreach ($this->aFilters as $filter) {
             if (!class_exists($filter)) {
                 $path = trim(preg_replace('/_/', '/', $filter)) . '.php';
-                if (is_file($path)) {
-                    require_once $path;
-                }
+                require_once $path;
             }
         }
     }
