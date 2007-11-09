@@ -805,7 +805,7 @@ class SGL_Output
     function outputBody($templateEngine = null)
     {
         if (empty($this->template)) {
-            $this->template = 'docBlank.html';
+            $this->template = 'null.html';
         }
         $this->masterTemplate = $this->template;
         $view = &new SGL_HtmlSimpleView($this, $templateEngine);
