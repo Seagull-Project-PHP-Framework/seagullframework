@@ -307,6 +307,14 @@ class ConfigMgr extends SGL_Manager
         $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
 
+        // de-merge module config
+        $moduleConf = new SGL_Config();
+        $aData = $moduleConf->load(SGL_MOD_DIR . '/default/conf.ini');
+        foreach ($aData as $k => $aValue) {
+            if ($c->exists($k)) {
+                $c->remove($k);
+            }
+        }
         //  write configuration to file
         $ok = $c->save();
 
@@ -324,7 +332,8 @@ class ConfigMgr extends SGL_Manager
             }
 
             if (isset($res) && PEAR::isError($res)) {
-                SGL::raiseMsg('config info successfully updated but failed syncing sequences', true, SGL_MESSAGE_WARNING);
+                SGL::raiseMsg('config info successfully updated but failed syncing sequences',
+                    true, SGL_MESSAGE_WARNING);
             } else {
                 SGL::raiseMsg('config info successfully updated', true, SGL_MESSAGE_INFO);
             }
