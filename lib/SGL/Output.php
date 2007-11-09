@@ -780,6 +780,17 @@ class SGL_Output
                 } else {
                     $aArgs = $aArgs[0];
                 }
+            // old style: params string specified as not part of array
+            } elseif (count($aArgs) == 5 && empty($aList)) {
+                $aVars = explode('||', $aArgs[4]);
+                foreach ($aVars as $varKey => $varString) {
+                    $aVar = explode('|', $varString);
+                    if (isset($aVar[1]) && isset($this->{$aVar[1]})) {
+                        $aVar[1] = $this->{$aVar[1]};
+                    }
+                    $aVars[$varKey] = implode('|', $aVar);
+                }
+                $aArgs[4] = implode('||', $aVars);
             }
             $url = $input->getCurrentUrl();
             $ret = $url->makeLink($aArgs);
