@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+09-11-07    Fixed prob where global and module configs were saving in global file
 27-10-07    Fixed bug user's password was being hashed twice in UserImportMgr
             (spaycegirl)
 23-10-07    Fixed bug where it was not possible for admin to receive emails for errors [3471]
