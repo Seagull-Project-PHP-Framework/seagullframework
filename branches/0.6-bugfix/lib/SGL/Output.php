@@ -736,23 +736,28 @@ class SGL_Output
     }
 
     /**
-     * Wrapper for SGL_Url::makeLink,
+     * Wrapper for SGL_Url::makeLink.
      * Generates URL for easy access to modules and actions.
      *
-     * @access  public
+     * @access public
+     *
      * @param string $action
      * @param string $mgr
      * @param string $mod
      * @param array $aList
      * @param string $params
      * @param integer $idx
-     * @return  string
+     *
+     * @return string
      */
-    function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(), $params = '', $idx = 0)
+    function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
+        $params = '', $idx = 0)
     {
-        if (SGL_Config::get('site.inputUrlHandlers') != 'Horde_Routes') {
-            $ret = SGL_Url::makeLink($action, $mgr, $mod, $aList, $params, $idx, $this);
-        } else {
+        $input = &SGL_Registry::singleton();
+        $req = $input->getRequest();
+        // Horde routes work only for browser request types
+        if ($req->type == SGL_REQUEST_BROWSER
+                && SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
             $aArgs = func_get_args();
             // new style call
             if (count($aArgs) == 1) {
@@ -776,7 +781,11 @@ class SGL_Output
                     $aArgs = $aArgs[0];
                 }
             }
-            $ret = SGL_Registry::singleton()->getCurrentUrl()->makeLink($aArgs);
+            $url = $input->getCurrentUrl();
+            $ret = $url->makeLink($aArgs);
+        } else {
+            $ret = SGL_Url::makeLink($action, $mgr, $mod, $aList,
+                $params, $idx, $this);
         }
         return $ret;
     }
