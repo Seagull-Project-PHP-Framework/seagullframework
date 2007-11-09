@@ -86,12 +86,6 @@ class SGL_URL2
                 && !isset($aNewParams['moduleName'])) {
             $aNewParams['moduleName'] = $aNewParams['managerName'];
         }
-        // this allows to skip manager name if it is the same as module name
-        if (isset($aNewParams['managerName'])
-                && isset($aNewParams['moduleName'])
-                && $aNewParams['managerName'] == $aNewParams['moduleName']) {
-            unset($aNewParams['managerName']);
-        }
         return $aNewParams;
     }
 
