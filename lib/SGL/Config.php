@@ -173,21 +173,22 @@ class SGL_Config
      * Remove a config key, save() must be used to persist changes.
      *
      * To remove the key $conf['site']['blocksEnabled'] = true, you would use
-     * $c->remove(array('site', 'blocksEnabled').
+     * $c->remove(array('site', 'blocksEnabled')
      *
-     * @param array $aKey   A 2 element array: element one for the section, element
-     *                      2 for the section key.
+     * @param array $key  	a) A 2 element array: element one for the section, element
+     *                         2 for the section key
+	 *						b) a key - the whole section will be removed
      * @return mixed
      * @todo in 0.7 make this consistent with $c->get()
      */
-    function remove($aKey)
+    function remove($key)
     {
-        if (!is_array($aKey)) {
-            return SGL::raiseError('Array arg expected',
-                SGL_ERROR_INVALIDARGS);
+        if (is_array($key)) {
+            list($key1, $key2) = $key;
+            unset($this->aProps[$key1][$key2]);
+        } else {
+            unset($this->aProps[$key]);
         }
-        list($key1, $key2) = $aKey;
-        unset($this->aProps[$key1][$key2]);
         return true;
     }
 
