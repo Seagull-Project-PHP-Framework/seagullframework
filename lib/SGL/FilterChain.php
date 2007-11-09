@@ -17,8 +17,10 @@ class SGL_FilterChain
 
         $code = '$process = ';
         foreach ($this->aFilters as $filter) {
-            $filters .= "new $filter(\n";
-            $closeParens .= ')';
+            if (class_exists($filter)) {
+                $filters .= "new $filter(\n";
+                $closeParens .= ')';
+            }
         }
         $code = $filters . $closeParens;
         eval("\$process = $code;");
@@ -39,7 +41,9 @@ class SGL_FilterChain
         foreach ($this->aFilters as $filter) {
             if (!class_exists($filter)) {
                 $path = trim(preg_replace('/_/', '/', $filter)) . '.php';
-                require_once $path;
+                if (is_file($path)) {
+                    require_once $path;
+                }
             }
         }
     }
