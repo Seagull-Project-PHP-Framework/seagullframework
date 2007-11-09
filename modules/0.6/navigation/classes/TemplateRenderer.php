@@ -59,7 +59,10 @@ class TemplateRenderer
         $this->view             = &new SGL_HtmlSimpleView($this->output);
 
         $output                 = &$this->output;
-        $output->theme          = $_SESSION['aPrefs']['theme'];
+        $output->theme          = (isset($navDriver->output->theme)) ? 
+                                  $navDriver->output->theme :
+                                  $_SESSION['aPrefs']['theme'];
+
         $output->moduleName     = 'navigation';
         $output->renderer       = &$this;
         $output->masterTemplate = $navDriver->_template
