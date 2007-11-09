@@ -141,7 +141,6 @@ class FileMgr extends SGL_Manager
             return $document;
         }
         $fileName = SGL_UPLOAD_DIR . '/' . $document->name;
-        $output->template = 'docBlank.html';
         $mimeType = $document->mime_type;
         $download = &new SGL_Download();
         $download->setFile($fileName);

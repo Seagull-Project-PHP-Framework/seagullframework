@@ -155,7 +155,7 @@ class PasswordMgr extends SGL_Manager
 
         //  else display error with blank template
         } else {
-            $output->template = 'docBlank.html';
+            $output->template = 'error.html';
         }
     }
 

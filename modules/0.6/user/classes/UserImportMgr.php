@@ -165,7 +165,7 @@ class UserImportMgr extends UserMgr
 
         //  else display error with blank template
         } else {
-            $output->template = 'docBlank.html';
+            $output->template = 'error.html';
         }
     }
 

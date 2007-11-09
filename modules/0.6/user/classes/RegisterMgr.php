@@ -183,7 +183,7 @@ class RegisterMgr extends SGL_Manager
                 SGL::raiseMsg($msg, false);
                 SGL::logMessage($msg, PEAR_LOG_CRIT);
 
-                $input->template = 'docBlank.html';
+                $input->template = 'error.html';
                 $this->validated = false;
                 return false;
             }
@@ -200,7 +200,7 @@ class RegisterMgr extends SGL_Manager
         if (!$this->conf['RegisterMgr']['enabled']
                 && strtolower(get_class($this)) == strtolower(__CLASS__)) {
             SGL::raiseMsg('Registration has been disabled');
-            $input->template = 'docBlank.html';
+            $input->template = 'error.html';
             $this->validated = false;
         }
     }

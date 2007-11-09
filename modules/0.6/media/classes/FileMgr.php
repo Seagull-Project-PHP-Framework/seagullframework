@@ -114,7 +114,6 @@ class FileMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'docBlank.html';
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $media->get($input->mediaId);
         $fileName = SGL_UPLOAD_DIR . '/' . $media->file_name;
@@ -149,7 +148,6 @@ class FileMgr extends SGL_Manager
 
         $c = &SGL_Config::singleton();
         $ok = $c->set('FileMgr', array('setHeaders' => false));
-        $output->template = 'docBlank.html';
         $media = DB_DataObject::factory($this->conf['table']['media']);
         $fileType = DB_DataObject::factory($this->conf['table']['file_type']);
         $media->joinAdd($fileType);

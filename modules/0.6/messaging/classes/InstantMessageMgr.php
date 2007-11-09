@@ -330,7 +330,6 @@ class InstantMessageMgr extends SGL_Manager
     function _cmd_insert(&$input, &$output) // send
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $output->template = 'docBlank.html';
 
         // Get the user id from the current session
         $uid = SGL_Session::getUid();

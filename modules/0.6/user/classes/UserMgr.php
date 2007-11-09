@@ -246,8 +246,6 @@ class UserMgr extends RegisterMgr
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->template = 'docBlank.html';
-
         $results = array();
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $userId) {
