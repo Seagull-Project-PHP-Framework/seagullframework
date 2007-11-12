@@ -74,6 +74,7 @@ class SGL_Request
                   SGL_ERROR_NOCLASS);
             }
             $obj = new $class();
+            error_log('##########   Req type: '.$class);
             $ok = $obj->init();
 
             return PEAR::isError($ok)
