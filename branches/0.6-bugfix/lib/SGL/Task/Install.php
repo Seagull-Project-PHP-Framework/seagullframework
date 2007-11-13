@@ -1539,10 +1539,22 @@ class SGL_Task_SyncSequences extends SGL_Task
             $suffixRaw = str_replace('%s', '', $suffix);
             $suffixRawStart = (0 - strlen($suffixRaw));
 
+            // get views
+            $aViews = SGL_Task_SyncSequences::_getViews();
+            if (PEAR::isError($aViews)) {
+                SGL_Error::pop();
+                $aViews = array(); // no views by default
+            }
+
             foreach ($aTables as $table) {
                 $primary_field = '';
                 //  we only build sequences for tables that are not sequences themselves
                 if ($table == $conf['table']['sequence'] || substr($table, $suffixRawStart) == $suffixRaw) {
+                    continue;
+                }
+
+                // skip views
+                if (in_array($table, $aViews)) {
                     continue;
                 }
 
@@ -1582,7 +1594,18 @@ class SGL_Task_SyncSequences extends SGL_Task
                 SGL_Sql::parse(SGL_ETC_DIR . '/sequence.my.sql', 0, array('SGL_Sql', 'execute'));
             }
 
+            // get views
+            $aViews = SGL_Task_SyncSequences::_getViews();
+            if (PEAR::isError($aViews)) {
+                SGL_Error::pop();
+                $aViews = array(); // no views by default
+            }
+
             foreach ($aTables as $table) {
+                // skip views
+                if (in_array($table, $aViews)) {
+                    continue;
+                }
                 $primary_field = '';
                 if ($table != $conf['table']['sequence']) {
                     $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
@@ -1705,6 +1728,19 @@ class SGL_Task_SyncSequences extends SGL_Task
                 SGL_Error::pop();
             }
         }
+    }
+
+    function _getViews()
+    {
+        $locator = &SGL_ServiceLocator::singleton();
+        $dbh     = $locator->get('DB');
+        $dbName  = SGL_Config::get('db.name');
+        $query   = "
+            SELECT table_name
+            FROM   information_schema.views
+            WHERE  table_schema = '" . $dbh->escapeSimple($dbName) . "'
+        ";
+        return $dbh->getCol($query);
     }
 }
 
