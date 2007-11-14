@@ -420,6 +420,7 @@ $defaultWords['navigation'] = 'navigation';
 $defaultWords['blocks'] = 'blocks';
 $defaultWords['categories'] = 'categories';
 $defaultWords['permissions'] = 'permissions';
+$defaultWords['library'] = 'library';
 $defaultWords['Clear Selected Caches Now'] = 'Clear Selected Caches Now';
 $defaultWords['Rebuild Data Objects'] = 'Rebuild Data Objects';
 $defaultWords['Rebuild Dataobjects Now'] = 'Rebuild Dataobjects Now';

@@ -306,6 +306,12 @@ class MaintenanceMgr extends SGL_Manager
                 SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
             }
         }
+        // drop lib cache
+        if (!empty($input->cache['lib'])) {
+            if (file_exists(SGL_VAR_DIR . '/cachedLibs.php')) {
+                unlink(SGL_VAR_DIR . '/cachedLibs.php');
+            }
+        }
         if (count($input->cache) > 0) {
             $success = true;
             foreach ($input->cache as $group => $v) {
