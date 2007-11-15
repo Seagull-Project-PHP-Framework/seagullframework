@@ -695,13 +695,13 @@ class SGL_String
      *
      * @return string
      */
-	function replaceAccents($str)
+    function replaceAccents($str)
     {
-	    if (!SGL_String::isCyrillic($str)) {
+        if (!SGL_String::isCyrillic($str)) {
             $str = SGL_String::to7bit($str);
             $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
-	    }
-	    return $str;
+        }
+        return $str;
     }
 
 	/**
@@ -714,11 +714,11 @@ class SGL_String
 	 * @param string $str
 	 *
 	 * @return boolean
-	 */
+     */
     function isCyrillic($str)
-	{
+    {
         return SGL::getCurrentLang() == 'ru';
-	}
+    }
 
     /**
      * Removes chars that are illegal in ini files.
