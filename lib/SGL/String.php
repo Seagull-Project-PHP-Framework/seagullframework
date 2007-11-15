@@ -681,11 +681,43 @@ class SGL_String
         return $text;
 	}
 
-
+    /**
+     * Replaces accents in string.
+     *
+     * @static
+     *
+     * @todo make it work with cyrillic chars
+     * @todo make it work with non utf-8 encoded strings
+     *
+     * @see SGL_String::isCyrillic()
+     *
+     * @param string $str
+     *
+     * @return string
+     */
 	function replaceAccents($str)
+    {
+	    if (!SGL_String::isCyrillic($str)) {
+            $str = SGL_String::to7bit($str);
+            $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
+	    }
+	    return $str;
+    }
+
+	/**
+	 * Checks if strings has cyrillic chars.
+	 *
+	 * @todo write the algorithm
+	 *
+	 * @static
+	 *
+	 * @param string $str
+	 *
+	 * @return boolean
+	 */
+    function isCyrillic($str)
 	{
-		$str = SGL_String::to7bit($str);
-		return preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
+        return SGL::getCurrentLang() == 'ru';
 	}
 
     /**
