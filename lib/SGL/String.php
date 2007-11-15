@@ -707,8 +707,6 @@ class SGL_String
 	/**
 	 * Checks if strings has cyrillic chars.
 	 *
-	 * @todo write the algorithm
-	 *
 	 * @static
 	 *
 	 * @param string $str
@@ -717,7 +715,23 @@ class SGL_String
      */
     function isCyrillic($str)
     {
-        return SGL::getCurrentLang() == 'ru';
+        $ret = false;
+        if (function_exists('mb_convert_encoding') && !empty($str)) {
+            // codes for Russian chars
+            $aCodes = range(1040, 1103);
+            // convert to entities
+            $encoded = mb_convert_encoding($str, 'HTML-ENTITIES',
+                mb_detect_encoding($str));
+            // get codes of the string
+            $aChars = explode(';', str_replace('&#', '', $encoded));
+            array_pop($aChars);
+            $aChars = array_unique($aChars);
+            // see if cyrillic chars there
+            $aNonCyrillicChars = array_diff($aChars, $aCodes);
+            // if string is the same -> no cyrillic chars
+            $ret = count($aNonCyrillicChars) != count($aChars);
+        }
+        return $ret;
     }
 
     /**
