@@ -2,7 +2,7 @@
     $states = array(
         ''      =>'',
         'BAY'   =>'Bayern',
-        'BAWÜ'  =>'Baden-Württemberg',
+        'BAWÃœ'  =>'Baden-WÃ¼rttemberg',
         'BBG'   =>'Brandenburg',
         'HB'    =>'Freie Hansestadt Bremen',
         'HE'    =>'Hessen',
@@ -15,6 +15,6 @@
         'SAAN'  =>'Sachsen-Anahlt',
         'SAAR'  =>'Saarland',
         'SH'    =>'Schleswig-Hostein',
-        'TH'    =>'Thüringen',
+        'TH'    =>'ThÃ¼ringen',
     );
 ?>

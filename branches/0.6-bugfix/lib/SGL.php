@@ -308,36 +308,77 @@ class SGL
     }
 
      /**
-      * Test if there is a country or state file corresponding
-      * to the current language preference/setting.
-      * If not, tries with the default file (English).
-      * In either case, load it into the GLOBALS and return the array.
+      * Loads region list for current language. If not found, loads region
+      * list for default language (English). Put found data into $GLOBALS.
       *
-      * @param string $fileType 'states' or 'countries' or 'counties'
-      * @return array reference
+      * All region lists should be UTF-8 encoded.
       *
-      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+      * @todo remove presence of $GLOBALS
+      *
+      * @static
+      *
+      * @param string $regionType
+      *
+      * @return mixed
       */
-    function loadRegionList($fileType)
+    function loadRegionList($regionType)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
-            SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
-            return;
+        $aAllowedTypes = array('countries', 'states', 'counties');
+        if (!in_array($regionType, $aAllowedTypes)) {
+            return SGL::raiseError('Invalid argument', SGL_ERROR_INVALIDARGS);
         }
+        if (!empty($GLOBALS['_SGL'][strtoupper($regionType)])) {
+            return $GLOBALS['_SGL'][strtoupper($regionType)];
+        }
+
         $lang = SGL::getCurrentLang();
-        $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+        $file = SGL_DAT_DIR . "/ary.$regionType.$lang.php";
         if (!file_exists($file)) {
-            $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+            // get data with default language
+            $file = SGL_DAT_DIR . "/ary.$regionType.en.php";
         }
-        include_once $file;
 
-        $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
-        if (is_array($a)) {
-            ksort($a);
+        // load data
+        include_once $file;
+        $list = ${$regionType};
+
+        // sort arrays
+        if (is_array($list)) {
+            $aList = $list;
+
+            // replace accents for utf-8 encoded string
+            array_walk($aList, create_function('&$v',
+                '$v = SGL_String::replaceAccents($v);'));
+
+            // sort values
+            asort($aList);
+
+            // restore accents
+            $aList = array_merge($aList, $list);
+            $list = $aList;
+
+            // decode list to current charset
+            array_walk($list, array('SGL', '_toCurrentCharset'));
         }
-        return $a;
+
+        // remember region list in global array
+        $GLOBALS['_SGL'][strtoupper($regionType)] = $list;
+
+        return $list;
+    }
+
+    /**
+     * Convert string to current charset from utf-8.
+     *
+     * @static
+     *
+     * @param string $v
+     */
+    function _toCurrentCharset(&$v)
+    {
+        $v = function_exists('iconv')
+            ? iconv('UTF-8', SGL::getCurrentCharset(), $v)
+            : $v;
     }
 
     function displayStaticPage($msg)
