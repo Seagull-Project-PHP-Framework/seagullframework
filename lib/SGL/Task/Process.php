@@ -559,7 +559,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
             // 2. look for language in settings
             if (!isset($_SESSION['aPrefs']['language'])
                     || !SGL_Translation::isAllowedLanguage($_SESSION['aPrefs']['language'])
-                    || $firstLaunch) {
+                    || ($firstLaunch && SGL_Session::getUid() == SGL_GUEST)) {
                 // 3. look for language in browser settings
                 if (!SGL_Config::get('translation.languageAutoDiscover')
                         || !($lang = $this->resolveLanguageFromBrowser())) {
