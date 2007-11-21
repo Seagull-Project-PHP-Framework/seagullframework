@@ -114,12 +114,12 @@ class SGL_FrontController
                 new SGL_Task_DiscoverClientOs(
                 new SGL_Task_ResolveManager(
                 new SGL_Task_CreateSession(
-                new SGL_Task_SetupLangSupport(
+                new SGL_Task_AuthenticateRequest(
                 new SGL_Task_DetectAdminMode(
                 new SGL_Task_MaintenanceModeIntercept(
                 new SGL_Task_DetectSessionDebug(
                 new SGL_Task_SetupPerms(
-                new SGL_Task_AuthenticateRequest(
+                new SGL_Task_SetupLangSupport(
                 new SGL_Task_SetupLocale(
 
                 //  post-process (order: bottom up)
