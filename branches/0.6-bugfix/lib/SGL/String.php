@@ -480,28 +480,49 @@ class SGL_String
     /**
      * Returns a shortened version of text string resolved by word boundaries.
      *
-     * @access  public
-     * @param   string  $str    Text to be shortened
-     * @param   integer $limit  Number of words/chars to cut to
-     * @param   integer $element What string element type to count by
-     * @param   string  $appendString  Trailing string to be appended
-     * @return  string  $processedString    Correctly shortened text
+     * @static
+     *
+     * @access public
+     *
+     * @param string $str           Text to be shortened.
+     * @param integer $limit        Number of words/chars to cut to.
+     * @param integer $element      What string element type to count by.
+     * @param string $appendString  Trailing string to be appended.
+     *
+     * @return string Correctly shortened text.
      */
-    function summarise($str, $limit=50, $element = SGL_WORD, $appendString=' ...')
+    function summarise($str, $limit = 50, $element = SGL_WORD,
+        $appendString = ' ...')
     {
         switch ($element) {
+
+        // strip by chars
         case SGL_CHAR:
-            $ret = (strlen($str) > $limit) ? substr($str, 0, $limit) . $appendString : $str;
+            if (extension_loaded('mbstring')) {
+                $enc = mb_detect_encoding($str);
+                $len = mb_strlen($str, $enc);
+                $ret = $len > $limit
+                    ? mb_substr($str, 0, $limit, $enc) . $appendString
+                    : $str;
+            } else {
+                $len = strlen($str);
+                $ret = $len > $limit
+                    ? substr($str, 0, $limit) . $appendString
+                    : $str;
+            }
             break;
 
+        // strip by words
         case SGL_WORD:
-            $limit--;
-            $words = explode(' ', $str);
-            $sliced = (count($words) > $limit) ? array_slice($words, 0, $limit) : $words;
-            $ret = implode(' ', $sliced);
-            $ret = (count($words) > $limit) ? $ret . $appendString : $ret;
+            $aWords = explode(' ', $str);
+            if (count($aWords) > $limit) {
+                $ret = implode(' ', array_slice($aWords, 0, $limit)) . $appendString;
+            } else {
+                $ret = $str;
+            }
             break;
         }
+
         return  $ret;
     }
 
