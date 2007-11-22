@@ -117,7 +117,7 @@ class TranslationMgr extends SGL_Manager
         $input->submitted = $req->get('submitted');
 
         // make sure we don't use cache
-        SGL_Translation::clearCache();
+        SGL_Config::set('cache.enabled', false);
 
         if ($input->submitted) {
             if ($input->action == 'update') {
@@ -334,6 +334,7 @@ class TranslationMgr extends SGL_Manager
             $input->aTranslation
         );
         if (!PEAR::isError($ok)) {
+            SGL_Translation2::clearCache();
             SGL::raiseMsg('translation successfully updated', true,
                 SGL_MESSAGE_INFO);
         } else {
