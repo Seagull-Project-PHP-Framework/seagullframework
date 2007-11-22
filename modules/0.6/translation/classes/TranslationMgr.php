@@ -114,7 +114,10 @@ class TranslationMgr extends SGL_Manager
         $input->showWords    = $req->get('showWords');
 
         // submit action
-        $input->submitted    = $req->get('submitted');
+        $input->submitted = $req->get('submitted');
+
+        // make sure we don't use cache
+        SGL_Translation::clearCache();
 
         if ($input->submitted) {
             if ($input->action == 'update') {
