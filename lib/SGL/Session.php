@@ -476,7 +476,11 @@ class SGL_Session
         if (!in_array(SGL_ADMIN, $aRoles)) {
             $aRoles[] = SGL_ADMIN;
         }
-        $ret = in_array($_SESSION['rid'], $aRoles);
+        if (!isset($_SESSION['rid'])) {
+            $ret = false;
+        } else {
+            $ret = in_array($_SESSION['rid'], $aRoles);
+        }
         return $ret;
     }
 
