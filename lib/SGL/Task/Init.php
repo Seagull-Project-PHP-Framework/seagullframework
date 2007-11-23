@@ -483,9 +483,6 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
      */
     function pearErrorHandler($oError)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
         //  log message
         $message = $oError->getMessage();
         $debugInfo = $oError->getDebugInfo();
