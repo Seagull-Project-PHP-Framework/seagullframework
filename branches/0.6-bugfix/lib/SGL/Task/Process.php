@@ -120,7 +120,7 @@ class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
             // allow admin to access and to connect if provided a key
             $rid = SGL_Session::getRoleId();
             $adminMode = SGL_Session::get('adminMode');
-            if ($rid != SGL_ADMIN && !$adminMode) {
+            if ($rid != SGL_ADMIN && !$adminMode && !SGL::runningFromCLI()) {
                 SGL::displayMaintenancePage($output);
             }
         }

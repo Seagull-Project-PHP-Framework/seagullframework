@@ -24,7 +24,6 @@ class SessionTest extends UnitTestCase
             'adminPassword'  => 'admin',
             'createTables'   => 1
         );
-
         // create 5 demo users
         SGL_Task_CreateAdminUser::run($aAdmin);
         SGL_Task_CreateMemberUser::run(array('createTables' => 1));

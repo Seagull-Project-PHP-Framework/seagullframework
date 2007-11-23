@@ -197,8 +197,12 @@ class VariousTest extends UnitTestCase {
 
     function test_hasAdminGui()
     {
-        $ret = SGL_Session::hasAdminGui();
-        $this->assertEqual($ret, SGL_ADMIN); // tests run as SGL_ADMIN
+        $rid = SGL_Session::getRoleId();
+        if ($rid == SGL_ADMIN) {
+            $this->assertTrue(SGL_Session::hasAdminGui());
+        } else {
+            $this->assertFalse(SGL_Session::hasAdminGui());
+        }
     }
 
     function getNextKey($aKeys)
