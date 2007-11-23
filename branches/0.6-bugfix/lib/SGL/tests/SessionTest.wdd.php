@@ -29,13 +29,19 @@ class SessionTest extends UnitTestCase
         SGL_Task_CreateMemberUser::run(array('createTables' => 1));
         SGL_Task_CreateDemoUsers::run();
 
+        $this->_destroySession();
         new SGL_Session(1);
+    }
+
+    function _destroySession()
+    {
+        @session_destroy();
+        $_SESSION = array();
     }
 
     function tearDown()
     {
-        @session_destroy();
-        $_SESSION = array();
+        $this->_destroySession();
     }
 
     function testRunAs()

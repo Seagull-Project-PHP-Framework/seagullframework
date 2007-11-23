@@ -8,9 +8,9 @@ require_once SGL_LIB_PEAR_DIR . '/Config.php';
  * @package translation
  * @author  Julien Casanova <julien@soluo.fr>
  */
-class TestTranslation extends UnitTestCase
+class TestTranslation2 extends UnitTestCase
 {
-    function TestTranslation()
+    function TestTranslation2()
     {
         $this->UnitTestCase('Translation Test');
     }

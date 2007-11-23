@@ -27,6 +27,31 @@ class TestUserMgr extends UnitTestCase {
         SGL_DB::setConnection();
     }
 
+    function tearDown()
+    {
+        $table  = $this->da->conf['table']['user'];
+        $query  = "SELECT usr_id FROM $table";
+        $aUsers = $this->da->dbh->getCol($query);
+
+        foreach ($aUsers as $userId) {
+            $this->_deleteUser($userId);
+        }
+
+        // rebuild seqs
+        include_once SGL_CORE_DIR . '/Task/Install.php';
+        SGL_Task_SyncSequences::run();
+    }
+
+    function _deleteUser($userId)
+    {
+        $this->da->deletePrefsByUserId($userId);
+        $this->da->deleteUserLoginCookiesByUserId($userId);
+
+        $oUser = DB_DataObject::factory($this->da->conf['table']['user']);
+        $oUser->get($userId);
+        $oUser->delete();
+    }
+
     function testInsertingAUserIncrementsTotalCount()
     {
         $conf      = $this->da->conf;
