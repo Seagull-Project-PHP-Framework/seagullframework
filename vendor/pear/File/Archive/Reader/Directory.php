@@ -101,7 +101,9 @@ class File_Archive_Reader_Directory extends File_Archive_Reader_Relay
             }
         }
 
+        $file = null;
         while ($this->source === null ||
+              $file == '.' || $file == '..' ||
               ($error = $this->source->next()) !== true) {
 
             if ($this->source !== null) {
