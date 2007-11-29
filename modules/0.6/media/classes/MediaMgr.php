@@ -287,6 +287,7 @@ class MediaMgr extends FileMgr
                 'media/js/media.js',
                 ));
         }
+        $output->masterLayout = 'layout-navtop-2col_subright.css';
     }
 
     function ensureUploadDirWritable($targetDir)

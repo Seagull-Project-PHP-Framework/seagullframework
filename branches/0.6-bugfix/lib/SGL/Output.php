@@ -1137,6 +1137,12 @@ class SGL_Output
         } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.css"))) {
             $this->addCssFile("themes/$theme/css/$module.css");
         }
+        // BC
+        if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.php"))) {
+            $this->addCssFile("$module/css/$module.php");
+        } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.php"))) {
+            $this->addCssFile("themes/$theme/css/$module.php");
+        }
 
         $params = '';
         foreach ($aCssHelperParams as $k => $v) {
