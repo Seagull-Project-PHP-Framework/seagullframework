@@ -172,7 +172,7 @@ class SGL_Emailer
             'text_charset' => $GLOBALS['_SGL']['CHARSET'],
             'head_charset' => $GLOBALS['_SGL']['CHARSET'],
         ));
-        $headers = $mime->headers($this->headers, true);
+        $headers = $mime->headers($this->headers);
         $headers = $this->cleanMailInjection($headers);
 
         // if queue is enabled put email to queue
@@ -210,9 +210,6 @@ class SGL_Emailer
         case '':
         case 'mail':
             $backend = 'mail';
-            if (!empty($this->conf['mta']['mailArgs'])) {
-                $aParams = array($this->conf['mta']['mailArgs']);
-            }
             break;
 
         case 'sendmail':
