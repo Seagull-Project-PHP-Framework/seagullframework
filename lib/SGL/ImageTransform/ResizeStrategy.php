@@ -34,39 +34,38 @@
 // +---------------------------------------------------------------------------+
 // | ResizeStrategy.php                                                        |
 // +---------------------------------------------------------------------------+
-// | Author: Dmitri Lakachauskis <dmitri@telenet.lv>                           |
+// | Author: Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
 /**
  * Strategy for resizing images.
  *
- * @package    SGL
+ * @package SGL
  * @subpackage image
- * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_ImageTransform_ResizeStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        $width  = null;
-        $height = null;
-        if (isset($this->aParams['width'])) {
-            $width = $this->aParams['width'];
-        }
-        if (isset($this->aParams['height'])) {
-            $height = $this->aParams['height'];
-        }
-        $aSize = $this->driver->getImageSize();
+        $width  = isset($this->aParams['width'])
+            ? $this->aParams['width'] : null;
+        $height = isset($this->aParams['height'])
+            ? $this->aParams['height'] : null;
+        $aSize  = $this->driver->getImageSize();
+
+        $ret = true;
         if (isset($width) && isset($height)) {
             if ($aSize[0] > $width || $aSize[1] > $height) {
-                return $this->driver->fit($width, $height);
+                $ret = $this->driver->fit($width, $height);
             }
         } elseif (isset($width) && $aSize[0] > $width) {
-            return $this->driver->scaleByX($width);
+            $ret = $this->driver->scaleByX($width);
         } elseif (isset($height) && $aSize[1] > $height) {
-            return $this->driver->scaleByY($height);
+            $ret = $this->driver->scaleByY($height);
         }
-        return true;
+
+        return $ret;
     }
 }
 

@@ -72,7 +72,8 @@ class SGL_Emailer
         'crlf'          => '',
         'filepath'      => '',
         'mimetype'      => '',
-        'Cc'            => ''
+        'Cc'            => '',
+        'Bcc'           => ''
    );
 
     function SGL_Emailer($options = array())
@@ -160,6 +161,10 @@ class SGL_Emailer
         if (!empty($this->options['Cc'])) {
             $mime->addCc($this->options['Cc']);
         }
+        // Add Bcc-address
+        if (!empty($this->options['Bcc'])) {
+            $mime->addBcc($this->options['Bcc']);
+        }
         $body = $mime->get(array(
             'head_encoding' => 'base64',
             'html_encoding' => '7bit',
@@ -167,7 +172,7 @@ class SGL_Emailer
             'text_charset' => $GLOBALS['_SGL']['CHARSET'],
             'head_charset' => $GLOBALS['_SGL']['CHARSET'],
         ));
-        $headers = $mime->headers($this->headers);
+        $headers = $mime->headers($this->headers, true);
         $headers = $this->cleanMailInjection($headers);
 
         // if queue is enabled put email to queue
@@ -205,6 +210,9 @@ class SGL_Emailer
         case '':
         case 'mail':
             $backend = 'mail';
+            if (!empty($this->conf['mta']['mailArgs'])) {
+                $aParams = array($this->conf['mta']['mailArgs']);
+            }
             break;
 
         case 'sendmail':
