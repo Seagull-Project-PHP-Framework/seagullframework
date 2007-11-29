@@ -285,7 +285,7 @@ class MediaMgr extends FileMgr
                 'ajaxServer.php?client=html_ajax_lite&stub=MediaAjaxProvider&' . $sessId,
                 'media/js/Widgets.js',
                 'media/js/media.js',
-                ));
+                ), $optimize = false);
         }
         $output->masterLayout = 'layout-navtop-2col_subright.css';
     }

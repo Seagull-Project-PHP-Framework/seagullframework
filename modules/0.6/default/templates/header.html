@@ -31,8 +31,11 @@
         var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
     {scriptClose:h}
 
-    <link rel="stylesheet" type="text/css" href="{makeCssOptimizerLink()}" />
-    <script type="text/javascript" src="{makeJsOptimizerLink()}"></script>
+    {makeCssOptimizerLink():h}
+    {makeJsOptimizerLink():h}
+
+    <!--link rel="stylesheet" type="text/css" href="{makeCssOptimizerLink()}" />
+    <script type="text/javascript" src="{makeJsOptimizerLink()}"></script-->
 
     {scriptOpen:h}
     {foreach:onReadyDom,eventHandler}
