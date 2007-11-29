@@ -1071,7 +1071,7 @@ class SGL_Output
         $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&rev='
             . $rev . '&files=' . $jsString;
 
-        $ret .= "<script type=\"text/javascript\" src=\"$link\"></script>\n";
+        $ret = "<script type=\"text/javascript\" src=\"$link\"></script>\n";
         foreach ($this->aRawJavascriptFiles as $jsFile) {
             $ret .= "<script type=\"text/javascript\" src=\"$jsFile\"></script>\n";
         }
