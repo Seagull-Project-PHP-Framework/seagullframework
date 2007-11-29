@@ -56,6 +56,7 @@ class SGL_Output
     var $onReadyDom = '';
     var $aOnReadyDomEvents = array();
     var $aJavascriptFiles = array();
+    var $aRawJavascriptFiles = array();
     var $aCssFiles = array();
     var $aHeaders = array();
 
@@ -655,19 +656,24 @@ class SGL_Output
                 can also be remote js file e.g. http://example.com/foo.js
      * @return void
      */
-    function addJavascriptFile($file)
+    function addJavascriptFile($file, $optimize = true)
     {
+        if ($optimize) {
+            $aFiles = &$this->aJavascriptFiles;
+        } else {
+            $aFiles = &$this->aRawJavascriptFiles;
+        }
         if (is_array($file)) {
             foreach ($file as $jsFile) {
-                if (!in_array($jsFile, $this->aJavascriptFiles)) {
-                    $this->aJavascriptFiles[] = (strpos($jsFile, 'http://') === 0)
+                if (!in_array($jsFile, $aFiles)) {
+                    $aFiles[] = (strpos($jsFile, 'http://') === 0)
                         ? $jsFile
                         : SGL_BASE_URL . '/' . $jsFile;
                 }
             }
         } else {
-            if (!in_array($file, $this->aJavascriptFiles)) {
-                $this->aJavascriptFiles[] = (strpos($file, 'http://') === 0)
+            if (!in_array($file, $aFiles)) {
+                $aFiles[] = (strpos($file, 'http://') === 0)
                     ? $file
                     : SGL_BASE_URL . '/' . $file;
             }
@@ -1064,7 +1070,12 @@ class SGL_Output
         //  - files: loaded js files
         $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&rev='
             . $rev . '&files=' . $jsString;
-        return $link;
+
+        $ret .= "<script type=\"text/javascript\" src=\"$link\"></script>\n";
+        foreach ($this->aRawJavascriptFiles as $jsFile) {
+            $ret .= "<script type=\"text/javascript\" src=\"$jsFile\"></script>\n";
+        }
+        return $ret;
     }
 
     /**
@@ -1153,7 +1164,8 @@ class SGL_Output
         $cssString = implode(',', $this->aCssFiles);
         $link      = SGL_BASE_URL . '/optimizer.php?type=css&rev='
             . $rev . '&files=' . $cssString . $params;
-        return $link;
+
+        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
     }
 
     /**
