@@ -21,7 +21,9 @@ class SGL_Task_SetupExtraLanguages extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         // only setup extra languages in admin mode
-        if (SGL_Session::get('adminMode')) {
+        if (SGL_Session::get('adminMode')
+                // or when not in production
+                || !SGL_Config::get('debug.production')) {
             $this->setup();
         }
 
