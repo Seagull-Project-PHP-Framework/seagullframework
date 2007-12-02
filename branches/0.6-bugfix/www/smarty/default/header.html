@@ -6,15 +6,16 @@
     {else}
 	<title>{$result->conf.site.name} :: {$result->currentSectionName}</title>
     {/if}
-    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Type" content="text/html; charset={$result->charset}" />
     <meta http-equiv="Content-Language" content="{$result->currLang}" />
     <meta name="ROBOTS" content="ALL" />
     <meta name="Copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
-    <meta name="Generator" content="Seagull Framework v{versionAPI}" />
+    <meta name="Generator" content="Seagull Framework v{$result->versionAPI}" />
     <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="{$result->webRoot}/themes/{$result->theme}/css/style.php?navStylesheet={$result->conf.navigation.stylesheet}&amp;moduleName={$result->moduleName}" />
+    {$result->makeCssOptimizerLink()}
+    {$result->makeJsOptimizerLink()}
 
     <script type="text/javascript">
         var SGL_JS_WEBROOT="{$result->webRoot}";
