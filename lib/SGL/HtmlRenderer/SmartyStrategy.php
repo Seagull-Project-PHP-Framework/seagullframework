@@ -50,8 +50,8 @@ class SGL_Smarty extends Smarty
     function SGL_Smarty()
     {
         $this->Smarty();
-        $this->debugging = false;
-        $this->template_dir = SGL_THEME_DIR . '/smarty';
+        $this->debugging = true;
+        $this->template_dir = SGL_WEB_ROOT . '/smarty';
         $this->compile_dir = SGL_CACHE_DIR . '/templates_c';
         $this->config_dir = SGL_SMARTY_DIR . '/unit_test/configs';
         $this->cache_dir = SGL_CACHE_DIR;
