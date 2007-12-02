@@ -47,6 +47,7 @@ class EventMgr extends SGL_Manager
 
         $this->pageTitle    = 'Events Manager';
         $this->template     = 'eventList.html';
+        $this->masterLayout = 'layout-navtop-2col_localleft.css';
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -69,7 +70,7 @@ class EventMgr extends SGL_Manager
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = 'masterLeftCol.html';
+        $input->masterLayout = $this->masterLayout;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->eventId     = $req->get('frmEventId');

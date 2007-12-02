@@ -48,6 +48,7 @@ class CalendarMgr extends SGL_Manager
 
         $this->pageTitle    = 'Calendar';
         $this->template     = 'monthView.html';
+        $this->masterLayout = 'layout-navtop-2col_localleft.css';
 
         $this->_aActionsMapping =  array(
             'viewYear'    => array('viewYear'),
@@ -64,7 +65,7 @@ class CalendarMgr extends SGL_Manager
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = 'masterLeftCol.html';
+        $input->masterLayout   = $this->masterLayout;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'viewMonth';
         $input->event_id    = $req->get('frmEventId');

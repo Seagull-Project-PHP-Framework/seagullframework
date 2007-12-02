@@ -71,6 +71,7 @@ class MediaMgr extends FileMgr
 
         $this->module    = 'media';
         $this->template  = 'mediaList.html';
+        $this->masterLayout = 'layout-navtop-2col_localleft.css';
         $this->pageTitle = 'Media Manager';
 
         $this->da = & MediaDAO::singleton();
@@ -95,8 +96,8 @@ class MediaMgr extends FileMgr
         $input->error          = array();
         $input->module         = $this->module;
         $input->template       = $this->template;
+        $input->masterLayout   = $this->masterLayout;
         $input->pageTitle      = $this->pageTitle;
-        $input->masterTemplate = 'masterLeftCol.html';
 
         //  form vars
         $input->action    = ($req->get('action')) ? $req->get('action') : 'list';

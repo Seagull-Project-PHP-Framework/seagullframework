@@ -45,6 +45,7 @@ class LocationMgr extends SGL_Manager
 
         $this->pageTitle    = 'Location Manager';
         $this->template     = 'locationMgrList.html';
+        $this->masterLayout = 'layout-navtop-2col_localleft.css';
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -62,7 +63,7 @@ class LocationMgr extends SGL_Manager
         $this->validated    = true;
         $input->error       = array();
         $input->pageTitle   = $this->pageTitle;
-        $input->masterTemplate = 'masterLeftCol.html';
+        $input->masterLayout   = $this->masterLayout;
         $input->template    = $this->template;
         $input->action      = ($req->get('action')) ? $req->get('action') : 'list';
         $input->aDelete     = $req->get('frmDelete');

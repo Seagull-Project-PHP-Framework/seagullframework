@@ -44,6 +44,7 @@ class FileAssocMgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->pageTitle        = 'File Association Manager';
+        $this->masterLayout = 'layout-navtop-2col_localleft.css';
         $this->_aActionsMapping =  array(
             'list'   => array('list'),
             'listImageChoices'   => array('listImageChoices'),
@@ -59,7 +60,7 @@ class FileAssocMgr extends SGL_Manager
         $this->validated        = true;
         $input->error           = array();
         $input->pageTitle       = $this->pageTitle;
-        $input->masterTemplate  = 'masterLeftCol.html';
+        $input->masterLayout   = $this->masterLayout;
 
         //  form vars
         $input->action          = $req->get('action');
