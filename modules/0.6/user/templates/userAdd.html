@@ -1,5 +1,7 @@
-<h1>{translate(pageTitle)}</h1>
-<div id="ajaxMessage" class="message">{msgGet():h}</div>
+<div id="content-header">
+	<h2>{translate(pageTitle)}</h2>
+	<div id="ajaxMessage" class="message">{msgGet():h}</div>
+</div>
 
 <form id="frmUser" method="post" action="" flexy:ignore>
     <fieldset class="hide">
@@ -227,6 +229,22 @@
                            value="{user.security_answer}" />
                 </div>
             </li>
+			{if:isAdmin()} 
+			<li> 
+				<label for="user_role-id">{translate(#Role#)}</label> 
+				<div>
+					<select id="user_role-id" name="user[role_id]">
+						{generateSelect(aRoles,user.role_id):h}
+					</select>
+				</div>
+			</li>
+			<li> 
+				<label for="user_is-acct-active">{translate(#Is Active?#)}</label>
+				<div>
+					<input id="user_is-acct-active" type="checkbox" name="user[is_acct_active]" value="1" flexy:raw="{isAcctActive}" /> {translate(#check if active#)}
+				</div>
+			</li>
+			{end:}
         </ol>
     </fieldset>
 
