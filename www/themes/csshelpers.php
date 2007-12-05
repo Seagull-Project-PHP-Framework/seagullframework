@@ -1,9 +1,14 @@
 <?php
 
 // css vars
-$baseUrl         = resolveBaseUrl(resolveTheme());
-$baseUrl2        = resolveBaseUrl(resolveDefaultModule(), true);
-$isFormSubmitted = resolveFormStatus();
+/* Explicit */
+$webRootUrl         = resolveBaseUrl(null, true);
+/* Current theme directory */ 
+$themeUrl           = resolveBaseUrl(resolveTheme());
+$baseUrl = $themeUrl; // bc
+/* Current module directory */
+$moduleUrl          = resolveBaseUrl(resolveCurrentModule(), true);
+$isFormSubmitted    = resolveFormStatus();
 
 
 /**
@@ -29,14 +34,14 @@ function resolveFormStatus()
 }
 
 /**
- * Get default module name.
+ * Get current module name.
  *
  * @return string
  */
-function resolveDefaultModule()
+function resolveCurrentModule()
 {
-    return isset($_GET['aParams']['defaultModule'])
-        ? $_GET['aParams']['defaultModule']
+    return isset($_GET['aParams']['module'])
+        ? $_GET['aParams']['module']
         : 'default';
 }
 
@@ -56,7 +61,9 @@ function resolveBaseUrl($arg, $byDefaultModule = false)
     $aPath       = array_filter($aPath);
     $webRootUrl  = implode('/', $aPath);
     if ($byDefaultModule) {
-        $baseUrl = $webRootUrl . "/$arg";
+        $baseUrl = !empty($arg)
+            ? $webRootUrl . "/$arg"
+            : $webRootUrl;
     } else {
         $baseUrl = $webRootUrl . '/themes/' . $arg;
     }
