@@ -1,15 +1,20 @@
 <?php
 
-// css vars
-/* Explicit */
-$webRootUrl         = resolveBaseUrl(null, true);
-/* Current theme directory */ 
-$themeUrl           = resolveBaseUrl(resolveTheme());
-$baseUrl = $themeUrl; // bc
-/* Current module directory */
-$moduleUrl          = resolveBaseUrl(resolveCurrentModule(), true);
-$isFormSubmitted    = resolveFormStatus();
+// ----------------
+// --- CSS vars ---
+// ----------------
 
+// Explicit
+$webRootUrl = resolveBaseUrl(null, true);
+
+// Current theme directory
+$themeUrl = resolveBaseUrl(resolveTheme());
+$baseUrl  = $themeUrl; // bc
+
+// Current module directory
+$moduleUrl = resolveBaseUrl(resolveCurrentModule(), true);
+
+$isFormSubmitted = resolveFormStatus();
 
 /**
  * Get current theme name.
@@ -67,7 +72,7 @@ function resolveBaseUrl($arg, $byDefaultModule = false)
     } else {
         $baseUrl = $webRootUrl . '/themes/' . $arg;
     }
-    if ($baseUrl[0] != '/') {
+    if (substr($baseUrl, 0, 1) != '/') {
         $baseUrl = '/' . $baseUrl;
     }
 
