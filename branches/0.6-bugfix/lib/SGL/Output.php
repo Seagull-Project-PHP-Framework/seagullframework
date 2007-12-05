@@ -1091,7 +1091,7 @@ class SGL_Output
      * @return string
      */
     function makeCssOptimizerLink($aCssHelperParams = array(),
-            $aDefaultThemeFiles = null)
+            $aDefaultThemeFiles = null, $themePreloadFile = null)
     {
         $theme = $this->theme;
 
@@ -1168,17 +1168,23 @@ class SGL_Output
             $params .= '&aParams[' . urlencode($k) . ']=' . urlencode($v);
         }
 
-        $rev = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
-        $ret = '';
-
         // allow to load each file in a separate request for debug purposes
         if (!SGL_Config::get('debug.production')) {
+            $ret = '';
+            $rev = time();
             foreach ($this->aCssFiles as $file) {
+                $aFiles = array();
+                if (!empty($themePreloadFile)) {
+                    $aFiles[] = "themes/$theme/css/$themePreloadFile";
+                }
+                $aFiles[] = $file;
+                $cssString = implode(',', $aFiles);
                 $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
-                    . $file . $params;
+                    . $cssString . $params;
                 $ret .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
             }
         } else {
+            $rev = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
             $cssString = implode(',', $this->aCssFiles);
             $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
                 . $cssString . $params;
