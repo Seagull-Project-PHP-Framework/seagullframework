@@ -20,14 +20,14 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
             $req = $input->getRequest();
             $entityName = SGL_Config::get('REST.entityName');
             $xml = $req->get($entityName, $allowTags = true);
-        	$unserializer = &new XML_Unserializer();
-        	$unserializer->setOption('tagAsClass', true);
-        	$unserializer->setOption('ignoreKeys', $this->getKeysToIgnore());
-        	$unserializer->setOption('complexType', $this->getComplexTypes());
+            $unserializer = &new XML_Unserializer();
+            $unserializer->setOption('tagAsClass', true);
+            $unserializer->setOption('ignoreKeys', $this->getKeysToIgnore());
+            $unserializer->setOption('complexType', $this->getComplexTypes());
 
             $result = $unserializer->unserialize($xml);
             if (PEAR::isError($result)) {
-            	return $result;
+                return $result;
             }
             $data = $unserializer->getUnserializedData();
             $input->$entityName = $data;

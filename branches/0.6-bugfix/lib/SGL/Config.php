@@ -117,7 +117,7 @@ class SGL_Config
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
 
-    	    // instance call with 1 key: $c->get('foo');
+            // instance call with 1 key: $c->get('foo');
             } elseif (isset($this->aProps[$key])){
                 $ret = $this->aProps[$key];
 
@@ -175,9 +175,9 @@ class SGL_Config
      * To remove the key $conf['site']['blocksEnabled'] = true, you would use
      * $c->remove(array('site', 'blocksEnabled')
      *
-     * @param array $key  	a) A 2 element array: element one for the section, element
+     * @param array $key    a) A 2 element array: element one for the section, element
      *                         2 for the section key
-	 *						b) a key - the whole section will be removed
+     *                      b) a key - the whole section will be removed
      * @return mixed
      * @todo in 0.7 make this consistent with $c->get()
      */

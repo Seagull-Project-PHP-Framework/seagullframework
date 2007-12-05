@@ -688,19 +688,19 @@ class SGL_String
          return $s;
     }
 
-	function to7bit($text)
-	{
-	    if (!function_exists('mb_convert_encoding')) {
-	        return $text;
-	    }
+    function to7bit($text)
+    {
+        if (!function_exists('mb_convert_encoding')) {
+            return $text;
+        }
         $text = mb_convert_encoding($text,'HTML-ENTITIES',mb_detect_encoding($text));
         $text = preg_replace(
            array('/&szlig;/','/&(..)lig;/',
-        		 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
+                 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
            array('ss',"$1","$1".'e',"$1"),
            $text);
         return $text;
-	}
+    }
 
     /**
      * Replaces accents in string.
@@ -725,14 +725,14 @@ class SGL_String
         return $str;
     }
 
-	/**
-	 * Checks if strings has cyrillic chars.
-	 *
-	 * @static
-	 *
-	 * @param string $str
-	 *
-	 * @return boolean
+    /**
+     * Checks if strings has cyrillic chars.
+     *
+     * @static
+     *
+     * @param string $str
+     *
+     * @return boolean
      */
     function isCyrillic($str)
     {

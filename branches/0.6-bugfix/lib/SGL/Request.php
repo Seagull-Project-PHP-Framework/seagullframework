@@ -42,7 +42,7 @@ define('SGL_REQUEST_BROWSER',   1);
 define('SGL_REQUEST_CLI',       2);
 define('SGL_REQUEST_AJAX',      3);
 define('SGL_REQUEST_XMLRPC',    4);
-define('SGL_REQUEST_AMF',     	5);
+define('SGL_REQUEST_AMF',       5);
 
 /**
  * Loads Request driver, provides a number of filtering methods.

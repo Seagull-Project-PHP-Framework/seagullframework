@@ -704,7 +704,7 @@ class SGL_Output
                         : SGL_BASE_URL . '/' . $file;
                 }
             } else {
-            	$aFiles[] = (strpos($this->javascriptSrc, 'http://') === 0)
+                $aFiles[] = (strpos($this->javascriptSrc, 'http://') === 0)
                     ? $this->javascriptSrc
                     : SGL_BASE_URL . '/' . $this->javascriptSrc;
             }

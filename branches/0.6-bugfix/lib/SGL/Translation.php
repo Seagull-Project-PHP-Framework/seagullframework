@@ -436,9 +436,9 @@ class SGL_Translation
         }
         $aLang = explode($devider, $lang);
         array_shift($aLang);
-	if ($aLang[0] == 'tw') {
-		array_shift($aLang);
-	}
+    if ($aLang[0] == 'tw') {
+        array_shift($aLang);
+    }
         return implode($devider, $aLang);
     }
 

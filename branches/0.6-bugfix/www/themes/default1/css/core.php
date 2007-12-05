@@ -230,12 +230,12 @@ li {
 }
 .two-cols .col {
     float : left;
-	width : 49%;
-	margin-left : 1%;
+    width : 49%;
+    margin-left : 1%;
 }
 .two-cols .first {
-	width : 50%;
-	margin-left : 0;
+    width : 50%;
+    margin-left : 0;
 }
 
 /*
@@ -315,34 +315,34 @@ form label {
 
 /* SIZES */
 .third {
-	width:32% !important;
+    width:32% !important;
 }
 .half {
-	width:48% !important;
+    width:48% !important;
 }
 .full {
-	width:100% !important;
+    width:100% !important;
 }
 input.small, select.small {
-	width:25%;
+    width:25%;
 }
 input.medium, select.medium {
-	width:50%;
+    width:50%;
 }
 input.large, select.large, textarea.textarea {
-	width:99%;
+    width:99%;
 }
 input.tags {
-	width:315px;
+    width:315px;
 }
 textarea.small {
-	height:5.5em;
+    height:5.5em;
 }
 textarea.medium {
-	height:10em;
+    height:10em;
 }
 textarea.large {
-	height:20em;
+    height:20em;
 }
 
 /* BUTTONS */
@@ -408,10 +408,10 @@ table .nowrap {
 }
 .sglTable td, .sglTable th {
     border-width : 0 0 1px 0;
-	border-style : solid;
-	border-color : <?php echo $grey ?>;
-	padding : 2px 5px;
-	vertical-align : top;
+    border-style : solid;
+    border-color : <?php echo $grey ?>;
+    padding : 2px 5px;
+    vertical-align : top;
 }
 .sglTable th {
     text-align: left;
