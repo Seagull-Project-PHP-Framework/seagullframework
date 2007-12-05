@@ -1186,8 +1186,14 @@ class SGL_Output
                 $ret .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
             }
         } else {
-            $rev = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
-            $cssString = implode(',', $this->aCssFiles);
+            $aFiles = !empty($themePreloadFile)
+                ? array_merge(
+                      array("themes/$theme/css/$themePreloadFile"),
+                      $this->aCssFiles
+                  )
+                : $this->aCssFiles;
+            $rev = SGL_Output::_getFilesModifiedTime($aFiles);
+            $cssString = implode(',', $aFiles);
             $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
                 . $cssString . $params;
             $ret = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
