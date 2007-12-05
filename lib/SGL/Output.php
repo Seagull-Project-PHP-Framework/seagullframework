@@ -1087,6 +1087,8 @@ class SGL_Output
      * @param mixed $aDefaultThemeFiles  if null default css files are loaded
      *                                   otherwise custom files specified as array
      *                                   or string (CSV)
+     * @param string $themePreloadFile   file which is "prepended" to every CSS request
+     *                                   (even in non-production mode)
      *
      * @return string
      */
