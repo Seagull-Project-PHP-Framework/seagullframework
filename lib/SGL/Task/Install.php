@@ -1408,29 +1408,29 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
             }
             //  load current test config
             if (is_file(SGL_VAR_DIR . '/test.conf.ini.php')) {
-	            $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
-	            //  and add schema/data files
-	            $update = false;
-	            if (isset($aFiles['schema'])) {
-	                $nextId = $this->getNextKey($aTestData['schemaFiles']);
-	                $aTestData['schemaFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/schema.my.sql';
-	                $update = true;
-	            }
-	            if (isset($aFiles['dataDefault'])) {
-	                $nextId = $this->getNextKey($aTestData['dataFiles']);
-	                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.default.my.sql';
-	                $update = true;
-	            }
-	            if (isset($aFiles['dataTest'])) {
-	                $nextId = $this->getNextKey($aTestData['dataFiles']);
-	                $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.test.my.sql';
-	                $update = true;
-	            }
-	            if ($update) {
-	                $c->replace($aTestData);
-	                $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
-	                SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
-	            }
+                $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
+                //  and add schema/data files
+                $update = false;
+                if (isset($aFiles['schema'])) {
+                    $nextId = $this->getNextKey($aTestData['schemaFiles']);
+                    $aTestData['schemaFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/schema.my.sql';
+                    $update = true;
+                }
+                if (isset($aFiles['dataDefault'])) {
+                    $nextId = $this->getNextKey($aTestData['dataFiles']);
+                    $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.default.my.sql';
+                    $update = true;
+                }
+                if (isset($aFiles['dataTest'])) {
+                    $nextId = $this->getNextKey($aTestData['dataFiles']);
+                    $aTestData['dataFiles']['file'.$nextId] =  $moduleDir . '/' . $module  . '/data/data.test.my.sql';
+                    $update = true;
+                }
+                if ($update) {
+                    $c->replace($aTestData);
+                    $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
+                    SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
+                }
             }
         }
     }
@@ -1455,31 +1455,31 @@ class SGL_Task_RemoveTestDataFromConfig extends SGL_UpdateHtmlTask
     function run($data = null)
     {
         if (is_file(SGL_VAR_DIR . '/test.conf.ini.php')) {
-	        $this->setup();
-	        $c = new SGL_Config();
-	        foreach ($data['aModuleList'] as $module) {
-	            //  load current test config
-	            $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
-	            //  and add schema/data files
-	            $update = false;
-	            foreach ($aTestData['schemaFiles'] as $k => $line) {
-	                if (preg_match("/$module/", $line)) {
-	                    unset($aTestData['schemaFiles'][$k]);
-	                    $update = true;
-	                }
-	            }
-	            foreach ($aTestData['dataFiles'] as $k => $line) {
-	                if (preg_match("/$module/", $line)) {
-	                    unset($aTestData['dataFiles'][$k]);
-	                    $update = true;
-	                }
-	            }
-	            if ($update) {
-	                $c->replace($aTestData);
-	                $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
-	                SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
-	            }
-	        }
+            $this->setup();
+            $c = new SGL_Config();
+            foreach ($data['aModuleList'] as $module) {
+                //  load current test config
+                $aTestData = parse_ini_file(SGL_VAR_DIR . '/test.conf.ini.php', true);
+                //  and add schema/data files
+                $update = false;
+                foreach ($aTestData['schemaFiles'] as $k => $line) {
+                    if (preg_match("/$module/", $line)) {
+                        unset($aTestData['schemaFiles'][$k]);
+                        $update = true;
+                    }
+                }
+                foreach ($aTestData['dataFiles'] as $k => $line) {
+                    if (preg_match("/$module/", $line)) {
+                        unset($aTestData['dataFiles'][$k]);
+                        $update = true;
+                    }
+                }
+                if ($update) {
+                    $c->replace($aTestData);
+                    $ok = $c->save(SGL_VAR_DIR . '/test.conf.ini');
+                    SGL_Util::makeIniUnreadable(SGL_VAR_DIR . '/test.conf.ini');
+                }
+            }
         }
     }
 }

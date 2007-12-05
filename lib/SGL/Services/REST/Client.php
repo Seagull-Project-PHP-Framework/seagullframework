@@ -117,7 +117,7 @@ class SGL_Services_REST_Client
         foreach ($params as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $k => $v) {
-            	   $string .= $key . '['.$k.']/' .urlencode($v) .'/';
+                   $string .= $key . '['.$k.']/' .urlencode($v) .'/';
                 }
                 $value = $string;
             }
@@ -129,7 +129,7 @@ class SGL_Services_REST_Client
                 ? $value
                 : $key . '/' . urlencode($value);
             $string = '';
-        	$url = $url . '/' . $append;
+            $url = $url . '/' . $append;
         }
         $this->_getRequest = $url;
         $request = &new HTTP_Request($url);
@@ -152,9 +152,9 @@ class SGL_Services_REST_Client
         $url = sprintf('%s/action/%s', $this->_apiUrl, $verb);
         foreach ($params as $key => $value) {
             if (is_array($value)) {
-            	$value = implode(' ', $value);
+                $value = implode(' ', $value);
             }
-        	$url = $url . '/' . $key . '/' . urlencode($value);
+            $url = $url . '/' . $key . '/' . urlencode($value);
         }
 
         $options = array(
@@ -167,7 +167,7 @@ class SGL_Services_REST_Client
         $serializer = &new XML_Serializer($options);
         $result = $serializer->serialize($oData);
         if ($result === true ) {
-        	$xml = $serializer->getSerializedData();
+            $xml = $serializer->getSerializedData();
         }
 
         $request = &new HTTP_Request($url);
@@ -190,15 +190,15 @@ class SGL_Services_REST_Client
         $xml = $this->_responseXml = $request->getResponseBody();
 
         if (!is_object($this->_us)) {
-        	$this->_us = &new XML_Unserializer();
-        	$this->_us->setOption('tagAsClass', true);
-        	$this->_us->setOption('ignoreKeys', $this->getKeysToIgnore());
-        	$this->_us->setOption('complexType', $this->getComplexTypes());
+            $this->_us = &new XML_Unserializer();
+            $this->_us->setOption('tagAsClass', true);
+            $this->_us->setOption('ignoreKeys', $this->getKeysToIgnore());
+            $this->_us->setOption('complexType', $this->getComplexTypes());
         }
 
         $result = $this->_us->unserialize($xml);
         if (PEAR::isError($result)) {
-        	return $result;
+            return $result;
         }
         $data = $this->_us->getUnserializedData();
         return $data;
