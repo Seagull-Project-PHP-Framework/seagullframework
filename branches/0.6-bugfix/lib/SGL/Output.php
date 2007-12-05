@@ -1086,6 +1086,7 @@ class SGL_Output
      * @param array $aCssHelperParams    additional params passed to css helper
      * @param mixed $aDefaultThemeFiles  if null default css files are loaded
      *                                   otherwise custom files specified as array
+     *                                   or string (CSV)
      *
      * @return string
      */
@@ -1107,6 +1108,13 @@ class SGL_Output
         // make sure we pass layout to output
         $this->masterLayout = $masterLayout;
 
+        if (!empty($aDefaultThemeFiles) && is_string($aDefaultThemeFiles)) {
+            $aTmpThemeFiles = explode(',', $aDefaultThemeFiles);
+            $aDefaultThemeFiles = array();
+            foreach ($aTmpThemeFiles as $file) {
+                $aDefaultThemeFiles[] = "themes/$theme/css/$file";
+            }
+        }
         if (!is_array($aDefaultThemeFiles)) {
             // default files loaded
             $aDefaultThemeFiles = array( // we need to be able to customize it
@@ -1160,12 +1168,23 @@ class SGL_Output
             $params .= '&aParams[' . urlencode($k) . ']=' . urlencode($v);
         }
 
-        $rev       = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
-        $cssString = implode(',', $this->aCssFiles);
-        $link      = SGL_BASE_URL . '/optimizer.php?type=css&rev='
-            . $rev . '&files=' . $cssString . $params;
+        $rev = SGL_Output::_getFilesModifiedTime($this->aCssFiles);
+        $ret = '';
 
-        return "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
+        // allow to load each file in a separate request for debug purposes
+        if (!SGL_Config::get('debug.production')) {
+            foreach ($this->aCssFiles as $file) {
+                $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
+                    . $file . $params;
+                $ret .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
+            }
+        } else {
+            $cssString = implode(',', $this->aCssFiles);
+            $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
+                . $cssString . $params;
+            $ret = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
+        }
+        return $ret;
     }
 
     /**
