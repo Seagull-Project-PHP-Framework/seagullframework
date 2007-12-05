@@ -11,7 +11,7 @@
  * @author     Michael Wallner <mike@php.net>
  * @copyright  2003-2005 Michael Wallner
  * @license    BSD, revised
- * @version    CVS: $Id: Download.php,v 1.78 2007/05/02 19:29:15 mike Exp $
+ * @version    CVS: $Id: Download.php,v 1.79 2007/10/05 07:02:03 mike Exp $
  * @link       http://pear.php.net/package/HTTP_Download
  */
 
@@ -86,7 +86,7 @@ define('HTTP_DOWNLOAD_E_INVALID_ARCHIVE_TYPE',  -9);
  * if you want to send already gzipped data!
  * 
  * @access   public
- * @version  $Revision: 1.78 $
+ * @version  $Revision: 1.79 $
  */
 class HTTP_Download
 {
@@ -993,7 +993,9 @@ class HTTP_Download
         $this->HTTP->sendHeaders();
         /* NSAPI won't output anything if we did this */
         if (strncasecmp(PHP_SAPI, 'nsapi', 5)) {
-            ob_flush();
+            if (ob_get_level()) {
+                ob_flush();
+            }
             flush();
         }
     }
