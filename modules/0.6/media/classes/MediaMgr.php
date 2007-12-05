@@ -279,7 +279,7 @@ class MediaMgr extends FileMgr
 
         if ($output->action != 'add') {
             $sessId = SGL_Session::getId();
-    		$output->addJavascriptFile(array(
+            $output->addJavascriptFile(array(
                 'js/scriptaculous/lib/prototype.js',
                 'js/scriptaculous/src/scriptaculous.js?load=effects,dragdrop',
                 'js/lightbox/lightbox.js',

@@ -59,18 +59,18 @@ class SGL_Task_SetupExtraLanguages extends SGL_DecorateProcess
                 $aExtra = array_map('trim', $aExtra);
                 foreach ($aExtra as $v) {
                     $aLang = array_map('trim', explode(':', $v));
-            	    if (!array_key_exists($aLang[0], $aLangs)) {
+                    if (!array_key_exists($aLang[0], $aLangs)) {
                         // get language code
-            	        $code = reset(explode('-', $aLang[0]));
-            	        // add language to global array
-            	        $aLangs[$aLang[0]] = array(
-            	            $code . '|' . $aLang[1], // ar|arabic
-            	            $aLang[2],               // arabic-utf-8
-            	            $code                    // ar
-            	        );
-            	    }
-            	}
-            	ksort($aLangs);
+                        $code = reset(explode('-', $aLang[0]));
+                        // add language to global array
+                        $aLangs[$aLang[0]] = array(
+                            $code . '|' . $aLang[1], // ar|arabic
+                            $aLang[2],               // arabic-utf-8
+                            $code                    // ar
+                        );
+                    }
+                }
+                ksort($aLangs);
             }
         }
         $runOnce = true;

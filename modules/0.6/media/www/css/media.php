@@ -117,72 +117,72 @@ div.thumbMedia {
 /*           IMG ASSOC MGR          */
 /************************************/
 .complete_thumb{
-	float:left;
-	margin:0;
-	padding:10px 0 10px 0;
+    float:left;
+    margin:0;
+    padding:10px 0 10px 0;
 }
 .complete_thumb_highlighted{
-	float:left;
-	margin:0 10px 10px 0;
-	padding:14px 10px 4px 10px;
-	background-color:#f6f5f2;
-	border:1px solid #d9d8cb;
-	height:100px;
-	width:20%;
+    float:left;
+    margin:0 10px 10px 0;
+    padding:14px 10px 4px 10px;
+    background-color:#f6f5f2;
+    border:1px solid #d9d8cb;
+    height:100px;
+    width:20%;
 }
 div.complete_thumb_highlighted input{
-	margin:0 0 4px 0;
-	padding:0;
-	border:1px solid #c3cea5;
+    margin:0 0 4px 0;
+    padding:0;
+    border:1px solid #c3cea5;
 }
 /*
 .thumb img{
-	border:1px solid #666666;
-	margin:0;
-	padding:1px;
-	background-color:#ffffff;
-	vertical-align:bottom;
+    border:1px solid #666666;
+    margin:0;
+    padding:1px;
+    background-color:#ffffff;
+    vertical-align:bottom;
 }
 */
 
 .thumb img:hover{
-	/*border:1px solid #000000;*/
+    /*border:1px solid #000000;*/
 }
 
 .thumb_title{
-	margin:0;
-	padding:8px 0 0 0;
-	clear:both;
-	float:left;
+    margin:0;
+    padding:8px 0 0 0;
+    clear:both;
+    float:left;
 }
 
 .thumb_title h1{
-	margin:0;
-	padding:0 0 0 0;
-	color:#333333;
-	font-weight:bold;
-	font-size:1em;
+    margin:0;
+    padding:0 0 0 0;
+    color:#333333;
+    font-weight:bold;
+    font-size:1em;
 }
 .thumb_title h2{
-	margin:0;
-	padding:0 0 8px 0;
-	color:#666666;
-	font-weight:normal;
-	font-size:1em;
+    margin:0;
+    padding:0 0 8px 0;
+    color:#666666;
+    font-weight:normal;
+    font-size:1em;
 }
 .thumb_title h3{
-	margin:0;
-	padding:0;
-	color:#666666;
-	font-weight:normal;
-	font-size:1em;
+    margin:0;
+    padding:0;
+    color:#666666;
+    font-weight:normal;
+    font-size:1em;
 }
 .thumb_title a{
-	text-decoration:none;
-	color:#666666;
+    text-decoration:none;
+    color:#666666;
 }
 .thumb_title a:hover{
-	text-decoration:underline;
+    text-decoration:underline;
 }
 
 /*************************/
