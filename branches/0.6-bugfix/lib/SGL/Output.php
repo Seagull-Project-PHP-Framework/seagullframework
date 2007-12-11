@@ -1039,7 +1039,8 @@ class SGL_Output
 
         // bc for global javascript
         if (!SGL_Config::get('site.globalJavascriptFiles')
-                && $_SESSION['aPrefs']['theme'] == 'default') {
+                && ($_SESSION['aPrefs']['theme'] == 'default'
+                    || $this->adminGuiAllowed)) {
             SGL_Config::set('site.globalJavascriptFiles', 'js/SGL.js');
         }
 
