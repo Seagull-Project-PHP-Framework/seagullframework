@@ -776,12 +776,15 @@ class SGL_Translation2
             $aFallbackTrans = SGL_Translation2::removeMetaData($aFallbackTrans, true);
             $aTrans2 = array_intersect(array_keys($aFallbackTrans), array_keys($aTrans));
 
+            $aTmp = array();
             // make sure we intersect correctly
             foreach ($aTrans2 as $key) {
-                if (!array_key_exists($key, $aTrans)) {
-                    unset($aTrans[$key]);
+                if (array_key_exists($key, $aTrans)) {
+                    $aTmp[$key] = $aTrans[$key];
                 }
             }
+            $aTrans = $aTmp;
+            unset($aTmp, $aTrans2);
         }
 
         $errorsAfter = SGL_Error::count();
