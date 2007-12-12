@@ -677,7 +677,6 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
             //  Go back and load each module's default data, if there is a sql file in /data
             foreach ($data['aModuleList'] as $module) {
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
-
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));

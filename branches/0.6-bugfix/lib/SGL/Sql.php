@@ -96,8 +96,12 @@ class SGL_Sql
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableNameFromInsertStatement($line);
                 $nextId = SGL_Sql::getNextId($tableName);
+                if (PEAR::isError($nextId)) {
+                    return $nextId;
+                }
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
+
 
             // prefix table name in statement
             if (!empty($conf['db']['prefix'])) {
@@ -125,7 +129,6 @@ class SGL_Sql
                     $line = SGL_Sql::prefixTableNameInStatement($line, $statementType);
                 }
             }
-
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
