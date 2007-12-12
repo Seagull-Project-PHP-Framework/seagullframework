@@ -667,6 +667,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        $result = false;
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             $this->setup();
 
@@ -680,9 +681,6 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));
-                    if (PEAR::isError($result)) {
-                        return $result;
-                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_data', $displayHtml);
                 } else {
@@ -690,6 +688,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
                 }
             }
         }
+        return $result;
     }
 }
 
@@ -700,6 +699,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        $result = false;
         if (array_key_exists('insertSampleData', $data) && $data['insertSampleData'] == 1) {
             $this->setup();
 
@@ -713,9 +713,6 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename3)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename3, 0, array('SGL_Sql', 'execute'));
-                    if (PEAR::isError($result)) {
-                        return $result;
-                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_dataSample', $displayHtml);
                 } else {
@@ -723,6 +720,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
                 }
             }
         }
+        return $result;
     }
 }
 
@@ -736,6 +734,7 @@ class SGL_Task_LoadCustomData extends SGL_UpdateHtmlTask
         $this->setup();
         $statusText = 'loading custom data';
         $this->updateHtml('status', $statusText);
+        $result = false;
 
         //  Go back and load each module's custom data, if there is a custom sql file in /data
         foreach ($data['aModuleList'] as $module) {
@@ -743,12 +742,9 @@ class SGL_Task_LoadCustomData extends SGL_UpdateHtmlTask
             //  Load the module's custom data if exists
             if (file_exists($modulePath . $this->filename5)) {
                 $result = SGL_Sql::parse($modulePath . $this->filename5, 0, array('SGL_Sql', 'execute'));
-                if (PEAR::isError($result)) {
-                    return $result;
-                }
             }
         }
-
+        return $result;
     }
 }
 
@@ -772,7 +768,6 @@ class SGL_Task_RemoveDefaultData extends SGL_Task
         }
         //  then delete perms
         $ok = $da->deletePermsByModuleId($data['moduleId']);
-
     }
 }
 
@@ -783,6 +778,7 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
+        $result = false;
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1
             && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
             $this->setup();
@@ -800,6 +796,7 @@ class SGL_Task_LoadBlockData extends SGL_UpdateHtmlTask
                 }
             }
         }
+        return $result;
     }
 }
 
