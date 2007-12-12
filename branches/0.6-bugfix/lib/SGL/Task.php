@@ -102,7 +102,16 @@ class SGL_TaskRunner
     {
         $ret = array();
         foreach ($this->aTasks as $k => $oTask) {
-            $ret[] = $this->aTasks[$k]->run($this->data);
+            $return = $this->aTasks[$k]->run($this->data);
+            // log to system tmp dir if we're installing
+            if (!defined('SGL_INSTALLED')) {
+                $err = is_a($return, 'PEAR_Error')
+                    ? print_r($return, 1)
+                    : 'ok';
+                $data = get_class($oTask) .': '. $err;
+                error_log($data);
+            }
+            $ret[] = $return;
         }
         return implode('', $ret);
     }

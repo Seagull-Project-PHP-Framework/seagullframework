@@ -80,10 +80,11 @@ class SGL_Task_SetTimeout extends SGL_Task
         if (array_key_exists('storeTranslationsInDB', $data)
             && $data['storeTranslationsInDB'] == 1)
         {
-            set_time_limit(60*(count($data['installLangs'])));
+            $ok = set_time_limit(60*(count($data['installLangs'])));
         } else {
-            set_time_limit(120);
+            $ok = set_time_limit(120);
         }
+        return $ok;
     }
 }
 
@@ -204,6 +205,7 @@ class SGL_Task_CreateConfig extends SGL_Task
                 && $oldConf['db']['prefix'] != $data['prefix']) {
             $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
         }
+        return $ok;
     }
 }
 
@@ -310,6 +312,7 @@ class SGL_Task_DefineTableAliases extends SGL_Task
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
         }
+        return $ok;
     }
 }
 
@@ -332,13 +335,14 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
             $dbh = & SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 SGL_Install_Common::errorPush($dbh);
-                return false;
+                return $dbh;
             }
             $query = 'SET FOREIGN_KEY_CHECKS=0;';
             $res = $dbh->query($query);
             if (PEAR::isError($res)) {
                 SGL_Install_Common::errorPush($res);
             }
+            return $res;
         }
     }
 }
@@ -630,7 +634,9 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
                 //  Load the module's schema
                 if (file_exists($modulePath . $this->filename1)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename1, 0, array('SGL_Sql', 'execute'));
-#FIXME: should test for PEAR::error
+                    if (PEAR::isError($result)) {
+                        return $result;
+                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_schema', $displayHtml);
                 } else {
@@ -674,6 +680,9 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));
+                    if (PEAR::isError($result)) {
+                        return $result;
+                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_data', $displayHtml);
                 } else {
@@ -704,6 +713,9 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename3)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename3, 0, array('SGL_Sql', 'execute'));
+                    if (PEAR::isError($result)) {
+                        return $result;
+                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_dataSample', $displayHtml);
                 } else {
@@ -731,6 +743,9 @@ class SGL_Task_LoadCustomData extends SGL_UpdateHtmlTask
             //  Load the module's custom data if exists
             if (file_exists($modulePath . $this->filename5)) {
                 $result = SGL_Sql::parse($modulePath . $this->filename5, 0, array('SGL_Sql', 'execute'));
+                if (PEAR::isError($result)) {
+                    return $result;
+                }
             }
         }
 
@@ -1044,6 +1059,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
         }
+        return $ok;
     }
 }
 
@@ -1056,6 +1072,7 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
     {
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
+        $res = true;
 
         //  re-enable fk constraints if mysql (>= 4.1.x)
         if        ($this->conf['db']['type'] == 'mysql_SGL'
@@ -1068,6 +1085,7 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
             $query = 'SET FOREIGN_KEY_CHECKS=1;';
             $res = $dbh->query($query);
         }
+        return $res;
     }
 }
 
@@ -1130,6 +1148,7 @@ class SGL_Task_CreateFileSystem extends SGL_Task
     function run($data)
     {
         require_once 'System.php';
+        $err = false;
 
         //  pass paths as arrays to avoid widows space parsing prob
         //  create cache dir
@@ -1164,10 +1183,12 @@ Deny from all
 EOF;
             $ok = file_put_contents(SGL_TMP_DIR . '/.htaccess', $htAccessContent);
             if (!$tmpDir) {
-                SGL_Install_Common::errorPush(SGL::raiseError('The tmp directory does not '.
-                'appear to be writable, please give the webserver permissions to write to it'));
+                $err = SGL::raiseError('The tmp directory does not '.
+                    'appear to be writable, please give the webserver permissions to write to it');
+                SGL_Install_Common::errorPush($err);
             }
         }
+        return $err;
     }
 }
 
@@ -1178,6 +1199,7 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
 {
     function run($data = null)
     {
+        $err = false;
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -1213,9 +1235,10 @@ class SGL_Task_CreateDataObjectEntities extends SGL_Task
         ob_end_clean();
 
         if (PEAR::isError($out)) {
-            SGL_Install_Common::errorPush(
-                PEAR::raiseError('generating DB_DataObject entities failed'));
+            $err =  PEAR::raiseError('generating DB_DataObject entities failed');
+            SGL_Install_Common::errorPush($err);
         }
+        return $err;
     }
 }
 
@@ -1226,6 +1249,7 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
 {
     function run($data = null)
     {
+        $err = false;
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -1276,15 +1300,16 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
             }
             if (is_writable($linksFile) || !file_exists($linksFile)) {
                 if (!$handle = fopen($linksFile, 'a+')) {
-                    SGL_Install_Common::errorPush(
-                        PEAR::raiseError('could not open links file for writing'));
+                    $err = PEAR::raiseError('could not open links file for writing');
+                    SGL_Install_Common::errorPush($err);
                 }
                 if (fwrite($handle, $linkData) === false) {
-                    SGL_Install_Common::errorPush(
-                        PEAR::raiseError('could not write to file' . $linksFile));
+                    $err = PEAR::raiseError('could not write to file' . $linksFile);
+                    SGL_Install_Common::errorPush($err);
                 }
             }
         }
+        return $err;
     }
 }
 
@@ -1295,6 +1320,7 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
 {
     function run($data = null)
     {
+        $ret = true;
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             if (file_exists($wwwDir)) {
@@ -1304,31 +1330,32 @@ class SGL_Task_SymLinkWwwData extends SGL_Task
                     if (strpos(PHP_OS, 'WIN') !== false) {
 
                         // if linkd binary is present
-                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                        $ret = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
 
                         //  otherwise just copy
-                        if (!$ok) {
+                        if (!$ret) {
                             require_once SGL_CORE_DIR . '/File.php';
-                            $success = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
+                            $ret = SGL_File::copyDir($wwwDir, SGL_WEB_ROOT . "/$module");
                         }
                     } elseif (is_link(SGL_WEB_ROOT . "/$module")) {
-                            PEAR::raiseError('A www directory was detected in ' .
+                            $ret = PEAR::raiseError('A www directory was detected in ' .
                                 ' one of the modules therefore an attempt to create ' .
                                 ' a corresponding symlink was made ' .
                                 ' but the symlink already exists ' .
                                 ' in seagull/www');
                     } else {
-                        $ok = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
+                        $ret = symlink($wwwDir, SGL_WEB_ROOT . "/$module");
                     }
 
                 } else {
-                    PEAR::raiseError('A www directory was detected in one of the modules '.
+                    $ret = PEAR::raiseError('A www directory was detected in one of the modules '.
                     ' but the required webserver' .
                     ' write perms on seagull/www do not exist, so the symlink could'.
                     ' not be created');
                 }
             }
         }
+        return $ret;
     }
 }
 
@@ -1339,6 +1366,7 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
 {
     function run($data = null)
     {
+        $ret = true;
         foreach ($data['aModuleList'] as $module) {
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             // if we're windows
@@ -1355,12 +1383,13 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
                         unlink(SGL_WEB_ROOT . "/$module");
                     }
                 } else {
-                    PEAR::raiseError('An attempt to remove an existing ' .
+                    $ret = PEAR::raiseError('An attempt to remove an existing ' .
                         ' symlink failed, the webserver no longer has ' .
                         ' required write perms on seagull/www dir');
                 }
             }
         }
+        return $ret;
     }
 }
 
@@ -1512,9 +1541,7 @@ class SGL_Task_SyncSequences extends SGL_Task
 
         //  postgres sequence routine creates errors, get initial count
         $initialErrorCount = SGL_Error::count();
-
         $tables = null;
-
         $phptype = $dbh->phptype;
 
         // if it is SGL MySQL driver
@@ -1718,7 +1745,7 @@ class SGL_Task_SyncSequences extends SGL_Task
 
         default:
             SGL_Install_Common::errorPush(
-                PEAR::raiseError('This feature currently is impmlemented only for MySQL, Oracle and PostgreSQL.'));
+                PEAR::raiseError('This feature currently is implemented only for MySQL, Oracle and PostgreSQL.'));
         }
         //  remove irrelevant errors
         $finalErrorCount = SGL_Error::count();
@@ -1751,6 +1778,7 @@ class SGL_Task_CreateAdminUser extends SGL_Task
 {
     function run($data)
     {
+        $ok = true;
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
             $da = & UserDAO::singleton();
@@ -1768,12 +1796,13 @@ class SGL_Task_CreateAdminUser extends SGL_Task
             $oUser->role_id         = SGL_ADMIN;
             $oUser->date_created    = $oUser->last_updated = SGL_Date::getTime();
             $oUser->created_by      = $oUser->updated_by = SGL_ADMIN;
-            $success = $da->addUser($oUser);
+            $ok = $da->addUser($oUser);
 
-            if (PEAR::isError($success)) {
-                SGL_Install_Common::errorPush($success);
+            if (PEAR::isError($ok)) {
+                SGL_Install_Common::errorPush($ok);
             }
         }
+        return $ok;
     }
 }
 
@@ -1858,6 +1887,7 @@ PHP;
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
         }
+        return $ok;
     }
 }
 
