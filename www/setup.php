@@ -176,6 +176,12 @@ require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
+//  setup temporary logging for Seagull install
+$tmpDir = SGL_Util::getTmpDir();
+$log = "$tmpDir/install.log";
+$ok = @ini_set('error_log', $log);
+
+
 class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
