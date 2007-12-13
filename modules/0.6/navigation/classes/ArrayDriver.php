@@ -244,12 +244,16 @@ class ArrayDriver
      */
     function nodeAccessAllowed($aNode)
     {
+        static $rid;
+        if (is_null($rid)) {
+            $rid = SGL_Session::getRoleId();
+        }
         $ret = false;
         if (!isset($aNode['is_enabled']) || !empty($aNode['is_enabled'])) {
             $aPerms = explode(',', $aNode['perms']);
             foreach ($aPerms as $permId) {
                 $permValue = SGL_String::pseudoConstantToInt($permId);
-                if ($permValue == SGL_Session::getRoleId()
+                if ($permValue == $rid
                         || $permValue == SGL_ANY_ROLE) {
                     $ret = true;
                     break;
