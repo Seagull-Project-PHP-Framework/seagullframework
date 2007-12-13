@@ -22,6 +22,7 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+13-12-07    Added logging for installation, see SGL_Util::getTmpDir()
 23-10-07    Fatal db errors handled gracefully
 23-10-07    Added ability to use objects callbacks for function caching
 19-09-07    Implemented ability to run unit tests by CLI [3425] (Dmitri Lakachauskis)
