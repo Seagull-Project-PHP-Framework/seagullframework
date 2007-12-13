@@ -130,6 +130,19 @@ class SGL_Cache2
         }
         return $ret;
     }
+
+    /**
+     * Make cache ID from method name and it's arguments.
+     *
+     * @param string $methodName
+     * @param array $aArgs
+     *
+     * @return string
+     */
+    function makeCacheIdFromMethodName($methodName, $aArgs = array())
+    {
+        return md5($methodName . serialize($aArgs));
+    }
 }
 
 ?>
