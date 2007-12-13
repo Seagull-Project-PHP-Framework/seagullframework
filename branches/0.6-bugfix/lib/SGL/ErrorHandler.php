@@ -180,9 +180,6 @@ EOL;
                     echo $output;
                 }
 
-                //  disable block so errors can be seen
-                $c->set('site', array('blocksEnabled' => false));
-
             } else {
                 //  we're in production mode, suppress any errors from being displayed
                 @ini_set('display_errors', 0);
