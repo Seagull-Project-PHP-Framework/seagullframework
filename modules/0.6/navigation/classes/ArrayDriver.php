@@ -269,20 +269,30 @@ class ArrayDriver
      * @param array $aNode
      *
      * @return boolean
-     *
-     * @todo check for parameters
      */
     function isCurrentNode($aNode)
     {
         $req = &SGL_Request::singleton();
         $ret = false;
 
+        // compare node's module and manager with current
         if ($req->getModuleName() == $aNode['module']
                 && $req->getManagerName() == $aNode['manager']) {
-            if (!empty($aNode['actionMapping'])) {
-                $ret = $req->getActionName() == $aNode['actionMapping'];
-            } else {
-                $ret = true;
+            // compare node's action with current
+            $ret = !empty($aNode['actionMapping'])
+                ? $req->getActionName() == $aNode['actionMapping'] : true;
+            // compare node's params with current
+            if (!empty($aNode['add_params'])) {
+                $ret     = true; // by default params match
+                $aParams = explode('/', $aNode['add_params']);
+                for ($i = 0, $cnt = count($aParams); $i < $cnt; $i = $i + 2) {
+                    $k = $aParams[$i];
+                    $v = isset($aParams[$i + 1]) ? $aParams[$i + 1] : null;
+                    if ($req->get($k) != $v) {
+                        $ret = false;
+                        break;
+                    }
+                }
             }
         }
         return $ret;
