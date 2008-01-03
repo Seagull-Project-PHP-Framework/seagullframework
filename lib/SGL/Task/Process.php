@@ -319,16 +319,25 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
     /**
      * Authenticate user.
      *
-     * @param integer      $uid
+     * @access protected
+     *
+     * @param integer $uid
      * @param SGL_Registry $input
      *
      * @return void
      */
     function doLogin($uid, &$input)
     {
-        //  if we do login here, then $uid was recovered by cookie,
-        //  i.e. we need to activate 'remember me' functionality
+        // if we do login here, then $uid was recovered by cookie,
+        // thus activating 'remember me' functionality
         $input->set('session', new SGL_Session($uid, $rememberMe = true));
+
+        // record login if allowed
+        require_once SGL_MOD_DIR . '/user/classes/observers/RecordLogin.php';
+        if (RecordLogin::loginRecordingAllowed()) {
+            $dbh = &SGL_DB::singleton();
+            RecordLogin::insert($dbh);
+        }
     }
 
     function process(&$input, &$output)
