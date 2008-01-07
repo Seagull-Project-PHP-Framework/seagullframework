@@ -35,6 +35,13 @@ class SGL_Optimizer
      */
     var $type = 'javascript';
 
+    /**
+     * Enable optimization and caching.
+     *
+     * @var boolean
+     */
+    var $optimize = false;
+
     function SGL_Optimizer()
     {
         $lastMod = 0;
@@ -45,18 +52,25 @@ class SGL_Optimizer
             $this->type = $_GET['type'];
         }
 
+        // check if compression is enabled
+        // we only support JS compression for now
+        if (isset($_GET['optimize'])) {
+            $this->optimize = (boolean) $_GET['optimize'];
+        }
+
         // get files and it's mod time
         if (!empty($_GET['files'])) {
             $filesString = $_GET['files'];
             $aFiles = explode(',', $_GET['files']);
             foreach ($aFiles as $fileName) {
-                if (is_file($jsFile = realpath(dirname(__FILE__) . '/' . $fileName))) {
+                if (is_file($jsFile = dirname(__FILE__) . '/' . $fileName)) {
                     $this->aFiles[] = $jsFile;
                     $lastMod = max($lastMod, filemtime($jsFile));
                 }
             }
 
             $this->hash = $lastMod . '-' . md5($filesString);
+
             if (isset($_SERVER['HTTP_IF_NONE_MATCH'])
                     && $_SERVER['HTTP_IF_NONE_MATCH'] == $this->hash) {
                 $this->modifiedSinceLastRequest = false;
@@ -174,6 +188,16 @@ class SGL_Optimizer
      */
     function optimizeJavascript($script)
     {
+        if ($this->optimize) {
+            $cached_js = dirname(__FILE__) . '/../var/tmp/js_' . $this->hash;
+            if (is_file($cached_js)) {
+                $script = file_get_contents($cached_js);
+            } else {
+                require dirname(__FILE__) . '/../lib/other/jsmin.php';
+                $script = JSMin::minify($script);
+                file_put_contents($cached_js, $script);
+            }
+        }
         return $script;
     }
 

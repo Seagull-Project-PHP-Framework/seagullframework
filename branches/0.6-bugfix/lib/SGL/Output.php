@@ -1071,6 +1071,9 @@ class SGL_Output
         //  - files: loaded js files
         $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&rev='
             . $rev . '&files=' . $jsString;
+        if (SGL_Config::get('cache.javascript')) {
+            $link .= '&optimize=1';
+        }
 
         $ret = "<script type=\"text/javascript\" src=\"$link\"></script>\n";
         foreach ($this->aRawJavascriptFiles as $jsFile) {

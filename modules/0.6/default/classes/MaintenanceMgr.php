@@ -312,6 +312,18 @@ class MaintenanceMgr extends SGL_Manager
                 unlink(SGL_VAR_DIR . '/cachedLibs.php');
             }
         }
+        // drop js cache
+        if (!empty($input->cache['js'])) {
+            require_once 'System.php';
+            $tmpDir = SGL_VAR_DIR . '/tmp';
+            $aFiles = System::find("$tmpDir -name *js_*");
+            if (!@System::rm($aFiles)) {
+                SGL::raiseError('There was a problem deleting the files',
+                    SGL_ERROR_FILEUNWRITABLE);
+            } else {
+                SGL::raiseMsg('Cache files successfully deleted', true, SGL_MESSAGE_INFO);
+            }
+        }
         if (count($input->cache) > 0) {
             $success = true;
             foreach ($input->cache as $group => $v) {

@@ -256,6 +256,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Read control tip' => 'If enabled, a control key is embeded in cache file and this key is compared with the one calculated after the reading',
         'Write control' => 'Write control',
         'Write control tip' => 'Enable write control will lightly slow the cache writing but not the cache reading. Write control can detect some corrupt cache files but maybe it\'s not a perfect control',
+        'Cache JavaScript' => 'Cache JavaScript',
         'Database Options'=>'Database Options',
         'Type'=>'Type',
         'server default' => 'server default',
@@ -421,6 +422,7 @@ $defaultWords['Process'] = 'Process';
 $defaultWords['Manage Caches'] = 'Manage Caches';
 $defaultWords['Templates'] = 'Templates';
 $defaultWords['functions'] = 'Functions';
+$defaultWords['javascript'] = 'Javascript';
 $defaultWords['navigation'] = 'navigation';
 $defaultWords['blocks'] = 'blocks';
 $defaultWords['categories'] = 'categories';
