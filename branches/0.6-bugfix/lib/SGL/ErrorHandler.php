@@ -211,7 +211,6 @@ EOL;
                 $info = print_r($aExtraInfo, true);
 
                 //  rebuild error output w/out html
-                require_once SGL_CORE_DIR . '/Util.php';
                 $crlf = SGL_String::getCrlf();
                 $output = $errStr . $crlf .
                     'type: ' . $this->errorType[$errNo][0] . $crlf .
