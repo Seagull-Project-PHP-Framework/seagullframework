@@ -1,5 +1,7 @@
 <?php
 
+require_once SGL_CORE_DIR . '/Observer.php';
+
 /**
  * Records login in database.
  *
