@@ -1069,10 +1069,10 @@ class SGL_Output
         //  - type: javascript
         //  - rev: current revision number (still to be implemented)
         //  - files: loaded js files
-        $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&rev='
-            . $rev . '&files=' . $jsString;
+        $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&amp;rev='
+            . $rev . '&amp;files=' . $jsString;
         if (SGL_Config::get('cache.javascript')) {
-            $link .= '&optimize=1';
+            $link .= '&amp;optimize=1';
         }
 
         $ret = "<script type=\"text/javascript\" src=\"$link\"></script>\n";
@@ -1171,7 +1171,7 @@ class SGL_Output
 
         $params = '';
         foreach ($aCssHelperParams as $k => $v) {
-            $params .= '&aParams[' . urlencode($k) . ']=' . urlencode($v);
+            $params .= '&amp;aParams[' . urlencode($k) . ']=' . urlencode($v);
         }
 
         // allow to load each file in a separate request for debug purposes
@@ -1185,7 +1185,7 @@ class SGL_Output
                 }
                 $aFiles[] = $file;
                 $cssString = implode(',', $aFiles);
-                $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
+                $link = SGL_BASE_URL . "/optimizer.php?type=css&amp;rev=$rev&amp;files="
                     . $cssString . $params;
                 $ret .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
             }
@@ -1198,7 +1198,7 @@ class SGL_Output
                 : $this->aCssFiles;
             $rev = SGL_Output::_getFilesModifiedTime($aFiles);
             $cssString = implode(',', $aFiles);
-            $link = SGL_BASE_URL . "/optimizer.php?type=css&rev=$rev&files="
+            $link = SGL_BASE_URL . "/optimizer.php?type=css&amp;rev=$rev&amp;files="
                 . $cssString . $params;
             $ret = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
         }
