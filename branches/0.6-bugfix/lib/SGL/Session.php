@@ -545,7 +545,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION && isset($_SESSION['oid']))) {
+        if (count($_SESSION) && isset($_SESSION['oid'])) {
             return $_SESSION['oid'];
         } else {
             return false;
