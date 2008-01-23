@@ -99,7 +99,9 @@ class TasksProcessTest extends UnitTestCase {
 
         // stop decorator chain
         $foo = new ProcFoo();
-        $host = $_SERVER['HTTP_HOST'];
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $host = $_SERVER['HTTP_HOST'];
+        }
 
         $_SESSION['aPrefs']['language'] = 'en-utf-8';
         SGL_Config::set('translation.languageAutoDiscover', true);
@@ -202,7 +204,9 @@ class TasksProcessTest extends UnitTestCase {
         // restore env
         unset($_SESSION['sglFirstLaunch']);
         unset($_SESSION['aPrefs']['language']);
-        $_SERVER['HTTP_HOST'] = $host;
+        if (isset($_SERVER['HTTP_HOST']) && isset($host)) {
+            $_SERVER['HTTP_HOST'] = $host;
+        }
     }
 }
 
