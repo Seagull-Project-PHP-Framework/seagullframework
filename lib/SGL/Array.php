@@ -41,6 +41,7 @@
  * Provides array manipulation methods.
  *
  * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Array
 {

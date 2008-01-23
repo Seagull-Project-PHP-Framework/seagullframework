@@ -329,6 +329,9 @@ class SGL_DB
   * A class that allows services to be globally registered, so that they
   * can be accessed by any class that needs them. Also allows Mock Objects
   * to be easily used as replacements for classes during testing.
+  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
   */
 class SGL_ServiceLocator
 {

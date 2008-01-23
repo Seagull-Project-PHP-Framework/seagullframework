@@ -41,6 +41,8 @@
 /**
  * PHP 4/5 compatible class for aggregating objects.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Delegator
 {

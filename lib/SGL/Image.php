@@ -672,8 +672,7 @@ $GLOBALS['_SGL']['ImageConfig']['aProps']['_aAdditionalParams'] =
 /**
  * Manipulate with SGL_Image configuration.
  *
- * @package    seagull
- * @subpackage image
+ * @package    SGL
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageConfig
@@ -950,8 +949,7 @@ class SGL_ImageConfig
 /**
  * Base image transformation strategy.
  *
- * @package    seagull
- * @subpackage image
+ * @package    SGL
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  *
  * @abstract
