@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -44,6 +44,12 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  */
 require_once dirname(__FILE__) . '/../Task.php';
+
+// if SGL_FrontController::init() called without index.php
+if (!isset($GLOBALS['varDir'])) {
+    $GLOBALS['varDir']  = realpath(dirname(__FILE__) . '/../../../var');
+    $GLOBALS['rootDir'] = realpath(dirname(__FILE__) . '/../../../');
+}
 
 /**
  * @package Task
@@ -153,7 +159,6 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
             define('SGL_APP_ROOT',              SGL_PATH);
         }
         define('SGL_LOG_DIR',                   SGL_VAR_DIR . '/log');
-        define('SGL_TMP_DIR',                   SGL_VAR_DIR . '/tmp');
         define('SGL_CACHE_DIR',                 SGL_VAR_DIR . '/cache');
         define('SGL_LIB_DIR',                   SGL_APP_ROOT . '/lib');
         define('SGL_ENT_DIR',                   SGL_CACHE_DIR . '/entities');
@@ -224,7 +229,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          */
         define('SGL_ERROR_INVALIDFILEPERMS',    -115);
         /**
-         * Session was invalild.
+         * Session was invalid.
          */
         define('SGL_ERROR_INVALIDSESSION',      -116);
         /**
@@ -244,17 +249,21 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
          */
         define('SGL_ERROR_INVALIDMETHODPERMS',  -120);
         /**
+         * Authorisation is invalid.
+         */
+        define('SGL_ERROR_INVALIDAUTHORISATION',  -121);
+        /**
          * Request was invalid.
          */
-        define('SGL_ERROR_INVALIDREQUEST',      -121);
+        define('SGL_ERROR_INVALIDREQUEST',      -122);
         /**
          * Type invalid.
          */
-        define('SGL_ERROR_INVALIDTYPE',         -122);
+        define('SGL_ERROR_INVALIDTYPE',         -123);
         /**
          * Excessive recursion occured.
          */
-        define('SGL_ERROR_RECURSION',           -123);
+        define('SGL_ERROR_RECURSION',           -124);
         /**
          * Resource could not be found.
          */
@@ -326,6 +335,21 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
     function run($conf)
     {
+        //  include Log.php if logging enabled
+        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
+            require_once 'Log.php';
+
+        } else {
+            //  define log levels to avoid notices, since Log.php not included
+            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
+            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
+            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
+            define('PEAR_LOG_ERR',      3);     /** Error conditions */
+            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
+            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
+            define('PEAR_LOG_INFO',     6);     /** Informational */
+            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+        }
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
             $c = &SGL_Config::singleton();
@@ -349,13 +373,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
                 $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
                     . $conf['path']['additionalIncludePath']);
             }
-            //  add pear include path
-            if (!empty($conf['path']['pearIncludePath'])) {
-                $ok = ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR
-                    . $conf['path']['pearIncludePath']);
-            }
         }
-        require_once 'PEAR.php';
 
         if (isset($conf['path']['webRoot'])) {
             define('SGL_WEB_ROOT', $conf['path']['webRoot']);
@@ -376,21 +394,10 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
         } else {
             define('SGL_UPLOAD_DIR', SGL_VAR_DIR . '/uploads');
         }
-
-        //  include Log.php if logging enabled
-        if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
-            require_once 'Log.php';
-
+        if (!empty($conf['path']['tmpDirOverride'])) {
+            define('SGL_TMP_DIR', $conf['path']['tmpDirOverride']);
         } else {
-            //  define log levels to avoid notices, since Log.php not included
-            define('PEAR_LOG_EMERG',    0);     /** System is unusable */
-            define('PEAR_LOG_ALERT',    1);     /** Immediately action */
-            define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
-            define('PEAR_LOG_ERR',      3);     /** Error conditions */
-            define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
-            define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
-            define('PEAR_LOG_INFO',     6);     /** Informational */
-            define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+            define('SGL_TMP_DIR', SGL_VAR_DIR . '/tmp');
         }
     }
 }
@@ -400,7 +407,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
  */
 class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
-    function run($conf = array())
+    function run()
     {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
@@ -409,7 +416,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
             'class_location'        => SGL_ENT_DIR,
             'require_prefix'        => SGL_ENT_DIR . '/',
             'class_prefix'          => 'DataObjects_',
-            'debug'                 => $conf['debug']['dataObject'],
+            'debug'                 => SGL_Config::get('debug.dataObject'),
             'production'            => 0,
             'ignore_sequence_keys'  => 'ALL',
             'generator_strip_schema'=> 1,
@@ -446,6 +453,7 @@ class SGL_Task_SetGlobals extends SGL_Task
         $GLOBALS['_SGL']['ERRORS'] =            array();
         $GLOBALS['_SGL']['QUERY_COUNT'] =       0;
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] =    false;
+        $GLOBALS['_SGL']['CHARSET'] =           '';
     }
 }
 
@@ -459,6 +467,10 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         //  set PEAR error handler
         #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
+        if (!SGL_Config::get('debug.showBacktrace')) {
+           $options = &PEAR::getStaticProperty('PEAR_Error', 'skiptrace');
+           $options = true;
+        }
     }
 
     /**
@@ -471,9 +483,6 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
      */
     function pearErrorHandler($oError)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
         //  log message
         $message = $oError->getMessage();
         $debugInfo = $oError->getDebugInfo();
@@ -481,7 +490,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
 
         //  send error info to screen
         SGL_Error::push($oError);
-        if (!empty($conf['debug']['showBacktrace'])) {
+        if (SGL_Config::get('debug.showBacktrace')) {
             echo '<pre>'; print_r($oError->getBacktrace()); print '</pre>';
         }
     }
@@ -602,8 +611,11 @@ class SGL_Task_LoadCustomConfig extends SGL_Task
  */
 class SGL_Task_InitialiseModules extends SGL_Task
 {
-    function run($conf)
+    function run()
     {
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
         //  skip if we're in installer
         if (defined('SGL_INSTALLED')) {
             $locator = &SGL_ServiceLocator::singleton();
@@ -612,11 +624,18 @@ class SGL_Task_InitialiseModules extends SGL_Task
                 $dbh = & SGL_DB::singleton();
                 $locator->register('DB', $dbh);
             }
-            $query = "
-                SELECT  name
-                FROM    {$conf['table']['module']}
-                ";
-            $aRet = $dbh->getAll($query);
+            //  this task can be called when installing a new module
+            if (!empty($conf['aModuleList'])) {
+                $oMod = new stdClass();
+                $oMod->name = $conf['aModuleList'][0];
+                $aRet[] = $oMod;
+            } else {
+                $query = "
+                    SELECT  name
+                    FROM    {$conf['table']['module']}
+                    ";
+                $aRet = $dbh->getAll($query);
+            }
             if (is_array($aRet) && count($aRet)) {
                 foreach ($aRet as $oModule) {
                     $moduleInitFile = SGL_MOD_DIR . '/' . $oModule->name . '/init.php';
@@ -695,8 +714,6 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
     function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
     {
         $this->processRequest = $pr;
-        $this->c = &SGL_Config::singleton();
-        $this->conf = $this->c->getAll();
     }
 }
 
@@ -794,9 +811,7 @@ class SGL_HtmlSimpleView extends SGL_View
     {
         //  prepare renderer class
         if (!$templateEngine) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $templateEngine = $conf['site']['templateEngine'];
+            $templateEngine = SGL_Config::get('site.templateEngine');
         }
         $templateEngine = ucfirst($templateEngine);
         $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';

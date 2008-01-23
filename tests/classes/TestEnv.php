@@ -102,28 +102,43 @@ class STR_TestEnv
             }
         }
         //  shell_exec raw sql if exists
-        $aSqlFiles = $GLOBALS['_STR']['CONF']['rawSqlFiles'];
+        $aSqlFiles = isset($GLOBALS['_STR']['CONF']['rawSqlFiles'])
+            ? $GLOBALS['_STR']['CONF']['rawSqlFiles']
+            : null;
         if (is_array($aSqlFiles) && count($aSqlFiles)) {
             foreach ($aSqlFiles as $sqlFile) {
                 $file = STR_PATH .'/'. $sqlFile;
-                $cmd= "/usr/bin/mysql -u{$GLOBALS['_STR']['CONF']['database']['user']} {$GLOBALS['_STR']['CONF']['database']['name']} < $file";
+                $host = ($GLOBALS['_STR']['CONF']['db']['protocol'] == 'tcp')?"-h {$GLOBALS['_STR']['CONF']['db']['host']}":'';
+                if ($GLOBALS['_STR']['CONF']['db']['type'] == 'pgsql') {
+                    $cmd = "/usr/bin/psql $host -U {$GLOBALS['_STR']['CONF']['db']['user']} {$GLOBALS['_STR']['CONF']['db']['name']} < $file";
+                } else {
+                    $cmd= "/usr/bin/mysql $host -u{$GLOBALS['_STR']['CONF']['db']['user']} {$GLOBALS['_STR']['CONF']['db']['name']} < $file";
+                }
                 $ok = `$cmd`;
             }
         }
     }
 
     /**
-     * A method for tearing down (dropping) the test database.
+     * A method for tearing down (dropping) the test database and restore it empty
      */
     function teardownDB()
     {
         $conf = $GLOBALS['_STR']['CONF'];
-
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
+        $query = SGL_Sql::buildDbDropStatement($conf['db']['type'], $dbh->quoteIdentifier($conf['db']['name']));
+        $dbh->query($query);
 
-        $query = 'DROP DATABASE ' . $conf['database']['name'];
-        $result = $dbh->query($query);
+        if ($conf['db']['type'] == 'pgsql') {
+            $excludeDbName = false;
+        } else {
+            $excludeDbName = true;
+        }
+        $dsn = STR_DB::getDsn($excludeDbName);
+        $dbh = &STR_DB::singleton($dsn);
+        $query = SGL_Sql::buildDbCreateStatement($conf['db']['type'], $dbh->quoteIdentifier($conf['db']['name']));
+        $ok = $dbh->query($query);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -41,7 +41,6 @@
  * Strategy for overlaying color across image.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_ColorOverlayStrategy extends SGL_ImageTransformStrategy

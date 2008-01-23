@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -43,7 +43,6 @@ define('SGL_IMAGE_DEFAULT_SECTION', 'default');
  * Base image class.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_Image
@@ -210,6 +209,22 @@ class SGL_Image
         return call_user_func_array($callback, $args);
     }
 
+    function isValidImage($fileName)
+    {
+        $ok = @getimagesize($fileName);
+        return $ok !== false;
+    }
+
+    function isTransformable($fileName)
+    {
+        $ret = getimagesize($fileName);
+        $mem = ini_get('memory_limit');
+
+        // implement logic here, which detects if php has enough memory
+        // to transform image
+        return true;
+    }
+
     /**
      * Upload image and create thumbnails.
      *
@@ -307,10 +322,11 @@ class SGL_Image
      * @access public
      *
      * @param mixed $section
+     * @param string $pathOverride
      *
      * @return boolean
      */
-    function transform($section = null)
+    function transform($section = null, $pathOverride = null)
     {
         // do nothing if no strats were loaded or there is no strategy for
         // specified section (thumbnail)
@@ -325,14 +341,17 @@ class SGL_Image
             if (!is_numeric($section)) {
                 return true;
             }
-            $fileName = $this->getPath() . '/' . $this->fileName;
-            $params   = &$this->_aParams;
+            $fileName = $pathOverride
+                ? $pathOverride . '/' . $this->fileName
+                : $this->getPath() . '/' . $this->fileName;
+            $params = &$this->_aParams;
         } else {
             $thumbDir = !empty($this->_aParams['thumbDir'])
                 ? '/' . $this->_aParams['thumbDir']
                 : '';
-            $fileName = $this->getPath() . $thumbDir . '/' .
-                $section . '_' . $this->fileName;
+            $fileName = $pathOverride
+                ? "{$pathOverride}$thumbDir/{$section}_{$this->fileName}"
+                : $this->getPath() . "$thumbDir/{$section}_{$this->fileName}";
             $params = &$this->_aThumbnails[$section];
         }
         foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
@@ -653,8 +672,7 @@ $GLOBALS['_SGL']['ImageConfig']['aProps']['_aAdditionalParams'] =
 /**
  * Manipulate with SGL_Image configuration.
  *
- * @package    seagull
- * @subpackage image
+ * @package    SGL
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageConfig
@@ -931,8 +949,7 @@ class SGL_ImageConfig
 /**
  * Base image transformation strategy.
  *
- * @package    seagull
- * @subpackage image
+ * @package    SGL
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  *
  * @abstract

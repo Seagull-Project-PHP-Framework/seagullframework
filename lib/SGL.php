@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -34,48 +34,47 @@
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
-// | Authors:   Demian Turner <demian@phpkitchen.com>                          |
-// |            Gilles Laborderie <gillesl@users.sourceforge.net>              |
+// | Authors: Demian Turner <demian@phpkitchen.com>                            |
+// |          Gilles Laborderie <gillesl@users.sourceforge.net>                |
 // +---------------------------------------------------------------------------+
-// $Id: SGL.php,v 1.20 2005/05/17 22:53:29 demian Exp $
 
 /**
  * Provides a set of static utility methods used by most modules.
  *
- * A set of utility methods used by most modules.
- *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.20 $
+ * @author Demian Turner <demian@phpkitchen.com>
  */
 class SGL
 {
     /**
      * Returns the 2 letter language code, ie, de for German.
      *
-     * @access  public
      * @static
-     * @return string    language abbreviation
+     *
+     * @access public
+     *
+     * @return string  language abbreviation
      */
     function getCurrentLang()
     {
-        $aLangs = $GLOBALS['_SGL']['LANGUAGE'];
-        $sessLang = isset($_SESSION['aPrefs']['language'])
-            ? $_SESSION['aPrefs']['language']
-            : 'en-iso-8859-15';
-        return $aLangs[$sessLang][2];
+        $aLangs   = $GLOBALS['_SGL']['LANGUAGE'];
+        $lang     = SGL_Translation::getLangID(SGL_LANG_ID_SGL);
+        $langCode = $aLangs[$lang][2];
+        return $langCode;
     }
 
     /**
      * Returns current encoding, ie, utf-8.
      *
-     * @access  public
      * @static
-     * @return string   charset codepage
+     *
+     * @access public
+     *
+     * @return string  charset codepage
      */
     function getCurrentCharset()
     {
-        return $GLOBALS['_SGL']['CHARSET'];
+        return SGL_Translation::getCharset();
     }
 
     /**
@@ -173,21 +172,6 @@ class SGL
     }
 
     /**
-     * Determines if a debug session is permittetd for the current authenticated user.
-     *
-     * @access  public
-     * @static
-     * @return boolean   true if debug session allowed
-     */
-    function debugAllowed()
-    {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        return $conf['debug']['sessionDebugAllowed'] &&
-            in_array($_SERVER['REMOTE_ADDR'], $GLOBALS['_SGL']['TRUSTED_IPS']);
-    }
-
-    /**
      * A static method to invoke errors.
      *
      * @static
@@ -199,8 +183,6 @@ class SGL
      */
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
@@ -326,36 +308,77 @@ class SGL
     }
 
      /**
-      * Test if there is a country or state file corresponding
-      * to the current language preference/setting.
-      * If not, tries with the default file (English).
-      * In either case, load it into the GLOBALS and return the array.
+      * Loads region list for current language. If not found, loads region
+      * list for default language (English). Put found data into $GLOBALS.
       *
-      * @param string $fileType 'states' or 'countries' or 'counties'
-      * @return array reference
+      * All region lists should be UTF-8 encoded.
       *
-      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+      * @todo remove presence of $GLOBALS
+      *
+      * @static
+      *
+      * @param string $regionType
+      *
+      * @return mixed
       */
-    function loadRegionList($fileType)
+    function loadRegionList($regionType)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        if ($fileType != 'countries' && $fileType != 'states' && $fileType != 'counties') {
-            SGL::raiseError('Invalid arg', SGL_ERROR_INVALIDARGS);
-            return;
+        $aAllowedTypes = array('countries', 'states', 'counties');
+        if (!in_array($regionType, $aAllowedTypes)) {
+            return SGL::raiseError('Invalid argument', SGL_ERROR_INVALIDARGS);
         }
+        if (!empty($GLOBALS['_SGL'][strtoupper($regionType)])) {
+            return $GLOBALS['_SGL'][strtoupper($regionType)];
+        }
+
         $lang = SGL::getCurrentLang();
-        $file = SGL_DAT_DIR . "/ary.$fileType.$lang.php";
+        $file = SGL_DAT_DIR . "/ary.$regionType.$lang.php";
         if (!file_exists($file)) {
-            $file = SGL_DAT_DIR . "/ary.$fileType.en.php";
+            // get data with default language
+            $file = SGL_DAT_DIR . "/ary.$regionType.en.php";
         }
-        include_once $file;
 
-        $a = $GLOBALS['_SGL'][strtoupper($fileType)] = &${$fileType};
-        if (is_array($a)) {
-            asort($a);
+        // load data
+        include_once $file;
+        $list = ${$regionType};
+
+        // sort arrays
+        if (is_array($list)) {
+            $aList = $list;
+
+            // replace accents for utf-8 encoded string
+            array_walk($aList, create_function('&$v',
+                '$v = SGL_String::replaceAccents($v);'));
+
+            // sort values
+            asort($aList);
+
+            // restore accents
+            $aList = array_merge($aList, $list);
+            $list = $aList;
+
+            // decode list to current charset
+            array_walk($list, array('SGL', '_toCurrentCharset'));
         }
-        return $a;
+
+        // remember region list in global array
+        $GLOBALS['_SGL'][strtoupper($regionType)] = $list;
+
+        return $list;
+    }
+
+    /**
+     * Convert string to current charset from utf-8.
+     *
+     * @static
+     *
+     * @param string $v
+     */
+    function _toCurrentCharset(&$v)
+    {
+        $v = function_exists('iconv')
+            ? iconv('UTF-8', SGL::getCurrentCharset(), $v)
+            : $v;
     }
 
     function displayStaticPage($msg)
@@ -372,6 +395,77 @@ class SGL
         }
         SGL_Install_Common::printFooter();
         exit();
+    }
+
+    function displayMaintenancePage(&$output)
+    {
+        $c      = &SGL_Config::singleton();
+        $conf   = $c->getAll();
+        $output->moduleName         = 'default';
+        $output->theme              = !empty($conf['site']['defaultTheme'])
+            ? $conf['site']['defaultTheme']
+            : 'default';
+        $output->masterTemplate     = 'masterBlank.html';
+        $output->template           = 'maintenance.html';
+        $output->charset            = $GLOBALS['_SGL']['CHARSET'];
+        $output->webRoot            = SGL_BASE_URL;
+        $output->imagesDir          = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
+        $output->versionAPI         = SGL_SEAGULL_VERSION;
+        $output->sessID             = SGL_Session::getId();
+        $output->scriptOpen         = "\n<script type='text/javascript'>\n//<![CDATA[\n";
+        $output->scriptClose        = "\n//]]>\n</script>\n";
+        $output->conf               = $conf;
+
+        $view = new SGL_HtmlSimpleView($output);
+        echo $view->render();
+
+        exit();
+    }
+
+    /**
+     * Display Seagull error page.
+     *
+     * @param SGL_Output $output
+     */
+    function displayErrorPage(&$output)
+    {
+        $c = &SGL_Config::singleton();
+
+        // basics to be able to render
+        $output->moduleName = SGL_Config::get('site.defaultModule');
+        $output->theme      = SGL_Config::get('site.defaultTheme')
+            ? SGL_Config::get('site.defaultTheme')
+            : 'default';
+
+        // templates
+        $output->masterTemplate = 'masterBlank.html';
+        $output->template       = 'error.html';
+
+        // lang prefs
+        $output->charset  = $GLOBALS['_SGL']['CHARSET'];
+        $output->currLang = SGL::getCurrentLang()
+            ? SGL::getCurrentLang()
+            : 'en';
+        $output->langDir  = in_array($output->currLang, array('ar', 'he'))
+            ? 'rtl'
+            : 'ltr';
+
+        // paths
+        $output->webRoot   = SGL_BASE_URL;
+        $output->imagesDir = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
+
+        // other
+        $output->versionAPI  = SGL_SEAGULL_VERSION;
+        $output->sessID      = SGL_Session::getId();
+        $output->scriptOpen  = "\n<script type='text/javascript'>\n//<![CDATA[\n";
+        $output->scriptClose = "\n//]]>\n</script>\n";
+        $output->conf        = $c->getAll();
+
+        // output rendered page
+        $view = new SGL_HtmlSimpleView($output);
+        echo $view->render();
+
+        exit;
     }
 
      /**
@@ -394,7 +488,6 @@ class SGL
       */
     function moduleIsEnabled($moduleName)
     {
-        return false;
         static $aInstances;
         if (!isset($aInstances)) {
             $aInstances = array();
@@ -421,6 +514,24 @@ class SGL
             }
         }
         return ! is_null($aInstances[$moduleName]);
+    }
+
+    /**
+     * Detect if it is a first launch.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @return boolean
+     */
+    function isFirstLaunch()
+    {
+        $ret = !isset($_SESSION['sglFirstLaunch']);
+        if (!isset($_SESSION['sglFirstLaunch'])) {
+            $_SESSION['sglFirstLaunch'] = true;
+        }
+        return $ret;
     }
 }
 

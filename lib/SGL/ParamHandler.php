@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -97,6 +97,12 @@ class SGL_ParamHandler
 //    }
 }
 
+/**
+ * Concrete implementation for ini files.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_ParamHandler_Ini extends SGL_ParamHandler
 {
     function read()
@@ -116,6 +122,12 @@ class SGL_ParamHandler_Ini extends SGL_ParamHandler
     }
 }
 
+/**
+ * Concrete implementation for arrays.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_ParamHandler_Array extends SGL_ParamHandler
 {
     function read()
@@ -144,6 +156,12 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
     }
 }
 
+/**
+ * Concrete implementation for XML files.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_ParamHandler_Xml extends SGL_ParamHandler
 {
     function read()

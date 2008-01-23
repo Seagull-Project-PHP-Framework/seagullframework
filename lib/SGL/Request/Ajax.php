@@ -17,10 +17,13 @@ class SGL_Request_Ajax extends SGL_Request
 
         if ($data = $cache->get($cacheId, 'uri')) {
             $url = unserialize($data);
+            $ok = $c->ensureModuleConfigLoaded($url->getModuleName());
             SGL::logMessage('URI from cache', PEAR_LOG_DEBUG);
         } else {
             require_once SGL_CORE_DIR . '/UrlParser/ClassicStrategy.php';
-            require_once SGL_CORE_DIR . '/UrlParser/SefStrategy.php';
+            if (!class_exists('SGL_UrlParser_SefStrategy')) {
+                require_once SGL_CORE_DIR . '/UrlParser/SefStrategy.php';
+            }
 
             $aStrats = array(
                 new SGL_UrlParser_ClassicStrategy(),

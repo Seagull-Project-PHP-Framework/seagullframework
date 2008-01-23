@@ -146,8 +146,13 @@ EOT;
             array(
                 'package.xml',
                 'package2.xml',
+                'generate_package_xml.php',
+                'lib/pear/',
                 'modules/',
                 'www/themes/default_admin/',
+                'www/themes/savant/',
+                'www/themes/smarty/',
+                '*tests*',
                 '*.svn',
 		    ),
 
@@ -166,10 +171,10 @@ EOT;
             'roles'             =>
             array(
                 'php' => 'php',
-                'html' => 'web',
-                'png' => 'web',
-                'gif' => 'web',
-                'jpg' => 'web',
+                #'html' => 'web',
+                #'png' => 'web',
+                #'gif' => 'web',
+                #'jpg' => 'web',
                 '*' => 'php',
             ),
 
@@ -210,8 +215,8 @@ EOT;
     $pkg->setDescription($description);
     $pkg->setChannel($channel);
 
-    $pkg->setReleaseStability('alpha');
-    $pkg->setAPIStability('alpha');
+    $pkg->setReleaseStability('beta');
+    $pkg->setAPIStability('stable');
     $pkg->setReleaseVersion($version);
     $pkg->setAPIVersion($version);
 
@@ -222,7 +227,7 @@ EOT;
     $pkg->setPackageType('php');
 
     // Must be available in new package.xml format
-    $pkg->setPhpDep('4.3.11');
+    $pkg->setPhpDep('4.3.0');
     $pkg->setPearinstallerDep('1.4.6');
 
     // Require custom file role for our web installation
@@ -258,12 +263,12 @@ EOT;
     $pkg->specifySubpackage($default_pkg, $dependency = false/* indicates subpackage */, $required = true);
 
     //  - navigation
-    #require_once SGL_PKG_TMP_BUILD_DIR . '/modules/navigation/generatePearPackageXml.php';
-    #$pkg->specifySubpackage($navigation_pkg, $dependency = false/* indicates subpackage */, $required = true);
+    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/navigation/generatePearPackageXml.php';
+    $pkg->specifySubpackage($navigation_pkg, $dependency = false/* indicates subpackage */, $required = true);
 
     //  - user
-    #require_once SGL_PKG_TMP_BUILD_DIR . '/modules/user/generatePearPackageXml.php';
-    #$pkg->specifySubpackage($user_pkg, $dependency = false/* indicates subpackage */, $required = true);
+    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/user/generatePearPackageXml.php';
+    $pkg->specifySubpackage($user_pkg, $dependency = false/* indicates subpackage */, $required = true);
 
     //  - publisher
 #    require_once SGL_PKG_TMP_BUILD_DIR . '/modules/publisher/generatePearPackageXml.php';
@@ -303,17 +308,13 @@ EOT;
 //    if (PEAR::isError($e)) {
 //        die($e->getMessage());
 //    }
-//    $e = $pkg->addrole('gif', 'web');
-//    if (pear::iserror($e)) {
-//        die($e->getmessage());
+//    $e = $pkg->addRole('gif', 'web');
+//    if (PEAR::isError($e)) {
+//        die($e->getMessage());
 //    }
-//    $e = $pkg->addrole('jpeg', 'web');
-//    if (pear::iserror($e)) {
-//        die($e->getmessage());
-//    }
-//    $e = $pkg->addrole('png', 'web');
-//    if (pear::iserror($e)) {
-//        die($e->getmessage());
+//    $e = $pkg->addRole('jpeg', 'web');
+//    if (PEAR::isError($e)) {
+//        die($e->getMessage());
 //    }
 
     // Create the current release and add it to the package definition

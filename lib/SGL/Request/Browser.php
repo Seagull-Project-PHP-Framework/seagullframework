@@ -72,7 +72,7 @@ class SGL_Request_Browser extends SGL_Request
      */
     function getDefaultUrlParsingStrategies()
     {
-        return array('Classic', 'Sef');
+        return array('Classic', 'Alias', 'Sef');
     }
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2007, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -34,19 +34,23 @@
 // +---------------------------------------------------------------------------+
 // | AjaxProvider.php                                                          |
 // +---------------------------------------------------------------------------+
-// | Author:   Julien Casanova <julien@soluo.fr>                               |
+// | Author: Julien Casanova <julien@soluo.fr>                                 |
 // +---------------------------------------------------------------------------+
 
 define('SGL_RESPONSEFORMAT_JSON', 1);
 define('SGL_RESPONSEFORMAT_PLAIN', 2);
 define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
 define('SGL_RESPONSEFORMAT_HTML', 4);
+define('SGL_RESPONSEFORMAT_XML', 5);
+
 /**
  * Abstract model controller for all the 'ajax provider' classes.
  *
  * @package SGL
- * @subpackage
- * @author  Julien Casanova <julien@soluo.fr>
+ *
+ * @author Julien Casanova <julien@soluo.fr>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ *
  * @abstract
  */
 class SGL_AjaxProvider
@@ -75,8 +79,7 @@ class SGL_AjaxProvider
     /**
      * Constructor.
      *
-     * @access  public
-     * @return  void
+     * @access public
      */
     function SGL_AjaxProvider()
     {
@@ -92,57 +95,104 @@ class SGL_AjaxProvider
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh = &SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;
     }
 
-    function processResponse($response = null)
+    /**
+     * Main routine of processing ajax requests.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     *
+     * @return mixed
+     */
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (is_null($response)) {
+        $req = $input->getRequest();
+        $actionName = $req->getActionName();
+
+        // handle errors
+        if (SGL_Error::count()) { // eg, authentication failure
+            return;
+        } elseif (!method_exists($this, $actionName)) {
+            SGL::raiseError('requested method does not exist');
             return;
         }
-        // Handle errors
-        if (PEAR::isError($response)) {
-            $response = array(
-                'message'   => $response->getMessage(),
-                'debugInfo' => $response->getDebugInfo(),
-                'level'     => $response->getCode(),
-                'errorType' => SGL_Error::constantToString($response->getCode())
-            );
-            header('HTTP/1.1 404 Not found');
-        }
-        // Returned encoded response with appropriate headers
-        switch (strtoupper($this->responseFormat)) {
+        // by default request is authorised
+        $ok = true;
 
-        case SGL_RESPONSEFORMAT_JSON:
+        // only implement on demand
+        $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
+        if (!empty($this->conf[$providerContainer]['requiresAuth'])
+                && $this->conf['debug']['authorisationEnabled']) {
+            $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
+            $aMethods = array_map('trim', $aMethods);
+            if (in_array($actionName, $aMethods)) {
+                $resourseId = $this->getAuthResourceId();
+                $ok = $this->isOwner($resourseId, SGL_Session::getUid());
+            }
+        }
+        if (!$ok) {
+            SGL::raiseError('authorisation failed', SGL_ERROR_INVALIDAUTHORISATION);
+            return;
+        }
+        $output->data = $this->$actionName();
+    }
+
+    /**
+     * Authorisation routine.
+     *
+     * @param mixed $resourseId
+     * @param integer $userId
+     *
+     * @return boolean
+     *
+     * @abstract
+     */
+    function isOwner($resourseId, $userId)
+    {
+        return true;
+    }
+
+    /**
+     * Get resource ID.
+     *
+     * @return mixed
+     *
+     * @abstract
+     */
+    function getAuthResourceId()
+    {
+        return 'resourceId';
+    }
+
+    function jsonEncode($data)
+    {
+        if (function_exists('json_encode')) {
+            $ret = json_encode($data);
+        } else {
             require_once 'HTML/AJAX/JSON.php';
             $json = new HTML_AJAX_JSON();
-            $ret = $json->encode($response);
-            header('Content-Type: text/plain');
-            break;
-
-        case SGL_RESPONSEFORMAT_HTML:
-            $ret = $response;
-            header('Content-Type: text/html');
-            break;
-
-        case SGL_RESPONSEFORMAT_PLAIN:
-            $ret = $response;
-            header('Content-Type: text/plain');
-            break;
-
-        case SGL_RESPONSEFORMAT_JAVASCRIPT:
-            $ret = $response;
-            header('Content-Type: text/javascript');
-            break;
-
-        default:
-            $ret = 'You haven\'t defined your response format, see SGL_AjaxProvider::processResponse';
+            $ret = $json->encode($data);
         }
+        return $ret;
+    }
+
+    function handleError($oError)
+    {
+        $aResponse = array(
+            'message'   => $oError->getMessage(),
+            'debugInfo' => $oError->getDebugInfo(),
+            'level'     => $oError->getCode(),
+            'errorType' => SGL_Error::constantToString($oError->getCode())
+        );
+
+        $ret = SGL_AjaxProvider::jsonEncode($aResponse);
         return $ret;
     }
 }

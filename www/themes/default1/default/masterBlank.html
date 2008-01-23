@@ -1,0 +1,50 @@
+		<flexy:include src="header.html" />
+		<!-- Logo and header -->
+	    <div id="header">
+	        <div class="wrapLeft">
+	            <div class="wrapRight">
+	                <div class="wrap">
+	                    <a id="logo" href="{webRoot}/{conf[site][frontScriptName]}" title="{translate(#Home#)}">
+	                    {if:conf[site][showLogo]}
+	                    <img src="{webRoot}/themes/{theme}/images/{conf[site][showLogo]}" alt="{conf[site][name]} Logo" />
+	                    {else:}
+	                    <span>{conf[site][name]}</span>
+	                    {end:}
+	                    </a>
+	                </div>
+	            </div>
+	        </div>
+	    </div> <!-- close header -->
+        <div class="inner-container" id="layout-noCols">          
+            <div id="middleCol">
+                <div class="inner" id="content">
+                {outputBody()}
+                </div>
+            </div>
+            <div class="spacer"></div>
+        </div> <!-- close inner-container -->
+		<div id="footer">
+            <div class="wrapLeft">
+                <div class="wrapRight">
+                    <div class="wrap">
+                        <p>
+                        {translate(#Powered by#)} <a href="http://seagullproject.org/" title="{translate(#Seagull PHP Framework#)}">
+                        {translate(#Seagull PHP Framework#)}</a>
+                        {if:isAdmin()}
+                            v{versionAPI}
+                        {end:}
+                         - &copy;
+                        <a href="http://seagullsystems.com/" title="Seagull Systems">Seagull Systems</a> 2003-2006
+                        </p>
+                        <p flexy:if="showExecutionTimes">
+                        {translate(#Execution Time#)} = {getExecutionTime()} {translate(#ms#)}
+                        {getQueryCount()} {translate(#queries#)}
+                        </p>
+                        <p flexy:if="conf[debug][profiling]">{getMemoryUsage()} kb {translate(#allocated#)}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div> <!-- close outer-wrapper -->
+</body>
+</html>

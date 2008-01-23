@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -67,9 +67,6 @@ class SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-
         $this->da = & UserDAO::singleton();
         $this->dbh = & SGL_DB::singleton();
 
@@ -86,10 +83,10 @@ class SGL_Category
                 'label'       => 'label',
                 'perms'       => 'perms',
             ),
-            'tableName'     => $this->conf['table']['category'],
+            'tableName'     => SGL_Config::get('table.category'),
             /** @todo Use $this->conf['table']['table_lock'] */
-            'lockTableName' => $this->conf['db']['prefix'] . 'table_lock',
-            'sequenceName'  => $this->conf['table']['category']);
+            'lockTableName' => SGL_Config::get('db.prefix') . 'table_lock',
+            'sequenceName'  => SGL_Config::get('table.category'));
     }
 
     /**
@@ -122,7 +119,6 @@ class SGL_Category
             SGL::raiseError('Incorrect parent node id passed to ' . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-
         //  clear block & category caches
         SGL_Cache::clear('blocks');
         SGL_Cache::clear('categorySelect');
@@ -166,7 +162,7 @@ class SGL_Category
 
         case 0:
             //  move the category, make it into a root node, just above it's own root
-            $thisNode = $nestedSet->getNode($values['category_id']);
+            $thisNode = $nestedSet->getNode( $values['category_id']);
             $moveNode = $nestedSet->moveTree($values['category_id'], $thisNode['root_id'], 'BE');
 
             if (!is_a($thisNode, 'PEAR_Error') && !is_a($moveNode, 'PEAR_Error')) {
@@ -224,7 +220,6 @@ class SGL_Category
             SGL::raiseError("Incorrect parameter passed to " . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS);
         }
-
         //  clear block & category caches
         SGL_Cache::clear('categorySelect');
         SGL_Cache::clear('blocks');
@@ -393,10 +388,11 @@ class SGL_Category
             SGL::raiseError('Wrong datatype passed to '  . __CLASS__ . '::' .
                 __FUNCTION__, SGL_ERROR_INVALIDARGS, PEAR_ERROR_DIE);
         }
-        $query = "  SELECT category_id, label
-                    FROM " . $this->conf['table']['category'] . "
-                    WHERE parent_id = $id
-                    ORDER BY parent_id, order_id";
+        $query = "
+            SELECT category_id, label
+            FROM " . SGL_Config::get('table.category') . "
+            WHERE parent_id = $id
+            ORDER BY parent_id, order_id";
 
         $result = $this->dbh->query($query);
         $count = 0;
@@ -406,7 +402,6 @@ class SGL_Category
             $aChildren[$count]['label'] = $row['label'];
             $count++;
         }
-
         return $aChildren;
     }
 
@@ -456,7 +451,6 @@ class SGL_Category
         }
         $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
-
 
         $req = & SGL_Request::singleton();
 

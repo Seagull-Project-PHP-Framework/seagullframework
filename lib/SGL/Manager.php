@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -112,7 +112,12 @@ class SGL_Manager
 
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
-//$this->dbh = $this->_getDb();
+        $this->dbh = $this->_getDb();
+
+        //  detect if trans2 support required
+        if ($this->conf['translation']['container'] == 'db') {
+            $this->trans = & SGL_Translation::singleton();
+        }
 
         //  determine the value for the masterTemplate
         if (!empty($this->conf['site']['masterTemplate'])) {
@@ -287,19 +292,6 @@ class SGL_Manager
         return $ret;
     }
 
-    function getTemplate(&$input)
-    {
-        $req = $input->getRequest();
-        $mgrName = $req->get('managerName');
-        $userRid = SGL_Session::getRoleId();
-
-        if (isset($this->conf[$mgrName]['adminGuiAllowed'])
-               && $this->conf[$mgrName]['adminGuiAllowed']
-               && $userRid == SGL_ADMIN) {
-            $this->template = 'admin_' . $this->template;
-        }
-    }
-
     /**
      * Parent page display method.
      *
@@ -351,7 +343,7 @@ class SGL_Manager
 
         //  else display error with blank template
         } else {
-            $output->template = 'docBlank.html';
+            $output->template = 'error.html';
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -197,13 +197,13 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
         'curl' => array(SGL_RECOMMENDED => 1),
         'gd' => array(SGL_RECOMMENDED => 1),
         'iconv' => array(SGL_RECOMMENDED => 1),
-//        'mysql' => array(SGL_NEUTRAL => 0),
-//        'mysqli' => array(SGL_NEUTRAL => 0),
-//        'oci8' => array(SGL_NEUTRAL => 0),
-//        'odbc' => array(SGL_NEUTRAL => 0),
+        'mysql' => array(SGL_NEUTRAL => 0),
+        'mysqli' => array(SGL_NEUTRAL => 0),
+        'oci8' => array(SGL_NEUTRAL => 0),
+        'odbc' => array(SGL_NEUTRAL => 0),
         'openssl' => array(SGL_RECOMMENDED => 1),
         'pcre' => array(SGL_REQUIRED => 1),
-//        'pgsql' => array(SGL_NEUTRAL => 0),
+        'pgsql' => array(SGL_NEUTRAL => 0),
         'posix' => array(SGL_RECOMMENDED => 1),
         'session' => array(SGL_REQUIRED => 1),
         'tidy' => array(SGL_RECOMMENDED => 1),

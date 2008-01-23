@@ -1,7 +1,10 @@
 <?php
 //  setup seagull environment
 require_once dirname(__FILE__)  . '/../lib/SGL/FrontController.php';
+require_once dirname(__FILE__)  . '/../lib/SGL/Sql.php';
 require_once dirname(__FILE__)  . '/../tests/classes/DB.php';
+
+define('SGL_INSTALLED', true);
 
 class TestRunnerInit extends SGL_FrontController
 {
@@ -41,30 +44,21 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
     function process(&$input, &$output)
     {
         $conf = $GLOBALS['_STR']['CONF'];
-
-        // Create a DSN to create DB (must not include database name from config)
-        $dbType = $conf['database']['type'];
-        if ($dbType == 'mysql') {
-            $dbType = 'mysql_SGL';
+        if ($conf['db']['type'] == 'pgsql'){
+            $excludeDbName = false;
+        } else {
+            $excludeDbName = true;
         }
-        if ($dbType == 'mysqli') {
-            $dbType = 'mysqli_SGL';
-        }
-    	$protocol = isset($conf['database']['protocol']) ? $conf['database']['protocol'] . '+' : '';
-        $dsn = $dbType . '://' .
-            $conf['database']['user'] . ':' .
-            $conf['database']['pass'] . '@' .
-            $protocol .
-            $conf['database']['host'];
+        $dsn = SGL_DB::_getDsnAsString($conf,$excludeDbName);
         $dbh = &SGL_DB::singleton($dsn);
         if (PEAR::isError($dbh)) {
             die($dbh->getMessage());
         }
 
-        $query = 'DROP DATABASE IF EXISTS ' . $conf['database']['name'];
-        $result = $dbh->query($query);
-        $query = 'CREATE DATABASE ' . $conf['database']['name'];
-        $result = $dbh->query($query);
+        $query1 = SGL_Sql::buildDbDropStatement($conf['db']['type'], $conf['db']['name']);
+        $query2 = SGL_Sql::buildDbCreateStatement($conf['db']['type'], $conf['db']['name']);
+        $result = $dbh->query($query1);
+        $result = $dbh->query($query2);
         $this->processRequest->process($input, $output);
     }
 }
