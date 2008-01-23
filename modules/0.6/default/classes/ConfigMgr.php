@@ -112,9 +112,16 @@ class ConfigMgr extends SGL_Manager
         $this->aNavDrivers   = SGL_Util::getAllClassesFromFolder($navDir, '.*Driver');
         $this->aNavRenderers = SGL_Util::getAllClassesFromFolder($navDir, '.*Renderer');
         $this->aSessHandlers = array('file' => 'file', 'database' => 'database');
-        $this->aUrlHandlers  = array(
-            'SGL_UrlParser_SefStrategy' => 'Seagull SEF',
-            'SGL_UrlParser_ClassicStrategy' => 'Classic');
+        $stratDir = SGL_CORE_DIR . '/UrlParser';
+        $aUrlHandlers = SGL_Util::getAllClassesFromFolder($stratDir);
+        foreach ($aUrlHandlers as $k => $v) {
+            require_once $stratDir . '/' . $k . '.php';
+            $stratName = 'SGL_UrlParser_' . $k;
+            $oStrategy = new $stratName();
+            if ($oStrategy->makeLink('', '', '', array(), '', 0, null)) {
+                $this->aUrlHandlers[$stratName] = str_replace('Strategy', '', $v);
+            }
+        }
         $this->aTemplateEngines = array(
             'flexy'   => 'Flexy',
             'savant2' => 'Savant2',
