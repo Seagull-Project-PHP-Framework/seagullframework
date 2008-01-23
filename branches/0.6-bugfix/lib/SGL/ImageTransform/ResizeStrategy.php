@@ -41,7 +41,6 @@
  * Strategy for resizing images.
  *
  * @package SGL
- * @subpackage image
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_ImageTransform_ResizeStrategy extends SGL_ImageTransformStrategy

@@ -6,7 +6,6 @@ require_once dirname(__FILE__) . '/Queue/Container.php';
  * Emailer queue.
  *
  * @package SGL
- * @subpackage Emailer
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_Emailer_Queue

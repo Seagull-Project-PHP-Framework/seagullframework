@@ -4,7 +4,6 @@
  * Base class for all containers.
  *
  * @package SGL
- * @subpackage Emailer
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 abstract class SGL_Emailer_Queue_Container

@@ -13,7 +13,6 @@ require_once SGL_CORE_DIR . '/Url2.php';
  * to resolve query data, instead SGL_Url heavy parsing used by Browser1.
  *
  * @package SGL
- * @subpackage request
  * @author Demian Turner <demian@phpkitchen.com>
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
