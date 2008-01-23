@@ -40,6 +40,8 @@
 /**
  * Performs transformations on resource names, ie, urls, classes, methods, variables.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Inflector
 {

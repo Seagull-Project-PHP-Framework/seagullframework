@@ -42,7 +42,7 @@
  * Acts as a wrapper for content objects.
  *
  * @access  public
- * @author  Demian Turner <demian@phpkitchen.com>
+ * @author  AJ <aj@seagullproject.org>
  * @package SGL
  * @version $Revision: 1.12 $
  */

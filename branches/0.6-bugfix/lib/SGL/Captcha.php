@@ -39,6 +39,9 @@
 
 /**
  * Provides methods for generating/validating a captcha.
+ *
+ * @package SGL
+ * @author  Steven Stremciuc <steve@freeslacker.net>
  */
 class SGL_Captcha
 {

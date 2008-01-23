@@ -47,6 +47,7 @@
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @author  Peter James
  * @version $Revision: 1.8 $
  */
 class SGL_ErrorHandler

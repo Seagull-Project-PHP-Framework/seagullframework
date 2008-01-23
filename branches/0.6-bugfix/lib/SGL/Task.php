@@ -36,6 +36,14 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
+
+/**
+ * Abstract task class.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ * @abstract
+ */
 class SGL_Task
 {
     /**
@@ -66,6 +74,8 @@ class SGL_Task
 /**
  * Used for building and running a task list.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_TaskRunner
 {

@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * Manages an array of filters.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_FilterChain
 {
     var $aFilters;
