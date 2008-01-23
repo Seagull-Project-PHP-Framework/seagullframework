@@ -41,7 +41,6 @@
  * Strategy for drawing borders.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_BorderStrategy extends SGL_ImageTransformStrategy

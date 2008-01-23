@@ -4,7 +4,6 @@
  * Resize image and crop.
  *
  * @package SGL
- * @subpackage image
  * @author ed209
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */

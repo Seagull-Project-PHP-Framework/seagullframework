@@ -43,7 +43,6 @@ define('SGL_IMAGE_DEFAULT_SECTION', 'default');
  * Base image class.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_Image

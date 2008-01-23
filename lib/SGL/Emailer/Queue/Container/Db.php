@@ -4,7 +4,6 @@
  * PEAR::DB container for SGL_Emailer_Queue.
  *
  * @package SGL
- * @subpackage Emailer
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container

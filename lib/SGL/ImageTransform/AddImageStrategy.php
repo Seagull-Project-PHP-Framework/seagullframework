@@ -41,7 +41,6 @@
  * Strategy for adding image across original one.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_AddImageStrategy extends SGL_ImageTransformStrategy

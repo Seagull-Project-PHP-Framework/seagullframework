@@ -41,7 +41,6 @@
  * Strategy for resizing canvas.
  *
  * @package    SGL
- * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_CanvasResizeStrategy extends SGL_ImageTransformStrategy
