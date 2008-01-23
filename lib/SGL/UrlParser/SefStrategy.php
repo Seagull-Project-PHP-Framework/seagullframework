@@ -254,9 +254,13 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                             $qsParamValue = $listKey; // pass literal
                         }
                     }
-                    $qs .= '/' . $qsParamName . '/' . $qsParamValue;
+                    if (strlen($qsParamValue) > 0) {
+                        $qs .= '/' . $qsParamName . '/' . $qsParamValue;
+                    }
                 } else {
-                    $qs .= '/' . $qsParamName . '/' . $aList[$idx]->$listKey;
+                    if (isset($aList[$idx]->$listKey) && strlen($aList[$idx]->$listKey) > 0) {
+                        $qs .= '/' . $qsParamName . '/' . $aList[$idx]->$listKey;
+                    }
                 }
             }
             //  append querystring
