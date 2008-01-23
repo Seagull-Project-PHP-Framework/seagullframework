@@ -25,7 +25,10 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
-18-12-07    Added SGL_Emailer_Queue lib, use it to store emails in DB (Dmitri)
+20-12-07    CSS and JavaScript reorganization and optimization, see
+            http://trac.seagullproject.org/wiki/Howto/JavaScriptAndCssImprovements
+            (Dmitri)
+19-12-07    Added SGL_Emailer_Queue lib, use it to store emails in DB (Dmitri)
 18-12-07    Maintenance screen now manages additional caches: javascript, library
             and function (Dmitri)
 17-12-07    Implemented new ArrayDriver for navigation, huge performance improvement
