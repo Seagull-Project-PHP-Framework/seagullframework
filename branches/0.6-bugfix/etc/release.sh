@@ -17,8 +17,8 @@
 SVN=/sw/bin/svn
 SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
-PHP=/usr/bin/php
-PEAR=/usr/bin/pear
+PHP=/opt/local/bin/php
+PEAR=/opt/local/bin/pear
 
 # SF FTP details
 FTP_HOSTNAME=upload.sourceforge.net
