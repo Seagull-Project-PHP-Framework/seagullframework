@@ -5,6 +5,9 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+22-12-07    Fixed bug where blocks got disabled after PEAR errors (Demian)
+21-12-07    Logins now recorded correctly if 'remember me' is used (Dmitri)
+20-12-07    Fixed system messages, using Config screen to set them
 12-02-07    Fixed Smarty integration problem
 09-11-07    Fixed prob where global and module configs were saving in global file
 27-10-07    Fixed bug user's password was being hashed twice in UserImportMgr
@@ -22,8 +25,17 @@ BUGFIXES
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
-13-12-07    Added logging for installation, see SGL_Util::getTmpDir()
-23-10-07    Fatal db errors handled gracefully
+18-12-07    Maintenance screen now manages additional caches: javascript, library
+            and function (Dmitri)
+17-12-07    Implemented new ArrayDriver for navigation, huge performance improvement
+            (Dmitri)
+16-12-07    Implemented CSS and javascript caching and compression (Dmitri)
+15-12-07    Implemented Horde_Routes as optional input URL handler, much more flexible
+            than default handler (Dmitri + Demian)
+15-12-07    Implemented SGL_Cache2 which wraps Zend_Cache which has memcached backend
+            (Dmitri)
+13-12-07    Added logging for installation, see SGL_Util::getTmpDir() (Demian)
+23-10-07    Fatal db errors handled gracefully (Demian)
 23-10-07    Added ability to use objects callbacks for function caching
 19-09-07    Implemented ability to run unit tests by CLI [3425] (Dmitri Lakachauskis)
 19-09-07    Config cache can be cleared at the module level (Dmitri Lakachauskis)
