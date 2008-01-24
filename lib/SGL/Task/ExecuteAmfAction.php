@@ -11,6 +11,9 @@ if (!defined('PRODUCTION_SERVER')) {
     define('PRODUCTION_SERVER', false);
 }
 
+/**
+ * @package Task
+ */
 class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
 {
     function process(&$input, &$output)

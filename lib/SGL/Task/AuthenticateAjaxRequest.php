@@ -3,7 +3,7 @@
 /**
  * Ajax request authentication.
  *
- * @package SGL
+ * @package Task
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
