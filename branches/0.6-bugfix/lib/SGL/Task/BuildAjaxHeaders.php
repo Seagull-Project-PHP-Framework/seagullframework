@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__FILE__) . '/../AjaxProvider.php';
 
+/**
+ * @package Task
+ */
 class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
 {
     function process(&$input, &$output)

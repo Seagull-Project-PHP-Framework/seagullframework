@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @package Task
+ */
 class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
 {
     function process(&$input, &$output)
