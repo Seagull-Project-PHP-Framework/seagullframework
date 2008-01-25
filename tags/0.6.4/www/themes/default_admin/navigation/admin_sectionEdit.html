@@ -1,0 +1,249 @@
+<script type="text/javascript">
+function addFormValue(myElement, form)
+{
+    var myForm = document.getElementById(form);
+
+    newInput = document.createElement("input");
+    newInput.setAttribute('name', myElement.name);
+    newInput.setAttribute('value', myElement.value);
+    newInput.setAttribute('type', 'hidden');
+    myForm.appendChild(newInput);
+}
+</script>
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/translit.js"></script>
+
+<div id="manager-actions">
+    <span>{translate(#Action#)}:&nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('sectionEdit','submitted',1,1)" accesskey="s">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#section#,#navigation#)}" accesskey="c">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)} :: {translate(mode)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" name="sectionEdit" flexy:ignore id="sectionEdit" action="">
+        <div id="optionsLinks"></div>
+        <fieldset class="options" id="navigationContent">
+            <h3>{translate(#Section info#)}</h3>
+            <input type="hidden" name="mode" value="{mode}" />
+            <input type="hidden" name="section[edit]" value="1" />
+        {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="isadd" value="1" />
+            <input type="hidden" name="frmNavLang" value="{navLang}" />
+        {else:}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="section[section_id]" value="{section[section_id]}" />
+            <input type="hidden" name="section[order_id]" value="{section[order_id]}" />
+            <input type="hidden" name="section[parent_id_original]" value="{section[parent_id_original]}" />
+            <input type="hidden" name="section[is_enabled_original]" value="{section[is_enabled_original]}" />
+            <input type="hidden" name="section[trans_id]" value="{section[trans_id]}" />
+            <input type="hidden" name="section[title_original]" value="{section[title_original]:h}" />
+            <input type="hidden" name="section[addonParams]" value="{section[addonParams]:h}" />
+            {foreach:availableLangs,langID,langName}
+            <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
+            {end:}
+
+            <p flexy:if="availableLangs">
+                <label for="frmNavLang">{translate(#Language#)}</label>
+                <select name="frmNavLang" id="frmNavLang"
+                        onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                    {generateSelect(availableLangs,navLang):h}
+                </select>
+            </p>
+        {end:}
+            <p>
+                <label for="section[title]">{translate(#Section Title#)}</label>
+                <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
+                <input type="text" class="longText" name="section[title]" id="section[title]" value="{section[title]:h}" /><span class="currentLanguage">&nbsp;{fullNavLang}</span>
+            </p>
+            <p>
+                <label class="tipOwner" for="section[parent_id]">{translate(#Parent Section#)}
+                    <span class="tipText">{translate(#specify the section under which yours will be placed#)}</span>
+                </label>
+                <select name="section[parent_id]" id="section[parent_id]">
+                    {generateSelect(sectionNodesOptions,section[parent_id]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="section[uriType]">{translate(#Target#)}
+                    <span class="tipText">{translate(#select where your content is coming from#)}</span>
+                </label>
+                <select name="section[uriType]" id="section[uriType]" onchange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()" class="uriType">
+                    <option value="static" flexy:raw="{staticSelected}">
+                        {translate(#pre-existing static content#)}
+                    </option>
+                    <option value="dynamic" flexy:raw="{dynamicSelected}">
+                        {translate(#output from specified module#)}
+                    </option>
+                    {if:conf[SectionMgr][wikiScreenTypeEnabled]}
+                    <option value="wiki" flexy:raw="{wikiSelected}">
+                        wiki
+                    </option>
+                    {end:}
+                    <option value="uriNode" flexy:raw="{uriNodeSelected}">
+                        {translate(#link to section#)}
+                    </option>
+                    <option value="uriAddon" flexy:raw="{uriAddonSelected}">
+                        {translate(#addon#)}
+                    </option>
+                    <option value="uriExternal" flexy:raw="{uriExternalSelected}">
+                        {translate(#external URI#)}
+                    </option>
+                    <option value="uriEmpty" flexy:raw="{uriEmptySelected}">
+                        {translate(#empty link#)}
+                    </option>
+                </select>
+            </p>
+            {if:staticSelected}
+            <p>
+                <label for="section[staticArticleId]">{translate(#static article title#,#ucfirst#)}</label>
+                <span class="error" flexy:if="error[staticArticleId]">{translate(error[staticArticleId])}</span>
+                <select size="1" name="section[staticArticleId]" id="section[staticArticleId]">
+                    <option value="0">{translate(#Select a content#)}</option>
+                    {generateSelect(aStaticArticles,section[staticArticleId],currentLang):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="section[anchor]">{translate(#Anchor#)}
+                    <span class="tipText">{translate(#just the anchor name#)}</span>
+                </label>
+                <input type="text" class="longText" name="section[anchor]" id="section[anchor]" value="{section[anchor]}" />
+            </p>
+            {end:}
+            {if:dynamicSelected}
+            <p>
+                <label for="section[module]">{translate(#Module#)}</label>
+                <select size="1" name="section[module]" id="section[module]"
+                    onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                    {generateSelect(aModules,section[module]):h}
+                </select>
+            </p>
+            <p>
+                <label for="section[manager]">{translate(#Manager#)}</label>
+                <select size="1" name="section[manager]" id="section[manager]"
+                    onChange="addFormValue(this, 'sectionEdit'); self.document.sectionEdit.submit()">
+                    {generateSelect(aManagers,section[manager]):h}
+                </select>
+            </p>
+            <p>
+                <label for="section[actionMapping]">{translate(#action#,#ucfirst#)}</label>
+                <select size="1" name="section[actionMapping]" id="section[actionMapping]">
+                    <option value="">{translate(#none#)}
+                    {generateSelect(aActions,section[actionMapping]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="section[add_params]">{translate(#Additional params#)}
+                <span class="tipText">{translate(#separate with slashes (/)#)}</span>
+                </label>
+                <input type="text" class="longText" name="section[add_params]" id="section[add_params]" value="{section[add_params]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="section[anchor]">{translate(#Anchor#)}
+                    <span class="tipText">{translate(#just the anchor name#)}</span>
+                </label>
+                <input type="text" class="longText" name="section[anchor]" id="section[anchor]" value="{section[anchor]}" />
+            </p>
+            {end:}
+            {if:wikiSelected}
+            <p>
+                <label for="section[resource_uri]">{translate(#Wiki section Url#)}</label>
+                <input type="text" size="50" name="section[resource_uri]" id="section[resource_uri]" value="{section[resource_uri]}">
+            </p>
+            {end:}
+            {if:uriExternalSelected}
+            <p>
+                <label for="section[resource_uri]">{translate(#External section URI#)}</label>
+                <input type="text" class="longText" name="section[resource_uri]" id="section[resource_uri]" value="{section[resource_uri]}">
+            </p>
+            {end:}
+            {if:uriNodeSelected}
+            <p>
+                <label for="section[uri_node]">{translate(#Choose section#)}</label>
+                <select name="section[uri_node]" id="section[uri_node]">
+                    {generateSelect(sectionNodesOptions2,section[uri_node]):h}
+                </select>
+            </p>
+            {end:}
+            {if:uriAddonSelected}
+            <p>
+                <label for="section[addon]">{translate(#Addon class name#)}</label>
+                <select name="section[addon]" id="section[addon]" onchange="document.sectionEdit.submit()">
+                    <option value="">- {translate(#Choose class name#)} -</option>
+                    {generateSelect(aAllAddons,section[addon]):h}
+                </select>
+            </p>
+            <p>
+                <label flexy:if="details.description">{translate(#Addon description#)}</label>
+                <span>{details.description}</span>
+            </p>
+                {if:aParams}
+                    <flexy:include src="admin_editParams.html" />
+                {end:}
+            {end:}
+            {if:uriAliasAllowed}
+            <p id="uriAliasEnableBox">
+                <label class="tipOwner" for="section_uriAliasEnable">{translate(#Add an alias#)}?
+                    <span class="tipText">{translate(#an alias is just a search-engine-friendly URL#)}</span>
+                </label>
+                <input type="checkbox" name="section[uri_alias_enable]" id="section_uriAliasEnable" flexy:raw="{uriAliasIsEnabled}" />
+            </p>
+            <p id="uriAliasAutoModeBox">
+                <label for="section_UriAliasAutoMode">{translate(#Automatic alias#)}?</label>
+                <input type="checkbox" name="section[uri_alias_autoMode]" id="section_uriAliasAutoMode" flexy:raw="{uriAliasIsAutoMode}" />
+                <input type="text" class="longText" name="aliasInputText" id="aliasInputText" value="" />
+            </p>
+            <p id="uriAliasDisplayBox">
+                <label>{translate(#alias URI#,#ucfirst#)}</label>
+                <input type="hidden" name="section[uri_alias]" id="section_uriAlias" value="{section[uri_alias]}" />
+                <span id="uriAliasDisplay">{section[uri_alias]}</span>
+
+            </p>
+            {end:}
+        </fieldset>
+        <fieldset class="options" id="navigationRights">
+            <h3>{translate(#Editing options#)}</h3>
+            <p>
+                <label class="tipOwner" for="section[is_enabled]">{translate(#Publish#)}
+                <span class="tipText">{translate(#check to activate#,#ucfirst#)}</span>
+                </label>
+                <span class="error" flexy:if="error[is_enabled]">{translate(error[is_enabled][string],#vprintf#,error[is_enabled][args])}</span>
+                <input type="checkbox" name="section[is_enabled]" id="section[is_enabled]" flexy:raw="{sectionIsEnabled}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="section[perms][]">{translate(#Can view#)}
+                <span class="tipText">{translate(#Select roles to which you want to grant access#)}</span>
+                </label>
+                <span class="error" flexy:if="error[perms]">{translate(error[perms][string],#vprintf#,error[perms][args])}</span>
+                <select size="5" name="section[perms][]" id="section[perms][]" multiple="multiple">
+                    {generateSelect(aRoles,aSelectedRoles,1):h}
+                </select>
+            </p>
+        </fieldset>
+        {if:!uriAddonSelected}
+        <fieldset class="options" id="navigationOptimisation">
+            <h3>{translate(#Accessibility#)}</h3>
+            <p>
+                <label class="tipOwner" for="section[access_key]">{translate(#Access Key#)}
+                    <span class="tipText">{translate(#Any number, which can be pressed with the ALT-key to load the page.#)}</span>
+                </label>
+                <input type="text" name="section[access_key]" id="section[access_key]" value="{section[access_key]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="section[rel]">{translate(#Rel Marker#)}
+                    <span class="tipText">{translate(#Additional navigation aids for better accessibility. Use values like "home", "prev" or "next".#)}</span>
+                </label>
+                <input type="text" name="section[rel]" id="section[rel]" value="{section[rel]}" />
+            </p>
+        </fieldset>
+        {end:}
+    </form>
+    <div class="spacer"></div>
+</div>
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/cleanUrls.js"></script>
+<script type="text/javascript">
+createAvailOptionsLinks('sectionEdit','h3');
+showSelectedOptions('sectionEdit','navigationContent');
+</script>
