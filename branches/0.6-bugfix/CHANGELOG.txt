@@ -5,7 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
-25-01-07
+25-01-07    Fixed file disclosure flaw in optimizer.php
 
 +-----------------------+
 | VERSION: 0.6.3        |
