@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -50,8 +50,8 @@ class SGL_Smarty extends Smarty
     function SGL_Smarty()
     {
         $this->Smarty();
-        $this->debugging = false;
-        $this->template_dir = SGL_THEME_DIR . '/smarty';
+        $this->debugging = true;
+        $this->template_dir = SGL_WEB_ROOT . '/smarty';
         $this->compile_dir = SGL_CACHE_DIR . '/templates_c';
         $this->config_dir = SGL_SMARTY_DIR . '/unit_test/configs';
         $this->cache_dir = SGL_CACHE_DIR;

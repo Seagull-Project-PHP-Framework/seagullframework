@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -55,18 +55,14 @@ class SGL_Date
      * @access public
      * @static
      * @param boolean $gmt       is time GMT or locale offset
-     * @return string $instance  formatted current time
-     * @todo factor out Cache and Lang methods into their own objects
+     * @return string $time formatted current time
      */
     function getTime($gmt = false)
     {
         //  no logMessage allowed here
-        static $instance;
-        if (!isset($instance)) {
-            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                                : strftime("%Y-%m-%d %H:%M:%S", time());
-        }
-        return $instance;
+        $time = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
+                        : strftime("%Y-%m-%d %H:%M:%S", time());
+        return $time;
     }
 
     /**
@@ -256,7 +252,8 @@ class SGL_Date
             $selected = date('m', time());
         }
         foreach ($aMonths as $k => $v) {
-            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            $monthOptions .= "\n<option value=\"$k\" ";
             if ($k == $selected) {
                 $monthOptions .= 'selected="selected"';
             }

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -608,6 +608,22 @@ class SGL_NestedSet
 
         $ns = $this->_getNestedSet();
         return $ns->createSubNode($id, $values);
+    }
+
+    function createLeftNode($id, $values)
+    {
+        $this->_cleanMemoryCache($id);
+
+        $ns = $this->_getNestedSet();
+        return $ns->createLeftNode($id, $values);
+    }
+
+    function createRightNode($id, $values)
+    {
+        $this->_cleanMemoryCache($id);
+
+        $ns = $this->_getNestedSet();
+        return $ns->createRightNode($id, $values);
     }
 
     function moveTree($id, $targetid, $pos, $copy = false)

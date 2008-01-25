@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -122,7 +122,7 @@ class SGL_Rebuild extends SGL_ProcessRequest
 
         //  retrieve translation settings
         $transContainer = ($conf['translation']['container'] == 'db') ? 1 : 0;
-        $transLanguage  = explode(',', $conf['translation']['installedLanguages']);
+        $transLanguage  = str_replace('_','-', explode(',', $conf['translation']['installedLanguages']));
 
         //  check for custom modules
         $aDefaultData = SGL_Install_Common::overrideDefaultInstallSettings();

@@ -12,7 +12,6 @@ function getSystemTime()
     return $resultTime;
 }
 
-
 //  start timer
 define('SGL_START_TIME', getSystemTime());
 $pearTest = '@PHP-DIR@';

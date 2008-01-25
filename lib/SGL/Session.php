@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -77,8 +77,6 @@ define('SGL_SESSION_UPDATE_WINDOW', 10);
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.36 $
- * @since   PHP 4.1
  */
 class SGL_Session
 {
@@ -100,11 +98,11 @@ class SGL_Session
      *  o persist user object in session
      *
      * @access  public
-     * @param   int $uid       user id if present
-     * @param   int $lifetime  cookie lifetime in seconds
+     * @param   int $uid             user id if present
+     * @param   boolean $rememberMe  set remember me cookie
      * @return  void
      */
-    function SGL_Session($uid = -1, $lifetime = 0)
+    function SGL_Session($uid = -1, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = &SGL_Config::singleton();
@@ -117,7 +115,7 @@ class SGL_Session
         //  set session timeout to 0 (until the browser is closed) initially,
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
-            $lifetime,
+            0,
             $conf['cookie']['path'],
             $conf['cookie']['domain'],
             $conf['cookie']['secure']);
@@ -147,12 +145,31 @@ class SGL_Session
             require_once 'DB/DataObject.php';
             $sessUser = DB_DataObject::factory($conf['table']['user']);
             $sessUser->get($uid);
-            $this->_init($sessUser);
+            $this->_init($sessUser, $rememberMe);
+            if ($rememberMe) {
+                $this->setRememberMeCookie();
+            }
 
         //  if session doesn't exist, initialise
-        } elseif (!SGL_Session::exists()){
+        } elseif (!SGL_Session::exists()) {
             $this->_init();
         }
+    }
+
+    function setRememberMeCookie()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
+        $ok = setcookie(
+            'SGL_REMEMBER_ME',
+            $cookie,
+            time() + 31104000, // 360 days
+            $conf['cookie']['path'],
+            $conf['cookie']['domain'],
+            $conf['cookie']['secure']
+        );
     }
 
     /**
@@ -162,7 +179,7 @@ class SGL_Session
      * @param   object  $oUser  user object if present
      * @return  boolean true on successful initialisation
      */
-    function _init($oUser = null)
+    function _init($oUser = null, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -181,16 +198,40 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => $oUser->usr_id,
                 'rid'               => $oUser->role_id,
-                'oid'               => !empty($oUser->organisation_id) ? $oUser->organisation_id : 0,
                 'username'          => $oUser->username,
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
                 'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
-                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id),
-                'aPerms'            => ($oUser->role_id == SGL_ADMIN)
-                    ? array()
-                    : $da->getPermsByUserId($oUser->usr_id),
+                'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id)
             );
+
+            // for admin we don't need any perms
+            if ($oUser->role_id == SGL_ADMIN) {
+                $aPerms = array();
+            // check for customized perms
+            } elseif (($method = SGL_Config::get('session.permsRetrievalMethod'))
+                    && is_callable(array($da, $method))) {
+                $aPerms = $da->$method($oUser);
+            // get permissions by user
+            } else {
+                $aPerms = $da->getPermsByUserId($oUser->usr_id);
+            }
+            $aSessVars['aPerms'] = $aPerms;
+
+            //  check for rememberMe cookie
+            list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
+            //  if 'remember me' cookie is set remove it
+            if (!empty($cookieValue)) {
+                $da->deleteUserLoginCookieByUserId($oUser->usr_id, $cookieValue);
+            }
+            //  add new 'remember me' cookie
+            if (!empty($rememberMe)) {
+                $salt = 'SGL_SALT'; // @todo: make salt configurable
+                $cookieValue = md5($salt . $aSessVars['key']);
+                $da->addUserLoginCookie($oUser->usr_id, $cookieValue);
+                $aSessVars['cookie'] = $cookieValue;
+            }
+
         //  otherwise it's a guest session, these values always get
         //  set and exist in the session before a login
         } else {
@@ -198,7 +239,6 @@ class SGL_Session
             $aSessVars = array(
                 'uid'               => 0,
                 'rid'               => 0,
-                'oid'               => 0,
                 'username'          => 'guest',
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
@@ -209,6 +249,13 @@ class SGL_Session
                 'aPerms'            => $da->getPermsByRoleId(),
             );
         }
+
+        if (SGL_Config::get('OrgMgr.enabled')) {
+            $aSessVars['oid'] = !empty($oUser->organisation_id)
+                ? $oUser->organisation_id
+                : 0;
+        }
+
         //  set vars in session
         if (isset($_SESSION)) {
             foreach ($aSessVars as $k => $v) {
@@ -226,7 +273,7 @@ class SGL_Session
             if ($conf['session']['handler'] == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-                @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
 
             } elseif ($conf['session']['handler'] == 'database') {
                 $value = $this->dbRead($oldSessionId);
@@ -268,8 +315,73 @@ class SGL_Session
         $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] .
             $acceptLang . $userAgent);
 
-        //  compare actual key with session key, and that UID is not 0 (guest)
-        return  ($currentKey == $_SESSION['key']) && $_SESSION['uid'];
+        //  compare actual key with session key
+        return  ($currentKey == $_SESSION['key']);
+    }
+
+    /**
+     * Returns true if current user is a guest (not logged in)
+     *
+     * @return boolean
+     */
+    function isAnonymous()
+    {
+        $ret = !((bool) $_SESSION['uid']);
+        return $ret;
+    }
+
+    /**
+     * Run session as specified user.
+     *
+     *   1. SGL_Session::runAs(3);
+     *      run as user with ID = 3
+     *   2. SGL_Session::runAs(4);
+     *      run as user with ID = 4
+     *   3. SGL_Session::runAs('prev');
+     *      run as user with ID = 3 (taken fromn stack)
+     *   4. SGL_Session::runAs(5, 'prev');
+     *      if stack is e.g. array(2, 5, 3, 6, 7)
+     *      after running above command it will become array(2).
+     *
+     * @access public
+     *
+     * @param mixed  $runAs      user ID or 'prev'
+     * @param string $direction  only needs to be specified, when running
+     *                           certain session from stack
+     *
+     * @return void
+     */
+    function runAs($runAs, $direction = null)
+    {
+        $aStack = SGL_Session::get('sessionStack');
+        if (!is_array($aStack)) {
+            $aStack = array();
+        }
+
+        // user ID specified and no direction
+        if (is_numeric($runAs) && empty($direction)) {
+            // put current user ID to stack
+            array_push($aStack, SGL_Session::getUid());
+
+        // restore previous session
+        } elseif ($runAs == 'prev') {
+            // pop previous user ID from stack
+            $runAs = array_pop($aStack);
+
+        // restore specified session from stack
+        } else {
+            do {
+                // pop user ID from stack
+                $userId = array_pop($aStack);
+            // until user ID found or stack is empty
+            } while ($userId != $runAs && !is_null($userId));
+        }
+
+        // update stack
+        SGL_Session::set('sessionStack', $aStack);
+
+        // start new session
+        new SGL_Session($runAs);
     }
 
     /**
@@ -285,7 +397,9 @@ class SGL_Session
         //  check for session timeout
         $currentTime = mktime();
         $lastPageRefreshTime = $_SESSION['lastRefreshed'];
-        $timeout = $_SESSION['aPrefs']['sessionTimeout'];
+        $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
+            ? $_SESSION['aPrefs']['sessionTimeout']
+            : '';
         //  if timeout is set to zero session never expires
         if (empty($timeout)) {
             return false;
@@ -352,6 +466,24 @@ class SGL_Session
         return $_SESSION['uid'] == $ownerId;
     }
 
+    function hasAdminGui()
+    {
+        $aRoles = explode(',', SGL_Config::get('site.rolesHaveAdminGui'));
+        foreach ($aRoles as $k => $role) {
+            $aRoles[$k] = SGL_String::pseudoConstantToInt($role);
+        }
+        //  at least admin must have admin gui rights
+        if (!in_array(SGL_ADMIN, $aRoles)) {
+            $aRoles[] = SGL_ADMIN;
+        }
+        if (!isset($_SESSION['rid'])) {
+            $ret = false;
+        } else {
+            $ret = in_array($_SESSION['rid'], $aRoles);
+        }
+        return $ret;
+    }
+
     /**
      * Returns the current user's id.
      *
@@ -413,7 +545,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (count($_SESSION && isset($_SESSION['oid']))) {
+        if (count($_SESSION) && isset($_SESSION['oid'])) {
             return $_SESSION['oid'];
         } else {
             return false;
@@ -532,6 +664,11 @@ class SGL_Session
         //  clear session cookie so theme comes from DB and not session
         setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                     $conf['cookie']['domain'], $conf['cookie']['secure']);
+        //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
+        if (!empty($conf['cookie']['rememberMeEnabled'])) {
+            $ok = setcookie('SGL_REMEMBER_ME', null, 0, $conf['cookie']['path'],
+                $conf['cookie']['domain'], $conf['cookie']['secure']);
+        }
 
         $sess = & new SGL_Session();
     }

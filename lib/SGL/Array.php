@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -41,6 +41,7 @@
  * Provides array manipulation methods.
  *
  * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Array
 {
@@ -57,7 +58,7 @@ class SGL_Array
         if (is_array($elem)) {
             $clean = array_filter($elem);
         } else {
-            SGL::raiseError('array argument expected, got '.gettype($elem),
+            SGL::raiseError('array argument expected, got ' . gettype($elem),
                 SGL_ERROR_INVALIDARGS);
         }
         return $clean;

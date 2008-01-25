@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -96,8 +96,12 @@ class SGL_Sql
             if (preg_match("/insert/i", $line) && preg_match("/\{SGL_NEXT_ID\}/", $line)) {
                 $tableName = SGL_Sql::extractTableNameFromInsertStatement($line);
                 $nextId = SGL_Sql::getNextId($tableName);
+                if (PEAR::isError($nextId)) {
+                    return $nextId;
+                }
                 $line = SGL_Sql::rewriteWithAutoIncrement($line, $nextId);
             }
+
 
             // prefix table name in statement
             if (!empty($conf['db']['prefix'])) {
@@ -125,7 +129,6 @@ class SGL_Sql
                     $line = SGL_Sql::prefixTableNameInStatement($line, $statementType);
                 }
             }
-
             $sql .= $line;
 
             if (!preg_match("/;\s*$/", $sql)) {
@@ -137,14 +140,19 @@ class SGL_Sql
                 $sql = preg_replace("/;\s*$/", '', $sql);
             }
 
-            // support for mysql cluster
-            if ($conf['db']['type'] == 'mysql_SGL'
-                    && $conf['db']['mysqlCluster'] == true
-                    && preg_match('/create table/i', $sql)) {
-                if (preg_match('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', $sql)) {
-                    $sql = preg_replace('/(type|engine)(\s*)=(\s*)(myisam|innodb)/i', 'engine=ndbcluster', $sql);
-                } elseif (preg_match('/\)\s*;\s*$/', $sql)) {
-                    $sql = preg_replace('/;\s*$/', 'engine=ndbcluster;', $sql);
+            // support for custom mysql engine
+            if (in_array($conf['db']['type'], array('mysql', 'mysql_SGL', 'mysqli_SGL'))) {
+                if (SGL_Config::get('db.mysqlDefaultStorageEngine')
+                        && preg_match('/create table/i', $sql)) {
+                    $engine = SGL_Config::get('db.mysqlDefaultStorageEngine');
+                    // we only change default storage engine for tables,
+                    // which doesn't have explicit storage specified in
+                    // create table statement
+                    if (!preg_match('/(type|engine)(\s*)=(\s*)([a-z]+)/i', $sql)) {
+                        if (preg_match('/\)\s*;\s*$/', $sql)) {
+                            $sql = preg_replace('/;\s*$/', 'engine = ' . $engine . ';', $sql);
+                        }
+                    }
                 }
             }
 
@@ -283,71 +291,98 @@ class SGL_Sql
     function prefixTableNameInStatement($str, $type)
     {
         switch ($type) {
-            case 'select':
-                $pattern     = '/(SELECT)(.*?)(FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'select':
+            $pattern     = '/(SELECT)(.*?)(FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'insert':
-                $pattern     = '/(INSERT INTO)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' .
-                    SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'insert':
+            $pattern     = '/(INSERT INTO)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' .
+                SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'delete':
-                $pattern     = '/(DELETE FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'delete':
+            $pattern     = '/(DELETE FROM)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'createTable':
-                $pattern     = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'createTable':
+            $pattern     = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'createIndex':
-                $pattern     = '/(CREATE)(.*?)(INDEX)(\W+)?([A-Za-z0-9_-]+)(\W+)?' .
-                    '(.*?)(ON)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}${7}${8}${9}' .
-                    SGL_Sql::addTablePrefix('$10') . '${11}';
-                break;
+        case 'createIndex':
+            $pattern     = '/(CREATE)(.*?)(INDEX)(\W+)?([A-Za-z0-9_-]+)(\W+)?' .
+                '(.*?)(ON)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}${7}${8}${9}' .
+                SGL_Sql::addTablePrefix('$10') . '${11}';
+            break;
 
-            case 'alterTable':
-                // prefix sub-statements on the same line
-                if (preg_match('/add constraint/i', $str)) {
-                    $str = SGL_Sql::prefixTableNameInStatement($str, 'addConstraint');
-                }
-                if (preg_match('/references/i', $str)) {
-                    $str = SGL_Sql::prefixTableNameInStatement($str, 'ref');
-                }
-                $pattern     = '/(ALTER)(.*?)(TABLE)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}${3}${4}' .
-                    SGL_Sql::addTablePrefix('$5') . '${6}';
-                break;
+        case 'alterTable':
+            // prefix sub-statements on the same line
+            if (preg_match('/add constraint/i', $str)) {
+                $str = SGL_Sql::prefixTableNameInStatement($str, 'addConstraint');
+            }
+            if (preg_match('/references/i', $str)) {
+                $str = SGL_Sql::prefixTableNameInStatement($str, 'ref');
+            }
+            $pattern     = '/(ALTER)(.*?)(TABLE)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}${3}${4}' .
+                SGL_Sql::addTablePrefix('$5') . '${6}';
+            break;
 
-            case 'addConstraint':
-                $pattern     = '/(ADD CONSTRAINT)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'addConstraint':
+            $pattern     = '/(ADD CONSTRAINT)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'ref':
-                $pattern     = '/(REFERENCES)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
-                $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
-                break;
+        case 'ref':
+            $pattern     = '/(REFERENCES)(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
+            $replacement = '${1}${2}' . SGL_Sql::addTablePrefix('$3') . '${4}';
+            break;
 
-            case 'createSequence':
-                $pattern     = '/(CREATE)(.*?)(SEQUENCE)(\W+)?([A-Za-z0-9_-]+)/i';
-                $replacement = '${1}${2}${3}${4}' . SGL_Sql::addTablePrefix('$5');
-                break;
+        case 'createSequence':
+            $pattern     = '/(CREATE)(.*?)(SEQUENCE)(\W+)?([A-Za-z0-9_-]+)/i';
+            $replacement = '${1}${2}${3}${4}' . SGL_Sql::addTablePrefix('$5');
+            break;
 
-            default:
-                return SGL::raiseError('Unknown replacement format',
-                    SGL_ERROR_INVALIDARGS);
+        default:
+            return SGL::raiseError('Unknown replacement format',
+                SGL_ERROR_INVALIDARGS);
         }
         $str = preg_replace($pattern, $replacement, $str);
         return $str;
     }
+
+    function buildDbCreateStatement($driver, $dbname)
+    {
+        if ($driver != 'pgsql') {
+            $result = 'CREATE DATABASE ' . $dbname;
+            if (SGL_Config::get('db.charset')) {
+                $result .= ' CHARACTER SET ' . SGL_Config::get('db.charset');
+            }
+            if (SGL_Config::get('db.collation')) {
+                $result .= ' COLLATE ' . SGL_Config::get('db.collation');
+            }
+        } else {
+            $result = 'CREATE SCHEMA public';
+        }
+        return $result;
+    }
+
+    function buildDbDropStatement($driver, $dbname)
+    {
+        if ($driver != 'pgsql') {
+            $result = 'DROP DATABASE IF EXISTS ' . $dbname;
+        } else {
+            $result = 'DROP SCHEMA public CASCADE';
+        }
+        return $result;
+    }
+
 }
 ?>

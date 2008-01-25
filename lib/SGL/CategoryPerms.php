@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -56,15 +56,13 @@ class SGL_CategoryPerms extends SGL_Category
     function SGL_CategoryPerms($catID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        
+
         if (isset($catID) && $catID >= 0) {
             $this->init($catID);
         } else {
             SGL::raiseError('No category ID passed', SGL_ERROR_INVALIDARGS);
         }
         parent::SGL_Category();
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
     }
 
     function init($catID)
@@ -86,16 +84,16 @@ class SGL_CategoryPerms extends SGL_Category
 
         //  notice null is a mysql null which is not the same as a PHP null
         $permsStr = count($aKeys) ? "perms = '$this->sPerms'" : 'perms = NULL';
-        $dbh = & SGL_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $query = "
-                    UPDATE  " . $this->conf['table']['category'] . "
+                    UPDATE  " . SGL_Config::get('table.category') . "
                     SET     $permsStr
                     WHERE   category_id = $this->catID
                 ";
         $result = $dbh->query($query);
-        
+
         //  recurse to update children
-        if ($this->isBranch($this->catID)) {           
+        if ($this->isBranch($this->catID)) {
             $childNodeArray = $this->getChildren($this->catID);
             $this->_updateChildNodes($childNodeArray);
         }
@@ -114,7 +112,7 @@ class SGL_CategoryPerms extends SGL_Category
         $dbh = & SGL_DB::singleton();
         for ($x=0; $x < count($childNodeArray); $x++) {
             $query = "
-                        UPDATE  " . $this->conf['table']['category'] . "
+                        UPDATE  " . SGL_Config::get('table.category') . "
                         SET     $permsStr
                         WHERE   category_id = {$childNodeArray[$x]['category_id']}
                     ";

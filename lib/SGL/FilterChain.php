@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * Manages an array of filters.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
 class SGL_FilterChain
 {
     var $aFilters;
@@ -17,8 +24,10 @@ class SGL_FilterChain
 
         $code = '$process = ';
         foreach ($this->aFilters as $filter) {
-            $filters .= "new $filter(\n";
-            $closeParens .= ')';
+            if (class_exists($filter)) {
+                $filters .= "new $filter(\n";
+                $closeParens .= ')';
+            }
         }
         $code = $filters . $closeParens;
         eval("\$process = $code;");

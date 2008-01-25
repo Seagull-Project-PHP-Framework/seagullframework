@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -41,6 +41,8 @@
 /**
  * PHP 4/5 compatible class for aggregating objects.
  *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Delegator
 {

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -369,10 +369,13 @@ class SGL_Util
         $aLangs = array();
         foreach ($availableLanguages as $id => $tmplang) {
             $langName = ucfirst(substr(strstr($tmplang[0], '|'), 1));
+            $keyId = ($langKeyType)
+                ? SGL_Translation::transformLangID($id, $langKeyType)
+                : $id;
             if (count($aSelected) && in_array($id, $aSelected)) {
-                $aSelectedLangs[$id] =  $langName . ' (' . $id . ')';
+                $aSelectedLangs[$keyId] =  $langName . ' (' . $id . ')';
             } else {
-                $aLangs[$id] =  $langName . ' (' . $id . ')';
+                $aLangs[$keyId] =  $langName . ' (' . $id . ')';
             }
         }
 

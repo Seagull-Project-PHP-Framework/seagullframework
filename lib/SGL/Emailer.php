@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -72,7 +72,8 @@ class SGL_Emailer
         'crlf'          => '',
         'filepath'      => '',
         'mimetype'      => '',
-        'Cc'            => ''
+        'Cc'            => '',
+        'Bcc'           => ''
    );
 
     function SGL_Emailer($options = array())
@@ -160,6 +161,10 @@ class SGL_Emailer
         if (!empty($this->options['Cc'])) {
             $mime->addCc($this->options['Cc']);
         }
+        // Add Bcc-address
+        if (!empty($this->options['Bcc'])) {
+            $mime->addBcc($this->options['Bcc']);
+        }
         $body = $mime->get(array(
             'head_encoding' => 'base64',
             'html_encoding' => '7bit',
@@ -169,8 +174,26 @@ class SGL_Emailer
         ));
         $headers = $mime->headers($this->headers);
         $headers = $this->cleanMailInjection($headers);
-        $mail = & SGL_Emailer::factory();
-        return $mail->send($this->options['toEmail'], $headers, $body);
+
+        // if queue is enabled put email to queue
+        if (SGL_Config::get('emailQueue.enabled')) {
+            static $queue;
+            if (!isset($queue)) { // init queue
+                require_once SGL_CORE_DIR .  '/Emailer/Queue.php';
+                $conf = SGL_Config::get('emailQueue')
+                    ? SGL_Config::get('emailQueue')
+                    : array();
+                $queue = new SGL_Emailer_Queue($conf);
+            }
+            // put email to queue
+            $ok = $queue->push($headers, $this->options['toEmail'], $body, $headers['Subject']);
+
+        // else send email straight away
+        } else {
+            $mail = &SGL_Emailer::factory();
+            $ok = $mail->send($this->options['toEmail'], $headers, $body);
+        }
+        return $ok;
     }
 
     // PEAR Mail::factory wrapper

@@ -233,11 +233,11 @@ class ImageTest extends UnitTestCase
         $conf   = &$this->conf;
 
         // initial data for image
-        $fileName   = 'riga.jpg';
-        $moduleName = 'testModule';
+        $fileName   = 'chicago.jpg';
+        //$moduleName = 'testModule';
 
         // init image
-        $image = & new SGL_Image($fileName, $moduleName);
+        $image = & new SGL_Image($fileName);
         $image->init($conf);
 
         $driver->expectCallCount('resize', 8);
@@ -246,6 +246,9 @@ class ImageTest extends UnitTestCase
         $driver->expectCallCount('save', 8);
 
         $ret = $image->create($this->imageSampleFile, 'copy');
+        if (PEAR::isError($ret)) {
+            die($ret->getMessage());
+        }
         $this->assertTrue($ret && (is_string($ret) || is_bool($ret)));
 
         // can't create file, 'cos it already exists
@@ -260,7 +263,8 @@ class ImageTest extends UnitTestCase
 
         // cleanup
         require_once SGL_CORE_DIR . '/File.php';
-        SGL_File::rmDir(SGL_MOD_DIR . '/' . $moduleName, '-r');
+        SGL_File::rmDir(SGL_UPLOAD_DIR, '-r');
+        //SGL_File::rmDir(SGL_MOD_DIR . '/' . $moduleName, '-r');
     }
 
     function testDelete()

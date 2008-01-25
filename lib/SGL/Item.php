@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -42,7 +42,7 @@
  * Acts as a wrapper for content objects.
  *
  * @access  public
- * @author  Demian Turner <demian@phpkitchen.com>
+ * @author  AJ <aj@seagullproject.org>
  * @package SGL
  * @version $Revision: 1.12 $
  */
@@ -488,7 +488,7 @@ class SGL_Item
         case SGL_RET_STRING:
         default:
             //  get language name
-            $langID = $language;
+            $langID = str_replace('_', '-', $language);
             $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
             $lang_name = ucfirst(substr(strstr($availableLanguages[$langID][0], '|'), 1));
             $languageName =  '('. $lang_name . ' - ' . $langID . ')';
@@ -545,7 +545,7 @@ class SGL_Item
 
         //  get language name
         //  FIXME: getLangID() and add to $this->conf()
-        $langID = $language;
+        $langID = str_replace('_', '-', $language);
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         $lang_name = ucfirst(substr(@strstr($availableLanguages[$langID][0], '|'), 1));
         $languageName =  '('. $lang_name . ' - ' . $langID . ')';
@@ -679,7 +679,7 @@ class SGL_Item
      * by constructor.
      * @see init()
      */
-    function preview($bPublished = false, $language = null, $enforceDate=false)
+    function preview($bPublished = false, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -690,11 +690,6 @@ class SGL_Item
             }
 
             $constraint = $bPublished ? ' AND i.status  = ' . SGL_STATUS_PUBLISHED : '';
-            $currentDateTime = SGL_Date::getTime();
-            $dateRangeClause = ($enforceDate) ? 
-                           "AND i.start_date <= '$currentDateTime' ". 
-                           "AND (i.expiry_date >= '$currentDateTime' OR i.expiry_date IS NULL)" :
-                           '';            
             $query = "
                 SELECT  ia.item_addition_id, itm.field_name, ia.addition, ia.trans_id, i.category_id
                 FROM    {$this->conf['table']['item']} i,
@@ -706,7 +701,6 @@ class SGL_Item
                 AND     i.item_id = ia.item_id
                 AND     ia.item_id = $this->id
                 $constraint
-                $dateRangeClause
                 ORDER BY itm.item_type_mapping_id
                 ";
             $result = $this->dbh->query($query);
@@ -886,8 +880,7 @@ class SGL_Item
      * @param   string  $language   Language
      * @return  array   $ret        Array containg an Item's Details or false
      */
-    function getItemDetail($itemID = null, $bPublished = null, $language = null,
-                           $enforceDate=false)
+    function getItemDetail($itemID = null, $bPublished = null, $language = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -899,9 +892,7 @@ class SGL_Item
             if (!isset($language) || empty($language) ) {
                 $language = SGL_Translation::getLangID();
             }
-                    // make sure the article is within the start and expiry values
-
-            $ret = $item->preview($bPublished, $language,$enforceDate);
+            $ret = $item->preview($bPublished, $language);
 
             //if article is not loaded user does not have permission to view
             if (!empty($ret)) {
@@ -933,7 +924,7 @@ class SGL_Item
      * @see     retrieveAll()
      */
     function retrievePaginated($catID, $bPublished = false, $dataTypeID = 1,
-        $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated',$enforceDate=false)
+        $queryRange = 'thisCategory', $from = '', $orderBy = 'last_updated')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -953,14 +944,7 @@ class SGL_Item
         //  if user only wants contents from current category, add where clause
         $rangeWhereClause   = ($queryRange == 'all')?'' : " AND i.category_id = $catID";
         $roleId = SGL_Session::get('rid');
-        
-        // make sure the article is within the start and expiry values
-        $currentDateTime = SGL_Date::getTime();
-        $dateRangeClause = ($enforceDate) ? 
-                           "AND i.start_date <= '$currentDateTime' ". 
-                           "AND (i.expiry_date >= '$currentDateTime' OR i.expiry_date IS NULL)" :
-                           '';  
-        
+
         //  dataTypeID 1 = all template types, otherwise only a specific one
         $typeWhereClause = ($dataTypeID > '1') ? " AND it.item_type_id = $dataTypeID" : '';
         $query = "
@@ -983,13 +967,10 @@ class SGL_Item
             $typeWhereClause .                          //  match datatype
             $rangeWhereClause .
             $isPublishedClause . "
-            $dateRangeClause            
             AND     $roleId NOT IN (COALESCE(c.perms, '-1'))
             ORDER BY i.$orderBy DESC
             ";
 
-           
-            
         $limit = $_SESSION['aPrefs']['resPerPage'];
         $pagerOptions = array(
             'mode'     => 'Sliding',

@@ -40,12 +40,13 @@
      * and users would not see anything.
      */
 
-    $GLOBALS['_SGL']['LANGUAGE'] = (SGL::isMinimalInstall()) ? array(
-                    'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
-    ) : array(
+    $GLOBALS['_SGL']['LANGUAGE'] = (SGL::isMinimalInstall())
+        ? array('en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'))
+        : array(
                     'cs-iso-8859-2'=> array('cs|czech', 'czech-iso-8859-2', 'cs'),
                     'de-iso-8859-1'=> array('de([-_][[:alpha:]]{2})?|german', 'german-iso-8859-1', 'de'),
                     'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
+                    'en-utf-8'=> array('en([-_][[:alpha:]]{2})?|english',  'english-utf-8', 'en'),
                     'es-iso-8859-1'=> array('es([-_][[:alpha:]]{2})?|spanish', 'spanish-iso-8859-1', 'es'),
                     'es-utf-8'=> array('es([-_][[:alpha:]]{2})?|spanish', 'spanish-utf-8', 'es'),
                     'fr-iso-8859-1'=> array('fr([-_][[:alpha:]]{2})?|french', 'french-iso-8859-1', 'fr'),

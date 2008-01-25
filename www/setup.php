@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2006, Demian Turner                                         |
+// | Copyright (c) 2008, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -167,8 +167,8 @@ require_once 'HTML/QuickForm/Action/Display.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardLicenseAgreement.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardSetupAuth.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardDetectEnv.php';
-//require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
-//require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardTestDbConnection.php';
+require_once SGL_PATH . '/lib/SGL/Install/WizardCreateDb.php';
 require_once SGL_PATH . '/lib/SGL/Install/WizardCreateAdminUser.php';
 require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 
@@ -176,74 +176,80 @@ require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
+//  setup temporary logging for Seagull install
+$tmpDir = SGL_Util::getTmpDir();
+$log = "$tmpDir/install.log";
+$ok = @ini_set('error_log', $log);
+
+
 class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
         $data = $page->controller->exportValues();
 
-//          is this a rebuild?
-//        $dbh = & SGL_DB::singleton();
-//        $res = false;
-//        if (!PEAR::isError($dbh)) {
-//            require_once SGL_CORE_DIR . '/Sql.php';
-//            $table = SGL_Sql::addTablePrefix('module');
-//            $query = 'SELECT COUNT(*) FROM ' . $table;
-//            $res = $dbh->getOne($query);
-//        }
-//
-//        if (!PEAR::isError($res) && $res > 1) { // it's a re-install
-//            $data['aModuleList'] = SGL_Install_Common::getModuleList();
-//            if (count($data['aModuleList'])) {
-//                foreach ($data['aModuleList'] as $key => $moduleName) {
-//                    if (!SGL::moduleIsEnabled($moduleName)) {
-//                        unset($data['aModuleList'][$key]);
-//                    }
-//                }
-//            }
-//        } else { // a new install
-//            SGL_Error::pop();
-//            if (PEAR::isError($dbh)) {
-//                SGL_Error::pop(); // two errors produced
-//            }
+        //  is this a rebuild?
+        $dbh = & SGL_DB::singleton();
+        $res = false;
+        if (!PEAR::isError($dbh)) {
+            require_once SGL_CORE_DIR . '/Sql.php';
+            $table = SGL_Sql::addTablePrefix('module');
+            $query = 'SELECT COUNT(*) FROM ' . $table;
+            $res = $dbh->getOne($query);
+        }
+
+        if (!PEAR::isError($res) && $res > 1) { // it's a re-install
+            $data['aModuleList'] = SGL_Install_Common::getModuleList();
+            if (count($data['aModuleList'])) {
+                foreach ($data['aModuleList'] as $key => $moduleName) {
+                    if (!SGL::moduleIsEnabled($moduleName)) {
+                        unset($data['aModuleList'][$key]);
+                    }
+                }
+            }
+        } else { // a new install
+            SGL_Error::pop();
+            if (PEAR::isError($dbh)) {
+                SGL_Error::pop(); // two errors produced
+            }
             $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
-//        }
+        }
 
         //  override with custom settings if they exist
         $data = SGL_Install_Common::overrideDefaultInstallSettings($data);
-//        $buildNavTask = 'SGL_Task_BuildNavigation';
-//        if (in_array('cms', $data['aModuleList'])) {
-//            require_once SGL_MOD_DIR . '/cms/init.php';
-//            $buildNavTask = 'SGL_Task_BuildNavigation2';
-//        }
+        $buildNavTask = 'SGL_Task_BuildNavigation';
+        if (in_array('cms', $data['aModuleList'])) {
+            require_once SGL_MOD_DIR . '/cms/init.php';
+            $buildNavTask = 'SGL_Task_BuildNavigation2';
+        }
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
-#        $runner->addTask(new SGL_Task_SetTimeout());
+        $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_CreateConfig());
         $runner->addTask(new SGL_Task_LoadCustomConfig());
-#        $runner->addTask(new SGL_Task_DefineTableAliases());
-#        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
-$runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
-#        $runner->addTask(new SGL_Task_DropTables());
-#        $runner->addTask(new SGL_Task_CreateTables());
-#        $runner->addTask(new SGL_Task_LoadTranslations());
-#        $runner->addTask(new SGL_Task_LoadDefaultData());
-#        $runner->addTask(new SGL_Task_LoadSampleData());
-#        $runner->addTask(new SGL_Task_LoadCustomData());
-#        $runner->addTask(new SGL_Task_SyncSequences());
-#        $runner->addTask(new $buildNavTask());
-#        $runner->addTask(new SGL_Task_LoadBlockData());
-#        $runner->addTask(new SGL_Task_CreateConstraints());
-#        $runner->addTask(new SGL_Task_SyncSequences());
-#        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
+        $runner->addTask(new SGL_Task_DropTables());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new $buildNavTask());
+        $runner->addTask(new SGL_Task_LoadBlockData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
 
-$runner->addTask(new SGL_Task_VerifyDbSetup());
+        $runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
-#        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-#        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_UnLinkWwwData());
         $runner->addTask(new SGL_Task_SymLinkWwwData());
-#        $runner->addTask(new SGL_Task_AddTestDataToConfig());
+        $runner->addTask(new SGL_Task_AddTestDataToConfig());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
@@ -254,10 +260,10 @@ $runner->addTask(new SGL_Task_VerifyDbSetup());
 //  start wizard
 $wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
-//$wizard->addPage(new WizardSetupAuth('page2'));
+$wizard->addPage(new WizardSetupAuth('page2'));
 $wizard->addPage(new WizardDetectEnv('page3'));
-//$wizard->addPage(new WizardTestDbConnection('page4'));
-//$wizard->addPage(new WizardCreateDb('page5'));
+$wizard->addPage(new WizardTestDbConnection('page4'));
+$wizard->addPage(new WizardCreateDb('page5'));
 $wizard->addPage(new WizardCreateAdminUser('page6'));
 
 // We actually add these handlers here for the sake of example

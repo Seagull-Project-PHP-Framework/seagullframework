@@ -1,30 +1,94 @@
 CHANGELOG
 =========
 +-----------------------+
-| VERSION: 0.7.0        |
+| VERSION: 0.6.4        |
 +-----------------------+
-BUGFIXES
-
-IMPROVEMENTS
-02-07-07    Added Administration section for contactus module (Dmitri Lakachauskis)
-02-07-07    Made calling global config file more flexible [3231] (Andrey Podshivalov)
-01-04-07    Implemented SGL_Authenticator lib, dependency on DB to use admin
-            screens removed, file-based driver selected by default, call
-            http://example.com/index.php/default/login/ to invoke
 
 BUGFIXES
-02-07-07    Added lang_id patch [3224] (AJ Tarachanowicz)
-02-07-07    Fixed expiry_date issue with articles in Publisher (tmpvar)
+25-01-07    Fixed file disclosure flaw in optimizer.php
 
 +-----------------------+
 | VERSION: 0.6.3        |
 +-----------------------+
+
 BUGFIXES
+22-12-07    Fixed bug where blocks got disabled after PEAR errors (Demian)
+21-12-07    Logins now recorded correctly if 'remember me' is used (Dmitri)
+20-12-07    Fixed system messages, using Config screen to set them
+12-02-07    Fixed Smarty integration problem
+09-11-07    Fixed prob where global and module configs were saving in global file
+27-10-07    Fixed bug user's password was being hashed twice in UserImportMgr
+            (spaycegirl)
+23-10-07    Fixed bug where it was not possible for admin to receive emails for errors [3471]
+16-10-07    Fixed bug where TinyFCK connector was broken [3447]
+15-10-07    Fixed rebuild sequences when database session storage is used (mrhov)
+19-09-07    Fixed bug where enabling caching killed Ajax requests #1530
+19-09-07    Transaction integrity in the User DAO was fixed, ie better error recovery
+            (Dmitri Lakachauskis)
+03-07-07    Fixed SMTP authentication driver choice in Config (mburkardt)
+11-06-07    Correctly initialised charset global
 04-06-07    Fixed parsing of multiple roles for navigation [3117]
-26-05-07    Fixed Classic URI parsing see http://trac.seagullproject.org/changeset/3105
+26-05-07    Fixed Classic URI parsing [3105]
 27-04-07    Tests now correctly identify custom module paths
 
 IMPROVEMENTS
+20-12-07    CSS and JavaScript reorganization and optimization, see
+            http://trac.seagullproject.org/wiki/Howto/JavaScriptAndCssImprovements
+            (Dmitri)
+19-12-07    Added SGL_Emailer_Queue lib, use it to store emails in DB (Dmitri)
+18-12-07    Maintenance screen now manages additional caches: javascript, library
+            and function (Dmitri)
+17-12-07    Implemented new ArrayDriver for navigation, huge performance improvement
+            (Dmitri)
+16-12-07    Implemented CSS and javascript caching and compression (Dmitri)
+15-12-07    Implemented Horde_Routes as optional input URL handler, much more flexible
+            than default handler (Dmitri + Demian)
+15-12-07    Implemented SGL_Cache2 which wraps Zend_Cache which has memcached backend
+            (Dmitri)
+13-12-07    Added logging for installation, see SGL_Util::getTmpDir() (Demian)
+23-10-07    Fatal db errors handled gracefully (Demian)
+23-10-07    Added ability to use objects callbacks for function caching
+19-09-07    Implemented ability to run unit tests by CLI [3425] (Dmitri Lakachauskis)
+19-09-07    Config cache can be cleared at the module level (Dmitri Lakachauskis)
+17-09-07    Added example deployment scripts [3406]
+17-09-07    Added abilityto show only pre-selected modules in translation manager
+            (Dmitri Lakachauskis)
+17-09-07    Validation for variables in translation values (Dmitri Lakachauskis)
+17-09-07    Improved translation summary screen to show all language at once
+            (Dmitri Lakachauskis)
+11-09-07    Visual warning added to admin screen when site is in production mode
+29-08-07    Default language comes from Config [3366]
+28-08-07    Added ability to specify custom logout screen [3356]
+23-08-07    Session files can now be saved whereever you like, /tmp recommended
+            for auto-cleanup, esp. on busy sites but not for shared hosts
+23-08-07    Added language detection from user agent (Dmitri Lakachauskis)
+23-08-07    Added config option to set storage engine for MySQL (Dmitri Lakachauskis)
+16-08-07    Added support for RTL languages
+                http://trac.seagullproject.org/wiki/Howto/Internationalisation/HebrewAndRtlLanguages#newinSeagull0.6.3
+15-08-07    Static SGL_Config::set() call implemented, eg:
+                SGL_Config::set('cache.lifetime', 123)
+14-08-07    Request types can now be preset
+07-08-07    Implemented Config option so roles other than SGL_ADMIN can use the admin GUI
+07-08-07    Symbolic links support for Windows Vista (Dmitri Lakachauskis)
+25-07-07    Added create{Left|Right}Node to SGL_NestedSet (biggs)
+24-07-07    Better error handling for stored proc multiple resultsets (mysqli_SGL.php)
+18-07-07    Improved customising of block layouts, for details see
+            http://trac.seagullproject.org/wiki/Howto/Blocks#Creatingcustomblockpositions
+16-07-07    Shorthand config calling implemented, you can now do:
+                SGL_Config::get('cache.lifetime')
+            NOTE: empty() and isset() cannot check the return value of a function
+            or method, they can only check variables, so don't use those tests with
+            the new shorthand
+16-07-07    Correctly suppressed backtrace info if disabled in config option
+            (Dmitri Lakachauskis)
+09-07-07    Added support for charset and collation in MySQL (Dmitri Lakachauskis)
+09-07-07    Test runner now takes global config into account and works for Postgres
+            (ajmixto)
+29-06-07    Implemented ability to set Seagull into maintenance mode (Julien Casanova)
+27-06-07    Implemented ability to rebuild Seagull for Postgresql (ajmixto)
+13-06-07    Added ability to suppress errors in logs, useful for Ajax debugging
+12-06-07    Implemented persistent logins
+07-06-07    Added ability to set theme on a per-module basis (Thomas Goetz)
 04-06-07    Improved dynamic navigation, see http://trac.seagullproject.org/ticket/1470
             (Dmitri Lakachauskis)
 29-05-07    Added ability to add multiple attachments in SGL_Emailer
