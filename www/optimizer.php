@@ -58,14 +58,31 @@ class SGL_Optimizer
             $this->optimize = (boolean) $_GET['optimize'];
         }
 
-        // get files and it's mod time
+        // get files and their mod time
         if (!empty($_GET['files'])) {
             $filesString = $_GET['files'];
-            $aFiles = explode(',', $_GET['files']);
+            $aFiles      = explode(',', $_GET['files']);
+            $allowedDir  = dirname(__FILE__); // WWW dir
+            $sglDir      = dirname($allowedDir);
+            $aModuleDirs = glob($sglDir . '/modules*/*/www/*', GLOB_ONLYDIR);
             foreach ($aFiles as $fileName) {
-                if (is_file($jsFile = dirname(__FILE__) . '/' . $fileName)) {
-                    $this->aFiles[] = $jsFile;
-                    $lastMod = max($lastMod, filemtime($jsFile));
+                if (is_file($loadFile = $allowedDir . '/' . $fileName)) {
+                    $realPath = realpath($loadFile);
+                    // check if file is located in WWW dir
+                    $allow = strpos($realPath, $allowedDir) === 0;
+                    // check if file is symlinked from modules WWW dir
+                    if (!$allow && !empty($aModuleDirs)) {
+                        foreach ($aModuleDirs as $moduleDir) {
+                            $allow = strpos($realPath, $moduleDir) === 0;
+                            if ($allow) {
+                                break;
+                            }
+                        }
+                    }
+                    if ($allow) {
+                        $this->aFiles[] = $loadFile;
+                        $lastMod = max($lastMod, filemtime($loadFile));
+                    }
                 }
             }
 
