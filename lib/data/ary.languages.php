@@ -56,7 +56,7 @@
                     'ja-utf-8' => array('ja|japanese', 'japanese-utf-8', 'ja'),
                     'nl-iso-8859-1'=> array('nl([-_][[:alpha:]]{2})?|dutch', 'dutch-iso-8859-1', 'nl'),
                     'no-iso-8859-1'=> array('no|norwegian', 'norwegian-iso-8859-1', 'no'),
-                    'pt-br-iso-8859-1' => array('pt[-_]br|brazilian portuguese', 'brazilian_portuguese-iso-8859-1', 'pt-BR'),
+                    'ptbr-iso-8859-1' => array('pt[-_]br|brazilian portuguese', 'brazilian_portuguese-iso-8859-1', 'pt-BR'),
                     'pt-iso-8859-1'=> array('pt([-_][[:alpha:]]{2})?|portuguese', 'portuguese-iso-8859-1', 'pt'),
                     'pl-iso-8859-2'=> array('pl|polish', 'polish-iso-8859-2', 'pl'),
                     'ru-windows-1251' => array('ru|russian', 'russian-windows-1251', 'ru'),
@@ -64,8 +64,8 @@
                     'sv-iso-8859-1'=> array('sv|swedish', 'swedish-iso-8859-1', 'sv'),
                     'tr-iso-8859-9'=> array('tr|turkish', 'turkish-iso-8859-9', 'tr'),
                     'tr-utf-8'     => array('tr|turkish', 'turkish-utf-8', 'tr'),
-                    'zh-tw-utf-8'  => array('zh[-_]tw|chinese traditional', 'chinese_traditional-utf-8', 'zh-TW'),
-                    'zh-tw-big5'   => array('zh[-_]tw|chinese traditional', 'chinese-big5', 'zh-TW'),
+                    'zhtw-utf-8'  => array('zh[-_](tw|hk)|chinese traditional', 'chinese_traditional-utf-8', 'zh-TW'),
+                    'zhtw-big5'   => array('zh[-_](tw|hk)|chinese traditional', 'chinese-big5', 'zh-TW'),
                     'zh-utf-8'     => array('zh|chinese simplified', 'chinese_simplified-utf-8', 'zh'),
                     'zh-gb2312'    => array('zh|chinese simplified', 'chinese-gb2312', 'zh')
     );
