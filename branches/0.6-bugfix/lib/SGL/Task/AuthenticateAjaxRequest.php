@@ -17,7 +17,8 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
 
         //  test for anonymous session and rememberMe cookie
         if (($session->isAnonymous() || $timeout)
-                && SGL_Config::get('cookie.rememberMeEnabled')) {
+                && SGL_Config::get('cookie.rememberMeEnabled')
+                && !SGL_Config::get('site.maintenanceMode')) {
             $aCookieData = $this->getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
                 $this->doLogin($aCookieData['uid'], $input);
