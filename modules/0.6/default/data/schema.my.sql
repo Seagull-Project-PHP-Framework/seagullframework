@@ -65,6 +65,7 @@ CREATE TABLE `module` (
 /*==============================================================*/
 /* Table: email_queue                                           */
 /*==============================================================*/
+/*
 CREATE TABLE `email_queue` (
   `email_queue_id` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
@@ -81,3 +82,4 @@ CREATE TABLE `email_queue` (
   KEY (`date_to_send`),
   KEY (`usr_id`)
 );
+*/
