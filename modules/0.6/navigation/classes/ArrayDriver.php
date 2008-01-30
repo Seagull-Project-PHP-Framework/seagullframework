@@ -21,43 +21,44 @@ class ArrayDriver
     /**
      * Navigation structure.
      *
+     * @access private
+     *
      * @var array
      */
-    var $aSections = array();
+    var $_aSections = array();
 
     /**
      * Array of current IDs by root IDs.
      *
+     * @access private
+     *
      * @var array
      */
-    var $aCurrentIndexes = array();
+    var $_aCurrentIndexes = array();
 
     /**
      * Index of current root node.
      *
+     * @access private
+     *
      * @var integer
      */
-    var $currentRootIndex;
-
-    /**
-     * Default renderer name.
-     *
-     * @var string
-     */
-    var $defaultRenderer = 'DirectTreeRenderer';
+    var $_currentRootIndex;
 
     /**
      * Array of current titles by root IDs.
      *
+     * @access private
+     *
      * @var array
      */
-    var $aCurrentTitles = array();
+    var $_aCurrentTitles = array();
 
     function &singleton(&$output)
     {
         static $instance;
         if (!isset($instance)) {
-            $instance = new ArrayDriver($output);
+            $instance = & new ArrayDriver($output);
         }
         return $instance;
     }
@@ -70,6 +71,8 @@ class ArrayDriver
      *
      * NOTE: only two levels menu supported by now.
      *
+     * @access public
+     *
      * @param SGL_Output $output
      *
      * @return ArrayDriver
@@ -77,9 +80,9 @@ class ArrayDriver
     function ArrayDriver(&$output)
     {
         // get nodes
-        if (!($aNodes = $this->loadCachedNodes())) {
-            $aNodes = $this->createNavigationStructure();
-            $this->cacheNodes($aNodes);
+        if (!($aNodes = $this->_loadCachedNodes())) {
+            $aNodes = $this->_createNavigationStructure();
+            $this->_cacheNodes($aNodes);
         }
 
         // skip admin root if not allowed
@@ -88,25 +91,27 @@ class ArrayDriver
 
             // set default root index
             // it can be changed with ArrayDriver::setParams()
-            $this->currentRootIndex = SGL_NODE_USER;
+            $this->_currentRootIndex = SGL_NODE_USER;
         } else {
-            $this->currentRootIndex = SGL_NODE_ADMIN;
+            $this->_currentRootIndex = SGL_NODE_ADMIN;
         }
 
         foreach ($aNodes as $rootId => $aSections) {
-            $this->aCurrentIndexes[$rootId] = 0;
+            if (!isset($this->_aCurrentIndexes[$rootId])) {
+                $this->_aCurrentIndexes[$rootId] = 0;
+            }
             foreach ($aSections as $sectionId => $section) {
-                if (!$this->nodeAccessAllowed($section)) {
+                if (!$this->_nodeAccessAllowed($section)) {
                     unset($aNodes[$rootId][$sectionId]);
                     continue;
                 }
-                $section['link']       = $this->makeLinkFromNode($section);
+                $section['link']       = $this->_makeLinkFromNode($section);
                 $section['url']        = $section['link'];
-                $section['is_current'] = $this->isCurrentNode($section);
+                $section['is_current'] = $this->_isCurrentNode($section);
 
                 if (!empty($section['is_current'])) {
-                    $this->aCurrentTitles[$rootId] = $section['title'];
-                    $this->aCurrentIndexes[$rootId] = $sectionId;
+                    $this->_aCurrentTitles[$rootId] = $section['title'];
+                    $this->_aCurrentIndexes[$rootId] = $sectionId;
                 }
 
                 // save changes made to section
@@ -114,17 +119,17 @@ class ArrayDriver
 
                 if (!empty($section['sub'])) {
                     foreach ($section['sub'] as $subSectionId => $subSection) {
-                        if (!$this->nodeAccessAllowed($subSection)) {
+                        if (!$this->_nodeAccessAllowed($subSection)) {
                             unset($aNodes[$rootId][$sectionId]['sub'][$subSectionId]);
                             continue;
                         }
-                        $subSection['link']       = $this->makeLinkFromNode($subSection);
+                        $subSection['link']       = $this->_makeLinkFromNode($subSection);
                         $subSection['url']        = $subSection['link'];
-                        $subSection['is_current'] = $this->isCurrentNode($subSection);
+                        $subSection['is_current'] = $this->_isCurrentNode($subSection);
 
                         if (!empty($subSection['is_current'])) {
-                            $this->aCurrentTitles[$rootId] = $subSection['title'];
-                            $this->aCurrentIndexes[$rootId] = $subSectionId;
+                            $this->_aCurrentTitles[$rootId] = $subSection['title'];
+                            $this->_aCurrentIndexes[$rootId] = $subSectionId;
                         }
 
                         // save changes made to subsection
@@ -133,16 +138,18 @@ class ArrayDriver
                 }
             }
         }
-        $this->aSections = $aNodes;
+        $this->_aSections = $aNodes;
     }
 
     /**
      * Go through all modules and read navigation.php files.
      * Combines all sections in one array ready for use with HTML_Menu.
      *
+     * @access private
+     *
      * @return array
      */
-    function createNavigationStructure()
+    function _createNavigationStructure()
     {
         $aMenu = array();
         $aDirs = SGL_Util::getAllModuleDirs(true);
@@ -172,14 +179,23 @@ class ArrayDriver
                 if (!empty($section['uriType']) && $section['uriType'] == 'dynamic') {
                     unset($section['uriType']);
                 }
-                if (isset($section['actionMapping']) && empty($section['actionMapping'])) {
+                if (isset($section['actionMapping'])) {
+                    if (!empty($section['actionMapping'])) {
+                        $section['action'] = $section['actionMapping'];
+                    }
                     unset($section['actionMapping']);
                 }
-                if (isset($section['add_params']) && empty($section['add_params'])) {
+                if (isset($section['add_params'])) {
+                    if (!empty($section['add_params'])) {
+                        $section['params'] = $section['add_params'];
+                    }
                     unset($section['add_params']);
                 }
                 if (!empty($section['is_enabled'])) {
                     unset($section['is_enabled']);
+                }
+                if (isset($section['perms']) && $section['perms'] == SGL_ANY_ROLE) {
+                    unset($section['perms']);
                 }
 
                 $parentId = $section['parent_id'];
@@ -207,9 +223,11 @@ class ArrayDriver
     /**
      * Load nodes from cached file.
      *
+     * @access private
+     *
      * @return array
      */
-    function loadCachedNodes()
+    function _loadCachedNodes()
     {
         $fileName = SGL_VAR_DIR . '/navigation.php';
         if (file_exists($fileName)) {
@@ -223,11 +241,13 @@ class ArrayDriver
     /**
      * Cache nodes to file.
      *
+     * @access private
+     *
      * @param array $aNodes
      *
      * @return boolean
      */
-    function cacheNodes($aNodes)
+    function _cacheNodes($aNodes)
     {
         $data = var_export($aNodes, true);
         $data = "<?php\n\$aSections = $data;\n?>";
@@ -238,11 +258,13 @@ class ArrayDriver
     /**
      * Check node permission by current role.
      *
+     * @access private
+     *
      * @param array $aNode
      *
      * @return boolean
      */
-    function nodeAccessAllowed($aNode)
+    function _nodeAccessAllowed($aNode)
     {
         static $rid;
         if (is_null($rid)) {
@@ -250,14 +272,18 @@ class ArrayDriver
         }
         $ret = false;
         if (!isset($aNode['is_enabled']) || !empty($aNode['is_enabled'])) {
-            $aPerms = explode(',', $aNode['perms']);
-            foreach ($aPerms as $permId) {
-                $permValue = SGL_String::pseudoConstantToInt($permId);
-                if ($permValue == $rid
-                        || $permValue == SGL_ANY_ROLE) {
-                    $ret = true;
-                    break;
+            if (!empty($aNode['perms'])) {
+                $aPerms = explode(',', $aNode['perms']);
+                foreach ($aPerms as $permId) {
+                    $permValue = SGL_String::pseudoConstantToInt($permId);
+                    if ($permValue == $rid
+                    || $permValue == SGL_ANY_ROLE) {
+                        $ret = true;
+                        break;
+                    }
                 }
+            } else {
+                $ret = true;
             }
         }
         return $ret;
@@ -266,11 +292,13 @@ class ArrayDriver
     /**
      * Check if supplied node is current.
      *
+     * @access private
+     *
      * @param array $aNode
      *
      * @return boolean
      */
-    function isCurrentNode($aNode)
+    function _isCurrentNode($aNode)
     {
         $req = &SGL_Request::singleton();
         $ret = false;
@@ -279,12 +307,12 @@ class ArrayDriver
         if ($req->getModuleName() == $aNode['module']
                 && $req->getManagerName() == $aNode['manager']) {
             // compare node's action with current
-            $ret = !empty($aNode['actionMapping'])
-                ? $req->getActionName() == $aNode['actionMapping'] : true;
+            $ret = !empty($aNode['action'])
+                ? $req->getActionName() == $aNode['action'] : true;
             // compare node's params with current
-            if (!empty($aNode['add_params'])) {
+            if (!empty($aNode['params'])) {
                 $ret     = true; // by default params match
-                $aParams = explode('/', $aNode['add_params']);
+                $aParams = explode('/', $aNode['params']);
                 for ($i = 0, $cnt = count($aParams); $i < $cnt; $i = $i + 2) {
                     $k = $aParams[$i];
                     $v = isset($aParams[$i + 1]) ? $aParams[$i + 1] : null;
@@ -301,18 +329,20 @@ class ArrayDriver
     /**
      * Create URL from supplied node.
      *
+     * @access private
+     *
      * @param array $aNode
      *
      * @return string
      *
      * @todo check for URI type
      */
-    function makeLinkFromNode($aNode)
+    function _makeLinkFromNode($aNode)
     {
-        $action = !empty($aNode['actionMapping']) ? $aNode['actionMapping'] : '';
+        $action = !empty($aNode['action']) ? $aNode['action'] : '';
         $params = '';
-        if (!empty($aNode['add_params'])) {
-            $aVars = explode('/', $aNode['add_params']);
+        if (!empty($aNode['params'])) {
+            $aVars = explode('/', $aNode['params']);
             for ($i = 0, $cnt = count($aVars); $i < $cnt; $i += 2) {
                 if (isset($aVars[$i + 1])) {
                     if (!empty($params)) {
@@ -329,6 +359,8 @@ class ArrayDriver
     /**
      * Set root ID for current navigation branch.
      *
+     * @access public
+     *
      * @param mixed $rootId  can be integer or array for BC with old block
      *
      * @return void
@@ -336,65 +368,64 @@ class ArrayDriver
     function setParams($rootId)
     {
         if (is_array($rootId)) {
-            $this->currentRootIndex = $rootId['startParentNode'];
+            $this->_currentRootIndex = $rootId['startParentNode'];
         } else {
-            $this->currentRootIndex = $rootId;
+            $this->_currentRootIndex = $rootId;
         }
     }
 
     /**
-     * Render menu.
+     * Render navigation.
+     *
+     * @access public
      *
      * @param string $renderer  name of renderer
      * @param string $menuType  type of menu
      *
-     * @return array or false on failure
+     * @return array or false (if nothing to render)
      *
      * @todo add breadcrumbs to result set
      */
-    function render($renderer = 'DirectTreeRenderer', $menuType = 'tree')
+    function render($renderer = 'SimpleRenderer', $menuType = 'tree')
     {
-        $fileNameDriver   = SGL_LIB_PEAR_DIR . '/HTML/Menu.php';
-        $fileNameRenderer = SGL_LIB_PEAR_DIR . '/HTML/Menu/' . $renderer . '.php';
-
-        // use default one if none exists
-        // need this for BC
-        if (!file_exists($fileNameRenderer)) {
-            $fileNameRenderer = SGL_LIB_PEAR_DIR . '/HTML/Menu/' . $this->defaultRenderer . '.php';
-            $renderer = $this->defaultRenderer;
-        }
-
-        if (isset($this->aSections[$this->currentRootIndex])
-                && file_exists($fileNameDriver)
-                && file_exists($fileNameRenderer)) {
-            require_once $fileNameDriver;
-            require_once $fileNameRenderer;
-
-            // init renderer
-            $rendererClassName = 'HTML_Menu_' . $renderer;
-            $renderer = & new $rendererClassName();
-            $this->prepareRenderer($renderer);
-
-            // init driver
-            $menu = & new HTML_Menu($this->aSections[$this->currentRootIndex]);
-            $menu->forceCurrentIndex($this->aCurrentIndexes[$this->currentRootIndex]);
-            $menu->setUrlPrefix('');
-
-            // render
-            $menu->render($renderer, $menuType);
-            $html = $renderer->toHtml();
-
-            $ret = array(
-                0 => $this->aCurrentIndexes[$this->currentRootIndex],
-                1 => $html,
-                2 => '' // breadcrumbs
-            );
-        } elseif (!file_exists($fileNameDriver) || !file_exists($fileNameRenderer)) {
-            // should return the error instead
-            SGL::raiseError('ArrayDriver: PEAR::HTML_Menu package not found');
+        // nothing to render
+        if (empty($this->_aSections[$this->_currentRootIndex])) {
             $ret = false;
         } else {
-            $ret = false;
+            $fileNameRenderer = dirname(__FILE__) . '/ArrayDriver/' . $renderer . '.php';
+            // check if renderer file exists
+            if (!file_exists($fileNameRenderer)) {
+                $msg = sprintf('ArrayDriver: %s renderer not found', $renderer);
+                $ret = SGL::raiseError($msg);
+            } else {
+                require_once $fileNameRenderer;
+                $rendererClassName = 'ArrayDriver_' . $renderer;
+                // check if renderer class exists
+                if (!class_exists($rendererClassName)) {
+                    $msg = sprintf('ArrayDriver: %s class not found', $rendererClassName);
+                    $ret = SGL::raiseError($msg);
+                } else {
+                    $currentIdx = $this->_aCurrentIndexes[$this->_currentRootIndex];
+                    $aSections  = $this->_aSections[$this->_currentRootIndex];
+
+                    // init renderer
+                    $renderer = & new $rendererClassName();
+                    $renderer->currentIndex = $currentIdx;
+                    $renderer->type         = $menuType;
+
+                    // render
+                    $html = $renderer->toHtml($aSections);
+                    if (!PEAR::isError($html)) {
+                        $ret = array(
+                            0 => $currentIdx,
+                            1 => $html,
+                            2 => '' // breadcrumbs
+                        );
+                    } else {
+                        $ret = $html;
+                    }
+                }
+            }
         }
         return $ret;
     }
@@ -402,29 +433,15 @@ class ArrayDriver
     /**
      * Return current section name.
      *
+     * @access public
+     *
      * @return string
      */
     function getCurrentSectionName()
     {
-        return isset($this->aCurrentTitles[$this->currentRootIndex])
-            ? $this->aCurrentTitles[$this->currentRootIndex]
+        return isset($this->_aCurrentTitles[$this->_currentRootIndex])
+            ? $this->_aCurrentTitles[$this->_currentRootIndex]
             : SGL_Config::get('site.name');
-    }
-
-    /**
-     * Prepare renderer's entry templates.
-     *
-     * @param HTML_Menu_Renderer $renderer
-     */
-    function prepareRenderer(&$renderer)
-    {
-        $renderer->setItemTemplate('', '</li>');
-        $renderer->setLevelTemplate('<ul>', '</ul>');
-        $renderer->setEntryTemplate(array(
-            HTML_MENU_ENTRY_INACTIVE    => '<li><a href="{url}">{title}</a>',
-            HTML_MENU_ENTRY_ACTIVE      => '<li class="current"><a href="{url}">{title}</a>',
-            HTML_MENU_ENTRY_ACTIVEPATH  => '<li class="current"><a href="{url}">{title}</a>'
-        ));
     }
 }
 
