@@ -10,6 +10,15 @@
 class ArrayDriver_TemplateRenderer
 {
     /**
+     * Rendering params.
+     *
+     * @access private
+     *
+     * @var array
+     */
+    var $_aParams = array();
+
+    /**
      * SGL_Output.
      *
      * @access private
@@ -32,9 +41,11 @@ class ArrayDriver_TemplateRenderer
      *
      * @access public
      *
+     * @param array $aParams
+     *
      * @return ArrayDriver_TemplateRenderer
      */
-    function ArrayDriver_TemplateRenderer()
+    function ArrayDriver_TemplateRenderer($aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -42,11 +53,14 @@ class ArrayDriver_TemplateRenderer
         $output                 = & new $outputClass();
         $output->theme          = $_SESSION['aPrefs']['theme'];
         $output->moduleName     = 'navigation';
-        $output->masterTemplate = 'arrayDriverTemplateRenderer.html';
+        $output->masterTemplate = !empty($aParams['template'])
+            ? $aParams['template']
+            : 'arrayDriverTemplateRenderer.html';
         $output->renderer       = &$this;
 
-        $this->_output = &$output;
-        $this->_view   = & new SGL_HtmlSimpleView($this->_output);
+        $this->_output  = &$output;
+        $this->_view    = & new SGL_HtmlSimpleView($this->_output);
+        $this->_aParams = $aParams;
     }
 
     /**

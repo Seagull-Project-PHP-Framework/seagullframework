@@ -10,29 +10,28 @@
 class ArrayDriver_SimpleRenderer
 {
     /**
-     * Index of current node.
+     * Rendering params.
      *
-     * @var integer
-     */
-    var $currentIndex;
-
-    /**
-     * Rendering type.
+     * @access private
      *
-     * @var string
+     * @var array
      */
-    var $type;
+    var $_aParams = array();
 
     /**
      * Constructor.
      *
      * @access public
      *
+     * @param array $aParams
+     *
      * @return ArrayDriver_SimpleRenderer
      */
-    function ArrayDriver_SimpleRenderer()
+    function ArrayDriver_SimpleRenderer($aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $this->_aParams = $aParams;
     }
 
     /**
@@ -63,11 +62,11 @@ class ArrayDriver_SimpleRenderer
 
             // init driver
             $menu = & new HTML_Menu($aSections);
-            $menu->forceCurrentIndex($this->currentIndex);
+            $menu->forceCurrentIndex($this->_aParams['currentIndex']);
             $menu->setUrlPrefix('');
 
             // render
-            $menu->render($renderer, $this->type);
+            $menu->render($renderer, $this->_aParams['menuType']);
             $ret = $renderer->toHtml();
         }
         return $ret;

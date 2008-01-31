@@ -54,6 +54,15 @@ class ArrayDriver
      */
     var $_aCurrentTitles = array();
 
+    /**
+     * Params for rendering.
+     *
+     * @access private
+     *
+     * @var array
+     */
+    var $_aParams = array();
+
     function &singleton(&$output)
     {
         static $instance;
@@ -130,6 +139,7 @@ class ArrayDriver
                         if (!empty($subSection['is_current'])) {
                             $this->_aCurrentTitles[$rootId] = $subSection['title'];
                             $this->_aCurrentIndexes[$rootId] = $subSectionId;
+                            $aNodes[$rootId][$sectionId]['is_current'] = $subSection['is_current'];
                         }
 
                         // save changes made to subsection
@@ -276,8 +286,7 @@ class ArrayDriver
                 $aPerms = explode(',', $aNode['perms']);
                 foreach ($aPerms as $permId) {
                     $permValue = SGL_String::pseudoConstantToInt($permId);
-                    if ($permValue == $rid
-                    || $permValue == SGL_ANY_ROLE) {
+                    if ($permValue == $rid || $permValue == SGL_ANY_ROLE) {
                         $ret = true;
                         break;
                     }
@@ -357,20 +366,23 @@ class ArrayDriver
     }
 
     /**
-     * Set root ID for current navigation branch.
+     * Set rendering params.
      *
      * @access public
      *
-     * @param mixed $rootId  can be integer or array for BC with old block
+     * @param mixed $aParams  can be integer or array for BC with old block
      *
      * @return void
      */
-    function setParams($rootId)
+    function setParams($aParams)
     {
-        if (is_array($rootId)) {
-            $this->_currentRootIndex = $rootId['startParentNode'];
+        if (is_array($aParams)) {
+            $this->_aParams = $aParams;
+            if (isset($aParams['startParentNode'])) {
+                $this->_currentRootIndex = $aParams['startParentNode'];
+            }
         } else {
-            $this->_currentRootIndex = $rootId;
+            $this->_currentRootIndex = $aParams;
         }
     }
 
@@ -395,25 +407,25 @@ class ArrayDriver
             $fileNameRenderer = dirname(__FILE__) . '/ArrayDriver/' . $renderer . '.php';
             // check if renderer file exists
             if (!file_exists($fileNameRenderer)) {
-                $msg = sprintf('ArrayDriver: %s renderer not found', $renderer);
+                $msg = sprintf('%s: %s renderer not found', $renderer, __CLASS__);
                 $ret = SGL::raiseError($msg);
             } else {
                 require_once $fileNameRenderer;
                 $rendererClassName = 'ArrayDriver_' . $renderer;
                 // check if renderer class exists
                 if (!class_exists($rendererClassName)) {
-                    $msg = sprintf('ArrayDriver: %s class not found', $rendererClassName);
+                    $msg = sprintf('%s: %s class not found', $rendererClassName, __CLASS__);
                     $ret = SGL::raiseError($msg);
                 } else {
                     $currentIdx = $this->_aCurrentIndexes[$this->_currentRootIndex];
                     $aSections  = $this->_aSections[$this->_currentRootIndex];
 
-                    // init renderer
-                    $renderer = & new $rendererClassName();
-                    $renderer->currentIndex = $currentIdx;
-                    $renderer->type         = $menuType;
+                    $aParams = $this->_aParams;
+                    $aParams['currentIndex'] = $currentIdx;
+                    $aParams['menuType']     = $menuType;
 
                     // render
+                    $renderer = & new $rendererClassName($aParams);
                     $html = $renderer->toHtml($aSections);
                     if (!PEAR::isError($html)) {
                         $ret = array(
