@@ -1014,9 +1014,8 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if (SGL_Session::hasAdminGui()
-            || (SGL_Config::get('navigation.enabled')
-            && !SGL::runningFromCli()))
+        if (SGL_Config::get('navigation.enabled')
+            && !SGL::runningFromCli())
         {
             //  prepare navigation driver
             $navDriver = SGL_Config::get('navigation.driver');
