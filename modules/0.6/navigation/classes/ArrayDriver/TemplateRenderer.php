@@ -58,6 +58,7 @@ class ArrayDriver_TemplateRenderer
             : 'arrayDriverTemplateRenderer.html';
         $output->renderer       = &$this;
 
+//        SGL_Task_BuildOutputData::addOutputData($output);
         $this->_output  = &$output;
         $this->_view    = & new SGL_HtmlSimpleView($this->_output);
         $this->_aParams = $aParams;
@@ -89,12 +90,13 @@ class ArrayDriver_TemplateRenderer
      * @access public
      *
      * @param array $aSection
+     * @param string $initial
      *
      * @return string
      */
-    function getAttributes($aSection)
+    function getAttributes($aSection, $initial = '')
     {
-        $ret = '';
+        $ret = $initial;
         if (!empty($aSection['is_current'])) {
             $ret .= ' current';
         }
