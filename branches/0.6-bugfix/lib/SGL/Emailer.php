@@ -73,7 +73,9 @@ class SGL_Emailer
         'filepath'      => '',
         'mimetype'      => '',
         'Cc'            => '',
-        'Bcc'           => ''
+        'Bcc'           => '',
+        'sendDelay'     => '',
+        'groupID'       => '',
    );
 
     function SGL_Emailer($options = array())
@@ -183,11 +185,14 @@ class SGL_Emailer
                 $conf = SGL_Config::get('emailQueue')
                     ? SGL_Config::get('emailQueue')
                     : array();
+                if ($this->options['sendDelay']) {
+                    $conf['delay'] = $this->options['sendDelay'];
+                }
                 $queue = new SGL_Emailer_Queue($conf);
             }
             // put email to queue
-            $ok = $queue->push($headers, $this->options['toEmail'], $body, $headers['Subject']);
-
+            $ok = $queue->push($headers, $this->options['toEmail'], $body, $headers['Subject'],
+                      $this->options['groupID'] );
         // else send email straight away
         } else {
             $mail = &SGL_Emailer::factory();

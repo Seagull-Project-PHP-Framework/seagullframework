@@ -50,26 +50,29 @@ class SGL_Emailer_Queue
      * @param mixed  $recipient
      * @param string $body
      * @param string $subject
+     * @param string $groupID
      *
      * @return boolean
      */
-    public function push($headers, $recipient, $body, $subject = '')
+    public function push($headers, $recipient, $body, $subject = '', $groupID = '')
     {
         $dateToSend = date("Y-m-d G:i:s", time() + $this->_aOptions['delay']);
         return $this->_container->push(
             serialize($headers),
             serialize($recipient),
-            $body, $subject, $dateToSend);
+            $body, $subject, $dateToSend, $groupID);
     }
 
     /**
      * Pops email from queue.
      *
+     * @param string $groupID
+     *
      * @return object.
      */
-    public function pop()
+    public function pop($groupID)
     {
-        $ok = $this->_preload();
+        $ok = $this->_preload($groupID);
         if (PEAR::isError($ok)) {
             return $ok;
         }
@@ -91,11 +94,13 @@ class SGL_Emailer_Queue
     /**
      * Processes email queue. Sends retrieved emails.
      *
+     * @param string $groupID
+     *
      * @return boolean
      */
-    public function processQueue($skipSend = false)
+    public function processQueue($groupID = null, $skipSend = false)
     {
-        while ($email = $this->pop()) {
+        while ($email = $this->pop($groupID)) {
             if (PEAR::isError($email)) {
                 return $email;
             }
@@ -149,13 +154,13 @@ class SGL_Emailer_Queue
      *
      * @return boolean
      */
-    private function _preload()
+    private function _preload($groupID)
     {
         if ($this->_container->isPreloaded()) {
             $ret = true;
         } else {
             $ret = $this->_container->preload($this->_aOptions['limit'],
-                $this->_aOptions['attempts']);
+                $this->_aOptions['attempts'], $groupID);
         }
         return $ret;
     }
