@@ -772,7 +772,8 @@ class SGL_Output
                     $aArgs = array();
                     foreach ($aVars as $varString) {
                         list($k, $v) = explode('|', $varString);
-                        $aArgs[$k] = $v;
+                        $aArgs[$k] = isset($this->{$v})
+                            ? $this->{$v} : $v;
                     }
                     if (isset($aArgs['module'])) {
                         $aArgs['moduleName'] = $aArgs['module'];
