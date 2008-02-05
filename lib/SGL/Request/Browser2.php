@@ -124,6 +124,12 @@ class SGL_Request_Browser2 extends SGL_Request
 
         // mapper options
         $m->appendSlash = true;
+        $m->encoding    = null;
+
+# remove this hack
+        foreach ($m->matchList as $oRoute) {
+            $oRoute->encoding = null;
+        }
 
         // SGL_URL2
         Horde_Routes_Config::getInstance()->util = new Horde_Routes_Util();
@@ -146,7 +152,7 @@ class SGL_Request_Browser2 extends SGL_Request
      *
      * @return array
      */
-    public function getAvailableManagers()
+    public static function getAvailableManagers()
     {
         $aModules  = SGL_Util::getAllModuleDirs();
         $aManagers = array();
@@ -189,7 +195,7 @@ class SGL_Request_Browser2 extends SGL_Request
      *
      * @return mixed string or null
      */
-    private function _getManagerName($sectionName)
+    private static function _getManagerName($sectionName)
     {
         $ret = null;
         if (substr($sectionName, -3) === 'Mgr') {
