@@ -402,6 +402,23 @@ class SGL_Image
      *
      * @return array
      */
+    function setImagePath($path = "")
+    {
+    	if (empty($path)) {
+    		return;
+    	}
+        if (isset($this->_aParams['path'])) {
+            $this->_aParams['path'] .= '/' . $path;
+		} else {
+			$this->_aParams['path'] = '/' . $path;
+		}
+    }
+
+    /**
+     * @access public
+     *
+     * @return array
+     */
     function getThumbnailNames()
     {
         return array_keys($this->_aThumbnails);
@@ -482,6 +499,11 @@ class SGL_Image
                 $path = SGL_UPLOAD_DIR;
             }
         }
+
+        if (SGL_Image::_isInstanceMethod() && isset($this->_aParams['path'])) {
+            $path .= $this->_aParams['path'];
+        }
+
         return $path;
     }
 
