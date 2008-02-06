@@ -409,9 +409,9 @@ class SGL_Image
     	}
         if (isset($this->_aParams['path'])) {
             $this->_aParams['path'] .= '/' . $path;
-		} else {
-			$this->_aParams['path'] = '/' . $path;
-		}
+        } else {
+            $this->_aParams['path'] = '/' . $path;
+        }
     }
 
     /**
