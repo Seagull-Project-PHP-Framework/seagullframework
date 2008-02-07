@@ -294,6 +294,7 @@ class SGL_String
                         if (!empty($value) && !is_scalar($value)) {
                             continue;
                         }
+                        $value = str_replace('%', '%%', $value);
                         $ret = str_replace("%$i%", $value, $ret);
                         $ret = str_replace("%$i", $value, $ret);
                         $ret = str_replace("%$key%", $value, $ret);
