@@ -1,5 +1,8 @@
 <?php
 
+#needed for BC output url hander
+require_once dirname(__FILE__)  . '/UrlParser/SefStrategy.php';
+
 /**
  * Url class to work with Browser2 request type.
  *
