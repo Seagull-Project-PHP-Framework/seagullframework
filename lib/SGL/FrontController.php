@@ -268,7 +268,6 @@ class SGL_FrontController
             $coreLibs = dirname(__FILE__);
             $aRequiredFiles = array(
                 $coreLibs  . '/Url.php',
-                $coreLibs  . '/UrlParser/SefStrategy.php',
                 $coreLibs  . '/HTTP.php',
                 $coreLibs  . '/Manager.php',
                 $coreLibs  . '/Output.php',
