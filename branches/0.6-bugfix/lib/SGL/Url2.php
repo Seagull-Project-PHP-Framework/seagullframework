@@ -234,6 +234,23 @@ class SGL_URL2
         }
         return $baseUrl;
     }
+
+    /**
+     * Get query string as in SGL_Url1.
+     *
+     * @return string
+     */
+    public function getQueryString()
+    {
+        $ret = '/';
+        foreach ($this->_aQueryData as $k => $v) {
+            if (!in_array($k, array('moduleName', 'managerName'))) {
+                $ret .= $k . '/';
+            }
+            $ret .= $v . '/';
+        }
+        return $ret;
+    }
 }
 
 ?>
