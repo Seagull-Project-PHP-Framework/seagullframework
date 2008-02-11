@@ -1,11 +1,19 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.6.5        |
++-----------------------+
+
+BUGFIXES
+11-02-08    Fixed dependency where using ArrayDriver for navigation required
+            Horde_Routes input URL handler
+
++-----------------------+
 | VERSION: 0.6.4        |
 +-----------------------+
 
 BUGFIXES
-25-01-07    Fixed file disclosure flaw in optimizer.php
+11-02-08    Fixed file disclosure flaw in optimizer.php
 
 +-----------------------+
 | VERSION: 0.6.3        |
