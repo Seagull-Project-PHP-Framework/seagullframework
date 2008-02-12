@@ -40,6 +40,9 @@
 // $Id: Url.php,v 1.32 2005/05/29 21:32:17 demian Exp $
 //
 
+#needed for BC output url hander, esp: SGL_URL::makeLink()
+require_once dirname(__FILE__)  . '/UrlParser/SefStrategy.php';
+
 /**
  * Url related functionality.
  *
