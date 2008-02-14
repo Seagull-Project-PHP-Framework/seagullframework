@@ -394,7 +394,10 @@ class SGL
       */
     function moduleIsEnabled($moduleName)
     {
-        return false;
+##REMOVE HACK
+if ($moduleName == 'default') {
+    return true;
+}
         static $aInstances;
         if (!isset($aInstances)) {
             $aInstances = array();
