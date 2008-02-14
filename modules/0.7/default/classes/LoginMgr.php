@@ -168,7 +168,7 @@ class User_DoLogin extends SGL_Observable
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $this->conf = $this->input->getConfig();
-        $this->dbh = $this->_getDb();
+        //$this->dbh = $this->_getDb();
 
         if ($res = $this->_doLogin($this->input->username, $this->input->password)) {
 
