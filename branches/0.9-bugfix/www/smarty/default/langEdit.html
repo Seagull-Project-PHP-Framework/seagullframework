@@ -1,0 +1,52 @@
+<h1 class="pageTitle">{pageTitle}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="translations" action="" method="post" flexy:ignore id="translations">
+    <input type="hidden" name="action" value="update" /> 
+    <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
+    <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
+
+    <table class="wide">
+        <caption>
+            <h3>{translate(#You are editing: Module#)} "{currentModuleName}"</h3>
+        </caption>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="save" value="{translate(#Save Translation#)}" />
+                <input class="wideButton" type="button" name="back" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href='{makeUrl(##,#maintenance#)}'" /> 
+            </td>
+        </tr>
+
+        <tr>
+            <th width="50%">{translate(#Master Value#)}</th>
+            <th width="50%">{translate(#Translated Value#)}</th>
+        </tr>
+
+        <tr flexy:foreach="aTargetLang,k,v">
+        {if:GLOBALS.is_array(v)}
+            <td colspan="2">
+                <table class="wide">
+                    <tr flexy:foreach="v,kk,vv">
+                        <td class="fieldNameWrap" width="50%">{k}[{kk}]</td>
+                        <td class="fieldValue" align="center" width="50%">
+                            <input type="text" name="translation[{k}][{kk}]" value="{vv}" size="50" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        {else:}  
+            <td class="fieldNameWrap">{k}</td>
+            <td class="fieldValue" align="center"><input type="text" name="translation[{k}]" value="{v}" size="50" /></td>
+        {end:}
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="save" value="{translate(#Save Translation#)}" />
+                <input class="wideButton" type="button" name="back" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href'{makeUrl(##,#maintenance#)}''" /> 
+            </td>
+        </tr>
+    </table>
+</form>

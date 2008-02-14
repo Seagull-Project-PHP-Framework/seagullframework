@@ -1,0 +1,300 @@
+<div id="content">
+    <h1 class="pageTitle">{translate(pageTitle)}</h1>
+    <div id="ajaxMessage" class="message">{msgGet()}</div>
+
+    <form id="frmUser" method="post" action="" flexy:ignore>
+        <fieldset class="hide">
+            <input flexy:if="!isAdmin()" id="usernameWrongFormatMsg" type="hidden" name="usernameWrongFormatMsg" value="{translate(#username min length#)}" />
+            <input flexy:if="!isAdmin()" id="ajaxProviderIsUniqueUsernameUrl" type="hidden" name="usernameWrongFormatMsg" value="{makeUrl(#isUniqueUsername#,##,#user#)}" />
+        {if:isAdd}
+            <input type="hidden" name="action"value="insert" />
+            {if:redir}
+            <input type="hidden" name="redir" value="{redir}" />
+            {end:}
+        {else:}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
+            <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
+            <input type="hidden" name="user[organisation_id_orig]" value="{user.organisation_id}" />
+            <input type="hidden" name="user[username_orig]" value="{user.username_orig}" />
+            <input type="hidden" name="user[email_orig]" value="{user.email_orig}" />
+        {end:}
+        </fieldset>
+
+        <h3 flexy:if="isAdd">{translate(#add user#,#ucfirst#)}</h3>
+        <h3 flexy:if="!isAdd">{translate(#edit user#,#ucfirst#)} "{user.username}"</h3>
+
+        <fieldset class="inside">
+            <h3>{translate(#Personal Details#)}</h3>
+            <dl class="onSide">
+                <dt>
+                    <label for="user_username"><span class="required">* </span>{translate(#Username#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[username]">
+                        {translate(error[username])}
+                    </div>
+                    <input id="user_username" type="text" name="user[username]" value="{user.username}" />
+                    {if:!isAdmin()}
+                    &nbsp;<input type="button" name="button" value="Check Availability" onclick="UserRegister.isUniqueUsername('user_username')" />
+                    {end:}
+                </dd>
+                <dt>
+                    <label for="user_first-name">{translate(#First Name#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_first-name" type="text" name="user[first_name]" value="{user.first_name}" />
+                </dd>
+                <dt>
+                    <label for="user_last-name">{translate(#Last Name#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_last-name" type="text" name="user[last_name]" value="{user.last_name}" />
+                </dd>
+
+                {if:isAdd}
+                <dt>
+                    <label for="user_passwd"><span class="required">* </span>{translate(#Password#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[passwd]">
+                        {translate(error[passwd])}
+                    </div>
+                    <input id="user_passwd" type="password" name="user[passwd]" value="{user.passwd}" />
+                </dd>
+                <dt>
+                    <label for="user_password-confirm"><span class="required">* </span>{translate(#Confirm Password#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[password_confirm]">
+                        {translate(error[password_confirm])}
+                    </div>
+                    <input id="user_password-confirm" type="password" name="user[password_confirm]" value="{user.password_confirm}" />
+                </dd>
+                {end:}
+
+                {if:isAdmin()}
+                    {if:conf[OrgMgr][enabled]}
+                <dt>
+                    <label for="user_organisation-id">{translate(#Organisation name#)}</label>
+                </dt>
+                <dd>
+                    <select id="user_organisation-id" name="user[organisation_id]">
+                        {generateSelect(aOrgs,user.organisation_id):h}
+                    </select>
+                </dd>
+                    {end:}
+                {end:}
+            </dl>
+        </fieldset>
+        <fieldset class="inside">
+            <h3>{translate(#Contact#)}</h3>
+            <dl class="onSide">
+                <dt>
+                    <label for="user_email"><span class="required">*</span> {translate(#Email#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[email]">
+                        {translate(error[email])}
+                    </div>
+                    <input id="user_email" type="text" name="user[email]" value="{user.email}" />
+                </dd>
+                <dt>
+                    <label for="user_telephone">{translate(#Telephone#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_telephone" type="text" name="user[telephone]" value="{user.telephone}" />
+                </dd>
+                <dt>
+                    <label for="user_mobile">{translate(#Mobile#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_mobile" type="text" name="user[mobile]" value="{user.mobile}" />
+                </dd>
+
+                {if:isAdmin()}
+                <dt>
+                    <label for="user_is-acct-active">{translate(#Is Active?#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_is-acct-active" type="checkbox" name="user[is_acct_active]" value="1" flexy:raw="{isAcctActive}" /> {translate(#check if active#)}
+                </dd>
+                {end:}
+            </dl>
+        </fieldset>
+        <fieldset class="inside">
+            <h3>{translate(#Location#)}</h3>
+            <dl class="onSide">
+                <dt>
+                    <label for="user_addr-1"><span class="required">* </span>{translate(#Address 1#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[addr_1]">
+                        {translate(error[addr_1])}
+                    </div>
+                    <input id="user_addr-1" type="text" name="user[addr_1]" value="{user.addr_1}" />
+                </dd>
+                <dt>
+                    <label for="user_addr-2">{translate(#Address 2#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_addr-2" type="text" name="user[addr_2]" value="{user.addr_2}" />
+                </dd>
+                <dt>
+                    <label for="user_addr-3">{translate(#Address 3#)}</label>
+                </dt>
+                <dd>
+                    <input id="user_addr-3" type="text" name="user[addr_3]" value="{user.addr_3}" />
+                </dd>
+                <dt>
+                    <label for="user_city"><span class="required">* </span>{translate(#City#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[city]">
+                        {translate(error[city])}
+                    </div>
+                    <input id="user_city" type="text" name="user[city]" value="{user.city}" />
+                </dd>
+                <dt>
+                    <label for="user_region">{translate(#County/State/Province#)}</label>
+                </dt>
+                <dd>
+                    <select id="user_region" name="user[region]">
+                        {generateSelect(states,user.region):h}
+                    </select>
+                </dd>
+                <dt>
+                    <label for="user_post-code"><span class="required">* </span>{translate(#ZIP/Postal Code#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[post_code]">
+                        {translate(error[post_code])}
+                    </div>
+                    <input id="user_post-code" type="text" name="user[post_code]" value="{user.post_code}" />
+                </dd>
+
+                <dt>
+                    <label for="user_country"><span class="required">* </span>{translate(#Country#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[country]">
+                        {translate(error[country])}
+                    </div>
+                    <select id="user_country" name="user[country]">
+                        {generateSelect(countries,user.country):h}
+                    </select>
+                </dd>
+            </dl>
+        </fieldset>
+        <fieldset class="inside">
+            <h3>{translate(#Security#)}</h3>
+            <dl class="onSide">
+                <dt>
+                    <label for="user_security-question"><span class="required">* </span>{translate(#Security question#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[security_question]">
+                        {translate(error[security_question])}
+                    </div>
+                    <select id="user_security-question" name="user[security_question]">
+                        {generateSelect(aSecurityQuestions,user.security_question):h}
+                    </select>
+                </dd>
+                <dt>
+                    <label for="user_security-answer"><span class="required">* </span>{translate(#Answer#)}</label>
+                </dt>
+                <dd>
+                    <div class="error" flexy:if="error[security_answer]">
+                        {translate(error[security_answer])}
+                    </div>
+                    <input id="user_security-answer" type="text" name="user[security_answer]" value="{user.security_answer}" />
+                </dd>
+
+                {if:isAdmin()}
+                <dt>
+                    <label for="user_role-id">{translate(#Role#)}</label>
+                </dt>
+                <dd>
+                    <select id="user_role-id" name="user[role_id]">
+                        {generateSelect(aRoles,user.role_id):h}
+                    </select>
+                </dd>
+                {end:}
+
+                <!-- only show submit buttons at bottom if frontend -->
+                {if:!isAdmin()}
+                <dt>&nbsp;</dt>
+                <dd>
+                    {if:isAdd}
+                    <input class="button" type="submit" name="submitted" value="{translate(#Register#)}" />
+                        {if:isAdmin()}
+                    <input class="button" type="button" value="{translate(#Cancel#)}"
+                        onclick="document.location.href='{makeUrl(##,#user#,#user#)}'" />
+                        {end:}
+                    {else:}
+                    <input class="button" type="submit" name="submitted" value="{translate(#Save#)}" />
+                    <input class="button" type="button" value="{translate(#Cancel#)}" onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
+                    {end:}
+                </dd>
+                {end:}
+                <!-- end variable submit buttons -->
+
+            </dl>
+        </fieldset>
+        <p class="helpRequire">
+            <span class="required">*</span> <span class="small">{translate(#denotes required field#)}</span>
+        </p>
+    </form>
+
+</div>
+
+{if:!isAdmin()}
+<script type="text/javascript">
+     UserRegister = {
+
+        // predefined containers
+        messageContainer: 'ajaxMessage',
+        messageWrongUserFormat: $F('usernameWrongFormatMsg'),
+        urlIsUniqueUsername: $F('ajaxProviderIsUniqueUsernameUrl'),
+
+        isUniqueUsername: function(username) {
+            if (!UserValidator.isValidUsername($F(username))) {
+                this._showMessage('error', this.messageWrongUserFormat);
+            } else {
+                new Ajax.Request(this.urlIsUniqueUsername, {
+                        method: 'post',
+                        parameters: {username: $F(username)},
+                        onSuccess: this._showResults
+                    });
+            }
+            return false;
+        },
+
+        _showMessage: function(messageType, messageText) {
+            var innerDiv = document.createElement('div');
+            $(innerDiv).toggleClassName(messageType + 'Message').update(messageText);
+            $(this.messageContainer).show().update('').appendChild(innerDiv)
+            // Opacity effect is used, because we don't want screen to jump
+            new Effect.Opacity(this.messageContainer, {
+                duration: 1.5,
+                from: 1.0,
+                to: 0
+            });
+        },
+
+        _showResults: function(transport) {
+            var result = eval('(' + transport.responseText + ')');
+            UserRegister._showMessage(result.type, result.message);
+        }
+    }
+
+    UserValidator = {
+        isValidUsername: function(value) {
+            if (value == '') {
+                return false;
+            }
+            return value.match('^[a-zA-Z0-9]{5,}$');
+        }
+    }
+</script>
+{end:}

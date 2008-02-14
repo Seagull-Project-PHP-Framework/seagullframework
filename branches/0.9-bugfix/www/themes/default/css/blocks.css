@@ -1,0 +1,43 @@
+
+/**
+ * Blocks.
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+/* Logout */
+div#block-logout {
+}
+    div#block-logout strong {
+        color: #666;
+        color: #333;
+    }
+    div#block-logout em {
+        font-style: normal;
+    }
+
+
+/* Lang switcher */
+div#langSwitcher {
+    float: right;
+}
+    div#langSwitcher a {
+        float: left;
+        margin-left: 15px;
+    }
+        div#langSwitcher a img {
+            display: block;
+        }
+
+
+/* Breadcrumbs */
+#breadcrumbs {
+    margin: 0;
+    float: left;
+}
+    #breadcrumbs a {
+        font-weight: bold;
+        color: #66A326;
+    }
