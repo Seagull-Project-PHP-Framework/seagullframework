@@ -479,7 +479,13 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         $req = $input->getRequest();
 
         // modules to get translation for
-        $moduleDefault = SGL_Config::get('site.defaultModule');
+        if (SGL_Config::get('translation.defaultLangBC')) {
+            $moduleDefault = 'default';
+        } else {
+            $moduleDefault = SGL_Config::get('site.defaultModule');
+        }
+
+
         $moduleCurrent = $req->get('moduleName')
             ? $req->get('moduleName')
             : $moduleDefault;
