@@ -727,6 +727,10 @@ function toggleTransElements() {
                 <label for="conf[translation][languageAutoDiscover]">{translate(#Language auto discover#)}</label>
                 {generateRadioPair(#conf[translation][languageAutoDiscover]#,conf[translation][languageAutoDiscover]):h}
             </p>
+            <p>
+            	<label for="conf[translation][defaultLangBC]">{translate(#Translation from default module (BC)#)}</label>
+                {generateRadioPair(#conf[translation][defaultLangBC]#,conf[translation][defaultLangBC]):h}
+            </p>
         </fieldset>
 
         <fieldset class="main options" id="cookieOptions">

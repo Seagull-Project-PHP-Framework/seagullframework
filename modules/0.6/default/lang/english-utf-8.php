@@ -474,6 +474,7 @@ $defaultWords['Container'] = 'Container';
 $defaultWords['Fallback Language'] = 'Fallback Language';
 $defaultWords['Add Missing Translations'] = 'Add Missing Translations';
 $defaultWords['Language auto discover'] = 'Language auto discover';
+$defaultWords['Translation from default module (BC)'] = 'Use translations from default module bc style';
 $defaultWords['General'] = 'General';
 $defaultWords['Navigation'] = 'Navigation';
 $defaultWords['Debug'] = 'Debug';

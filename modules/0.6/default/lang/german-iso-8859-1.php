@@ -499,4 +499,6 @@ $defaultWords['You are updating: Module'] = 'Sie aktualisieren: Modul';
 $defaultWords['Master Value'] = 'Original';
 $defaultWords['Translated Value'] = 'Übersetzung';
 $defaultWords['Save Translation'] = 'Übersetzung speichern';
+$defaultWords['Language auto discover'] = 'Automatische Spracherkennung';
+$defaultWords['Translation from default module (BC)'] = 'Hole Übersetzungen aus dem Default-Modul (abwärtskompatibel)';
 ?>
