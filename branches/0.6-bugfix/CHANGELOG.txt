@@ -5,6 +5,10 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+18-02-08    New translation.defaultLangBC  is set to true by default, which means
+            even if you make eg publisher your default module, the lang strings in
+            the default module will be loaded on every request.  New behaviour is
+            to load *only* strings in default module.
 11-02-08    Fixed dependency where using ArrayDriver for navigation required
             Horde_Routes input URL handler
 
