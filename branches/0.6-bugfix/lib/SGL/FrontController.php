@@ -320,6 +320,34 @@ class SGL_FrontController
 }
 
 /**
+ * Abstract request processor.
+ *
+ * @abstract
+ * @package SGL
+ *
+ */
+class SGL_ProcessRequest
+{
+    function process(/*SGL_Registry*/ $input, /*SGL_Output*/ $output) {}
+}
+
+/**
+ * Decorator.
+ *
+ * @abstract
+ * @package SGL
+ */
+class SGL_DecorateProcess extends SGL_ProcessRequest
+{
+    var $processRequest;
+
+    function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
+    {
+        $this->processRequest = $pr;
+    }
+}
+
+/**
  * Core data processing routine.
  *
  * @package SGL

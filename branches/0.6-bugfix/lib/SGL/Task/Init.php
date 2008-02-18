@@ -690,34 +690,6 @@ class SGL_Task_EnsureBC extends SGL_Task
     // +---------------------------------------+
 
 /**
- * Abstract request processor.
- *
- * @abstract
- * @package SGL
- *
- */
-class SGL_ProcessRequest
-{
-    function process(/*SGL_Output*/ $data) {}
-}
-
-/**
- * Decorator.
- *
- * @abstract
- * @package SGL
- */
-class SGL_DecorateProcess extends SGL_ProcessRequest
-{
-    var $processRequest;
-
-    function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
-    {
-        $this->processRequest = $pr;
-    }
-}
-
-/**
  * Abstract renderer strategy
  *
  * @abstract
