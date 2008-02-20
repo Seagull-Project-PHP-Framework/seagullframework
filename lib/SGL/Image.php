@@ -307,7 +307,7 @@ class SGL_Image
         }
 
         if (!file_exists($fileName)) {
-            return SGL::raiseError('SGL_Image: file not found', SGL_ERROR_NOFILE);
+            return SGL::raiseError('SGL_Image: file not found ' . $fileName, SGL_ERROR_NOFILE);
         }
         unlink($fileName);
         $ok = $this->_toThumbnails('unlink'); // delete thumbnails
@@ -411,7 +411,7 @@ class SGL_Image
         if (isset($this->_aParams['path'])) {
             $this->_aParams['path'] .= '/' . $path;
         } else {
-            $this->_aParams['path'] = '/' . $path;
+            $this->_aParams['path'] = $path;
         }
     }
 
