@@ -305,6 +305,7 @@ class SGL_Image
         if (PEAR::isError($ok)) {
             return $ok;
         }
+
         if (!file_exists($fileName)) {
             return SGL::raiseError('SGL_Image: file not found', SGL_ERROR_NOFILE);
         }
@@ -493,15 +494,18 @@ class SGL_Image
             }
             $path = SGL_BASE_URL . '/' . $moduleName . '/images';
         } else {
-            if (!empty($moduleName)) {
+        	// if uploadDir is set in image.ini conf, overwrite
+        	// starting from 'SGL_APP_ROOT'
+        	if (SGL_Image::_isInstanceMethod() && isset($this->_aParams['uploadDir'])) {
+        		$path = SGL_APP_ROOT . '/' . $this->_aParams['uploadDir'];
+        	} elseif (!empty($moduleName)) {
                 $path = SGL_MOD_DIR . '/' . $moduleName . '/www/images';
             } else {
                 $path = SGL_UPLOAD_DIR;
             }
         }
-
         if (SGL_Image::_isInstanceMethod() && isset($this->_aParams['path'])) {
-            $path .= $this->_aParams['path'];
+            $path .= '/' .$this->_aParams['path'];
         }
 
         return $path;
@@ -681,7 +685,7 @@ class SGL_Image
  * @see SGL_ImageConfig::getProperty()
  */
 $GLOBALS['_SGL']['ImageConfig']['aProps']['_aMainParams'] =
-    array('driver', 'saveQuality', 'thumbDir');
+    array('driver', 'saveQuality', 'thumbDir', 'uploadDir');
 
 /**
  * @staticvar array
