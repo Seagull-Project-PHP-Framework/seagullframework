@@ -747,6 +747,12 @@ class SGL_ImageConfig
     function paramsCheck($aParams, $sectionName = '')
     {
         $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
+        //hack, remove uploadDir to keep BC.
+        // need to find a better way
+        if (!isset($aParams['uploadDir'])) {
+            $aParams['uploadDir']='';
+        }
+
         $aRet = array_diff($aMainParams, array_keys($aParams));
         if (!empty($aRet)) {
             $error = "SGL_ImageConfig: missing parameters";
