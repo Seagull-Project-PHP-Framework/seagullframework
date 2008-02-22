@@ -30,8 +30,11 @@ class SGL_Request_Browser2 extends SGL_Request
                 ? $_SERVER['PATH_INFO']
                 : '/';
         } else {
-            $qs = str_replace(SGL_Config::get('site.baseUrl'), '',
-                $_SERVER['REQUEST_URI']);
+            $baseUrl       = SGL_Config::get('site.baseUrl');
+            list($proto, ) = explode('://', $baseUrl, 2);
+            $host          = $_SERVER['HTTP_HOST'];
+            $url           = $proto . '://' . $host . $_SERVER['REQUEST_URI'];
+            $qs            = str_replace($baseUrl, '', $url);
         }
 
         $defModule  = SGL_Config::get('site.defaultModule');
