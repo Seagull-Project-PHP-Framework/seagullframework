@@ -316,8 +316,11 @@ class ArrayDriver
         if ($req->getModuleName() == $aNode['module']
                 && $req->getManagerName() == $aNode['manager']) {
             // compare node's action with current
-            $ret = !empty($aNode['action'])
-                ? $req->getActionName() == $aNode['action'] : true;
+            if (!empty($aNode['action'])) {
+                $ret = $req->getActionName() == $aNode['action'];
+            } else {
+                $ret = $req->getActionName() == 'default';
+            }
             // compare node's params with current
             if (!empty($aNode['params'])) {
                 $ret     = true; // by default params match
