@@ -21,7 +21,7 @@ $aRoutes = array(
  * Named routes
  */
 
-    // 1. index.php/profile -> index.php/user/account/
+    // 1. index.php/account -> index.php/user/account/
     //    in template: <a href="{makeUrl(#useraccount#)}">account</a>
 //    array('useraccount', '/account', array('moduleName' => 'user', 'controller' => 'account')),
 
