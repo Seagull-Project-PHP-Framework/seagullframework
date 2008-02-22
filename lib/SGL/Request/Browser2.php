@@ -25,9 +25,14 @@ class SGL_Request_Browser2 extends SGL_Request
      */
     public function init()
     {
-        $qs = isset($_SERVER['PATH_INFO'])
-            ? $_SERVER['PATH_INFO']
-            : '/';
+        if (SGL_Config::get('site.frontScriptName')) {
+            $qs = isset($_SERVER['PATH_INFO'])
+                ? $_SERVER['PATH_INFO']
+                : '/';
+        } else {
+            $qs = str_replace(SGL_Config::get('site.baseUrl'), '',
+                $_SERVER['REQUEST_URI']);
+        }
 
         $defModule  = SGL_Config::get('site.defaultModule');
         $defManager = SGL_Config::get('site.defaultManager');
