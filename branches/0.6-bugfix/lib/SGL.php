@@ -527,7 +527,10 @@ class SGL
      */
     function isFirstLaunch()
     {
-        $ret = !isset($_SESSION['sglFirstLaunch']);
+        static $ret;
+        if (!isset($ret)) {
+            $ret = !isset($_SESSION['sglFirstLaunch']);
+        }
         if (!isset($_SESSION['sglFirstLaunch'])) {
             $_SESSION['sglFirstLaunch'] = true;
         }
