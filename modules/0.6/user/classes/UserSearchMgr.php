@@ -293,7 +293,7 @@ class UserSearchMgr extends SGL_Manager
             'delta'     => 3,
             'perPage'   => $limit,
             'totalItems'=> $input->totalItems,
-            'path'      => SGL_Output::makeUrl('search'),
+            'path'      => SGL_Output::makeUrl('search', 'usersearch', 'usersearch'),
             'append'    => true,
         );
         $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
