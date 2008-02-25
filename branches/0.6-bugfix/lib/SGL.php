@@ -515,27 +515,6 @@ class SGL
         }
         return ! is_null($aInstances[$moduleName]);
     }
-
-    /**
-     * Detect if it is a first launch.
-     *
-     * @static
-     *
-     * @access public
-     *
-     * @return boolean
-     */
-    function isFirstLaunch()
-    {
-        static $ret;
-        if (!isset($ret)) {
-            $ret = !isset($_SESSION['sglFirstLaunch']);
-        }
-        if (!isset($_SESSION['sglFirstLaunch'])) {
-            $_SESSION['sglFirstLaunch'] = true;
-        }
-        return $ret;
-    }
 }
 
 if (!SGL::isPhp5() && !function_exists('clone')) {
