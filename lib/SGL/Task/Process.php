@@ -571,14 +571,13 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
 
         // resolve language from request
         $lang = $req->get('lang');
-        $firstLaunch = SGL::isFirstLaunch();
 
         // 1. look for language in URL
         if (empty($lang) || !SGL_Translation::isAllowedLanguage($lang)) {
             // 2. look for language in settings
             if (!isset($_SESSION['aPrefs']['language'])
                     || !SGL_Translation::isAllowedLanguage($_SESSION['aPrefs']['language'])
-                    || ($firstLaunch && SGL_Session::getUid() == SGL_GUEST)) {
+                    || SGL_Session::isFirstAnonRequest()) {
                 // 3. look for language in browser settings
                 if (!SGL_Config::get('translation.languageAutoDiscover')
                         || !($lang = $this->resolveLanguageFromBrowser())) {
