@@ -927,6 +927,48 @@ class SGL_Session
         $dbh->query($query);
         return true;
     }
+
+    /**
+     * Detect if it is a first anonymous request to SGL.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @return boolean
+     */
+    function isFirstAnonRequest()
+    {
+        static $ret;
+        if (SGL_Session::getRoleId() == SGL_GUEST) {
+            $ret = !isset($_SESSION['isFirstAnonRequest']);
+            if (!isset($_SESSION['isFirstAnonRequest'])) {
+                $_SESSION['isFirstAnonRequest'] = true;
+            }
+        }
+        return isset($ret) ? $ret : false;
+    }
+
+    /**
+     * Detect if it is a first authenticated request to SGL.
+     *
+     * @static
+     *
+     * @access public
+     *
+     * @return boolean
+     */
+    function isFirstAuthenticatedRequest()
+    {
+        static $ret;
+        if (SGL_Session::getRoleId() > SGL_GUEST) {
+            $ret = !isset($_SESSION['isFirstAuthRequest']);
+            if (!isset($_SESSION['isFirstAuthRequest'])) {
+                $_SESSION['isFirstAuthRequest'] = true;
+            }
+        }
+        return isset($ret) ? $ret : false;
+    }
 }
 
 ?>
