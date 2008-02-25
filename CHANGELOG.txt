@@ -5,6 +5,9 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+25-02-08    User search breaks with Horde_Routes are used, now fixed [3689].  When using
+            Horde_Routes single arg url construction invalid, eg: SGL_Output::makeUrl('search'),
+            instead you must use SGL_Output::makeUrl('search', 'usersearch', 'usersearch')
 18-02-08    New translation.defaultLangBC  is set to true by default, which means
             even if you make eg publisher your default module, the lang strings in
             the default module will be loaded on every request.  New behaviour is
