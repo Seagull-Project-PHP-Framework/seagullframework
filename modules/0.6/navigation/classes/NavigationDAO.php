@@ -497,9 +497,9 @@ class NavigationDAO extends SGL_Manager
             $lang = SGL_Translation::getFallbackLangID();
             //  insert translation
             $ok = $this->trans->add($nodeId, 'nav', array($lang => $section['title']));
-            //  update trans_id
-            $this->nestedSet->updateNode($nodeId, array('trans_id' => $nodeId));
         }
+        //  update trans_id
+        $this->nestedSet->updateNode($nodeId, array('trans_id' => $nodeId));
 
         //  deal with potential alias to add
         if (isset($aliasNextId)) {
