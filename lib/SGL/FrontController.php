@@ -100,10 +100,6 @@ class SGL_FrontController
         // run module init tasks
         SGL_Task_InitialiseModules::run();
 
-        $setupNav = SGL::moduleIsEnabled('cms')
-            ? 'SGL_Task_SetupNavigation2'
-            : 'SGL_Task_SetupNavigation';
-
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
@@ -127,7 +123,7 @@ class SGL_FrontController
                 new SGL_Task_BuildView(
                 new SGL_Task_BuildDebugBlock(
                 new SGL_Task_SetupBlocks(
-                new $setupNav(
+                new SGL_Task_SetupNavigation(
                 new SGL_Task_SetupGui(
                 new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
