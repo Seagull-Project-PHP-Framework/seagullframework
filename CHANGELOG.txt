@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+26-02-08    section.trans_id was not being added when creating new navigation (rzur2004)
 25-02-08    User search breaks with Horde_Routes are used, now fixed [3689].  When using
             Horde_Routes single arg url construction invalid, eg: SGL_Output::makeUrl('search'),
             instead you must use SGL_Output::makeUrl('search', 'usersearch', 'usersearch')
