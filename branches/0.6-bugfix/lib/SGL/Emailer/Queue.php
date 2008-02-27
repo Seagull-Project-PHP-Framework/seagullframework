@@ -54,7 +54,7 @@ class SGL_Emailer_Queue
      *
      * @return boolean
      */
-    public function push($headers, $recipient, $body, $subject = '', $groupID = '')
+    public function push($headers, $recipient, $body, $subject = '', $groupID = null)
     {
         $dateToSend = date("Y-m-d G:i:s", time() + $this->_aOptions['delay']);
         return $this->_container->push(
@@ -70,12 +70,13 @@ class SGL_Emailer_Queue
      *
      * @return object.
      */
-    public function pop($groupID)
+    public function pop($groupID = null)
     {
         $ok = $this->_preload($groupID);
         if (PEAR::isError($ok)) {
             return $ok;
         }
+
         return $this->_container->fetch();
     }
 
@@ -105,6 +106,7 @@ class SGL_Emailer_Queue
                 return $email;
             }
             $id = $this->_container->identifyEmail($email);
+
             if (!$skipSend) { // need this flag for test purpose
                 // try to send the email
                 $ok = $this->send($email);
