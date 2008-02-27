@@ -37,10 +37,10 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      *
      * @return DB_OK
      */
-    public function push($headers, $recipient, $body, $subject, $dateToSend, $groupID)
+    public function push($headers, $recipient, $body, $subject, $dateToSend, $groupID = null)
     {
         $query = sprintf('INSERT INTO email_queue
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
             $this->_dbh->nextId('email_queue'),
             'NOW()',
             $this->_dbh->quoteSmart($dateToSend),
@@ -51,7 +51,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
             $this->_dbh->quoteSmart($subject),
             0,
             SGL_Session::getUid(),
-            $this->dbh->quoteSmart($groupID)
+            $this->_dbh->quoteSmart($groupID)
         );
         return $this->_dbh->query($query);
     }
