@@ -867,8 +867,8 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
     function run($data)
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1
-                && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)) {
-
+                && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)
+                && SGL_Config::get('navigation.driver') != 'ArrayDriver') {
             require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
             $da = & NavigationDAO::singleton();
 
@@ -897,6 +897,14 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                         }
                     }
                 }
+            }
+        } elseif (SGL_Config::get('navigation.driver') == 'ArrayDriver') {
+            require_once SGL_MOD_DIR . '/navigation/classes/ArrayDriver.php';
+
+            $aNodes = ArrayDriver::getNavigationStructure();
+            $ok = ArrayDriver::saveNodes($aNodes);
+            if (!$ok) {
+                SGL::raiseError('ArrayDriver: can\'t save nodes');
             }
         }
     }

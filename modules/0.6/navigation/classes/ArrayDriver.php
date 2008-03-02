@@ -90,8 +90,8 @@ class ArrayDriver
     {
         // get nodes
         if (!($aNodes = $this->_loadCachedNodes())) {
-            $aNodes = $this->_createNavigationStructure();
-            $this->_cacheNodes($aNodes);
+            $aNodes = ArrayDriver::getNavigationStructure();
+            ArrayDriver::saveNodes($aNodes);
         }
 
         // skip admin root if not allowed
@@ -155,15 +155,17 @@ class ArrayDriver
      * Go through all modules and read navigation.php files.
      * Combines all sections in one array ready for use with HTML_Menu.
      *
-     * @access private
+     * @static
+     *
+     * @access public
      *
      * @return array
      */
-    function _createNavigationStructure()
+    function getNavigationStructure()
     {
         $aMenu = array();
-        $aDirs = SGL_Util::getAllModuleDirs(true);
-        foreach ($aDirs as $dirName) {
+        $aModules = SGL_Util::getAllModuleDirs(true);
+        foreach ($aModules as $dirName) {
             $structureFile = SGL_MOD_DIR . '/' . $dirName . '/data/navigation.php';
             if (!file_exists($structureFile)) {
                 continue;
@@ -251,13 +253,15 @@ class ArrayDriver
     /**
      * Cache nodes to file.
      *
-     * @access private
+     * @access public
+     *
+     * @static
      *
      * @param array $aNodes
      *
      * @return boolean
      */
-    function _cacheNodes($aNodes)
+    function saveNodes($aNodes)
     {
         $data = var_export($aNodes, true);
         $data = "<?php\n\$aSections = $data;\n?>";
@@ -410,14 +414,14 @@ class ArrayDriver
             $fileNameRenderer = dirname(__FILE__) . '/ArrayDriver/' . $renderer . '.php';
             // check if renderer file exists
             if (!file_exists($fileNameRenderer)) {
-                $msg = sprintf('%s: %s renderer not found', $renderer, __CLASS__);
+                $msg = sprintf('%s: %s renderer not found', __CLASS__, $renderer);
                 $ret = SGL::raiseError($msg);
             } else {
                 require_once $fileNameRenderer;
                 $rendererClassName = 'ArrayDriver_' . $renderer;
                 // check if renderer class exists
                 if (!class_exists($rendererClassName)) {
-                    $msg = sprintf('%s: %s class not found', $rendererClassName, __CLASS__);
+                    $msg = sprintf('%s: %s class not found', __CLASS__, $rendererClassName);
                     $ret = SGL::raiseError($msg);
                 } else {
                     $currentIdx = $this->_aCurrentIndexes[$this->_currentRootIndex];
