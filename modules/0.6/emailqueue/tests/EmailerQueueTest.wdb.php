@@ -1,17 +1,18 @@
 <?php
 
-require_once 'KDO/Emailer/Queue.php';
+require_once 'SGL/Emailer/Queue.php';
 
 /**
  * Test suite.
  *
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ * @author Peter Termaten <peter.termaten@gmail.com>
  */
-class KDOEmailerQueueTest extends UnitTestCase
+class EmailerQueueTest extends UnitTestCase
 {
     function __construct()
     {
-        $this->UnitTestCase('KDO Emailer Queue Test');
+        $this->UnitTestCase('Emailer Queue Test');
     }
 
     function setUp()
@@ -22,7 +23,6 @@ class KDOEmailerQueueTest extends UnitTestCase
             'delay'     => 0,    // send next time the queue will be processed
             'attempts'  => 5     // 5 attempts to send each email
         );
-        //$this->queue = new KDO_Emailer_Queue($aOptions);
     }
 
     function tearDown()
@@ -46,14 +46,14 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testPush()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
 
         $headers   = 'From: lakiboy83@gmail.com';
         $body      = 'Blow it up...';
         $subject   = 'Top secret';
         $recipient = 'james@bond.com';
         $groupID   = '';
-        $ok = $queue->push($headers, $recipient, $body, $subject);
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
 
         // no errors should be returned
         // and result is DB_OK
@@ -96,7 +96,7 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testPop()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
         $groupID = '';
 
         // try to pop emails again
@@ -121,7 +121,7 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testRemove()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
 
         $ok = $queue->remove(1);
         // no errors should be returned
@@ -144,7 +144,7 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testPopRemove2()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
         $groupID = '';
 
         // pop the only email in queue
@@ -163,7 +163,7 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testPop3()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
         $groupID = '';
 
         // ensure there no emails in the queue
@@ -176,7 +176,7 @@ class KDOEmailerQueueTest extends UnitTestCase
         $aOptions = $this->aOptions;
         $aOptions['delay'] = 60; // 1 minute
 
-        $queue = new KDO_Emailer_Queue($aOptions);
+        $queue = new SGL_Emailer_Queue($aOptions);
         $groupID = '';
 
         $headers   = 'From: lakiboy83@gmail.com';
@@ -195,7 +195,7 @@ class KDOEmailerQueueTest extends UnitTestCase
 
     function testProcessQueue()
     {
-        $queue = new KDO_Emailer_Queue($this->aOptions);
+        $queue = new SGL_Emailer_Queue($this->aOptions);
         $groupID = '';
 
         // add emails to queue
@@ -227,7 +227,7 @@ class KDOEmailerQueueTest extends UnitTestCase
         $aOptions = $this->aOptions;
         $aOptions['removeSent'] = false; // keep sent emails
 
-        $queue = new KDO_Emailer_Queue($aOptions);
+        $queue = new SGL_Emailer_Queue($aOptions);
         $groupID = '';
 
         // add emails to queue
@@ -257,6 +257,68 @@ class KDOEmailerQueueTest extends UnitTestCase
         $this->_cleanTable();
     }
 
+     /**
+     * This test should only send email with a specified groupid.
+     */
+    function testProcessQueue3()
+    {
+        $aOptions = $this->aOptions;
+        $aOptions['limit'] = 5;
+
+        $queue = new SGL_Emailer_Queue($aOptions);
+        //$groupID = '';
+
+        // add emails to queue
+        $headers   = 'From: lakiboy83@gmail.com';
+        $body      = 'Blow it up...';
+        $subject   = 'Top secret';
+        $recipient = 'james@bond.com';
+        $groupID   = '123';
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+
+        $headers   = 'From: lakiboy83@gmail.com';
+        $body      = 'Time to attack...';
+        $recipient = 'spider@man.com';
+        $ok = $queue->push($headers, $recipient, $body);
+
+        $headers   = 'From: peter.termaten@gmail.com';
+        $body      = 'Grouping...';
+        $subject   = 'Robin';
+        $recipient = 'bat@man.com';
+        $groupID   = '456';
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+
+        $headers   = 'From: lakiboy83@gmail.com';
+        $body      = 'Seagull 2.0...';
+        $recipient = 'demian@seagullproject.com';
+        $subject   = 'Is it real?';
+        $ok = $queue->push($headers, $recipient, $body, $subject);
+
+        // 4 db records created
+        $this->assertEqual(4, $this->_getTableRecordsCount());
+
+        $ok = $queue->processQueue($groupID = '456', $skipSend = true);
+        $this->assertFalse($ok instanceof PEAR_Error);
+        $this->assertTrue($ok);
+
+        // 3 db record left
+        $this->assertEqual(3, $this->_getTableRecordsCount());
+
+        $aOptions = $this->aOptions;
+        $aOptions['limit'] = 5;
+
+        $queue = new SGL_Emailer_Queue($aOptions);
+        $ok = $queue->processQueue($groupID = null, $skipSend = true);
+        $this->assertFalse($ok instanceof PEAR_Error);
+        $this->assertTrue($ok);
+
+         // no records left
+        $this->assertEqual(0, $this->_getTableRecordsCount());
+
+        // clean table
+        $this->_cleanTable();
+    }
+
     /**
      * This test should send emails to file instead of sending real emails.
      */
@@ -269,7 +331,7 @@ class KDOEmailerQueueTest extends UnitTestCase
         $aOptions = $this->aOptions;
         $aOptions['removeSent'] = false; // keep sent emails
 
-        $queue = new KDO_Emailer_Queue($aOptions);
+        $queue = new SGL_Emailer_Queue($aOptions);
 
         // add emails to queue
         $subject   = 'Test subject 1';
