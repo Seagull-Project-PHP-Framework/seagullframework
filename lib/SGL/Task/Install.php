@@ -1606,7 +1606,7 @@ class SGL_Task_SyncSequences extends SGL_Task
 
             foreach ($data as $k) {
                 $tableName = $k[0];
-                $seqName = sprintf($suffix, $tableName);
+                $seqName = $dbh->quoteIdentifier(sprintf($suffix, $tableName));
                 $maxVal   = $k[1];
                 $currVal = $dbh->nextId($tableName, true);
                 $sql = 'UPDATE ' . $seqName . ' SET id=' . $maxVal . ' WHERE id=' . $currVal;
