@@ -588,61 +588,66 @@ class UserDAO extends SGL_Manager
     }
 
     /**
-     * Returns an array of preferences by user id.
+     * Returns an array of preferences by user ID.
      *
-     * If no arg is passed, zero is assumed which returns a default set of name/value pref pairs.
-     * The more aptly named getMasterPrefs() above returns a master set of id/value pref pairs
+     * If no arg is passed, zero is assumed which returns a default set
+     * of name/value pref pairs.
      *
-        [aPrefs] => Array
-            (
-                [sessionTimeout] => 1800
-                [timezone] => UTC
-                [theme] => default
-                [dateFormat] => UK
-                [language] => fr-iso-8859-1
-                [resPerPage] => 10
-                [showExecutionTimes] => 1
-                [locale] => en_GB
-            )
-     * @access  public
-     * @return  mixed   An array of prefs on success, else PEAR::raiseError
+     * Theme preference is overriden from config for guests.
+     *
+     *   Array
+     *   (
+     *       [sessionTimeout] => 1800
+     *       [timezone] => UTC
+     *       [theme] => default
+     *       [dateFormat] => UK
+     *       [language] => fr-iso-8859-1
+     *       [resPerPage] => 10
+     *       [showExecutionTimes] => 1
+     *       [locale] => en_GB
+     *   )
+     *
+     * @access public
+     *
+     * @param integer $userId
+     * @param boolean $addMissing
+     *
+     * @return array
      */
-    function getPrefsByUserId($uid = 0)
+    function getPrefsByUserId($userId = 0, $addMissing = true)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $query = "
-            SELECT  name, value
-            FROM    {$this->conf['table']['preference']} p,
-                    {$this->conf['table']['user_preference']} up
-            WHERE   p.preference_id = up.preference_id
-            AND     up.usr_id = " . $uid;
-        $aRes = $this->dbh->getAssoc($query);
+            SELECT name, value
+            FROM   {$this->conf['table']['preference']} AS p,
+                   {$this->conf['table']['user_preference']} AS up
+            WHERE  p.preference_id = up.preference_id
+                   AND up.usr_id = " . intval($userId) . "
+        ";
+        $aUserPrefs = $this->dbh->getAssoc($query);
 
-        if (!PEAR::isError($aRes) && count($aRes)) {
-            return $aRes;
-        } elseif (!PEAR::isError($aRes)) {
-
-            //  return default prefs if none exist for given user id
-            if ($uid != SGL_GUEST) {
-                return $this->getPrefsByUserId();
-            } else {
-                $aRes = $this->getMasterPrefs();
-                if (PEAR::isError($aRes) || !count($aRes)) {
-                    SGL::raiseError('No default prefs have been set!',
-                        SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-                } else {
-                    return $aRes;
-                }
-            }
-        } elseif (PEAR::isError($aRes, DB_ERROR_NOSUCHTABLE)) {
-            SGL::raiseError('You have a Seagull database with no tables ...',
-                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
-
-        } else {
-            SGL::raiseError('Unknown DB error occurred, pls file bug',
-                SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+        // stop script execution on error
+        if (PEAR::isError($aUserPrefs, DB_ERROR_NOSUCHTABLE)) {
+            $msg = 'You have a Seagull database with no tables ...';
+            SGL::raiseError($msg, SGL_ERROR_NODATA, PEAR_ERROR_DIE);
+        } elseif (PEAR::isError($aUserPrefs)) {
+            $msg = 'Unknown DB error occurred, pls file bug';
+            SGL::raiseError($msg, SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         }
+
+        if ($addMissing) {
+            $aMasterPrefs = $this->getMasterPrefs();
+            foreach ($aMasterPrefs as $prefName => $prefValue) {
+            	if (!array_key_exists($prefName, $aUserPrefs)) {
+                    $aUserPrefs[$prefName] = $prefValue;
+            	}
+            }
+        }
+        if (SGL_Session::getRoleId() == SGL_GUEST) {
+            $aUserPrefs['theme'] = SGL_Config::get('site.defaultTheme');
+        }
+        return $aUserPrefs;
     }
 
     /**
@@ -797,30 +802,51 @@ class UserDAO extends SGL_Manager
     /**
      * Updates user preferences.
      *
-     * @param array $aPrefs A hash of prefId => values
+     * @access public
+     *
+     * @param array $aPrefs    hash of pref ID => value
+     * @param integer $userId
+     *
      * @return boolean
-     * @TODO check for errors, wrap in transaction
      */
     function updatePrefsByUserId($aPrefs, $userId)
     {
-        if (count($aPrefs)) {
-            $this->dbh->autocommit(false);
-            foreach ($aPrefs as $prefId => $prefValue) {
-                $ok = $this->dbh->query("
+        $this->dbh->autocommit(false);
+
+        $aMapping   = $this->getPrefsMapping();
+        $aMapping   = array_flip($aMapping);
+        $aUserPrefs = $this->getPrefsByUserId($userId, $addMissing = false);
+        foreach ($aPrefs as $prefId => $prefValue) {
+            $prefName = $aMapping[$prefId];
+            // update preference
+            if (array_key_exists($prefName, $aUserPrefs)) {
+                $query = "
                     UPDATE {$this->conf['table']['user_preference']}
-                    SET value = '$prefValue'
-                    WHERE preference_id = '$prefId'
-                    AND usr_id = $userId
-                    ");
-                if (PEAR::isError($ok)) {
-                    $this->dbh->rollBack();
-                    $this->dbh->autocommit(true);
-                    return $ok;
-                }
+                    SET    value = " . $this->dbh->quoteSmart($prefValue) . "
+                    WHERE  preference_id = " . intval($prefId) . "
+                           AND usr_id = " . intval($userId) . "
+                ";
+            // add missing preference
+            } else {
+                $nextId = $this->dbh->nextId($this->conf['table']['user_preference']);
+                $query = "
+                    INSERT INTO {$this->conf['table']['user_preference']}
+                    VALUES ($nextId,
+                        " . intval($userId) . ",
+                        " . intval($prefId) . ",
+                        " . $this->dbh->quoteSmart($prefValue) . ")
+                ";
             }
-            $this->dbh->commit();
-            $this->dbh->autocommit(true);
+            $ok = $this->dbh->query($query);
+            if (PEAR::isError($ok)) {
+                $this->dbh->rollBack();
+                $this->dbh->autocommit(true);
+                return $ok;
+            }
         }
+        $this->dbh->commit();
+        $this->dbh->autocommit(true);
+
         return true;
     }
 
