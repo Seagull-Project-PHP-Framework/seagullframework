@@ -33,7 +33,7 @@ class SGL_URL2
      *
      * @param Horde_Routes_Config $oRoutes
      */
-    public function setRoutes(Horde_Routes_Config $oRoutes)
+    public function setRoutes(Horde_Routes_Utils $oRoutes)
     {
         $this->_routes = $oRoutes;
     }
@@ -181,11 +181,11 @@ class SGL_URL2
         }
 
         // try to match URL in new style
-        $url = $this->_routes->util->urlFor($aParams);
+        $url = $this->_routes->urlFor($aParams);
         // if URL was not matched do it in old style
         if (!$this->_urlIsMatched($url)) {
             $aParams = $this->_makeDefaultParamsArray($aParams);
-            $url = $this->_routes->util->urlFor($aParams);
+            $url = $this->_routes->urlFor($aParams);
             $namedRoute = false;
         }
 
