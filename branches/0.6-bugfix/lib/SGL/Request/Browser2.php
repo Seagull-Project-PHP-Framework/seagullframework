@@ -3,8 +3,7 @@
 require_once 'Horde/Routes/Mapper.php';
 require_once 'Horde/Routes/Exception.php';
 require_once 'Horde/Routes/Route.php';
-require_once 'Horde/Routes/Util.php';
-require_once 'Horde/Routes/Config.php';
+require_once 'Horde/Routes/Utils.php';
 
 require_once SGL_CORE_DIR . '/Url2.php';
 
@@ -140,9 +139,8 @@ class SGL_Request_Browser2 extends SGL_Request
         }
 
         // SGL_URL2
-        Horde_Routes_Config::getInstance()->util = new Horde_Routes_Util();
         $url = new SGL_URL2($aQueryData);
-        $url->setRoutes(Horde_Routes_Config::getInstance());
+        $url->setRoutes(new Horde_Routes_Utils($m));
 
         // assign to registry
         SGL_Registry::singleton()->setCurrentUrl($url);
