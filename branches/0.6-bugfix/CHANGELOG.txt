@@ -18,6 +18,11 @@ BUGFIXES
 11-02-08    Fixed dependency where using ArrayDriver for navigation required
             Horde_Routes input URL handler
 
+IMPROVEMENTS
+05-03-08    Adding new preferences to your application is much easier now, if you have
+            a large userbase, you can easily add n new preferences and existing
+            users will get default values [3704]
+
 +-----------------------+
 | VERSION: 0.6.4        |
 +-----------------------+
