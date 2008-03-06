@@ -39,6 +39,20 @@ class SGL_URL2
     }
 
     /**
+     * Set mapper options.
+     *
+     * @param array $aOpts
+     *
+     * @return viod
+     */
+    public function setMapperOptions($aOpts)
+    {
+        foreach ($aOpts as $k => $v) {
+            $this->_routes->mapper->{$k} = $v;
+        }
+    }
+
+    /**
      * Format params specified in old SGL_Output::makeUrl() style
      * to new system.
      *
