@@ -287,6 +287,11 @@ class UserDAO extends SGL_Manager
         return true;
     }
 
+    function getPermsByUser($oUser)
+    {
+        return $this->getPermsByRoleId($oUser->role_id);
+    }
+
     /**
      * Returns an array of permissions for the given role.
      *
