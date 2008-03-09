@@ -2,7 +2,7 @@ INSTALL INSTRUCTIONS FOR SEAGULL FRAMEWORK
 ==========================================
 
 Seagull is organised so there's minimum fuss involved setting it up for the
-first time.  The main thing you need to do is:
+first time. The main thing you need to do is:
 
 ** MAKE THE seagull/var DIRECTORY WRITABLE BY THE WEBSERVER **
 
@@ -37,7 +37,7 @@ DETAILED INSTRUCTIONS
     uncompress it.  You will get a folder called seagull-<version_no>, rename
     this to seagull
 
-2.  Make the [web-doc-root]/seagull/var directory writable by the webserver.  If
+2.  Make the [web-doc-root]/seagull/var directory writable by the webserver. If
     *nix, you can achieve this by making the user the webserver runs under
     owner of the seagull/var directory, so if your webserver runs as
     'nobody':

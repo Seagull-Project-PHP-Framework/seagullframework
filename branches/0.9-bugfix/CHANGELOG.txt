@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 0.9          |
++-----------------------+
+IMPROVEMENTS
+09-08-08    Major cleanup. Removed obsolete modules, Javascript libraries,
+            moved some files out of www directory.
+
+BUGFIXES
+
++-----------------------+
 | VERSION: 0.6.5        |
 +-----------------------+
 
