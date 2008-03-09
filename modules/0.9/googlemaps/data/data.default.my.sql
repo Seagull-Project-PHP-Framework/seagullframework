@@ -1,0 +1,1 @@
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'googlemaps', 'Google Maps', 'The ''Google Maps'' module graphs user locations.', NULL, '48/module_map.png', '', NULL, NULL, NULL);

@@ -1,0 +1,11 @@
+# This file instructs web crawlers where to look for the sitemap.
+#
+# @package SGL
+# @subpackage Sitemap
+# @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+#
+# 1. Replace <sgl-base-url> with actual path.
+# 2. Move this file to document root of your application.
+# 3. If you already have 'robots.txt' created, just append the following command.
+
+Sitemap: <sgl-base-url>/sitemap/sitemap.php

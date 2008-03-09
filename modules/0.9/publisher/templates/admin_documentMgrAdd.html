@@ -1,0 +1,118 @@
+<div id="alertNotFinished" class="hide">{translate(#Please wait until upload is finished#)}</div>
+<div id="alertNoFile" class="hide">{translate(#You must select a file to upload#)}</div>
+<div id="alertPleaseWait" class="hide">{translate(#Please wait while document uploads#)}</div>
+<script type='text/javascript'>
+//<![CDATA[
+<!--
+    /* alert messages: */
+    var alertNotFinished    = document.getElementById('alertNotFinished').innerHTML;
+    var alertNoFile         = document.getElementById('alertNoFile').innerHTML;
+    var alertPleaseWait     = document.getElementById('alertPleaseWait').innerHTML;
+
+    function doAttach()
+    {
+        if (document.uploadAsset.assetFile.value=="") {
+            alert(alertNoFile);
+            return false;
+        } else {
+            //Launch uploading document message
+            avoidDown();
+            msgUp();
+        }
+    }
+
+    var cteTxti = alertPleaseWait;
+    var msgPts  = '';
+
+    function msgUp()
+    {
+            msgPts = (msgPts.length > 7) ? '.' : msgPts + '.';
+            uploadLayer = document.getElementById('uploadLayer');
+
+            uploadLayer.innerHTML = cteTxti + msgPts;
+            identifier = setTimeout('msgUp()', 100);
+    }
+
+    function avoidDown()
+    {
+        document.onmousedown = document.onkeydown = function () {alert(alertNotFinished);}
+    }
+
+//-->
+//]]>
+</script>
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    {if:save}<a class="action save" href="javascript:formSubmit('uploadAsset','submitted',1,1)">{translate(#Save#)}</a>
+    {else:}<a class="action upload" href="javascript:formSubmit('uploadAsset','submitted',1,1)" onclick="return doAttach();">{translate(#Upload#)}</a>
+    {end:}
+    <a class="action cancel" href="{makeUrl(##,#document#,#publisher#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form method="post" name="uploadAsset" enctype="multipart/form-data" action="" flexy:ignore id="uploadAsset">
+        <h3>{translate(#New Asset#)}</h3>
+        <fieldset class="inside">
+            <input type="hidden" name="frmDocumentCatID" value="{docCatID}" />
+            <input type="hidden" name="document[document_type_id]" value="{document.document_type_id}" />
+            <input type="hidden" name="document[added_by]" value="{loggedOnUserID}" />
+            <input type="hidden" name="document[orig_name]" value="{document.name}" />
+            <input type="hidden" name="document[mime_type]" value="{document.mime_type}" />
+            <input type="hidden" name="document[file_size]" value="{document.file_size}" />
+            {if:save}
+                <input type="hidden" name="action" value="insert" />
+            {else:}
+                <input type="hidden" name="action" value="add" />
+            {end:}
+            <p>
+                <label>{translate(#Owner#)}</label>
+                <span>{loggedOnUser}</span>
+            </p>
+            <p>
+                <label>{translate(#Category#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label for="frmCategoryChangeToID">{translate(#Change Category#)}</label>
+                <select name="frmCategoryChangeToID" id="frmCategoryChangeToID">
+                    {generateSelect(aCategories,currentCat):h}
+                </select>
+            </p>
+            {if:save}
+            <p>
+                <label>{translate(#Type#)}</label>
+                <span>{assetTypeName}</span>
+            </p>
+            <p>
+                <label for="document[name]">{translate(#Asset Name#)}</label>
+                <input class="longText" type="text" name="document[name]" id="document[name]" value="{document.name}"/>
+            </p>
+            <p>
+                <label for="document[description]">{translate(#Description#)}</label>
+                <textarea class="longText" name="document[description]" id="document[description]">{document.description}</textarea>
+            </p>
+            <p>
+                <label>{translate(#Size#)}</label>
+                <span>{formatBytes(document.file_size)}</span>
+            </p>
+            <p>
+                <label>{translate(#Mime Type#)}</label>
+                <span>{document.mime_type}</span>
+            </p>
+            {else:}
+             <p>
+                <label for="assetFile">{translate(#Locate#)}</label>
+                <input class="longText" type="file" name="assetFile" id="assetFile"/>
+            </p>
+            <p>
+                <label>&nbsp;</label>
+                <div id="uploadLayer" class="error"></div>
+            </p>
+            {end:}
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

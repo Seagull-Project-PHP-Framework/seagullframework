@@ -1,0 +1,100 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('frmBlockEdit','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#block#,#block#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)} :: {translate(mode)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmBlockEdit" flexy:ignore id="frmBlockEdit">
+        <div id="optionsLinks"></div>
+        <fieldset class="options" id="blockEditContent">
+            <input type="hidden" name="mode" value="{mode}" />
+            <input type="hidden" name="block[edit]" value="1" />
+        {if:isAdd}
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="isadd" value="1" />
+        {else:}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="block[block_id]" value="{block.block_id}" />
+        {end:}
+            <h3>{translate(#Block Details#)}</h3>
+            <p>
+                <label class="tipOwner" for="block[title]"><span class="required">*</span>{translate(#Display Title#)}
+                    <span class="tipText">{translate(#Block title tooltip#)}</span>
+                </label>
+                <span class="error" flexy:if="error[title]">{translate(error[title])}</span>
+                <input type="text" name="block[title]" id="block[title]" value="{block.title}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="block[name]"><span class="required">*</span>{translate(#Block Class Name#)}
+                    <span class="tipText">{translate(#Block class name tooltip#)}</span>
+                </label>
+                <span class="error" flexy:if="error[name]">{translate(error[name])}</span>
+                <select name="block[name]" id="block[name]" onchange="document.frmBlockEdit.submit()">
+                    <option value="">- {translate(#Choose class name#)} -</option>
+                    {generateSelect(aAllBlocks,block.name):h}
+                </select>
+            </p>
+            <p>
+                <label flexy:if="details.name">{translate(#Block name#)}</label>
+                <span>{details.name}</span>
+            </p>
+            <p>
+                <label flexy:if="details.description">{translate(#Block description#)}</label>
+                <span>{details.description}</span>
+            </p>
+            <p>
+                <label for="block[title_class]">{translate(#Title class#)}</label>
+                <input type="text" name="block[title_class]" id="block[title_class]" value="{block.title_class}" />
+            </p>
+            <p>
+                <label for="block[body_class]">{translate(#Body class#)}</label>
+                <input type="text" name="block[body_class]" id="block[body_class]" value="{block.body_class}" />
+            </p>
+            <p flexy:if="checked">
+                <label for="block[is_enabled]">{translate(#Status#)}</label>
+                <input type="checkbox" name="block[is_enabled]" id="block[is_enabled]" flexy:raw="{blockIsEnabled}" />{translate(#check to activate#)}
+            </p>
+            <p>
+                <label for="block[is_cached]">{translate(#Cache status#)}</label>
+                <input type="checkbox" name="block[is_cached]" id="block[is_cached]" flexy:raw="{blockIsCached}" />{translate(#check to cache block content#)}
+            </p>
+            <p>
+                <span class="required">*</span>{translate(#denotes required field#)}
+            </p>
+        </fieldset>
+        <fieldset class="options" id="blockParamOptions" flexy:if="aParams">
+            <h3>{translate(#Block Parameters#)}</h3>
+            <flexy:include src="admin_editParams.html" />
+        </fieldset>
+        <fieldset class="options" id="blockEditOptions">
+            <h3>{translate(#Publishing#)}</h3>
+            <p>
+                <label for="block[position]">{translate(#Position#)}</label>
+                <select name="block[position]" id="block[position]">
+                    {generateSelect(aBlocksNames,block.position):h}
+                </select>
+            </p>
+            <p>
+                <label for="block[sections]">{translate(#Sections#)}</label>
+                <select name="block[sections][]" id="block[sections]" multiple="multiple" size="15">
+                    {generateSelect(aSections,block.sections,1):h}
+                </select>
+            </p>
+            <p>
+                <label for="block[roles]">{translate(#Can view#)}</label>
+                <select name="block[roles][]" id="block[roles]" multiple="multiple" size="5">
+                    {generateSelect(aRoles,block.roles,1):h}
+                </select>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+<script type="text/javascript">
+createAvailOptionsLinks('frmBlockEdit','h3');
+showSelectedOptions('frmBlockEdit','blockEditContent')
+</script>

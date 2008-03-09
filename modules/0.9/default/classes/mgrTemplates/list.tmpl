@@ -1,0 +1,27 @@
+        $output->template  = '%mgrName%List.html';
+        $output->pageTitle = '%MgrName% :: List';
+
+        //  only execute if CRUD option selected
+        if (%crud%) {
+            $query = "  SELECT
+                             %field_list%
+                        FROM {$this->conf['table']['%mgrName%']}
+                        ";
+
+            $limit = $_SESSION['aPrefs']['resPerPage'];
+            $pagerOptions = array(
+                'mode'      => 'Sliding',
+                'delta'     => 3,
+                'perPage'   => $limit,
+            );
+            $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+            if (PEAR::isError($aPagedData)) {
+                return false;
+            }
+            $output->aPagedData = $aPagedData;
+            $output->totalItems = $aPagedData['totalItems'];
+
+            if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+                $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+            }
+        }

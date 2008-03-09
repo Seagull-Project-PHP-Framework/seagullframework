@@ -1,0 +1,60 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" onClick="javascript:document.location.href='{makeUrl(#addSubscriber#,#list#,#newsletter#)}'">{translate(#Add Subscriber#)}</a>
+    <a class="action upload" onClick="javascript:document.location.href='{makeUrl(#exportSubscribers#,#list#,#newsletter#)}'">{translate(#Export Subscriber#)}</a>    
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+		<form name="frmNewsletterSubs" id="frmNewsletterSubs" method="post" flexy:ignore>
+        <h3>{translate(#Subscribers#)}</h3>
+        <fieldset class="noBorder">
+		<input type="hidden" name="action" value="deleteSubscriber" />
+            <table class="full">
+                <thead>
+			        <tr class="infos">
+					    <td class="right" colspan="10">
+			       			<flexy:include src="admin_pager_table.html" />
+			       		</td>
+			   		</tr>
+                    <tr>
+						<th width="10"><div align="center"><input type="checkbox" name="selAll" value="checkbox" onclick="javascript:applyToAllCheckboxes('frmNewsletterSubs', 'frmDelete[]', this.checked)"></div></th>
+						<th width="20" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/newsletter_id/frmSortOrder/{sortOrder}">{translate(#ID#)}</a></th>
+						<th width="70" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/list/frmSortOrder/{sortOrder}">{translate(#List#)}</a></th>
+						<th width="140" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/email/frmSortOrder/{sortOrder}">{translate(#Email#)}</a></th>
+						<th width="110"class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/name/frmSortOrder/{sortOrder}">{translate(#Name#)}</a></th>
+						<th width="50" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/status/frmSortOrder/{sortOrder}">{translate(#Status#)}</a></th>
+						<th class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/action_request/frmSortOrder/{sortOrder}">{translate(#Pending#)}</a></th>
+						<th width="150" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/last_updated/frmSortOrder/{sortOrder}">{translate(#Updated#)}</a></th>
+						<th width="150" class="left"><a class="header" href="{makeUrl(#listSubscribers#,#list#,#newsletter#)}frmSortBy/date_created/frmSortOrder/{sortOrder}">{translate(#Created#)}</a></th>
+                    </tr>
+                </thead>
+                <tfoot>
+		        <tr class="infos">
+				    <td class="right" colspan="10">
+		       			<flexy:include src="admin_pager_table.html" />
+		       		</td>
+		   		</tr>
+                </tfoot>
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+						<td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[newsletter_id]}" /></td>
+						<td class="left">{aValue[newsletter_id]}</td>
+						<td class="left">{aValue[list]}</td>
+						<td class="left"><a href="{makeUrl(#editSubscriber#,#list#,#newsletter#,aPagedData[data],#frmID|newsletter_id#,key)}">{aValue[email]}</a></td>
+						<td class="left">{aValue[name]}</td>
+						<td class="left">{this.plugin(#statusToString#,aValue[status])}</td>
+						<td class="left">{aValue[action_request]}</td>
+						<td class="left">{aValue[last_updated]}</td>
+						<td class="left">{aValue[date_created]}</td>
+                    </tr>
+                </tbody>
+            </table>
+	        <input type="submit" class="sgl-button" name="delete" value="{translate(#Delete Selected#)}" onclick="return confirmSubmit('{translate(#user#)}', 'users')" /></td>            
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+</div>

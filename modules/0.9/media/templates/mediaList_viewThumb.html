@@ -1,0 +1,32 @@
+<style type="text/css">
+@import url("{webRoot}/js/lightbox/css/lightbox.css");
+</style>
+<script type="text/javascript">
+var fileLoadingImage = SGL_JS_WEBROOT +'/js/lightbox/images/loading.gif';
+var fileBottomNavCloseImage = SGL_JS_WEBROOT +'/js/lightbox/images/closelabel.gif';
+</script>
+
+
+                <div class="thumb" flexy:foreach="aMedia,key,oMedia" flexy:ignore>
+                    <div class="thumbBox" id="media{oMedia.media_id}">
+                        <div class="thumbToolbar">
+                            <span class="thumbToolbarInner">
+                                <a rel="lightbox[media]" href="{makeUrl(#previewMedia#,#media#,##)}frmMediaId/{oMedia.media_id}">view</a>
+                                <a href="{makeUrl(#edit#,#media#,#media#)}frmMediaId/{oMedia.media_id}">edit</a>
+                                <a href="#" onclick="MediaList.deleteMediaById({oMedia.media_id});">
+                                    <img src="{webRoot}/media/images/trash.gif" alt="trash" />
+                                </a>
+                            </span>
+                        </div>
+                        <div class="thumbMedia">
+
+                            <img src="{makeUrl(#previewMedia#,#media#,##)}frmMediaId/{oMedia.media_id}/frmSize/small" alt="" title="" />
+                        </div>
+                        <div class="thumbInfo">
+                            Quelques infos ici
+                            Comme le nom de l'auteur
+                            ...
+                        </div>
+                        <h3>{oMedia.name}</h3>
+                    </div>
+                </div>

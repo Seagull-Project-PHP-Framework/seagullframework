@@ -1,0 +1,58 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<p>{translate(#contact intro#)}</p>
+
+<form action="{makeUrl(##,##,#contactus#)}" method="post" enctype="multipart/form-data" flexy:ignore>
+    <fieldset class="noBorder">
+        <input type="hidden" name="action" value="send" />
+        <input type="hidden" name="token" value="{token}" />
+
+        <dl class="onSide">
+            <dt><label for="contact_first-name"><span class="required">*&nbsp;</span>{translate(#First Name#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[first_name]">{translate(error[first_name])}</span>
+                <input type="text" name="contact[first_name]" id="contact_first-name" value="{contact.first_name}" size="30" />
+            </dd>
+
+            <dt><label for="contact_last-name"><span class="required">*&nbsp;</span>{translate(#Last Name#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[last_name]">{translate(error[last_name])}</span>
+                <input type="text" name="contact[last_name]" id="contact_last-name" value="{contact.last_name}" size="30" />
+            </dd>
+
+            <dt><label for="contact_email"><span class="required">*&nbsp;</span>{translate(#Email#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+                <input type="text" name="contact[email]" id="contact_email" value="{contact.email}" size="30" />
+            </dd>
+
+            <dt><label for="contact_enquiry-type"><span class="required">*&nbsp;</span>{translate(#Type of enquiry#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[enquiry_type]">{translate(error[enquiry_type])}</span>
+                <select name="contact[enquiry_type]" id="contact_enquiry-type">
+                    {generateSelect(aContactType,contact.enquiry_type):h}
+                </select>
+            </dd>
+
+            <dt><label for="contact_user-comment"><span class="required">*&nbsp;</span>{translate(#Comment#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[user_comment]">{translate(error[user_comment])}</span>
+                <textarea name="contact[user_comment]" id="contact_user-comment" cols="60" rows="10">{contact.user_comment}</textarea>
+            </dd>
+
+            {if:useCaptcha}
+            <dt><label for="contact_captcha"><span class="required">*&nbsp;</span>{translate(#Enter Captcha#)}</label></dt>
+            <dd>
+                <span class="error" flexy:if="error[captcha]">{translate(error[captcha])}</span>
+                <pre>{captcha}</pre>
+                <input type="text" id="contact_captcha" name="contact[captcha]" size="30" />
+            </dd>
+            {end:}
+
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" name="submitted" class="wideButton" value="{translate(#Send it#)}" /></dd>
+        </dl>
+        <p><span class="required">*</span> {translate(#denotes required field#)}</span></span>
+    </fieldset>
+</form>
