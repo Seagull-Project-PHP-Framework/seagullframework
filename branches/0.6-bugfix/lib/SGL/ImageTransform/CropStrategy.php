@@ -36,8 +36,8 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
             $scaleWidth = round($width * $percentChange);
             $scaleHeight = round($height * $percentChange);
         } else {
-            $scaleWidth = $newWidth;
-            $scaleWidth = $newHeight;
+            $scaleWidth  = $newWidth;
+            $scaleHeight = $newHeight;
         }
 
         // resize and crop
