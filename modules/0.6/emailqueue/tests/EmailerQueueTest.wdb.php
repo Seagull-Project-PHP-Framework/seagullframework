@@ -27,7 +27,7 @@ class EmailerQueueTest extends UnitTestCase
 
     function tearDown()
     {
-        //unset($this->queue);
+//        unset($this->queue);
     }
 
     function _cleanTable()
@@ -52,8 +52,8 @@ class EmailerQueueTest extends UnitTestCase
         $body      = 'Blow it up...';
         $subject   = 'Top secret';
         $recipient = 'james@bond.com';
-        $groupID   = '';
-        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+        $groupId   = null;
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupId);
 
         // no errors should be returned
         // and result is DB_OK
@@ -85,8 +85,8 @@ class EmailerQueueTest extends UnitTestCase
         $body      = 'Grouping...';
         $subject   = 'Robin';
         $recipient = 'bat@man.com';
-        $groupID   = '123';
-        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+        $groupId   = '123';
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupId);
 
         // no errors should be returned
         // and result is DB_OK
@@ -97,24 +97,24 @@ class EmailerQueueTest extends UnitTestCase
     function testPop()
     {
         $queue = new SGL_Emailer_Queue($this->aOptions);
-        $groupID = '';
+        $groupId = null;
 
         // try to pop emails again
-        $email_1 = $queue->pop($groupID);
+        $email_1 = $queue->pop($groupId);
         // no errors should be returned
         $this->assertFalse($email_1 instanceof PEAR_Error);
         // result is the email object
         $this->assertTrue(is_object($email_1) && isset($email_1->email_queue_id));
         $this->assertEqual($email_1->email_queue_id, 1);
 
-        $email_2 = $queue->pop($groupID);
+        $email_2 = $queue->pop($groupId);
         // no errors should be returned
         $this->assertFalse($email_2 instanceof PEAR_Error);
         // result is the email object
         $this->assertTrue(is_object($email_2) && isset($email_2->email_queue_id));
         $this->assertEqual($email_2->email_queue_id, 2);
 
-        $email_3 = $queue->pop($groupID);
+        $email_3 = $queue->pop($groupId);
         // only two emails were allowed for retrieval
         $this->assertFalse($email_3);
     }
@@ -145,14 +145,14 @@ class EmailerQueueTest extends UnitTestCase
     function testPopRemove2()
     {
         $queue = new SGL_Emailer_Queue($this->aOptions);
-        $groupID = '';
+        $groupId = null;
 
         // pop the only email in queue
-        $email = $queue->pop($groupID);
+        $email = $queue->pop($groupId);
         $this->assertEqual($email->email_queue_id, 4);
 
         // ensure nothing else left
-        $ok = $queue->pop($groupID);
+        $ok = $queue->pop($groupId);
         $this->assertFalse($ok);
 
         // remove it
@@ -164,10 +164,10 @@ class EmailerQueueTest extends UnitTestCase
     function testPop3()
     {
         $queue = new SGL_Emailer_Queue($this->aOptions);
-        $groupID = '';
+        $groupId = null;
 
         // ensure there no emails in the queue
-        $ok = $queue->pop($groupID);
+        $ok = $queue->pop($groupId);
         $this->assertFalse($ok);
     }
 
@@ -177,7 +177,7 @@ class EmailerQueueTest extends UnitTestCase
         $aOptions['delay'] = 60; // 1 minute
 
         $queue = new SGL_Emailer_Queue($aOptions);
-        $groupID = '';
+        $groupId = null;
 
         $headers   = 'From: lakiboy83@gmail.com';
         $body      = 'Blow it up...';
@@ -186,7 +186,7 @@ class EmailerQueueTest extends UnitTestCase
         $ok = $queue->push($headers, $recipient, $body, $subject);
 
         // nothing returned, need to wait for 1 minute
-        $ok = $queue->pop($groupID);
+        $ok = $queue->pop($groupId);
         $this->assertFalse($ok);
 
         // clean table
@@ -196,7 +196,7 @@ class EmailerQueueTest extends UnitTestCase
     function testProcessQueue()
     {
         $queue = new SGL_Emailer_Queue($this->aOptions);
-        $groupID = '';
+        $groupId = null;
 
         // add emails to queue
         $headers   = 'From: lakiboy83@gmail.com';
@@ -210,12 +210,12 @@ class EmailerQueueTest extends UnitTestCase
         $recipient = 'spider@man.com';
         $ok = $queue->push($headers, $recipient, $body);
 
-        $ok = $queue->processQueue($groupID = null, $skipSend = true);
+        $ok = $queue->processQueue($groupId = null, $skipSend = true);
         $this->assertFalse($ok instanceof PEAR_Error);
         $this->assertTrue($ok);
 
         // nothing returned
-        $ok = $queue->pop($groupID);
+        $ok = $queue->pop($groupId);
         $this->assertFalse($ok);
 
         // no records in db, they were deleted by default
@@ -228,7 +228,7 @@ class EmailerQueueTest extends UnitTestCase
         $aOptions['removeSent'] = false; // keep sent emails
 
         $queue = new SGL_Emailer_Queue($aOptions);
-        $groupID = '';
+        $groupId = null;
 
         // add emails to queue
         $headers   = 'From: lakiboy83@gmail.com';
@@ -242,12 +242,12 @@ class EmailerQueueTest extends UnitTestCase
         $recipient = 'spider@man.com';
         $ok = $queue->push($headers, $recipient, $body);
 
-        $ok = $queue->processQueue($groupID = null, $skipSend = true);
+        $ok = $queue->processQueue($groupId = null, $skipSend = true);
         $this->assertFalse($ok instanceof PEAR_Error);
         $this->assertTrue($ok);
 
         // nothing returned
-        $ok = $queue->pop($groupID);
+        $ok = $queue->pop($groupId);
         $this->assertFalse($ok);
 
         // 2 emails still i db
@@ -257,8 +257,8 @@ class EmailerQueueTest extends UnitTestCase
         $this->_cleanTable();
     }
 
-     /**
-     * This test should only send email with a specified groupid.
+    /**
+     * This test should only send email with a specified group ID.
      */
     function testProcessQueue3()
     {
@@ -266,15 +266,15 @@ class EmailerQueueTest extends UnitTestCase
         $aOptions['limit'] = 5;
 
         $queue = new SGL_Emailer_Queue($aOptions);
-        //$groupID = '';
+//        $groupId = null;
 
         // add emails to queue
         $headers   = 'From: lakiboy83@gmail.com';
         $body      = 'Blow it up...';
         $subject   = 'Top secret';
         $recipient = 'james@bond.com';
-        $groupID   = '123';
-        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+        $groupId   = '123';
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupId);
 
         $headers   = 'From: lakiboy83@gmail.com';
         $body      = 'Time to attack...';
@@ -285,8 +285,8 @@ class EmailerQueueTest extends UnitTestCase
         $body      = 'Grouping...';
         $subject   = 'Robin';
         $recipient = 'bat@man.com';
-        $groupID   = '456';
-        $ok = $queue->push($headers, $recipient, $body, $subject, $groupID);
+        $groupId   = '456';
+        $ok = $queue->push($headers, $recipient, $body, $subject, $groupId);
 
         $headers   = 'From: lakiboy83@gmail.com';
         $body      = 'Seagull 2.0...';
@@ -297,7 +297,7 @@ class EmailerQueueTest extends UnitTestCase
         // 4 db records created
         $this->assertEqual(4, $this->_getTableRecordsCount());
 
-        $ok = $queue->processQueue($groupID = '456', $skipSend = true);
+        $ok = $queue->processQueue($groupId = '456', $skipSend = true);
         $this->assertFalse($ok instanceof PEAR_Error);
         $this->assertTrue($ok);
 
@@ -308,7 +308,7 @@ class EmailerQueueTest extends UnitTestCase
         $aOptions['limit'] = 5;
 
         $queue = new SGL_Emailer_Queue($aOptions);
-        $ok = $queue->processQueue($groupID = null, $skipSend = true);
+        $ok = $queue->processQueue($groupId = null, $skipSend = true);
         $this->assertFalse($ok instanceof PEAR_Error);
         $this->assertTrue($ok);
 
