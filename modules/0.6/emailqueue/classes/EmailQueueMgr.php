@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2007, Demian Turner                                     |
+// | Copyright (c) 2007, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -32,45 +32,44 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.6.3                                                             |
 // +---------------------------------------------------------------------------+
-// | EmailqueueMgr.php                                                         |
+// | EmailQueueMgr.php                                                         |
 // +---------------------------------------------------------------------------+
-// | Author: Peter Termaten <peter.termaten@gmail.com>                         |
+// | Authors: Peter Termaten <peter.termaten@gmail.com>                        |
+// |          Dmitri Lakachauskis <lakiboy83@gmail.com>                        |
 // +---------------------------------------------------------------------------+
 
 require_once SGL_CORE_DIR . '/Emailer/Queue.php';
 
 /**
- * Admin functions for QueueMgr module
+ * CLI manager, which processes email queue.
  *
- * @package emailqueue
- * @author  Peter Termaten <peter.termaten@gmail.com>
+ * @package seagull
+ * @subpackage emailqueue
+ * @author Peter Termaten <peter.termaten@gmail.com>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class EmailQueueMgr extends SGL_Manager
 {
     public function __construct()
     {
-    SGL::logMessage(null, PEAR_LOG_DEBUG);
-    parent::SGL_Manager();
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+        parent::SGL_Manager();
 
-    $this->_aActionsMapping =  array(
-             'list'         => array('list', 'cliResult'),
-             'empty_queue'  => array('empty_queue','cliResult'),
-                                    );
+        $this->_aActionsMapping = array(
+            'list'    => array('list', 'cliResult'),
+            'process' => array('process','cliResult'),
+        );
     }
 
-    function validate($req, &$input)
+    public function validate(SGL_Request $req, SGL_Registry $input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->validated       = true;
-        $input->pageTitle      = $this->pageTitle;
-        $input->template       = $this->template;
-        $input->masterTemplate = $this->masterTemplate;
-        $input->action         = $req->get('action')
-            ? $req->get('action') : 'list';
+        $this->validated = true;
+        $input->action   = $req->get('action') ? $req->get('action') : 'list';
+        $input->tty      = "\n";
 
-        $input->terminalOutput = '';
-        $input->groupID        =  $req->get('groupID')? (int)$req->get('groupID') : NULL;
+        $input->groupId = $req->get('groupId');
     }
 
     /**
@@ -79,15 +78,24 @@ class EmailQueueMgr extends SGL_Manager
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    public function _cmd_list($input, $output)
+    public function _cmd_list(SGL_Registry $input, SGL_Output $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $input->terminalOutput .= "
-        \nAvailable actions:\n\n"
-            . " 1. empty_queue - send emails from email_queue table\n"
-            . "    Parameters:\n"
-            . "     --groupID - send only mails for this group, default: all groups\n";
+        $input->tty .= <<< HELP
+Available actions:
+  1. process            process emails in queue
+       --groupId          process emails of certain group only
+
+
+HELP;
+    }
+
+    public function _cmd_process(SGL_Registry $input, SGL_Output $output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        $aOptions = SGL_Config::get('EmailQueueMgr');
     }
 
     /**
@@ -103,7 +111,7 @@ class EmailQueueMgr extends SGL_Manager
      */
     public function _cmd_empty_queue(&$input, &$output)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
 
         $aOptions = $this->conf['EmailQueueMgr']
             ? $this->conf['EmailQueueMgr']
@@ -134,18 +142,33 @@ class EmailQueueMgr extends SGL_Manager
         return $className;
     }
 
-     /**
+    /**
      * Action, which outputs CLI result.
      *
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    public function _cmd_cliResult($input, $output)
+    public function _cmd_cliResult(SGL_Registry $input, SGL_Output $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        echo $input->terminalOutput;
-        exit;
+        $this->_flush($input->tty, $stopScript = true);
+    }
+
+    /**
+     * Send data to terminal.
+     *
+     * @param string $string
+     * @param boolean $stopScript
+     */
+    private function _flush(&$string, $stopScript = false)
+    {
+        echo $string;
+        flush();
+        $string = '';
+        if ($stopScript) {
+            exit;
+        }
     }
 }
 ?>

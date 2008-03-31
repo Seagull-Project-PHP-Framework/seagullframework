@@ -9,7 +9,7 @@ $aSections = array(
         'actionMapping' => '',
         'add_params'    => '',
         'is_enabled'    => 1,
-        'perms'         => 'SGL_ADMIN,SG',
+        'perms'         => 'SGL_ADMIN',
     ),
     array(
         'title'         => 'Summary',
