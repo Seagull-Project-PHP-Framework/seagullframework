@@ -91,43 +91,32 @@ Available actions:
 HELP;
     }
 
-    public function _cmd_process(SGL_Registry $input, SGL_Output $output)
-    {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $aOptions = SGL_Config::get('EmailQueueMgr');
-    }
-
     /**
-     * Send the emails using a MTA from the email_queue table.
+     * Send emails from queue.
      *
-     * Example usage:
-     * php www/index.php --moduleName=emailqueue --managerName=EmailQueueMgr
-     *       --action=empty_queue --groupID=1
-     * see conf.ini for configurable options
+     * Example usage: php www/index.php
+     *   --moduleName=emailqueue
+     *   --managerName=emailqueue
+     *   --action=process
+     *   --groupId=1
      *
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    public function _cmd_empty_queue(&$input, &$output)
+    public function _cmd_process(SGL_Registry $input, SGL_Output $output)
     {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-
-        $aOptions = $this->conf['EmailQueueMgr']
-            ? $this->conf['EmailQueueMgr']
-            : array();
+        $aOptions     = $this->conf['EmailQueueMgr'];
         $emailerClass = $this->_getEmailerClass();
-        $mail_queue = new $emailerClass($aOptions);
+        $oQueue       = new $emailerClass($aOptions);
 
-        //sending the messages
-        $res = $mail_queue->processQueue($input->groupID);
-
-        if ($res === true) {
-            $input->terminalOutput .= "\nMail_queue processed correctly\n";
+        $ok = $oQueue->processQueue($input->groupId);
+        if (PEAR::isError($ok)) {
+            $input->tty .= sprintf("Error: %s\n", $ok->getMessage());
         } else {
-            $input->terminalOutput .= "No emails sent from email_queue, mail problem?\n";
+            $input->tty .= "Queue successfully processed...\n";
         }
-
     }
 
     private function _getEmailerClass()
@@ -152,6 +141,7 @@ HELP;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $input->tty .= "\n";
         $this->_flush($input->tty, $stopScript = true);
     }
 

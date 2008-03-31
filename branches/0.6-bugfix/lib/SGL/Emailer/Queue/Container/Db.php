@@ -33,11 +33,12 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      * @param string $body
      * @param string $subject
      * @param string $dateToSend
-     * @param string $groupID
+     * @param string $groupId
      *
      * @return DB_OK
      */
-    public function push($headers, $recipient, $body, $subject, $dateToSend, $groupID = null)
+    public function push($headers, $recipient, $body, $subject, $dateToSend,
+        $groupId)
     {
         $query = sprintf('INSERT INTO email_queue
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
@@ -51,7 +52,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
             $this->_dbh->quoteSmart($subject),
             0,
             SGL_Session::getUid(),
-            $this->_dbh->quoteSmart($groupID)
+            $this->_dbh->quoteSmart($groupId)
         );
         return $this->_dbh->query($query);
     }
@@ -106,18 +107,18 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      *
      * @param integer $limit
      * @param integer $attempts
-     * @param integer $groupID
+     * @param integer $groupId
      *
      * @return void
      */
-    public function preload($limit = null, $attempts = null, $groupID = null)
+    public function preload($limit = null, $attempts = null, $groupId = null)
     {
         $constraint = '';
         if (!empty($attempts)) {
             $constraint = ' AND attempts < ' . intval($attempts);
         }
-        if (!empty($groupID)) {
-            $constraint .= ' AND group_id = ' . intval($groupID);
+        if (!empty($groupId)) {
+            $constraint .= ' AND group_id = ' . intval($groupId);
         }
         $query = "
             SELECT email_queue_id, date_created, date_to_send, date_sent,

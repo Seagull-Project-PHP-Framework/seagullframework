@@ -50,29 +50,29 @@ class SGL_Emailer_Queue
      * @param mixed  $recipient
      * @param string $body
      * @param string $subject
-     * @param string $groupID
+     * @param string $groupId
      *
      * @return boolean
      */
-    public function push($headers, $recipient, $body, $subject = '', $groupID = null)
+    public function push($headers, $recipient, $body, $subject = '', $groupId = null)
     {
         $dateToSend = date("Y-m-d G:i:s", time() + $this->_aOptions['delay']);
         return $this->_container->push(
             serialize($headers),
             serialize($recipient),
-            $body, $subject, $dateToSend, $groupID);
+            $body, $subject, $dateToSend, $groupId);
     }
 
     /**
      * Pops email from queue.
      *
-     * @param string $groupID
+     * @param string $groupId
      *
      * @return object.
      */
-    public function pop($groupID = null)
+    public function pop($groupId = null)
     {
-        $ok = $this->_preload($groupID);
+        $ok = $this->_preload($groupId);
         if (PEAR::isError($ok)) {
             return $ok;
         }
@@ -95,13 +95,13 @@ class SGL_Emailer_Queue
     /**
      * Processes email queue. Sends retrieved emails.
      *
-     * @param string $groupID
+     * @param string $groupId
      *
      * @return boolean
      */
-    public function processQueue($groupID = null, $skipSend = false)
+    public function processQueue($groupId = null, $skipSend = false)
     {
-        while ($email = $this->pop($groupID)) {
+        while ($email = $this->pop($groupId)) {
             if (PEAR::isError($email)) {
                 return $email;
             }
@@ -154,15 +154,17 @@ class SGL_Emailer_Queue
     /**
      * Preloads queue.
      *
+     * @param integer $groupId
+     *
      * @return boolean
      */
-    private function _preload($groupID)
+    private function _preload($groupId)
     {
         if ($this->_container->isPreloaded()) {
             $ret = true;
         } else {
             $ret = $this->_container->preload($this->_aOptions['limit'],
-                $this->_aOptions['attempts'], $groupID);
+                $this->_aOptions['attempts'], $groupId);
         }
         return $ret;
     }

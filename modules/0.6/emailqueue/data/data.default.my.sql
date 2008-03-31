@@ -3,4 +3,4 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'emailqueue', 'EmailQueue', 'The ''
 SELECT @moduleId := MAX(module_id) FROM module;
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'emailqueuemgr', NULL, @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'emailqueuemgr_cmd_empty_queue', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'emailqueuemgr_cmd_process', NULL, @moduleId);
