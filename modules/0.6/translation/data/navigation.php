@@ -1,5 +1,9 @@
 <?php
 $aSections = array(
+
+    /**
+     * Nodes for admin navigation branch.
+     */
     array(
         'title'         => 'Manage Translations',
         'parent_id'     => SGL_NODE_ADMIN,
@@ -24,19 +28,18 @@ $aSections = array(
     ),
 
     /**
-     * @todo add SGL_TRANSLATOR constant to init.php
-     * @todo add SGL_NODE_TRANSLATOR constant to init.php
+     * Nodes for translator navigation branch.
      */
     array(
         'title'         => 'Manage Translations',
-        'parent_id'     => 5,
+        'parent_id'     => SGL_NODE_TRANSLATOR,
         'uriType'       => 'dynamic',
         'module'        => 'translation',
         'manager'       => 'TranslationMgr.php',
         'actionMapping' => '',
         'add_params'    => '',
         'is_enabled'    => 1,
-        'perms'         => 3,
+        'perms'         => SGL_ROLE_TRANSLATOR,
     ),
     array(
         'title'         => 'Summary',
@@ -47,7 +50,7 @@ $aSections = array(
         'actionMapping' => 'summary',
         'add_params'    => '',
         'is_enabled'    => 1,
-        'perms'         => 3,
+        'perms'         => SGL_ROLE_TRANSLATOR,
     )
 );
 ?>
