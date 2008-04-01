@@ -33,17 +33,23 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
             $percentChange = $width > $height
                 ? $newHeight / $height
                 : $newWidth / $width;
-            $scaleWidth = round($width * $percentChange);
+            $scaleWidth  = round($width * $percentChange);
             $scaleHeight = round($height * $percentChange);
+
+            $this->driver->scaleByXY($scaleWidth, $scaleHeight);
         } else {
-            $scaleWidth  = $newWidth;
-            $scaleHeight = $newHeight;
+            if ($newWidth > $newHeight) {
+                $scaleSide = $newWidth;
+                $method    = 'scaleByX';
+            } else {
+                $scaleSide = $newHeight;
+                $method    = 'scaleByY';
+            }
+            $this->driver->{$method}($scaleSide);
         }
 
-        // resize and crop
-        $ret = $this->driver->scaleByXY($scaleWidth, $scaleHeight);
+        // crop
         $ret = $this->driver->crop($newWidth, $newHeight, $newX, $newY);
-
         return $ret;
     }
 }
