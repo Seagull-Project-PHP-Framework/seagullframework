@@ -107,11 +107,13 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      *
      * @param integer $limit
      * @param integer $attempts
+     * @param string $dateToSent
      * @param integer $groupId
      *
      * @return void
      */
-    public function preload($limit = null, $attempts = null, $groupId = null)
+    public function preload($limit = null, $attempts = null,
+        $dateToSent = null, $groupId = null)
     {
         $constraint = '';
         if (!empty($attempts)) {
@@ -120,12 +122,23 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
         if (!empty($groupId)) {
             $constraint .= ' AND group_id = ' . intval($groupId);
         }
+        if (!empty($dateToSent)) {
+            if (strpos($dateToSent, ' ') !== false) {
+                $constraint .= ' AND date_to_send <= '
+                    . $this->_dbh->quoteSmart($dateToSent);
+            } else {
+                $constraint .= ' AND DATE(date_to_send) = '
+                    . $this->_dbh->quoteSmart($dateToSent);
+            }
+        } else {
+            $constraint .= ' AND date_to_send <= NOW()';
+        }
         $query = "
             SELECT email_queue_id, date_created, date_to_send, date_sent,
                    mail_headers, mail_recipient, mail_body, mail_subject,
                    date_sent, usr_id, group_id
             FROM   email_queue
-            WHERE  date_to_send <= NOW() AND date_sent IS NULL
+            WHERE  date_sent IS NULL
                    $constraint
         ";
         if (!empty($limit)) {
