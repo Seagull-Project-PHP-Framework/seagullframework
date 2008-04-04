@@ -121,7 +121,9 @@ class SGL_TaskRunner
                 $data = get_class($oTask) .': '. $err;
                 error_log($data);
             }
-            $ret[] = $return;
+            if (!isset($err) || $err == 'ok') {
+                $ret[] = $return;
+            }
         }
         return implode('', $ret);
     }

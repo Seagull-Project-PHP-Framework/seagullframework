@@ -177,8 +177,7 @@ require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
 //  setup temporary logging for Seagull install
-$tmpDir = SGL_Util::getTmpDir();
-$log = "$tmpDir/install.log";
+$log = "$varDir/install.log";
 $ok = @ini_set('error_log', $log);
 
 
