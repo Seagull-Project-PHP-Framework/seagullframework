@@ -69,7 +69,8 @@ class EmailQueueMgr extends SGL_Manager
         $input->action   = $req->get('action') ? $req->get('action') : 'list';
         $input->tty      = "\n";
 
-        $input->groupId = $req->get('groupId');
+        $input->groupId      = $req->get('groupId');
+        $input->deliveryDate = $req->get('deliveryDate');
     }
 
     /**
@@ -86,6 +87,7 @@ class EmailQueueMgr extends SGL_Manager
 Available actions:
   1. process            process emails in queue
        --groupId          process emails of certain group only
+       --deliveryDate     process emails of specified date
 
 
 HELP;
@@ -111,7 +113,7 @@ HELP;
         $emailerClass = $this->_getEmailerClass();
         $oQueue       = new $emailerClass($aOptions);
 
-        $ok = $oQueue->processQueue($input->groupId);
+        $ok = $oQueue->processQueue($input->deliveryDate, $input->groupId);
         if (PEAR::isError($ok)) {
             $input->tty .= sprintf("Error: %s\n", $ok->getMessage());
         } else {
