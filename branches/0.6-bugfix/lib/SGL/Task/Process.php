@@ -494,8 +494,8 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         $aWords = SGL_Translation::getTranslations($moduleDefault, $lang);
         if ($moduleCurrent != $moduleDefault) {
             $aWords = array_merge(
-                SGL_Translation::getTranslations($moduleCurrent, $lang),
-                $aWords
+                $aWords,
+                SGL_Translation::getTranslations($moduleCurrent, $lang)
             );
         }
 
