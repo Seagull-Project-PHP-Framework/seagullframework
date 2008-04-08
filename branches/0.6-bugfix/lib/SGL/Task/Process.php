@@ -920,8 +920,10 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         }
 
         // request data
-        $output->remoteIp = $_SERVER['REMOTE_ADDR'];
-        $output->currUrl  = $_SERVER['PHP_SELF'];
+        if (!SGL::runningFromCLI()) {
+            $output->remoteIp = $_SERVER['REMOTE_ADDR'];
+            $output->currUrl  = $_SERVER['PHP_SELF'];
+        }
 
         // lang data
         $output->currLang     = SGL::getCurrentLang();
