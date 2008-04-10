@@ -40,7 +40,8 @@ class SGL_Emailer_Queue
     public function SGL_Emailer_Queue($aOptions = array())
     {
         $this->_aOptions  = array_merge($this->_aOptions, $aOptions);
-        $this->_container = SGL_Emailer_Queue_Container::factory($this->_aOptions['container']);
+        $this->_container = SGL_Emailer_Queue_Container::factory(
+            $this->_aOptions['container']);
     }
 
     /**
@@ -58,7 +59,10 @@ class SGL_Emailer_Queue
     public function push($headers, $recipient, $body, $subject = '',
         $groupId = null, $userId = null)
     {
-        $dateToSend = date("Y-m-d G:i:s", time() + $this->_aOptions['delay']);
+        $dateToSend = is_int($this->_aOptions['delay'])
+                || empty($this->_aOptions['delay'])
+            ? date("Y-m-d G:i:s", time() + $this->_aOptions['delay'])
+            : $this->_aOptions['delay'];
         return $this->_container->push(
             serialize($headers),
             serialize($recipient),
@@ -174,8 +178,12 @@ class SGL_Emailer_Queue
         if ($this->_container->isPreloaded()) {
             $ret = true;
         } else {
-            $ret = $this->_container->preload($this->_aOptions['limit'],
-                $this->_aOptions['attempts'], $deliveryDate, $groupId);
+            $ret = $this->_container->preload(
+                $this->_aOptions['limit'],
+                $this->_aOptions['attempts'],
+                $deliveryDate,
+                $groupId
+            );
         }
         return $ret;
     }
