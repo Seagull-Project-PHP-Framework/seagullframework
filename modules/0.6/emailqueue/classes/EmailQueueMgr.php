@@ -58,6 +58,7 @@ class EmailQueueMgr extends SGL_Manager
         $this->_aActionsMapping = array(
             'list'    => array('list', 'cliResult'),
             'process' => array('process','cliResult'),
+            'flush'   => array('flush', 'process', 'cliResult')
         );
     }
 
@@ -89,6 +90,8 @@ Available actions:
        --groupId          process emails of certain group only
        --deliveryDate     process emails of specified date
 
+  2. flush              process all emails in queue, same as
+                        --action=process --deliveryDate=all
 
 HELP;
     }
@@ -125,6 +128,11 @@ HELP;
             $msg = "Messages proccesed %s; sent: %s\n";
             $input->tty .= sprintf($msg, $aRet['processed'], $aRet['sent']);
         }
+    }
+
+    public function _cmd_flush(SGL_Registry $input, SGL_Output $output)
+    {
+        $input->deliveryDate = 'all';
     }
 
     /**
