@@ -109,28 +109,22 @@ HELP;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $aOptions     = $this->conf['EmailQueueMgr'];
-        $emailerClass = $this->_getEmailerClass();
-        $oQueue       = new $emailerClass($aOptions);
+        // header
+        $msg = "Notice: `removeSent` option is set, processed messages"
+            . " will be removed from queue\n";
+        $input->tty .= $msg;
+        $this->_flush($input->tty);
 
-        $ok = $oQueue->processQueue($input->deliveryDate, $input->groupId);
-        if (PEAR::isError($ok)) {
-            $input->tty .= sprintf("Error: %s\n", $ok->getMessage());
-        } else {
-            $input->tty .= "Queue successfully processed...\n";
-        }
-    }
+        // process queue
+        $oQueue = new SGL_Emailer_Queue($this->conf['EmailQueueMgr']);
+        $aRet   = $oQueue->processQueue($input->deliveryDate, $input->groupId);
 
-    private function _getEmailerClass()
-    {
-        if (SGL_Config::get('EmailQueueMgr.customEmailer')) {
-            $className = SGL_Config::get('EmailQueueMgr.customEmailer');
-            $path = trim(preg_replace('/_/', '/', $className)) . '.php';
-            require_once SGL_LIB_DIR . '/' . $path;
+        if (PEAR::isError($aRet)) {
+            $input->tty .= sprintf("Error: %s\n", $aRet->getMessage());
         } else {
-            $className = 'SGL_Emailer_Queue';
+            $msg = "Messages proccesed %s; sent: %s\n";
+            $input->tty .= sprintf($msg, $aRet['processed'], $aRet['sent']);
         }
-        return $className;
     }
 
     /**

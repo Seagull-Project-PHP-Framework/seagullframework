@@ -51,16 +51,18 @@ class SGL_Emailer_Queue
      * @param string $body
      * @param string $subject
      * @param string $groupId
+     * @param integer $userId
      *
      * @return boolean
      */
-    public function push($headers, $recipient, $body, $subject = '', $groupId = null)
+    public function push($headers, $recipient, $body, $subject = '',
+        $groupId = null, $userId = null)
     {
         $dateToSend = date("Y-m-d G:i:s", time() + $this->_aOptions['delay']);
         return $this->_container->push(
             serialize($headers),
             serialize($recipient),
-            $body, $subject, $dateToSend, $groupId);
+            $body, $subject, $dateToSend, $groupId, $userId);
     }
 
     /**
@@ -105,6 +107,7 @@ class SGL_Emailer_Queue
     public function processQueue($deliveryDate = null, $groupId = null,
         $skipSend = false)
     {
+        $processed = $sent = 0;
         while ($email = $this->pop($deliveryDate, $groupId)) {
             if (PEAR::isError($email)) {
                 return $email;
@@ -117,6 +120,7 @@ class SGL_Emailer_Queue
                 if (PEAR::isError($ok) || $ok === false) {
                     // email was not send
                     $this->_container->increaseAttemptCount($id);
+                    $sent++;
                     continue;
                 }
             }
@@ -127,8 +131,10 @@ class SGL_Emailer_Queue
             if (PEAR::isError($ok)) {
                 return $ok;
             }
+
+            $processed++;
         }
-        return true;
+        return array('processed' => $processed, 'sent' => $sent);
     }
 
     /**
