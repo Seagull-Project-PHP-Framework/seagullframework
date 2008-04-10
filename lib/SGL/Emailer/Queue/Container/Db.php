@@ -123,7 +123,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
         if (!empty($groupId)) {
             $constraint .= ' AND group_id = ' . intval($groupId);
         }
-        if (!empty($dateToSent)) {
+        if (!empty($dateToSent) && $dateToSent != 'all') {
             if (strpos($dateToSent, ' ') !== false) {
                 $constraint .= ' AND date_to_send <= '
                     . $this->_dbh->quoteSmart($dateToSent);
@@ -131,7 +131,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
                 $constraint .= ' AND DATE(date_to_send) = '
                     . $this->_dbh->quoteSmart($dateToSent);
             }
-        } else {
+        } elseif ($dateToSent != 'all') {
             $constraint .= ' AND date_to_send <= NOW()';
         }
         $query = "
