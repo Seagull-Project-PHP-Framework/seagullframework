@@ -48,11 +48,12 @@ abstract class SGL_Emailer_Queue_Container
      * @param string $subject
      * @param string $dateToSend
      * @param string $groupId
+     * @param integer $userId
      *
      * @return void
      */
     public function push($headers, $recipient, $body, $subject, $dateToSend,
-        $groupId)
+        $groupId, $userId)
     {
         return SGL::raiseError('Not implemented', SGL_ERROR_NOMETHOD);
     }
