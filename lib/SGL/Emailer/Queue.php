@@ -124,8 +124,9 @@ class SGL_Emailer_Queue
                 if (PEAR::isError($ok) || $ok === false) {
                     // email was not send
                     $this->_container->increaseAttemptCount($id);
-                    $sent++;
                     continue;
+                } else {
+                    $sent++;
                 }
             }
             // email sent successfully at this point, now do smth with it
