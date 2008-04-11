@@ -5,6 +5,9 @@
  *
  * @package seagull
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ *
+ * USAGE:
+ * php www/index.php --moduleName=siteexporter --managerName=siteexporter --action=run --url="user/login"
  */
 class SiteExporterMgr extends SGL_Manager
 {
@@ -155,7 +158,7 @@ HELP;
     {
         if (!is_writeable($dir)) {
             require_once 'System.php';
-            System::mkDir($dir);
+            $ok = System::mkDir($dir);
             $mask = umask(0);
             chmod($dir, 0777);
             umask($mask);
