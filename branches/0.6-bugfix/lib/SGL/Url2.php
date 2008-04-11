@@ -182,7 +182,7 @@ class SGL_URL2
         }
 
         // rename managerName -> controller
-        if (isset($aParams['managerName'])) {
+        if (is_array($aParams) && isset($aParams['managerName'])) {
             if ($aParams['moduleName'] != $aParams['managerName']) {
                 $aParams['controller'] = $aParams['managerName'];
             }
