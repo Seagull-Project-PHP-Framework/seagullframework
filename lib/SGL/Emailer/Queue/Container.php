@@ -47,13 +47,14 @@ abstract class SGL_Emailer_Queue_Container
      * @param string $body
      * @param string $subject
      * @param string $dateToSend
-     * @param string $groupId
+     * @param integer $groupId
+     * @param integer $batchId
      * @param integer $userId
      *
      * @return void
      */
     public function push($headers, $recipient, $body, $subject, $dateToSend,
-        $groupId, $userId)
+        $groupId, $batchId, $userId)
     {
         return SGL::raiseError('Not implemented', SGL_ERROR_NOMETHOD);
     }
@@ -75,11 +76,13 @@ abstract class SGL_Emailer_Queue_Container
      *
      * @param integer $limit
      * @param integer $attempts
-     * @param integer $groupId
+     * @param string $deliveryDate
+     * @param array $aParams
      *
      * @return void
      */
-    public function preload($limit = null, $attempts = null, $groupId = null)
+    public function preload($limit = null, $attempts = null,
+        $deliveryDate = null, $aParams = null)
     {
         return SGL::raiseError('Not implemented', SGL_ERROR_NOMETHOD);
     }
