@@ -124,7 +124,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
         }
         if (is_array($aParams)) {
             foreach ($aParams as $field => $val) {
-                $constraint = " AND $field = " . $this->dbh->quoteSmart($val);
+                $constraint = " AND $field = " . $this->_dbh->quoteSmart($val);
             }
         }
         if (!empty($dateToSent) && $dateToSent != 'all') {

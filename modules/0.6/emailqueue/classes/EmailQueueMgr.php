@@ -123,7 +123,7 @@ HELP;
 
         // get config
         $conf = $this->conf['EmailQueueMgr'];
-        if (!empty($conf['limit'])) {
+        if (!empty($input->limit)) {
             $conf['limit'] = $input->limit;
         }
         // queue params
