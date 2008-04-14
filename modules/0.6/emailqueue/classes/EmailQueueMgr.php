@@ -72,6 +72,7 @@ class EmailQueueMgr extends SGL_Manager
 
         $input->groupId      = $req->get('groupId');
         $input->deliveryDate = $req->get('deliveryDate');
+        $input->limit        = $req->get('limit');
     }
 
     /**
@@ -89,6 +90,8 @@ Available actions:
   1. process            process emails in queue
        --groupId          process emails of certain group only
        --deliveryDate     process emails of specified date
+       --limit            process only certain number of emails
+                          (unlimited by default)
 
   2. flush              process all emails in queue, same as
                         --action=process --deliveryDate=all
@@ -118,8 +121,14 @@ HELP;
         $input->tty .= $msg;
         $this->_flush($input->tty);
 
+        // get config
+        $conf = $this->conf['EmailQueueMgr'];
+        if (!empty($conf['limit'])) {
+            $conf['limit'] = $input->limit;
+        }
+
         // process queue
-        $oQueue = new SGL_Emailer_Queue($this->conf['EmailQueueMgr']);
+        $oQueue = new SGL_Emailer_Queue($conf);
         $aRet   = $oQueue->processQueue($input->deliveryDate, $input->groupId);
 
         if (PEAR::isError($aRet)) {
