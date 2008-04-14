@@ -73,6 +73,7 @@ class EmailQueueMgr extends SGL_Manager
         $input->batchId      = $req->get('batchId');
         $input->deliveryDate = $req->get('deliveryDate');
         $input->limit        = $req->get('limit');
+        $input->interval     = $req->get('interval');
     }
 
     /**
@@ -92,6 +93,8 @@ Available actions:
        --deliveryDate     process emails of specified date
        --limit            process only certain number of emails
                           (unlimited by default)
+       --interval         delay in seconds between every email
+                          (anti-spam measure)
 
   2. flush              process all emails in queue, same as
                         --action=process --deliveryDate=all
@@ -134,7 +137,8 @@ HELP;
 
         // process queue
         $oQueue = new SGL_Emailer_Queue($conf);
-        $aRet   = $oQueue->processQueue($input->deliveryDate, $aParams);
+        $aRet   = $oQueue->processQueue($input->deliveryDate,
+            $input->interval, $aParams);
 
         if (PEAR::isError($aRet)) {
             $input->tty .= sprintf("Error: %s\n", $aRet->getMessage());

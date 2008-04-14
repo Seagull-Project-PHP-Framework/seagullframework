@@ -104,13 +104,14 @@ class SGL_Emailer_Queue
      * Processes email queue. Sends retrieved emails.
      *
      * @param string $deliveryDate
+     * @param integer $interval
      * @param array $aParams
      * @param integer $skipSend
      *
      * @return boolean
      */
-    public function processQueue($deliveryDate = null, $aParams = null,
-        $skipSend = false)
+    public function processQueue($deliveryDate = null, $interval = null,
+        $aParams = null, $skipSend = false)
     {
         $processed = $sent = 0;
         while ($email = $this->pop($deliveryDate, $aParams)) {
@@ -120,6 +121,9 @@ class SGL_Emailer_Queue
             $id = $this->_container->identifyEmail($email);
 
             if (!$skipSend) { // need this flag for test purpose
+                if ($interval && $sent) {
+                    sleep($interval);
+                }
                 // try to send the email
                 $ok = $this->send($email);
                 if (PEAR::isError($ok) || $ok === false) {
