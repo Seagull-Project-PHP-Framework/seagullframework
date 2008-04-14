@@ -34,15 +34,16 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      * @param string $subject
      * @param string $dateToSend
      * @param string $groupId
+     * @param integer $batchId
      * @param integer $userId
      *
      * @return DB_OK
      */
     public function push($headers, $recipient, $body, $subject, $dateToSend,
-        $groupId, $userId)
+        $groupId, $batchId, $userId)
     {
         $query = sprintf('INSERT INTO email_queue
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
             $this->_dbh->nextId('email_queue'),
             'NOW()',
             $this->_dbh->quoteSmart($dateToSend),
@@ -53,7 +54,8 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
             $this->_dbh->quoteSmart($subject),
             0,
             $this->_dbh->quoteSmart($userId),
-            $this->_dbh->quoteSmart($groupId)
+            $this->_dbh->quoteSmart($groupId),
+            $this->_dbh->quoteSmart($batchId)
         );
         return $this->_dbh->query($query);
     }
@@ -109,19 +111,21 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      * @param integer $limit
      * @param integer $attempts
      * @param string $dateToSent
-     * @param integer $groupId
+     * @param array $aParams
      *
      * @return void
      */
     public function preload($limit = null, $attempts = null,
-        $dateToSent = null, $groupId = null)
+        $dateToSent = null, $aParams = null)
     {
         $constraint = '';
         if (!empty($attempts)) {
             $constraint = ' AND attempts < ' . intval($attempts);
         }
-        if (!empty($groupId)) {
-            $constraint .= ' AND group_id = ' . intval($groupId);
+        if (is_array($aParams)) {
+            foreach ($aParams as $field => $val) {
+                $constraint = " AND $field = " . $this->dbh->quoteSmart($val);
+            }
         }
         if (!empty($dateToSent) && $dateToSent != 'all') {
             if (strpos($dateToSent, ' ') !== false) {

@@ -51,13 +51,14 @@ class SGL_Emailer_Queue
      * @param mixed  $recipient
      * @param string $body
      * @param string $subject
-     * @param string $groupId
+     * @param integer $groupId
+     * @param integer $batchId
      * @param integer $userId
      *
      * @return boolean
      */
     public function push($headers, $recipient, $body, $subject = '',
-        $groupId = null, $userId = null)
+        $groupId = null, $batchId = null, $userId = null)
     {
         $dateToSend = is_int($this->_aOptions['delay'])
                 || empty($this->_aOptions['delay'])
@@ -66,20 +67,20 @@ class SGL_Emailer_Queue
         return $this->_container->push(
             serialize($headers),
             serialize($recipient),
-            $body, $subject, $dateToSend, $groupId, $userId);
+            $body, $subject, $dateToSend, $groupId, $batchId, $userId);
     }
 
     /**
      * Pops email from queue.
      *
      * @param string $deliveryDate
-     * @param string $groupId
+     * @param array $aParams
      *
      * @return object.
      */
-    public function pop($deliveryDate = null, $groupId = null)
+    public function pop($deliveryDate = null, $aParams = null)
     {
-        $ok = $this->_preload($deliveryDate, $groupId);
+        $ok = $this->_preload($deliveryDate, $aParams);
         if (PEAR::isError($ok)) {
             return $ok;
         }
@@ -103,16 +104,16 @@ class SGL_Emailer_Queue
      * Processes email queue. Sends retrieved emails.
      *
      * @param string $deliveryDate
-     * @param string $groupId
+     * @param array $aParams
      * @param integer $skipSend
      *
      * @return boolean
      */
-    public function processQueue($deliveryDate = null, $groupId = null,
+    public function processQueue($deliveryDate = null, $aParams = null,
         $skipSend = false)
     {
         $processed = $sent = 0;
-        while ($email = $this->pop($deliveryDate, $groupId)) {
+        while ($email = $this->pop($deliveryDate, $aParams)) {
             if (PEAR::isError($email)) {
                 return $email;
             }
@@ -170,11 +171,11 @@ class SGL_Emailer_Queue
      * Preloads queue.
      *
      * @param string $deliveryDate
-     * @param integer $groupId
+     * @param array $aParams
      *
      * @return boolean
      */
-    private function _preload($deliveryDate, $groupId)
+    private function _preload($deliveryDate, $aParams)
     {
         if ($this->_container->isPreloaded()) {
             $ret = true;
@@ -183,7 +184,7 @@ class SGL_Emailer_Queue
                 $this->_aOptions['limit'],
                 $this->_aOptions['attempts'],
                 $deliveryDate,
-                $groupId
+                $aParams
             );
         }
         return $ret;

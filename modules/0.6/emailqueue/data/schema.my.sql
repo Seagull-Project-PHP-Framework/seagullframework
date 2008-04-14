@@ -13,6 +13,7 @@ CREATE TABLE `email_queue` (
   `attempts` smallint NOT NULL default 0,
   `usr_id` int(11) DEFAULT NULL,
   `group_id` int(11) DEFAULT NULL,
+  `batch_id` int(11) DEFAULT NULL,
 
   PRIMARY KEY(`email_queue_id`),
   KEY (`date_to_send`),

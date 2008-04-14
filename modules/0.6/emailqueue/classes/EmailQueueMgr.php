@@ -70,7 +70,7 @@ class EmailQueueMgr extends SGL_Manager
         $input->action   = $req->get('action') ? $req->get('action') : 'list';
         $input->tty      = "\n";
 
-        $input->groupId      = $req->get('groupId');
+        $input->batchId      = $req->get('batchId');
         $input->deliveryDate = $req->get('deliveryDate');
         $input->limit        = $req->get('limit');
     }
@@ -88,7 +88,7 @@ class EmailQueueMgr extends SGL_Manager
         $input->tty .= <<< HELP
 Available actions:
   1. process            process emails in queue
-       --groupId          process emails of certain group only
+       --batchId          process emails by certain batch id
        --deliveryDate     process emails of specified date
        --limit            process only certain number of emails
                           (unlimited by default)
@@ -126,10 +126,15 @@ HELP;
         if (!empty($conf['limit'])) {
             $conf['limit'] = $input->limit;
         }
+        // queue params
+        $aParams = array();
+        if (!empty($input->batchId)) {
+            $aParams['batch_id'] = $input->batchId;
+        }
 
         // process queue
         $oQueue = new SGL_Emailer_Queue($conf);
-        $aRet   = $oQueue->processQueue($input->deliveryDate, $input->groupId);
+        $aRet   = $oQueue->processQueue($input->deliveryDate, $aParams);
 
         if (PEAR::isError($aRet)) {
             $input->tty .= sprintf("Error: %s\n", $aRet->getMessage());
