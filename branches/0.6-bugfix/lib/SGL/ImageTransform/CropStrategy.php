@@ -11,19 +11,13 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        $newWidth  = isset($this->aParams['width'])
-            ? $this->aParams['width'] : null;
-        $newHeight = isset($this->aParams['height'])
-            ? $this->aParams['height'] : null;
-
         // both params must be specified
-        if (empty($newWidth) || empty($newHeight)) {
-            return true;
+        if (empty($this->aParams['width']) || empty($this->aParams['height'])) {
+            return false;
         }
 
-        // crop by default from left top corner
-        $newX = 0;
-        $newY = 0;
+        $newWidth  = $this->aParams['width'];
+        $newHeight = $this->aParams['height'];
 
         // get size of current image
         list($width, $height) = $this->driver->getImageSize();
@@ -47,6 +41,14 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
             }
             $this->driver->{$method}($scaleSide);
         }
+
+        // get size of current (transformed) image
+        $width  = $this->driver->getCurrentImageWidth();
+        $height = $this->driver->getCurrentImageHeight();
+
+        // center
+        $newX = round(($width - $newWidth) / 2);
+        $newY = round(($height - $newHeight) / 2);
 
         // crop
         $ret = $this->driver->crop($newWidth, $newHeight, $newX, $newY);
