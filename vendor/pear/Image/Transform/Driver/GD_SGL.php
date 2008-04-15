@@ -232,6 +232,26 @@ class Image_Transform_Driver_GD_SGL extends Image_Transform_Driver_GD
         return true;
     }
 
+    function getCurrentImageWidth()
+    {
+        if (is_resource($this->imageHandle)) {
+            $ret = imagesx($this->imageHandle);
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
+    function getCurrentImageHeight()
+    {
+        if (is_resource($this->imageHandle)) {
+            $ret = imagesy($this->imageHandle);
+        } else {
+            $ret = false;
+        }
+        return $ret;
+    }
+
     function _createImage($width = -1, $height = -1, $trueColor = null)
     {
         $new_img = parent::_createImage($width, $height, $trueColor);
