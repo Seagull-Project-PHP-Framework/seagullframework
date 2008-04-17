@@ -1170,7 +1170,9 @@ class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
                 : '';
             $output->debug_action = $output->action;
             $output->debug_section = $output->sectionId;
-            $output->debug_master_template = $output->masterTemplate;
+            $output->debug_master_template = isset($output->masterTemplate)
+                ? $output->masterTemplate
+                : '';
             $output->debug_template = $output->template;
             $output->debug_theme = $output->theme;
 
