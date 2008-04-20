@@ -158,7 +158,7 @@ HELP;
     {
         if (!is_writeable($dir)) {
             require_once 'System.php';
-            $ok = System::mkDir($dir);
+            $ok = System::mkDir(array('-p', $dir));
             $mask = umask(0);
             chmod($dir, 0777);
             umask($mask);
