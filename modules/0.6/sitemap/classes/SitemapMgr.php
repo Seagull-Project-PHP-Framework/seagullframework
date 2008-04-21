@@ -48,17 +48,19 @@ class SitemapMgr extends SGL_Manager
             $oSitemap = new SGL_Sitemap(SGL_Config::get('SitemapMgr.xmlns'));
 
             // add strategies
-            $aStrategies = explode(',', SGL_Config::get('SitemapMgr.strategies'));
+            $aStrategies = explode(';', SGL_Config::get('SitemapMgr.strategies'));
             foreach ($aStrategies as $strategyString) {
 
                 // get strategy params
                 $aParams = array();
                 if (strpos($strategyString, ':') !== false) {
                     $aRawParams = explode(':', trim($strategyString));
-                    $strategy = array_shift($aRawParams);
-                    for ($i = 0, $cnt = count($aRawParams); $i < $cnt; $i = $i + 2) {
-                        if (isset($aRawParams[$i]) && isset($aRawParams[$i + 1])) {
-                            $aParams[$aRawParams[$i]] = $aRawParams[$i + 1];
+                    $strategy   = trim(array_shift($aRawParams));
+                    $aRawParams = explode(',', implode(':', $aRawParams));
+                    foreach ($aRawParams as $paramString) {
+                        $aParamValue = explode(':', trim($paramString));
+                        if (!empty($aParamValue[1])) {
+                            $aParams[trim($aParamValue[0])] = trim($aParamValue[1]);
                         }
                     }
                 } else {
@@ -71,6 +73,7 @@ class SitemapMgr extends SGL_Manager
                     $oSitemap->addStrategy(new $strategyClass($aParams));
                 }
             }
+            exit;
             try {
                 $oSitemap->generate();
                 $output->sitemap = $oSitemap;
