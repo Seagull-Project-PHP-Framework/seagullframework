@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+21-04-08    Fixed problem with ordering blocks [3753] (alexanders)
 26-02-08    UserAjaxProvider filter chain fixed with addresses ajax unique username
             search prob (rzur2004)
 26-02-08    section.trans_id was not being added when creating new navigation (rzur2004)
