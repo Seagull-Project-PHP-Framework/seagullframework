@@ -25,7 +25,7 @@ function getSystemTime()
  *
  * @return string
  */
-function getRootDir()
+function getAppRootDir()
 {
     if (isset($_SERVER['SCRIPT_FILENAME'])) {
         $aPath = explode(DIRECTORY_SEPARATOR, $_SERVER['SCRIPT_FILENAME']);
@@ -40,7 +40,7 @@ function getRootDir()
 // start timer
 define('SGL_START_TIME', getSystemTime());
 
-$rootDir = getRootDir();
+$rootDir = getAppRootDir();
 $varDir  = "$rootDir/var";
 
 // check for lib cache
