@@ -20,11 +20,28 @@ function getSystemTime()
     return $resultTime;
 }
 
+/**
+ * Get application root dir.
+ *
+ * @return string
+ */
+function getRootDir()
+{
+    if (isset($_SERVER['SCRIPT_FILENAME'])) {
+        $aPath = explode(DIRECTORY_SEPARATOR, $_SERVER['SCRIPT_FILENAME']);
+        $aPath = array_slice($aPath, 0, count($aPath) - 3);
+        $ret   = implode(DIRECTORY_SEPARATOR, $aPath);
+    } else {
+        $ret = realpath(dirname(__FILE__) . '/../../..');
+    }
+    return $ret;
+}
+
 // start timer
 define('SGL_START_TIME', getSystemTime());
 
-$rootDir = dirname(__FILE__) . '/../../..';
-$varDir  = dirname(__FILE__) . '/../../../var';
+$rootDir = getRootDir();
+$varDir  = "$rootDir/var";
 
 // check for lib cache
 define('SGL_CACHE_LIBS', is_file($varDir . '/ENABLE_LIBCACHE.txt'));
