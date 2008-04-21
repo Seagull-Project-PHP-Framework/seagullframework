@@ -880,3 +880,44 @@ a.clearSearch:hover {
 #debug a, #debug a:visited {
     color: #CCCCCC;
 }
+
+
+/* Debug panel */
+div#debugPanel {
+    position: absolute;
+    z-index: 9999;
+    top: 0;
+    right: 0;
+    overflow: auto;
+    border: 1px black solid;
+    margin: 10px;
+    min-width: 150px;
+    height: 300px;
+    padding: 5px 10px;
+    background-color: #808080;
+    opacity: 0.9;
+    font-size: 0.9em;
+    color: #333;
+    text-align: left;
+}
+    div#debugPanel h3 {
+        margin-bottom: 0.5em;
+        color: #fff;
+    }
+    div#debugPanel a {
+        color: #ccc;
+        text-decoration: none;
+    }
+    div#debugPanel dl {
+        margin-bottom: 0;
+    }
+        div#debugPanel dl dt {
+            margin-bottom: 0.2em;
+            font-weight: normal
+        }
+        div#debugPanel dl dd {
+            margin-left: 0;
+            margin-bottom: 0.5em;
+        }
+/* END debug panel
+
