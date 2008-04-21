@@ -73,7 +73,6 @@ class SitemapMgr extends SGL_Manager
                     $oSitemap->addStrategy(new $strategyClass($aParams));
                 }
             }
-            exit;
             try {
                 $oSitemap->generate();
                 $output->sitemap = $oSitemap;
