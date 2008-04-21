@@ -67,10 +67,21 @@ class SitemapMgr extends SGL_Manager
                     $strategy = trim($strategyString);
                 }
 
-                require_once "Sitemap/$strategy.php";
-                $strategyClass = 'SGL_Sitemap_' . $strategy;
-                if (class_exists($strategyClass)) {
-                    $oSitemap->addStrategy(new $strategyClass($aParams));
+                // spelling check
+                if (empty($strategy)) {
+                    continue;
+                }
+
+                // get strat filename
+                $aPath = explode('_', $strategy);
+                if ($aPath[0] == 'SGL') {
+                    array_shift($aPath);
+                }
+                $strategyFile = implode(DIRECTORY_SEPARATOR, $aPath) . '.php';
+
+                require_once $strategyFile;
+                if (class_exists($strategy)) {
+                    $oSitemap->addStrategy(new $strategy($aParams));
                 }
             }
             try {
