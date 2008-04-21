@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{webRoot}/js/openWin.js"></script>
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/openWin.js"></script>
 <div id="manager-actions">
     <a class="action upload" href="javascript:formSubmit('NewsletterMgr','submitted',1,1)">{translate(#Send#)}</a>
 </div>
@@ -27,7 +27,7 @@
 				<span class="error" flexy:if="error[group]">{translate(error[group])}</span>
 				<div id="newsletterLists">{generateCheckboxList(roleList,groups,#frmGroups[]#):h}</div>
 	         </p>
-	         
+
 	         <p>
 			   	<label for="frmNewsList[]"><span class="required"></span>{translate(#To newslists#)}</label>
 			   	<span class="error" flexy:if="error[newslist]">{translate(error[newslist])}</span>
