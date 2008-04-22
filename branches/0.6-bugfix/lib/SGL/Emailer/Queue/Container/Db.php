@@ -141,7 +141,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
         $query = "
             SELECT email_queue_id, date_created, date_to_send, date_sent,
                    mail_headers, mail_recipient, mail_body, mail_subject,
-                   date_sent, usr_id, group_id
+                   date_sent, usr_id, group_id, batch_id
             FROM   email_queue
             WHERE  date_sent IS NULL
                    $constraint
