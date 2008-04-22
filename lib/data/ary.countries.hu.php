@@ -1,6 +1,5 @@
 <?php
 $countries = array(
-    ''   => '',
     'AD' => 'Andorra',
     'AE' => 'Egyesült Arab Emirátus',
     'AF' => 'Afganisztán',
