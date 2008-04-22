@@ -1,5 +1,5 @@
 <?php
-require 'Sitemap.php';
+require SGL_MOD_DIR . '/sitemap/lib/Sitemap.php';
 
 /**
  * A manager to build SITEMAP 0.9 compliant XML.
@@ -75,9 +75,12 @@ class SitemapMgr extends SGL_Manager
                 // get strat filename
                 $aPath = explode('_', $strategy);
                 if ($aPath[0] == 'SGL') {
-                    array_shift($aPath);
+                    $strategyFile = SGL_MOD_DIR
+                        . '/sitemap/lib/Sitemap/'
+                        . array_pop($aPath) . '.php';
+                } else {
+                    $strategyFile = implode(DIRECTORY_SEPARATOR, $aPath) . '.php';
                 }
-                $strategyFile = implode(DIRECTORY_SEPARATOR, $aPath) . '.php';
 
                 require_once $strategyFile;
                 if (class_exists($strategy)) {
