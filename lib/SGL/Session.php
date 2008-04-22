@@ -940,7 +940,7 @@ class SGL_Session
     function isFirstAnonRequest()
     {
         static $ret;
-        if (SGL_Session::getRoleId() == SGL_GUEST) {
+        if (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAnonRequest']);
             if (!isset($_SESSION['isFirstAnonRequest'])) {
                 $_SESSION['isFirstAnonRequest'] = true;
@@ -961,7 +961,7 @@ class SGL_Session
     function isFirstAuthenticatedRequest()
     {
         static $ret;
-        if (SGL_Session::getRoleId() > SGL_GUEST) {
+        if (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAuthRequest']);
             if (!isset($_SESSION['isFirstAuthRequest'])) {
                 $_SESSION['isFirstAuthRequest'] = true;
