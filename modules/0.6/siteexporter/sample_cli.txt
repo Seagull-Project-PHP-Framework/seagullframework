@@ -1,1 +1,0 @@
-LakiBoys-Machine:0.6-bugfix lakiboy$ php www/index.php --moduleName=siteexporter --managerName=siteexporter --action=runCollection --baseUrl=http://localhost/seagullproject/branches/0.6-bugfix/www --dir=/user

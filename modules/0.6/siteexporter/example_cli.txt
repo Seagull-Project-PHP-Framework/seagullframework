@@ -1,0 +1,61 @@
+---------------------
+1. EXPORT SINGLE FILE
+---------------------
+
+a) Command:
+
+   php www/index.php --moduleName=siteexporter --managerName=siteexporter --action=run --url=user/login --baseUrl=http://seagullproject --ext=phtml
+
+b) Description:
+
+   php www/index.php                |  run SGL in CLI mode
+   --moduleName=siteexporter        |  in `siteexporter` module
+   --managerName=siteexporter       |  look for `siteexporter` manager
+   --url=user/login                 |  export URL `http://base-url-from-config/front-controller/user/login/`
+   --baseUrl=http://seagullproject  |  replace current base URL with specified value
+                                    |  i.e. `http://base-url-from-config/front-controller`
+                                    |  will be replaced with
+                                    |  `http://seagullproject` for SGL URLs
+   --ext=phtml                      |  append `phtml` extension to saved file
+                                    |  (note: default extension is `html`)
+
+c) Result:
+
+   File is saved to "<sgl-web-dir>/user/login.phtml", thus can
+   be accessible as `http://base-url-from-config/user/login.phtml`.
+
+------------------------
+2. EXPORT MULTIPLE FILES
+------------------------
+
+a) Command:
+
+   php www/index.php --moduleName=siteexporter --managerName=siteexporter --action=runCollection --baseUrl=http://seagullproject --dir=/user/
+
+b) Description:
+
+   php www/index.php                |  run SGL in CLI mode
+   --moduleName=siteexporter        |  in `siteexporter` module
+   --managerName=siteexporter       |  look for `siteexporter` manager
+   --action=runCollection           |  export URLs returned by collection strategies
+   --baseUrl=http://seagullproject  |  replace base URLs with specified value
+                                    |  i.e. `http://base-url-from-config/front-controller`
+                                    |  will be replaced with
+                                    |  `http://seagullproject` for SGL URLs
+   --dir=/user/                     |  links replacement will be limited to
+                                    |  subset of URLs `/user/`
+
+c) Result:
+
+   Let's say we used `SGL_UrlCollector_Demo` strategy, which returned 3 URLs
+   to export:
+     - `user/login`
+     - `user/password`
+     - `user/register`
+
+   3 files are saved to
+     - "<sgl-web-dir>/user/login.html"
+     - "<sgl-web-dir>/user/password.html"
+     - "<sgl-web-dir>/user/register.html"
+
+   Note: we didn't use --ext parameter, thus default extension is `html`.

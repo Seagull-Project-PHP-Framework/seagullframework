@@ -35,6 +35,7 @@ class SiteExporterMgr extends SGL_Manager
         $input->baseUrl = $req->get('baseUrl');
         $input->ext     = $req->get('ext') ? $req->get('ext') : 'html';
         $input->dir     = $req->get('dir') ? $req->get('dir') : '/';
+        $input->params  = $req->get('params');
     }
 
     public function _cmd_list(SGL_Reqistry $input, SGL_Output $output)
@@ -46,11 +47,20 @@ class SiteExporterMgr extends SGL_Manager
 Available actions:
   1. run            export single page to file
        --url          url to export
-       --baseUrl      replace page's base url with specified value
-       --ext          file extension, html is default
-       --dir          limit to certain directory
-  2. runCollection  export the arbitrary number of pages to files
+       --baseUrl      replace links' base URL with specified value
+       --ext          append file extension to file
+                      (default: html)
+       --dir          links replacement will be limited to specified
+                      subset of URLs (example: /user/)
 
+  2. runCollection  export collection of urls to files
+       --baseUrl      replace links' base URL with specified value
+       --ext          append file extension to file
+                      (default: html)
+       --dir          links replacement will be limited to specified
+                      subset of URLs (example: /user/)
+       --params       pass parameters to URL collectors
+                      (format: k1:v1::k2::v2)
 
 HELP;
     }
@@ -85,13 +95,8 @@ HELP;
             $regex = "@(<a.*? href=\")($baseUrl)/$fc({$input->dir})(.*?)\"@";
             $html = preg_replace($regex, "\\1\\2\\3\\4\"", $html);
 
-            /*
-            $html = str_replace(
-                $baseUrl . '/' . $fc . $input->dir,
-                $baseUrl . $input->dir,
-                $html
-            );
-            */
+            $html = str_replace("\"$baseUrl/$fc/\"", "\"$baseUrl\"", $html);
+            $html = str_replace("\"$baseUrl/$fc\"", "\"$baseUrl\"", $html);
         }
         // replace base URL
         $html = str_replace($baseUrl, $input->baseUrl, $html);
@@ -102,24 +107,37 @@ HELP;
 
         // output
         $input->tty .= "Exported to $saveFile\n";
-        if ($input->action == 'run') {
-            $input->tty .= "\n";
-        }
 
         $this->_flush($input->tty);
     }
 
     public function _cmd_runCollection(SGL_Reqistry $input, SGL_Output $output)
     {
-        // collect urls
-        $aCollectors = explode(',', SGL_Config::get('SiteExporterMgr.urls'));
-        $oCollector  = new SGL_UrlCollector();
-        foreach ($aCollectors as $collectorName) {
-            require_once dirname(__FILE__) . "/UrlCollector/$collectorName.php";
-            $className = 'SGL_UrlCollector_' . $collectorName;
-            $oCollector->add(new $className());
+        $aUrls   = array();
+        $aParams = $this->_parseParams($input->params);
+        if (SGL_Config::get('SiteExporterMgr.strategies')) {
+
+            // collect urls
+            $aCollectors = explode(',', SGL_Config::get('SiteExporterMgr.strategies'));
+            $oCollection = new SGL_UrlCollection();
+            foreach ($aCollectors as $collectorName) {
+                $collectorName = trim($collectorName);
+
+                // get path to UrlCollector class
+                $aPath = explode('_', $collectorName);
+                if ($aPath[0] == 'SGL') {
+                    $strategyFile = SGL_MOD_DIR
+                        . '/siteexporter/lib/UrlCollector/'
+                        . array_pop($aPath) . '.php';
+                } else {
+                    $strategyFile = implode(DIRECTORY_SEPARATOR, $aPath) . '.php';
+                }
+
+                require_once $strategyFile;
+                $oCollection->add(new $collectorName($aParams));
+            }
+            $aUrls = $oCollection->retrieve();
         }
-        $aUrls = $oCollector->retrieve();
 
         // export
         foreach ($aUrls as $url) {
@@ -138,20 +156,24 @@ HELP;
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->_flush($input->tty);
-        exit;
+        $input->tty .= "\n";
+        $this->_flush($input->tty, $stopScript = true);
     }
 
     /**
      * Send data to terminal.
      *
      * @param string $string
+     * @param boolean $stopScript
      */
-    private function _flush(&$string)
+    private function _flush(&$string, $stopScript = false)
     {
         echo $string;
         flush();
         $string = '';
+        if ($stopScript) {
+            exit;
+        }
     }
 
     private function _ensureDirIsWriteable($dir)
@@ -164,13 +186,28 @@ HELP;
             umask($mask);
         }
     }
+
+    private function _parseParams($paramString)
+    {
+        $aRet = array();
+        if (!empty($paramString)) {
+            $aParams = explode('::', $paramString);
+            foreach ($aParams as $paramKeyValue) {
+                $aVar = explode(':', $paramKeyValue);
+                if (isset($aVar[1])) {
+                    $aRet[$aVar[0]] = $aVar[1];
+                }
+            }
+        }
+        return $aRet;
+    }
 }
 
 /**
- * @package seagull
+ * @package SGL
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_UrlCollector
+class SGL_UrlCollection
 {
     private $_aCollectors = array();
 
