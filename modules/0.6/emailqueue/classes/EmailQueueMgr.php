@@ -38,8 +38,6 @@
 // |          Dmitri Lakachauskis <lakiboy83@gmail.com>                        |
 // +---------------------------------------------------------------------------+
 
-require_once SGL_CORE_DIR . '/Emailer/Queue.php';
-
 /**
  * CLI manager, which processes email queue.
  *
@@ -135,8 +133,13 @@ HELP;
             $aParams['batch_id'] = $input->batchId;
         }
 
+        $emailerClass = trim($this->conf['EmailQueueMgr']['emailer']);
+        $emailerFile  = str_replace('_', DIRECTORY_SEPARATOR,
+            $emailerClass) . '.php';
+        require_once $emailerFile;
+
         // process queue
-        $oQueue = new SGL_Emailer_Queue($conf);
+        $oQueue = new $emailerClass($conf);
         $aRet   = $oQueue->processQueue($input->deliveryDate,
             $input->interval, $aParams);
 
