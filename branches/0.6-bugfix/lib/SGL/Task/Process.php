@@ -922,7 +922,10 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         // request data
         if (!SGL::runningFromCLI()) {
             $output->remoteIp = $_SERVER['REMOTE_ADDR'];
-            $output->currUrl  = $_SERVER['PHP_SELF'];
+            $output->currUrl  =
+                    SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes'
+                ? SGL_Task_BuildOutputData::getCurrentUrlFromRoutes()
+                : $_SERVER['PHP_SELF'];
         }
 
         // lang data
@@ -958,6 +961,20 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $output->scriptOpen         = "\n<script type='text/javascript'>\n//<![CDATA[\n";
         $output->scriptClose        = "\n//]]>\n</script>\n";
         $output->showExecutionTimes = $_SESSION['aPrefs']['showExecutionTimes'];
+    }
+
+    /**
+     * Get current URL in $_SERVER['PHP_SELF'] style.
+     *
+     * @return string
+     */
+    function getCurrentUrlFromRoutes()
+    {
+        $input   = &SGL_Registry::singleton();
+        $url     = $input->getCurrentUrl();
+        $currUrl = $url->toString();
+        $baseUrl = $url->getBaseUrl($skipProto = false, $includeFc = false);
+        return str_replace($baseUrl, '', $currUrl);
     }
 }
 

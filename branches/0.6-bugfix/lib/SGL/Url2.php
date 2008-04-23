@@ -233,9 +233,12 @@ class SGL_URL2
     /**
      * Get Seagull base URL without protocol.
      *
+     * @param boolean $skipProtocol
+     * @param boolean $includeFc
+     *
      * @return string
      */
-    public function getBaseUrl($skipProtocol = false)
+    public function getBaseUrl($skipProtocol = false, $includeFc = true)
     {
         if ($skipProtocol) {
             $baseUrl = substr(SGL_BASE_URL, strpos(SGL_BASE_URL, '://') + 3);
@@ -243,7 +246,7 @@ class SGL_URL2
             $baseUrl = SGL_BASE_URL;
         }
         $fcName = SGL_Config::get('site.frontScriptName');
-        if (!empty($fcName)) {
+        if (!empty($fcName) && $includeFc) {
             $baseUrl .= '/' . $fcName;
         }
         return $baseUrl;
