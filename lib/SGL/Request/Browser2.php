@@ -57,6 +57,12 @@ class SGL_Request_Browser2 extends SGL_Request
             'explicit'       => true, // do not connect to Horder defaults
             'controllerScan' => array('SGL_Request_Browser2', 'getAvailableManagers'),
         ));
+
+        // mapper options
+        $m->appendSlash = true;
+# hack to avoid URL decoding
+        $m->encoding    = null;
+
         foreach ($aRoutes as $aRouteData) {
             call_user_func_array(array($m, 'connect'), $aRouteData);
         }
@@ -128,10 +134,6 @@ class SGL_Request_Browser2 extends SGL_Request
                 SGL::getCurrentCharset();
 //                'utf-8';
         }
-
-        // mapper options
-        $m->appendSlash = true;
-        $m->encoding    = null;
 
 # remove this hack
         foreach ($m->matchList as $oRoute) {
