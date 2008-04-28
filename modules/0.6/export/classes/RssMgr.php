@@ -236,13 +236,12 @@ class RssMgr extends SGL_Manager
                     AND     itm.field_type <> itm2.field_type
                     AND     it.item_type_id = ?
                     AND     i.start_date < ?
-                    AND     i.expiry_date  > ?
+                    AND     (i.expiry_date  > ? OR i.expiry_date IS NULL)
                     AND     i.status  = ?
                     GROUP BY i.item_id
                     ORDER BY i.date_created DESC
                     LIMIT 0, ?
             ";
-
             $aRes = $this->dbh->getAll($query, array(
                 SGL_ITEM_TYPE_ARTICLE_HTML,
                 SGL_Date::getTime(),
