@@ -53,7 +53,7 @@ class SimplesiteMgr extends SGL_Manager
         parent::SGL_Manager();
 
         $this->pageTitle    = 'Simplesite Manager';
-        $this->template     = 'simplesiteList.html';
+        $this->template     = 'index.html';
 
         $this->_aActionsMapping =  array(
             'list'      => array('list'),
