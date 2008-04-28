@@ -10,7 +10,7 @@
  *   2. First element (@string) - route to connect
  *   3. Second element (@array)
  *      a) moduleName index - name of module to map
- *      b) contoller index  - name of manager to map (NB! don't use managerName)
+ *      b) controller index  - name of manager to map (NB! don't use managerName)
  *      c) k/v pairs        - optional variable name and it's value pairs
  *
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
