@@ -81,6 +81,8 @@ class SimplesiteMgr extends SGL_Manager
         } else {
             $output->template  = $input->page . '.html';
         }
+        //  custom CSS
+        $output->addCssFile(SGL_Config::get('SimplesiteMgr.css'));
 
     }
 }
