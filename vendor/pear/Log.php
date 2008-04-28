@@ -7,14 +7,16 @@
  * @package Log
  */
 
-define('PEAR_LOG_EMERG',    0);     /** System is unusable */
-define('PEAR_LOG_ALERT',    1);     /** Immediate action required */
-define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
-define('PEAR_LOG_ERR',      3);     /** Error conditions */
-define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
-define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
-define('PEAR_LOG_INFO',     6);     /** Informational */
-define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+if (!defined('PEAR_LOG_EMERG')) {
+    define('PEAR_LOG_EMERG',    0);     /** System is unusable */
+    define('PEAR_LOG_ALERT',    1);     /** Immediate action required */
+    define('PEAR_LOG_CRIT',     2);     /** Critical conditions */
+    define('PEAR_LOG_ERR',      3);     /** Error conditions */
+    define('PEAR_LOG_WARNING',  4);     /** Warning conditions */
+    define('PEAR_LOG_NOTICE',   5);     /** Normal but significant */
+    define('PEAR_LOG_INFO',     6);     /** Informational */
+    define('PEAR_LOG_DEBUG',    7);     /** Debug-level messages */
+}
 
 define('PEAR_LOG_ALL',      bindec('11111111'));  /** All messages */
 define('PEAR_LOG_NONE',     bindec('00000000'));  /** No message */
