@@ -258,6 +258,7 @@ class ModuleMgr extends SGL_Manager
         $runner->addTask(new SGL_Task_DefineTableAliases());
         $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
         $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadTranslations());
         $runner->addTask(new SGL_Task_LoadDefaultData());
         $runner->addTask(new SGL_Task_LoadSampleData());
         $runner->addTask(new SGL_Task_LoadCustomData());
