@@ -5,6 +5,8 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+28-04-08    RssMgr was not accounting for articles that had expiry_date set to NULL
+28-04-08    Re-added masterFeed.html to default module, needed for export module
 21-04-08    Fixed problem with ordering blocks [3753] (alexanders)
 26-02-08    UserAjaxProvider filter chain fixed with addresses ajax unique username
             search prob (rzur2004)
