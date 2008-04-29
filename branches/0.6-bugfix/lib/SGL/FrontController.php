@@ -91,6 +91,11 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
+
+        //  ensure local config loaded and merged
+        $c = &SGL_Config::singleton();
+        $c->ensureModuleConfigLoaded($req->getModuleName());
+
         $outputClass = SGL_FrontController::getOutputClass();
         $output = &new $outputClass();
 
