@@ -33,7 +33,7 @@ class SGL_Request_Browser2 extends SGL_Request
             list($proto, ) = explode('://', $baseUrl, 2);
             $host          = $_SERVER['HTTP_HOST'];
             $url           = $proto . '://' . $host . $_SERVER['REQUEST_URI'];
-            $qs            = str_replace($baseUrl, '', $url);
+            $qs            = urldecode(str_replace($baseUrl, '', $url));
         }
 
         $defModule  = SGL_Config::get('site.defaultModule');
