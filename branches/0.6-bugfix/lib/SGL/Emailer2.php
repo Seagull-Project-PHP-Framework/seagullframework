@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/Emailer/Builder.php';
+require_once dirname(__FILE__) . '/String.php';
 require_once 'Mail.php';
 
 /**
@@ -31,7 +32,7 @@ class SGL_Emailer2
      *
      * @param array $aTplOpts
      *               obligatory keys:
-     *                * mode (by default: MODE_HTML_AND_TEXT)
+     *                * mode (by default: SGL_Emailer_Builder::MODE_HTML_AND_TEXT)
      *                * htmlTemplate
      *                * moduleName (for htmlTemplate only)
      *                * textTemplate

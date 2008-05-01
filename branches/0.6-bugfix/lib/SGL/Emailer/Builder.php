@@ -38,7 +38,6 @@ class SGL_Emailer_Builder
      *
      * @todo replace PHP's Exception with SGL_Exception
      * @todo remove outgoing email hack
-     * @todo add Html2Text functionality
      *
      * @param array $aDeliveryOpts
      * @param array $aTplOpts
@@ -60,7 +59,7 @@ class SGL_Emailer_Builder
         	}
         }
         // check tpl options
-        if (empty($aTplOpts['htmlTemplate'])
+        if ((empty($aTplOpts['htmlTemplate']) || empty($aTplOpts['moduleName']))
             && empty($aTplOpts['textTemplate']))
         {
             $msg = __CLASS__ . ': template options is not specified';
@@ -100,12 +99,16 @@ class SGL_Emailer_Builder
         if (PEAR::isError($bodyHtml)) {
             throw new Exception(__CLASS__ . ': ' . $bodyHtml->getMessage());
         }
-
-        /*
-        require_once 'SGL/Html2Text.php';
-        $h2t = new SGL/Html2Text($this->html);
-        $this->text = $h2t->getText();
-        */
+        // get plain text version of email
+        if (empty($bodyTxt)) {
+            require_once 'Horde/Text/Filter.php';
+            $oFilter = new Text_Filter();
+            $bodyTxt = $oFilter->filter(
+                $bodyHtml,
+                array('html2text'),
+                array(array('charset' => SGL::getCurrentCharset()))
+            );
+        }
 
         $aOpts     = array(
             'crlf' => $aTplOpts['crlf'],
@@ -175,11 +178,11 @@ class SGL_Emailer_Builder
     public static function prepareTxtBody($aOpts)
     {
         $templatePath = $aOpts['textTemplate'];
-        // try to resolve template from project's root dir
         if (!file_exists($templatePath)) {
-            $templatePath = SGL_APP_ROOT . '/' . $templatePath;
-            // try to resolve template from default module's template dir
+            // try to resolve template from project's root dir
+            $templatePath = SGL_PATH . '/' . $templatePath;
             if (!file_exists($templatePath)) {
+                // try to resolve template from default module's template dir
                 $defaultModule = SGL_Config::get('site.defaultModule');
                 $templateName  = array_pop(explode(DIRECTORY_SEPARATOR, $templatePath));
                 $templatePath  = SGL_MOD_DIR . "/$defaultModule/templates/$templateName";
@@ -200,7 +203,7 @@ class SGL_Emailer_Builder
         include $templatePath;
 
         // return body
-        return isset($bodyTXT) ? strip_tags($bodyTXT) : '';
+        return isset($bodyTxt) ? strip_tags($bodyTxt) : '';
     }
 
     /**
@@ -218,9 +221,7 @@ class SGL_Emailer_Builder
 
         // setup template/module for HtmlSimpleView
         $oOutput->masterTemplate = $aOpts['htmlTemplate'];
-        $oOutput->moduleName     = !empty($aOpts['moduleName'])
-            ? $aOpts['moduleName']
-            : SGL_Registry::singleton()->getRequest()->getModuleName();
+        $oOutput->moduleName     = $aOpts['moduleName'];
 
         unset($aOpts['module']);
         unset($aOpts['htmlTemplate']);
