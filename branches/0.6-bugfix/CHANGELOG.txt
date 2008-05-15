@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+15-05-08    Fixed emailqueue filter chain
 29-04-08    Module config is now correctly loaded for all request types
 28-04-08    RssMgr was not accounting for articles that had expiry_date set to NULL
 28-04-08    Re-added masterFeed.html to default module, needed for export module
