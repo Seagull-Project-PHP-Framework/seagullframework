@@ -442,8 +442,8 @@ class SGL_Session
      */
     function hasPerms($permId)
     {
-        if (!count($_SESSION)) {
-            $ret = false;
+        if (!isset($_SESSION) || !count($_SESSION)) {
+            return false;
         }
         //  if admin role, give perms by default
         if (@$_SESSION['rid'] == SGL_ADMIN) {
