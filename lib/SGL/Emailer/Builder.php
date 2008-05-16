@@ -101,13 +101,15 @@ class SGL_Emailer_Builder
         }
         // get plain text version of email
         if (empty($bodyTxt)) {
-            require_once 'Horde/Text/Filter.php';
-            $oFilter = new Text_Filter();
-            $bodyTxt = $oFilter->filter(
-                $bodyHtml,
-                array('html2text'),
-                array(array('charset' => SGL::getCurrentCharset()))
-            );
+            $ok = @require_once 'Horde/Text/Filter.php';
+            if ($ok) {
+                $oFilter = new Text_Filter();
+                $bodyTxt = $oFilter->filter(
+                    $bodyHtml,
+                    array('html2text'),
+                    array(array('charset' => SGL::getCurrentCharset()))
+                );
+            }
         }
 
         $aOpts     = array(
@@ -210,20 +212,25 @@ class SGL_Emailer_Builder
      * Loads HTML template.
      *
      * @param array $aOpts
+     * @param boolean $oOutput
      *
      * @return string
      */
-    public static function prepareHtmlBody($aOpts)
+    public static function prepareHtmlBody($aOpts, $skipOutputVars = false)
     {
-        $outputClass = SGL_Config::get('site.customOutputClassName');
-        $oOutput     = new $outputClass();
-        SGL_Task_BuildOutputData::addOutputData($oOutput);
+        $outputClass = SGL_Config::get('site.customOutputClassName')
+            ? SGL_Config::get('site.customOutputClassName')
+            : 'SGL_Output';
+        $oOutput = new $outputClass();
+        if (!$skipOutputVars) {
+            SGL_Task_BuildOutputData::addOutputData($oOutput);
+        }
 
         // setup template/module for HtmlSimpleView
         $oOutput->masterTemplate = $aOpts['htmlTemplate'];
         $oOutput->moduleName     = $aOpts['moduleName'];
 
-        unset($aOpts['module']);
+        unset($aOpts['moduleName']);
         unset($aOpts['htmlTemplate']);
         foreach ($aOpts as $k => $v) {
         	$oOutput->$k = $v;
@@ -257,19 +264,28 @@ class SGL_Emailer_Builder
             $oMime->setHTMLBody($bodyHtml);
         }
         // add attachments
-        foreach ($aAttachments as $filePath) {
+        foreach ($aAttachments as $key => $filePath) {
+            // in case hash is supplied, keys are filenames,
+            // but values are mime-types
+            if (is_string($key)) {
+                $mime     = $filePath;
+                $filePath = $key;
+            }
             if (is_readable($filePath)) {
-                if (extension_loaded('fileinfo')) {
-                    $fp   = finfo_open(FILEINFO_MIME);
-                    $mime = finfo_file($fp, $filePath);
-                    finfo_close($fp);
-                } elseif (function_exists('mime_content_type')) {
-                    $mime = mime_content_type($filePath);
-                } else {
-                    continue;
+                if (!isset($mime)) {
+                    if (extension_loaded('fileinfo')) {
+                        $fp   = finfo_open(FILEINFO_MIME);
+                        $mime = finfo_file($fp, $filePath);
+                        finfo_close($fp);
+                    } elseif (function_exists('mime_content_type')) {
+                        $mime = mime_content_type($filePath);
+                    } else {
+                        continue;
+                    }
                 }
                 $oMime->addAttachment($filePath, $mime);
             }
+            unset($mime);
         }
         // get data
         $retBody = $oMime->get(array(
@@ -282,7 +298,9 @@ class SGL_Emailer_Builder
         ));
         $aRetHeaders = $oMime->headers($aHeaders);
         // reinsert Subject to avoid PEAR::Mail failure
-        $aRetHeaders['Subject'] = $aHeaders['Subject'];
+        if (isset($aHeaders['Subject'])) {
+            $aRetHeaders['Subject'] = $aHeaders['Subject'];
+        }
         $aRetHeaders = SGL_Emailer2::cleanMailInjection($aRetHeaders);
         // return results
         return array(
