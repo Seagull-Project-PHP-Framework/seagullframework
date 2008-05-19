@@ -395,6 +395,13 @@ class SGL_Config
         return $ret;
     }
 
+    /**
+     * Given a string of the format moduleName^managerName^action, returns a
+     * hash of the values.
+     *
+     * @param string $str
+     * @return array
+     */
     function getCommandTarget($str)
     {
         if (empty($str)) {
