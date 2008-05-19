@@ -21,14 +21,14 @@ class Emailer2Test extends UnitTestCase
         // test mail backend
         $c->set('mta.backend', 'mail');
         $oMail = SGL_Emailer2::factory();
-        $this->assertTrue($oMail instanceof Mail_mail);
+        $this->assertIsA($oMail, 'Mail_mail');
 
         // test sendmail backend
         $c->set('mta.backend', 'sendmail');
         $c->set('mta.sendmailPath', '/path/to/sendmail');
         $c->set('mta.sendmailArgs', '-agr1 -arg2');
         $oMail = SGL_Emailer2::factory();
-        $this->assertTrue($oMail instanceof Mail_sendmail);
+        $this->assertIsA($oMail, 'Mail_sendmail');
 
         // test sendmail params
         $this->assertEqual($oMail->sendmail_path, '/path/to/sendmail');
@@ -43,7 +43,7 @@ class Emailer2Test extends UnitTestCase
         $c->set('mta.smtpUsername', 'dima');
         $c->set('mta.smtpPassword', 'lak');
         $oMail = SGL_Emailer2::factory();
-        $this->assertTrue($oMail instanceof Mail_smtp);
+        $this->assertIsA($oMail, 'Mail_smtp');
 
         // test SMTP params
         $this->assertEqual($oMail->localhost, 'myhost');
@@ -56,7 +56,7 @@ class Emailer2Test extends UnitTestCase
         // test default (fallback)
         $c->set('mta.backend', 'unknown');
         $oMail = SGL_Emailer2::factory();
-        $this->assertTrue($oMail instanceof Mail_mail);
+        $this->assertIsA($oMail, 'Mail_mail');
     }
 
     public function testQueueSingleton()
@@ -64,7 +64,7 @@ class Emailer2Test extends UnitTestCase
         $oQueue1 = SGL_Emailer2::queueSingleton();
         $oQueue2 = SGL_Emailer2::queueSingleton();
 
-        $this->assertTrue($oQueue1 instanceof SGL_Emailer_Queue);
+        $this->assertIsA($oQueue1, 'SGL_Emailer_Queue');
         $this->assertReference($oQueue1, $oQueue2);
     }
 
