@@ -24,6 +24,8 @@ BUGFIXES
             Horde_Routes input URL handler
 
 IMPROVEMENTS
+19-05-08    Added improved functionality in SGL_Emailer2 (PHP5 only), see
+                http://trac.seagullproject.org/wiki/Howto/SendingEmails#UsingimprovedfunctionalityavailableinSGL_Emailer2
 05-03-08    Adding new preferences to your application is much easier now, if you have
             a large userbase, you can easily add n new preferences and existing
             users will get default values [3704]
