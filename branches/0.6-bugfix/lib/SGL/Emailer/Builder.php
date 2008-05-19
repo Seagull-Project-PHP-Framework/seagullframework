@@ -212,7 +212,7 @@ class SGL_Emailer_Builder
      * Loads HTML template.
      *
      * @param array $aOpts
-     * @param boolean $oOutput
+     * @param boolean $skipOutputVars
      *
      * @return string
      */

@@ -53,8 +53,8 @@ class EmailerBuilderTest extends UnitTestCase
         try {
             $bodyTxt = SGL_Emailer_Builder::prepareTxtBody($aOpts);
         } catch (Exception $error) {}
-        $this->assertTrue($error instanceof Exception);
-        $this->assertTrue(is_null($bodyTxt));
+        $this->assertIsA($error, 'Exception');
+        $this->assertNull($bodyTxt);
 
         // test when template is found
         $aOpts   = array('textTemplate' => dirname(__FILE__) . '/emailer2.txt.tpl');
@@ -63,7 +63,7 @@ class EmailerBuilderTest extends UnitTestCase
         try {
             $bodyTxt = SGL_Emailer_Builder::prepareTxtBody($aOpts);
         } catch (Exception $error) {}
-        $this->assertTrue(is_null($error));
+        $this->assertNull($error);
         $this->assertTrue(is_string($bodyTxt));
 
         // test tpl body
@@ -110,7 +110,7 @@ TXT;
         );
         $bodyHtml = SGL_Emailer_Builder::prepareHtmlBody($aOpts,
             $skipOutputVars = true);
-        $this->assertFalse($bodyHtml instanceof PEAR_Error);
+        $this->assertNotA($bodyHtml, 'PEAR_Error');
         $this->assertTrue(is_string($bodyHtml));
 
         // test tpl body
