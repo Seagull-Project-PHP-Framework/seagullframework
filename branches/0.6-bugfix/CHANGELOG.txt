@@ -5,6 +5,8 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+21-05-08    Fixed problem where SGL_Cache was not returning singletons correctly
+            [3801] (Dmitri, rungss)
 15-05-08    Fixed emailqueue filter chain
 29-04-08    Module config is now correctly loaded for all request types
 28-04-08    RssMgr was not accounting for articles that had expiry_date set to NULL
