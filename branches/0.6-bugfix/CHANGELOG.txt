@@ -26,6 +26,8 @@ BUGFIXES
             Horde_Routes input URL handler
 
 IMPROVEMENTS
+20-05-08    Emailqueue module added see
+                http://trac.seagullproject.org/wiki/Modules/EmailQueue
 19-05-08    Added improved functionality in SGL_Emailer2 (PHP5 only), see
                 http://trac.seagullproject.org/wiki/Howto/SendingEmails#UsingimprovedfunctionalityavailableinSGL_Emailer2
 05-03-08    Adding new preferences to your application is much easier now, if you have
