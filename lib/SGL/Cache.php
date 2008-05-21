@@ -44,7 +44,7 @@ require_once 'Cache/Lite.php';
  * A wrapper for PEAR::Cache_Lite.
  *
  * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
+ * @author Demian Turner <demian@phpkitchen.com>
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class SGL_Cache
@@ -72,7 +72,7 @@ class SGL_Cache
      * @access public
      *
      * @param mixed $type        Cache_Lite container.
-     *                           In BC mode flag to force boolean mode.
+     *                            In BC mode flag to force boolean mode.
      * @param array $aOptions    Options to override config values on the fly.
      * @param boolean $forceNew  Force cache even if not in caching mode.
      *
@@ -85,11 +85,15 @@ class SGL_Cache
         static $aInstances;
 
         // BC
-        if (is_bool($type) && $type) {
-            $forceNew = true;
+        if (is_bool($type)) {
+            if ($type) {
+                $forceNew = true;
+            }
+            $type = 'default';
         }
+        $key = $type . '-' . md5(serialize($aOptions));
 
-        if (!isset($aInstances[$type]) || $forceNew) {
+        if (!isset($aInstances[$key]) || $forceNew) {
             $isEnabled = $forceNew ? true : SGL_Config::get('cache.enabled');
             // basic options
             $aDefaultOptions = array(
@@ -109,7 +113,6 @@ class SGL_Cache
             }
             // override with specified options
             $aOptions = array_merge($aDefaultOptions, $aOptions);
-            $hash = md5(serialize($aOptions));
             switch (strtolower($type)) {
                 case 'output':
                     require_once 'Cache/Lite/Output.php';
@@ -122,8 +125,7 @@ class SGL_Cache
                 default:
                     $className = 'SGL_Cache_Lite';
             }
-            $key = $type .'-'.$hash;
-            $aInstances[$key] = new $className($aOptions);
+            $aInstances[$key] = & new $className($aOptions);
         }
         return $aInstances[$key];
     }
