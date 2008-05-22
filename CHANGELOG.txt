@@ -27,7 +27,8 @@ BUGFIXES
 
 IMPROVEMENTS
 22-05-08    Symlinks in the webroot (like those created by installing modules with
-            web resources) are now supported if you remove the index.php file
+            web resources) are now supported if you remove the index.php file, see
+                http://trac.seagullproject.org/wiki/TroubleShooting/RemovingIndex.php
 20-05-08    Emailqueue module added see
                 http://trac.seagullproject.org/wiki/Modules/EmailQueue
 19-05-08    Added improved functionality in SGL_Emailer2 (PHP5 only), see
