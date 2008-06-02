@@ -193,7 +193,6 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $title = 'Available Modules';
     var $key = 'loaded_modules';
     var $aRequirements = array(
-        'apc' => array(SGL_FORBIDDEN => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
         'gd' => array(SGL_RECOMMENDED => 1),
         'iconv' => array(SGL_RECOMMENDED => 1),
