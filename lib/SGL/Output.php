@@ -309,7 +309,7 @@ class SGL_Output
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
-        if ($inTable == false){
+        if ($inTable){
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
@@ -331,7 +331,7 @@ class SGL_Output
                 $i = $i + 1;
                 $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
                 if ($selected == $k ) {
-                    $html .= " checked ";
+                    $html .= " checked='checked'";
                 }
                 $html .= " />$v </td>\n";
                 if ($newline) {
