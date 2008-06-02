@@ -172,6 +172,10 @@ class UserMgr extends RegisterMgr
             $output->aSyncModes = $aSyncModes;
         }
         $output->isAcctActive = ($output->user->is_acct_active) ? ' checked="checked"' : '';
+        $output->addJavascriptFile(array(
+            'js/scriptaculous/lib/prototype.js',
+            'js/scriptaculous/src/scriptaculous.js?load=effects'
+        ));
     }
 
     function _cmd_add(&$input, &$output)

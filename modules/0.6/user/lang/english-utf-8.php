@@ -172,6 +172,8 @@ $words = array(
     'Show execution times?'                        => 'Show execution times?',
     // + user template
     'General'                                      => 'General',
+    'Selected prefs have been set for all users'   => 'Selected prefs have been set for all users',
+    'synchonise selected preference(s) globally'   => 'synchonise selected preference(s) globally',
 
     // messages
     'details successfully updated' => 'User details have been successfully updated',

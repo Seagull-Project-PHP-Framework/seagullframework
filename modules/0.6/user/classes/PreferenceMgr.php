@@ -64,7 +64,7 @@ class PreferenceMgr extends SGL_Manager
             'insert'    => array('insert', 'redirectToDefault'),
             'edit'      => array('edit'),
             'update'    => array('update', 'redirectToDefault'),
-            'updateThemeForAllMembers' => array('updateThemeForAllMembers', 'redirectToDefault'),
+            'updatePreferencesForAllMembers' => array('updatePreferencesForAllMembers', 'redirectToDefault'),
             'delete'    => array('delete', 'redirectToDefault'),
             'list'      => array('list'),
         );
@@ -229,12 +229,24 @@ class PreferenceMgr extends SGL_Manager
         SGL::raiseMsg('pref successfully updated', true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_updateThemeForAllMembers(&$input, &$output)
+    function _cmd_updatePreferencesForAllMembers(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $ok = $this->da->updatePrefByRoleId('theme', $input->themeName, $roleId = SGL_MEMBER);
-        SGL::raiseMsg('theme set for all users', false, SGL_MESSAGE_INFO);
+        if (is_array($input->aDelete)) {
+            foreach ($input->aDelete as $index => $prefId) {
+                $oPref = DB_DataObject::factory($this->conf['table']['preference']);
+                $oPref->get($prefId);
+                $ok = $this->da->updatePrefByRoleId($oPref->name, $oPref->default_value,
+                    $roleId = SGL_MEMBER);
+                unset($oPref);
+            }
+            SGL::raiseMsg('Selected prefs have been set for all users', true,
+                SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('Incorrect parameter passed to ' . __CLASS__ . '::' .
+                __FUNCTION__, SGL_ERROR_INVALIDARGS);
+        }
     }
 
     function _cmd_delete(&$input, &$output)
