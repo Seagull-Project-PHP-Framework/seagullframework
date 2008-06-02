@@ -80,6 +80,27 @@ function confirmSubmit(item, formName)
         return false;
 }
 
+function confirmSubmitAndUpdate(myAction, formId)
+{
+    var selectedForm = document.getElementById(formId);
+    var flag = false
+    for (var count = 0; count < selectedForm.elements.length; count++) {
+        var myType = selectedForm.elements[count].type
+        if (myType == 'checkbox' && selectedForm.elements[count].checked == true && selectedForm.elements[count].name != '')
+            flag = true
+    }
+    if (flag == false) {
+        alert('You must select at least one element to update')
+        return false
+    }
+    newInput = document.createElement("input");
+    newInput.setAttribute('name', 'action');
+    newInput.setAttribute('value', myAction);
+    newInput.setAttribute('type', 'hidden');
+    selectedForm.appendChild(newInput);
+    selectedForm.submit();
+}
+
 function confirmDelete(item, formName)
 {
     var evalFormName = eval('document.' + formName)
