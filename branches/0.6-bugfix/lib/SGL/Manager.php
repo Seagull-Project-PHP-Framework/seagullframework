@@ -330,8 +330,8 @@ class SGL_Manager
     /**
      * Default redirect for all Managers.
      *
-     * @param unknown_type $input
-     * @param unknown_type $output
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
      */
     function _cmd_redirectToDefault(&$input, &$output)
     {
