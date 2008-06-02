@@ -645,52 +645,42 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
                     SGL_ERROR_RESOURCENOTFOUND);
                 $getDefaultMgr = true;
             } else {
-                //  load current module's config if not present
-                $c = &SGL_Config::singleton();
-                $conf = $c->ensureModuleConfigLoaded($moduleName);
+                $conf = $input->getConfig();
 
-                if (!PEAR::isError($conf)) {
-                    //  get manager name, if $managerName not correct attempt to load default
-                    //  manager w/$moduleName
-                    $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
-                    $retMgrName = $this->getManagerName($managerName, $mgrPath, $conf);
-                    if ($retMgrName === false) {
-                        SGL::raiseError("Specified manager '$managerName' could not be found, ".
-                            "defaults loaded, pls ensure full manager name is present in module's conf.ini",
-                            SGL_ERROR_RESOURCENOTFOUND);
-                    }
-                    $managerName = ($retMgrName)
-                        ? $retMgrName
-                        : $this->getManagerName($moduleName, $mgrPath, $conf);
-                    if (!empty($managerName)) {
+                //  get manager name, if $managerName not correct attempt to load default
+                //  manager w/$moduleName
+                $mgrPath = SGL_MOD_DIR . '/' . $moduleName . '/classes/';
+                $retMgrName = $this->getManagerName($managerName, $mgrPath, $conf);
+                if ($retMgrName === false) {
+                    SGL::raiseError("Specified manager '$managerName' could not be found, ".
+                        "defaults loaded, pls ensure full manager name is present in module's conf.ini",
+                        SGL_ERROR_RESOURCENOTFOUND);
+                }
+                $managerName = ($retMgrName)
+                    ? $retMgrName
+                    : $this->getManagerName($moduleName, $mgrPath, $conf);
+                if (!empty($managerName)) {
 
-                        //  build path to manager class
-                        $classPath = $mgrPath . $managerName . '.php';
-                        if (@is_file($classPath)) {
-                            require_once $classPath;
+                    //  build path to manager class
+                    $classPath = $mgrPath . $managerName . '.php';
+                    if (@is_file($classPath)) {
+                        require_once $classPath;
 
-                            //  if class exists, instantiate it
-                            if (@class_exists($managerName)) {
-                                $input->moduleName = $moduleName;
-                                $input->set('manager', new $managerName);
-                            } else {
-                                SGL::logMessage("Class $managerName does not exist");
-                                $getDefaultMgr = true;
-                            }
+                        //  if class exists, instantiate it
+                        if (@class_exists($managerName)) {
+                            $input->moduleName = $moduleName;
+                            $input->set('manager', new $managerName);
                         } else {
-                            SGL::logMessage("Could not find file $classPath");
+                            SGL::logMessage("Class $managerName does not exist");
                             $getDefaultMgr = true;
                         }
                     } else {
-                        SGL::logMessage('Manager name could not be determined from '.
-                                        'SGL_Process_ResolveManager::getManagerName');
+                        SGL::logMessage("Could not find file $classPath");
                         $getDefaultMgr = true;
                     }
                 } else {
-                    //  remove last error and rethrow as SGL_ERROR_RESOURCENOTFOUND
-                    //  so can be caught in SGL_Manager
-                    SGL_Error::pop();
-                    SGL::raiseError($conf->getMessage(), SGL_ERROR_RESOURCENOTFOUND);
+                    SGL::logMessage('Manager name could not be determined from '.
+                                    'SGL_Process_ResolveManager::getManagerName');
                     $getDefaultMgr = true;
                 }
             }
