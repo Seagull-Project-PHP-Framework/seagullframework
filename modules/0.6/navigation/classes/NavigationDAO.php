@@ -625,6 +625,8 @@ class NavigationDAO extends SGL_Manager
                 }
                 $section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$section['resource_uri'];
             }
+        } else {
+            $this->deleteAliasBySectionId($section['section_id']);  
         }
 
         //  update translations
