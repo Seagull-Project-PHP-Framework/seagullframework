@@ -820,7 +820,7 @@ class SGL_URL
         //  split elements (remove eventual leading/trailing slashes)
         $aUriParts = explode('/', trim($url, '/'));
 
-        if ($frontScriptName != false) {
+        if ($frontScriptName) {
             //  step through array and strip until fc element is reached
             foreach ($aUriParts as $elem) {
                 if ($elem != $frontScriptName) {
@@ -830,17 +830,12 @@ class SGL_URL
                 }
             }
         } else {
-            $pathFromServer = (dirname($_SERVER['SCRIPT_NAME']) == DIRECTORY_SEPARATOR)
-                ? ''
-                : dirname($_SERVER['SCRIPT_NAME']); //=> /seagull/trunk/www
+            $aParts = parse_url($url);
+            $pathFromServer = $aParts['path'];
+
             if (!empty($pathFromServer)) {
-                foreach ($aUriParts as $elem) {
-                    if (stristr($pathFromServer, $elem)) {
-                        array_shift($aUriParts);
-                    } else {
-                        break;
-                    }
-                }
+                $a_ = explode('/', $pathFromServer);
+                $aUriParts = SGL_Array::removeBlanks($a_);
             }
         }
         return $aUriParts;
