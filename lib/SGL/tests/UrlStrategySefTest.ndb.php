@@ -29,6 +29,19 @@ class UrlStrategySefTest extends UnitTestCase
         unset($this->strategy, $this->obj);
     }
 
+    //  test urls like /
+    function testSingleSlashUrls()
+    {
+        $this->obj->url = $this->exampleUrl;
+        $ret = $this->strategy->parseQueryString($this->obj);
+
+        //  assert expected keys present, default module + mgr values
+        $this->assertTrue(array_key_exists('moduleName', $ret));
+        $this->assertTrue(array_key_exists('managerName', $ret));
+        //  assert expected values present
+        $this->assertEqual(count($ret), 2);
+    }
+
     function testMakeSearchEngineFriendlyBasic()
     {
         $aUrlSegments = array (
