@@ -830,7 +830,7 @@ class SGL_URL
                 }
             }
         } else {
-            $aParts = parse_url($url);
+            $aParts = @parse_url($url);
             $pathFromServer = $aParts['path'];
 
             if (!empty($pathFromServer)) {
