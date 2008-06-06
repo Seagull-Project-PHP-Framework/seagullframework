@@ -831,11 +831,15 @@ class SGL_URL
             }
         } else {
             $aParts = @parse_url($url);
-            $pathFromServer = $aParts['path'];
+            if ($aParts && count($aParts)) {
+                $pathFromServer = $aParts['path'];
 
-            if (!empty($pathFromServer)) {
-                $a_ = explode('/', $pathFromServer);
-                $aUriParts = SGL_Array::removeBlanks($a_);
+                if (!empty($pathFromServer)) {
+                    $a_ = explode('/', $pathFromServer);
+                    $aUriParts = SGL_Array::removeBlanks($a_);
+                }
+            } else {
+                $aUriParts = array();
             }
         }
         return $aUriParts;
