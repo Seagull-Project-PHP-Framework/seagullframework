@@ -79,7 +79,10 @@ function resolveBaseUrl($arg, $byDefaultModule = false)
     $proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']  == 'on'
         ? 'https'
         : 'http';
-    return "$proto://{$_SERVER['HTTP_HOST']}{$baseUrl}";
+    $host = isset($_SERVER['HTTP_HOST'])
+        ? $_SERVER['HTTP_HOST']
+        : 'localhost';
+    return "$proto://{$host}{$baseUrl}";
 }
 
 /**
