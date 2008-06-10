@@ -90,6 +90,20 @@ class SGL_AjaxProvider
         $this->dbh = $this->_getDb();
     }
 
+    function &singleton()
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        static $instance;
+
+        // If the instance is not there, create one
+        if (!isset($instance)) {
+            $class = __CLASS__;
+            $instance = new $class();
+        }
+        return $instance;
+    }
+
     function &_getDb()
     {
         $locator = &SGL_ServiceLocator::singleton();
@@ -169,6 +183,30 @@ class SGL_AjaxProvider
     function getAuthResourceId()
     {
         return 'resourceId';
+    }
+
+    /**
+     * Raises notification messages intended for end user.
+     *
+     * @param array $message
+     *        with  string $message['message']
+     *        with  int    $message['messageType'] SGL_MESSAGE_ERROR | SGL_MESSAGE_INFO | SGL_MESSAGE_WARNING
+     * @param boolean $persist
+     * @param boolean $translate
+     *
+     */
+    function raiseMsg($aMessage, $translate = false, $persist = false)
+    {
+        if ($translate && isset($aMessage['message'])) {
+            $aMessage['message'] = SGL_String::translate($aMessage['message']);
+        }
+        $this->aMsg = $aMessage;
+        if ($persist && isset($aMessage['message'])) {
+            SGL_Session::set('message', $aMessage['message']);
+            if (isset($aMessage['type'])) {
+                SGL_Session::set('messageType', $aMessage['type']);
+            }
+        }
     }
 
     function jsonEncode($data)
