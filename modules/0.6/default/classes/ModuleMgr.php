@@ -244,7 +244,7 @@ class ModuleMgr extends SGL_Manager
 
         //  if we're installing cms, insert sections to 'page' table
         $installingCms = false;
-        if ($input->moduleName == 'cms') {
+        if ($input->moduleName == 'cms' || SGL::moduleIsEnabled('cms')) {
             $buildNavTask = 'SGL_Task_BuildNavigation2';
             require_once SGL_MOD_DIR . '/cms/init.php';
             $installingCms = true;
