@@ -21,11 +21,15 @@ class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
 
         if (!headers_sent()) {
             if (!isset($output->responseFormat)) {
-                $output->responseFormat = SGL_RESPONSEFORMAT_JSON;
+                if (isset($output->data->responseFormat)) {
+                    $output->responseFormat = $output->data->responseFormat;
+                } else {
+                    $output->responseFormat = SGL_RESPONSEFORMAT_JSON;
+                }
             }
 
             // return encoded response with appropriate headers
-            switch (strtoupper($output->responseFormat)) {
+            switch ($output->responseFormat) {
             case SGL_RESPONSEFORMAT_JSON:
                 $data = $output->data;
                 $output->data = SGL_AjaxProvider::jsonEncode($data);
