@@ -48,7 +48,6 @@ class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
                 }
             }
         }
-
         $this->processRequest->process($input, $output);
     }
 }
