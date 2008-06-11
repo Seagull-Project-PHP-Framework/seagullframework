@@ -37,7 +37,7 @@ class SGL_Task_ExecuteAjaxAction extends SGL_ProcessRequest
                 $output->responseFormat = $oProvider->responseFormat;
             }
             //  assign messages to output object
-            if (method_exists($oProvider, 'raiseMsg')) {
+            if (method_exists($oProvider, 'raiseMsg' && isset($oProvider->aMsg))) {
                 $output->aMsg = $oProvider->aMsg;
             }
         }
