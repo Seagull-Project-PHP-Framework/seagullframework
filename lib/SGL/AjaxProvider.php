@@ -70,11 +70,18 @@ class SGL_AjaxProvider
     var $dbh = null;
 
     /**
-     * Constant indicating response format.
+     * Constant indicating response format
      *
      * @var integer
      */
     var $responseFormat = SGL_RESPONSEFORMAT_HTML;
+
+    /**
+     * Array for messages passed back to client
+     *
+     * @var array
+     */
+    var $aMsg = array();
 
     /**
      * Constructor.
