@@ -247,7 +247,9 @@ class ModuleMgr extends SGL_Manager
         if ($input->moduleName == 'cms' || SGL::moduleIsEnabled('cms')) {
             $buildNavTask = 'SGL_Task_BuildNavigation2';
             require_once SGL_MOD_DIR . '/cms/init.php';
-            $installingCms = true;
+            if (!SGL::moduleIsEnabled('cms')) {
+                $installingCms = true;
+            }
         } else {
             $buildNavTask = 'SGL_Task_BuildNavigation';
         }
