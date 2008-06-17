@@ -351,7 +351,7 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Global Javascript OnReadyDOM' => 'Global javascript OnReadyDOM',
         'Global Javascript Onload' => 'Global javascript Onload',
         'Global Javascript OnUnload' => 'Global javascript OnUnload',
-        'globalJavascriptFiles' => 'If you want a Javascript file included on every page of your site, put it here (separate with ";" if several files)',
+        'globalJavascriptFiles' => 'If you want a Javascript file included on every page of your site, put it here (separate with "," if several files)',
         'globalJavascriptOnReadyDom' => 'The Javascript expression you put here will be called as soon as the DOM is ready, this happens before the onload event',
         'globalJavascriptOnload' => 'If you want a Javascript onload expression called on every page of your site, put it here',
         'globalJavascriptOnUnload' => 'If you want a Javascript onunload expression called on every page of your site, put it here',
