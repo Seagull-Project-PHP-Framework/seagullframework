@@ -208,4 +208,37 @@ function FileUpload( $resourceType, $currentFolder )
 
 	exit ;
 }
+// Added by Bramus!
+function DeleteFile($resourceType, $currentFolder) {
+          $sErrorNumber = '0' ;
+          $sErrorMsg = '' ;
+         
+          if ( isset( $_GET['FileName'] ) ) {
+             
+              // Map the virtual path to the local server path.
+              $sServerDir = ServerMapFolder( $resourceType, $currentFolder ) ;
+             
+              $sFileName = $_GET['FileName'] ;
+             
+              if ( strpos( $sFileName, '..' ) !== FALSE ) {
+                  $sErrorNumber = '102' ; // Invalid file name.
+                  $sErrorMsg = 'Invalid file name';
+              } else {
+                  if ( @unlink($sServerDir.$sFileName) ) {
+                      $sErrorNumber = '0' ; // deleted
+                  } else {
+                      $sErrorNumber = '103' ; // not deleted
+                      $sErrorMsg = 'Could not delete file '.$sServerDir.$sFileName;
+                  }
+              }
+          } else {
+              $sErrorNumber = '102' ; // no file set
+              $sErrorMsg = 'No file specified';
+          }
+         
+          // Create the "Error" node.
+          echo '<Error number="' . $sErrorNumber . '" originalDescription="' . ConvertToXmlAttribute( $sErrorMsg ) . '" />' ;
+}
+
+
 ?>

@@ -98,6 +98,9 @@ function DoResponse()
 		case 'CreateFolder' :
 			CreateFolder( $sResourceType, $sCurrentFolder ) ;
 			break ;
+      	case 'DeleteFile' : // Added by Bramus!
+          		DeleteFile( $sResourceType, $sCurrentFolder ) ;
+		       break ;
 	}
 
 	CreateXmlFooter() ;

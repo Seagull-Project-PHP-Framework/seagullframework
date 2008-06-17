@@ -64,15 +64,17 @@ oListManager.AddFile = function( fileName, fileUrl, fileSize )
 
 	// Build the link to view the folder.
 	var sLink = '<a href="#" onclick="OpenFile(\'' + fileUrl + '\');return false;">' ;
+	
+	var dLink = '<a href="#" title="Delete file" onclick="DeleteFile(\'' + escape(fileName) + '\');return false;">' ;     // Added by Bramus!
 
 	// Get the file icon.
 	var sIcon = oIcons.GetIcon( fileName ) ;
 
 	// Add the file icon cell.
 	var oCell = oRow.insertCell(-1) ;
-	oCell.width = 16 ;
-	oCell.innerHTML = sLink + '<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"></a>' ;
-
+	oCell.width = 40 ;
+	oCell.innerHTML = sLink + '<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"></a>&nbsp;&nbsp;' +  dLink + '<img alt="" src="images/icons/delete.gif" width="16" height="16" border="0"></a>' ;    // Modded by Bramus!
+	
 	// Add the file name cell.
 	oCell = oRow.insertCell(-1) ;
 	oCell.innerHTML = '&nbsp;' + sLink + fileName + '</a>' ;
@@ -142,6 +144,40 @@ function GetFoldersAndFilesCallBack( fckXml )
 		oListManager.AddFile( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ;
 	}
 }
+
+// Added by Bramus!
+function DeleteFile( fileName, fileUrl ) {
+          if (confirm('Are you sure you wish to delete ' + unescape(fileName) + '?')) {
+              oConnector.SendCommand( 'DeleteFile', "FileName=" + fileName, DeleteFileCallBack ) ;
+          }
+}
+
+// Added by Bramus!
+      function DeleteFileCallBack ( fckXml ) {
+          var oNodes = fckXml.SelectNodes( 'Connector/Error' );
+          if (oNodes!=null && oNodes.length>0) {
+              var errNo = parseInt(oNodes[0].attributes.getNamedItem('number').value) ;
+             
+              switch (errNo) {
+                  case 0 :
+                  break;
+                
+                  case 102 :
+                  case 103 :
+                      alert(oNodes[0].attributes.getNamedItem('originalDescription').value);
+                   break;
+                  
+                   default:
+                      alert('DFi: Invalid XML response from connector..');
+              }
+             
+          } else {
+              alert('DFi: Invalid XML response from connector.');
+          }
+          Refresh();
+      }
+
+
 
 window.onload = function()
 {
