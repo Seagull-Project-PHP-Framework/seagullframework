@@ -26,6 +26,10 @@ BUGFIXES
             Horde_Routes input URL handler
 
 IMPROVEMENTS
+17-06-08    The makeCssOptimizerLink() method no longer loads the Seagull CSS
+            framework by default (Dmitri)
+17-06-08    Added new comment2 module, ajax with jquery, see
+                http://trac.seagullproject.org/wiki/Modules/Comment2
 02-06-08    Added ability to synchonise prefs for all members (wik01)
 22-05-08    Symlinks in the webroot (like those created by installing modules with
             web resources) are now supported if you remove the index.php file, see
