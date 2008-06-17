@@ -1086,6 +1086,16 @@ class SGL_Output
     /**
      * Makes CSS optimizer link.
      *
+     * 1. {makeCssOptimizerLink():h}
+     *    Loads default "CSS fw" stylesheets + stylesheets specified in mgr.
+     *
+     * 2. {makeCssOptimizerLink(##,#a.css,b.css#):h}
+     *    Loads "a.css" and "b.css" from current theme + stylesheets
+     *    specified in mgr.
+     *
+     * 3. {makeCssOptimizerLink(##,##):h}
+     *    Loads only stylesheets specified in mgr.
+     *
      * @access public
      *
      * @param array $aCssHelperParams    additional params passed to css helper
@@ -1122,7 +1132,7 @@ class SGL_Output
                 $aDefaultThemeFiles[] = "themes/$theme/css/$file";
             }
         }
-        if (!is_array($aDefaultThemeFiles)) {
+        if (!is_array($aDefaultThemeFiles) && is_null($aDefaultThemeFiles)) {
             // default files loaded
             $aDefaultThemeFiles = array( // we need to be able to customize it
                 "themes/$theme/css/reset.css",
@@ -1134,6 +1144,8 @@ class SGL_Output
                 "themes/$theme/css/common.css",
                 "themes/$theme/css/$masterLayout",
             );
+        } elseif (!is_array($aDefaultThemeFiles)) {
+            $aDefaultThemeFiles = array();
         }
 
         // custom loaded files
@@ -1203,6 +1215,10 @@ class SGL_Output
                 . $cssString . $params;
             $ret = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
         }
+
+        // reset to default state in case of multiply calls
+        $this->aCssFiles = $aCurrentFiles;
+
         return $ret;
     }
 
