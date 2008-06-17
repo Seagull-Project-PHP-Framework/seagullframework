@@ -186,6 +186,7 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
+        $var = SGL_String::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
@@ -198,7 +199,6 @@ class SGL_String
             $clean = preg_replace($search, $replace, $var);
             return $clean;
         }
-        return SGL_String::trimWhitespace($clean);
     }
 
     /**
