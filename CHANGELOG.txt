@@ -26,6 +26,7 @@ BUGFIXES
             Horde_Routes input URL handler
 
 IMPROVEMENTS
+17-06-08    Removed PEAR error message that shows DB password when connect fails
 17-06-08    The makeCssOptimizerLink() method no longer loads the Seagull CSS
             framework by default (Dmitri)
 17-06-08    Added new comment2 module, ajax with jquery, see

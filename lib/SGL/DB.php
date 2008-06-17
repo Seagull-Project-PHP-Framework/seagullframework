@@ -82,6 +82,12 @@ class SGL_DB
         if (!isset($aInstances[$signature])) {
             $conn = DB::connect($dsn);
             if (PEAR::isError($conn)) {
+                //  remove sensitve details, ie, db password
+                if ($conn->getCode() == DB_ERROR_CONNECT_FAILED) {
+                    $oLastStackError = SGL_Error::pop();
+                    $oLastStackError->userinfo = ''; //crude but give me an API!
+                    SGL_Error::push($oLastStackError);
+                }
                 if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php') && defined('SGL_INSTALLED')) {
                     $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be'.
                     ' able to run the setup again.';
