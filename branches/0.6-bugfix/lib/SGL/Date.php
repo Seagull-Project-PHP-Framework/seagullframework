@@ -251,13 +251,15 @@ class SGL_Date
         if (empty($selected) && $selected != null) {
             $selected = date('m', time());
         }
-        foreach ($aMonths as $k => $v) {
-            //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
-            $monthOptions .= "\n<option value=\"$k\" ";
-            if ($k == $selected) {
-                $monthOptions .= 'selected="selected"';
+        if (count($aMonths)) {
+            foreach ($aMonths as $k => $v) {
+                //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+                $monthOptions .= "\n<option value=\"$k\" ";
+                if ($k == $selected) {
+                    $monthOptions .= 'selected="selected"';
+                }
+                $monthOptions .= '>' . $v . '</option>';
             }
-            $monthOptions .= '>' . $v . '</option>';
         }
         return $monthOptions;
     }
