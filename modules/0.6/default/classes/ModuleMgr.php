@@ -363,57 +363,63 @@ class ModuleMgr extends SGL_Manager
         //  get all tables defined in this module's schema
         $oModule = $this->da->getModuleById($input->moduleId);
 
-        $data = array(
-            'createTables'          => 1,
-//            'insertSampleData'      => $input->useSampleData,
-            'aModuleList' => array($oModule->name),
-            'moduleId' => $oModule->module_id,
-            'createTables' => 1,
-            'moduleInstall' => true,
-            );
-
-        define('SGL_ADMIN_REBUILD', 1);
-
-        $buildNavTask = SGL::moduleIsEnabled('cms')
-            ? 'SGL_Task_BuildNavigation2'
-            : 'SGL_Task_BuildNavigation';
-
-        $runner = new SGL_TaskRunner();
-        $runner->addData($data);
-        $runner->addTask(new SGL_Task_SetTimeout());
-        $runner->addTask(new SGL_Task_DefineTableAliases());
-        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
-        $runner->addTask(new SGL_Task_DropTables());
-        $runner->addTask(new SGL_Task_RemoveDefaultData());
-        $runner->addTask(new SGL_Task_RemoveNavigation());
-        $runner->addTask(new SGL_Task_RemoveBlockData());
-        $runner->addTask(new SGL_Task_DeregisterModule());
-        $runner->addTask(new SGL_Task_CreateTables());
-        $runner->addTask(new SGL_Task_LoadTranslations());
-        $runner->addTask(new SGL_Task_LoadDefaultData());
-        $runner->addTask(new SGL_Task_LoadSampleData());
-        $runner->addTask(new SGL_Task_LoadCustomData());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new $buildNavTask());
-        $runner->addTask(new SGL_Task_LoadBlockData());
-        $runner->addTask(new SGL_Task_CreateConstraints());
-        $runner->addTask(new SGL_Task_SyncSequences());
-        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
-        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-        $runner->addTask(new SGL_Task_UnLinkWwwData());
-        $runner->addTask(new SGL_Task_SymLinkWwwData());
-
-        $ok = $runner->main();
-
-        if (SGL_Error::count()) {
-            $oError = SGL_Error::getLast();
-            $msg = $oError->getMessage();
-            $type = SGL_MESSAGE_WARNING;
+        //  disallow uninstalling default modules
+        if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
+            SGL::raiseMsg('This is a default module and cannot be reinstalled',
+                false, SGL_MESSAGE_ERROR);
         } else {
-            $msg = "'$oModule->name' module reinstalled successfully";
-            $type = SGL_MESSAGE_INFO;
+            $data = array(
+                'createTables'          => 1,
+    //            'insertSampleData'      => $input->useSampleData,
+                'aModuleList' => array($oModule->name),
+                'moduleId' => $oModule->module_id,
+                'createTables' => 1,
+                'moduleInstall' => true,
+                );
+
+            define('SGL_ADMIN_REBUILD', 1);
+
+            $buildNavTask = SGL::moduleIsEnabled('cms')
+                ? 'SGL_Task_BuildNavigation2'
+                : 'SGL_Task_BuildNavigation';
+
+            $runner = new SGL_TaskRunner();
+            $runner->addData($data);
+            $runner->addTask(new SGL_Task_SetTimeout());
+            $runner->addTask(new SGL_Task_DefineTableAliases());
+            $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+            $runner->addTask(new SGL_Task_DropTables());
+            $runner->addTask(new SGL_Task_RemoveDefaultData());
+            $runner->addTask(new SGL_Task_RemoveNavigation());
+            $runner->addTask(new SGL_Task_RemoveBlockData());
+            $runner->addTask(new SGL_Task_DeregisterModule());
+            $runner->addTask(new SGL_Task_CreateTables());
+            $runner->addTask(new SGL_Task_LoadTranslations());
+            $runner->addTask(new SGL_Task_LoadDefaultData());
+            $runner->addTask(new SGL_Task_LoadSampleData());
+            $runner->addTask(new SGL_Task_LoadCustomData());
+            $runner->addTask(new SGL_Task_SyncSequences());
+            $runner->addTask(new $buildNavTask());
+            $runner->addTask(new SGL_Task_LoadBlockData());
+            $runner->addTask(new SGL_Task_CreateConstraints());
+            $runner->addTask(new SGL_Task_SyncSequences());
+            $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+            $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+            $runner->addTask(new SGL_Task_UnLinkWwwData());
+            $runner->addTask(new SGL_Task_SymLinkWwwData());
+
+            $ok = $runner->main();
+
+            if (SGL_Error::count()) {
+                $oError = SGL_Error::getLast();
+                $msg = $oError->getMessage();
+                $type = SGL_MESSAGE_WARNING;
+            } else {
+                $msg = "'$oModule->name' module reinstalled successfully";
+                $type = SGL_MESSAGE_INFO;
+            }
+            SGL::raiseMsg($msg, false, $type);
         }
-        SGL::raiseMsg($msg, false, $type);
     }
 
     function _cmd_edit(&$input, &$output)
