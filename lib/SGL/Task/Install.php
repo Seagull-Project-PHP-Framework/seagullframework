@@ -680,6 +680,9 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
                     $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));
+                    if (PEAR::isError($result)) {
+                        return $result;
+                    }
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_data', $displayHtml);
                 } else {
@@ -934,6 +937,24 @@ class SGL_Task_RemoveNavigation extends SGL_Task
         }
     }
 }
+
+/**
+ * @package Task
+ */
+class SGL_Task_DeregisterModule extends SGL_Task
+{
+    function run($data)
+    {
+        $ok = false;
+        foreach ($data['aModuleList'] as $module) {
+            $rm = DB_DataObject::factory(SGL_Config::get('table.module'));
+            $rm->get($data['moduleId']);
+            $ok = $rm->delete();
+        }
+        return $ok;
+    }
+}
+
 
 /**
  * @package Task
