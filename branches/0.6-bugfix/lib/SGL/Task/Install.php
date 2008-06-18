@@ -1372,6 +1372,9 @@ class SGL_Task_UnLinkWwwData extends SGL_Task
     {
         $ret = true;
         foreach ($data['aModuleList'] as $module) {
+            if (empty($module)) {
+                continue;
+            }
             $wwwDir = SGL_MOD_DIR . '/' . $module  . '/www';
             // if we're windows
             if ((strpos(PHP_OS, 'WIN') !== false) && is_dir(SGL_WEB_ROOT . "/$module")) {
