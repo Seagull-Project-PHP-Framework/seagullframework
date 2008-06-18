@@ -272,7 +272,6 @@ class MaintenanceMgr extends SGL_Manager
             $type = SGL_MESSAGE_INFO;
         }
         SGL::raiseMsg($msg, false, $type);
-
     }
 
     function _cmd_clearCache(&$input, &$output)

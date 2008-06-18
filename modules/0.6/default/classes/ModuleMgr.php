@@ -39,8 +39,12 @@
 // +---------------------------------------------------------------------------+
 // $Id: ModuleMgr.php,v 1.37 2005/06/22 00:32:36 demian Exp $
 
-require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
 require_once 'DB/DataObject.php';
+require_once 'System.php';
+require_once SGL_CORE_DIR . '/Task/Install.php';
+require_once SGL_CORE_DIR . '/Sql.php';
+require_once SGL_CORE_DIR. '/Install/Common.php';
+require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
 
 define('SGL_ICONS_PER_ROW', 3);
 
@@ -70,6 +74,7 @@ class ModuleMgr extends SGL_Manager
             'update'     => array('update', 'redirectToDefault'),
             'delete'     => array('delete', 'redirectToDefault'),
             'uninstall'  => array('uninstall', 'redirectToDefault'),
+            'reinstall'  => array('reinstall', 'redirectToDefault'),
             'deregister' => array('deregister', 'redirectToDefault'),
             'list'       => array('list'),
             'overview'   => array('overview'),
@@ -240,7 +245,6 @@ class ModuleMgr extends SGL_Manager
             'skipLangTablesCreation' => true
         );
         define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
-        require_once SGL_CORE_DIR . '/Task/Install.php';
 
         //  if we're installing cms, insert sections to 'page' table
         $installingCms = false;
@@ -298,12 +302,10 @@ class ModuleMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  drop tables
-        require_once SGL_CORE_DIR . '/Sql.php';
         $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
         //  get all tables defined in this module's schema
         $oModule = $this->da->getModuleById($input->moduleId);
         //  disallow uninstalling default modules
-        require_once SGL_CORE_DIR. '/Install/Common.php';
         if (in_array($oModule->name, SGL_Install_Common::getMinimumModuleList())) {
             SGL::raiseMsg('This is a default module and cannot be uninstalled',
                 false, SGL_MESSAGE_ERROR);
@@ -316,7 +318,6 @@ class ModuleMgr extends SGL_Manager
                 'moduleInstall' => true,
                 );
             define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
-            require_once SGL_CORE_DIR . '/Task/Install.php';
 
             $runner = new SGL_TaskRunner();
             $runner->addData($data);
@@ -329,12 +330,8 @@ class ModuleMgr extends SGL_Manager
             $runner->addTask(new SGL_Task_SyncSequences());
             $runner->addTask(new SGL_Task_UnLinkWwwData());
             $runner->addTask(new SGL_Task_RemoveTestDataFromConfig());
+            $runner->addTask(new SGL_Task_DeregisterModule());
             $ok = $runner->main();
-
-            //  de-register module
-            $rm = DB_DataObject::factory($this->conf['table']['module']);
-            $rm->get($input->moduleId);
-            $ok = $rm->delete();
 
             // remove translations
             if ($this->conf['translation']['container'] == 'db') {
@@ -350,6 +347,73 @@ class ModuleMgr extends SGL_Manager
             SGL::raiseMsg('The ' . $oModule->name . ' module was successfully uninstalled' . $extraMsg,
                 false, SGL_MESSAGE_INFO);
         }
+    }
+
+    function _cmd_reinstall(&$input, &$output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (!preg_match("/(mysql|pgsql)/", $this->dbh->phptype)) {
+            SGL::raiseMsg('This operation is currently only supported for MySQL or PostgreSQL',
+                false, SGL_MESSAGE_INFO);
+            return false;
+        }
+
+        $dbShortname = SGL_Sql::getDbShortnameFromType($this->conf['db']['type']);
+        //  get all tables defined in this module's schema
+        $oModule = $this->da->getModuleById($input->moduleId);
+
+        $data = array(
+            'createTables'          => 1,
+//            'insertSampleData'      => $input->useSampleData,
+            'aModuleList' => array($oModule->name),
+            'moduleId' => $oModule->module_id,
+            'createTables' => 1,
+            'moduleInstall' => true,
+            );
+
+        define('SGL_ADMIN_REBUILD', 1);
+
+        $buildNavTask = SGL::moduleIsEnabled('cms')
+            ? 'SGL_Task_BuildNavigation2'
+            : 'SGL_Task_BuildNavigation';
+
+        $runner = new SGL_TaskRunner();
+        $runner->addData($data);
+        $runner->addTask(new SGL_Task_SetTimeout());
+        $runner->addTask(new SGL_Task_DefineTableAliases());
+        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_DropTables());
+        $runner->addTask(new SGL_Task_RemoveDefaultData());
+        $runner->addTask(new SGL_Task_RemoveNavigation());
+        $runner->addTask(new SGL_Task_RemoveBlockData());
+        $runner->addTask(new SGL_Task_DeregisterModule());
+        $runner->addTask(new SGL_Task_CreateTables());
+        $runner->addTask(new SGL_Task_LoadTranslations());
+        $runner->addTask(new SGL_Task_LoadDefaultData());
+        $runner->addTask(new SGL_Task_LoadSampleData());
+        $runner->addTask(new SGL_Task_LoadCustomData());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new $buildNavTask());
+        $runner->addTask(new SGL_Task_LoadBlockData());
+        $runner->addTask(new SGL_Task_CreateConstraints());
+        $runner->addTask(new SGL_Task_SyncSequences());
+        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+        $runner->addTask(new SGL_Task_UnLinkWwwData());
+        $runner->addTask(new SGL_Task_SymLinkWwwData());
+
+        $ok = $runner->main();
+
+        if (SGL_Error::count()) {
+            $oError = SGL_Error::getLast();
+            $msg = $oError->getMessage();
+            $type = SGL_MESSAGE_WARNING;
+        } else {
+            $msg = "'$oModule->name' module reinstalled successfully";
+            $type = SGL_MESSAGE_INFO;
+        }
+        SGL::raiseMsg($msg, false, $type);
     }
 
     function _cmd_edit(&$input, &$output)
@@ -402,7 +466,6 @@ class ModuleMgr extends SGL_Manager
             could not be removed, please give the webserver permissions to write to it';
         $moduleDir =  SGL_MOD_DIR . '/' . $input->moduleName;
         if (is_writable($moduleDir)) {
-            require_once 'System.php';
             $success = System::rm(array('-r', $moduleDir));
         }
 
@@ -423,7 +486,6 @@ class ModuleMgr extends SGL_Manager
 
         // if there are modules, determine whether installed
         if (count($aModules)) {
-            require_once SGL_CORE_DIR . '/Sql.php';
             foreach ($aModules as $k => $oModule) {
                 $aModules[$k]->isInstalled = $this->_isInstalled($oModule->name);
             }

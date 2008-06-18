@@ -18,9 +18,11 @@
         'Refresh Module Listing' => 'Refresh Module Listing',
         'WARNING: This will drop your database' => 'WARNING: This will drop your database and create your Seagull environment from discovered data files. It will only work correctly if your current database user has full privileges, ie to drop and create databases.',
         'with sample data' => 'with sample data',
-         'Maintainer' => 'Maintainer',
-         'License' => 'License',
-         'State' => 'Status',
+        'Maintainer' => 'Maintainer',
+        'License' => 'License',
+        'State' => 'Status',
+        'Reload' => 'Reload',
+        'reload' => 'reload',
 
 /*  MODULE CONFIG MGR  */
         'Module Config Manager' => 'Module Config Manager',
@@ -56,6 +58,7 @@
         'Your alert has been sent successfully' => 'Your alert has been sent successfully',
         'Are you sure you want to delete this' => 'Are you sure you want to delete this',
         'module deregister msg' => 'An attempt will be made to drop this module\\\'s tables and data, are you sure you want to proceed?',
+        'module reload msg' => 'An attempt will be made to reinstall this module, any data entered will be lost, are you sure you want to proceed?',
         'module deletion msg' => 'An attempt will be made to delete this module\\\'s files from your filesystem, are you sure you want to proceed?',
         'show uninstalled modules' => 'show uninstalled modules',
         'Below is a list' => 'Below is a list of modules registered in the \'module\' table.  Some modules may be present in
