@@ -40,6 +40,7 @@
 
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
+require_once dirname(__FILE__)  . '/FilterChain.php';
 
 /**
  * Application controller.
@@ -107,37 +108,36 @@ class SGL_FrontController
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
-            $process =
+
+
+            $aFilters = array(
                 //  pre-process (order: top down)
-                new SGL_Task_Init(
-                new SGL_Task_StripMagicQuotes(
-                new SGL_Task_DiscoverClientOs(
-                new SGL_Task_ResolveManager(
-                new SGL_Task_CreateSession(
-                new SGL_Task_AuthenticateRequest(
-                new SGL_Task_DetectAdminMode(
-                //new SGL_Task_MaintenanceModeIntercept(
-                //new SGL_Task_DetectSessionDebug(
-                //new SGL_Task_SetupPerms(
-                new SGL_Task_SetupLangSupport(
-                new SGL_Task_SetupLocale(
-
+                'SGL_Task_Init',
+                'SGL_Task_StripMagicQuotes',
+                'SGL_Task_DiscoverClientOs',
+                'SGL_Task_ResolveManager',
+                'SGL_Task_CreateSession',
+                'SGL_Task_AuthenticateRequest',
+                'SGL_Task_DetectAdminMode',
+//                //new SGL_Task_MaintenanceModeIntercept(
+//                //new SGL_Task_DetectSessionDebug(
+//                //new SGL_Task_SetupPerms(
+                'SGL_Task_SetupLangSupport',
+                'SGL_Task_SetupLocale',
                 //  post-process (order: bottom up)
-                new SGL_Task_BuildHeaders(
-                new SGL_Task_BuildView(
-                //new SGL_Task_BuildDebugBlock(
-                //new SGL_Task_SetupBlocks(
-                //new SGL_Task_SetupNavigation(
-                new SGL_Task_SetupGui(
-                new SGL_Task_BuildOutputData(
-
+                'SGL_Task_BuildHeaders',
+                'SGL_Task_BuildView',
+//                //new SGL_Task_BuildDebugBlock(
+//                //new SGL_Task_SetupBlocks(
+//                //new SGL_Task_SetupNavigation(
+                'SGL_Task_SetupGui',
+                'SGL_Task_BuildOutputData',
                 //  target
-                new SGL_MainProcess()
-                )))))))))))));
-            $process->process($input, $output);
-
+                'SGL_MainProcess',
+                );
+            $chain = new SGL_FilterChain($aFilters);
+            $chain->doFilter($input, $output);
         } else {
-            require_once dirname(__FILE__)  . '/FilterChain.php';
             $chain = new SGL_FilterChain($input->getFilters());
             $chain->doFilter($input, $output);
         }

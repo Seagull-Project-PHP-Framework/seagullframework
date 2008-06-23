@@ -84,9 +84,8 @@ class SGL_Task_SetupPaths extends SGL_Task
             } else {
                 define('SGL_PATH', $GLOBALS['rootDir']);
             }
-            //define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
             //  put sgl lib dir in include path
-            $sglLibDir =  SGL_PATH . '/lib/SGL';
+            $sglLibDir =  SGL_PATH . '/lib';
         }
 
         $sglPath = get_include_path().PATH_SEPARATOR .$sglLibDir ;
