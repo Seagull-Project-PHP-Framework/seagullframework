@@ -232,7 +232,7 @@ class RegisterMgr extends SGL_Manager
         $sessId = SGL_Session::getId();
         $output->addJavascriptFile(array(
             'js/scriptaculous/lib/prototype.js',
-            'js/scriptaculous/src/scriptaculous.js?load=effects'
+            'js/scriptaculous/src/effects.js'
         ));
     }
 
