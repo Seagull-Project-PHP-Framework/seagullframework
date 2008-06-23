@@ -271,7 +271,7 @@ class SGL_FrontController
                 $coreLibs  . '/Manager.php',
                 $coreLibs  . '/Output.php',
                 $coreLibs  . '/String.php',
-                $coreLibs  . '/Task/Process.php',
+                //$coreLibs  . '/Task/Process.php',
                 $coreLibs  . '/Session.php',
                 $coreLibs  . '/Util.php',
                 $coreLibs  . '/Config.php',
