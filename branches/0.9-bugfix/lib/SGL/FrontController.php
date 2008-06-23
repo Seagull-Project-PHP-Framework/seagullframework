@@ -124,6 +124,7 @@ class SGL_FrontController
 //                //new SGL_Task_SetupPerms(
                 'SGL_Task_SetupLangSupport',
                 'SGL_Task_SetupLocale',
+
                 //  post-process (order: bottom up)
                 'SGL_Task_BuildHeaders',
                 'SGL_Task_BuildView',
@@ -132,15 +133,14 @@ class SGL_FrontController
 //                //new SGL_Task_SetupNavigation(
                 'SGL_Task_SetupGui',
                 'SGL_Task_BuildOutputData',
+
                 //  target
                 'SGL_MainProcess',
                 );
-            $chain = new SGL_FilterChain($aFilters);
-            $chain->doFilter($input, $output);
-        } else {
-            $chain = new SGL_FilterChain($input->getFilters());
-            $chain->doFilter($input, $output);
+            $input->setFilters($aFilters);
         }
+        $chain = new SGL_FilterChain($input->getFilters());
+        $chain->doFilter($input, $output);
         if (SGL_Config::get('site.outputBuffering')) {
             ob_end_flush();
         }
