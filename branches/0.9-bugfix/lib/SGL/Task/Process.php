@@ -196,8 +196,12 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $locale = $_SESSION['aPrefs']['locale'];
-        $timezone = $_SESSION['aPrefs']['timezone'];
+        $locale = isset($_SESSION['aPrefs']['locale'])
+            ? $_SESSION['aPrefs']['locale']
+            : 'en_GB';
+        $timezone = isset($_SESSION['aPrefs']['timezone'])
+            ? $_SESSION['aPrefs']['timezone']
+            : 'UTC';
         $language = substr($locale, 0,2);
 
         if (!SGL_Config::get('site.extendedLocale')) {
@@ -950,7 +954,9 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         // Additional information
         $output->scriptOpen         = "\n<script type='text/javascript'>\n//<![CDATA[\n";
         $output->scriptClose        = "\n//]]>\n</script>\n";
-        $output->showExecutionTimes = $_SESSION['aPrefs']['showExecutionTimes'];
+        $output->showExecutionTimes = isset($_SESSION['aPrefs']['showExecutionTimes'])
+            ? $_SESSION['aPrefs']['showExecutionTimes']
+            : 1;
     }
 
     /**

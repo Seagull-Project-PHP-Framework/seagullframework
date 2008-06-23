@@ -184,8 +184,8 @@ class SGL_Session
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get UserDAO object
-        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da = & UserDAO::singleton();
+//require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+//$da = & UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();
@@ -245,8 +245,10 @@ class SGL_Session
                 'key'               => md5($startTime . $acceptLang . $userAgent),
                 'currentResRange'   => 'all',
                 'sortOrder'         => 'ASC',
-                'aPrefs'            => $da->getPrefsByUserId(),
-                'aPerms'            => $da->getPermsByRoleId(),
+                'aPrefs'            => array(),
+                //'aPrefs'            => $da->getPrefsByUserId(),
+                'aPerms'            => array(),
+                //'aPerms'            => $da->getPermsByRoleId(),
             );
         }
 

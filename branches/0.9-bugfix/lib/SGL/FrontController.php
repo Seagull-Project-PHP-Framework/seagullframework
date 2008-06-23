@@ -100,42 +100,40 @@ class SGL_FrontController
         $output = &new $outputClass();
 
         // test db connection
-        SGL_FrontController::testDbConnection($output);
+//SGL_FrontController::testDbConnection($output);
 
         // run module init tasks
-        SGL_Task_InitialiseModules::run();
+//SGL_Task_InitialiseModules::run();
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
             $process =
                 //  pre-process (order: top down)
                 new SGL_Task_Init(
-                new SGL_Task_SetupORM(
                 new SGL_Task_StripMagicQuotes(
                 new SGL_Task_DiscoverClientOs(
                 new SGL_Task_ResolveManager(
                 new SGL_Task_CreateSession(
                 new SGL_Task_AuthenticateRequest(
                 new SGL_Task_DetectAdminMode(
-                new SGL_Task_MaintenanceModeIntercept(
-                new SGL_Task_DetectSessionDebug(
-                new SGL_Task_SetupPerms(
+                //new SGL_Task_MaintenanceModeIntercept(
+                //new SGL_Task_DetectSessionDebug(
+                //new SGL_Task_SetupPerms(
                 new SGL_Task_SetupLangSupport(
                 new SGL_Task_SetupLocale(
 
                 //  post-process (order: bottom up)
                 new SGL_Task_BuildHeaders(
                 new SGL_Task_BuildView(
-                new SGL_Task_BuildDebugBlock(
-                new SGL_Task_SetupBlocks(
-                new SGL_Task_SetupNavigation(
+                //new SGL_Task_BuildDebugBlock(
+                //new SGL_Task_SetupBlocks(
+                //new SGL_Task_SetupNavigation(
                 new SGL_Task_SetupGui(
-                new SGL_Task_SetupWysiwyg(
                 new SGL_Task_BuildOutputData(
 
                 //  target
                 new SGL_MainProcess()
-                )))))))))))))))))))));
+                )))))))))))));
             $process->process($input, $output);
 
         } else {
