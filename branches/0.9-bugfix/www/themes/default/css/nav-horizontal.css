@@ -1,0 +1,56 @@
+
+/**
+ * - horizontal navigation
+ * - toolbar
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+/* Main navigation */
+div#nav-main {
+    border-bottom: 1px solid #bbb;
+    background-color: #fff;
+}
+    div#nav-main div.inner {
+        margin-bottom: 2px;
+        height: 2.2em;
+        border: 1px solid #bbb;
+        border-top: none;
+        background-color: #eef7d4;
+        padding-left: 200px;
+    }
+    div#nav-main ul {
+        margin: 0;
+        list-style: none;
+        line-height: 1em;
+    }
+        div#nav-main ul li {
+            margin: 0;
+            float: left;
+        }
+            div#nav-main ul li a {
+                display: block;
+                border-right: 1px solid #fff;
+                padding: 0.65em 1em 0.55em;
+                font-weight: bold;
+                color: #66a326;
+            }
+            div#nav-main ul li a:hover, div#nav-main ul li.current a {
+                background-color: #9c0;
+                color: #fff;
+                text-decoration: none;
+            }
+/* END main navigation */
+
+
+/* Toolbar */
+div#nav-main div#toolbar {
+    border: 1px solid #bbb;
+    margin-bottom: 2px;
+    padding: 0.6em;
+    height: 1.1em;
+    font-size: 0.8em;
+}
+/* END toolbar */
