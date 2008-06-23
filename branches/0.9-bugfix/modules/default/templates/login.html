@@ -1,0 +1,60 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<form id="frmLogin" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
+        <input type="hidden" name="action" value="login" />
+        <input type="hidden" name="redir" value="{redir}" />
+    </fieldset>
+    <fieldset class="lastChild">
+        <legend>{translate(#Authorisation Required#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="frm_username">
+                    <em>*</em> {translate(#Username#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[username]">
+                        {translate(error[username])}
+                    </p>
+                    <input id="frm_username" class="text" type="text"
+                           name="frmUsername" value="{username}" />
+                </div>
+            </li>
+            <li>
+                <label for="frm_password">
+                    <em>*</em> {translate(#Password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password]">
+                        {translate(error[password])}
+                    </p>
+                    <input id="frm_password" class="text" type="password"
+                           name="frmPassword" value="{password}" />
+                </div>
+            </li>
+            {if:conf[cookie][rememberMeEnabled]}
+            <li>
+                <label for="frm_extendedLifetime">{translate(#Remember me#)}</label>
+                <div>
+                    <input id="frm_extendedLifetime"
+                           type="checkbox" name="frmExtendedLifetime" value="1" />
+                </div>
+            </li>
+            {end:}
+        </ol>
+    </fieldset>
+    <div class="fieldIndent">
+        <p>
+            <input class="submit" type="submit" name="submitted"
+                   value="{translate(#Login#)}" />
+        </p>
+        <p flexy:if="conf[RegisterMgr][enabled]">
+            <a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>
+        </p>
+        <p>
+            <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a>
+        </p>
+    </div>
+    <p><em>*</em> {translate(#denotes required field#)}</p>
+</form>

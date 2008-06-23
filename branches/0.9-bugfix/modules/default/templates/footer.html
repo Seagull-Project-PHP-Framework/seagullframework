@@ -1,0 +1,37 @@
+        <div id="footer">
+            <div class="wrap-left">
+                <div class="wrap-right">
+                    <p>
+                        {translate(#Powered by#)}
+                        <a href="http://seagullproject.org/"
+                           title="{translate(#Seagull PHP Framework#)}">
+                            {translate(#Seagull PHP Framework#)}</a>
+                        {if:isAdmin()}v{versionAPI}{end:} - &copy;
+                        <a href="http://seagullsystems.com/"
+                           title="Seagull Systems">Seagull Systems</a>
+                        2003-2007
+                    </p>
+                    <p flexy:if="showExecutionTimes">
+                        {translate(#Execution Time#)} = {getExecutionTime()} {translate(#ms#)}
+                        {getQueryCount()} {translate(#queries#)}
+                    </p>
+                    <p flexy:if="conf[debug][profiling]">
+                        {getMemoryUsage()} kb {translate(#allocated#)}
+                    </p>
+                </div>
+            </div>
+        </div><!-- end footer -->
+
+    </div><!-- end wrapper-outer -->
+
+    {if:conf[debug][infoBlock]}
+    <flexy:include src="debug.html" />
+    {end:}
+
+    <div flexy:if="conf[site][broadcastMessage]" id="broadcastMessage">
+        {conf[site][broadcastMessage]}
+        <a href="#" title="{tr(#close#)}">X</a>
+    </div>
+
+</body>
+</html>
