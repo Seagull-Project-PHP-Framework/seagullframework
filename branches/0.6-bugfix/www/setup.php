@@ -81,8 +81,8 @@ if ($pearTest != '@' . 'PHP-DIR'. '@') {
     $rootDir = '@PHP-DIR@/Seagull';
     $varDir = '@DATA-DIR@/Seagull/var';
 } else {
-    $rootDir = dirname(__FILE__) . '/..';
-    $varDir = dirname(__FILE__) . '/../var';
+    $rootDir = realpath(dirname(__FILE__) . '/..');
+    $varDir = realpath(dirname(__FILE__) . '/../var');
 }
 
 //  check for lib cache
@@ -98,6 +98,7 @@ define('SGL_MINIMAL_INSTALL', (is_file($rootDir . '/MINIMAL_INSTALL.txt'))
 require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
 SGL_FrontController::init();
+
 session_start();
 $_SESSION['ERRORS'] = array();
 
