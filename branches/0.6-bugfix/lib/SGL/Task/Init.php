@@ -85,17 +85,19 @@ class SGL_Task_SetupPaths extends SGL_Task
                 define('SGL_PATH', $GLOBALS['rootDir']);
             }
             define('SGL_LIB_PEAR_DIR', SGL_PATH . '/lib/pear');
+            //  put sgl lib dir in include path
+            $sglLibDir =  SGL_PATH . '/lib/SGL';
         }
 
         if (!defined('PATH_SEPARATOR')) { // defined in >= PHP 4.3.4
             define('PATH_SEPARATOR', (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':');
         }
-        $sglPath = '.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR;
+        $sglPath = '.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR . PATH_SEPARATOR . $sglLibDir;
         $allowed = @ini_set('include_path', $sglPath);
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
             if (function_exists('set_include_path')) {
-                set_include_path('.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR);
+                set_include_path($sglPath);
             } else {
                 die('You need at least PHP 4.3.0 if you want to run Seagull
                 with safe mode enabled.');
