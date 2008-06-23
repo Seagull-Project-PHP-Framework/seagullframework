@@ -112,7 +112,7 @@ class SGL_FrontController
 
             $aFilters = array(
                 //  pre-process (order: top down)
-                'SGL_Task_Init',
+                //'SGL_Task_Init',
                 'SGL_Task_StripMagicQuotes',
                 'SGL_Task_DiscoverClientOs',
                 'SGL_Task_ResolveManager',
@@ -243,13 +243,13 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
-        $init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
+        //$init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
         $init->addTask(new SGL_Task_SetupPearErrorCallback());
         $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
-        $init->addTask(new SGL_Task_RegisterTrustedIPs());
+        //$init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
         $init->main();
         define('SGL_INITIALISED', true);
@@ -283,8 +283,8 @@ class SGL_FrontController
                 $coreLibs  . '/Array.php',
                 $coreLibs  . '/Error.php',
                 $coreLibs  . '/Cache.php',
-                $coreLibs  . '/DB.php',
-                $coreLibs  . '/BlockLoader.php',
+                //$coreLibs  . '/DB.php',
+                //$coreLibs  . '/BlockLoader.php',
                 $coreLibs  . '/Translation.php',
                 $coreLibs  . '/../data/ary.languages.php',
             );
@@ -305,7 +305,7 @@ class SGL_FrontController
             }
         }
         require_once 'PEAR.php';
-        require_once 'DB.php';
+        //require_once 'DB.php';
     }
 
     function setupMinimumEnv()
@@ -327,7 +327,7 @@ class SGL_FrontController
  */
 class SGL_ProcessRequest
 {
-    function process(/*SGL_Registry*/ $input, /*SGL_Output*/ $output) {}
+    function process(SGL_Registry $input, SGL_Output $output) {}
 }
 
 /**
