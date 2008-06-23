@@ -113,24 +113,24 @@ class SGL_Task_CreateConfig extends SGL_Task
         }
 
         // mysql storage
-        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
-            ? $data['dbMysqlDefaultStorageEngine']
-            : false;
-
-        //  db details
-        $c->set('db', array('prefix' => $data['prefix']));
-        $c->set('db', array('host' => $data['host']));
-        $c->set('db', array('name' => $data['name']));
-        $c->set('db', array('user' => $data['databaseUser']));
-        $c->set('db', array('pass' => $data['databaseUserPass']));
-        $c->set('db', array('port' => $data['dbPort']['port']));
-        $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
-        $c->set('db', array('socket' => $data['socket']));
-        $c->set('db', array('type' => $data['dbType']['type']));
-        $c->set('db', array('postConnect' => $data['postConnect']));
-        $c->set('db', array('mysqlDefaultStorageEngine' => $mysqlStorageEngine));
-        $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
-
+//        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
+//            ? $data['dbMysqlDefaultStorageEngine']
+//            : false;
+//
+//        //  db details
+//        $c->set('db', array('prefix' => $data['prefix']));
+//        $c->set('db', array('host' => $data['host']));
+//        $c->set('db', array('name' => $data['name']));
+//        $c->set('db', array('user' => $data['databaseUser']));
+//        $c->set('db', array('pass' => $data['databaseUserPass']));
+//        $c->set('db', array('port' => $data['dbPort']['port']));
+//        $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
+//        $c->set('db', array('socket' => $data['socket']));
+//        $c->set('db', array('type' => $data['dbType']['type']));
+//        $c->set('db', array('postConnect' => $data['postConnect']));
+//        $c->set('db', array('mysqlDefaultStorageEngine' => $mysqlStorageEngine));
+//        $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
+//
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));
 
@@ -151,24 +151,24 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
-        $c->set('site', array('blocksEnabled' => true));
+#        $c->set('site', array('blocksEnabled' => true));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
-        (array_key_exists('storeTranslationsInDB', $data)
-                && $data['storeTranslationsInDB'] == 1)
-            ? $c->set('translation', array('container' => 'db'))
-            : $c->set('translation', array('container' => 'file'));
-
-        //  add missing translations to db
-        (array_key_exists('addMissingTranslationsToDB', $data)
-                && $data['addMissingTranslationsToDB'] == 1)
-            ? $c->set('translation', array('addMissingTrans' => true))
-            : $c->set('translation', array('addMissingTrans' => false));
-
-        //  translation fallback language
-        $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
-        $c->set('translation', array('fallbackLang' => $fallbackLang));
+//        (array_key_exists('storeTranslationsInDB', $data)
+//                && $data['storeTranslationsInDB'] == 1)
+//            ? $c->set('translation', array('container' => 'db'))
+//            : $c->set('translation', array('container' => 'file'));
+//
+//        //  add missing translations to db
+//        (array_key_exists('addMissingTranslationsToDB', $data)
+//                && $data['addMissingTranslationsToDB'] == 1)
+//            ? $c->set('translation', array('addMissingTrans' => true))
+//            : $c->set('translation', array('addMissingTrans' => false));
+//
+//        //  translation fallback language
+//        $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
+//        $c->set('translation', array('fallbackLang' => $fallbackLang));
 
         //  auto-correct frontScriptName for CGI users
         if (preg_match("/cgi|apache2filter/i", php_sapi_name())) {
@@ -201,10 +201,10 @@ class SGL_Task_CreateConfig extends SGL_Task
         $_SESSION['install_timezone'] = $data['serverTimeOffset'];
 
         //  store old prefix for tables drop
-        if (isset($oldConf['db']['prefix'])
-                && $oldConf['db']['prefix'] != $data['prefix']) {
-            $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
-        }
+//        if (isset($oldConf['db']['prefix'])
+//                && $oldConf['db']['prefix'] != $data['prefix']) {
+//            $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
+//        }
         return $ok;
     }
 }
@@ -235,47 +235,47 @@ class SGL_UpdateHtmlTask extends SGL_Task
 
     function setup()
     {
-        $c = &SGL_Config::singleton();
-        $this->conf = $c->getAll();
-
-        //  setup db type vars
-        $this->dbType = $this->conf['db']['type'];
-
-        switch ($this->conf['db']['type']) {
-        case 'pgsql':
-            $this->filename1 = '/schema.pg.sql';
-            $this->filename2 = '/data.default.pg.sql';
-            $this->filename3 = '/data.sample.pg.sql';
-            $this->filename4 = '/data.block.add.pg.sql';
-            $this->filename5 = '/data.custom.pg.sql';
-            $this->filename6 = '/data.test.pg.sql';
-            $this->filename7 = '/constraints.pg.sql';
-            break;
-
-        case 'mysql':
-        case 'mysqli':
-        case 'mysql_SGL':
-        case 'mysqli_SGL':
-            $this->filename1 = '/schema.my.sql';
-            $this->filename2 = '/data.default.my.sql';
-            $this->filename3 = '/data.sample.my.sql';
-            $this->filename4 = '/data.block.add.my.sql';
-            $this->filename5 = '/data.custom.my.sql';
-            $this->filename6 = '/data.test.my.sql';
-            $this->filename7 = '/constraints.my.sql';
-            break;
-
-        case 'oci8_SGL':
-            $this->dbType = 'oci8'; // exception to dbType naming
-            $this->filename1 = '/schema.oci.sql';
-            $this->filename2 = '/data.default.oci.sql';
-            $this->filename3 = '/data.sample.oci.sql';
-            $this->filename4 = '/data.block.add.oci.sql';
-            $this->filename5 = '/data.custom.oci.sql';
-            $this->filename6 = '/data.test.oci.sql';
-            $this->filename7 = '/constraints.oci.sql';
-            break;
-        }
+//        $c = &SGL_Config::singleton();
+//        $this->conf = $c->getAll();
+//
+//        //  setup db type vars
+//        $this->dbType = $this->conf['db']['type'];
+//
+//        switch ($this->conf['db']['type']) {
+//        case 'pgsql':
+//            $this->filename1 = '/schema.pg.sql';
+//            $this->filename2 = '/data.default.pg.sql';
+//            $this->filename3 = '/data.sample.pg.sql';
+//            $this->filename4 = '/data.block.add.pg.sql';
+//            $this->filename5 = '/data.custom.pg.sql';
+//            $this->filename6 = '/data.test.pg.sql';
+//            $this->filename7 = '/constraints.pg.sql';
+//            break;
+//
+//        case 'mysql':
+//        case 'mysqli':
+//        case 'mysql_SGL':
+//        case 'mysqli_SGL':
+//            $this->filename1 = '/schema.my.sql';
+//            $this->filename2 = '/data.default.my.sql';
+//            $this->filename3 = '/data.sample.my.sql';
+//            $this->filename4 = '/data.block.add.my.sql';
+//            $this->filename5 = '/data.custom.my.sql';
+//            $this->filename6 = '/data.test.my.sql';
+//            $this->filename7 = '/constraints.my.sql';
+//            break;
+//
+//        case 'oci8_SGL':
+//            $this->dbType = 'oci8'; // exception to dbType naming
+//            $this->filename1 = '/schema.oci.sql';
+//            $this->filename2 = '/data.default.oci.sql';
+//            $this->filename3 = '/data.sample.oci.sql';
+//            $this->filename4 = '/data.block.add.oci.sql';
+//            $this->filename5 = '/data.custom.oci.sql';
+//            $this->filename6 = '/data.test.oci.sql';
+//            $this->filename7 = '/constraints.oci.sql';
+//            break;
+//        }
 
         //  these hold what to display in results grid, depending on outcome
         $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
@@ -1124,16 +1124,16 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $this->setup();
 
         //  verify db
-        $dbh = & SGL_DB::singleton();
-        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
-        $res = $dbh->getAll($query);
-        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
-            SGL_Install_Common::errorPush(
-                PEAR::raiseError('No tables exist in DB - was schema created?'));
-        } elseif (!(count($res))) {
-            SGL_Install_Common::errorPush(
-                PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
-        }
+//        $dbh = & SGL_DB::singleton();
+//        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
+//        $res = $dbh->getAll($query);
+//        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
+//            SGL_Install_Common::errorPush(
+//                PEAR::raiseError('No tables exist in DB - was schema created?'));
+//        } elseif (!(count($res))) {
+//            SGL_Install_Common::errorPush(
+//                PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
+//        }
 
         //  create error message if appropriate
         if (SGL_Install_Common::errorsExist()) {
