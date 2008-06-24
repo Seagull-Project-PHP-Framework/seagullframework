@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.6                                                               |
+// | Seagull 0.9                                                               |
 // +---------------------------------------------------------------------------+
 // | FrontController.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -81,11 +81,11 @@ class SGL_FrontController
     function run()
     {
         if (!defined('SGL_INITIALISED')) {
-            SGL_FrontController::init();
+            self::init();
         }
         //  assign request to registry
-        $input = &SGL_Registry::singleton();
-        $req   = &SGL_Request::singleton();
+        $input = SGL_Registry::singleton();
+        $req   = SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
@@ -94,11 +94,11 @@ class SGL_FrontController
         $input->setRequest($req);
 
         //  ensure local config loaded and merged
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->ensureModuleConfigLoaded($req->getModuleName());
 
-        $outputClass = SGL_FrontController::getOutputClass();
-        $output = &new $outputClass();
+        $outputClass = self::getOutputClass();
+        $output = new $outputClass();
 
         // test db connection
 //SGL_FrontController::testDbConnection($output);
@@ -107,7 +107,7 @@ class SGL_FrontController
 //SGL_Task_InitialiseModules::run();
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
-        if (!SGL_FrontController::customFilterChain($input)) {
+        if (!self::customFilterChain($input)) {
 
 
             $aFilters = array(
@@ -152,6 +152,7 @@ class SGL_FrontController
         $req = $input->getRequest();
 
         switch ($req->getType()) {
+
         case SGL_REQUEST_BROWSER:
         case SGL_REQUEST_CLI:
             $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
@@ -232,13 +233,13 @@ class SGL_FrontController
 
     function init()
     {
-        SGL_FrontController::setupMinimumEnv();
-        SGL_FrontController::loadRequiredFiles();
+        self::setupMinimumEnv();
+        self::loadRequiredFiles();
 
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
-        $c = &SGL_Config::singleton($autoLoad);
+        $c = SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
@@ -293,11 +294,7 @@ class SGL_FrontController
                 require_once $file;
                 if ($cachedLibsEnabled) {
                     // 270kb vs 104kb
-                    if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
-                        $fileCache .= php_strip_whitespace($file);
-                    } else {
-                        $fileCache .= file_get_contents($file);
-                    }
+                    $fileCache .= php_strip_whitespace($file);
                 }
             }
             if ($cachedLibsEnabled) {
@@ -354,7 +351,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
