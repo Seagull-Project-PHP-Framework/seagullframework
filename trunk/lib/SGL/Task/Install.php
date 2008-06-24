@@ -107,10 +107,10 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('email', array('support' => $data['adminEmail']));
 
         // correct db prefix
-        if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
-            // enforce underscore in prefix
-            $data['prefix'] .= '_';
-        }
+//        if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
+//            // enforce underscore in prefix
+//            $data['prefix'] .= '_';
+//        }
 
         // mysql storage
 //        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
@@ -401,7 +401,8 @@ class SGL_Task_PrepareInstallationProgressTable extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        SGL_Install_Common::printHeader('Building Database');
+        //SGL_Install_Common::printHeader('Building Database');
+        SGL_Install_Common::printHeader('Installing Seagull');
 
         if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
             echo '<span class="title">Status: </span><span id="status"></span>
@@ -1144,7 +1145,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
                 //  note: must all be on one line for DOM text replacement
-                $message = 'Database initialisation complete!';
+                $message = 'Seagull initialisation complete!';
                 $this->updateHtml('status', $message);
                 $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
 
@@ -1808,27 +1809,41 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     {
         $ok = true;
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
-            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $da = & UserDAO::singleton();
-            $oUser = $da->getUserById();
-            $oUser->username        = $data['adminUserName'];
-            $oUser->first_name      = $data['adminFirstName'];
-            $oUser->last_name       = $data['adminLastName'];
-            $oUser->email           = $data['adminEmail'];
-            $oUser->passwd          = !empty($data['adminPasswordIsHash'])
-                ? $data['adminPassword']
-                :  md5($data['adminPassword']);
-            $oUser->organisation_id = 1;
-            $oUser->is_acct_active  = 1;
-            $oUser->country         = 'GB';
-            $oUser->role_id         = SGL_ADMIN;
-            $oUser->date_created    = $oUser->last_updated = SGL_Date::getTime();
-            $oUser->created_by      = $oUser->updated_by = SGL_ADMIN;
-            $ok = $da->addUser($oUser);
 
-            if (PEAR::isError($ok)) {
-                SGL_Install_Common::errorPush($ok);
+            $user = $data['adminUserName'];
+            $passwd = md5($data['adminPassword']);
+            $passwdFile = <<<PHP
+<?php
+#{$user}:{$passwd}
+?>
+PHP;
+            if (is_writable(SGL_VAR_DIR)) {
+                $ok = file_put_contents(SGL_VAR_DIR . '/passwd.php', $passwdFile);
+            } else {
+                SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
             }
+
+//            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+//            $da = & UserDAO::singleton();
+//            $oUser = $da->getUserById();
+//            $oUser->username        = $data['adminUserName'];
+//            $oUser->first_name      = $data['adminFirstName'];
+//            $oUser->last_name       = $data['adminLastName'];
+//            $oUser->email           = $data['adminEmail'];
+//            $oUser->passwd          = !empty($data['adminPasswordIsHash'])
+//                ? $data['adminPassword']
+//                :  md5($data['adminPassword']);
+//            $oUser->organisation_id = 1;
+//            $oUser->is_acct_active  = 1;
+//            $oUser->country         = 'GB';
+//            $oUser->role_id         = SGL_ADMIN;
+//            $oUser->date_created    = $oUser->last_updated = SGL_Date::getTime();
+//            $oUser->created_by      = $oUser->updated_by = SGL_ADMIN;
+//            $ok = $da->addUser($oUser);
+//
+//            if (PEAR::isError($ok)) {
+//                SGL_Install_Common::errorPush($ok);
+//            }
         }
         return $ok;
     }
@@ -1883,39 +1898,40 @@ PHP;
         } else {
             SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
         }
+        return $ok;
 
         //  update lang in default prefs
-        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da = & UserDAO::singleton();
-        $lang = isset($_SESSION['install_language'])
-            ? $_SESSION['install_language']
-            : $data['aPrefs']['language'];
-        $ok = $da->updateMasterPrefs(array('language' => $lang));
-        if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush($ok);
-        }
+//        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+//        $da = & UserDAO::singleton();
+//        $lang = isset($_SESSION['install_language'])
+//            ? $_SESSION['install_language']
+//            : $data['aPrefs']['language'];
+//        $ok = $da->updateMasterPrefs(array('language' => $lang));
+//        if (PEAR::isError($ok)) {
+//            SGL_Install_Common::errorPush($ok);
+//        }
         //  update lang in admin prefs
-        $aMapping = $da->getPrefsMapping();
-        $langPrefId = $aMapping['language'];
-        $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
-        if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush($ok);
-        }
+//        $aMapping = $da->getPrefsMapping();
+//        $langPrefId = $aMapping['language'];
+//        $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
+//        if (PEAR::isError($ok)) {
+//            SGL_Install_Common::errorPush($ok);
+//        }
         //  update tz in default prefs
-        $tz = isset($_SESSION['install_timezone'])
-            ? $_SESSION['install_timezone']
-            : $data['aPrefs']['timezone'];
-        $ok = $da->updateMasterPrefs(array('timezone' => $tz));
-        if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush($ok);
-        }
+//        $tz = isset($_SESSION['install_timezone'])
+//            ? $_SESSION['install_timezone']
+//            : $data['aPrefs']['timezone'];
+//        $ok = $da->updateMasterPrefs(array('timezone' => $tz));
+//        if (PEAR::isError($ok)) {
+//            SGL_Install_Common::errorPush($ok);
+//        }
         //  update tz in admin prefs
-        $tzPrefId = $aMapping['timezone'];
-        $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
-        if (PEAR::isError($ok)) {
-            SGL_Install_Common::errorPush($ok);
-        }
-        return $ok;
+//        $tzPrefId = $aMapping['timezone'];
+//        $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
+//        if (PEAR::isError($ok)) {
+//            SGL_Install_Common::errorPush($ok);
+//        }
+//        return $ok;
     }
 }
 

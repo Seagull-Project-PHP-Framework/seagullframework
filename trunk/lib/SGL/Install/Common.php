@@ -225,7 +225,7 @@ HTML;
 
     function getMinimumModuleList()
     {
-        return array('block');
+        return array('default');
     }
 
     /**
@@ -254,19 +254,6 @@ HTML;
             $aRet['aModuleList'] = explode(',', $aRet['aModuleList']);
         }
         return $aRet;
-    }
-}
-
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (is_file($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
     }
 }
 ?>
