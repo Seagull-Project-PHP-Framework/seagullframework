@@ -68,7 +68,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'siteName'  => 'Seagull Framework',
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
-            'siteLanguage'  => 'en-iso-8859-15',
+            'siteLanguage'  => 'en-utf-8',
             'serverTimeOffset'  => 'UTC',
             'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_PATH,
