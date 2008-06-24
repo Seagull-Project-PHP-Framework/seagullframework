@@ -30,11 +30,13 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.6                                                               |
+// | Seagull 0.9                                                               |
 // +---------------------------------------------------------------------------+
 // | AjaxProvider.php                                                          |
 // +---------------------------------------------------------------------------+
 // | Author: Julien Casanova <julien@soluo.fr>                                 |
+// | Author: Demian Turner <demian@phpkitchen.com>                             |
+// | Author: Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
 define('SGL_RESPONSEFORMAT_JSON', 1);
@@ -48,12 +50,9 @@ define('SGL_RESPONSEFORMAT_XML', 5);
  *
  * @package SGL
  *
- * @author Julien Casanova <julien@soluo.fr>
- * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
- *
  * @abstract
  */
-class SGL_AjaxProvider
+class SGL_AjaxProvider2
 {
     /**
      * Holds configuration
@@ -63,7 +62,7 @@ class SGL_AjaxProvider
     var $conf = array();
 
     /**
-     * DB abstract layer
+     * DB abstraction layer
      *
      * @var DB resource
      */
@@ -86,9 +85,9 @@ class SGL_AjaxProvider
     /**
      * Constructor.
      *
-     * @access public
+     * @access private
      */
-    function SGL_AjaxProvider()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -130,24 +129,24 @@ class SGL_AjaxProvider
      *
      * @return mixed
      */
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $req = $input->getRequest();
         $actionName = $req->getActionName();
 
-        // handle errors
+        //  handle errors
         if (SGL_Error::count()) { // eg, authentication failure
             return;
         } elseif (!method_exists($this, $actionName)) {
-            SGL::raiseError('requested method does not exist');
+            SGL::raiseError("requested method, $actionName, does not exist");
             return;
         }
         // by default request is authorised
         $ok = true;
 
-        // only implement on demand
+        // only check auth and perms on demand
         $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
         if (!empty($this->conf[$providerContainer]['requiresAuth'])
                 && $this->conf['debug']['authorisationEnabled']) {
@@ -162,7 +161,12 @@ class SGL_AjaxProvider
             SGL::raiseError('authorisation failed', SGL_ERROR_INVALIDAUTHORISATION);
             return;
         }
-        $output->data = $this->$actionName();
+        //  setup props needed for creating HTML output with Flexy
+        $output->theme      = SGL_Config::get('site.defaultTheme');
+        $output->webRoot    = SGL_BASE_URL;
+        $output->conf       = SGL_Config::singleton()->getAll();
+
+        $this->$actionName($input, $output);
     }
 
     /**
@@ -218,14 +222,7 @@ class SGL_AjaxProvider
 
     function jsonEncode($data)
     {
-        if (function_exists('json_encode')) {
-            $ret = json_encode($data);
-        } else {
-            require_once 'HTML/AJAX/JSON.php';
-            $json = new HTML_AJAX_JSON();
-            $ret = $json->encode($data);
-        }
-        return $ret;
+        return json_encode($data);
     }
 
     function handleError($oError)
@@ -237,7 +234,7 @@ class SGL_AjaxProvider
             'errorType' => SGL_Error::constantToString($oError->getCode())
         );
 
-        $ret = SGL_AjaxProvider::jsonEncode($aResponse);
+        $ret = self::jsonEncode($aResponse);
         return $ret;
     }
 }
