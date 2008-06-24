@@ -650,10 +650,16 @@ class SGL_Output
     }
 
     /**
-     * For adding JavaScript files to include.
+     * For adding Javascript files to include.
      *
-     * @param   mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js.
-                can also be remote js file e.g. http://example.com/foo.js
+     * @access public
+     *
+     * @param mixed $file  string (file) or array of strings (files)
+     *                     path/to/jsFile relative to www/ dir e.g. js/foo.js,
+     *                     can also be remote js file
+     *                     e.g. http://example.com/foo.js
+     * @param boolean $optimize
+     *
      * @return void
      */
     function addJavascriptFile($file, $optimize = true)
@@ -663,19 +669,13 @@ class SGL_Output
         } else {
             $aFiles = &$this->aRawJavascriptFiles;
         }
-        if (is_array($file)) {
-            foreach ($file as $jsFile) {
-                if (!in_array($jsFile, $aFiles)) {
-                    $aFiles[] = (strpos($jsFile, 'http://') === 0)
-                        ? $jsFile
-                        : SGL_BASE_URL . '/' . $jsFile;
-                }
-            }
-        } else {
-            if (!in_array($file, $aFiles)) {
-                $aFiles[] = (strpos($file, 'http://') === 0)
-                    ? $file
-                    : SGL_BASE_URL . '/' . $file;
+        $aIncludeFiles = !is_array($file) ? array($file) : $file;
+        foreach ($aIncludeFiles as $jsFile) {
+            $jsFile = strpos($jsFile, 'http://') === 0
+                ? $jsFile
+                : SGL_BASE_URL . '/' . $jsFile;
+            if (!in_array($jsFile, $aFiles)) {
+                $aFiles[] = $jsFile;
             }
         }
     }
@@ -1054,7 +1054,7 @@ class SGL_Output
 
         // merge default js files with custom ones
         // default js files will be loaded first
-        $this->aJavascriptFiles = array_merge($this->aJavascriptFiles, $aCurrentFiles);
+        $this->addJavascriptFile($aCurrentFiles);
 
         // remove base url from files
         // NB! this hack should be removed
