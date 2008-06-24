@@ -1,0 +1,40 @@
+
+/**
+ * - navigation bar at the right
+ * - 2 columns
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+<?php include('nav-vertical.css'); ?>
+<?php include('layout-navside-fluid.css'); ?>
+
+div#content {
+    position: relative;
+    border: 1px solid #bbb;
+
+    background-image: none;
+    background-position: left top;
+}
+div#main {
+    margin-left: 200px;
+    margin-right: 216px;
+}
+div#sub {
+    display: none;
+}
+div#local {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+}
+div#nav-main {
+    position: absolute;
+    right: 0;
+    _right: -1px;
+    top: 0;
+    width: 212px;
+}
