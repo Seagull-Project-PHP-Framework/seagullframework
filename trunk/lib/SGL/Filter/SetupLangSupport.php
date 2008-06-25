@@ -9,7 +9,7 @@
  * @author Alexander J. Tarachanowicz II <ajt@localhype.net>
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
+class SGL_Filter_SetupLangSupport extends SGL_DecorateProcess
 {
     /**
      * Main workflow.
@@ -34,7 +34,6 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         } else {
             $moduleDefault = SGL_Config::get('site.defaultModule');
         }
-
 
         $moduleCurrent = $req->get('moduleName')
             ? $req->get('moduleName')
@@ -117,7 +116,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
      */
     function _resolveLanguage()
     {
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
 
         // resolve language from request
         $lang = $req->get('lang');

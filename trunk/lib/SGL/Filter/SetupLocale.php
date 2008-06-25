@@ -6,7 +6,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_SetupLocale extends SGL_DecorateProcess
+class SGL_Filter_SetupLocale extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -40,8 +40,7 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
             }
 
         } else {
-            require_once dirname(__FILE__) . '/../Locale.php';
-            $setlocale = & SGL_Locale::singleton($locale);
+            $setlocale = SGL_Locale::singleton($locale);
         }
 
         $this->processRequest->process($input, $output);

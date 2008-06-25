@@ -9,7 +9,7 @@ require_once 'XML/Unserializer.php';
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
+class SGL_TFilter_XmlToPhpUnserializer extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -20,7 +20,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
             $req = $input->getRequest();
             $entityName = SGL_Config::get('REST.entityName');
             $xml = $req->get($entityName, $allowTags = true);
-            $unserializer = &new XML_Unserializer();
+            $unserializer = new XML_Unserializer();
             $unserializer->setOption('tagAsClass', true);
             $unserializer->setOption('ignoreKeys', $this->getKeysToIgnore());
             $unserializer->setOption('complexType', $this->getComplexTypes());

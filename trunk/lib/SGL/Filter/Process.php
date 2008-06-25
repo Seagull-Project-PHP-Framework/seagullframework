@@ -45,7 +45,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_Init extends SGL_DecorateProcess
+class SGL_Filter_Init extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -64,7 +64,7 @@ class SGL_Task_Init extends SGL_DecorateProcess
 /**
  * @package Task
  */
-class SGL_Task_SetupORM extends SGL_DecorateProcess
+class SGL_Filter_SetupORM extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -81,7 +81,7 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
+class SGL_Filter_DetectBlackListing extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -110,7 +110,7 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
     }
 }
 
-class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
+class SGL_Filter_MaintenanceModeIntercept extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -141,7 +141,7 @@ class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
  * @todo think something better than checking for action to avoid
  *       saving config to file, when value was changed
  */
-class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
+class SGL_Filter_DetectSessionDebug extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -167,7 +167,7 @@ class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_SetupPerms extends SGL_DecorateProcess
+class SGL_Filter_SetupPerms extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -203,7 +203,7 @@ class SGL_Task_SetupPerms extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
+class SGL_Filter_SetupWysiwyg extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -249,7 +249,7 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_SetupNavigation extends SGL_DecorateProcess
+class SGL_Filter_SetupNavigation extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -294,7 +294,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_SetupBlocks extends SGL_DecorateProcess
+class SGL_Filter_SetupBlocks extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -324,7 +324,7 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
+class SGL_Filter_BuildDebugBlock extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

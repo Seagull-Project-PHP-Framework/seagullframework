@@ -4,7 +4,7 @@
  *
  * @package Task
  */
-class SGL_Task_SetupGui extends SGL_DecorateProcess
+class SGL_Filter_SetupGui extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

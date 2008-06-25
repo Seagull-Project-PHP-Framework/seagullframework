@@ -5,7 +5,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_CustomHeaders extends SGL_DecorateProcess
+class SGL_Filter_CustomHeaders extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

@@ -11,7 +11,7 @@ require_once 'XML/Serializer.php';
  * Serializes returned PHP objects into XML for requests.
  *
  */
-class SGL_Task_PhpToXmlSerializer extends SGL_DecorateProcess
+class SGL_Filter_PhpToXmlSerializer extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -27,7 +27,7 @@ class SGL_Task_PhpToXmlSerializer extends SGL_DecorateProcess
             "addDecl" => true,
         );
 
-        $serializer = &new XML_Serializer($options);
+        $serializer = new XML_Serializer($options);
         $result = $serializer->serialize($input->result);
         if ($result === true ) {
             $xml = $serializer->getSerializedData();

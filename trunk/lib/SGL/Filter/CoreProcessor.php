@@ -5,7 +5,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_CoreProcessor extends SGL_ProcessRequest
+class SGL_Filter_CoreProcessor extends SGL_ProcessRequest
 {
     function process(&$input, &$output)
     {
