@@ -88,8 +88,11 @@ class SGL_Task_SetupPaths extends SGL_Task
             $sglLibDir =  SGL_PATH . '/lib';
         }
 
-        $sglPath = get_include_path().PATH_SEPARATOR .$sglLibDir ;
-        set_include_path($sglPath);
+        $aPaths = array(
+            $sglLibDir,
+            get_include_path()
+        );
+        set_include_path(implode(PATH_SEPARATOR, $aPaths));
     }
 
     /**
