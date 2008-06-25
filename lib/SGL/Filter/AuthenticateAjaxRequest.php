@@ -6,7 +6,7 @@
  * @package Task
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_Task_AuthenticateAjaxRequest extends SGL_Task_AuthenticateRequest
+class SGL_Filter_AuthenticateAjaxRequest extends SGL_Filter_AuthenticateRequest
 {
     function process(&$input, &$output)
     {

@@ -14,21 +14,20 @@ if (!defined('PRODUCTION_SERVER')) {
 /**
  * @package Task
  */
-class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
+class SGL_Filter_ExecuteAmfAction extends SGL_ProcessRequest
 {
     function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $req = $input->getRequest();
         $moduleName = $req->getModuleName();
         $method = $req->getActionName();
-
 
         $gateway = new Gateway();
 
         //Set where the services classes are loaded from, *with trailing slash*
         $gateway->setClassPath(SGL_MOD_DIR . '/' .($moduleName) . '/classes/');
-
 
         //Set where class mappings are loaded from (ie: for VOs)
         $gateway->setClassMappingsPath(SGL_MOD_DIR . '/' .($moduleName) . '/classes/vo/');
@@ -38,8 +37,7 @@ class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
         //Error types that will be rooted to the NetConnection debugger
         $gateway->setErrorHandling(E_ALL ^ E_NOTICE);
 
-        if (PRODUCTION_SERVER)
-        {
+        if (PRODUCTION_SERVER) {
             //Disable profiling, remote tracing, and service browser
             $gateway->disableDebug();
         }
@@ -62,6 +60,7 @@ class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
         $gateway->service();
         $output->data = ob_get_contents();
         ob_end_clean();
+
         SGL::logMessage('------ query count:'.SGL_Output::getQueryCount(), PEAR_LOG_DEBUG);
     }
 }

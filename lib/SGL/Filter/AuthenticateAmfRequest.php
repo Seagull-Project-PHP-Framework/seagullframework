@@ -6,7 +6,7 @@
  * @package Task
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_Task_AuthenticateAmfRequest extends SGL_Task_AuthenticateRequest
+class SGL_Filter_AuthenticateAmfRequest extends SGL_Filter_AuthenticateRequest
 {
     function process(&$input, &$output)
     {

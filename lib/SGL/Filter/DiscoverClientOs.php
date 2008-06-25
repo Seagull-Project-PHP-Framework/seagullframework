@@ -6,7 +6,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
+class SGL_Filter_DiscoverClientOs extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

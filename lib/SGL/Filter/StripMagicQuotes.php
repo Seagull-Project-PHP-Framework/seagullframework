@@ -3,7 +3,7 @@
 /**
  * @package Task
  */
-class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
+class SGL_Filter_StripMagicQuotes extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

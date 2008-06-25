@@ -1,10 +1,10 @@
 <?php
-require_once dirname(__FILE__) . '/../AjaxProvider.php';
+require_once dirname(__FILE__) . '/../AjaxProvider2.php';
 
 /**
  * @package Task
  */
-class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
+class SGL_Filter_BuildAjaxHeaders extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
@@ -13,7 +13,7 @@ class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (SGL_Error::count()) {
-            $output->data = SGL_AjaxProvider::handleError(SGL_Error::getLast());
+            $output->data = SGL_AjaxProvider2::handleError(SGL_Error::getLast());
             header('HTTP/1.0 500 text/json');
             header('Cache-Control: no-store, no-cache');
             return;

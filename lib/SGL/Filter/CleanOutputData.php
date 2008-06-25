@@ -1,6 +1,6 @@
 <?php
 
-class SGL_Task_CleanOutputData extends SGL_DecorateProcess
+class SGL_Filter_CleanOutputData extends SGL_DecorateProcess
 {
     function process($input, $output)
     {

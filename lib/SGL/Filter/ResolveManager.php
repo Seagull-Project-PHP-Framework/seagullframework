@@ -9,7 +9,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Task_ResolveManager extends SGL_DecorateProcess
+class SGL_Filter_ResolveManager extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {

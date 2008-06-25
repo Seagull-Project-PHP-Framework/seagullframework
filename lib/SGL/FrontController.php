@@ -111,26 +111,26 @@ class SGL_FrontController
             $aFilters = array(
                 //  pre-process (order: top down)
                 //'SGL_Task_Init',
-                'SGL_Task_StripMagicQuotes',
-                'SGL_Task_DiscoverClientOs',
-                'SGL_Task_ResolveManager',
-                'SGL_Task_CreateSession',
-                'SGL_Task_AuthenticateRequest',
-                'SGL_Task_DetectAdminMode',
-//                //new SGL_Task_MaintenanceModeIntercept(
-//                //new SGL_Task_DetectSessionDebug(
-//                //new SGL_Task_SetupPerms(
-                'SGL_Task_SetupLangSupport',
-                'SGL_Task_SetupLocale',
+                'SGL_Filter_StripMagicQuotes',
+                'SGL_Filter_DiscoverClientOs',
+                'SGL_Filter_ResolveManager',
+                'SGL_Filter_CreateSession',
+                'SGL_Filter_AuthenticateRequest',
+                'SGL_Filter_DetectAdminMode',
+//                //new SGL_Filter_MaintenanceModeIntercept(
+//                //new SGL_Filter_DetectSessionDebug(
+//                //new SGL_Filter_SetupPerms(
+                'SGL_Filter_SetupLangSupport',
+                'SGL_Filter_SetupLocale',
 
                 //  post-process (order: bottom up)
-                'SGL_Task_BuildHeaders',
-                'SGL_Task_BuildView',
-//                //new SGL_Task_BuildDebugBlock(
-//                //new SGL_Task_SetupBlocks(
-//                //new SGL_Task_SetupNavigation(
-                'SGL_Task_SetupGui',
-                'SGL_Task_BuildOutputData',
+                'SGL_Filter_BuildHeaders',
+                'SGL_Filter_BuildView',
+//                //new SGL_Filter_BuildDebugBlock(
+//                //new SGL_Filter_SetupBlocks(
+//                //new SGL_Filter_SetupNavigation(
+                'SGL_Filter_SetupGui',
+                'SGL_Filter_BuildOutputData',
 
                 //  target
                 'SGL_MainProcess',

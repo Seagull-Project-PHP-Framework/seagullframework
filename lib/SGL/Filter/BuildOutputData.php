@@ -7,7 +7,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_Task_BuildOutputData extends SGL_DecorateProcess
+class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
 {
     /**
      * Main routine.
@@ -22,7 +22,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         $this->processRequest->process($input, $output);
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        SGL_Task_BuildOutputData::addOutputData($output);
+        self::addOutputData($output);
     }
 
     /**
@@ -48,7 +48,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
             $output->remoteIp = $_SERVER['REMOTE_ADDR'];
             $output->currUrl  =
                     SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes'
-                ? SGL_Task_BuildOutputData::getCurrentUrlFromRoutes()
+                ? self::getCurrentUrlFromRoutes()
                 : $_SERVER['PHP_SELF'];
         }
 
@@ -96,7 +96,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
      */
     function getCurrentUrlFromRoutes()
     {
-        $input   = &SGL_Registry::singleton();
+        $input   = SGL_Registry::singleton();
         $url     = $input->getCurrentUrl();
         $currUrl = $url->toString();
         $baseUrl = $url->getBaseUrl($skipProto = false, $includeFc = false);
