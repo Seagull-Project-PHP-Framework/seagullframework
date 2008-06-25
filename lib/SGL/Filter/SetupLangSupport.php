@@ -1,5 +1,9 @@
 <?php
 
+//  define language id types
+define('SGL_LANG_ID_SGL',               1);
+define('SGL_LANG_ID_TRANS2',            2);
+
 /**
  * Resolve current language and put in current user preferences.
  * Load relevant language translation file.

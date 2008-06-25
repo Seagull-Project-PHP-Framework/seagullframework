@@ -40,7 +40,6 @@
 
 require_once dirname(__FILE__)  . '/../SGL.php';
 require_once dirname(__FILE__)  . '/Task/Init.php';
-require_once dirname(__FILE__)  . '/FilterChain.php';
 
 /**
  * Application controller.
@@ -308,7 +307,6 @@ class SGL_FrontController
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
-        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
     }
 }
