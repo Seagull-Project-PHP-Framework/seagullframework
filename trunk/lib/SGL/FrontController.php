@@ -39,7 +39,6 @@
 // $Id: FrontController.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 require_once dirname(__FILE__)  . '/../SGL.php';
-require_once dirname(__FILE__)  . '/Task/Init.php';
 
 /**
  * Application controller.
@@ -368,5 +367,27 @@ class SGL_MainProcess extends SGL_ProcessRequest
         SGL_Manager::display($output);
         $mgr->display($output);
     }
+}
+
+/**
+ * Abstract renderer strategy
+ *
+ * @abstract
+ * @package SGL
+ */
+class SGL_OutputRendererStrategy
+{
+    /**
+     * Prepare renderer options.
+     *
+     */
+    function initEngine() {}
+
+    /**
+     * Abstract render method.
+     *
+     * @param SGL_View $view
+     */
+    function render($view) {}
 }
 ?>
