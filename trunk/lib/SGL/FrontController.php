@@ -66,8 +66,6 @@ class SGL_FrontController
     {
         if (SGL_Config::get('site.customOutputClassName')) {
             $className = SGL_Config::get('site.customOutputClassName');
-            $path = trim(preg_replace('/_/', '/', $className)) . '.php';
-            require_once $path;
         } else {
             $className = 'SGL_Output';
         }
