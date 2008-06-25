@@ -12,6 +12,14 @@ function getSystemTime()
     return $resultTime;
 }
 
+function __autoload($className)
+{
+    if (!class_exists($className)) {
+        $path = str_replace('_', '/', $className);
+        require $path . '.php';
+    }
+}
+
 //  start timer
 define('SGL_START_TIME', getSystemTime());
 $pearTest = '@PHP-DIR@';
