@@ -39,8 +39,12 @@ define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
     : false);
 
 if (is_file($rootDir .'/lib/SGL/FrontController.php')) {
+    require_once $rootDir .'/lib/SGL/Task.php';
     require_once $rootDir .'/lib/SGL/FrontController.php';
+    require_once $rootDir .'/lib/SGL/Task/SetupPaths.php';
 }
+
+SGL_Task_SetupPaths::run();
 
 // determine if setup needed
 if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
