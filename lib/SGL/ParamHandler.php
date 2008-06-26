@@ -48,21 +48,21 @@
 class SGL_ParamHandler
 {
     var $source;
+    private static $instances;
 
     function SGL_ParamHandler($source)
     {
         $this->source = $source;
     }
 
-    function &singleton($source)
+    public static function singleton($source)
     {
-        static $instances;
-        if (!isset($instances)) {
-            $instances = array();
+        if (!self::$instances) {
+            self::$instances = array();
         }
 
         $signature = md5($source);
-        if (!isset($instances[$signature])) {
+        if (!isset(self::$instances[$signature])) {
 
             $ext = substr($source, -3);
             switch ($ext) {
@@ -80,9 +80,9 @@ class SGL_ParamHandler
                 $ret =  new SGL_ParamHandler_Ini($source);
                 break;
             }
-            $instances[$signature] = $ret;
+            self::$instances[$signature] = $ret;
         }
-        return $instances[$signature];
+        return self::$instances[$signature];
     }
 
     function read() {}

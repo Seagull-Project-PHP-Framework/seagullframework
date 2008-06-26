@@ -97,9 +97,9 @@ class SGL
      * @author Gilles Laborderie <gillesl@users.sourceforge.net>
      * @author Horde Group <http://www.horde.org>
      */
-    function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
+    public static function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         // Logging is not activated
@@ -131,13 +131,13 @@ class SGL
         include_once 'Log.php';
 
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton($conf['log']['type'],
-                                   $logName,
-                                   $conf['log']['ident'],
-                                   array(  $conf['log']['paramsUsername'],
-                                           $conf['log']['paramsPassword'],
-                                           'dsn' => $dsn
-                                    ));
+        $logger = Log::singleton($conf['log']['type'],
+            $logName,
+            $conf['log']['ident'],
+            array(  $conf['log']['paramsUsername'],
+                   $conf['log']['paramsPassword'],
+                   'dsn' => $dsn
+            ));
         // If log message is an error object, extract info
         if (is_a($message, 'PEAR_Error')) {
             $userinfo = $message->getUserInfo();
@@ -277,7 +277,7 @@ class SGL
      *
      * @return boolean
      */
-    function runningFromCLI()
+    public static function runningFromCLI()
     {
         // STDIN isn't a CLI constant before 4.3.0
         $sapi = php_sapi_name();
@@ -474,7 +474,7 @@ class SGL
       * @static
       * @return boolean
       */
-    function isMinimalInstall()
+    public static function isMinimalInstall()
     {
         return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
     }

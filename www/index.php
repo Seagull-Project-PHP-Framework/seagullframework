@@ -16,7 +16,18 @@ function __autoload($className)
 {
     if (!class_exists($className)) {
         $path = str_replace('_', '/', $className);
-        require $path . '.php';
+        $file = $path . '.php';
+        // man we have to get rid of Flexy ..
+        if ($file == 'HTML/Template/Flexy/Token/Comment.php' ||
+            $file == 'HTML/Template/Flexy/Token/Doctype.php' ||
+            $file == 'HTML/Template/Flexy/Token/Literal.php' ||
+            $file == 'HTML/Template/Flexy/Token/WhiteSpace.php' ||
+            $file == 'HTML/Template/Flexy/Token/CloseTag.php' ||
+            $file == 'HTML/Template/Flexy/Token/Name.php'
+        ) {
+            return;
+        }
+        require $file;
     }
 }
 
@@ -46,6 +57,9 @@ if (is_file($rootDir .'/lib/SGL/FrontController.php')) {
 
 SGL_Task_SetupPaths::run();
 
+//$erh = SGL_ErrorHandler2::singleton();
+$ech = SGL_ExceptionHandler::singleton();
+
 // determine if setup needed
 if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'
@@ -59,5 +73,10 @@ if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
     define('SGL_INSTALLED', true);
 }
 
-SGL_FrontController::run();
+
+try {
+    SGL_FrontController::run();
+} catch (Exception $e) {
+    print '<pre>'; print_r($e);
+}
 ?>

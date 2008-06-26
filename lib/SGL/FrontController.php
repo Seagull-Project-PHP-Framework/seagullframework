@@ -74,7 +74,7 @@ class SGL_FrontController
      * Main invocation, init tasks plus main process.
      *
      */
-    function run()
+    public static function run()
     {
         if (!defined('SGL_INITIALISED')) {
             self::init();
@@ -227,7 +227,7 @@ class SGL_FrontController
     }
 
 
-    function init()
+    public static function init()
     {
         self::setupMinimumEnv();
         self::loadRequiredFiles();
@@ -243,8 +243,8 @@ class SGL_FrontController
         //$init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
-        $init->addTask(new SGL_Task_SetupPearErrorCallback());
-        $init->addTask(new SGL_Task_SetupCustomErrorHandler());
+        //$init->addTask(new SGL_Task_SetupPearErrorCallback());
+        //$init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
         //$init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
@@ -252,7 +252,7 @@ class SGL_FrontController
         define('SGL_INITIALISED', true);
     }
 
-    function loadRequiredFiles()
+    public static function loadRequiredFiles()
     {
         $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
         $cachedLibsEnabled = (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true)
@@ -297,11 +297,11 @@ class SGL_FrontController
                 $ok = file_put_contents($cachedLibs, $fileCache);
             }
         }
-        require_once 'PEAR.php';
+        //require_once 'PEAR.php';
         //require_once 'DB.php';
     }
 
-    function setupMinimumEnv()
+    public static function setupMinimumEnv()
     {
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_SetupPaths());

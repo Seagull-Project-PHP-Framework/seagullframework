@@ -776,7 +776,7 @@ class SGL_String
      * @param string $string
      * @return integer
      */
-    function pseudoConstantToInt($string)
+    public static function pseudoConstantToInt($string)
     {
         $ret = 0;
         if (is_int($string)) {
@@ -792,21 +792,6 @@ class SGL_String
             }
         }
         return $ret;
-    }
-}
-
-if (!function_exists('array_combine')) {
-    function array_combine($a, $b)
-    {
-        $c = array();
-        if (is_array($a) && is_array($b))
-            while (list(, $va) = each($a))
-                if (list(, $vb) = each($b)) {
-                    $c[$va] = $vb;
-                } else {
-                    break 1;
-                }
-        return $c;
     }
 }
 ?>

@@ -54,6 +54,7 @@ define('SGL_REQUEST_AMF',       5);
 class SGL_Request
 {
     var $aProps;
+    private static $instance;
 
     function init($type = null)
     {
@@ -145,15 +146,13 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function &singleton($forceNew = false, $type = null)
+    public static function singleton($forceNew = false, $type = null)
     {
-        static $instance;
-
-        if (!isset($instance) || $forceNew) {
+        if (!self::$instance || $forceNew) {
             $obj = new SGL_Request();
-            $instance = $obj->init($type);
+            self::$instance = $obj->init($type);
         }
-        return $instance;
+        return self::$instance;
     }
 
     function isEmpty()
