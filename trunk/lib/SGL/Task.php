@@ -101,7 +101,7 @@ class SGL_TaskRunner
     */
     function addTask($oTask)
     {
-        if (is_a($oTask, 'SGL_Task')) {
+        if ($oTask instanceof SGL_Task) {
             $this->aTasks[] = & $oTask;
             return true;
         }

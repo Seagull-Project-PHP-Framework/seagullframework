@@ -133,20 +133,6 @@ class SGL_URL
     var $useBrackets;
 
     /**
-    * PHP4 Constructor
-    *
-    * @see __construct()
-    */
-    function SGL_URL(
-        $url = null,
-        $useBrackets = true,
-        /*SGL_UrlParserStrategy*/ $parserStrategy = null,
-        $conf = null)
-    {
-        $this->__construct($url, $useBrackets, $parserStrategy, $conf);
-    }
-
-    /**
     * PHP5 Constructor
     *
     * Parses the given url and stores the various parts
@@ -161,7 +147,8 @@ class SGL_URL
     *
     * @todo the main URL attributes always get set twice, this needs to be optimised
     */
-    function __construct($url = null, $useBrackets = true, $parserStrategy = null)
+    function __construct($url = null, $useBrackets = true, $parserStrategy = null,
+        $conf = null)
     {
         $this->useBrackets = $useBrackets;
         $this->url         = $url;

@@ -50,6 +50,7 @@ class SGL_Config
 {
     var $aProps = array();
     var $fileName;
+    private static $instance;
 
     function SGL_Config($autoLoad = false)
     {
@@ -63,14 +64,13 @@ class SGL_Config
         }
     }
 
-    function &singleton($autoLoad = true)
+    public static function singleton($autoLoad = true)
     {
-        static $instance;
-        if (!isset($instance)) {
+        if (!self::$instance) {
             $class = __CLASS__;
-            $instance = new $class($autoLoad);
+            self::$instance = new $class($autoLoad);
         }
-        return $instance;
+        return self::$instance;
     }
 
     /**
@@ -112,7 +112,7 @@ class SGL_Config
             }
         //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $aKeys = split('\.', trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
@@ -129,8 +129,10 @@ class SGL_Config
             }
         }
         if (!isset($ret)) {
-            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
-                PEAR_LOG_DEBUG);
+            SGL::logMessage("sort out sgl_config for php5",
+                PEAR_LOG_EMERG);
+//            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
+//                PEAR_LOG_DEBUG);
         }
         return $ret;
     }
@@ -235,7 +237,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = &SGL_ParamHandler::singleton($file);
+        $ph = SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
             return $data;
@@ -366,7 +368,8 @@ class SGL_Config
     function ensureModuleConfigLoaded($moduleName)
     {
         if (!defined('SGL_MODULE_CONFIG_LOADED')
-                || $this->aProps['localConfig']['moduleName'] != $moduleName) {
+                || (isset($this->aProps['localConfig']['moduleName']) &&
+                $this->aProps['localConfig']['moduleName'] != $moduleName)) {
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 

@@ -41,6 +41,13 @@
 // +---------------------------------------------------------------------------+
 // $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
+function __autoload($className)
+{
+    if (!class_exists($className)) {
+        $path = str_replace('_', '/', $className);
+        require $path . '.php';
+    }
+}
 
 //  set initial paths according to install type
 $pearTest = '@PHP-DIR@';
@@ -63,8 +70,12 @@ define('SGL_MINIMAL_INSTALL', (is_file($rootDir . '/MINIMAL_INSTALL.txt'))
     ? true
     : false);
 
-require_once $rootDir . '/lib/SGL/FrontController.php';
+require_once $rootDir .'/lib/SGL/Task.php';
+require_once $rootDir .'/lib/SGL/FrontController.php';
+require_once $rootDir .'/lib/SGL/Task/SetupPaths.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
+SGL_Task_SetupPaths::run();
+
 SGL_FrontController::init();
 
 session_start();
@@ -90,8 +101,7 @@ if (isset($_GET['start'])) {
     $_SESSION = array();
 
     //  clear session cookie
-    $c = &SGL_Config::singleton();
-    $conf = $c->getAll();
+    $conf = SGL_Config::singleton()->getAll();
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 

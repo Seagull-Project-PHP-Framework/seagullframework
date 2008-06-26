@@ -17,7 +17,9 @@ class SGL_Task_SetupPaths extends SGL_Task
      */
     function run($conf = array())
     {
-        //define('SGL_SERVER_NAME', self::hostnameToFilename());
+        if (!defined('SGL_SERVER_NAME')) {
+            define('SGL_SERVER_NAME', self::hostnameToFilename());
+        }
         if (defined('SGL_PEAR_INSTALLED')) {
             define('SGL_PATH', '@PHP-DIR@/Seagull');
             define('SGL_LIB_PEAR_DIR', '@PHP-DIR@');
@@ -31,15 +33,17 @@ class SGL_Task_SetupPaths extends SGL_Task
                     define('SGL_PATH', $conf['path']['installRoot']);
                 }
             } else {
-                define('SGL_PATH', $GLOBALS['rootDir']);
+                if (!defined('SGL_PATH')) {
+                    define('SGL_PATH', $GLOBALS['rootDir']);
+                }
             }
             //  put sgl lib dir in include path
             $sglLibDir =  SGL_PATH . '/lib';
         }
 
         $aPaths = array(
+            get_include_path(),
             $sglLibDir,
-            get_include_path()
         );
         set_include_path(implode(PATH_SEPARATOR, $aPaths));
     }
@@ -52,7 +56,7 @@ class SGL_Task_SetupPaths extends SGL_Task
      *
      * @return  string  the name of the host
      */
-    function hostnameToFilename()
+    public static function hostnameToFilename()
     {
         //  start with a default
         $hostName = 'localhost';
