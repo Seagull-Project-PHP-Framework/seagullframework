@@ -34,12 +34,10 @@
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
-// | Authors:                                                                  |
-// |            Demian Turner <demian@phpkitchen.com>                          |
-// |            Gerry Lachac <glachac@tethermedia.com>                         |
-// |            Andy Crain <apcrain@fuse.net>                                  |
+// | Authors: Demian Turner <demian@phpkitchen.com>                            |
+// |          Gerry Lachac <glachac@tethermedia.com>                           |
+// |          Andy Crain <apcrain@fuse.net>                                    |
 // +---------------------------------------------------------------------------+
-// $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 function __autoload($className)
 {
@@ -54,10 +52,10 @@ $pearTest = '@PHP-DIR@';
 if ($pearTest != '@' . 'PHP-DIR'. '@') {
     define('SGL_PEAR_INSTALLED', true);
     $rootDir = '@PHP-DIR@/Seagull';
-    $varDir = '@DATA-DIR@/Seagull/var';
+    $varDir  = '@DATA-DIR@/Seagull/var';
 } else {
     $rootDir = realpath(dirname(__FILE__) . '/..');
-    $varDir = realpath(dirname(__FILE__) . '/../var');
+    $varDir  = realpath(dirname(__FILE__) . '/../var');
 }
 
 //  check for lib cache
