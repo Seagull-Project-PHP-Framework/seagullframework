@@ -170,13 +170,13 @@ class SGL_Filter_SetupPerms extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $cache = & SGL_Cache::singleton();
+        $cache = SGL_Cache::singleton();
         if ($serialized = $cache->get('all_users', 'perms')) {
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);
         } else {
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $da = & UserDAO::singleton();
+            $da = UserDAO::singleton();
             $aPerms = $da->getPermsByModuleId();
             $serialized = serialize($aPerms);
             $cache->save($serialized, 'all_users', 'perms');

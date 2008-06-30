@@ -32,7 +32,7 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
         }
         //  get UID by cookie value
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da  = &UserDAO::singleton();
+        $da  = UserDAO::singleton();
         $uid = $da->getUserIdByCookie($username, $cookieValue);
         if ($uid) {
             $ret = array('uid' => $uid, 'cookieVal' => $cookieValue);
@@ -61,7 +61,7 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
         // record login if allowed
         require_once SGL_MOD_DIR . '/user/classes/observers/RecordLogin.php';
         if (RecordLogin::loginRecordingAllowed()) {
-            $dbh = &SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             RecordLogin::insert($dbh);
         }
     }

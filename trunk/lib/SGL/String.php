@@ -322,7 +322,7 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                $trans = &SGL_Translation::singleton('admin');
+                $trans = SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
 

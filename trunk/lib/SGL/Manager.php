@@ -116,7 +116,7 @@ class SGL_Manager
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            $this->trans = & SGL_Translation::singleton();
+            $this->trans = SGL_Translation::singleton();
         }
 
         //  determine the value for the masterTemplate
@@ -130,7 +130,7 @@ class SGL_Manager
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;

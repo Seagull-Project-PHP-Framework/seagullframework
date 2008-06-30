@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.6                                                               |
+// | Seagull 0.9                                                               |
 // +---------------------------------------------------------------------------+
 // | Task.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -53,21 +53,6 @@ class SGL_Task
     function run($data = null)
     {
         return;
-    }
-
-   /**
-    * Example ...
-    * @access private
-    */
-    function &_getDal()
-    {
-        $oServiceLocator = &ServiceLocator::instance();
-        $oDal = $oServiceLocator->get('dal');
-        if (!$oDal) {
-            $oDal = &DA_FooBar::singleton();
-            $oServiceLocator->register('dal', $oDal);
-        }
-        return $oDal;
     }
 }
 

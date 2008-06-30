@@ -54,7 +54,7 @@ class SGL_DB
      * Returns a singleton reference to the DB resource.
      *
      * example usage:
-     * $dbh = & SGL_DB::singleton();
+     * $dbh = SGL_DB::singleton();
      * warning: in order to work correctly, DB handle
      * singleton must be instantiated statically and
      * by reference
@@ -71,7 +71,7 @@ class SGL_DB
         if (empty($dsn['phptype'])) {
             return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
         }
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         static $aInstances;
@@ -115,8 +115,7 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
+        $conf = SGL_Config::singleton()->getAll();
         if (!count($conf)) {
             return false;
         }
@@ -213,7 +212,7 @@ class SGL_DB
         $locator = &SGL_ServiceLocator::singleton();
         $singleton = $locator->get('DB');
         if (!$singleton) {
-            $singleton = & SGL_DB::singleton();
+            $singleton = SGL_DB::singleton();
             $locator->register('DB', $singleton);
         }
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
@@ -273,7 +272,7 @@ class SGL_DB
 
         require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
-        $req =& SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $pager_options['currentPage'] = (array_key_exists('currentPage', $pager_options))
             ? $pager_options['currentPage']
             : $req->get('pageID');

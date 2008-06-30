@@ -77,7 +77,7 @@ function canCreateDb()
         $host . $port . $dbName;
 
     //  attempt to get db connection
-    $dbh = & SGL_DB::singleton($dsn);
+    $dbh = SGL_DB::singleton($dsn);
 
     if ($skipDbCreation && PEAR::isError($dbh)) {
         SGL_Install_Common::errorPush($dbh);

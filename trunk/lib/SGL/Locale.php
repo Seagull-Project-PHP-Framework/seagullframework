@@ -53,7 +53,7 @@ class SGL_Locale
      *
      *   usage:
      *
-     *   $locale =& SGL_Locale::singleton();
+     *   $locale = SGL_Locale::singleton();
      *   // setting locale here would override defaults.
      *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
@@ -77,7 +77,7 @@ class SGL_Locale
                 $uid = SGL_Session::getUid();
                 require_once 'I18Nv2/Negotiator.php';
                 if ($uid && isset($langCode)) {
-                    $dbh = &SGL_DB::singleton();
+                    $dbh = SGL_DB::singleton();
                     $c = &SGL_Config::singleton();
                     $conf = $c->getAll();
 
@@ -85,16 +85,16 @@ class SGL_Locale
                     $country = strtoupper($country);
 
                     if (!$country) {
-                        $neg = &new I18Nv2_Negotiator();
+                        $neg = new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
                     $localeId = empty($country) ? $langCode : $langCode . "_" . $country;
 
                 } else {
-                    $neg = &new I18Nv2_Negotiator();
+                    $neg = new I18Nv2_Negotiator();
                     $localeId = $neg->getLocaleMatch();
                 }
-                $locale = &I18Nv2::createLocale($localeId);
+                $locale = I18Nv2::createLocale($localeId);
             }
         }
         return $locale;

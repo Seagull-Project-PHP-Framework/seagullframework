@@ -91,7 +91,7 @@ class SGL_AjaxProvider2
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->dbh = $this->_getDb();
     }
@@ -115,7 +115,7 @@ class SGL_AjaxProvider2
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = &SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;

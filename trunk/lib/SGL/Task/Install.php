@@ -301,7 +301,7 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
                 || $this->conf['db']['type'] == 'mysqli'
                 || $this->conf['db']['type'] == 'mysqli_SGL') {
 
-            $dbh = & SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 SGL_Install_Common::errorPush($dbh);
                 return $dbh;
@@ -332,7 +332,7 @@ class SGL_Task_CreateDatabase extends SGL_Task
             $excludeDbName = true;
         }
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName);
-        $dbh = & SGL_DB::singleton($dsn);
+        $dbh = SGL_DB::singleton($dsn);
         $query = SGL_Sql::buildDbCreateStatement($this->conf['db']['type'],
             $dbh->quoteIdentifier($this->conf['db']['name']));
         $res = $dbh->query($query);
@@ -352,7 +352,7 @@ class SGL_Task_DropDatabase extends SGL_Task
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $dbh = & SGL_DB::singleton();
+        $dbh = SGL_DB::singleton();
         require_once SGL_CORE_DIR . '/Sql.php';
         $query = SGL_Sql::buildDbDropStatement($this->conf['db']['type'],
             $dbh->quoteIdentifier($this->conf['db']['name']));
@@ -459,8 +459,8 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             $statusText = 'dropping existing tables';
             $this->updateHtml('status', $statusText);
 
-            $c   = &SGL_Config::singleton();
-            $dbh = & SGL_DB::singleton();
+            $c   = SGL_Config::singleton();
+            $dbh = SGL_DB::singleton();
 
             // set old db prefix if any
             if (isset($_SESSION['install_dbPrefix'])) {
@@ -532,7 +532,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                 if ($conf['translation']['container'] == 'db') {
                     $statusText = 'dropping translation tables';
                     $this->updateHtml('status', $statusText);
-                    $trans = &SGL_Translation::singleton('admin');
+                    $trans = SGL_Translation::singleton('admin');
                     $aLangs = $trans->getLangs('ids');
                     if (!PEAR::isError($aLangs)) {
                         // removeme
@@ -728,7 +728,7 @@ class SGL_Task_RemoveDefaultData extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
-        $da = & DefaultDAO::singleton();
+        $da = DefaultDAO::singleton();
 
         //  get perms associated with module
         $aPermNames = $da->getPermNamesByModuleId($data['moduleId']);
@@ -843,7 +843,7 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                 && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)
                 && SGL_Config::get('navigation.driver') != 'ArrayDriver') {
             require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
-            $da = & NavigationDAO::singleton();
+            $da = NavigationDAO::singleton();
 
             foreach ($data['aModuleList'] as $module) {
                 $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
@@ -891,7 +891,7 @@ class SGL_Task_RemoveNavigation extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
-        $da = & NavigationDAO::singleton();
+        $da = NavigationDAO::singleton();
 
         foreach ($data['aModuleList'] as $module) {
             $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
@@ -934,7 +934,7 @@ class SGL_Task_EnableDebugBlock extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/block/classes/BlockDAO.php';
-        $da = & BlockDAO::singleton();
+        $da = BlockDAO::singleton();
         if (!empty($da->conf['debug']['enableDebugBlock'])) {
             $oBlock = new stdClass();
             $oBlock->name = 'Default_Block_Debug';
@@ -960,7 +960,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         $aLangOptions = SGL_Util::getLangsDescriptionMap();
 
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
-            $trans = & SGL_Translation::singleton('admin');
+            $trans = SGL_Translation::singleton('admin');
 
             $this->setup();
 
@@ -1076,7 +1076,7 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
                 || $this->conf['db']['type'] == 'mysqli_SGL') {
 
 
-            $dbh = & SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             $query = 'SET FOREIGN_KEY_CHECKS=1;';
             $res = $dbh->query($query);
         }
@@ -1094,7 +1094,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $this->setup();
 
         //  verify db
-//        $dbh = & SGL_DB::singleton();
+//        $dbh = SGL_DB::singleton();
 //        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
 //        $res = $dbh->getAll($query);
 //        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
@@ -1531,7 +1531,7 @@ class SGL_Task_SyncSequences extends SGL_Task
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         $c = &SGL_Config::singleton();
@@ -1793,7 +1793,7 @@ PHP;
             }
 
 //            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//            $da = & UserDAO::singleton();
+//            $da = UserDAO::singleton();
 //            $oUser = $da->getUserById();
 //            $oUser->username        = $data['adminUserName'];
 //            $oUser->first_name      = $data['adminFirstName'];
@@ -1827,7 +1827,7 @@ class SGL_Task_CreateMemberUser extends SGL_Task
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $da = & UserDAO::singleton();
+            $da = UserDAO::singleton();
             $oUser = $da->getUserById();
 
             $oUser->username = 'member';
@@ -1871,7 +1871,7 @@ PHP;
 
         //  update lang in default prefs
 //        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//        $da = & UserDAO::singleton();
+//        $da = UserDAO::singleton();
 //        $lang = isset($_SESSION['install_language'])
 //            ? $_SESSION['install_language']
 //            : $data['aPrefs']['language'];
