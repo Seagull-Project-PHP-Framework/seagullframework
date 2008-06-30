@@ -935,18 +935,28 @@ class SGL_Session
      *
      * @access public
      *
+     * @param boolean $clean  clean first launch info about anon request
+     *
      * @return boolean
      */
-    function isFirstAnonRequest()
+    function isFirstAnonRequest($clean = null)
     {
         static $ret;
-        if (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
+        if (!empty($clean)) {
+            if (isset($_SESSION['isFirstAnonRequest'])) {
+                unset($_SESSION['isFirstAnonRequest']);
+            }
+            if (isset($ret)) {
+                unset($ret);
+            }
+            return true;
+        } elseif (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAnonRequest']);
             if (!isset($_SESSION['isFirstAnonRequest'])) {
                 $_SESSION['isFirstAnonRequest'] = true;
             }
+            return isset($ret) ? $ret : false;
         }
-        return isset($ret) ? $ret : false;
     }
 
     /**
@@ -956,18 +966,28 @@ class SGL_Session
      *
      * @access public
      *
+     * @param boolean $clean  clean first launch info about auth request.
+     *
      * @return boolean
      */
-    function isFirstAuthenticatedRequest()
+    function isFirstAuthenticatedRequest($clean = null)
     {
         static $ret;
-        if (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
+        if (!empty($clean)) {
+            if (isset($_SESSION['isFirstAuthRequest'])) {
+                unset($_SESSION['isFirstAuthRequest']);
+            }
+            if (isset($ret)) {
+                unset($ret);
+            }
+            return true;
+        } elseif (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAuthRequest']);
             if (!isset($_SESSION['isFirstAuthRequest'])) {
                 $_SESSION['isFirstAuthRequest'] = true;
             }
+            return isset($ret) ? $ret : false;
         }
-        return isset($ret) ? $ret : false;
     }
 }
 

@@ -485,7 +485,6 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
             $moduleDefault = SGL_Config::get('site.defaultModule');
         }
 
-
         $moduleCurrent = $req->get('moduleName')
             ? $req->get('moduleName')
             : $moduleDefault;
@@ -572,12 +571,14 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
         // resolve language from request
         $lang = $req->get('lang');
 
+        $anonRequest = SGL_Session::isFirstAnonRequest();
+
         // 1. look for language in URL
         if (empty($lang) || !SGL_Translation::isAllowedLanguage($lang)) {
             // 2. look for language in settings
             if (!isset($_SESSION['aPrefs']['language'])
                     || !SGL_Translation::isAllowedLanguage($_SESSION['aPrefs']['language'])
-                    || SGL_Session::isFirstAnonRequest()) {
+                    || $anonRequest) {
                 // 3. look for language in browser settings
                 if (!SGL_Config::get('translation.languageAutoDiscover')
                         || !($lang = $this->resolveLanguageFromBrowser())) {

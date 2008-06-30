@@ -425,7 +425,7 @@ class UrlTest extends UnitTestCase {
         $a = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
         $b = array('foo'=>'do', 'bar' => 'bar', 'baz' => 'mi');
         $ret = array_merge($a, $b);
-        $this->assertTrue($ret, $b);
+        $this->assertEqual($ret, $b);
     }
 
     function testOverridingKeysWithBlanks()
@@ -433,13 +433,13 @@ class UrlTest extends UnitTestCase {
         $a = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
         $b = array();
         $ret = array_merge($a, $b);
-        $this->assertTrue($ret, $a);
+        $this->assertEqual($ret, $a);
     }
 
     function testDynaMerge()
     {
-        $a[] = array('foo'=>'foo', 'bar' => 'bar', 'baz' => 'baz');
-        $a[] = array('df'=>'df', 'er' => 'er', 'gh' => 'gh');
+        $a[] = array('foo' => 'foo', 'bar' => 'bar', 'baz' => 'baz');
+        $a[] = array('df' => 'df', 'er' => 'er', 'gh' => 'gh');
         $a[] = array();
 
         $expected = array (
@@ -451,7 +451,7 @@ class UrlTest extends UnitTestCase {
           'gh' => 'gh',
         );
         $ret = call_user_func_array('array_merge', $a);
-        $this->assertTrue($ret, $expected);
+        $this->assertEqual($ret, $expected);
     }
 
     function xtestCorrerctClassicResultsWithMultipleStrats()
