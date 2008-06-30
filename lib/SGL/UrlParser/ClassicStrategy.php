@@ -112,7 +112,7 @@ class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
         $conf = $c->getAll();
 
         //  get a reference to the request object
-        $req = & SGL_Request::singleton();
+        $req = SGL_Request::singleton();
 
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;

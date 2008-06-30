@@ -168,7 +168,7 @@ class SGL_Translation
         $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
 
         if (count($aLangs) > 0) {
-            $cache = & SGL_Cache::singleton();
+            $cache = SGL_Cache::singleton();
             $cache->setOption('cacheDir', SGL_TMP_DIR .'/');
 
             $success = true;
@@ -192,7 +192,7 @@ class SGL_Translation
     function getGuiTranslationsFromFile($module, $lang)
     {
         //  fetch translations from database and cache
-        $cache = & SGL_Cache::singleton();
+        $cache = SGL_Cache::singleton();
         $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
 
         $ret = array();
@@ -253,7 +253,7 @@ class SGL_Translation
         switch (strtolower($this->conf['translation']['container'])) {
         case 'db':
             require_once SGL_CORE_DIR . '/Translation.php';
-            $trans = &SGL_Translation::singleton('admin');
+            $trans = SGL_Translation::singleton('admin');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_TRANS2);
 
@@ -317,7 +317,7 @@ class SGL_Translation
             $installedLangs = explode(',', $conf['translation']['installedLanguages']);
             if ($conf['translation']['container'] == 'db'
                     && in_array($lang, $installedLangs)) {
-                $translation = &SGL_Translation::singleton();
+                $translation = SGL_Translation::singleton();
 
                 //  set language
                 $langInstalled = $translation->setLang($lang);
@@ -512,7 +512,7 @@ class SGL_Translation
      */
     function removeTranslations($moduleName)
     {
-        $trans  = &SGL_Translation::singleton('admin');
+        $trans  = SGL_Translation::singleton('admin');
         $aPages = $trans->getPageNames();
         if (PEAR::isError($aPages)) {
             return $aPages;

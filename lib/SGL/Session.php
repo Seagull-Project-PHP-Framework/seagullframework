@@ -185,7 +185,7 @@ class SGL_Session
 
         //  get UserDAO object
 //require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//$da = & UserDAO::singleton();
+//$da = UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();

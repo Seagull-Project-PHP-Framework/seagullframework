@@ -28,7 +28,7 @@ class SGL_Filter_SetupGui extends SGL_DecorateProcess
             $conf = $c->getAll();
             if (!$c->get($mgrName)) {
                 //  get current module
-                $req = &SGL_Request::singleton();
+                $req = SGL_Request::singleton();
                 $moduleName = $req->getModuleName();
 
                 //  load current module's config if not present

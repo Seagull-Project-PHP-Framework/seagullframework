@@ -759,7 +759,7 @@ class SGL_Output
     function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0)
     {
-        $input = &SGL_Registry::singleton();
+        $input = SGL_Registry::singleton();
         $req = $input->getRequest();
         // Horde routes work only for browser request types
         if ($req->type == SGL_REQUEST_BROWSER
@@ -810,7 +810,7 @@ class SGL_Output
 
     function getCurrentUrl()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $oCurrentUrl = $reg->getCurrentUrl();
         return $oCurrentUrl->toString();
     }

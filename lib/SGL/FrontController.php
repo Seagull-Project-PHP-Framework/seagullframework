@@ -217,7 +217,7 @@ class SGL_FrontController
 
         // test db connection
         if (defined('SGL_INSTALLED')) {
-            $dbh = &SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 // stop with error page
                 SGL::displayErrorPage($output);
