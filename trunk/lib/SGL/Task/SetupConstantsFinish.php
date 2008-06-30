@@ -32,8 +32,6 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
             }
         // On re-install or INSTALL_COMPLETE
         } elseif (count($conf)) {
-            //  set constant to represent profiling mode so it can be used in Controller
-            define('SGL_PROFILING_ENABLED', ($conf['debug']['profiling']) ? true : false);
             define('SGL_SEAGULL_VERSION', $conf['tuples']['version']);
 
             //  which degree of error severity before emailing admin

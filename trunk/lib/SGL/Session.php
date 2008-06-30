@@ -265,26 +265,24 @@ class SGL_Session
             }
         }
 
-        //  make session more secure if possible
-        if  (function_exists('session_regenerate_id')) {
-            $c = &SGL_Config::singleton();
-            $conf = $c->getAll();
-            $oldSessionId = session_id();
-            @session_regenerate_id();
+        //  make session more secure
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $oldSessionId = session_id();
+        @session_regenerate_id();
 
-            if ($conf['session']['handler'] == 'file') {
+        if ($conf['session']['handler'] == 'file') {
 
-                //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-                $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+            //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+            $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
 
-            } elseif ($conf['session']['handler'] == 'database') {
-                $value = $this->dbRead($oldSessionId);
-                $this->dbDestroy($oldSessionId);
-                $this->dbRead(session_id());          // creates new session record
-                $this->dbWrite(session_id(), $value); // store old session value in new session record
-            } else {
-                die('Internal Error: unknown session handler');
-            }
+        } elseif ($conf['session']['handler'] == 'database') {
+            $value = $this->dbRead($oldSessionId);
+            $this->dbDestroy($oldSessionId);
+            $this->dbRead(session_id());          // creates new session record
+            $this->dbWrite(session_id(), $value); // store old session value in new session record
+        } else {
+            die('Internal Error: unknown session handler');
         }
         return true;
     }

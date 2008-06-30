@@ -107,11 +107,4 @@ class SGL_Locale
     }
 }
 
-//  if iconv extension not present, at least fail silently
-if (!(function_exists('iconv'))) {
-    function iconv($in_charset, $out_charset, $string)
-    {
-        return $string;
-    }
-}
 ?>
