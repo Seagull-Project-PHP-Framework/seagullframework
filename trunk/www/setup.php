@@ -43,10 +43,20 @@ function __autoload($className)
 {
     if (!class_exists($className)) {
         $path = str_replace('_', '/', $className);
-        require $path . '.php';
+        $file = $path . '.php';
+        // man we have to get rid of Flexy ..
+        if ($file == 'HTML/Template/Flexy/Token/Comment.php' ||
+            $file == 'HTML/Template/Flexy/Token/Doctype.php' ||
+            $file == 'HTML/Template/Flexy/Token/Literal.php' ||
+            $file == 'HTML/Template/Flexy/Token/WhiteSpace.php' ||
+            $file == 'HTML/Template/Flexy/Token/CloseTag.php' ||
+            $file == 'HTML/Template/Flexy/Token/Name.php'
+        ) {
+            return;
+        }
+        require $file;
     }
 }
-
 //  set initial paths according to install type
 $pearTest = '@PHP-DIR@';
 if ($pearTest != '@' . 'PHP-DIR'. '@') {
