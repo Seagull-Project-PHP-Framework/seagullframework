@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.6                                                               |
+// | Seagull 0.9                                                               |
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -39,47 +39,11 @@
 // |          Andy Crain <apcrain@fuse.net>                                    |
 // +---------------------------------------------------------------------------+
 
-function __autoload($className)
-{
-    if (!class_exists($className)) {
-        $path = str_replace('_', '/', $className);
-        $file = $path . '.php';
-        // man we have to get rid of Flexy ..
-        if ($file == 'HTML/Template/Flexy/Token/Comment.php' ||
-            $file == 'HTML/Template/Flexy/Token/Doctype.php' ||
-            $file == 'HTML/Template/Flexy/Token/Literal.php' ||
-            $file == 'HTML/Template/Flexy/Token/WhiteSpace.php' ||
-            $file == 'HTML/Template/Flexy/Token/CloseTag.php' ||
-            $file == 'HTML/Template/Flexy/Token/Name.php'
-        ) {
-            return;
-        }
-        require $file;
-    }
-}
-//  set initial paths according to install type
-$pearTest = '@PHP-DIR@';
-if ($pearTest != '@' . 'PHP-DIR'. '@') {
-    define('SGL_PEAR_INSTALLED', true);
-    $rootDir = '@PHP-DIR@/Seagull';
-    $varDir  = '@DATA-DIR@/Seagull/var';
-} else {
-    $rootDir = realpath(dirname(__FILE__) . '/..');
-    $varDir  = realpath(dirname(__FILE__) . '/../var');
-}
-
-//  check for lib cache
-define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
-    ? true
-    : false);
-
-require_once $rootDir .'/lib/SGL/Task.php';
-require_once $rootDir .'/lib/SGL/FrontController.php';
-require_once $rootDir .'/lib/SGL/Task/SetupPaths.php';
-require_once $rootDir . '/lib/SGL/Install/Common.php';
-SGL_Task_SetupPaths::run();
+require 'init.php';
 
 SGL_FrontController::init();
+
+require_once $rootDir . '/lib/SGL/Install/Common.php';
 
 session_start();
 $_SESSION['ERRORS'] = array();
