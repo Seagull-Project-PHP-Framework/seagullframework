@@ -130,7 +130,8 @@ class TasksProcessTest extends UnitTestCase {
         // clean request
         $req->set('lang', null);
         // clean first launch
-        unset($_SESSION['sglFirstLaunch']);
+        SGL_Session::isFirstAnonRequest($clean = true);
+        SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // clean settings
         unset($_SESSION['aPrefs']['language']);
 
@@ -147,7 +148,8 @@ class TasksProcessTest extends UnitTestCase {
         $this->assertEqual($_SESSION['aPrefs']['language'], 'ru-utf-8');
 
         // clean first launch
-        unset($_SESSION['sglFirstLaunch']);
+        SGL_Session::isFirstAnonRequest($clean = true);
+        SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // clean settings
         unset($_SESSION['aPrefs']['language']);
 
@@ -162,7 +164,8 @@ class TasksProcessTest extends UnitTestCase {
         $this->assertEqual($_SESSION['aPrefs']['language'], 'fr-utf-8');
 
         // clean first launch
-        unset($_SESSION['sglFirstLaunch']);
+        SGL_Session::isFirstAnonRequest($clean = true);
+        SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // clean settings
         unset($_SESSION['aPrefs']['language']);
 
@@ -189,7 +192,8 @@ class TasksProcessTest extends UnitTestCase {
         $this->assertEqual($_SESSION['aPrefs']['language'], 'tr-utf-8');
 
         // clean first launch
-        unset($_SESSION['sglFirstLaunch']);
+        SGL_Session::isFirstAnonRequest($clean = true);
+        SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // clean settings
         unset($_SESSION['aPrefs']['language']);
 
@@ -201,8 +205,10 @@ class TasksProcessTest extends UnitTestCase {
 
         $this->assertEqual($_SESSION['aPrefs']['language'], 'en-utf-8');
 
+        // clean first launch
+        SGL_Session::isFirstAnonRequest($clean = true);
+        SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // restore env
-        unset($_SESSION['sglFirstLaunch']);
         unset($_SESSION['aPrefs']['language']);
         if (isset($_SERVER['HTTP_HOST']) && isset($host)) {
             $_SERVER['HTTP_HOST'] = $host;
