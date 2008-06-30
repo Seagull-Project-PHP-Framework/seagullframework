@@ -49,9 +49,6 @@ class SGL_Filter_Init extends SGL_DecorateProcess
 {
     function process(&$input, &$output)
     {
-        if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
-            apd_set_pprof_trace();
-        }
         //  start output buffering
         if (SGL_Config::get('site.outputBuffering')) {
             ob_start();

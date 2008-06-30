@@ -998,11 +998,7 @@ class SGL_Output
      */
     function getMemoryUsage()
     {
-        if (function_exists('memory_get_usage')) {
-            return number_format(memory_get_usage());
-        } else {
-            return 'unknown';
-        }
+        return number_format(memory_get_usage());
     }
 
     function addHeader($header)
