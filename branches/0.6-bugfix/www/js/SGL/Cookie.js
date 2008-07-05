@@ -2,7 +2,7 @@
 /**
  * Library to deal with cookies.
  *
- * @package seagull
+ * @package SGL
  * @subpackage cookie
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
@@ -21,7 +21,7 @@ SGL.Cookie =
         if (typeof expires != 'undefined') {
             var date = new Date();
             date.setTime(date.getTime() + 60*1000*expires);
-            expires = '; expires=' + date.toGMTString();
+            expires = '; expires=' + date.toString();
         } else {
             expires = '';
         }
@@ -29,15 +29,15 @@ SGL.Cookie =
     },
 
     read: function(name) {
+        var ret = undefined;
         var aCookiesString = document.cookie.split('; ');
         for (var i = 0, len = aCookiesString.length; i < len; i++) {
-            var cookieString = aCookiesString[i];
-            var aCookie = cookieString.split('=');
-            if (aCookie[0] == name) {
-                return aCookie[1];
+            if (aCookiesString[i].split('=')[0] == name) {
+                ret = aCookiesString[i].split('=')[1];
+                break;
             }
         }
-        return null;
+        return ret;
     },
 
     remove: function(name, path) {
