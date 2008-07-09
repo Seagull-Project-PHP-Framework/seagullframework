@@ -36,11 +36,9 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: style.php,v 1.85 2005/06/22 00:40:44 demian Exp $
 
 /**
- * Basic app process tasks: enables profiling, custom error handler, logging
- * and output buffering.
+ * Basic app process tasks: enables profiling and output buffering.
  *
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
