@@ -18,6 +18,9 @@
             {if:isEqual(valueObj.type,#text#)}
                 <input type="text" name="{valueObj.name}" id="{valueObj.name}" value="{valueObj.value}" />
             {end:}
+            {if:isEqual(valueObj.type,#textarea#)}
+                <textarea flexy:ignore name="{valueObj.name}" id="{valueObj.name}">{valueObj.value}</textarea>
+            {end:}
             {if:isEqual(valueObj.type,#yesno#)}
                 {generateRadioPair(valueObj.name,valueObj.value):h}
             {end:}

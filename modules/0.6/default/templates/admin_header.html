@@ -59,7 +59,7 @@
 
     {if:wysiwyg}
     {if:wysiwyg_fck}
-    <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
+    <script type="text/javascript" src="{webRoot}/wysiwyg/fckeditor/fckeditor.js"></script>
     <script type="text/javascript">
         var oFCKEditors = new Array;
 
@@ -68,7 +68,8 @@
         {
             i = oFCKEditors.length;
             oFCKEditors[i] = new FCKeditor(id, '100%', 500);
-            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/fck/";
+            oFCKEditors[i].ToolbarSet = 'Basic' ;
+            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/wysiwyg/fckeditor/";
             oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
             oFCKEditors[i].ReplaceTextarea();
         }
