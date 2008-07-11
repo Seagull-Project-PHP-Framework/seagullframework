@@ -993,6 +993,7 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
             switch ($output->wysiwygEditor) {
 
             case 'fck':
+            case 'fckeditor':
                 $output->wysiwyg_fck = true;
                 $output->addOnLoadEvent('fck_init()');
                 break;
