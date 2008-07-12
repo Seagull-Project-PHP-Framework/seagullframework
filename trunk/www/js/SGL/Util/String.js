@@ -1,7 +1,12 @@
+if (typeof SGL.Util == 'undefined') {
+    SGL.Util = {};
+}
 
 /**
  * String utilities.
  *
+ * @package SGL
+ * @subpackage Util
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 SGL.Util.String =
