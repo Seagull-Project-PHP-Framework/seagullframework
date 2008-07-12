@@ -100,6 +100,9 @@ class SGL_Request
 
         case SGL_REQUEST_AJAX:
             $ret = 'Ajax';
+            if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
+                $ret = 'Ajax2';
+            }
             break;
 
         case SGL_REQUEST_AMF:
