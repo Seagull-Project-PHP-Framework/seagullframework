@@ -165,8 +165,9 @@ class SGL_Request_Browser2 extends SGL_Request
         foreach ($aModules as $moduleName) {
             $configFile = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             if (file_exists($configFile)) {
+                $aDefault  = array(ucfirst($moduleName) . 'Mgr');
                 $aSections = array_keys(parse_ini_file($configFile, true));
-                $aManagers = array_merge($aManagers, $aSections);
+                $aManagers = array_merge($aManagers, $aSections, $aDefault);
             }
         }
         $aManagers = array_map(array('self', '_getManagerName'), $aManagers);
