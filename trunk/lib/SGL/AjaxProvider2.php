@@ -32,87 +32,106 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 0.9                                                               |
 // +---------------------------------------------------------------------------+
-// | AjaxProvider.php                                                          |
+// | AjaxProvider2.php                                                         |
 // +---------------------------------------------------------------------------+
 // | Author: Julien Casanova <julien@soluo.fr>                                 |
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // | Author: Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
 // +---------------------------------------------------------------------------+
 
-define('SGL_RESPONSEFORMAT_JSON', 1);
-define('SGL_RESPONSEFORMAT_PLAIN', 2);
-define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
-define('SGL_RESPONSEFORMAT_HTML', 4);
-define('SGL_RESPONSEFORMAT_XML', 5);
+require_once SGL_CORE_DIR . '/Delegator.php';
+
+if (!defined('SGL_RESPONSEFORMAT_JSON')) {
+    define('SGL_RESPONSEFORMAT_JSON',       1);
+    define('SGL_RESPONSEFORMAT_PLAIN',      2);
+    define('SGL_RESPONSEFORMAT_JAVASCRIPT', 3);
+    define('SGL_RESPONSEFORMAT_HTML',       4);
+    define('SGL_RESPONSEFORMAT_XML',        5);
+}
 
 /**
  * Abstract model controller for all the 'ajax provider' classes.
  *
  * @package SGL
- *
- * @abstract
  */
-class SGL_AjaxProvider2
+abstract class SGL_AjaxProvider2
 {
     /**
-     * Holds configuration
+     * Holds configuration.
      *
      * @var array
      */
-    var $conf = array();
+    public $conf = array();
 
     /**
      * DB abstraction layer
      *
      * @var DB resource
      */
-    var $dbh = null;
+    public $dbh;
 
     /**
-     * Constant indicating response format
+     * SGL_Request.
+     *
+     * @var SGL_Request
+     */
+    public $req;
+
+    /**
+     * Data access object.
+     *
+     * @var SGL_Delegator
+     */
+    public $da;
+
+    /**
+     * Constant indicating response format.
      *
      * @var integer
      */
-    var $responseFormat = SGL_RESPONSEFORMAT_HTML;
+    public $responseFormat = SGL_RESPONSEFORMAT_JSON;
 
     /**
-     * Array for messages passed back to client
+     * Message information passed back to client.
      *
      * @var array
      */
-    var $aMsg = array();
+    public $aMsg = array();
+
+    /**
+     * Current module.
+     *
+     * @var string
+     */
+    protected $_moduleName;
+
+    /**
+     * Current action.
+     *
+     * @var string
+     */
+    protected $_actionName;
 
     /**
      * Constructor.
-     *
-     * @access private
      */
-    function __construct()
+    public function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = SGL_Config::singleton();
-        $this->conf = $c->getAll();
-        $this->dbh = $this->_getDb();
+        $this->conf = SGL_Config::singleton()->getAll();
+        $this->req  = SGL_Registry::singleton()->getRequest();
+        $this->dbh  = $this->_getDb();
+        $this->da   = new SGL_Delegator();
+
+        $moduleName        = str_replace('AjaxProvider', '', get_class($this));
+        $this->_moduleName = strtolower($moduleName);
+        $this->_actionName = $this->req->getActionName();
     }
 
-    function &singleton()
+    private function _getDb()
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        static $instance;
-
-        // If the instance is not there, create one
-        if (!isset($instance)) {
-            $class = __CLASS__;
-            $instance = new $class();
-        }
-        return $instance;
-    }
-
-    function &_getDb()
-    {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
             $dbh = SGL_DB::singleton();
@@ -122,110 +141,105 @@ class SGL_AjaxProvider2
     }
 
     /**
-     * Main routine of processing ajax requests.
+     * Main workflow.
      *
      * @param SGL_Registry $input
      * @param SGL_Output $output
      *
-     * @return mixed
+     * @return void
      */
-    function process($input, $output)
+    public function process(SGL_Registry $input, SGL_Output $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $req = $input->getRequest();
-        $actionName = $req->getActionName();
+        if (method_exists($this, $this->_actionName)) {
+            $ok = true; // by default request is authorised
 
-        //  handle errors
-        if (SGL_Error::count()) { // eg, authentication failure
-            return;
-        } elseif (!method_exists($this, $actionName)) {
-            SGL::raiseError("requested method, $actionName, does not exist");
-            return;
-        }
-        // by default request is authorised
-        $ok = true;
-
-        // only check auth and perms on demand
-        $providerContainer = ucfirst($req->getModuleName()) . 'AjaxProvider';
-        if (!empty($this->conf[$providerContainer]['requiresAuth'])
-                && $this->conf['debug']['authorisationEnabled']) {
-            $aMethods = explode(',', $this->conf[$providerContainer]['requiresAuth']);
-            $aMethods = array_map('trim', $aMethods);
-            if (in_array($actionName, $aMethods)) {
-                $resourseId = $this->getAuthResourceId();
-                $ok = $this->isOwner($resourseId, SGL_Session::getUid());
+            $container = ucfirst($this->_moduleName . 'AjaxProvider');
+            if (SGL_Config::get("$container.requiresAuth")
+                && SGL_Config::get('debug.authorisationEnabled'))
+            {
+                $aMethods = explode(',', SGL_Config::get("$container.requiresAuth"));
+                $aMethods = array_map('trim', $aMethods);
+                if (in_array($this->_actionName, $aMethods)) {
+                    $ok = $this->_isOwner(SGL_Session::getUid());
+                }
             }
+            if (PEAR::isError($ok)) {
+                $ret = $ok;
+            } elseif (!$ok) {
+                $ret = SGL::raiseError('authorisation failed',
+                    SGL_ERROR_INVALIDAUTHORISATION);
+            } else {
+                $ret = $this->{$this->_actionName}($input, $output);
+                if (SGL_Error::count()) {
+                    $ret = SGL_Error::getLast();
+                }
+            }
+        } else {
+            $ret = SGL::raiseError('requested method does not exist');
         }
-        if (!$ok) {
-            SGL::raiseError('authorisation failed', SGL_ERROR_INVALIDAUTHORISATION);
-            return;
-        }
-        //  setup props needed for creating HTML output with Flexy
-        $output->theme      = SGL_Config::get('site.defaultTheme');
-        $output->webRoot    = SGL_BASE_URL;
-        $output->conf       = SGL_Config::singleton()->getAll();
-
-        $this->$actionName($input, $output);
+        return $ret;
     }
 
     /**
-     * Authorisation routine.
+     * Ensure the current user can perform requested action.
      *
-     * @param mixed $resourseId
-     * @param integer $userId
+     * @param integer $requestedUserId
      *
      * @return boolean
-     *
-     * @abstract
      */
-    function isOwner($resourseId, $userId)
-    {
-        return true;
-    }
-
-    /**
-     * Get resource ID.
-     *
-     * @return mixed
-     *
-     * @abstract
-     */
-    function getAuthResourceId()
-    {
-        return 'resourceId';
-    }
+    abstract protected function _isOwner($requestedUserId);
 
     /**
      * Raises notification messages intended for end user.
      *
-     * @param array $message
-     *        with  string $message['message']
-     *        with  int    $message['messageType'] SGL_MESSAGE_ERROR | SGL_MESSAGE_INFO | SGL_MESSAGE_WARNING
-     * @param boolean $persist
+     * @param array mixed     string $message['message']
+     *                        int    $message['type']    SGL_MESSAGE_ERROR
+     *                                                   SGL_MESSAGE_INFO
+     *                                                   SGL_MESSAGE_WARNING
      * @param boolean $translate
-     *
+     * @param boolean $persist
      */
-    function raiseMsg($aMessage, $translate = false, $persist = false)
+    protected function _raiseMsg($aMessage, $translate = false, $persist = false)
     {
-        if ($translate && isset($aMessage['message'])) {
-            $aMessage['message'] = SGL_String::translate($aMessage['message']);
+        if (!is_array($aMessage)) {
+            $aMessage = array('message' => $aMessage);
+        }
+        if ($translate) {
+            $aMessage['message'] = SGL_Output::tr($aMessage['message']);
+        }
+        if (!isset($aMessage['type'])) {
+            $aMessage['type'] = SGL_MESSAGE_INFO;
+        }
+        if ($persist) {
+            // propagate for next request
+            SGL_Session::set('message', $aMessage['message']);
+            SGL_Session::set('messageType', $aMessage['type']);
         }
         $this->aMsg = $aMessage;
-        if ($persist && isset($aMessage['message'])) {
-            SGL_Session::set('message', $aMessage['message']);
-            if (isset($aMessage['type'])) {
-                SGL_Session::set('messageType', $aMessage['type']);
-            }
-        }
     }
 
-    function jsonEncode($data)
+    /**
+     * Encode data to JSON.
+     *
+     * @param mixed $data
+     *
+     * @return string
+     */
+    public static function jsonEncode($data)
     {
         return json_encode($data);
     }
 
-    function handleError($oError)
+    /**
+     * Get formatted error.
+     *
+     * @param PEAR_Error $oError
+     *
+     * @return array
+     */
+    public static function handleError($oError)
     {
         $aResponse = array(
             'message'   => $oError->getMessage(),
@@ -233,9 +247,32 @@ class SGL_AjaxProvider2
             'level'     => $oError->getCode(),
             'errorType' => SGL_Error::constantToString($oError->getCode())
         );
-
         $ret = self::jsonEncode($aResponse);
         return $ret;
+    }
+
+    /**
+     * Render template.
+     *
+     * @param SGL_Output $output
+     * @param mixed $aParams
+     *
+     * @return string
+     *
+     * @todo do we really need to clone output object?
+     */
+    protected function _renderTemplate($output, $aParams)
+    {
+        if (!is_array($aParams)) {
+            $aParams = array('masterTemplate' => $aParams);
+        }
+        $o = clone $output;
+        $o->moduleName = $this->_moduleName;
+        foreach ($aParams as $k => $v) {
+            $o->$k = $v;
+        }
+        $view = new SGL_HtmlSimpleView($o);
+        return $view->render();
     }
 }
 ?>
