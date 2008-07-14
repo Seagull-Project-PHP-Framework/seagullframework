@@ -1,35 +1,37 @@
 <?php
 
+/**
+ * Clean output data object before sending it to the client.
+ *
+ * @package Task
+ */
 class SGL_Task_CleanOutputData extends SGL_DecorateProcess
 {
-    function process($input, $output)
+    /**
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
+    public function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
-        //  catch session timeout
-        if (SGL_Error::count()) {
-            if (SGL_Error::getLast()->getCode() == SGL_ERROR_INVALIDSESSION) {
-                $aMsg = array(
-                  'message' => 'session timeout',
-                  'type'    => SGL_MESSAGE_ERROR,
-                );
-                $output->aMsg($aMsg);
+        $aExceptions = array(
+            'aCssFiles', 'aHeaders', 'aJavascriptFiles', 'aRawJavascriptFiles',
+            'scriptOpen', 'scriptClose',
+            'aOnLoadEvents', 'aOnUnloadEvents', 'aOnReadyDomEvents',
+            'onLoad', 'onReadyDom', 'onUnload', 'conf',
+            'webRoot', 'currUrl', 'sessID', 'theme', 'imagesDir',
+            'isMinimalInstall', 'showExecutionTimes', 'responseFormat'
+        );
+        $aProps = array_keys(get_object_vars($output));
+        $oData  = new stdClass();
+        foreach ($aProps as $prop) {
+            if (!in_array($prop, $aExceptions)) {
+                $oData->$prop = $output->$prop;
             }
+            unset($output->$prop);
         }
-
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        $data = new stdClass();
-        $aExceptions = array('aCssFiles', 'aHeaders',
-            'aJavascriptFiles', 'aOnLoadEvents', 'aOnUnloadEvents', 'aOnReadyDomEvents',
-            'onLoad', 'onReadyDom', 'onUnload', 'conf');
-        foreach ($output as $k => $v) {
-            if (!in_array($k, $aExceptions)) {
-                $data->$k = $v;
-            }
-            unset($output->$k);
-        }
-        $output->data = $data;
+        $output->data = $oData;
     }
 }
 
