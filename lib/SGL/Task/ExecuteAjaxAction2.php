@@ -28,7 +28,7 @@ class SGL_Task_ExecuteAjaxAction2 extends SGL_ProcessRequest
                     SGL_ERROR_NOCLASS);
             } else {
                 // execute action method
-                $oProvider = & new $providerClass();
+                $oProvider = new $providerClass();
                 $ok = $oProvider->process($input, $output);
 
                 $output->responseFormat = $oProvider->responseFormat;

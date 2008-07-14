@@ -21,7 +21,7 @@ class SGL_Task_CleanOutputData extends SGL_DecorateProcess
             'aOnLoadEvents', 'aOnUnloadEvents', 'aOnReadyDomEvents',
             'onLoad', 'onReadyDom', 'onUnload', 'conf',
             'webRoot', 'currUrl', 'sessID', 'theme', 'imagesDir',
-            'isMinimalInstall', 'showExecutionTimes', 'responseFormat'
+            'isMinimalInstall', 'showExecutionTimes'
         );
         $aProps = array_keys(get_object_vars($output));
         $oData  = new stdClass();
