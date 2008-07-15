@@ -389,12 +389,12 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 
                 if (SGL_Config::get('site.logoutTarget')) {
                     $loginPage = SGL_Config::getCommandTarget(SGL_Config::get('site.logoutTarget'));
-                    $loginPage['redir'] = urlencode($redir);
+                    $loginPage['redir'] = base64_encode($redir);
                 } else {
                     $loginPage = array(
                         'moduleName'    => 'user',
                         'managerName'   => 'login',
-                        'redir'         => urlencode($redir));
+                        'redir'         => base64_encode($redir));
                 }
 
                 if (!$session->isValid()) {
