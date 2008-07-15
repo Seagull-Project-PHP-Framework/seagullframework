@@ -61,6 +61,13 @@ class SGL_Output
     var $aHeaders = array();
 
     /**
+     * @access private
+     *
+     * @var array
+     */
+    var $_aJsExportVars = array();
+
+    /**
      * Translates source text into target language.
      *
      * @access  public
@@ -1305,6 +1312,43 @@ class SGL_Output
         $ret = $this->langDir == 'rtl'
             ? 'left'
             : 'right';
+        return $ret;
+    }
+
+    /**
+     * Export js var.
+     *
+     * @access pubic
+     *
+     * @param string $k
+     * @param string $v
+     * @param boolean $replace
+     */
+    function exportJsVar($k, $v, $replace = true)
+    {
+        $k = strtoupper($k);
+        if ($replace) {
+            $this->_aJsExportVars[$k] = $v;
+        } elseif (!array_key_exists($k, $this->_aJsExportVars)) {
+            $this->_aJsExportVars[$k] = $v;
+        }
+    }
+
+    /**
+     * @access public
+     *
+     * @return string
+     */
+    function getExportedJsVars()
+    {
+        // default vars
+        $prefix = 'SGL';
+        $ret    = '';
+        foreach ($this->_aJsExportVars as $k => $v) {
+            $varName = $prefix . '_' . $k;
+            $varVal  = addcslashes($v, '"');
+            $ret .= "var $varName = \"$varVal\";\n";
+        }
         return $ret;
     }
 }
