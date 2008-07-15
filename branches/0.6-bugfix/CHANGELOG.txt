@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+15-07-08    Fixed logout target being used in wrong place (Yevgeniy)
 15-07-08    Fixed problem with redirects in timed out sessions, base64_encode used
             instead of urlencode
 21-05-08    Fixed problem where SGL_Cache was not returning singletons correctly
