@@ -248,7 +248,12 @@ class SGL_Request
 
     function getModuleName()
     {
-        return $this->aProps['moduleName'];
+        if (isset($this->aProps['managerName'])) {
+            $ret = $this->aProps['moduleName'];
+        } else {
+            $ret = SGL_Config::get('site.defaultModule');
+        }
+        return $ret;
     }
 
     function getManagerName()
