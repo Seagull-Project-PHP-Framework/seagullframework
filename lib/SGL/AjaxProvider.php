@@ -202,7 +202,7 @@ class SGL_AjaxProvider
      * @param boolean $translate
      *
      */
-    function raiseMsg($aMessage, $translate = false, $persist = false)
+    function _raiseMsg($aMessage, $translate = false, $persist = false)
     {
         if ($translate && isset($aMessage['message'])) {
             $aMessage['message'] = SGL_String::translate($aMessage['message']);
