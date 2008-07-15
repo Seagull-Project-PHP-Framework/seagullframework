@@ -1,19 +1,4 @@
 <?php
-
-/**
- * Translator role.
- *
- * @param integer
- */
-define('SGL_ROLE_TRANSLATOR', 3);
-
-/**
- * Root node for translator's navigation branch.
- *
- * @param integer
- */
-define('SGL_NODE_TRANSLATOR', 5);
-
 /**
  * Add extra languages (in config) to global language array.
  *
