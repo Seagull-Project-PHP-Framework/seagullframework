@@ -26,9 +26,11 @@ file1               = modules/default/data/schema.pg.sql
 file2               = modules/user/data/schema.pg.sql
 file3               = modules/navigation/data/schema.pg.sql
 file4               = modules/block/data/schema.pg.sql
+file5               = modules/emailqueue/data/schema.pg.sql
 
-[dataFiles] 
+[dataFiles]
 file1               = modules/default/data/data.default.pg.sql
 file2               = modules/user/data/data.default.pg.sql
 file3               = modules/navigation/data/data.default.pg.sql
 file4               = modules/block/data/data.default.pg.sql
+file5               = modules/emailqueue/data/data.default.pg.sql
