@@ -26,6 +26,8 @@ BUGFIXES
             Horde_Routes input URL handler
 
 IMPROVEMENTS
+15-07-08    Seagull's lib dir now in include path, so you can now include sgl libs
+            like "include 'SGL/Foo/Bar.php';  See [3930] for details
 11-07-08    Made FCKeditor the default wysiwyg following security alert
                 http://www.milw0rm.com/exploits/5945
             Use sgl/www/js/SGL/SglFckconfig.js to customise

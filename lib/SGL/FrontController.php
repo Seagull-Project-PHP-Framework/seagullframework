@@ -53,10 +53,11 @@ class SGL_FrontController
     /**
      * Allow SGL_Output with its template methods to be extended.
      *
-     * Remember to add your custom include path to the global config, ie a class
-     * called FOO_Output will be discovered if it exists in seagull/lib/FOO/Output.php.
-     * This means '/path/to/seagull/lib' must be added to
-     * $conf['path']['additionalIncludePath'].  The class definition would be:
+     * If you want to work with your own Seagull classes create your own namespace in
+     * the seagull/lib directory, ie, seagull/lib/FOO.  To override the SGL_Output
+     * class you would then create seagull/lib/FOO/Output.php, extend it from
+     * SGL_Output and provide the classname "FOO_Output" in "site.customOutputClassName"
+     * so it can be loaded automatically.
      *
      *  class FOO_Output extends SGL_Output {}
      *
