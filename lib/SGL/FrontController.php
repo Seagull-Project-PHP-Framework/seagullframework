@@ -113,13 +113,13 @@ class SGL_FrontController
                 'SGL_Filter_DiscoverClientOs',
                 'SGL_Filter_ResolveManager',
                 'SGL_Filter_CreateSession',
+                'SGL_Filter_SetupLangSupport',
+                'SGL_Filter_SetupLocale',
                 'SGL_Filter_AuthenticateRequest',
                 'SGL_Filter_DetectAdminMode',
 //                //new SGL_Filter_MaintenanceModeIntercept(
 //                //new SGL_Filter_DetectSessionDebug(
 //                //new SGL_Filter_SetupPerms(
-                'SGL_Filter_SetupLangSupport',
-                'SGL_Filter_SetupLocale',
 
                 //  post-process (order: bottom up)
                 'SGL_Filter_BuildHeaders',
