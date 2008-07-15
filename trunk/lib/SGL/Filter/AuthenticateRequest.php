@@ -111,16 +111,11 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
                 //  prepare referer info for redirect after login
                 $url = $input->getCurrentUrl();
                 $redir = $url->toString();
-
-                if (SGL_Config::get('site.logoutTarget')) {
-                    $loginPage = SGL_Config::getCommandTarget(SGL_Config::get('site.logoutTarget'));
-                    $loginPage['redir'] = urlencode($redir);
-                } else {
-                    $loginPage = array(
-                        'moduleName'    => 'user',
-                        'managerName'   => 'login',
-                        'redir'         => urlencode($redir));
-                }
+                $loginPage = array(
+                    'moduleName'    => 'user',
+                    'managerName'   => 'login',
+                    'redir'         => base64_encode($redir)
+                    );
 
                 if (!$session->isValid()) {
                     SGL::raiseMsg('authentication required');
