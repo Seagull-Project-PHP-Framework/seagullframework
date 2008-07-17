@@ -43,13 +43,13 @@ function switchDisplayType()
             </tr>
             <tr>
                 <th width="5%">&nbsp;</th><!--IMAGE-->
-                <th width="5%" class="left">{translate(#Reload#)}</th>
-                <th width="5%">{translate(#Title#)}</th>
+                <th width="5%" class="left">{translate(#Title#)}</th>
+                <th width="10%">{translate(#action#,#ucfirst#)}</th>
+                <th width="10%">{translate(#Reload#)}</th>
                 <th width="55%" class="left">{translate(#Description#)}</th>
                 <th width="5%">{translate(#Maintainer#)}</th>
                 <th width="5%">{translate(#License#)}</th>
                 <th width="5%">{translate(#State#)}</th>
-                <th width="15%">{translate(#action#,#ucfirst#)}</th>
             </tr>
         </thead>
 
@@ -59,7 +59,23 @@ function switchDisplayType()
                 {if:oValue.isInstalled}
 
                 <!--MODULE IMAGE-->
+
                 <td><img src="{webRoot}/themes/{theme}/images/16/module_{oValue.name}.gif" alt="" /></td>
+
+                <!--EDIT MODULE LINK-->
+                <td class="left">
+                    <a href="{makeUrl(##,#moduleconfig#,#default#,aModules,#frmModule|name#,key)}"
+                        title="edit config for {oValue.title}">{oValue.title}</a>
+                </td>
+
+                <!--ACTION-->
+                <td>
+                    <a href="{makeUrl(#uninstall#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}"
+                            title="{translate(#uninstall#)} {oValue.title}"
+                            onclick="return confirmDeleteWithMsg('{translate(#module deregister msg#)}')" >
+                        <img src="{webRoot}/themes/{theme}/images/16/edit_remove.png" alt="{translate(#uninstall#)}" />
+                    </a>
+                </td>
 
                 <!--RELOAD -->
                 <td>
@@ -67,12 +83,6 @@ function switchDisplayType()
                             title="{translate(#reload#)} {oValue.title}"
                             onclick="return confirmDeleteWithMsg('{translate(#module reload msg#)}')" >
                         <img src="{webRoot}/themes/{theme}/images/22/action_reorder.gif" alt="" />
-                </td>
-
-                <!--EDIT MODULE LINK-->
-                <td class="left">
-                    <a href="{makeUrl(##,#moduleconfig#,#default#,aModules,#frmModule|name#,key)}"
-                        title="edit config for {oValue.title}">{oValue.title}</a>
                 </td>
 
                 <!--DESCRIPTION-->
@@ -87,42 +97,19 @@ function switchDisplayType()
                 <!--STATE-->
                 <td class="left desc">{oValue.state}</td>
 
-                <!--ACTION-->
-                <td>
-                    <a href="{makeUrl(#uninstall#,#module#,#default#,aModules,#frmModuleId|module_id#,key)}"
-                            title="{translate(#uninstall#)} {oValue.title}"
-                            onclick="return confirmDeleteWithMsg('{translate(#module deregister msg#)}')" >
-                        <img src="{webRoot}/themes/{theme}/images/16/edit_remove.png" alt="{translate(#uninstall#)}" />
-                    </a>
-                </td>
                 {else:}
 
                 <!--MODULE IMAGE-->
                 <td><img src="{webRoot}/themes/{theme}/images/16/module_{oValue.name}_disabled.gif" alt="" /></td>
-
-                <!--RELOAD -->
-                <td>&nbsp;</td>
 
                 <!--EDIT MODULE LINK-->
                 <td class="left">
                     <a class="disabled" href="{makeUrl(##,#moduleconfig#,#default#,aModules,#frmModule|name#,key)}">{oValue.title}</a>
                 </td>
 
-                <!--DESCRIPTION-->
-                <td class="left desc disabled">{oValue.description}</td>
-
-                <!--MAINTAINER-->
-                <td class="left desc">{oValue.maintainers}</td>
-
-                <!--LICENSE-->
-                <td class="left desc">{oValue.license}</td>
-
-                <!--STATE-->
-                <td class="left desc">{oValue.state}</td>
-
                 <!--ACTION-->
                 <td>
-                <!--INSTALL-->
+                    <!--INSTALL-->
                     <a href="{makeUrl(#install#,#module#,#default#,aModules,#frmModuleName|name#,key)}"
                             title="{translate(#install#)} {oValue.title}" >
                         <img src="{webRoot}/themes/{theme}/images/16/edit_add.png" alt="{translate(#install#)}" />
@@ -135,6 +122,21 @@ function switchDisplayType()
                         <img src="{webRoot}/themes/{theme}/images/16/action_disable.gif" alt="{translate(#remove#)}" />
                     </a>
                 </td>
+
+                <!--RELOAD -->
+                <td>&nbsp;</td>
+
+                <!--DESCRIPTION-->
+                <td class="left desc disabled">{oValue.description}</td>
+
+                <!--MAINTAINER-->
+                <td class="left desc">{oValue.maintainers}</td>
+
+                <!--LICENSE-->
+                <td class="left desc">{oValue.license}</td>
+
+                <!--STATE-->
+                <td class="left desc">{oValue.state}</td>
                 {end:}
             </tr>
         {else:}
