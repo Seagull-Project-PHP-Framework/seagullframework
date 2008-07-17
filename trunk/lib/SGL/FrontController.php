@@ -254,51 +254,32 @@ class SGL_FrontController
 
     public static function loadRequiredFiles()
     {
-        $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
-        $cachedLibsEnabled = (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true)
-            ? true
-            : false;
-        if (is_file($cachedLibs) && $cachedLibsEnabled) {
-            require_once $cachedLibs;
-        } else {
-            $coreLibs = dirname(__FILE__);
-            $aRequiredFiles = array(
-                $coreLibs  . '/Url.php',
-                $coreLibs  . '/HTTP.php',
-                $coreLibs  . '/Manager.php',
-                $coreLibs  . '/Output.php',
-                $coreLibs  . '/String.php',
-                //$coreLibs  . '/Task/Process.php',
-                $coreLibs  . '/Session.php',
-                $coreLibs  . '/Util.php',
-                $coreLibs  . '/Config.php',
-                $coreLibs  . '/ParamHandler.php',
-                $coreLibs  . '/Registry.php',
-                $coreLibs  . '/Request.php',
-                $coreLibs  . '/Inflector.php',
-                $coreLibs  . '/Date.php',
-                $coreLibs  . '/Array.php',
-                $coreLibs  . '/Error.php',
-                $coreLibs  . '/Cache.php',
-                //$coreLibs  . '/DB.php',
-                //$coreLibs  . '/BlockLoader.php',
-                $coreLibs  . '/Translation.php',
-                $coreLibs  . '/../data/ary.languages.php',
-            );
-            $fileCache = '';
-            foreach ($aRequiredFiles as $file) {
-                require_once $file;
-                if ($cachedLibsEnabled) {
-                    // 270kb vs 104kb
-                    $fileCache .= php_strip_whitespace($file);
-                }
-            }
-            if ($cachedLibsEnabled) {
-                $ok = file_put_contents($cachedLibs, $fileCache);
-            }
+        $coreLibs = dirname(__FILE__);
+        $aRequiredFiles = array(
+            $coreLibs  . '/Url.php',
+            $coreLibs  . '/HTTP.php',
+            $coreLibs  . '/Manager.php',
+            $coreLibs  . '/Output.php',
+            $coreLibs  . '/String.php',
+            $coreLibs  . '/Session.php',
+            $coreLibs  . '/Util.php',
+            $coreLibs  . '/Config.php',
+            $coreLibs  . '/ParamHandler.php',
+            $coreLibs  . '/Registry.php',
+            $coreLibs  . '/Request.php',
+            $coreLibs  . '/Inflector.php',
+            $coreLibs  . '/Date.php',
+            $coreLibs  . '/Array.php',
+            $coreLibs  . '/Error.php',
+            $coreLibs  . '/Cache.php',
+            //$coreLibs  . '/DB.php',
+            //$coreLibs  . '/BlockLoader.php',
+            $coreLibs  . '/Translation.php',
+            $coreLibs  . '/../data/ary.languages.php',
+        );
+        foreach ($aRequiredFiles as $file) {
+            require_once $file;
         }
-        //require_once 'PEAR.php';
-        //require_once 'DB.php';
     }
 
     public static function setupMinimumEnv()
