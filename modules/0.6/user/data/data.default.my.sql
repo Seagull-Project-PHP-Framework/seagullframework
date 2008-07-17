@@ -1,4 +1,4 @@
-INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user', 'Users and Security', 'The ''Users and Security'' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.', 'user/user', '48/module_user.png', 'Demian Turner', NULL, 'BSD', 'beta');
+INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user', 'Users and Security', 'The ''Users and Security'' module allows you to manage all your users, administer the roles they belong to, change their passwords, setup permissions and alter the global default preferences.', 'user/user', '48/module_user.png', 'Demian Turner', NULL, 'BSD', 'stable');
 
 SELECT @moduleId := MAX(module_id) FROM module;
 

@@ -9,7 +9,7 @@
 
         <strong>by</strong> <a href="{makeUrl(#view#,#profile#,#user#)}frmUserID/{comment.created_by}">{comment.full_name}</a>
         on {formatDatePretty(comment.date_created)}
-        <p>{comment.body}</p>
+        <p>{GLOBALS.nl2br(comment.body):h}</p>
 
         <span><a id="deleteCommentTrigger_{comment.comment_id}" class="delete" href="#{comment.comment_id}">{delete}</a></span>
 

@@ -93,8 +93,6 @@ class ExampleMgr extends SGL_Manager
     function _cmd_list(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-
-        //echo 'test';
     }
 
 
