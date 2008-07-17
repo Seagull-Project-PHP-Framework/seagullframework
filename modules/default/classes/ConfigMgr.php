@@ -293,21 +293,6 @@ class ConfigMgr extends SGL_Manager
                 false, SGL_MESSAGE_WARNING);
             return false;
         }
-        //  lib cache is enabled by setting file flag in seagull/var
-        $cacheFileFlag = SGL_VAR_DIR . '/ENABLE_LIBCACHE.txt';
-        $cachedLibsFile = SGL_VAR_DIR . '/cachedLibs.php';
-        if ($input->conf['cache']['libCacheEnabled']) {
-            if (!is_file($cacheFileFlag)) {
-                $ok = touch($cacheFileFlag);
-            }
-        } else {
-            if (is_file($cacheFileFlag)) {
-                $ok = unlink($cacheFileFlag);
-            }
-            if (is_file($cachedLibsFile)) {
-                $ok = unlink($cachedLibsFile);
-            }
-        }
         //  add version info which is not available in form
         $c = &SGL_Config::singleton();
         $dbType = $c->get(array('db' => 'type')); // get db type before merge
