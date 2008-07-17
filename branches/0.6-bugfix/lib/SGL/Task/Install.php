@@ -1289,10 +1289,13 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                 unlink($linksFile);
             }
         }
-
         $linkData = '';
         foreach ($data['aModuleList'] as $module) {
-            $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
+            if ($module == 'block' && in_array('cms', $data['aModuleList'])) {
+                $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.cms.ini';
+            } else {
+                $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
+            }
             if (is_file($linksPath)) {
                 $linkData .= file_get_contents($linksPath);
                 $linkData .= "\n\n";
