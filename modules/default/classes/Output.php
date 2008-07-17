@@ -42,8 +42,9 @@ class DefaultOutput
 {
     function replaceSlashes($str)
     {
-        return str_replace('/', '^',$str);
+        return str_replace('/', '^', $str);
     }
+
     function createConfigField($section, $name, $field)
     {
         if (is_array($field)) {
