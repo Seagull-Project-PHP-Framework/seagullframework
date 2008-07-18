@@ -25,6 +25,7 @@
  */
 
 FCKConfig.AutoDetectLanguage = false ;
+FCKConfig.Plugins.Add( 'dragresizetable' );
 FCKConfig.ToolbarSets["Default"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
