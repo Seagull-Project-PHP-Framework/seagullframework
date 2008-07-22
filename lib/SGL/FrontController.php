@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.9                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FrontController.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -39,6 +39,7 @@
 // $Id: FrontController.php,v 1.49 2005/06/23 19:15:25 demian Exp $
 
 require_once dirname(__FILE__)  . '/../SGL.php';
+require_once dirname(__FILE__)  . '/Task/Init.php';
 
 /**
  * Application controller.
@@ -52,10 +53,11 @@ class SGL_FrontController
     /**
      * Allow SGL_Output with its template methods to be extended.
      *
-     * Remember to add your custom include path to the global config, ie a class
-     * called FOO_Output will be discovered if it exists in seagull/lib/FOO/Output.php.
-     * This means '/path/to/seagull/lib' must be added to
-     * $conf['path']['additionalIncludePath'].  The class definition would be:
+     * If you want to work with your own Seagull classes create your own namespace in
+     * the seagull/lib directory, ie, seagull/lib/FOO.  To override the SGL_Output
+     * class you would then create seagull/lib/FOO/Output.php, extend it from
+     * SGL_Output and provide the classname "FOO_Output" in "site.customOutputClassName"
+     * so it can be loaded automatically.
      *
      *  class FOO_Output extends SGL_Output {}
      *
@@ -64,6 +66,8 @@ class SGL_FrontController
     {
         if (SGL_Config::get('site.customOutputClassName')) {
             $className = SGL_Config::get('site.customOutputClassName');
+            $path = trim(preg_replace('/_/', '/', $className)) . '.php';
+            require_once $path;
         } else {
             $className = 'SGL_Output';
         }
@@ -74,14 +78,14 @@ class SGL_FrontController
      * Main invocation, init tasks plus main process.
      *
      */
-    public static function run()
+    function run()
     {
         if (!defined('SGL_INITIALISED')) {
-            self::init();
+            SGL_FrontController::init();
         }
         //  assign request to registry
-        $input = SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
@@ -90,53 +94,56 @@ class SGL_FrontController
         $input->setRequest($req);
 
         //  ensure local config loaded and merged
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $c->ensureModuleConfigLoaded($req->getModuleName());
 
-        $outputClass = self::getOutputClass();
-        $output = new $outputClass();
+        $outputClass = SGL_FrontController::getOutputClass();
+        $output = &new $outputClass();
 
         // test db connection
-//SGL_FrontController::testDbConnection($output);
+        SGL_FrontController::testDbConnection($output);
 
         // run module init tasks
-//SGL_Task_InitialiseModules::run();
+        SGL_Task_InitialiseModules::run();
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
-        if (!self::customFilterChain($input)) {
-
-
-            $aFilters = array(
+        if (!SGL_FrontController::customFilterChain($input)) {
+            $process =
                 //  pre-process (order: top down)
-                //'SGL_Task_Init',
-                'SGL_Filter_StripMagicQuotes',
-                'SGL_Filter_DiscoverClientOs',
-                'SGL_Filter_ResolveManager',
-                'SGL_Filter_CreateSession',
-                'SGL_Filter_SetupLangSupport',
-                'SGL_Filter_SetupLocale',
-                'SGL_Filter_AuthenticateRequest',
-                'SGL_Filter_DetectAdminMode',
-//                //new SGL_Filter_MaintenanceModeIntercept(
-//                //new SGL_Filter_DetectSessionDebug(
-//                //new SGL_Filter_SetupPerms(
+                new SGL_Task_Init(
+                new SGL_Task_SetupORM(
+                new SGL_Task_StripMagicQuotes(
+                new SGL_Task_DiscoverClientOs(
+                new SGL_Task_ResolveManager(
+                new SGL_Task_CreateSession(
+                new SGL_Task_SetupLangSupport(
+                new SGL_Task_SetupLocale(
+                new SGL_Task_AuthenticateRequest(
+                new SGL_Task_DetectAdminMode(
+                new SGL_Task_MaintenanceModeIntercept(
+                new SGL_Task_DetectSessionDebug(
+                new SGL_Task_SetupPerms(
 
                 //  post-process (order: bottom up)
-                'SGL_Filter_BuildHeaders',
-                'SGL_Filter_BuildView',
-//                //new SGL_Filter_BuildDebugBlock(
-//                //new SGL_Filter_SetupBlocks(
-//                //new SGL_Filter_SetupNavigation(
-                'SGL_Filter_SetupGui',
-                'SGL_Filter_BuildOutputData',
+                new SGL_Task_BuildHeaders(
+                new SGL_Task_BuildView(
+                new SGL_Task_BuildDebugBlock(
+                new SGL_Task_SetupBlocks(
+                new SGL_Task_SetupNavigation(
+                new SGL_Task_SetupGui(
+                new SGL_Task_SetupWysiwyg(
+                new SGL_Task_BuildOutputData(
 
                 //  target
-                'SGL_MainProcess',
-                );
-            $input->setFilters($aFilters);
+                new SGL_MainProcess()
+                )))))))))))))))))))));
+            $process->process($input, $output);
+
+        } else {
+            require_once dirname(__FILE__)  . '/FilterChain.php';
+            $chain = new SGL_FilterChain($input->getFilters());
+            $chain->doFilter($input, $output);
         }
-        $chain = new SGL_FilterChain($input->getFilters());
-        $chain->doFilter($input, $output);
         if (SGL_Config::get('site.outputBuffering')) {
             ob_end_flush();
         }
@@ -148,7 +155,6 @@ class SGL_FrontController
         $req = $input->getRequest();
 
         switch ($req->getType()) {
-
         case SGL_REQUEST_BROWSER:
         case SGL_REQUEST_CLI:
             $mgr = SGL_Inflector::getManagerNameFromSimplifiedName(
@@ -217,7 +223,7 @@ class SGL_FrontController
 
         // test db connection
         if (defined('SGL_INSTALLED')) {
-            $dbh = SGL_DB::singleton();
+            $dbh = &SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 // stop with error page
                 SGL::displayErrorPage($output);
@@ -227,66 +233,90 @@ class SGL_FrontController
     }
 
 
-    public static function init()
+    function init()
     {
-        self::setupMinimumEnv();
-        self::loadRequiredFiles();
+        SGL_FrontController::setupMinimumEnv();
+        SGL_FrontController::loadRequiredFiles();
 
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
-        $c = SGL_Config::singleton($autoLoad);
+        $c = &SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
         $init->addTask(new SGL_Task_SetupConstantsFinish());
-        //$init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
+        $init->addTask(new SGL_Task_EnsurePlaceholderDbPrefixIsNull());
         $init->addTask(new SGL_Task_SetGlobals());
         $init->addTask(new SGL_Task_ModifyIniSettings());
-        //$init->addTask(new SGL_Task_SetupPearErrorCallback());
-        //$init->addTask(new SGL_Task_SetupCustomErrorHandler());
+        $init->addTask(new SGL_Task_SetupPearErrorCallback());
+        $init->addTask(new SGL_Task_SetupCustomErrorHandler());
         $init->addTask(new SGL_Task_SetBaseUrl());
-        //$init->addTask(new SGL_Task_RegisterTrustedIPs());
+        $init->addTask(new SGL_Task_RegisterTrustedIPs());
         $init->addTask(new SGL_Task_LoadCustomConfig());
         $init->main();
         define('SGL_INITIALISED', true);
     }
 
-    public static function loadRequiredFiles()
+    function loadRequiredFiles()
     {
-        $coreLibs = dirname(__FILE__);
-        $aRequiredFiles = array(
-            $coreLibs  . '/Url.php',
-            $coreLibs  . '/HTTP.php',
-            $coreLibs  . '/Manager.php',
-            $coreLibs  . '/Output.php',
-            $coreLibs  . '/String.php',
-            $coreLibs  . '/Session.php',
-            $coreLibs  . '/Util.php',
-            $coreLibs  . '/Config.php',
-            $coreLibs  . '/ParamHandler.php',
-            $coreLibs  . '/Registry.php',
-            $coreLibs  . '/Request.php',
-            $coreLibs  . '/Inflector.php',
-            $coreLibs  . '/Date.php',
-            $coreLibs  . '/Array.php',
-            $coreLibs  . '/Error.php',
-            $coreLibs  . '/Cache.php',
-            //$coreLibs  . '/DB.php',
-            //$coreLibs  . '/BlockLoader.php',
-            $coreLibs  . '/Translation.php',
-            $coreLibs  . '/../data/ary.languages.php',
-        );
-        foreach ($aRequiredFiles as $file) {
-            require_once $file;
+        $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
+        $cachedLibsEnabled = (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true)
+            ? true
+            : false;
+        if (is_file($cachedLibs) && $cachedLibsEnabled) {
+            require_once $cachedLibs;
+        } else {
+            $coreLibs = dirname(__FILE__);
+            $aRequiredFiles = array(
+                $coreLibs  . '/Url.php',
+                $coreLibs  . '/HTTP.php',
+                $coreLibs  . '/Manager.php',
+                $coreLibs  . '/Output.php',
+                $coreLibs  . '/String.php',
+                $coreLibs  . '/Task/Process.php',
+                $coreLibs  . '/Session.php',
+                $coreLibs  . '/Util.php',
+                $coreLibs  . '/Config.php',
+                $coreLibs  . '/ParamHandler.php',
+                $coreLibs  . '/Registry.php',
+                $coreLibs  . '/Request.php',
+                $coreLibs  . '/Inflector.php',
+                $coreLibs  . '/Date.php',
+                $coreLibs  . '/Array.php',
+                $coreLibs  . '/Error.php',
+                $coreLibs  . '/Cache.php',
+                $coreLibs  . '/DB.php',
+                $coreLibs  . '/BlockLoader.php',
+                $coreLibs  . '/Translation.php',
+                $coreLibs  . '/../data/ary.languages.php',
+            );
+            $fileCache = '';
+            foreach ($aRequiredFiles as $file) {
+                require_once $file;
+                if ($cachedLibsEnabled) {
+                    // 270kb vs 104kb
+                    if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
+                        $fileCache .= php_strip_whitespace($file);
+                    } else {
+                        $fileCache .= file_get_contents($file);
+                    }
+                }
+            }
+            if ($cachedLibsEnabled) {
+                $ok = file_put_contents($cachedLibs, $fileCache);
+            }
         }
+        require_once 'PEAR.php';
+        require_once 'DB.php';
     }
 
-    public static function setupMinimumEnv()
+    function setupMinimumEnv()
     {
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
+        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
     }
 }
@@ -300,7 +330,7 @@ class SGL_FrontController
  */
 class SGL_ProcessRequest
 {
-    function process(SGL_Registry $input, SGL_Output $output) {}
+    function process(/*SGL_Registry*/ $input, /*SGL_Output*/ $output) {}
 }
 
 /**
@@ -327,7 +357,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -348,27 +378,5 @@ class SGL_MainProcess extends SGL_ProcessRequest
         SGL_Manager::display($output);
         $mgr->display($output);
     }
-}
-
-/**
- * Abstract renderer strategy
- *
- * @abstract
- * @package SGL
- */
-class SGL_OutputRendererStrategy
-{
-    /**
-     * Prepare renderer options.
-     *
-     */
-    function initEngine() {}
-
-    /**
-     * Abstract render method.
-     *
-     * @param SGL_View $view
-     */
-    function render($view) {}
 }
 ?>

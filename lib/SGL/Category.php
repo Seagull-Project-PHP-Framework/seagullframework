@@ -67,8 +67,8 @@ class SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->da  = UserDAO::singleton();
-        $this->dbh = SGL_DB::singleton();
+        $this->da = & UserDAO::singleton();
+        $this->dbh = & SGL_DB::singleton();
 
         //  Nested Set Params
         $this->_params = array(
@@ -452,7 +452,7 @@ class SGL_Category
         $crumbs = $nestedSet->getBreadcrumbs($category_id);
         $htmlString = '';
 
-        $req = SGL_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  logical case for publisher->articleview->view
         $managerName = $req->get('managerName');

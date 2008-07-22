@@ -5,8 +5,8 @@ require_once SGL_CORE_DIR . '/Translation.php';
 /**
  * Test suite.
  *
- * @package seagull
- * @author  Dmitri Lakachauskis <dmitri at telenet dot lv>
+ * @package Test
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
 class TranslationTest extends UnitTestCase
 {
@@ -23,7 +23,7 @@ class TranslationTest extends UnitTestCase
 
         // use connection to simpletest base
         $this->trans->storage->db = &SGL_DB::singleton();
-        if ($this->trans->storage->db->phptype == 'mysql_SGL') {
+        if (in_array($this->trans->storage->db->phptype, array('mysqli', 'mysqli_SGL'))) {
             $this->trans->storage->db->phptype = 'mysql';
         }
 

@@ -12,7 +12,7 @@ class SGL_Request_Browser extends SGL_Request
         SGL_URL::resolveServerVars($conf);
 
         //  get current url object
-        $cache = SGL_Cache::singleton();
+        $cache = & SGL_Cache::singleton();
         $cacheId = md5($_SERVER['PHP_SELF']);
 
         if ($data = $cache->get($cacheId, 'uri')) {
@@ -52,7 +52,7 @@ class SGL_Request_Browser extends SGL_Request
             return $aQueryData;
         }
         //  assign to registry
-        $input = SGL_Registry::singleton();
+        $input = &SGL_Registry::singleton();
         $input->setCurrentUrl($url);
 
         //  merge REQUEST AND FILES superglobal arrays

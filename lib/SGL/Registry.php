@@ -48,15 +48,15 @@
 class SGL_Registry
 {
     var $aProps = array();
-    private static $instance;
 
-    public static function singleton()
+    function &singleton()
     {
-        if (!self::$instance) {
+        static $instance;
+        if (!isset($instance)) {
             $class = __CLASS__;
-            self::$instance = new $class();
+            $instance = new $class();
         }
-        return self::$instance;
+        return $instance;
     }
 
     function &get($key)

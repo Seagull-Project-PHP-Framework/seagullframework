@@ -112,7 +112,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
             $path = realpath($testPath);
             if ($path) {
-                $c = SGL_Config::singleton();
+                $c = &SGL_Config::singleton();
                 $aModuleConfig = $c->load($path);
 
                 if (PEAR::isError($aModuleConfig)) {
@@ -179,11 +179,11 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
      */
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  get a reference to the request object
-        $req = SGL_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;

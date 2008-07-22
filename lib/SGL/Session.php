@@ -184,8 +184,8 @@ class SGL_Session
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  get UserDAO object
-//require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//$da = UserDAO::singleton();
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();
@@ -245,10 +245,8 @@ class SGL_Session
                 'key'               => md5($startTime . $acceptLang . $userAgent),
                 'currentResRange'   => 'all',
                 'sortOrder'         => 'ASC',
-                'aPrefs'            => array(),
-                //'aPrefs'            => $da->getPrefsByUserId(),
-                'aPerms'            => array(),
-                //'aPerms'            => $da->getPermsByRoleId(),
+                'aPrefs'            => $da->getPrefsByUserId(),
+                'aPerms'            => $da->getPermsByRoleId(),
             );
         }
 
@@ -265,24 +263,26 @@ class SGL_Session
             }
         }
 
-        //  make session more secure
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-        $oldSessionId = session_id();
-        @session_regenerate_id();
+        //  make session more secure if possible
+        if  (function_exists('session_regenerate_id')) {
+            $c = &SGL_Config::singleton();
+            $conf = $c->getAll();
+            $oldSessionId = session_id();
+            @session_regenerate_id();
 
-        if ($conf['session']['handler'] == 'file') {
+            if ($conf['session']['handler'] == 'file') {
 
-            //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-            $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
+                $ok = @unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
 
-        } elseif ($conf['session']['handler'] == 'database') {
-            $value = $this->dbRead($oldSessionId);
-            $this->dbDestroy($oldSessionId);
-            $this->dbRead(session_id());          // creates new session record
-            $this->dbWrite(session_id(), $value); // store old session value in new session record
-        } else {
-            die('Internal Error: unknown session handler');
+            } elseif ($conf['session']['handler'] == 'database') {
+                $value = $this->dbRead($oldSessionId);
+                $this->dbDestroy($oldSessionId);
+                $this->dbRead(session_id());          // creates new session record
+                $this->dbWrite(session_id(), $value); // store old session value in new session record
+            } else {
+                die('Internal Error: unknown session handler');
+            }
         }
         return true;
     }
@@ -670,7 +670,7 @@ class SGL_Session
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
         }
 
-        $sess = new SGL_Session();
+        $sess = & new SGL_Session();
     }
 
     /**
@@ -935,18 +935,28 @@ class SGL_Session
      *
      * @access public
      *
+     * @param boolean $clean  clean first launch info about anon request
+     *
      * @return boolean
      */
-    function isFirstAnonRequest()
+    function isFirstAnonRequest($clean = null)
     {
         static $ret;
-        if (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
+        if (!empty($clean)) {
+            if (isset($_SESSION['isFirstAnonRequest'])) {
+                unset($_SESSION['isFirstAnonRequest']);
+            }
+            if (isset($ret)) {
+                unset($ret);
+            }
+            return true;
+        } elseif (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAnonRequest']);
             if (!isset($_SESSION['isFirstAnonRequest'])) {
                 $_SESSION['isFirstAnonRequest'] = true;
             }
+            return isset($ret) ? $ret : false;
         }
-        return isset($ret) ? $ret : false;
     }
 
     /**
@@ -956,18 +966,28 @@ class SGL_Session
      *
      * @access public
      *
+     * @param boolean $clean  clean first launch info about auth request.
+     *
      * @return boolean
      */
-    function isFirstAuthenticatedRequest()
+    function isFirstAuthenticatedRequest($clean = null)
     {
         static $ret;
-        if (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
+        if (!empty($clean)) {
+            if (isset($_SESSION['isFirstAuthRequest'])) {
+                unset($_SESSION['isFirstAuthRequest']);
+            }
+            if (isset($ret)) {
+                unset($ret);
+            }
+            return true;
+        } elseif (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAuthRequest']);
             if (!isset($_SESSION['isFirstAuthRequest'])) {
                 $_SESSION['isFirstAuthRequest'] = true;
             }
+            return isset($ret) ? $ret : false;
         }
-        return isset($ret) ? $ret : false;
     }
 }
 

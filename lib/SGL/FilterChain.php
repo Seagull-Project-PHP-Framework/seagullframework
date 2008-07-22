@@ -17,6 +17,8 @@ class SGL_FilterChain
 
     function doFilter(&$input, &$output)
     {
+        $this->loadFilters();
+
         $filters = '';
         $closeParens = '';
 
@@ -31,6 +33,16 @@ class SGL_FilterChain
         eval("\$process = $code;");
 
         $process->process($input, $output);
+    }
+
+    function loadFilters()
+    {
+        foreach ($this->aFilters as $filter) {
+            if (!class_exists($filter)) {
+                $path = trim(preg_replace('/_/', '/', $filter)) . '.php';
+                require_once $path;
+            }
+        }
     }
 }
 ?>

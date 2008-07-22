@@ -54,7 +54,6 @@ define('SGL_REQUEST_AMF',       5);
 class SGL_Request
 {
     var $aProps;
-    private static $instance;
 
     function init($type = null)
     {
@@ -149,13 +148,15 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    public static function singleton($forceNew = false, $type = null)
+    function &singleton($forceNew = false, $type = null)
     {
-        if (!self::$instance || $forceNew) {
+        static $instance;
+
+        if (!isset($instance) || $forceNew) {
             $obj = new SGL_Request();
-            self::$instance = $obj->init($type);
+            $instance = $obj->init($type);
         }
-        return self::$instance;
+        return $instance;
     }
 
     function isEmpty()
@@ -204,8 +205,8 @@ class SGL_Request
             } else {
                 $clean = SGL_String::removeJs($copy);
             }
-
-            return $clean;
+            $this->set($key, $clean);
+            return $this->aProps[$key];
 
         } else {
             return null;
@@ -247,7 +248,12 @@ class SGL_Request
 
     function getModuleName()
     {
-        return $this->aProps['moduleName'];
+        if (isset($this->aProps['managerName'])) {
+            $ret = $this->aProps['moduleName'];
+        } else {
+            $ret = SGL_Config::get('site.defaultModule');
+        }
+        return $ret;
     }
 
     function getManagerName()

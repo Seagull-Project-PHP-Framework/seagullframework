@@ -74,7 +74,7 @@ class SGL_HTTP
             }
         } else {
             //  get a reference to the request object
-            $req = SGL_Request::singleton();
+            $req = & SGL_Request::singleton();
 
             if (is_scalar($url)) {
                 $url = array();

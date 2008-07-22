@@ -25,19 +25,21 @@
  */
 
 FCKConfig.AutoDetectLanguage = false ;
+FCKConfig.Plugins.Add( 'dragresizetable' );
 FCKConfig.ToolbarSets["Default"] = [
 	['Source','DocProps','-','Save','NewPage','Preview','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+	'/',
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 	['Image','Flash','Table','Rule','Smiley','SpecialChar','PageBreak'],
-	['TextColor','BGColor'],
-	['About'],
 	'/',
-	['Style','FontFormat','FontName','FontSize']
+	['Style','FontFormat','FontName','FontSize'],
+	['TextColor','BGColor'],
+	['About']
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [

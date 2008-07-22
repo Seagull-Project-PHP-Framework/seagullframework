@@ -42,6 +42,37 @@ require_once dirname(__FILE__) . '/../Install/Common.php';
 /**
  * @package Task
  */
+class SGL_Task_SetBaseUrlMinimal extends SGL_Task
+{
+    function run($data = array())
+    {
+        // no data if we're running installer
+        if (!defined('SGL_INSTALLED')) {
+            $conf = array(
+                'site' =>   array(
+                    'setup' => true,
+                    'frontScriptName' => 'index.php',
+                    'defaultModule' => 'default',
+                    'defaultManager' => 'default',
+                    ),
+                'cookie' => array('name' => ''),
+                );
+            //  create default config values for install
+            $c = &SGL_Config::singleton($autoLoad = false);
+            $c->merge($conf);
+        }
+        //  resolve value for $_SERVER['PHP_SELF'] based in host
+        SGL_URL::resolveServerVars();
+
+        $url = new SGL_URL($_SERVER['PHP_SELF'], true, new SGL_UrlParser_SefStrategy());
+        $err = $url->init();
+        define('SGL_BASE_URL', $url->getBase());
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_SetTimeout extends SGL_Task
 {
     function run($data)
@@ -76,30 +107,30 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('email', array('support' => $data['adminEmail']));
 
         // correct db prefix
-//        if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
-//            // enforce underscore in prefix
-//            $data['prefix'] .= '_';
-//        }
+        if (!empty($data['prefix']) && substr($data['prefix'], -1) != '_') {
+            // enforce underscore in prefix
+            $data['prefix'] .= '_';
+        }
 
         // mysql storage
-//        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
-//            ? $data['dbMysqlDefaultStorageEngine']
-//            : false;
-//
-//        //  db details
-//        $c->set('db', array('prefix' => $data['prefix']));
-//        $c->set('db', array('host' => $data['host']));
-//        $c->set('db', array('name' => $data['name']));
-//        $c->set('db', array('user' => $data['databaseUser']));
-//        $c->set('db', array('pass' => $data['databaseUserPass']));
-//        $c->set('db', array('port' => $data['dbPort']['port']));
-//        $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
-//        $c->set('db', array('socket' => $data['socket']));
-//        $c->set('db', array('type' => $data['dbType']['type']));
-//        $c->set('db', array('postConnect' => $data['postConnect']));
-//        $c->set('db', array('mysqlDefaultStorageEngine' => $mysqlStorageEngine));
-//        $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
-//
+        $mysqlStorageEngine = !empty($data['dbMysqlDefaultStorageEngine'])
+            ? $data['dbMysqlDefaultStorageEngine']
+            : false;
+
+        //  db details
+        $c->set('db', array('prefix' => $data['prefix']));
+        $c->set('db', array('host' => $data['host']));
+        $c->set('db', array('name' => $data['name']));
+        $c->set('db', array('user' => $data['databaseUser']));
+        $c->set('db', array('pass' => $data['databaseUserPass']));
+        $c->set('db', array('port' => $data['dbPort']['port']));
+        $c->set('db', array('protocol' => $data['dbProtocol']['protocol']));
+        $c->set('db', array('socket' => $data['socket']));
+        $c->set('db', array('type' => $data['dbType']['type']));
+        $c->set('db', array('postConnect' => $data['postConnect']));
+        $c->set('db', array('mysqlDefaultStorageEngine' => $mysqlStorageEngine));
+        $c->set('db', array('sepTableForEachSequence' => !$data['dbSequencesInOneTable']['dbSequences']));
+
         //  version
         $c->set('tuples', array('version' => $data['frameworkVersion']));
 
@@ -120,24 +151,24 @@ class SGL_Task_CreateConfig extends SGL_Task
         $c->set('site', array('name' => $data['siteName']));
         $c->set('site', array('description' => $data['siteDesc']));
         $c->set('site', array('keywords' => $data['siteKeywords']));
-#        $c->set('site', array('blocksEnabled' => true));
+        $c->set('site', array('blocksEnabled' => true));
         $c->set('cookie', array('name' => $data['siteCookie']));
 
         //  store translations in db
-//        (array_key_exists('storeTranslationsInDB', $data)
-//                && $data['storeTranslationsInDB'] == 1)
-//            ? $c->set('translation', array('container' => 'db'))
-//            : $c->set('translation', array('container' => 'file'));
-//
-//        //  add missing translations to db
-//        (array_key_exists('addMissingTranslationsToDB', $data)
-//                && $data['addMissingTranslationsToDB'] == 1)
-//            ? $c->set('translation', array('addMissingTrans' => true))
-//            : $c->set('translation', array('addMissingTrans' => false));
-//
-//        //  translation fallback language
-//        $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
-//        $c->set('translation', array('fallbackLang' => $fallbackLang));
+        (array_key_exists('storeTranslationsInDB', $data)
+                && $data['storeTranslationsInDB'] == 1)
+            ? $c->set('translation', array('container' => 'db'))
+            : $c->set('translation', array('container' => 'file'));
+
+        //  add missing translations to db
+        (array_key_exists('addMissingTranslationsToDB', $data)
+                && $data['addMissingTranslationsToDB'] == 1)
+            ? $c->set('translation', array('addMissingTrans' => true))
+            : $c->set('translation', array('addMissingTrans' => false));
+
+        //  translation fallback language
+        $fallbackLang = str_replace('-', '_', $data['siteLanguage']);
+        $c->set('translation', array('fallbackLang' => $fallbackLang));
 
         //  auto-correct frontScriptName for CGI users
         if (preg_match("/cgi|apache2filter/i", php_sapi_name())) {
@@ -170,10 +201,10 @@ class SGL_Task_CreateConfig extends SGL_Task
         $_SESSION['install_timezone'] = $data['serverTimeOffset'];
 
         //  store old prefix for tables drop
-//        if (isset($oldConf['db']['prefix'])
-//                && $oldConf['db']['prefix'] != $data['prefix']) {
-//            $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
-//        }
+        if (isset($oldConf['db']['prefix'])
+                && $oldConf['db']['prefix'] != $data['prefix']) {
+            $_SESSION['install_dbPrefix'] = $oldConf['db']['prefix'];
+        }
         return $ok;
     }
 }
@@ -204,47 +235,47 @@ class SGL_UpdateHtmlTask extends SGL_Task
 
     function setup()
     {
-//        $c = &SGL_Config::singleton();
-//        $this->conf = $c->getAll();
-//
-//        //  setup db type vars
-//        $this->dbType = $this->conf['db']['type'];
-//
-//        switch ($this->conf['db']['type']) {
-//        case 'pgsql':
-//            $this->filename1 = '/schema.pg.sql';
-//            $this->filename2 = '/data.default.pg.sql';
-//            $this->filename3 = '/data.sample.pg.sql';
-//            $this->filename4 = '/data.block.add.pg.sql';
-//            $this->filename5 = '/data.custom.pg.sql';
-//            $this->filename6 = '/data.test.pg.sql';
-//            $this->filename7 = '/constraints.pg.sql';
-//            break;
-//
-//        case 'mysql':
-//        case 'mysqli':
-//        case 'mysql_SGL':
-//        case 'mysqli_SGL':
-//            $this->filename1 = '/schema.my.sql';
-//            $this->filename2 = '/data.default.my.sql';
-//            $this->filename3 = '/data.sample.my.sql';
-//            $this->filename4 = '/data.block.add.my.sql';
-//            $this->filename5 = '/data.custom.my.sql';
-//            $this->filename6 = '/data.test.my.sql';
-//            $this->filename7 = '/constraints.my.sql';
-//            break;
-//
-//        case 'oci8_SGL':
-//            $this->dbType = 'oci8'; // exception to dbType naming
-//            $this->filename1 = '/schema.oci.sql';
-//            $this->filename2 = '/data.default.oci.sql';
-//            $this->filename3 = '/data.sample.oci.sql';
-//            $this->filename4 = '/data.block.add.oci.sql';
-//            $this->filename5 = '/data.custom.oci.sql';
-//            $this->filename6 = '/data.test.oci.sql';
-//            $this->filename7 = '/constraints.oci.sql';
-//            break;
-//        }
+        $c = &SGL_Config::singleton();
+        $this->conf = $c->getAll();
+
+        //  setup db type vars
+        $this->dbType = $this->conf['db']['type'];
+
+        switch ($this->conf['db']['type']) {
+        case 'pgsql':
+            $this->filename1 = '/schema.pg.sql';
+            $this->filename2 = '/data.default.pg.sql';
+            $this->filename3 = '/data.sample.pg.sql';
+            $this->filename4 = '/data.block.add.pg.sql';
+            $this->filename5 = '/data.custom.pg.sql';
+            $this->filename6 = '/data.test.pg.sql';
+            $this->filename7 = '/constraints.pg.sql';
+            break;
+
+        case 'mysql':
+        case 'mysqli':
+        case 'mysql_SGL':
+        case 'mysqli_SGL':
+            $this->filename1 = '/schema.my.sql';
+            $this->filename2 = '/data.default.my.sql';
+            $this->filename3 = '/data.sample.my.sql';
+            $this->filename4 = '/data.block.add.my.sql';
+            $this->filename5 = '/data.custom.my.sql';
+            $this->filename6 = '/data.test.my.sql';
+            $this->filename7 = '/constraints.my.sql';
+            break;
+
+        case 'oci8_SGL':
+            $this->dbType = 'oci8'; // exception to dbType naming
+            $this->filename1 = '/schema.oci.sql';
+            $this->filename2 = '/data.default.oci.sql';
+            $this->filename3 = '/data.sample.oci.sql';
+            $this->filename4 = '/data.block.add.oci.sql';
+            $this->filename5 = '/data.custom.oci.sql';
+            $this->filename6 = '/data.test.oci.sql';
+            $this->filename7 = '/constraints.oci.sql';
+            break;
+        }
 
         //  these hold what to display in results grid, depending on outcome
         $this->success = '<img src=\\"' . SGL_BASE_URL . '/themes/default/images/enabled.gif\\" border=\\"0\\" width=\\"22\\" height=\\"22\\">' ;
@@ -301,7 +332,7 @@ class SGL_Task_DisableForeignKeyChecks extends SGL_Task
                 || $this->conf['db']['type'] == 'mysqli'
                 || $this->conf['db']['type'] == 'mysqli_SGL') {
 
-            $dbh = SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 SGL_Install_Common::errorPush($dbh);
                 return $dbh;
@@ -332,7 +363,7 @@ class SGL_Task_CreateDatabase extends SGL_Task
             $excludeDbName = true;
         }
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, $excludeDbName);
-        $dbh = SGL_DB::singleton($dsn);
+        $dbh = & SGL_DB::singleton($dsn);
         $query = SGL_Sql::buildDbCreateStatement($this->conf['db']['type'],
             $dbh->quoteIdentifier($this->conf['db']['name']));
         $res = $dbh->query($query);
@@ -352,7 +383,7 @@ class SGL_Task_DropDatabase extends SGL_Task
         $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
-        $dbh = SGL_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         require_once SGL_CORE_DIR . '/Sql.php';
         $query = SGL_Sql::buildDbDropStatement($this->conf['db']['type'],
             $dbh->quoteIdentifier($this->conf['db']['name']));
@@ -370,8 +401,7 @@ class SGL_Task_PrepareInstallationProgressTable extends SGL_UpdateHtmlTask
 {
     function run($data)
     {
-        //SGL_Install_Common::printHeader('Building Database');
-        SGL_Install_Common::printHeader('Installing Seagull');
+        SGL_Install_Common::printHeader('Building Database');
 
         if (!(SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD'))) {
             echo '<span class="title">Status: </span><span id="status"></span>
@@ -459,8 +489,8 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
             $statusText = 'dropping existing tables';
             $this->updateHtml('status', $statusText);
 
-            $c   = SGL_Config::singleton();
-            $dbh = SGL_DB::singleton();
+            $c   = &SGL_Config::singleton();
+            $dbh = & SGL_DB::singleton();
 
             // set old db prefix if any
             if (isset($_SESSION['install_dbPrefix'])) {
@@ -532,7 +562,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                 if ($conf['translation']['container'] == 'db') {
                     $statusText = 'dropping translation tables';
                     $this->updateHtml('status', $statusText);
-                    $trans = SGL_Translation::singleton('admin');
+                    $trans = &SGL_Translation::singleton('admin');
                     $aLangs = $trans->getLangs('ids');
                     if (!PEAR::isError($aLangs)) {
                         // removeme
@@ -728,7 +758,7 @@ class SGL_Task_RemoveDefaultData extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
-        $da = DefaultDAO::singleton();
+        $da = & DefaultDAO::singleton();
 
         //  get perms associated with module
         $aPermNames = $da->getPermNamesByModuleId($data['moduleId']);
@@ -843,7 +873,7 @@ class SGL_Task_BuildNavigation extends SGL_UpdateHtmlTask
                 && (!array_key_exists('useExistingData', $data) || $data['useExistingData'] == 0)
                 && SGL_Config::get('navigation.driver') != 'ArrayDriver') {
             require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
-            $da = NavigationDAO::singleton();
+            $da = & NavigationDAO::singleton();
 
             foreach ($data['aModuleList'] as $module) {
                 $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
@@ -891,7 +921,7 @@ class SGL_Task_RemoveNavigation extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
-        $da = NavigationDAO::singleton();
+        $da = & NavigationDAO::singleton();
 
         foreach ($data['aModuleList'] as $module) {
             $navigationPath = SGL_MOD_DIR . '/' . $module  . '/data/navigation.php';
@@ -934,7 +964,7 @@ class SGL_Task_EnableDebugBlock extends SGL_Task
     function run($data)
     {
         require_once SGL_MOD_DIR . '/block/classes/BlockDAO.php';
-        $da = BlockDAO::singleton();
+        $da = & BlockDAO::singleton();
         if (!empty($da->conf['debug']['enableDebugBlock'])) {
             $oBlock = new stdClass();
             $oBlock->name = 'Default_Block_Debug';
@@ -960,7 +990,7 @@ class SGL_Task_LoadTranslations extends SGL_UpdateHtmlTask
         $aLangOptions = SGL_Util::getLangsDescriptionMap();
 
         if (array_key_exists('storeTranslationsInDB', $data) && $data['storeTranslationsInDB'] == 1) {
-            $trans = SGL_Translation::singleton('admin');
+            $trans = & SGL_Translation::singleton('admin');
 
             $this->setup();
 
@@ -1076,7 +1106,7 @@ class SGL_Task_EnableForeignKeyChecks extends SGL_Task
                 || $this->conf['db']['type'] == 'mysqli_SGL') {
 
 
-            $dbh = SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $query = 'SET FOREIGN_KEY_CHECKS=1;';
             $res = $dbh->query($query);
         }
@@ -1094,16 +1124,16 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $this->setup();
 
         //  verify db
-//        $dbh = SGL_DB::singleton();
-//        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
-//        $res = $dbh->getAll($query);
-//        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
-//            SGL_Install_Common::errorPush(
-//                PEAR::raiseError('No tables exist in DB - was schema created?'));
-//        } elseif (!(count($res))) {
-//            SGL_Install_Common::errorPush(
-//                PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
-//        }
+        $dbh = & SGL_DB::singleton();
+        $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
+        $res = $dbh->getAll($query);
+        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
+            SGL_Install_Common::errorPush(
+                PEAR::raiseError('No tables exist in DB - was schema created?'));
+        } elseif (!(count($res))) {
+            SGL_Install_Common::errorPush(
+                PEAR::raiseError('Perms inserts failed', SGL_ERROR_DBFAILURE));
+        }
 
         //  create error message if appropriate
         if (SGL_Install_Common::errorsExist()) {
@@ -1114,7 +1144,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
             if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
 
                 //  note: must all be on one line for DOM text replacement
-                $message = 'Seagull initialisation complete!';
+                $message = 'Database initialisation complete!';
                 $this->updateHtml('status', $message);
                 $body = '<p><a href=\\"' . SGL_BASE_URL . '/setup.php?start\\">LAUNCH SEAGULL</a> </p>NOTE: <strong>N/A</strong> indicates that a schema or data is not needed for this module';
 
@@ -1259,10 +1289,13 @@ class SGL_Task_CreateDataObjectLinkFile extends SGL_Task
                 unlink($linksFile);
             }
         }
-
         $linkData = '';
         foreach ($data['aModuleList'] as $module) {
-            $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
+            if ($module == 'block' && in_array('cms', $data['aModuleList'])) {
+                $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.cms.ini';
+            } else {
+                $linksPath = SGL_MOD_DIR . '/' . $module  . '/data/dataobjectLinks.ini';
+            }
             if (is_file($linksPath)) {
                 $linkData .= file_get_contents($linksPath);
                 $linkData .= "\n\n";
@@ -1531,7 +1564,7 @@ class SGL_Task_SyncSequences extends SGL_Task
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         $c = &SGL_Config::singleton();
@@ -1778,41 +1811,27 @@ class SGL_Task_CreateAdminUser extends SGL_Task
     {
         $ok = true;
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
+            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            $da = & UserDAO::singleton();
+            $oUser = $da->getUserById();
+            $oUser->username        = $data['adminUserName'];
+            $oUser->first_name      = $data['adminFirstName'];
+            $oUser->last_name       = $data['adminLastName'];
+            $oUser->email           = $data['adminEmail'];
+            $oUser->passwd          = !empty($data['adminPasswordIsHash'])
+                ? $data['adminPassword']
+                :  md5($data['adminPassword']);
+            $oUser->organisation_id = 1;
+            $oUser->is_acct_active  = 1;
+            $oUser->country         = 'GB';
+            $oUser->role_id         = SGL_ADMIN;
+            $oUser->date_created    = $oUser->last_updated = SGL_Date::getTime();
+            $oUser->created_by      = $oUser->updated_by = SGL_ADMIN;
+            $ok = $da->addUser($oUser);
 
-            $user = $data['adminUserName'];
-            $passwd = md5($data['adminPassword']);
-            $passwdFile = <<<PHP
-<?php
-#{$user}:{$passwd}
-?>
-PHP;
-            if (is_writable(SGL_VAR_DIR)) {
-                $ok = file_put_contents(SGL_VAR_DIR . '/passwd.php', $passwdFile);
-            } else {
-                SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
+            if (PEAR::isError($ok)) {
+                SGL_Install_Common::errorPush($ok);
             }
-
-//            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//            $da = UserDAO::singleton();
-//            $oUser = $da->getUserById();
-//            $oUser->username        = $data['adminUserName'];
-//            $oUser->first_name      = $data['adminFirstName'];
-//            $oUser->last_name       = $data['adminLastName'];
-//            $oUser->email           = $data['adminEmail'];
-//            $oUser->passwd          = !empty($data['adminPasswordIsHash'])
-//                ? $data['adminPassword']
-//                :  md5($data['adminPassword']);
-//            $oUser->organisation_id = 1;
-//            $oUser->is_acct_active  = 1;
-//            $oUser->country         = 'GB';
-//            $oUser->role_id         = SGL_ADMIN;
-//            $oUser->date_created    = $oUser->last_updated = SGL_Date::getTime();
-//            $oUser->created_by      = $oUser->updated_by = SGL_ADMIN;
-//            $ok = $da->addUser($oUser);
-//
-//            if (PEAR::isError($ok)) {
-//                SGL_Install_Common::errorPush($ok);
-//            }
         }
         return $ok;
     }
@@ -1827,7 +1846,7 @@ class SGL_Task_CreateMemberUser extends SGL_Task
     {
         if (array_key_exists('createTables', $data) && $data['createTables'] == 1) {
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $da = UserDAO::singleton();
+            $da = & UserDAO::singleton();
             $oUser = $da->getUserById();
 
             $oUser->username = 'member';
@@ -1867,40 +1886,39 @@ PHP;
         } else {
             SGL_Install_Common::errorPush(PEAR::raiseError('var dir is not writable'));
         }
-        return $ok;
 
         //  update lang in default prefs
-//        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-//        $da = UserDAO::singleton();
-//        $lang = isset($_SESSION['install_language'])
-//            ? $_SESSION['install_language']
-//            : $data['aPrefs']['language'];
-//        $ok = $da->updateMasterPrefs(array('language' => $lang));
-//        if (PEAR::isError($ok)) {
-//            SGL_Install_Common::errorPush($ok);
-//        }
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        $da = & UserDAO::singleton();
+        $lang = isset($_SESSION['install_language'])
+            ? $_SESSION['install_language']
+            : $data['aPrefs']['language'];
+        $ok = $da->updateMasterPrefs(array('language' => $lang));
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush($ok);
+        }
         //  update lang in admin prefs
-//        $aMapping = $da->getPrefsMapping();
-//        $langPrefId = $aMapping['language'];
-//        $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
-//        if (PEAR::isError($ok)) {
-//            SGL_Install_Common::errorPush($ok);
-//        }
+        $aMapping = $da->getPrefsMapping();
+        $langPrefId = $aMapping['language'];
+        $ok = $da->updatePrefsByUserId(array($langPrefId => $lang), SGL_ADMIN);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush($ok);
+        }
         //  update tz in default prefs
-//        $tz = isset($_SESSION['install_timezone'])
-//            ? $_SESSION['install_timezone']
-//            : $data['aPrefs']['timezone'];
-//        $ok = $da->updateMasterPrefs(array('timezone' => $tz));
-//        if (PEAR::isError($ok)) {
-//            SGL_Install_Common::errorPush($ok);
-//        }
+        $tz = isset($_SESSION['install_timezone'])
+            ? $_SESSION['install_timezone']
+            : $data['aPrefs']['timezone'];
+        $ok = $da->updateMasterPrefs(array('timezone' => $tz));
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush($ok);
+        }
         //  update tz in admin prefs
-//        $tzPrefId = $aMapping['timezone'];
-//        $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
-//        if (PEAR::isError($ok)) {
-//            SGL_Install_Common::errorPush($ok);
-//        }
-//        return $ok;
+        $tzPrefId = $aMapping['timezone'];
+        $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
+        if (PEAR::isError($ok)) {
+            SGL_Install_Common::errorPush($ok);
+        }
+        return $ok;
     }
 }
 

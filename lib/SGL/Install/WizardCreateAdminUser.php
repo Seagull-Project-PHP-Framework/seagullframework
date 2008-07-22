@@ -68,7 +68,7 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
             'siteName'  => 'Seagull Framework',
             'siteKeywords'  => 'seagull, php, framework, cms, content management',
             'siteDesc'  => 'Coming soon to a webserver near you.',
-            'siteLanguage'  => 'en-utf-8',
+            'siteLanguage'  => 'en-iso-8859-15',
             'serverTimeOffset'  => 'UTC',
             'siteCookie'  => 'SGLSESSID',
             'installRoot'  => SGL_PATH,
@@ -152,4 +152,23 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
     }
 }
 
+//  it's a php >= 5.1 fn
+if (!function_exists('array_intersect_key')) {
+
+    function array_intersect_key($isec, $arr2)
+    {
+        $argc = func_num_args();
+
+        for ($i = 1; !empty($isec) && $i < $argc; $i++) {
+            $arr = func_get_arg($i);
+
+            foreach ($isec as $k => $v) {
+                if (!isset($arr[$k])) {
+                    unset($isec[$k]);
+                }
+            }
+        }
+        return $isec;
+    }
+}
 ?>

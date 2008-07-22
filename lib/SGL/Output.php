@@ -61,6 +61,13 @@ class SGL_Output
     var $aHeaders = array();
 
     /**
+     * @access private
+     *
+     * @var array
+     */
+    var $_aJsExportVars = array();
+
+    /**
      * Translates source text into target language.
      *
      * @access  public
@@ -759,7 +766,7 @@ class SGL_Output
     function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0)
     {
-        $input = SGL_Registry::singleton();
+        $input = &SGL_Registry::singleton();
         $req = $input->getRequest();
         // Horde routes work only for browser request types
         if ($req->type == SGL_REQUEST_BROWSER
@@ -810,7 +817,7 @@ class SGL_Output
 
     function getCurrentUrl()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $oCurrentUrl = $reg->getCurrentUrl();
         return $oCurrentUrl->toString();
     }
@@ -826,7 +833,7 @@ class SGL_Output
             $this->template = 'null.html';
         }
         $this->masterTemplate = $this->template;
-        $view = new SGL_HtmlSimpleView($this, $templateEngine);
+        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
 
         //  suppress error notices in templates
@@ -998,7 +1005,11 @@ class SGL_Output
      */
     function getMemoryUsage()
     {
-        return number_format(memory_get_usage());
+        if (function_exists('memory_get_usage')) {
+            return number_format(memory_get_usage());
+        } else {
+            return 'unknown';
+        }
     }
 
     function addHeader($header)
@@ -1301,6 +1312,43 @@ class SGL_Output
         $ret = $this->langDir == 'rtl'
             ? 'left'
             : 'right';
+        return $ret;
+    }
+
+    /**
+     * Export js var.
+     *
+     * @access pubic
+     *
+     * @param string $k
+     * @param string $v
+     * @param boolean $replace
+     */
+    function exportJsVar($k, $v, $replace = true)
+    {
+        $k = strtoupper($k);
+        if ($replace) {
+            $this->_aJsExportVars[$k] = $v;
+        } elseif (!array_key_exists($k, $this->_aJsExportVars)) {
+            $this->_aJsExportVars[$k] = $v;
+        }
+    }
+
+    /**
+     * @access public
+     *
+     * @return string
+     */
+    function getExportedJsVars()
+    {
+        // default vars
+        $prefix = 'SGL';
+        $ret    = '';
+        foreach ($this->_aJsExportVars as $k => $v) {
+            $varName = $prefix . '_' . $k;
+            $varVal  = addcslashes($v, '"');
+            $ret .= "var $varName = \"$varVal\";\n";
+        }
         return $ret;
     }
 }

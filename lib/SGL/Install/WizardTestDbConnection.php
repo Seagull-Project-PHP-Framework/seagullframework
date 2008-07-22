@@ -66,7 +66,7 @@ function canConnectToDbServer()
         $host . $port . $dbName;
 
     //  attempt to get db connection
-    $dbh = SGL_DB::singleton($dsn);
+    $dbh = & SGL_DB::singleton($dsn);
 
     if (PEAR::isError($dbh)) {
         SGL_Install_Common::errorPush($dbh);
@@ -121,10 +121,12 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $radio[] = &$this->createElement('radio', 'type',     '', "mysqli",  'mysqli',
             'onClick="toggleDbNameForLogin(false);toggleDefaultStorageEngine(true);"');
 
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
-            'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
-        //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-        //    'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
+                'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
+            //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+            //    'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
+        }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
@@ -159,10 +161,12 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         unset($radio);
         $radio[] = &$this->createElement('radio', 'portOption', 'TCP port: ',"3306 (MySQL default)",
             3306, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
-            5432, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
-            1521, 'onClick="copyValueToPortElement(this);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
+                5432, 'onClick="copyValueToPortElement(this);"');
+            $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
+                1521, 'onClick="copyValueToPortElement(this);"');
+        }
         $this->addGroup($radio, 'dbPortChoices', 'TCP port:', '<br />');
         $this->addElement('text',  'dbPort[port]',    '', 'id="targetPortElement"');
         #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');

@@ -101,7 +101,7 @@ class SGL_NestedSet
         $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;

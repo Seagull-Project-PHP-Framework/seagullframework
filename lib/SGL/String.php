@@ -322,7 +322,7 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                $trans = SGL_Translation::singleton('admin');
+                $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
 
@@ -776,7 +776,7 @@ class SGL_String
      * @param string $string
      * @return integer
      */
-    public static function pseudoConstantToInt($string)
+    function pseudoConstantToInt($string)
     {
         $ret = 0;
         if (is_int($string)) {
@@ -792,6 +792,21 @@ class SGL_String
             }
         }
         return $ret;
+    }
+}
+
+if (!function_exists('array_combine')) {
+    function array_combine($a, $b)
+    {
+        $c = array();
+        if (is_array($a) && is_array($b))
+            while (list(, $va) = each($a))
+                if (list(, $vb) = each($b)) {
+                    $c[$va] = $vb;
+                } else {
+                    break 1;
+                }
+        return $c;
     }
 }
 ?>

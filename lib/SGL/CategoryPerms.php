@@ -84,7 +84,7 @@ class SGL_CategoryPerms extends SGL_Category
 
         //  notice null is a mysql null which is not the same as a PHP null
         $permsStr = count($aKeys) ? "perms = '$this->sPerms'" : 'perms = NULL';
-        $dbh = SGL_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $query = "
                     UPDATE  " . SGL_Config::get('table.category') . "
                     SET     $permsStr
@@ -109,7 +109,7 @@ class SGL_CategoryPerms extends SGL_Category
 
         //  notice null is a mysql null which is not comparable with a PHP null
         $permsStr = count($aKeys) ? "perms = '$this->sPerms'" : 'perms = NULL';
-        $dbh = SGL_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         for ($x=0; $x < count($childNodeArray); $x++) {
             $query = "
                         UPDATE  " . SGL_Config::get('table.category') . "

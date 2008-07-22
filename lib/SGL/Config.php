@@ -50,7 +50,6 @@ class SGL_Config
 {
     var $aProps = array();
     var $fileName;
-    private static $instance;
 
     function SGL_Config($autoLoad = false)
     {
@@ -64,13 +63,14 @@ class SGL_Config
         }
     }
 
-    public static function singleton($autoLoad = true)
+    function &singleton($autoLoad = true)
     {
-        if (!self::$instance) {
+        static $instance;
+        if (!isset($instance)) {
             $class = __CLASS__;
-            self::$instance = new $class($autoLoad);
+            $instance = new $class($autoLoad);
         }
-        return self::$instance;
+        return $instance;
     }
 
     /**
@@ -112,7 +112,7 @@ class SGL_Config
             }
         //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $aKeys = split('\.', trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
@@ -129,10 +129,8 @@ class SGL_Config
             }
         }
         if (!isset($ret)) {
-            SGL::logMessage("sort out sgl_config for php5",
-                PEAR_LOG_EMERG);
-//            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
-//                PEAR_LOG_DEBUG);
+            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
+                PEAR_LOG_DEBUG);
         }
         return $ret;
     }
@@ -155,7 +153,7 @@ class SGL_Config
 
             //  it's a static call
             if (isset($aKeys[0]) && isset($aKeys[1])) {
-                $c = SGL_Config::singleton();
+                $c = &SGL_Config::singleton();
                 $ret = $c->set($aKeys[0], array($aKeys[1] => $value));
             //  else it's an object call with scalar second arg
             } else {
@@ -237,7 +235,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = SGL_ParamHandler::singleton($file);
+        $ph = &SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
             return $data;
@@ -297,7 +295,7 @@ class SGL_Config
         static $modDir;
         if (is_null($modDir)) {
         //  allow for custom modules dir
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $customModDir = $c->get(array('path' => 'moduleDirOverride'));
             $modDir = !empty($customModDir)
                 ? $customModDir
@@ -335,7 +333,7 @@ class SGL_Config
                 $file = $this->getCachedFileName($file);
             }
         }
-        $ph = SGL_ParamHandler::singleton($file);
+        $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }
 
@@ -368,8 +366,7 @@ class SGL_Config
     function ensureModuleConfigLoaded($moduleName)
     {
         if (!defined('SGL_MODULE_CONFIG_LOADED')
-                || (isset($this->aProps['localConfig']['moduleName']) &&
-                $this->aProps['localConfig']['moduleName'] != $moduleName)) {
+                || $this->aProps['localConfig']['moduleName'] != $moduleName) {
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 

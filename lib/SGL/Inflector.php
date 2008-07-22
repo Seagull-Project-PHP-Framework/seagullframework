@@ -224,7 +224,7 @@ class SGL_Inflector
         }
     }
 
-    public static function isConstant($str)
+    function isConstant($str)
     {
         if (empty($str)) {
             return false;

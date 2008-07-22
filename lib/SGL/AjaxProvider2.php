@@ -217,6 +217,7 @@ abstract class SGL_AjaxProvider2
             SGL_Session::set('message', $aMessage['message']);
             SGL_Session::set('messageType', $aMessage['type']);
         }
+        $aMessage['persist'] = $persist;
         $this->aMsg = $aMessage;
     }
 
