@@ -121,7 +121,7 @@ function checkPreviousVersions()
 function tagRelease()
 {
     # tag release
-    $SVN copy $SVN_REPO_URL $SVN_REPO_TAGS_URL/$RELEASE_NAME
+    $SVN copy $SVN_REPO_URL $SVN_REPO_TAGS_URL/$RELEASE_NAME -m "creating tag for $REVISION_NUM"
 }
 
 ##############################
@@ -300,9 +300,6 @@ EOF
 ##############################
 function generateApiDocs()
 {
-    #make apiDocs script executable
-    chmod 755 $ARCHIVE_NAME/etc/phpDocCli.sh
-
     #execute phpDoc
     $ARCHIVE_NAME/etc/phpDocCli.sh
 
@@ -431,8 +428,6 @@ fi
 
 createTarball
 
-exit 0
-
 uploadToSfWholePackage
 
 generateApiDocs
@@ -441,7 +436,7 @@ packageApiDocs
 
 uploadToSfApiDocs
 
-#scpApiDocsToSglSite
+scpApiDocsToSglSite
 
 #buildMinimalPearPackage
 
