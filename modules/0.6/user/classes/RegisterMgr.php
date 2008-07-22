@@ -197,7 +197,7 @@ class RegisterMgr extends SGL_Manager
         }
 
         //  check if reg disabled
-        if (empty($this->conf['RegisterMgr']['enabled'])
+        if (!SGL_Config::get('RegisterMgr.enabled')
                 && strtolower(get_class($this)) == strtolower(__CLASS__)) {
             SGL::raiseMsg('Registration has been disabled');
             $input->template = 'error.html';
