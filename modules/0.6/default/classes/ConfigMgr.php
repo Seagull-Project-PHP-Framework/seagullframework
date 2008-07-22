@@ -137,7 +137,6 @@ class ConfigMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->aStyleFiles  = SGL_Util::getStyleFiles();
         $this->validated    = true;
         $input->pageTitle   = $this->pageTitle;
         $input->masterTemplate = 'masterMinimal.html';
@@ -257,7 +256,6 @@ class ConfigMgr extends SGL_Manager
         $output->aCensorModes       = $this->aCensorModes;
         $output->aNavDrivers        = $this->aNavDrivers;
         $output->aNavRenderers      = $this->aNavRenderers;
-        $output->aStyleFiles        = $this->aStyleFiles;
         $output->aSessHandlers      = $this->aSessHandlers;
         $output->aUrlHandlers       = $this->aUrlHandlers;
         $output->aTemplateEngines       = $this->aTemplateEngines;
