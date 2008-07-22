@@ -14,7 +14,7 @@
 ##############################
 
 # binaries
-SVN=/sw/bin/svn
+SVN=/opt/local/bin/svn
 SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
 PHP=/opt/local/bin/php
@@ -414,7 +414,7 @@ checkArgs
 
 checkPreviousVersions
 
-#tagRelease
+tagRelease
 
 # move to tmp dir
 cd /tmp
