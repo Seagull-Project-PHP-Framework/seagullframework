@@ -143,16 +143,6 @@ function createMinimalFlag()
     fi
 }
 
-##############################
-# prune developer
-# removes GPL  modules
-##############################
-function pruneDeveloper()
-{
-    # remove GPL modules
-    rm -rf $PROJECT_NAME/modules/media
-    rm -rf $PROJECT_NAME/modules/event
-}
 
 ##############################
 # prune minimal
@@ -173,10 +163,17 @@ function pruneMinimal()
     rm -f $PROJECT_NAME/etc/release.sh
     rm -f $PROJECT_NAME/etc/seagull-pgsql-createDB.sh
     rm -f $PROJECT_NAME/etc/sglBridge.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.af.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.ar.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.da.php
     rm -rf $PROJECT_NAME/lib/data/ary.countries.de.php
     rm -rf $PROJECT_NAME/lib/data/ary.countries.fr.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.hu.php
     rm -rf $PROJECT_NAME/lib/data/ary.countries.it.php
     rm -rf $PROJECT_NAME/lib/data/ary.countries.pl.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.pt.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.sv.php
+    rm -rf $PROJECT_NAME/lib/data/ary.countries.tr.php
     rm -rf $PROJECT_NAME/lib/data/ary.countries.ru.php
     rm -rf $PROJECT_NAME/lib/data/ary.states.de.php
     rm -rf $PROJECT_NAME/lib/data/ary.states.it.php
@@ -204,20 +201,25 @@ function pruneMinimal()
     rm -rf $PROJECT_NAME/lib/pear/Validate
     rm -rf $PROJECT_NAME/lib/SGL/tests
     rm -rf $PROJECT_NAME/modules/comment
+    rm -rf $PROJECT_NAME/modules/comment2
     rm -rf $PROJECT_NAME/modules/contactus
     rm -rf $PROJECT_NAME/modules/documentor
+    rm -rf $PROJECT_NAME/modules/emailqueue
     rm -rf $PROJECT_NAME/modules/event
     rm -rf $PROJECT_NAME/modules/export
     rm -rf $PROJECT_NAME/modules/faq
     rm -rf $PROJECT_NAME/modules/gallery2
-    rm -rf $PROJECT_NAME/modules/guestbook
     rm -rf $PROJECT_NAME/modules/googlemaps
+    rm -rf $PROJECT_NAME/modules/guestbook
     rm -rf $PROJECT_NAME/modules/media
     rm -rf $PROJECT_NAME/modules/messaging
     rm -rf $PROJECT_NAME/modules/newsletter
     rm -rf $PROJECT_NAME/modules/publisher
     rm -rf $PROJECT_NAME/modules/randommsg
     rm -rf $PROJECT_NAME/modules/s9ywrapper
+    rm -rf $PROJECT_NAME/modules/simplesite
+    rm -rf $PROJECT_NAME/modules/siteexporter
+    rm -rf $PROJECT_NAME/modules/sitemap
     rm -rf $PROJECT_NAME/modules/translation
     rm -rf $PROJECT_NAME/modules/user/tests
     rm -rf $PROJECT_NAME/tests
@@ -423,13 +425,13 @@ exportSvn
 
 createMinimalFlag
 
-#pruneDeveloper
-
 if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
 fi
 
 createTarball
+
+exit 0
 
 uploadToSfWholePackage
 
