@@ -1,0 +1,44 @@
+
+/**
+ * - navigation bar at the top
+ * - 2 columns (local + main)
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+<?php include('nav-horizontal.css'); ?>
+
+div#content {
+    position: relative;
+    border: 1px solid #bbb;
+    width: 944px;
+
+    /* padding needed for navigation */
+    padding-top: 4.6em;
+    background-position: left 4.6em;
+}
+div#main {
+    float: left;
+    width: 724px;
+    display: inline;
+
+    margin-left: 200px;
+}
+div#sub {
+    display: none;
+}
+div#local {
+    float: left;
+    width: 200px;
+    display: inline;
+
+    margin-left: -944px;
+}
+div#nav-main {
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 946px;
+}

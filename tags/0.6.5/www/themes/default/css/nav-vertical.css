@@ -1,0 +1,62 @@
+
+/**
+ * - vertical navigation
+ * - toolbar
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+/* Main navigation */
+div#nav-main {
+    background-color: #fff;
+}
+    div#nav-main div.inner {
+        border-bottom: 1px solid #bbb;
+        background-color: #eef7d4;
+    }
+    div#nav-main ul {
+        margin: 0;
+        list-style: none;
+        line-height: 1em;
+    }
+        div#nav-main ul li {
+            margin: 0;
+            _height: 1px;
+        }
+            div#nav-main ul li a {
+                display: block;
+                padding: 0.65em 1em 0.55em;
+                font-weight: bold;
+                color: #66a326;
+            }
+            div#nav-main ul li a:hover, div#nav-main ul li.current a {
+                background-color: #9c0;
+                color: #fff;
+                text-decoration: none;
+            }
+/* END main navigation */
+
+
+/* Toolbar */
+div#nav-main div#toolbar {
+    min-height: 300px;
+    _height: 300px;
+    padding: 15px 5px 0 15px;
+    background: url(<?php echo $baseUrl ?>/images/bg/column_tm.gif) repeat-x left top;
+    font-size: 0.8em;
+}
+/* END toolbar */
+
+
+/* Lang switcher */
+div#langSwitcher {
+    float: none;
+}
+    div#langSwitcher a {
+        float: left;
+        margin-left: 0;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
