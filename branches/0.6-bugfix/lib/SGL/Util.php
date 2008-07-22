@@ -117,56 +117,6 @@ class SGL_Util
         return $sortBy;
     }
 
-    /**
-     * Fetches the .css files in theme/css/ into array of form:
-     * filename => filename [without ".css" extension] for use by
-     * Output->generateSelect()
-     *
-     * @return  array of .css files from www/css
-     * @access  private
-     */
-    function getStyleFiles($curStyle = false)
-    {
-        $aFiles = array();
-
-        $c = &SGL_Config::singleton();
-        $theme = $c->get(array('site' => 'defaultTheme'));
-
-        //  get array of files in /www/css/
-        if ($fh = @opendir(SGL_THEME_DIR . "/$theme/css/")) {
-            while (false !== ($file = readdir($fh))) {
-
-                //  remove unwanted dir elements
-                if ($file == '.' || $file == '..' || $file == 'CVS') {
-                    continue;
-                }
-                //  and anything without .nav.php extension
-                $ext = substr($file, -8);
-                if ($ext != '.nav.php') {
-                    continue;
-                }
-
-                $filename = substr($file, 0, strpos($file, '.'));
-
-                //  if $curStyle is not false, we need an array of hashes for NavStyleMgr
-                if ($curStyle) {
-                    $aFiles[$filename]['currentStyle'] = ($filename == $curStyle) ? true : false;
-                    $aFiles[$filename]['fileMtime'] =  strftime('%Y-%b-%d %H:%M:%S',
-                        filemtime(SGL_THEME_DIR . '/' . $theme . '/css/' . $file));
-
-                //  otherwise a simple hash will do for ConfigMgr
-                } else {
-                    $aFiles[$filename] = $filename;
-                }
-            }
-            closedir($fh);
-        } else {
-            SGL::raiseError('There was a problem reading the navigation style dir',
-                SGL_ERROR_INVALIDFILEPERMS);
-        }
-        return $aFiles;
-    }
-
     function getAllThemes()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
