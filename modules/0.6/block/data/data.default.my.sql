@@ -24,16 +24,19 @@ INSERT INTO `block` VALUES ({SGL_NEXT_ID}, 'Navigation_Block_Navigation', 'User 
 -- Dumping data for table `block_assignment`
 --
 
+SELECT @blockIdAdmin := block_id FROM block WHERE title = 'Admin menu';
+SELECT @blockIdUser := block_id FROM block WHERE title = 'User menu';
+
 -- admin menu
-INSERT INTO `block_assignment` VALUES ({SGL_NEXT_ID}, 0);
+INSERT INTO `block_assignment` VALUES (@blockIdAdmin, 0);
 -- user menu
-INSERT INTO `block_assignment` VALUES ({SGL_NEXT_ID}, 0);
+INSERT INTO `block_assignment` VALUES (@blockIdUser, 0);
 
 --
 -- Dumping data for table `block_role`
 --
 
 -- admin menu
-INSERT INTO `block_role` VALUES ({SGL_NEXT_ID}, 1);
+INSERT INTO `block_role` VALUES (@blockIdAdmin, 1);
 -- user menu
-INSERT INTO `block_role` VALUES ({SGL_NEXT_ID}, -2);
+INSERT INTO `block_role` VALUES (@blockIdUser, -2);
