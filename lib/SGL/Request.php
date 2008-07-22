@@ -204,8 +204,8 @@ class SGL_Request
             } else {
                 $clean = SGL_String::removeJs($copy);
             }
-            $this->set($key, $clean);
-            return $this->aProps[$key];
+
+            return $clean;
 
         } else {
             return null;
