@@ -92,7 +92,8 @@ class SGL_Task_SetupPaths extends SGL_Task
         if (!defined('PATH_SEPARATOR')) { // defined in >= PHP 4.3.4
             define('PATH_SEPARATOR', (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':');
         }
-        $sglPath = '.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR . PATH_SEPARATOR . $sglLibDir;
+        $sglPath = '.' . PATH_SEPARATOR . SGL_LIB_PEAR_DIR . PATH_SEPARATOR . $sglLibDir .
+            PATH_SEPARATOR . get_include_path();
         $allowed = @ini_set('include_path', $sglPath);
         if (!$allowed) {
             //  depends on PHP version being >= 4.3.0
