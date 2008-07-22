@@ -1,0 +1,14 @@
+<p flexy:if="aSubscribedLists">
+	<strong>Current Subscriptions:</strong><br/>
+	{foreach:aSubscribedLists,key,oSubscribedList}
+    	<strong>{oSubscribedList.list}</strong> (<a href="{makeUrl(#unsubscribe#,#newsletter#,#newsletter#)}frmListName[]/{oSubscribedList.listID}/frmUserID/{loggedOnUserID}">unsubscribe</a>)<br />
+	{end:}
+	<br />
+</p>
+<p flexy:if="aUnsubscribedLists">
+	<strong>Available Subscriptions:</strong><br/>
+	{foreach:aUnsubscribedLists,key,aUnsubscribedList}
+		<strong>{aUnsubscribedList[name]}</strong> - {aUnsubscribedList[description]} (<a href="{makeUrl(#subscribe#,#newsletter#,#newsletter#)}frmListName[]/{key}/frmUserID/{loggedOnUserID}">subscribe</a>)<br />
+	{end:}
+	<br />
+</p>
