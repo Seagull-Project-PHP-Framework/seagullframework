@@ -769,7 +769,7 @@ class SGL_Output
         $input = &SGL_Registry::singleton();
         $req = $input->getRequest();
         // Horde routes work only for browser request types
-        if ($req->type == SGL_REQUEST_BROWSER
+        if (($req->type == SGL_REQUEST_BROWSER || $req->type == SGL_REQUEST_AJAX)
                 && SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
             $aArgs = func_get_args();
             // new style call
