@@ -244,10 +244,15 @@ class FileAssocMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        SGL_HTTP::redirect(array(
+        $aRedirectParams = array(
             'moduleName'  => $input->callerMod,
-            'managerName' => $input->callerMgr)
+            'managerName' => $input->callerMgr
             );
+
+        if (SGL::moduleIsEnabled('cms') && $input->action == 'associateToCategory') {
+            $aRedirectParams['frmCatID'] = $input->categoryId;
+        }
+        SGL_HTTP::redirect($aRedirectParams);
     }
 }
 ?>
