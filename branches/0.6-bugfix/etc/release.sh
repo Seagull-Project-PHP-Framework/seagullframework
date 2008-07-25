@@ -411,14 +411,14 @@ function buildMinimalPearPackage()
 
 checkArgs
 
-#checkPreviousVersions
+checkPreviousVersions
 
 #tagRelease
 
 # move to tmp dir
 cd /tmp
 
-#exportSvn
+exportSvn
 
 createMinimalFlag
 
@@ -426,15 +426,15 @@ if [ $MINIMAL_INSTALL ]; then
     pruneMinimal
 fi
 
-#createTarball
+createTarball
 
-uploadToSfWholePackage
+#uploadToSfWholePackage
 
 #generateApiDocs
 
 #packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
