@@ -251,7 +251,7 @@ class SGL_Date
         if (empty($selected) && $selected != null) {
             $selected = date('m', time());
         }
-        if (count($aMonths)) {
+        if (is_array($aMonths) && count($aMonths)) {
             foreach ($aMonths as $k => $v) {
                 //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
                 $monthOptions .= "\n<option value=\"$k\" ";
