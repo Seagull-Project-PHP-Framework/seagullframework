@@ -95,8 +95,10 @@ SGL2.showMessage = function(elem, message, type, speed) {
 }
 
 // BC
-function makeUrl() {
-    return SGL2.Util.makeUrl.apply(SGL2.Util, arguments);
+if (typeof makeUrl == 'undefined') {
+    function makeUrl() {
+        return SGL2.Util.makeUrl.apply(SGL2.Util, arguments);
+    }
 }
 
 $(document).ready(function() {
