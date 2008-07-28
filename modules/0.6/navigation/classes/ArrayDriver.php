@@ -266,6 +266,7 @@ class ArrayDriver
         $data = var_export($aNodes, true);
         $data = "<?php\n\$aSections = $data;\n?>";
         $ok = file_put_contents(SGL_VAR_DIR . '/navigation.php', $data);
+        @chmod(SGL_VAR_DIR . '/navigation.php', 0777);
         return $ok;
     }
 
