@@ -1083,6 +1083,9 @@ class SGL_Output
             $link .= '&amp;optimize=1';
         }
 
+        $this->aRawJavascriptFiles = array_diff($this->aRawJavascriptFiles,
+            $this->aJavascriptFiles);
+
         $ret = "<script type=\"text/javascript\" src=\"$link\"></script>\n";
         foreach ($this->aRawJavascriptFiles as $jsFile) {
             $ret .= "<script type=\"text/javascript\" src=\"$jsFile\"></script>\n";
