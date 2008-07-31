@@ -27,6 +27,8 @@ class SGL_Task_ExecuteAjaxAction2 extends SGL_ProcessRequest
                 SGL::raiseError('Ajax provider class does not exist',
                     SGL_ERROR_NOCLASS);
             } else {
+                self::assignOutputData($output);
+
                 // execute action method
                 $oProvider = new $providerClass();
                 $ok = $oProvider->process($input, $output);
