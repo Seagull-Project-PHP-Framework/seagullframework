@@ -43,7 +43,7 @@ FCKConfig.ToolbarSets["Default"] = [
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [
-	['Source','-','Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','About']
+	['Source','-','Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','FontFormat','Outdent', 'Indent','-','About']
 ] ;
 
 //  To enable ToolbarSet = 'Default', ie more options, you must update the
