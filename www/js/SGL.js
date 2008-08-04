@@ -170,4 +170,31 @@ SGL.ready(function() {
             msg.style.display = 'none';
         }
     }
+
+    /**
+     * Handle content language selection
+     *
+     * If a <select id="cLang"> is present this handler allows to modify
+     * the value of cLang param in url and preserves the rest of the url. 
+     * 
+     */
+    if (typeof jQuery != "undefined") {
+        jQuery("#cLang").change(function() {
+            var selectedLang = jQuery(this).val();
+            if (!selectedLang) {
+                return false;
+            } else {
+                var url = SGL_JS_CURRURL;
+                if (url.match(/cLang\/[a-z]{2}(\-[a-z0-9\-]+)?\/*/)) {
+                    url = url.replace(/cLang\/[a-z]{2}(\-[a-z0-9\-]+)?\/*/i, 'cLang/' +selectedLang +'/');
+                } else {
+                    url = url.replace(/\/$/, '');
+                    url = url + '/cLang/' +selectedLang +'/';
+                }
+                var webRoot = SGL_JS_WEBROOT.match(/(http[s]?\:\/\/[\w\.]+([\:0-9]+)?)/i)[0];
+                var target = webRoot + url;
+                window.location.href = target;
+            }
+        });
+    }
 });
