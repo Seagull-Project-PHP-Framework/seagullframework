@@ -77,7 +77,7 @@ class SGL_Output
      * @return  string          translated text
      * @see     setLanguage()
      */
-    function translate($key, $filter = false, $aParams = array(), $output = null)
+    function translate($key, $filter = false, $aParams = array(), $output = null, $lang = null)
     {
         // in case translation params are specified as a string
         // e.g. {translate(#my string to translate#,#vprintf#,#param1|value1||param2||value2#)}
@@ -118,7 +118,7 @@ class SGL_Output
             }
             $aParams = $aResultParams;
         }
-        return SGL_String::translate($key, $filter, $aParams);
+        return SGL_String::translate($key, $filter, $aParams, $lang);
     }
 
     function _extractVariableValue($varString, $output = null)
@@ -138,9 +138,9 @@ class SGL_Output
         return $ret;
     }
 
-    function tr($key, $filter = false, $aParams = array(), $output = null)
+    function tr($key, $filter = false, $aParams = array(), $output = null, $lang = null)
     {
-        return SGL_Output::translate($key, $filter, $aParams, $output);
+        return SGL_Output::translate($key, $filter, $aParams, $output, $lang);
     }
 
     /**
@@ -153,7 +153,8 @@ class SGL_Output
      * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  select options
      */
-    function generateSelect($aValues, $selected = null, $multiple = false, $options = null)
+    function generateSelect($aValues, $selected = null, $multiple = false,
+                            $options = null, $translate = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -174,15 +175,29 @@ class SGL_Output
         if ($multiple && is_array($selected)) {
             foreach ($aValues as $k => $v) {
                 $isSelected = in_array($k, $selected) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"" . $isSelected . $optionsString . ">$v</option>";
+                if ($translate) {
+                    $v = SGL_String::translate($v);
+                }
+                $r .= "\n<option value=\"$k\"" . $isSelected . $optionsString . ">" . $v . "</option>";
             }
         } else {
             //  ensure $selected is not the default null arg, allowing
             //  zeros to be selected array elements
             $r = '';
             foreach ($aValues as $k => $v) {
+
+                if ($translate) {
+                    // FIXME: remove this, spaces must be in template
+                    // avoid trying to translate strings prepended with "&nbsp;"
+                    $ok = preg_match('/^((\&nbsp\;)+)(.*)/', $v, $aMatches);
+                    if ($ok) {
+                        $v = $aMatches[1] . SGL_String::translate($aMatches[3]);
+                    } else {
+                        $v = SGL_String::translate($v);
+                    }
+                }
                 $isSelected = ($k === $selected && !is_null($selected)) ? ' selected="selected"' : '';
-                $r .= "\n<option value=\"$k\"". $isSelected . $optionsString . ">$v</option>";
+                $r .= "\n<option value=\"$k\"". $isSelected . $optionsString . ">" . $v . "</option>";
             }
         }
         return $r;

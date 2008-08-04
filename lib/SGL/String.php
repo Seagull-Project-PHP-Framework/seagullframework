@@ -261,30 +261,38 @@ class SGL_String
     }
 
     /**
-     * Looks up key in current lang file (determined by preference)
+     * Looks up key in current lang dictionary (SGL_Translate::language) or specific language
      * and returns target value.
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
+     * @param array  $aParams   Optional params
+     * @param string $lang      Optional language to force translation in this language
+     *                          Can be of type code: en, or full lang desc en-utf-8
      * @return string
      *
      */
-    function translate($key, $filter = false, $aParams = array())
+    function translate($key, $filter = false, $aParams = array(), $lang = null)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
-        if (isset($trans[$key])) {
-            if (!is_array($trans[$key])
-                    && strstr($trans[$key], '||')
+
+        require_once SGL_MOD_DIR . '/cms/classes/Translate.php';
+        $tr = SGL_Translate::singleton('array');
+        $lang = $tr->getLangCode($lang);
+        
+        if (isset($trans[$lang][$key])) {
+            if (!is_array($trans[$lang][$key])
+                    && strstr($trans[$lang][$key], '||')
                     && $conf['translation']['container'] == 'db') {
-                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$key], $aPieces);
+                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$lang][$key], $aPieces);
                 $ret = array_combine($aPieces[1], $aPieces[2]);
             } else {
-                $ret = $trans[$key];
+                $ret = $trans[$lang][$key];
             }
-            if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
+            if (!is_array($trans[$lang][$key]) && $filter && function_exists($filter)) {
                 if (is_object($aParams)) {
                     $aParams = (array)$aParams;
                 }
