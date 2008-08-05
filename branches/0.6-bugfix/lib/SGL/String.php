@@ -357,8 +357,8 @@ class SGL_String
 
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
 
-        require_once SGL_MOD_DIR . '/cms/classes/Translate.php';
-        $tr = SGL_Translate::singleton('array');
+        require_once 'SGL/Translation3.php';
+        $tr = Translation3::singleton('array');
         $lang = $tr->getLangCode($lang);
 
         if (isset($trans[$lang][$key])) {
@@ -874,6 +874,43 @@ class SGL_String
             if (defined($const)) {
                 $ret = constant($const);
             }
+        }
+        return $ret;
+    }
+
+    /**
+     * Esacape single quote.
+     *
+     * @param   string $string
+     *
+     * @return  string
+     *
+     * @static
+     */
+    function escapeSingleQuote($string)
+    {
+        $ret = str_replace('\\', '\\\\', $string);
+        $ret = str_replace("'", '\\\'', $ret);
+        return $ret;
+    }
+
+    /**
+     * Escape single quotes in every key of given array.
+     *
+     * @param   array $array
+     *
+     * @return  array
+     *
+     * @static
+     */
+    public static function escapeSingleQuoteInArrayKeys($array)
+    {
+        $ret = array();
+        foreach ($array as $key => $value) {
+            $k = self::escapeSingleQuote($key);
+            $ret[$k] = is_array($value)
+                ? self::escapeSingleQuoteInArrayKeys($value)
+                : $value;
         }
         return $ret;
     }
