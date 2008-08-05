@@ -19,16 +19,17 @@
     {end:}
 
     {scriptOpen:h}
-        var SGL_JS_WEBROOT="{webRoot}";
-        var SGL_JS_WINHEIGHT={conf[popup][winHeight]};
-        var SGL_JS_WINWIDTH={conf[popup][winWidth]};
-        var SGL_JS_SESSID="{sessID}";
-        var SGL_JS_CURRURL="{currUrl}";
-        var SGL_JS_THEME="{theme}";
-        var SGL_JS_ADMINGUI="1";
-        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
-        var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
+        // bc
+        var SGL_JS_WEBROOT          = "{webRoot}";
+        var SGL_JS_SESSID           = "{sessID}";
+        var SGL_JS_CURRURL          = "{currUrl}";
+        var SGL_JS_THEME            = "{theme}";
+        var SGL_JS_ADMINGUI         = "1";
+        var SGL_JS_URL_STRATEGY     = "{conf[site][outputUrlHandler]}";
         var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
+        var SGL_JS_DATETEMPLATE     = "{getDateFormat()}";
+
+        {getExportedJsVars():h}
     {scriptClose:h}
 
     <script type="text/javascript" src="{webRoot}/themes/{theme}/js/mainAdmin.js"></script>
@@ -38,9 +39,22 @@
     {makeJsOptimizerLink():h}
 
     {scriptOpen:h}
-    {foreach:onReadyDom,eventHandler}
-        SGL.ready("{eventHandler}");
+
+    // onload event
+    {if:onReadyDom}
+        if (typeof SGL2 != 'undefined') {
+            $(document).ready(function() {
+                {foreach:onReadyDom,eventHandler}
+                {eventHandler};
+                {end:}
+            });
+        } else if (typeof SGL != 'undefined') {
+            {foreach:onReadyDom,eventHandler}
+            SGL.ready("{eventHandler}");
+            {end:}
+        }
     {end:}
+
     {if:onLoad}
     window.onload = function() {
         {foreach:onLoad,eventHandler}
