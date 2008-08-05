@@ -57,9 +57,6 @@ class SGL_Translation3
         }
         $className = 'SGL_Translation3_Driver_' . $driver;
         $fileName = 'SGL/Translation3/Driver/' . ucfirst($driver) . '.php';
-        if (!is_file($fileName)) {
-            throw new Exception("No file found for driver $driver", 1);
-        }
         require_once $fileName;
         if (!class_exists($className)) {
             throw new Exception("Driver $driver not implemented", 1);

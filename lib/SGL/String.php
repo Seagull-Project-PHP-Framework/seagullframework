@@ -326,7 +326,7 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                $trans = &SGL_Translation::singleton('admin');
+                $trans = &SGL_Translation3::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
@@ -358,7 +358,7 @@ class SGL_String
         $trans = &$GLOBALS['_SGL']['TRANSLATION'];
 
         require_once 'SGL/Translation3.php';
-        $tr = Translation3::singleton('array');
+        $tr = SGL_Translation3::singleton('array');
         $lang = $tr->getLangCode($lang);
 
         if (isset($trans[$lang][$key])) {
