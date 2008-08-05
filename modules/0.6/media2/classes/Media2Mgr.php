@@ -60,6 +60,7 @@ class Media2Mgr extends SGL_Manager
             'media2/js/jquery/plugins/jquery.shadow.js',
             'media2/js/jquery/plugins/jquery.ifixpng.js',
             'media2/js/jquery/plugins/jquery.fancyzoom.js',
+            'media2/js/Media2.js',
             'media2/js/Media2/List.js'
         ));
     }
@@ -72,6 +73,7 @@ class Media2Mgr extends SGL_Manager
         $output->addJavascriptFile(array(
             'js/jquery/plugins/jquery.form.js',
             'media2/js/jquery/ajaxfileupload.js',
+            'media2/js/Media2.js',
             'media2/js/Media2/Upload.js',
             'media2/js/Media2/Edit.js'
         ));
@@ -85,6 +87,7 @@ class Media2Mgr extends SGL_Manager
         $output->template = 'media2Edit.html';
         $output->addJavascriptFile(array(
             'js/jquery/plugins/jquery.form.js',
+            'media2/js/Media2.js',
             'media2/js/Media2/Edit.js'
         ));
     }
