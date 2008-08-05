@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * Set of static media utilities.
+ *
+ * @package SGL
+ * @subpackage media2
+ * @author Thomas Goetz
+ * @author Demian Turner <demian@phpkitchen.com>
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+class SGL_Media_Util
+{
+    /**
+     * Test if specified file is a text file.
+     *
+     * @param string $path
+     *
+     * @return boolean
+     */
+    public static function isTextFile($path)
+    {
+        $ret = false;
+        if (is_readable($path)) {
+            $data = file_get_contents($path);
+            $bad  = false;
+            for ($i = 0, $len = strlen($data); !$bad && $i < $len; $i++) {
+                $bad = ord($data[$i]) > 127;
+            }
+            $ret = !$bad;
+        }
+        return $ret;
+    }
+
+    /**
+     * Check if mime type belongs to image mime type.
+     *
+     * @param string $mimeType
+     *
+     * @return boolean
+     */
+    public static function isImageMimeType($mimeType)
+    {
+        return preg_match("/^image/", $mimeType);
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $aHexIdents
+     *
+     * @return string
+     */
+    public static function getFileIdent($fileName, $aHexIdents)
+    {
+        $ret = false;
+        // open the file for reading (binary)
+        if ($fp = @fopen($fileName, 'rb')) {
+            // get the (converted to bin) hex identifier length
+            // to extract that amount of bytes from our uploaded file
+            $aBinIdents = array_map(array(__CLASS__, 'condense'), $aHexIdents);
+            $aSizes     = array_map('strlen', $aBinIdents);
+            $read       = max($aSizes);
+            $data       = fread($fp, $read); // store the read data
+            fclose($fp);
+
+            // check our data against the array of catalogued file types
+            foreach ($aBinIdents as $type => $signature) {
+                $found = substr($data, 0, strlen($signature)) === $signature
+                    && !empty($signature);
+                if ($found) {
+                    $ret = $type;
+                    break;
+                }
+            }
+        }
+        return $ret;
+    }
+
+    public static function condense($value)
+    {
+        return pack('H*', str_replace(' ', '', $value));
+    }
+
+    public static function getUniqueString($suffix = '')
+    {
+        return md5(microtime() . $suffix);
+    }
+
+    public function ensureDirIsWritable($dirName)
+    {
+        $ok = true;
+        if (!is_writable($dirName)) {
+            require_once 'System.php';
+            $ok = System::mkDir(array('-p', $dirName));
+            if (!PEAR::isError($ok)) {
+                $mask = umask(0);
+                $ok   = @chmod($dirName, 0777);
+                umask($mask);
+            }
+        }
+        return $ok;
+    }
+}
+?>
