@@ -86,7 +86,7 @@ class SGL_Media_Util
         return md5(microtime() . $suffix);
     }
 
-    public function ensureDirIsWritable($dirName)
+    public static function ensureDirIsWritable($dirName)
     {
         $ok = true;
         if (!is_writable($dirName)) {
@@ -99,6 +99,48 @@ class SGL_Media_Util
             }
         }
         return $ok;
+    }
+
+    public static function getIconPathByMimeType($mimeType, $path = SGL_WEB_ROOT)
+    {
+        switch ($mimeType) {
+            case 'image/gif':
+            case 'image/jpeg':
+            case 'image/png':
+                $ret = 'doc_img.png';
+                break;
+            case 'application/pdf':
+                $ret = 'doc_pdf.png';
+                break;
+            case 'application/msword':
+                $ret = 'doc_msword.png';
+                break;
+            case 'text/plain':
+                $ret = 'doc_msword.png';
+                break;
+            default:
+                $ret = 'doc_unknown.gif';
+        }
+        return $path . '/media2/images/icons/' . $ret;
+    }
+
+    public static function getImagePathByMimeType($fileName, $mimeType,
+        $thumb = false)
+    {
+        static $aConf;
+        if (!isset($aConf)) {
+            $aConf = parse_ini_file(SGL_MOD_DIR . '/media2/image.ini', true);
+        }
+        $container = !empty($mimeType) ? $mimeType : 'default';
+        $container = strtolower(str_replace(' ', '_', $container));
+
+        // find upload dir
+        $uploadDir = isset($aConf[$container]['uploadDir'])
+            ? $aConf[$container]['uploadDir']
+            : trim(str_replace(SGL_APP_ROOT, '', SGL_UPLOAD_DIR), '/');
+        $uploadDir .= $thumb ? '/thumbs/' . $thumb . '_' : '/';
+
+        return $uploadDir . $fileName;
     }
 }
 ?>

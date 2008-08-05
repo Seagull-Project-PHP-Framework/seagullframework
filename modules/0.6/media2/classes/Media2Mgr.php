@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/Media2DAO.php';
+require_once SGL_MOD_DIR . '/media2/lib/Media/Util.php';
 
 /**
  * Media manager.
@@ -23,7 +24,8 @@ class Media2Mgr extends SGL_Manager
             'list'     => array('list'),
             'upload'   => array('upload'),
             'edit'     => array('edit'),
-            'download' => array('download')
+            'download' => array('download'),
+            'preview'  => array('preview')
         );
 
         $this->da = Media2DAO::singleton();
@@ -41,6 +43,7 @@ class Media2Mgr extends SGL_Manager
             ? $req->get('action') : 'list';
 
         $input->mediaId = $req->get('mediaId');
+        $input->thumb   = $req->get('thumb');
     }
 
     public function display(SGL_Output $output)
@@ -105,6 +108,34 @@ class Media2Mgr extends SGL_Manager
         $oDownload->setFile($fileName);
         $oDownload->setContentType($oMedia->mime_type);
         $oDownload->setContentDisposition(HTTP_DOWNLOAD_ATTACHMENT, $oMedia->name);
+        $oDownload->setAcceptRanges('none');
+
+        $ok = $oDownload->send();
+        exit;
+    }
+
+    public function _cmd_preview(SGL_Registry $input, SGL_Output $output)
+    {
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once SGL_CORE_DIR . '/Download.php';
+
+        $oMedia = $this->da->getMediaById($input->mediaId);
+        if (SGL_Media_Util::isImageMimeType($oMedia->mime_type)) {
+            $path = SGL_Media_Util::getImagePathByMimeType(
+                $oMedia->file_name,
+                $oMedia->mime_type,
+                $input->thumb
+            );
+            $path = SGL_APP_ROOT . '/' . $path;
+        } else {
+            $path = SGL_Media_Util::getIconPathByMimeType($oMedia->mime_type);
+        }
+
+        $oDownload = new SGL_Download();
+        $oDownload->setFile($path);
+        $oDownload->setContentType($oMedia->mime_type);
+        $oDownload->setContentDisposition(HTTP_DOWNLOAD_INLINE, $oMedia->name);
         $oDownload->setAcceptRanges('none');
 
         $ok = $oDownload->send();
