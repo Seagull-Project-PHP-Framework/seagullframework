@@ -67,6 +67,20 @@ class SGL_Output
      */
     var $_aJsExportVars = array();
 
+    function __construct()
+    {
+        $this->exportJsVar('MSG_ERROR', SGL_MESSAGE_ERROR);
+        $this->exportJsVar('MSG_INFO', SGL_MESSAGE_INFO);
+        $this->exportJsVar('MSG_WARNING', SGL_MESSAGE_WARNING);
+        $this->exportJsVar('FC', SGL_Config::get('site.frontScriptName'));
+        $this->exportJsVar('WEBROOT', SGL_BASE_URL);
+    }
+
+    function SGL_Output()
+    {
+        $this->__construct();
+    }
+
     /**
      * Translates source text into target language.
      *
