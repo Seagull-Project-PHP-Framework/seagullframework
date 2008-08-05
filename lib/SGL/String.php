@@ -261,6 +261,84 @@ class SGL_String
     }
 
     /**
+     * Looks up key in current lang file (determined by preference)
+     * and returns target value.
+     *
+     * @param string $key       Translation term
+     * @param string $filter    Optional filter fn
+     * @return string
+     *
+     * @todo better integrate $lang handling
+     */
+    function translate($key, $filter = false, $aParams = array(), $lang = null)
+    {
+        if (!is_null($lang)) {
+            return SGL_String::translate2($key, $filter, $aParams, $lang);
+        }
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+
+        $trans = &$GLOBALS['_SGL']['TRANSLATION'];
+        if (isset($trans[$key])) {
+            if (!is_array($trans[$key])
+                    && strstr($trans[$key], '||')
+                    && $conf['translation']['container'] == 'db') {
+                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$key], $aPieces);
+                $ret = array_combine($aPieces[1], $aPieces[2]);
+            } else {
+                $ret = $trans[$key];
+            }
+            if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
+                if (is_object($aParams)) {
+                    $aParams = (array)$aParams;
+                }
+                if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
+                    $i = 1;
+                    foreach ($aParams as $key => $value) {
+                        if (!empty($value) && !is_scalar($value)) {
+                            continue;
+                        }
+                        $value = str_replace('%', '%%', $value);
+                        $ret = str_replace("%$i%", $value, $ret);
+                        $ret = str_replace("%$i", $value, $ret);
+                        $ret = str_replace("%$key%", $value, $ret);
+                        $ret = str_replace("%$key", $value, $ret);
+                        $i++;
+                    }
+                    $ret = vsprintf($ret, $aParams);
+                } else {
+                    $ret = $filter($ret);
+                }
+            }
+            return $ret;
+        } else {
+            //  add translation
+            if (!empty($key)
+                    && isset($conf['translation']['addMissingTrans'])
+                    && $conf['translation']['addMissingTrans']
+                    && isset($conf['translation']['container'])
+                    && $conf['translation']['container'] == 'db') {
+
+                //  get a reference to the request object
+                $req = & SGL_Request::singleton();
+                $moduleName = $req->get('moduleName');
+
+                //  fetch fallback lang
+                $fallbackLang = $conf['translation']['fallbackLang'];
+
+                $trans = &SGL_Translation::singleton('admin');
+                $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
+            }
+            SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
+            $key = (isset($conf['debug']['showUntranslated']) && $conf['debug']['showUntranslated'])
+                ? '>' . $key . '<'
+                : $key;
+            return $key;
+        }
+    }
+
+
+    /**
      * Looks up key in current lang dictionary (SGL_Translate::language) or specific language
      * and returns target value.
      *
@@ -272,7 +350,7 @@ class SGL_String
      * @return string
      *
      */
-    function translate($key, $filter = false, $aParams = array(), $lang = null)
+    function translate2($key, $filter = false, $aParams = array(), $lang = null)
     {
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -282,7 +360,7 @@ class SGL_String
         require_once SGL_MOD_DIR . '/cms/classes/Translate.php';
         $tr = SGL_Translate::singleton('array');
         $lang = $tr->getLangCode($lang);
-        
+
         if (isset($trans[$lang][$key])) {
             if (!is_array($trans[$lang][$key])
                     && strstr($trans[$lang][$key], '||')
@@ -333,9 +411,7 @@ class SGL_String
                 $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
-
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
-
             $key = (isset($conf['debug']['showUntranslated']) && $conf['debug']['showUntranslated'])
                 ? '>' . $key . '<'
                 : $key;
