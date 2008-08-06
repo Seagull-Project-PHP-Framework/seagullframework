@@ -72,7 +72,7 @@ abstract class SGL_Translation3_Driver
 
     public function setFallbackLanguage()
     {
-        $this->fallbackLanguage = self::getFallbackLanguage();
+        $this->fallbackLanguage = SGL_Translation3::getFallbackLanguage();
     }
 
     public function getLanguage()
@@ -243,18 +243,6 @@ abstract class SGL_Translation3_Driver
     /******************************/
     /*       STATIC METHODS       */
     /******************************/
-    public static function getFallbackLangCode()
-    {
-        $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        $fallbackLanguage = self::getFallbackLanguage();
-        return $aLanguages[$fallbackLanguage][2];
-    }
-
-    public static function getFallbackLanguage()
-    {
-        return str_replace('_', '-', SGL_Config::get('translation.fallbackLang'));
-    }
-
     public static function extractCharset($lang)
     {
         $aLang = explode('-', $lang);
@@ -267,7 +255,7 @@ abstract class SGL_Translation3_Driver
 
     public static function getFallbackCharset()
     {
-        $lang = self::getFallbackLanguage();
+        $lang = SGL_Translation3::getFallbackLanguage();
         return self::extractCharset($lang);
     }
 
@@ -361,7 +349,7 @@ abstract class SGL_Translation3_Driver
                     if (!SGL_Config::get('translation.languageAutoDiscover')
                             || !($lang = self::resolveLanguageFromDomain())) {
                         // 5. get default language
-                        $lang = self::getFallbackLanguage();
+                        $lang = SGL_Translation3::getFallbackLanguage();
                     }
                 }
             // get language from settings

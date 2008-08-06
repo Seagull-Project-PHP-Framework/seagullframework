@@ -79,5 +79,20 @@ class SGL_Translation3
         }
         throw new Exception("Unknown method '$method' called!");
     }
+
+    /******************************/
+    /*       STATIC METHODS       */
+    /******************************/
+    public static function getFallbackLangCode()
+    {
+        $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
+        $fallbackLanguage = self::getFallbackLanguage();
+        return $aLanguages[$fallbackLanguage][2];
+    }
+
+    public static function getFallbackLanguage()
+    {
+        return str_replace('_', '-', SGL_Config::get('translation.fallbackLang'));
+    }
 }
 ?>
