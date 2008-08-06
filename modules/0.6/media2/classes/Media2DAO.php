@@ -89,6 +89,15 @@ class Media2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
 
+    public function getMediaTypes()
+    {
+        $query = "
+            SELECT *
+            FROM   media_type
+        ";
+        return $this->dbh->getAll($query);
+    }
+
     public function addMedia($aFields)
     {
         $aFields['media_id']     = $this->dbh->nextId('media');
@@ -142,7 +151,7 @@ class Media2DAO extends SGL_Manager
         if (!empty($typeId)) {
             $aFields['media_type_id'] = $typeId;
         }
-        return $this->da->updateMediaById($mediaId, $aFields);
+        return $this->updateMediaById($mediaId, $aFields);
     }
 
     public function getMedias($typeId = null, $fkId = null)

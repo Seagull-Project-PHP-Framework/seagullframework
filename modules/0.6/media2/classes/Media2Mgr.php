@@ -80,6 +80,7 @@ class Media2Mgr extends SGL_Manager
             'media2/js/Media2/Upload.js',
             'media2/js/Media2/Edit.js'
         ));
+        $output->addOnLoadEvent('Media2.Upload.init()', true);
     }
 
     public function _cmd_edit(SGL_Registry $input, SGL_Output $output)

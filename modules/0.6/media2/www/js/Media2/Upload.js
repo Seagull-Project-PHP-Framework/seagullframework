@@ -20,6 +20,30 @@ Media2.Upload =
         SGL2.Util.enableSubmit('input[type!="file"]', f);
     },
 
+    uploadCallback: function(r) {
+        console.log(r);
+
+        var _self = Media2.Upload;
+
+        if (typeof r.aMsg == 'undefined') {
+            if (!r.isUploaded) {
+                _self.enableSubmit(_self._f);
+            } else {
+                $.ajax({
+                    url: makeUrl({module: 'media2', action: 'getMediaEditScreen', mediaId: r.mediaId}),
+                    success: function(r) {
+                        $('#mediaUpload').remove();
+                        $('#mediaContainer').html(r.html);
+                        Media2.Edit.init();
+                    }
+                });
+            }
+        } else {
+            // view mode
+            _self.enableSubmit(this._f);
+        }
+    },
+
     init: function() {
         var _self = this;
 
@@ -31,40 +55,21 @@ Media2.Upload =
                 showError('fill in required data'.translate().toString());
                 return false;
             } else {
-                var _f = $(this).parents('form').eq(0);
+                _self._f = $(this).parents('form').eq(0);
 
                 // edit mode
-                _self.disableSubmit(_f);
+                _self.disableSubmit(_self._f);
                 // upload file
                 $.ajaxFileUpload({
                     fileElementId: 'media_upload',
                     url: SGL2.Util.makeUrl({module: 'media2', manager: 'mediauploader'}),
                     secureuri: false,
                     dataType: 'json',
-                    success: function(r, status) {
-                        console.log(r);
-                        if (typeof r.aMsg == 'undefined') {
-                            if (!r.isUploaded) {
-                                _self.enableSubmit(_f);
-                            } else {
-                                $.ajax({
-                                    url: makeUrl({module: 'media2', action: 'getMediaEditScreen', mediaId: r.mediaId}),
-                                    success: function(r) {
-                                        $('#mediaUpload').remove();
-                                        $('#mediaContainer').html(r.html);
-                                        Media2.Edit.init();
-                                    }
-                                });
-                            }
-                        } else {
-                            // view mode
-                            _self.enableSubmit(_f);
-                        }
-                    },
+                    success: _self.uploadCallback,
                     error: function(r, status, e) {
                         showError(e);
                         // view mode
-                        _self.enableSubmit(_f);
+                        _self.enableSubmit(_self._f);
                     }
                 });
             }
@@ -72,7 +77,3 @@ Media2.Upload =
         });
     }
 }
-
-$(document).ready(function() {
-    Media2.Upload.init();
-});

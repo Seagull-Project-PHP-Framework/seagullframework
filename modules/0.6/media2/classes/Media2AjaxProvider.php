@@ -80,6 +80,33 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
         ));
     }
 
+    public function linkMediaAndView(SGL_Registry $input, SGL_Output $output)
+    {
+        $mediaId = $this->req->get('mediaId');
+        $fkId    = $this->req->get('mediaId');
+        $typeId  = $this->req->get('typeId');
+
+        // link media
+        $ok = $this->da->linkMediaToFk($mediaId, $fkId, $typeId);
+
+        // get template
+        $this->getMediaView($input, $output);
+    }
+
+    public function getMediaView(SGL_Registry $input, SGL_Output $output)
+    {
+        $mediaId = $this->req->get('mediaId');
+
+        $oMedia = $this->da->getMediaById($mediaId);
+
+        $output->html = $this->_renderTemplate($output, array(
+            'masterTemplate' => 'media2_item.html',
+            'oMedia'         => $oMedia,
+            'aMedias'        => array($oMedia),
+            'k'              => 0
+        ));
+    }
+
     public function updateMedia(SGL_Registry $input, SGL_Output $output)
     {
         $aMedia = $this->req->get('aMedia');
@@ -102,10 +129,15 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
 
         // delete image
         if (SGL_Media_Util::isImageMimeType($oMedia->mime_type)) {
+            $aContainers = parse_ini_file(SGL_MOD_DIR . '/media2/image.ini', true);
+
             // get container name by media type
             $container = !empty($oMedia->media_type_id)
                 ? $this->da->getMediaTypeById($oMedia->media_type_id)
                 : 'default';
+            if (!isset($aContainers[$container])) {
+                $container = 'default';
+            }
             $container = strtolower(str_replace(' ', '_', $container));
 
             $oImage = new SGL_Image($oMedia->file_name);
