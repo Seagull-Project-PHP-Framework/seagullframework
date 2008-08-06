@@ -14,7 +14,7 @@ class SGL_Translation3
      * @param unknown_type $driver
      * @param array $aOptions
      */
-    public function __construct($driver = null, array $aOptions = array())
+    private function __construct($driver = null, array $aOptions = array())
     {
         $this->setDriver($driver, $aOptions);
     }
