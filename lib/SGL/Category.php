@@ -105,7 +105,7 @@ class SGL_Category
             $values['label'] = 'New Category';
 
         //  use a NestedSet
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
 
         //  create new set with first rootnode
         if ($values['parent_id'] == 0) {
@@ -140,7 +140,7 @@ class SGL_Category
         $message = '';
 
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
 
         //  attempt to update section values
         if (!$nestedSet->updateNode($category_id, $values)) {
@@ -206,7 +206,7 @@ class SGL_Category
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($aDelete)) {
-            $nestedSet = new SGL_NestedSet($this->_params);
+            $nestedSet = &SGL_NestedSet::singleton($this->_params);
             //  deleting parent nodes automatically deletes children nodes, but user
             //  might have checked child nodes for deletion, in which case deleteNode()
             //  would try to delete nodes that no longer exist, after parent deletion,
@@ -236,7 +236,7 @@ class SGL_Category
     function move($category_id, $target_id, $pos)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
 
         //  move tree
         $nestedSet->moveTree($category_id, $target_id, $pos);
@@ -263,7 +263,7 @@ class SGL_Category
         }
 
         //  get NestedSet node
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
         $this->_nestedSetNode = $nestedSet->getNode($category_id);
 
         //  check if category_id does not exist
@@ -367,7 +367,7 @@ class SGL_Category
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
         $nestedSet->setImage('folder', 'images/treeNav/file.png');
         $categoryTree = $nestedSet->getTree();
         $nestedSet->addImages($categoryTree);
@@ -414,7 +414,7 @@ class SGL_Category
      */
     function isBranch($id)
     {
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
         $ns = $nestedSet->_getNestedSet();
         $node = $ns->pickNode($id, $keepAsArray = true, $alias = true);
         if ($node) {
@@ -443,7 +443,7 @@ class SGL_Category
                 __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
             return false;
         }
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
         $node = $nestedSet->getNode($category_id);
 
         if (empty($node) || is_a($node, 'PEAR_Error')) {
@@ -495,7 +495,7 @@ class SGL_Category
      */
     function getLabel($id)
     {
-        $nestedSet = new SGL_NestedSet($this->_params);
+        $nestedSet = &SGL_NestedSet::singleton($this->_params);
         $node = $nestedSet->getNode($id);
         if (!PEAR::isError($node)) {
             return $node['label'];
