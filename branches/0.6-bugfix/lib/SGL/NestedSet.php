@@ -85,6 +85,18 @@ class SGL_NestedSet
 
     var $_aNodes = array();
 
+    function &singleton($params)
+    {
+        static $aInstances;
+
+        $signature = md5(serialize($params));
+        if (!isset($aInstances[$signature])) {
+            $aInstances[$signature] = & new SGL_NestedSet($params);
+        }
+
+        return $aInstances[$signature];
+    }
+
     function SGL_NestedSet($params)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -577,8 +589,21 @@ class SGL_NestedSet
         static $ns;
         if (is_null($ns)) {
             require_once 'DB/NestedSet.php';
+
+            // we copy connection object instead of passing it
+            // to DB_NestedSet::factory(), because DB_NestedSet
+            // changes DB_Common::setFetchMode()
+            $db = SGL_DB::singleton();
+            if (SGL::isPhp5()) {
+                // use `clone($db)` instead of `clone $db`
+                // to aviod php4 parse error
+                $dbh = clone($db);
+            } else {
+                $dbh = $db;
+            }
+
             //  create an instance of DB_NestedSet_DB
-            $ns = & DB_NestedSet::factory('DB', SGL_DB::getDsn(), $this->_params['tableStructure']);
+            $ns = & DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);
             if (is_a($ns, 'PEAR_Error')) {
                 echo $ns->getCode() . ': ' . $ns->getMessage();
             }
