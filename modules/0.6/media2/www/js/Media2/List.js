@@ -11,9 +11,6 @@ Media2.List =
     init: function() {
         var _self = this;
 
-//        $('#mediaList .item a.delete').each(function() {
-//            console.log(this);
-//        });
         $('#mediaList .item a.delete').click(function() {
             _self.initTrigger(this);
             return false;
