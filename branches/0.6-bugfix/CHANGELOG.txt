@@ -5,8 +5,14 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+06-08-08    Fixed SGL_Category which was not using a singleton database resource
+            (lakiboy)
 
 IMPROVEMENTS
+06-08-08    Consolidated translation features (SGL_Translation, SGL_Translation2)
+            into new SGL_Translation3 PHP5 only package
+06-08-08    Added media2 module which makes ajax uploads easier and will provide
+            media features to CMS (lakiboy)
 
 +-----------------------+
 | VERSION: 0.6.5        |
