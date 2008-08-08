@@ -86,7 +86,9 @@ class SGL_URL2
             foreach ($aVars as $varString) {
                 list($k, $v) = explode('|', $varString);
                 if (isset($element)) {
-                    if (is_object($element) && isset($element->$v)) {
+                    if (is_object($element)
+                        && (isset($element->$v) || @$element->$v))
+                    {
                         $v = $element->$v;
                     } elseif (is_array($element) && isset($element[$v])) {
                         $v = $element[$v];
