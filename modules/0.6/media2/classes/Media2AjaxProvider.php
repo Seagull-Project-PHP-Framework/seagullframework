@@ -83,7 +83,7 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
     public function linkMediaAndView(SGL_Registry $input, SGL_Output $output)
     {
         $mediaId = $this->req->get('mediaId');
-        $fkId    = $this->req->get('mediaId');
+        $fkId    = $this->req->get('fkId');
         $typeId  = $this->req->get('typeId');
 
         // link media
