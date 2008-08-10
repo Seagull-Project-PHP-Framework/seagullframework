@@ -187,5 +187,46 @@ class ConfigTest extends UnitTestCase {
         $aRet = SGL_Config::getCommandTarget($str);
         $this->assertEqual($aExpected, $aRet);
     }
+
+    function testGetCachedFileName()
+    {
+        $fileName = SGL_MOD_DIR . '/default/conf.ini';
+        $ret = SGL_Config::getCachedFileName($fileName);
+        $this->assertEqual(SGL_VAR_DIR . '/config/default.ini', $ret);
+
+        $fileName = SGL_MOD_DIR . '/default/other.ini';
+        $ret = SGL_Config::getCachedFileName($fileName);
+        $this->assertEqual(SGL_VAR_DIR . '/default/other.ini', $ret);
+    }
+
+    function testCreateCachedFile()
+    {
+        $aTest = array(
+            SGL_VAR_DIR . '/config/user.ini',
+            SGL_VAR_DIR . '/media2/image.ini'
+        );
+
+        foreach ($aTest as $cachedFile) {
+            SGL_Config::ensureDirExists(dirname($cachedFile));
+
+            // copy cached file if exists
+            if (file_exists($cachedFile)) {
+                $ok = copy($cachedFile, $cachedFile . '.copy');
+                $ok = unlink($cachedFile);
+            }
+
+            $ok = SGL_Config::createCachedFile($cachedFile);
+            $this->assertTrue(file_exists($cachedFile));
+
+            // cleanup
+            unlink($cachedFile);
+
+            // restore
+            if (file_exists($cachedFile . '.copy')) {
+                $ok = copy($cachedFile . '.copy', $cachedFile);
+                $ok = unlink($cachedFile . '.copy');
+            }
+        }
+    }
 }
 ?>
