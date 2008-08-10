@@ -129,9 +129,12 @@ class MediaUploaderMgr extends SGL_Manager
                 : 'default';
             $container = strtolower(str_replace(' ', '_', $container));
 
+            $confFile = SGL_Config::locateCachedFile(
+                SGL_MOD_DIR . '/media2/image.ini');
+
             // process image
             $oImage = new SGL_Image($fileName);
-            $ok     = $oImage->init(SGL_MOD_DIR . '/media2/image.ini', $container);
+            $ok     = $oImage->init($confFile, $container);
             $ok     = $oImage->create($input->oMedia->tmp_name);
 
         // upload regular media

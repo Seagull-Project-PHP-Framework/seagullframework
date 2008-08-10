@@ -129,7 +129,9 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
 
         // delete image
         if (SGL_Media_Util::isImageMimeType($oMedia->mime_type)) {
-            $aContainers = parse_ini_file(SGL_MOD_DIR . '/media2/image.ini', true);
+            $confFile    = SGL_Config::locateCachedFile(
+                SGL_MOD_DIR . '/media2/image.ini');
+            $aContainers = parse_ini_file($confFile, true);
 
             // get container name by media type
             $container = !empty($oMedia->media_type_id)
@@ -141,7 +143,7 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
             $container = strtolower(str_replace(' ', '_', $container));
 
             $oImage = new SGL_Image($oMedia->file_name);
-            $ok     = $oImage->init(SGL_MOD_DIR . '/media2/image.ini', $container);
+            $ok     = $oImage->init($confFile, $container);
             $ok     = $oImage->delete();
 
         // delete regular media

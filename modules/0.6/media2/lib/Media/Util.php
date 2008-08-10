@@ -129,7 +129,9 @@ class SGL_Media_Util
     {
         static $aConf;
         if (!isset($aConf)) {
-            $aConf = parse_ini_file(SGL_MOD_DIR . '/media2/image.ini', true);
+            $confFile = SGL_Config::locateCachedFile(
+                SGL_MOD_DIR . '/media2/image.ini');
+            $aConf    = parse_ini_file($confFile, true);
         }
         $container = !empty($mimeType) ? $mimeType : 'default';
         $container = strtolower(str_replace(' ', '_', $container));
