@@ -17,6 +17,7 @@ CREATE TABLE `media` (
     `updated_by`               int(11)             NOT NULL,
 
     PRIMARY KEY (`media_id`),
+    KEY (`media_type_id`),
     KEY (`fk_id`)
 );
 

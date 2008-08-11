@@ -151,5 +151,21 @@ class Media2AjaxProvider extends SGL_AjaxProvider2
             @unlink(SGL_UPLOAD_DIR . '/' . $oMedia->file_name);
         }
     }
+
+    public function associateMedia(SGL_Registry $input, SGL_Output $output)
+    {
+        $entity   = $this->req->get('entity');
+        $entityId = $this->req->get('entityId');
+        $mediaId  = $this->req->get('mediaId');
+        $redir    = $this->req->get('redir');
+
+        $ok = $this->da->assocMediaByEntity($entity, $entityId, $mediaId);
+        if (!PEAR::isError($ok)) {
+            $output->isAssociated = true;
+            $output->redir = !empty($redir)
+                ? base64_decode($redir)
+                : $output->makeUrl('', 'media2', 'media2');
+        }
+    }
 }
 ?>

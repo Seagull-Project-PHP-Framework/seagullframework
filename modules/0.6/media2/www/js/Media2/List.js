@@ -39,7 +39,3 @@ Media2.List =
         return false;
     }
 }
-
-$(document).ready(function() {
-    Media2.List.init();
-});

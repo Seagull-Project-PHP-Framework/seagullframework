@@ -154,6 +154,39 @@ class Media2DAO extends SGL_Manager
         return $this->updateMediaById($mediaId, $aFields);
     }
 
+    public function getAssocMediaByEntity($entityName, $entityId)
+    {
+        $tableName = $entityName . '-media';
+        $tableFkId = $entityName . '_id';
+        $query     = "
+            SELECT media_id
+            FROM   " . $this->dbh->quoteIdentifier($tableName) . "
+            WHERE  $tableFkId = " . $this->dbh->quoteSmart($entityId) . "
+        ";
+        return $this->dbh->getOne($query);
+    }
+
+    public function assocMediaByEntity($entityName, $entityId, $mediaId)
+    {
+        $tableName = $entityName . '-media';
+        $tableFkId = $entityName . '_id';
+        $query = "
+            DELETE FROM " . $this->dbh->quoteIdentifier($tableName) . "
+            WHERE  $tableFkId = " . $this->dbh->quoteSmart($entityId) . "
+        ";
+        $ok = $this->dbh->query($query);
+        if (!PEAR::isError($ok)) {
+            $aFields['media_id'] = $mediaId;
+            $aFields[$tableFkId] = $entityId;
+            $ok = $this->dbh->autoExecute(
+                $this->dbh->quoteIdentifier($tableName),
+                $aFields,
+                DB_AUTOQUERY_INSERT
+            );
+        }
+        return $ok;
+    }
+
     public function getMedias($typeId = null, $fkId = null)
     {
         if (!empty($typeId)) {

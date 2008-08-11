@@ -66,6 +66,7 @@ class Media2Mgr extends SGL_Manager
             'media2/js/Media2.js',
             'media2/js/Media2/List.js'
         ));
+        $output->addOnLoadEvent('Media2.List.init()', true);
     }
 
     public function _cmd_upload(SGL_Registry $input, SGL_Output $output)
