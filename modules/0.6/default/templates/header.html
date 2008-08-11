@@ -39,9 +39,21 @@
     {makeJsOptimizerLink():h}
 
     {scriptOpen:h}
-    {foreach:onReadyDom,eventHandler}
-        SGL.ready("{eventHandler}");
+
+    {if:onReadyDom}
+        if (typeof SGL2 != 'undefined') {
+            $(document).ready(function() {
+                {foreach:onReadyDom,eventHandler}
+                {eventHandler};
+                {end:}
+            });
+        } else if (typeof SGL != 'undefined') {
+            {foreach:onReadyDom,eventHandler}
+            SGL.ready("{eventHandler}");
+            {end:}
+        }
     {end:}
+
     {if:onLoad}
     window.onload = function() {
         {foreach:onLoad,eventHandler}
