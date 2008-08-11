@@ -1,0 +1,20 @@
+<!--div id="manager-actions">
+    <span>{translate(#Action#)}:&nbsp;</span>
+    <a class="action save"
+       href="">{translate(#Save#)}</a>
+    <a class="action cancel"
+       href="">{translate(#Cancel#)}</a>
+</div-->
+
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <div id="mediaList">
+        <flexy:include src="media2_assoclist.html" />
+    </div>
+
+    <div class="spacer"></div>
+</div>
