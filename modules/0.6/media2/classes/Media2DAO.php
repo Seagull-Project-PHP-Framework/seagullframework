@@ -27,8 +27,7 @@ class Media2DAO extends SGL_Manager
         return $instance;
     }
 
-    /*
-    public function getMimeTypeIdByName($typeName)
+    public function getMediaTypeIdByName($typeName)
     {
         $query = "
             SELECT   media_type_id
@@ -37,7 +36,6 @@ class Media2DAO extends SGL_Manager
         ";
         return $this->dbh->getOne($query);
     }
-    */
 
     public function getMimeTypes()
     {
