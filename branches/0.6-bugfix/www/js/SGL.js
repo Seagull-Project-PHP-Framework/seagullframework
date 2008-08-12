@@ -175,8 +175,8 @@ SGL.ready(function() {
      * Handle content language selection
      *
      * If a <select id="cLang"> is present this handler allows to modify
-     * the value of cLang param in url and preserves the rest of the url. 
-     * 
+     * the value of cLang param in url and preserves the rest of the url.
+     *
      */
     if (typeof jQuery != "undefined") {
         jQuery("#cLang").change(function() {
@@ -185,6 +185,9 @@ SGL.ready(function() {
                 return false;
             } else {
                 var url = SGL_JS_CURRURL;
+                // remove version ref
+                url = url.replace(/version\/\d+\/?/, '');
+                // substitute language ref
                 if (url.match(/cLang\/[a-z]{2}(\-[a-z0-9\-]+)?\/*/)) {
                     url = url.replace(/cLang\/[a-z]{2}(\-[a-z0-9\-]+)?\/*/i, 'cLang/' +selectedLang +'/');
                 } else {
