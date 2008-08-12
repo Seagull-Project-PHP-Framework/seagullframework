@@ -68,6 +68,27 @@ div#broadcastMessage {
         right: 5px;
         top: 5px;
     }
+#message {
+    position: absolute;
+    z-index: 200;
+    right: 50px;
+    top: 15px;
+    max-width: 500px;
+    overflow: hidden;
+}
+    #message p {
+        margin-bottom: 0;
+        padding: 5px 10px;
+        text-align: left;
+    }
+    #message .success {
+        background-color: green;
+        color: #fff;
+    }
+    #message .error {
+        background-color: red;
+        color: #fff;
+    }
 /* END messages & errors */
 
 
