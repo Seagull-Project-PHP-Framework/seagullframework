@@ -166,7 +166,9 @@ function toggleTransElements() {
                 <label class="tipOwner" for="conf[site][wysiwygEditor]">{translate(#Editor type#)}
                 <span class="tipText">{translate(#Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir#)}</span>
                 </label>
-                <input type="text" name="conf[site][wysiwygEditor]" id="conf[site][wysiwygEditor]" value="{conf[site][wysiwygEditor]}" />
+                <select name="conf[site][wysiwygEditor]">
+                    {generateSelect(aWysiwygEditor,conf[site][wysiwygEditor]):h}
+                </select>
             </p>
             {if:!isMinimalInstall}
             <p>

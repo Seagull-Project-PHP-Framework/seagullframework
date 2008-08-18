@@ -131,6 +131,8 @@ class ConfigMgr extends SGL_Manager
             'update' => array('update', 'redirectToDefault'),
         );
         $this->aTranslationContainers = array('file' => 'file', 'db' => 'database');
+
+		$this->aWysiwygEditor = array('fckeditor' => 'fckeditor', 'xinha' => 'xinha', 'htmlarea' => 'htmlarea', 'tinyfck' => 'tinyfck');
     }
 
     function validate($req, &$input)
@@ -263,7 +265,7 @@ class ConfigMgr extends SGL_Manager
         $output->aDbDoDebugLevels = $this->aDbDoDebugLevels;
         $output->aMysqlEngines    = $this->aMysqlEngines;
         $output->aMysqlEngines[0] = SGL_Output::translate($output->aMysqlEngines[0]);
-
+		$output->aWysiwygEditor = $this->aWysiwygEditor;
         //  retrieve installed languages
         if ($this->conf['translation']['container'] == 'db') {
             $output->aInstalledLangs = $this->trans->getLangs();
