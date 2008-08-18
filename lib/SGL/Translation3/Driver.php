@@ -157,10 +157,12 @@ abstract class SGL_Translation3_Driver
     public function loadDefaultDictionaries()
     {
         $conf = SGL_Config::singleton()->ensureModuleConfigLoaded('translation');
+        // Look for default dictionaries to be loaded
         $defaultDictionaries = SGL_Config::get('TranslationMgr.defaultDictionaries');
         $aDefaultDictionaries = !empty($defaultDictionaries)
             ? explode(',', $defaultDictionaries)
             : array();
+        // Or load default dictionaries the seagull way
         if (!count($aDefaultDictionaries)) {
             $moduleDefault = SGL_Config::get('site.defaultModule');
             $current = SGL_Request::singleton()->get('moduleName');
@@ -174,6 +176,14 @@ abstract class SGL_Translation3_Driver
             if (!(array_key_exists('default', $aDefaultDictionaries))
                     && $this->_aOptions['loadDefault']) {
                 array_unshift($aDefaultDictionaries, 'default');
+            }
+        }
+        // Look for additional dictionaries to load each request
+        $additionalDictionaries = SGL_Config::get('TranslationMgr.otherDictionaries');
+        if (!empty($additionalDictionaries)) {
+            $aAdditionalDictionaries = explode(',', $additionalDictionaries);
+            foreach ($aAdditionalDictionaries as $dictionary) {
+                $aDefaultDictionaries[] = $dictionary;
             }
         }
         // now load the dictionaries
