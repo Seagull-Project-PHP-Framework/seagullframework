@@ -919,5 +919,5 @@ div#debugPanel {
             margin-left: 0;
             margin-bottom: 0.5em;
         }
-/* END debug panel
+/* END debug panel */
 
