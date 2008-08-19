@@ -53,8 +53,8 @@ class Profile2Mgr extends SGL_Manager
         $oUser->countryName  = isset($aRegs[$oUser->country])
             ? $aRegs[$oUser->country] : $oUser->country;
 
-        $output->oUser      = $oUser;
-        $output->oMedia     = $oMedia;
+        $output->oUser  = $oUser;
+        $output->oMedia = $oMedia;
     }
 }
 ?>
