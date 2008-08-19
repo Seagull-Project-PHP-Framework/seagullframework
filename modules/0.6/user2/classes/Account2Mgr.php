@@ -57,6 +57,7 @@ class Account2Mgr extends SGL_Manager
         $output->oUser    = $oUser;
         $output->oMedia   = $oMedia;
         $output->roleName = $this->da->getRoleNameById(SGL_Session::getRoleId());
+        $output->userId   = SGL_Session::getUid();
 //        $output->remoteIp = $_SERVER['REMOTE_ADDR'];
 //        $output->login    = $this->da->getLastLogin();
     }

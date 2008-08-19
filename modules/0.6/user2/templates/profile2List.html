@@ -11,13 +11,13 @@
              alt="" />
         {end:}
     </p>
-    <p>
+    <p flexy:if="oUser.first_name">
         <strong>{tr(#first name#)}</strong>: {oUser.first_name}
     </p>
-    <p>
+    <p flexy:if="oUser.last_name">
         <strong>{tr(#last name#)}</strong>: {oUser.last_name}
     </p>
-    <p>
+    <p flexy:if="oUser.about">
         <strong>{tr(#about me#)}</strong>:<br />
         {nl2br(oUser.about)}
     </p>
