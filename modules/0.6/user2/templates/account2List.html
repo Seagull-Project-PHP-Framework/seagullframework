@@ -1,0 +1,45 @@
+<div id="accountContainer" flexy:ignore>
+    <h2>{pageTitle}</h2>
+
+    <p>
+        {tr(#date registered %date_created%#,#vprintf#,oUser)}
+    </p>
+    <p>
+        <strong>{tr(#avatar#)}</strong>:
+        <span>
+            <img />
+        </span>
+
+<!--        <a href="#">{tr(#edit#)}</a>-->
+    </p>
+    <p>
+        <strong>{tr(#first name#)}</strong>:
+        <span>{oUser.first_name}</span>
+<!--        <a href="#">{tr(#edit#)}</a>-->
+    </p>
+    <p>
+        <strong>{tr(#last name#)}</strong>:
+        <span>{oUser.last_name}</span>
+
+<!--        <a href="#">{tr(#edit#)}</a>-->
+    </p>
+    <p>
+        <strong>{tr(#about me#)}</strong>:<br />
+        <span>About me section</span>
+
+<!--        <br />-->
+<!--        <a href="#">{tr(#edit#)}</a>-->
+    </p>
+    <p>
+        <strong>{tr(#username#)}</strong>:
+        <span>{oUser.username}</span>
+    </p>
+    <p>
+        <strong>{tr(#email#)}</strong>:
+        <span>{oUser.email}</span>
+        <!--
+        &nbsp;
+        <a href="#">{tr(#edit#)}</a>
+        -->
+    </p>
+</div>
