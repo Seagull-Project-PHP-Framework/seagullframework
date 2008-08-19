@@ -232,7 +232,7 @@ class SGL_Inflector
         if (preg_match('/sessid/i', $str)) {
             return false;
         }
-        $pattern = '@^[A-Z_\']*$@';
+        $pattern = '@^[A-Z_\'][A-Z_0-9\']*$@';
         if (!preg_match($pattern, $str)) {
             return false;
         }
