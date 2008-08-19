@@ -1383,5 +1383,21 @@ class SGL_Output
         }
         return $ret;
     }
+
+    /**
+     * nl2br
+     *
+     * @access public
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    function nl2br($text)
+    {
+        $text = htmlspecialchars($text);
+        // echo, dot not return... this allows to avoid :h modifier
+        echo nl2br($text);
+    }
 }
 ?>
