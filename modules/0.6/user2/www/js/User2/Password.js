@@ -63,7 +63,3 @@ User2.Password =
         });
     }
 }
-
-$(document).ready(function() {
-    User2.Password.init();
-});

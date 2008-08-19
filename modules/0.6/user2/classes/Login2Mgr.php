@@ -45,8 +45,10 @@ class Login2Mgr extends SGL_Manager
 
         $output->addJavascriptFile(array(
             'js/jquery/plugins/jquery.form.js',
+            'user2/js/User2.js',
             'user2/js/User2/Login.js'
         ));
+        $output->addOnLoadEvent('User2.Login.init()', true);
     }
 
     public function _cmd_logout(SGL_Registry $input, SGL_Output $output)

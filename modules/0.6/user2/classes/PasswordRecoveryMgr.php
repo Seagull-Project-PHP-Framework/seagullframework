@@ -49,8 +49,10 @@ class PasswordRecoveryMgr extends SGL_Manager
         $output->addCssFile('themes/doris/css/screen/layout_simple.css');
         $output->addJavascriptFile(array(
             'js/jquery/plugins/jquery.form.js',
+            'user2/js/User2.js',
             'user2/js/User2/Password.js'
         ));
+        $output->addOnLoadEvent('User2.Password.init()', true);
     }
 
     public function _cmd_list(SGL_Registry $input, SGL_Output $output)

@@ -22,9 +22,8 @@ User2.Login =
                 return ret;
             },
             success: function(r, msg, f) {
-                console.log(r);
                 if (r.isLogged) {
-                    location.href = r.redir;
+                    document.location.href = r.redir;
                 } else {
                     // view mode
                     $('.ajaxLoader', f).hide();
@@ -68,7 +67,3 @@ User2.Login =
         });
     }
 }
-
-$(document).ready(function() {
-    User2.Login.init();
-});
