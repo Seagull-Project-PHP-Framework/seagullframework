@@ -56,7 +56,7 @@ CREATE TABLE `media_type-mime` (
 );
 
 /*==============================================================*/
-/* View: wv_media_profile_filename                              */
+/* View: vw_media_profile_filename                              */
 /*==============================================================*/
 CREATE OR REPLACE VIEW vw_media_profile_filename
     AS
