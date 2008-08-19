@@ -54,3 +54,13 @@ CREATE TABLE `media_type-mime` (
 
     PRIMARY KEY (`media_type_id`, `media_mime_id`)
 );
+
+/*==============================================================*/
+/* View: wv_media_profile_filename                              */
+/*==============================================================*/
+CREATE OR REPLACE VIEW vw_media_profile_filename
+    AS
+SELECT    m.file_name AS media_file_name, m.fk_id AS usr_id
+FROM      media AS m, media_type AS mt
+WHERE     mt.name = 'profile' AND mt.media_type_id = m.media_type_id
+ORDER BY  m.date_created DESC;
