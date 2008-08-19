@@ -85,5 +85,22 @@ class User2DAO extends SGL_Manager
         ";
         return $this->dbh->query($query);
     }
+
+    public function getProfileImageByUserId($userId)
+    {
+        $query = "
+            SELECT    m.*
+            FROM      media AS m,
+                      usr AS u,
+                      media_type AS mt
+            WHERE     mt.name = 'profile'
+                      AND mt.media_type_id = m.media_type_id
+                      AND m.fk_id = u.usr_id
+                      AND u.usr_id = " . intval($userId) . "
+            ORDER BY  m.date_created DESC
+        ";
+        $query = $this->dbh->modifyLimitQuery($query, 0, 1);
+        return $this->dbh->getRow($query);
+    }
 }
 ?>

@@ -6,10 +6,10 @@
     </p>
     <p>
         <strong>{tr(#avatar#)}</strong>:
-        <span>
-            <img />
+        <span flexy:if="oMedia">
+            <img src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}"
+                 alt="" />
         </span>
-
 <!--        <a href="#">{tr(#edit#)}</a>-->
     </p>
     <p>
