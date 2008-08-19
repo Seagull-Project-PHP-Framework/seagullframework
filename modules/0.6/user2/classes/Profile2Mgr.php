@@ -46,12 +46,15 @@ class Profile2Mgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
+        $aRegs  = SGL::loadRegionList('countries');
         $oMedia = $this->da->getProfileImageByUserId($input->userId);
         $oUser  = $this->da->getUserById($input->userId);
         $oUser->date_created = SGL_Output::formatDatePretty($oUser->date_created);
+        $oUser->countryName  = isset($aRegs[$oUser->country])
+            ? $aRegs[$oUser->country] : $oUser->country;
 
-        $output->oUser  = $oUser;
-        $output->oMedia = $oMedia;
+        $output->oUser      = $oUser;
+        $output->oMedia     = $oMedia;
     }
 }
 ?>
