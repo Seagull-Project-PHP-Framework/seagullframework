@@ -4,6 +4,7 @@ require_once SGL_CORE_DIR . '/Observer.php';
 require_once SGL_CORE_DIR . '/AjaxProvider2.php';
 require_once dirname(__FILE__) . '/User2DAO.php';
 require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+require_once SGL_MOD_DIR . '/media2/classes/Media2DAO.php';
 
 /**
  * Ajax provider.
@@ -20,6 +21,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
 
         $this->da->add(UserDAO::singleton());
         $this->da->add(User2DAO::singleton());
+        $this->da->add(Media2DAO::singleton());
     }
 
     public function process(SGL_Registry $input, SGL_Output $output)
@@ -155,6 +157,29 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         }
     }
 
+    /**
+     * Update user for specified field.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
+    public function updateUserData(SGL_Registry $input, SGL_Output $output)
+    {
+        $aAllowedFields = array('first_name', 'last_name', 'about');
+
+        $field = $this->req->get('fieldName');
+        $val   = $this->req->get('value');
+
+        if (!in_array($field, $aAllowedFields)) {
+            $output->val = 'hack';
+        } else {
+            $this->da->updateUserById(SGL_Session::getUid(), array(
+                $field => $val
+            ));
+            $output->val = $val;
+        }
+    }
+
     public function recoverPassword(SGL_Registry $input, SGL_Output $output)
     {
         $input->user = (object) $this->req->get('user');
@@ -235,6 +260,27 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 }
             }
         }
+    }
+
+    /**
+     * Link already uploaded media to current user.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
+    public function linkProfileMediaAndView(SGL_Registry $input, SGL_Output $output)
+    {
+        $mediaId = $this->req->get('mediaId');
+
+        // link media
+        $ok = $this->da->linkMediaToFk($mediaId, SGL_Session::getUid());
+
+        $oMedia = $this->da->getMediaById($mediaId);
+
+        // return path for newly created media
+        $output->imgPath = SGL_BASE_URL
+            . '/media2/img.php?path=var/uploads/thumbs/small_'
+            . $oMedia->file_name;
     }
 
     private function _validateEmail($oUser, $type = 'recover')

@@ -40,6 +40,12 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getOne($query);
     }
 
+    public function updateUserById($userId, $aFields)
+    {
+        return $this->dbh->autoExecute('usr', $aFields,
+            DB_AUTOQUERY_UPDATE, 'usr_id = ' . intval($userId));
+    }
+
     public function updatePasswordByUserId($userId, $password)
     {
         $query = "

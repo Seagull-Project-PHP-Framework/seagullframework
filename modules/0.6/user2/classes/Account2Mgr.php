@@ -3,6 +3,7 @@
 require_once SGL_CORE_DIR . '/Delegator.php';
 require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 require_once SGL_MOD_DIR . '/user2/classes/User2DAO.php';
+require_once SGL_MOD_DIR . '/media2/classes/Media2DAO.php';
 
 class Account2Mgr extends SGL_Manager
 {
@@ -21,6 +22,7 @@ class Account2Mgr extends SGL_Manager
         $this->da = new SGL_Delegator();
         $this->da->add(UserDAO::singleton());
         $this->da->add(User2DAO::singleton());
+        $this->da->add(Media2DAO::singleton());
     }
 
     public function validate(SGL_Request $req, SGL_Registry $input)
@@ -39,10 +41,20 @@ class Account2Mgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-//        $output->addJavascriptFile(array(
-//            'js/jquery/plugins/jquery.form.js',
-//            'user2/js/User2/Login.js'
-//        ));
+        $output->addJavascriptFile(array(
+            'js/jquery/plugins/jquery.form.js',
+            'media2/js/jquery/ajaxfileupload.js',
+            'user2/js/User2.js',
+            'user2/js/User2/Account.js'
+        ));
+        $output->addOnLoadEvent('User2.Account.init()', true);
+
+        // export media type constants
+        $aMediaTypes = $this->da->getMediaTypes();
+        foreach ($aMediaTypes as $oMediaType) {
+            $name = 'MEDIATYPE_' . strtoupper($oMediaType->name);
+        	$output->exportJsVar($name, $oMediaType->media_type_id);
+        }
     }
 
     public function _cmd_list(SGL_Registry $input, SGL_Output $output)
