@@ -5,10 +5,11 @@
         {tr(#date registered %date_created%#,#vprintf#,oUser)}
     </p>
     <p>
-        <strong>{tr(#avatar#)}</strong>:
         {if:oMedia}
         <img src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}"
              alt="" />
+        {else:}
+        <img src="{imagesDir}/no_image.gif" alt="" />
         {end:}
     </p>
     <p flexy:if="oUser.first_name">

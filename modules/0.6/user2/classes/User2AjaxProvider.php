@@ -158,7 +158,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
     }
 
     /**
-     * Update user for specified field.
+     * Update user info for specified field.
      *
      * @param SGL_Registry $input
      * @param SGL_Output $output
