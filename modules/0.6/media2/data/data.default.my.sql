@@ -1,8 +1,15 @@
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'media2', 'Media2', NULL, NULL, NULL, 'Thomas Goetz', NULL, NULL, NULL);
 
--- SELECT @moduleId := MAX(module_id) FROM module;
--- SELECT @memberId := 2;
+SELECT @moduleId := MAX(module_id) FROM module;
+SELECT @memberId := 2;
 -- SELECT @anyRole  := -2;
+
+--
+-- Add permissions
+--
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'mediauploadermgr', '', @moduleId);
+SELECT @permissionId := `permission_id` FROM `permission` WHERE `name` = 'mediauploadermgr';
+INSERT INTO `role_permission` VALUES ({SGL_NEXT_ID}, @memberId, @permissionId);
 
 /*==============================================================*/
 /* Table: media_mime                                            */
