@@ -58,9 +58,23 @@ CREATE TABLE `media_type-mime` (
 /*==============================================================*/
 /* View: vw_media_profile_filename                              */
 /*==============================================================*/
+-- CREATE OR REPLACE VIEW vw_media_profile_filename
+--     AS
+-- SELECT    m.file_name AS media_file_name, m.fk_id AS usr_id
+-- FROM      media AS m, media_type AS mt
+-- WHERE     mt.name = 'profile' AND mt.media_type_id = m.media_type_id
+-- ORDER BY  m.date_created DESC;
 CREATE OR REPLACE VIEW vw_media_profile_filename
     AS
 SELECT    m.file_name AS media_file_name, m.fk_id AS usr_id
 FROM      media AS m, media_type AS mt
 WHERE     mt.name = 'profile' AND mt.media_type_id = m.media_type_id
-ORDER BY  m.date_created DESC;
+          AND m.media_id = (
+              SELECT    m2.media_id
+              FROM      media_type AS mt2, media AS m2
+              WHERE     mt2.name = 'profile'
+                        AND mt2.media_type_id = m2.media_type_id
+                        AND m2.fk_id = m.fk_id
+              ORDER BY  m2.date_created DESC
+              LIMIT     1
+          );
