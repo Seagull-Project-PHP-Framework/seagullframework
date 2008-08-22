@@ -143,8 +143,8 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 $persist              = true;
                 $output->isRegistered = true;
                 $output->redir        = $input->getCurrentUrl()->makeLink(array(
-                    'moduleName'  => SGL_Session::get('site.defaultModule'),
-                    'managerName' => SGL_Session::get('site.defaultManager')
+                    'moduleName'  => SGL_Config::get('site.defaultModule'),
+                    'managerName' => SGL_Config::get('site.defaultManager')
                 ));
             } else {
                 $msg = array(
