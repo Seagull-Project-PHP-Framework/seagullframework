@@ -125,7 +125,7 @@ class User2DAO extends SGL_Manager
             'post_code', 'country');
         foreach (array_keys($aFields) as $k) {
             if (!in_array($k, $aAllowedFields)) {
-                unserialize($aFields[$k]);
+                unset($aFields[$k]);
             }
         }
         return $this->dbh->autoExecute('address', $aFields,
