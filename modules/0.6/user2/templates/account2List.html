@@ -85,6 +85,56 @@
 
     </div><!-- END: Last name -->
 
+    <!-- Gender -->
+    <div class="field">
+
+        <!-- View block -->
+        <div class="viewMode">
+            <strong>{tr(#gender#)}</strong>:
+            <span>
+            {if:oUser.gender}
+                {if:isEqual(oUser.gender,#m#)}
+                    {tr(#male#)}
+                {end:}
+                {if:isEqual(oUser.gender,#f#)}
+                    {tr(#Female#)}
+                {end:}
+            {else:}
+                {tr(#no information specified#)}
+            {end:}
+            </span>
+            <a class="edit" href="#">{tr(#edit#)}</a>
+        </div>
+
+        <form class="editMode" method="post" style="display: none;"
+              action="{makeUrl(#updateUserData#,#user2#,#user2#)}" flexy:ignore>
+            <input type="hidden" name="fieldName" value="gender" />
+
+            <label for="gender_male">Male</label>
+            <input id="gender_male" type="radio" name="value" value="m" checked="checked"
+                   flexy:if="isEqual(oUser.gender,#m#)" />
+            <input id="gender_male" type="radio" name="value" value="m"
+                   flexy:if="!isEqual(oUser.gender,#m#)"  />
+            &nbsp;
+            <label for="gender_female">Female</label>
+            <input id="gender_female" type="radio" name="value" value="f" checked="checked"
+                   flexy:if="isEqual(oUser.gender,#f#)" />
+            <input id="gender_female" type="radio" name="value" value="f"
+                   flexy:if="!isEqual(oUser.gender,#f#)" />
+            &nbsp;&nbsp;&nbsp;
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#save#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </form>
+
+    </div><!-- END: gender -->
+
     <!-- About -->
     <div class="field">
 

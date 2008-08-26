@@ -165,7 +165,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
      */
     public function updateUserData(SGL_Registry $input, SGL_Output $output)
     {
-        $aAllowedFields = array('first_name', 'last_name', 'about');
+        $aAllowedFields = array('first_name', 'last_name', 'about', 'gender');
 
         $field = $this->req->get('fieldName');
         $val   = $this->req->get('value');
@@ -176,6 +176,18 @@ class User2AjaxProvider extends SGL_AjaxProvider2
             $this->da->updateUserById(SGL_Session::getUid(), array(
                 $field => $val
             ));
+            if ($field == 'gender') {
+                switch ($val) {
+                    case 'm':
+                        $val = SGL_Output::tr('male');
+                        break;
+                    case 'f':
+                        $val = SGL_Output::tr('female');
+                        break;
+                    default:
+                        $val = SGL_Output::tr('unknown');
+                }
+            }
             $output->val = $val;
         }
     }

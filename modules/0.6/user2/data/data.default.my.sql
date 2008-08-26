@@ -1,5 +1,7 @@
 ALTER TABLE `usr`
     ADD `about` TEXT NULL AFTER `email`;
+ALTER TABLE `usr`
+    ADD `gender` CHAR(1) NULL AFTER `email`;
 
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user2', 'User2', NULL, NULL, NULL, 'Dmitri Lakachauskis', NULL, NULL, NULL);
 
