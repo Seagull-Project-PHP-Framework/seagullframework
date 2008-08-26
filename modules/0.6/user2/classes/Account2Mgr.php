@@ -66,7 +66,7 @@ class Account2Mgr extends SGL_Manager
         $oUser  = $this->da->getUserById($userId);
         $oUser->date_created = SGL_Output::formatDatePretty($oUser->date_created);
 
-        $output->oAddress   = $this->da->getAddressById($oUser->address_id);
+        $output->oAddress   = $this->da->getAddressByUserId($userId);
         $output->oUser      = $oUser;
         $output->oMedia     = $oMedia;
         $output->roleName   = $this->da->getRoleNameById(SGL_Session::getRoleId());

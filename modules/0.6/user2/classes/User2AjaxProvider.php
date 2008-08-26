@@ -334,8 +334,13 @@ class User2AjaxProvider extends SGL_AjaxProvider2
     {
         $aAddress = $this->req->get('address');
 
-        $oUser = $this->da->getUserById(SGL_Session::getUid());
-        $this->da->updateAddressById($oUser->address_id, $aAddress);
+        $oAddress = $this->da->getAddressByUserId(SGL_Session::getUid());
+        if (!empty($oAddress)) {
+            $this->da->updateAddressById($oAddress->address_id, $aAddress);
+        } else {
+            $userId = SGL_Session::getUid();
+            $this->da->addAddress($userId, $aAddress);
+        }
     }
 
     private function _validateEmail($oUser, $type = 'recover')

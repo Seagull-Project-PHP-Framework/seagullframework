@@ -109,14 +109,52 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
 
-    public function getAddressById($addressId)
+    public function getAddressByUserId($userId, $addressType = null)
     {
+        $constraint = '';
+        if (!empty($addressType)) {
+            $constraint = ' AND ua.address_type = ' . $this->dbh->quoteSmart($addressType);
+        }
         $query = "
-            SELECT *
-            FROM   address
-            WHERE  address_id = " . intval($addressId) . "
+            SELECT a.*
+            FROM   `user-address` ua
+            INNER JOIN `address` a ON ua.address_id = a.address_id
+            WHERE  
+                ua.usr_id = " . intval($userId) . "
+                $constraint
         ";
         return $this->dbh->getRow($query);
+    }
+    
+    public function addAddress($userId, $aFields, $addressType = null)
+    {
+        $aAllowedFields = array('address1', 'address2', 'city', 'state',
+            'post_code', 'country');
+        foreach (array_keys($aFields) as $k) {
+            if (!in_array($k, $aAllowedFields)) {
+                unset($aFields[$k]);
+            }
+        }
+        $aFields['address_id'] = $this->dbh->nextId('address');
+        $success = $this->dbh->autoExecute('address', $aFields,
+            DB_AUTOQUERY_INSERT);
+
+        if (PEAR::isError($success)) {
+            return $success;
+        }
+        
+        $assocFields = array(
+            'usr_id'     => $userId,
+            'address_id' => $aFields['address_id'],
+        );
+        
+        if (!empty($addressType)) {
+            $assocFields['address_type'] = $addressType;
+        }
+        
+        return $this->dbh->autoExecute('`user-address`', $assocFields,
+            DB_AUTOQUERY_INSERT);
+        
     }
 
     public function updateAddressById($addressId, $aFields)

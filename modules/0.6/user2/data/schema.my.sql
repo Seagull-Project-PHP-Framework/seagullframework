@@ -25,3 +25,14 @@ CREATE TABLE `address` (
 
     PRIMARY KEY (`address_id`)
 ) ENGINE=InnoDB;
+
+/*==============================================================*/
+/* Table: address                                               */
+/*==============================================================*/
+CREATE TABLE `user-address` (
+    `usr_id`                  int(11)                            NOT NULL,
+    `address_id`              int(11)                            NOT NULL,
+    `address_type`            varchar(32)                        DEFAULT NULL,
+
+    PRIMARY KEY (`usr_id`,`address_id`,`address_type`)
+) ENGINE=InnoDB;
