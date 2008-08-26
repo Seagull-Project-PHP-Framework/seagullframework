@@ -64,6 +64,51 @@ User2.Account =
             return false;
         });
         this.uploadMediaTrigger();
+        // password update
+        $('#changePassword-trigger a').click(function() {
+            $(this).parent().hide();
+            $('#changePassword-container').show();
+            return false;
+        });
+        function hidePasswordForm() {
+            $('#changePassword-container').hide();
+            $('#changePassword-trigger').show();
+        }
+        $('#updatePassword .actions a').click(function() {
+            hidePasswordForm();
+            return false;
+        });
+        $('#updatePassword').ajaxForm({
+            beforeSubmit: function(elems, f) {
+                var ret = false;
+                if ($.trim($(elems[0]).val())
+                    && $.trim($(elems[1]).val())
+                    && $.trim($(elems[2]).val()))
+                {
+                    // edit mode
+                    SGL2.Util.disableSubmit('input', f);
+                    $('.actions', f).hide();
+                    $('.ajaxLoader', f).show();
+                    ret = true;
+                } else {
+                    var msg = 'fill in required data'.translate().toString();
+                    SGL2.showMessage('#message', msg, SGL_MSG_ERROR, 1);
+                }
+                return ret;
+            },
+            success: function(r, msg, f) {
+                console.log(r);
+                if (r.isUpdated) {
+                    hidePasswordForm();
+                    // cleanup
+                    $('input[type="password"]', f).val('').eq(0).focus();
+                }
+                // view mode
+                $('.ajaxLoader', f).hide();
+                $('.actions', f).show();
+                SGL2.Util.enableSubmit('input', f);
+            }
+        });
     },
 
     /**

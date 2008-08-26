@@ -231,6 +231,41 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         }
     }
 
+    public function resetPassword(SGL_Registry $input, SGL_Output $output)
+    {
+        $input->passwordNew    = $this->req->get('password_new');
+        $input->passwordRepeat = $this->req->get('password_repeat');
+        $input->passwordOrig   = $this->req->get('password_orig');
+
+        $userId            = SGL_Session::getUid();
+        $output->isUpdated = false;
+        if (empty($input->passwordNew)
+            || empty($input->passwordRepeat)
+            || empty($input->passwordOrig))
+        {
+            $this->_raiseMsg(array('message' => 'fill in required data',
+                'type' => SGL_MESSAGE_ERROR), $trans = true);
+        } else {
+            $oUser = $this->da->getUserById($userId);
+            if ($oUser->passwd != md5($input->passwordOrig)) {
+                $this->_raiseMsg(array('message' => 'wrong current password',
+                    'type' => SGL_MESSAGE_ERROR), $trans = true);
+            } elseif (strlen($input->passwordNew) <= 5) {
+                $this->_raiseMsg(array('message' => 'password is too short',
+                    'type' => SGL_MESSAGE_ERROR), $trans = true);
+            } elseif ($input->passwordNew != $input->passwordRepeat) {
+                $this->_raiseMsg(array('message' => 'passwords are not the same',
+                    'type' => SGL_MESSAGE_ERROR), $trans = true);
+            } else {
+                $ok = $this->da->updatePasswordByUserId($userId,
+                    $input->passwordNew);
+                if (!PEAR::isError($ok)) {
+                    $output->isUpdated = true;
+                }
+            }
+        }
+    }
+
     public function resetPasswordByHash(SGL_Registry $input, SGL_Output $output)
     {
         $input->oUser  = (object) $this->req->get('user');
