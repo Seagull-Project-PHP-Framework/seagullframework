@@ -66,10 +66,13 @@ class Account2Mgr extends SGL_Manager
         $oUser  = $this->da->getUserById($userId);
         $oUser->date_created = SGL_Output::formatDatePretty($oUser->date_created);
 
-        $output->oUser    = $oUser;
-        $output->oMedia   = $oMedia;
-        $output->roleName = $this->da->getRoleNameById(SGL_Session::getRoleId());
-        $output->userId   = SGL_Session::getUid();
+        $output->oAddress   = $this->da->getAddressById($oUser->address_id);
+        $output->oUser      = $oUser;
+        $output->oMedia     = $oMedia;
+        $output->roleName   = $this->da->getRoleNameById(SGL_Session::getRoleId());
+        $output->userId     = SGL_Session::getUid();
+        $output->aCountries = SGL::loadRegionList('countries');
+        $output->aStates    = SGL::loadRegionList('states');
 //        $output->remoteIp = $_SERVER['REMOTE_ADDR'];
 //        $output->login    = $this->da->getLastLogin();
     }

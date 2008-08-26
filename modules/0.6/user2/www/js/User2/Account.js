@@ -64,18 +64,31 @@ User2.Account =
             return false;
         });
         this.uploadMediaTrigger();
-        // password update
-        $('#changePassword-trigger a').click(function() {
-            $(this).parent().hide();
+        // password/address update
+        $('#changePassword-trigger').click(function() {
+            $(this).hide();
             $('#changePassword-container').show();
+            return false;
+        });
+        $('#changeAddress-trigger').click(function() {
+            $(this).hide();
+            $('#changeAddress-container').show();
             return false;
         });
         function hidePasswordForm() {
             $('#changePassword-container').hide();
             $('#changePassword-trigger').show();
         }
+        function hideAddressForm() {
+            $('#changeAddress-container').hide();
+            $('#changeAddress-trigger').show();
+        }
         $('#updatePassword .actions a').click(function() {
             hidePasswordForm();
+            return false;
+        });
+        $('#changeAddress .actions a').click(function() {
+            hideAddressForm();
             return false;
         });
         $('#updatePassword').ajaxForm({
@@ -103,6 +116,22 @@ User2.Account =
                     // cleanup
                     $('input[type="password"]', f).val('').eq(0).focus();
                 }
+                // view mode
+                $('.ajaxLoader', f).hide();
+                $('.actions', f).show();
+                SGL2.Util.enableSubmit('input', f);
+            }
+        });
+        $('#changeAddress').ajaxForm({
+            beforeSubmit: function(elems, f) {
+                // edit mode
+                SGL2.Util.disableSubmit('input', f);
+                $('.actions', f).hide();
+                $('.ajaxLoader', f).show();
+            },
+            success: function(r, msg, f) {
+                console.log(r);
+                hideAddressForm();
                 // view mode
                 $('.ajaxLoader', f).hide();
                 $('.actions', f).show();

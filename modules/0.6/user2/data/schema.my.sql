@@ -10,3 +10,18 @@ CREATE TABLE `user_passwd_hash` (
     PRIMARY KEY (`user_passwd_hash_id`),
     KEY (`usr_id`)
 ) ENGINE=InnoDB;
+
+/*==============================================================*/
+/* Table: address                                               */
+/*==============================================================*/
+CREATE TABLE `address` (
+    `address_id`              int(11)             NOT NULL,
+    `address1`                varchar(128)                       DEFAULT NULL,
+    `address2`                varchar(128)                       DEFAULT NULL,
+    `city`                    varchar(128)                       DEFAULT NULL,
+    `state`                   varchar(128)                       DEFAULT NULL,
+    `post_code`               varchar(128)                       DEFAULT NULL,
+    `country`                 varchar(128)                       DEFAULT NULL,
+
+    PRIMARY KEY (`address_id`)
+) ENGINE=InnoDB;

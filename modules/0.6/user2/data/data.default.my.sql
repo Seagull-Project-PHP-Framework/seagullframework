@@ -1,11 +1,17 @@
+/*==============================================================*/
+/* Table: usr                                                   */
+/*==============================================================*/
 ALTER TABLE `usr`
     ADD `about` TEXT NULL AFTER `email`;
 ALTER TABLE `usr`
     ADD `gender` CHAR(1) NULL AFTER `email`;
+ALTER TABLE `usr`
+    ADD `address_id` INTEGER NULL AFTER `role_id`;
 
 INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'user2', 'User2', NULL, NULL, NULL, 'Dmitri Lakachauskis', NULL, NULL, NULL);
 
 SELECT @moduleId := MAX(module_id) FROM module;
+SELECT @rootId   := 1;
 SELECT @memberId := 2;
 
 --

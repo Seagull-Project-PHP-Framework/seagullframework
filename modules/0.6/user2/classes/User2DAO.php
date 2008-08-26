@@ -108,5 +108,28 @@ class User2DAO extends SGL_Manager
         $query = $this->dbh->modifyLimitQuery($query, 0, 1);
         return $this->dbh->getRow($query);
     }
+
+    public function getAddressById($addressId)
+    {
+        $query = "
+            SELECT *
+            FROM   address
+            WHERE  address_id = " . intval($addressId) . "
+        ";
+        return $this->dbh->getRow($query);
+    }
+
+    public function updateAddressById($addressId, $aFields)
+    {
+        $aAllowedFields = array('address1', 'address2', 'city', 'state',
+            'post_code', 'country');
+        foreach (array_keys($aFields) as $k) {
+            if (!in_array($k, $aAllowedFields)) {
+                unserialize($aFields[$k]);
+            }
+        }
+        return $this->dbh->autoExecute('address', $aFields,
+            DB_AUTOQUERY_UPDATE, 'address_id = ' . intval($addressId));
+    }
 }
 ?>

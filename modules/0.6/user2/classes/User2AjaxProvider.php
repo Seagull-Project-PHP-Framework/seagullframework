@@ -250,7 +250,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
             if ($oUser->passwd != md5($input->passwordOrig)) {
                 $this->_raiseMsg(array('message' => 'wrong current password',
                     'type' => SGL_MESSAGE_ERROR), $trans = true);
-            } elseif (strlen($input->passwordNew) <= 5) {
+            } elseif (strlen($input->passwordNew) < 5) {
                 $this->_raiseMsg(array('message' => 'password is too short',
                     'type' => SGL_MESSAGE_ERROR), $trans = true);
             } elseif ($input->passwordNew != $input->passwordRepeat) {
@@ -328,6 +328,14 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         $output->imgPath = SGL_BASE_URL
             . '/media2/img.php?path=var/uploads/thumbs/small_'
             . $oMedia->file_name;
+    }
+
+    public function updateAddress(SGL_Registry $input, SGL_Output $output)
+    {
+        $aAddress = $this->req->get('address');
+
+        $oUser = $this->da->getUserById(SGL_Session::getUid());
+        $this->da->updateAddressById($oUser->address_id, $aAddress);
     }
 
     private function _validateEmail($oUser, $type = 'recover')

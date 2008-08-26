@@ -9,8 +9,15 @@
     <div id="changePassword-container" style="display: none;">
         <flexy:include src="account2_changePassword.html" />
     </div>
-    <p id="changePassword-trigger">
-        <a href="#">{tr(#change password#)}</a>
+
+    <!-- Change Address -->
+    <div id="changeAddress-container" style="display: none;">
+        <flexy:include src="account2_changeAddress.html" />
+    </div>
+
+    <p>
+        <a id="changePassword-trigger" href="#">{tr(#change password#)}</a><br />
+        <a id="changeAddress-trigger" href="#">{tr(#change address#)}</a>
     </p>
 
     <!-- Image upload -->
