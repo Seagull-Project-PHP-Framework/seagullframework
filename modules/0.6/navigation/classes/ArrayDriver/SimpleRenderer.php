@@ -81,14 +81,29 @@ class ArrayDriver_SimpleRenderer
      */
     function _prepare(&$renderer)
     {
-        $renderer->setItemTemplate('', '</li>');
-        $renderer->setLevelTemplate('<ul>', '</ul>');
-        $renderer->setEntryTemplate(array(
-            HTML_MENU_ENTRY_INACTIVE    => '<li><a href="{url}">{title}</a>',
-            HTML_MENU_ENTRY_ACTIVE      => '<li class="current"><a href="{url}">{title}</a>',
-            HTML_MENU_ENTRY_ACTIVEPATH  => '<li class="current"><a href="{url}">{title}</a>'
-        ));
+        if (is_a($renderer, 'HTML_Menu_DirectTreeRenderer')) {
+            $renderer->setItemTemplate('', '</li>');
+            $renderer->setLevelTemplate('<ul>', '</ul>');
+            $renderer->setEntryTemplate(array(
+                HTML_MENU_ENTRY_INACTIVE    => '<li><a href="{url}">{title}</a>',
+                HTML_MENU_ENTRY_ACTIVE      => '<li class="current"><a href="{url}">{title}</a>',
+                HTML_MENU_ENTRY_ACTIVEPATH  => '<li class="current"><a href="{url}">{title}</a>'
+            ));
+        } elseif (is_a($renderer, 'HTML_Menu_DirectRenderer')) {
+            $renderer->setEntryTemplate(array(
+                HTML_MENU_ENTRY_ACTIVE      => '<a href="{url}">{title}</a> &gt; ',
+                HTML_MENU_ENTRY_BREADCRUMB  => '<a href="{url}">{title}</a> &gt; ',
+                /*
+                HTML_MENU_ENTRY_INACTIVE    => '<td>{indent}<a href="{url}">{title}</a></td>',
+                HTML_MENU_ENTRY_ACTIVEPATH  => '<td>{indent}<b><a href="{url}">{title}</a></b></td>',
+                HTML_MENU_ENTRY_PREVIOUS    => '<td><a href="{url}">&lt;&lt; {title}</a></td>',
+                HTML_MENU_ENTRY_NEXT        => '<td><a href="{url}">{title} &gt;&gt;</a></td>',
+                HTML_MENU_ENTRY_UPPER       => '<td><a href="{url}">^ {title} ^</a></td>',
+                */
+            ));
+            $renderer->setRowTemplate('', '');
+            $renderer->setMenuTemplate('', '');
+        }
     }
 }
-
 ?>
