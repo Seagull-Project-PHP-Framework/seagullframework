@@ -63,6 +63,15 @@ class ArrayDriver
      */
     var $_aParams = array();
 
+    /**
+     * ArrayDriver singleton.
+     *
+     * @access public
+     *
+     * @param SGL_Output $output
+     *
+     * @return ArrayDriver
+     */
     function &singleton(&$output)
     {
         static $instance;
@@ -78,8 +87,6 @@ class ArrayDriver
      *   - identifies current node
      *   - checks permissions
      *
-     * NOTE: only two levels menu supported by now.
-     *
      * @access public
      *
      * @param SGL_Output $output
@@ -94,7 +101,7 @@ class ArrayDriver
             ArrayDriver::saveNodes($aNodes);
         }
 
-        // skip admin root if not allowed
+        // skip admin sections if not allowed
         if (empty($output->adminGuiAllowed)) {
             unset($aNodes[SGL_NODE_ADMIN]);
 
@@ -109,46 +116,39 @@ class ArrayDriver
             if (!isset($this->_aCurrentIndexes[$rootId])) {
                 $this->_aCurrentIndexes[$rootId] = 0;
             }
-            foreach ($aSections as $sectionId => $section) {
-                if (!$this->_nodeAccessAllowed($section)) {
-                    unset($aNodes[$rootId][$sectionId]);
-                    continue;
-                }
-                $section['link']       = $this->_makeLinkFromNode($section);
-                $section['url']        = $section['link'];
-                $section['is_current'] = $this->_isCurrentNode($section);
-
-                if (!empty($section['is_current'])) {
-                    $this->_aCurrentTitles[$rootId] = $section['title'];
-                    $this->_aCurrentIndexes[$rootId] = $sectionId;
-                }
-
-                // save changes made to section
-                $aNodes[$rootId][$sectionId] = $section;
-
-                if (!empty($section['sub'])) {
-                    foreach ($section['sub'] as $subSectionId => $subSection) {
-                        if (!$this->_nodeAccessAllowed($subSection)) {
-                            unset($aNodes[$rootId][$sectionId]['sub'][$subSectionId]);
-                            continue;
-                        }
-                        $subSection['link']       = $this->_makeLinkFromNode($subSection);
-                        $subSection['url']        = $subSection['link'];
-                        $subSection['is_current'] = $this->_isCurrentNode($subSection);
-
-                        if (!empty($subSection['is_current'])) {
-                            $this->_aCurrentTitles[$rootId] = $subSection['title'];
-                            $this->_aCurrentIndexes[$rootId] = $subSectionId;
-                            $aNodes[$rootId][$sectionId]['is_current'] = $subSection['is_current'];
-                        }
-
-                        // save changes made to subsection
-                        $aNodes[$rootId][$sectionId]['sub'][$subSectionId] = $subSection;
-                    }
-                }
-            }
+            $this->_processTree($aSections, $rootId);
+            $aNodes[$rootId] = $aSections;
         }
+
         $this->_aSections = $aNodes;
+    }
+
+    function _processTree(&$aTree, $rootId)
+    {
+        foreach ($aTree as $nodeId => $aNode) {
+            if (!$this->_nodeAccessAllowed($aNode)) {
+                unset($aTree[$nodeId]);
+                continue;
+            }
+            if (empty($aNode['link']) && empty($aNode['url'])) {
+                $aNode['link'] = $aNode['url'] = $this->_makeLinkFromNode($aNode);
+            } elseif (empty($aNode['link'])) {
+                $aNode['link'] = $aNode['url'];
+            } else {
+                $aNode['url'] = $aNode['link'];
+            }
+            if (!isset($aNode['is_current'])) {
+                $aNode['is_current'] = $this->_isCurrentNode($aNode);
+            }
+            if (!empty($aNode['is_current'])) {
+                $this->_aCurrentTitles[$rootId]  = $aNode['title'];
+                $this->_aCurrentIndexes[$rootId] = $nodeId;
+            }
+            if (!empty($aNode['sub'])) {
+                $this->_processTree($aNode['sub'], $rootId);
+            }
+            $aTree[$nodeId] = $aNode;
+        }
     }
 
     /**
@@ -163,7 +163,7 @@ class ArrayDriver
      */
     function getNavigationStructure()
     {
-        $aMenu = array();
+        $aTree    = array();
         $aModules = SGL_Util::getAllModuleDirs(true);
         foreach ($aModules as $dirName) {
             $structureFile = SGL_MOD_DIR . '/' . $dirName . '/data/navigation.php';
@@ -176,60 +176,101 @@ class ArrayDriver
                 continue;
             }
 
-            $sectionRootId = null;
-            foreach ($aSections as $section) {
-                // find root ID
-                if (empty($sectionRootId) || $section['parent_id'] != SGL_NODE_GROUP) {
-                    $sectionRootId = $section['parent_id'];
-                    if (empty($aMenu[$sectionRootId])) {
-                        $aMenu[$sectionRootId] = array();
-                    }
-                }
+            $rootId = $parentId = null;
+            foreach ($aSections as $aSection) {
+                ArrayDriver::_simplifyNode($aSection);
 
-                // simplify node
-                $section['manager'] = SGL_Inflector::getSimplifiedNameFromManagerName($section['manager']);
-                if (!empty($section['uriType']) && $section['uriType'] == 'dynamic') {
-                    unset($section['uriType']);
-                }
-                if (isset($section['actionMapping'])) {
-                    if (!empty($section['actionMapping'])) {
-                        $section['action'] = $section['actionMapping'];
-                    }
-                    unset($section['actionMapping']);
-                }
-                if (isset($section['add_params'])) {
-                    if (!empty($section['add_params'])) {
-                        $section['params'] = $section['add_params'];
-                    }
-                    unset($section['add_params']);
-                }
-                if (!empty($section['is_enabled'])) {
-                    unset($section['is_enabled']);
-                }
-                if (isset($section['perms']) && $section['perms'] == SGL_ANY_ROLE) {
-                    unset($section['perms']);
-                }
+                $parentId = $aSection['parent_id'];
+                unset($aSection['parent_id']);
 
-                $parentId = $section['parent_id'];
-                unset($section['parent_id']);
+                // find root ID and assign relevant node ID to current node
+                if (empty($rootId) || $parentId != SGL_NODE_GROUP) {
+                    $rootId       = $parentId;
+                    $parentNodeId = ArrayDriver::_getNextNodeId($aTree[$rootId]);
+                    $aNode        = &$aTree[$rootId][$parentNodeId];
 
-                // create first level item
-                if ($parentId != SGL_NODE_GROUP) {
-                    $nextId = $currentIndex = $currentNodeId = $parentId * 10 + count($aMenu[$sectionRootId]) + 1;
-                    $aMenu[$sectionRootId][$nextId] = $section;
-
-                // create second level item
+                // assign relevant node ID to current node
+                // under current parent node ID
                 } else {
-                    $subNav = &$aMenu[$sectionRootId][$currentNodeId]['sub'];
-                    if (empty($subNav)) {
-                        $subNav = array();
-                    }
-                    $currentIndex = $nextId * 10 + count($subNav) + 1;
-                    $subNav[$currentIndex] = $section;
+                    $nodeId = ArrayDriver::_getNextNodeId(
+                        $aTree[$rootId][$parentNodeId]['sub']);
+                    $aNode  = &$aTree[$rootId][$parentNodeId]['sub'][$nodeId];
                 }
+
+                // process subtrees populating proper node IDs
+                ArrayDriver::_populateNodeIds($aSection);
+
+                $aNode = $aSection;
             }
+            unset($aSections);
         }
-        return $aMenu;
+        return $aTree;
+    }
+
+    function _getNextNodeId(&$aTree)
+    {
+        static $i;
+        if (!isset($i)) {
+            $i = 0;
+        }
+        return ++$i;
+
+        /*
+        // create first level item
+        if ($parentId != SGL_NODE_GROUP) {
+            $nextId = $currentIndex = $currentNodeId = $parentId * 10 + count($aMenu[$sectionRootId]) + 1;
+            $aMenu[$sectionRootId][$nextId] = $section;
+
+        // create second level item
+        } else {
+            $subNav = &$aMenu[$sectionRootId][$currentNodeId]['sub'];
+            if (empty($subNav)) {
+                $subNav = array();
+            }
+            $currentIndex = $nextId * 10 + count($subNav) + 1;
+            $subNav[$currentIndex] = $section;
+        }
+        */
+    }
+
+    function _populateNodeIds(&$aTree)
+    {
+        if (!empty($aTree['sub'])) {
+            $aRet = array();
+            foreach ($aTree['sub'] as $k => $aNode) {
+        	    ArrayDriver::_populateNodeIds($aNode);
+        	    $nextId = ArrayDriver::_getNextNodeId($aTree['sub']);
+        	    $aRet[$nextId] = $aNode;
+            }
+            $aTree['sub'] = $aRet;
+        }
+    }
+
+    function _simplifyNode(&$aNode)
+    {
+        $aNode['manager'] = SGL_Inflector::getSimplifiedNameFromManagerName(
+            $aNode['manager']);
+        if (!empty($aNode['uriType']) && $aNode['uriType'] == 'dynamic') {
+            unset($aNode['uriType']);
+        }
+        if (isset($aNode['actionMapping'])) {
+            if (!empty($aNode['actionMapping'])) {
+                $aNode['action'] = $aNode['actionMapping'];
+            }
+            unset($aNode['actionMapping']);
+        }
+        if (isset($aNode['add_params'])) {
+            if (!empty($aNode['add_params'])) {
+                $aNode['params'] = $aNode['add_params'];
+            }
+            unset($aNode['add_params']);
+        }
+        if (!empty($aNode['is_enabled'])) {
+            unset($aNode['is_enabled']);
+        }
+        if (isset($aNode['perms']) && $aNode['perms'] == SGL_ANY_ROLE) {
+            unset($aNode['perms']);
+        }
     }
 
     /**
