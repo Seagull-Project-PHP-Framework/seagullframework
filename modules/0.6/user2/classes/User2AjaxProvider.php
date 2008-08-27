@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 require_once SGL_CORE_DIR . '/Observer.php';
 require_once SGL_CORE_DIR . '/AjaxProvider2.php';
@@ -334,11 +334,11 @@ class User2AjaxProvider extends SGL_AjaxProvider2
     {
         $aAddress = $this->req->get('address');
 
-        $oAddress = $this->da->getAddressByUserId(SGL_Session::getUid());
+        $userId   = SGL_Session::getUid();
+        $oAddress = $this->da->getAddressByUserId($userId);
         if (!empty($oAddress)) {
             $this->da->updateAddressById($oAddress->address_id, $aAddress);
         } else {
-            $userId = SGL_Session::getUid();
             $this->da->addAddress($userId, $aAddress);
         }
     }
