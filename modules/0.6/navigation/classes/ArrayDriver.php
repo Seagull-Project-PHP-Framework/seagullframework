@@ -211,7 +211,7 @@ class ArrayDriver
     {
         static $i;
         if (!isset($i)) {
-            $i = 0;
+            $i = 100;
         }
         return ++$i;
 
