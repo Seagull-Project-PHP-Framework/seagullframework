@@ -126,6 +126,23 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
     
+    public function getAddressesByUserId($userId, $addressType = null)
+    {
+        $constraint = '';
+        if (!empty($addressType)) {
+            $constraint = ' AND ua.address_type = ' . $this->dbh->quoteSmart($addressType);
+        }
+        $query = "
+            SELECT a.*
+            FROM   `user-address` ua
+            INNER JOIN `address` a ON ua.address_id = a.address_id
+            WHERE  
+                ua.usr_id = " . intval($userId) . "
+                $constraint
+        ";
+        return $this->dbh->getAssoc($query);
+    }
+    
     public function addAddress($userId, $aFields, $addressType = null)
     {
         $aAllowedFields = array('address1', 'address2', 'city', 'state',
@@ -152,9 +169,14 @@ class User2DAO extends SGL_Manager
             $assocFields['address_type'] = $addressType;
         }
         
-        return $this->dbh->autoExecute('`user-address`', $assocFields,
+        $success = $this->dbh->autoExecute('`user-address`', $assocFields,
             DB_AUTOQUERY_INSERT);
         
+        if (PEAR::isError($success)) {
+            return $success;
+        }
+
+        return $aFields['address_id'];
     }
 
     public function updateAddressById($addressId, $aFields)
