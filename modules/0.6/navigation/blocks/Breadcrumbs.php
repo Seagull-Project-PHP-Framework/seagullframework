@@ -58,7 +58,10 @@ class Navigation_Block_Breadcrumbs
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blockOutput          = &new SGL_Output();
+        $outputClassName      = SGL_Config::get('site.customOutputClassName')
+            ? SGL_Config::get('site.customOutputClassName')
+            : 'SGL_Output';
+        $blockOutput          = &new $outputClassName();
         $blockOutput->theme   = $output->theme;
         $blockOutput->webRoot = $output->webRoot;
 
