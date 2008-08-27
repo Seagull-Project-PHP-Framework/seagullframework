@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 require_once SGL_CORE_DIR . '/Observer.php';
 require_once SGL_CORE_DIR . '/AjaxProvider2.php';
