@@ -123,7 +123,7 @@ class ArrayDriver
         $this->_aSections = $aNodes;
     }
 
-    function _processTree(&$aTree, $rootId)
+    function _processTree(&$aTree, $rootId, $level = 0)
     {
         foreach ($aTree as $nodeId => $aNode) {
             if (!$this->_nodeAccessAllowed($aNode)) {
@@ -138,14 +138,16 @@ class ArrayDriver
                 $aNode['url'] = $aNode['link'];
             }
             if (!isset($aNode['is_current'])) {
-                $aNode['is_current'] = $this->_isCurrentNode($aNode);
+                $aNode['is_current'] = $this->_isCurrentNode($aNode)
+                    || $this->_childIsCurrentNode($aNode);
             }
+            $aNode['level'] = $level;
             if (!empty($aNode['is_current'])) {
                 $this->_aCurrentTitles[$rootId]  = $aNode['title'];
                 $this->_aCurrentIndexes[$rootId] = $nodeId;
             }
             if (!empty($aNode['sub'])) {
-                $this->_processTree($aNode['sub'], $rootId);
+                $this->_processTree($aNode['sub'], $rootId, $level + 1);
             }
             $aTree[$nodeId] = $aNode;
         }
@@ -248,8 +250,10 @@ class ArrayDriver
 
     function _simplifyNode(&$aNode)
     {
-        $aNode['manager'] = SGL_Inflector::getSimplifiedNameFromManagerName(
-            $aNode['manager']);
+        if (isset($aNode['manager'])) {
+            $aNode['manager'] = SGL_Inflector::getSimplifiedNameFromManagerName(
+                $aNode['manager']);
+        }
         if (!empty($aNode['uriType']) && $aNode['uriType'] == 'dynamic') {
             unset($aNode['uriType']);
         }
@@ -384,6 +388,18 @@ class ArrayDriver
         return $ret;
     }
 
+    function _childIsCurrentNode($aTree)
+    {
+        $ret = false;
+        if (!empty($aTree['sub'])) {
+            foreach ($aTree['sub'] as $aNode) {
+                $ret = $this->_isCurrentNode($aNode)
+                    || $this->_childIsCurrentNode($aNode);
+            }
+        }
+        return $ret;
+    }
+
     /**
      * Create URL from supplied node.
      *
@@ -453,6 +469,9 @@ class ArrayDriver
         if (empty($this->_aSections[$this->_currentRootIndex])) {
             $ret = false;
         } else {
+            if ($renderBreadcrumbs = is_null($renderer)) {
+                $renderer = 'SimpleRenderer';
+            }
             $fileNameRenderer = dirname(__FILE__) . '/ArrayDriver/' . $renderer . '.php';
             // check if renderer file exists
             if (!file_exists($fileNameRenderer)) {
@@ -471,19 +490,30 @@ class ArrayDriver
 
                     $aParams = $this->_aParams;
                     $aParams['currentIndex'] = $currentIdx;
-                    $aParams['menuType']     = $menuType;
 
-                    // render
-                    $renderer = & new $rendererClassName($aParams);
-                    $html = $renderer->toHtml($aSections);
-                    if (!PEAR::isError($html)) {
+                    // render menu
+                    if (!$renderBreadcrumbs) {
+                        $aParams['menuType'] = $menuType;
+                        $renderer = & new $rendererClassName($aParams);
+                        $menu = $renderer->toHtml($aSections);
+                        $breadcrumbs = '';
+
+                    // render breadcrumbs
+                    } else {
+                        $aParams['menuType'] = 'urhere';
+                        $renderer = & new ArrayDriver_SimpleRenderer($aParams);
+                        $breadcrumbs = $renderer->toHtml($aSections, 'DirectRenderer');
+                        $menu = '';
+                    }
+
+                    if (!PEAR::isError($menu)) {
                         $ret = array(
                             0 => $currentIdx,
-                            1 => $html,
-                            2 => '' // breadcrumbs
+                            1 => $menu,
+                            2 => $breadcrumbs
                         );
                     } else {
-                        $ret = $html;
+                        $ret = $menu;
                     }
                 }
             }
