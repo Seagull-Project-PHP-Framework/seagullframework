@@ -24,15 +24,17 @@ class SGL_Task_CleanOutputData extends SGL_DecorateProcess
     {
         $this->processRequest->process($input, $output);
 
-        $aProps = array_keys(get_object_vars($output));
-        $oData  = new stdClass();
-        foreach ($aProps as $prop) {
-            if (!in_array($prop, self::$_aExceptions)) {
-                $oData->$prop = $output->$prop;
+        if (!isset($output->data)) {
+            $aProps = array_keys(get_object_vars($output));
+            $oData  = new stdClass();
+            foreach ($aProps as $prop) {
+                if (!in_array($prop, self::$_aExceptions)) {
+                    $oData->$prop = $output->$prop;
+                }
+                unset($output->$prop);
             }
-            unset($output->$prop);
+            $output->data = $oData;
         }
-        $output->data = $oData;
     }
 }
 
