@@ -117,20 +117,24 @@ $(document).ready(function() {
     }
 
     // global error handling
-    $('#message').ajaxError(function(msg, r) {
-        var msg = eval('(' + r.responseText + ')'), ret = '';
-        ret += msg.errorType + ': ';
-        ret += msg.message;
-        if (ret.debugInfo) {
-            ret += '(DEBUG: ' + ret.debugInfo + ')';
+    $('#message').ajaxError(function(msg, r, opts) {
+        if (opts.dataType == 'json') {
+            var msg = eval('(' + r.responseText + ')'), ret = '';
+            ret += msg.errorType + ': ';
+            ret += msg.message;
+            if (ret.debugInfo) {
+                ret += '(DEBUG: ' + ret.debugInfo + ')';
+            }
+            SGL2.showMessage(this, ret, SGL_MSG_ERROR);
         }
-        SGL2.showMessage(this, ret, SGL_MSG_ERROR);
 
     // global message handling
-    }).ajaxSuccess(function(msg, r) {
-        var response = eval('(' + r.responseText + ')'), ret = '';
-        if (typeof response.aMsg != 'undefined' && !response.aMsg.persist) {
-            SGL2.showMessage(this, response.aMsg.message, response.aMsg.type);
+    }).ajaxSuccess(function(msg, r, opts) {
+        if (opts.dataType == 'json') {
+            var response = eval('(' + r.responseText + ')'), ret = '';
+            if (typeof response.aMsg != 'undefined' && !response.aMsg.persist) {
+                SGL2.showMessage(this, response.aMsg.message, response.aMsg.type);
+            }
         }
     });
 
