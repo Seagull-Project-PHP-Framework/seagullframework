@@ -27,17 +27,23 @@ class User2DAO extends SGL_Manager
 
     public function getUserIdByUsername($username, $email = null)
     {
+        $oUser = $this->getUserByUsername($username, $email);
+        return !empty($oUser) ? $oUser->usr_id : false;
+    }
+
+    public function getUserByUsername($username, $email = null)
+    {
         $constrant = '';
         if (!empty($email)) {
             $constrant = ' AND email = ' . $this->dbh->quoteSmart($email);
         }
         $query = "
-            SELECT usr_id
+            SELECT *
             FROM   usr
             WHERE  username = " . $this->dbh->quoteSmart($username) . "
                    $constrant
         ";
-        return $this->dbh->getOne($query);
+        return $this->dbh->getRow($query);
     }
 
     public function updateUserById($userId, $aFields)
@@ -119,13 +125,13 @@ class User2DAO extends SGL_Manager
             SELECT a.*
             FROM   `user-address` ua
             INNER JOIN `address` a ON ua.address_id = a.address_id
-            WHERE  
+            WHERE
                 ua.usr_id = " . intval($userId) . "
                 $constraint
         ";
         return $this->dbh->getRow($query);
     }
-    
+
     public function getAddressesByUserId($userId, $addressType = null)
     {
         $constraint = '';
@@ -136,13 +142,13 @@ class User2DAO extends SGL_Manager
             SELECT a.*
             FROM   `user-address` ua
             INNER JOIN `address` a ON ua.address_id = a.address_id
-            WHERE  
+            WHERE
                 ua.usr_id = " . intval($userId) . "
                 $constraint
         ";
         return $this->dbh->getAssoc($query);
     }
-    
+
     public function addAddress($userId, $aFields, $addressType = null)
     {
         $aAllowedFields = array('address1', 'address2', 'city', 'state',
@@ -159,19 +165,19 @@ class User2DAO extends SGL_Manager
         if (PEAR::isError($success)) {
             return $success;
         }
-        
+
         $assocFields = array(
             'usr_id'     => $userId,
             'address_id' => $aFields['address_id'],
         );
-        
+
         if (!empty($addressType)) {
             $assocFields['address_type'] = $addressType;
         }
-        
+
         $success = $this->dbh->autoExecute('`user-address`', $assocFields,
             DB_AUTOQUERY_INSERT);
-        
+
         if (PEAR::isError($success)) {
             return $success;
         }
