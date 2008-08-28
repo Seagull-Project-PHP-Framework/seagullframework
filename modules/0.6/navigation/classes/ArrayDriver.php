@@ -395,6 +395,9 @@ class ArrayDriver
             foreach ($aTree['sub'] as $aNode) {
                 $ret = $this->_isCurrentNode($aNode)
                     || $this->_childIsCurrentNode($aNode);
+                if ($ret) {
+                    break;
+                }
             }
         }
         return $ret;
