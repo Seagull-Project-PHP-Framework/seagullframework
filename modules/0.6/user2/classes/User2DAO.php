@@ -115,7 +115,7 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
 
-    public function getAddressByUserId($userId, $addressType = null)
+    public function getAddressByUserId($userId, $addressType = 'home')
     {
         $constraint = '';
         if (!empty($addressType)) {
@@ -132,12 +132,23 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
 
-    public function getAddressesByUserId($userId, $addressType = null)
+    public function getAddressesByUserIdAndType($userId, $aAddressType = array())
     {
-        $constraint = '';
-        if (!empty($addressType)) {
-            $constraint = ' AND ua.address_type = ' . $this->dbh->quoteSmart($addressType);
+        if (!is_array($aAddressType)) {
+            $aAddressType = (array)$aAddressType;
         }
+        
+        $constraint = '';
+        if (!empty($aAddressType)) {
+            $aTmp = array();
+            foreach ($aAddressType as $addressType) {
+                $aTmp[] = 'ua.address_type = ' . $this->dbh->quoteSmart($addressType);
+            }
+            if (!empty($aTmp)) {
+                $constraint = ' AND ('.implode(' OR ', $aTmp).')';
+            }
+        }
+        
         $query = "
             SELECT a.*
             FROM   `user-address` ua
@@ -149,7 +160,7 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getAssoc($query);
     }
 
-    public function addAddress($userId, $aFields, $addressType = null)
+    public function addAddress($userId, $aFields, $addressType = 'home')
     {
         $aAllowedFields = array('address1', 'address2', 'city', 'state',
             'post_code', 'country');
