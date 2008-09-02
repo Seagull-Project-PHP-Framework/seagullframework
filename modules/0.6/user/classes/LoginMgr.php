@@ -142,9 +142,9 @@ class LoginMgr extends SGL_Manager
         SGL::raiseMsg('You have been successfully logged out', true, SGL_MESSAGE_INFO);
 
         //  get default params for logout page
-        $aParams = !empty($this->conf['site']['logoutTarget'])
-                ? SGL_Config::getCommandTarget($this->conf['site']['logoutTarget'])
-                : $this->getDefaultPageParams();
+        $aParams = SGL_Config::get('site.logoutTarget')
+            ? SGL_Config::getCommandTarget(SGL_Config::get('site.logoutTarget'))
+            : $this->getDefaultPageParams();
         SGL_HTTP::redirect($aParams);
     }
 

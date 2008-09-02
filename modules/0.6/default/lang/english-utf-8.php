@@ -559,7 +559,8 @@ $defaultWords['prefixes not supported'] = 'Currently the module generator only w
 $defaultWords['Enable persistent logins'] = 'Enable persistent logins';
 $defaultWords['Logout target'] = 'Logout target';
 $defaultWords['Roles that can access the admin GUI'] = 'Roles that can access the admin GUI';
-$defaultWords['logout target comment'] = 'when a user is logged out, they will be redirect here, ie module^manager^action';
+$defaultWords['logout target comment'] = 'redirect to this module^manager^action when a user hits "logout"';
+$defaultWords['login target comment'] = 'redirect to this module^manager^action when a users session expires';
 
 /* --- PEAR::Pager --- */
 $defaultWords['altPrev'] = 'Previous';
