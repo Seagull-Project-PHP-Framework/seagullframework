@@ -25,6 +25,16 @@ class User2DAO extends SGL_Manager
         return $instance;
     }
 
+    public function getUserById($userId)
+    {
+        $query = "
+            SELECT *
+            FROM   usr
+            WHERE  usr_id = " . intval($userId) . "
+        ";
+        return $this->dbh->getRow($query);
+    }
+
     public function getUserIdByUsername($username, $email = null)
     {
         $oUser = $this->getUserByUsername($username, $email);
@@ -137,7 +147,7 @@ class User2DAO extends SGL_Manager
         if (!is_array($aAddressType)) {
             $aAddressType = (array)$aAddressType;
         }
-        
+
         $constraint = '';
         if (!empty($aAddressType)) {
             $aTmp = array();
@@ -148,7 +158,7 @@ class User2DAO extends SGL_Manager
                 $constraint = ' AND ('.implode(' OR ', $aTmp).')';
             }
         }
-        
+
         $query = "
             SELECT a.*
             FROM   `user-address` ua
