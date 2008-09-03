@@ -5,25 +5,27 @@
         <ol class="clearfix">
             <li>
                 <label for="address_address1">
-                    {tr(#address 1#)}
+                    <em>*</em> {tr(#address 1#)}
                 </label>
                 <div>
                     <input id="address_address1" class="text"
                            type="text" name="address[address1]" value="{oAddress.address1}" />
+                    <p class="comment">{tr(#address 1 comment#)}</p>
                 </div>
             </li>
             <li>
                 <label for="address_address2">
-                    {tr(#address 2#)}
+                    <em>*</em> {tr(#address 2#)}
                 </label>
                 <div>
                     <input id="address_address2" class="text"
                            type="text" name="address[address2]" value="{oAddress.address2}" />
+                    <p class="comment">{tr(#address 2 comment#)}</p>
                 </div>
             </li>
             <li>
                 <label for="address_city">
-                    {tr(#city#)}
+                    <em>*</em> {tr(#city#)}
                 </label>
                 <div>
                     <input id="address_city" class="text"
@@ -32,7 +34,7 @@
             </li>
             <li>
                 <label for="address_state">
-                    {tr(#state#)}
+                    {tr(#state / province / region#)}
                 </label>
                 <div>
                     <select id="address_state" name="address[state]">
@@ -42,7 +44,7 @@
             </li>
             <li>
                 <label for="address_post-code">
-                    {tr(#post code#)}
+                    <em>*</em> {tr(#post code#)}
                 </label>
                 <div>
                     <input id="address_post-code" class="text"
@@ -51,7 +53,7 @@
             </li>
             <li>
                 <label for="address_country">
-                    {tr(#country#)}
+                    <em>*</em> {tr(#country#)}
                 </label>
                 <div>
                     <select id="address_country" name="address[country]">

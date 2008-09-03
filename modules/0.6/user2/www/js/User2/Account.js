@@ -124,10 +124,23 @@ User2.Account =
         });
         $('#changeAddress').ajaxForm({
             beforeSubmit: function(elems, f) {
-                // edit mode
-                SGL2.Util.disableSubmit('input', f);
-                $('.actions', f).hide();
-                $('.ajaxLoader', f).show();
+                var ret = false;
+                if ($.trim($(elems[0]).val())
+                    && $.trim($(elems[1]).val())
+                    && $.trim($(elems[2]).val())
+                    && $.trim($(elems[4]).val())
+                    && $.trim($(elems[5]).val()))
+                {
+                    // edit mode
+                    SGL2.Util.disableSubmit('input', f);
+                    $('.actions', f).hide();
+                    $('.ajaxLoader', f).show();
+                    ret = true;
+                } else {
+                    var msg = 'fill in required data'.translate().toString();
+                    SGL2.showMessage('#message', msg, SGL_MSG_ERROR, 1);
+                }
+                return ret;
             },
             success: function(r, msg, f) {
                 console.log(r);
