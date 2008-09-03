@@ -126,7 +126,7 @@ User2.Account =
             beforeSubmit: function(elems, f) {
                 var ret = false;
                 if ($.trim($(elems[0]).val())
-                    && $.trim($(elems[1]).val())
+                    //&& $.trim($(elems[1]).val())
                     && $.trim($(elems[2]).val())
                     && $.trim($(elems[4]).val())
                     && $.trim($(elems[5]).val()))
