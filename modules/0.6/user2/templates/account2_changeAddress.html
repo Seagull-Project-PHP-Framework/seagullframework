@@ -32,7 +32,7 @@
                            type="text" name="address[city]" value="{oAddress.city}" />
                 </div>
             </li>
-            <li>
+            <!--li>
                 <label for="address_state">
                     {tr(#state / province / region#)}
                 </label>
@@ -40,6 +40,15 @@
                     <select id="address_state" name="address[state]">
                         {generateSelect(aStates,oAddress.state):h}
                     </select>
+                </div>
+            </li-->
+            <li>
+                <label for="address_state">
+                    {tr(#state / province / region#)}
+                </label>
+                <div>
+                    <input id="address_state" class="text"
+                           type="text" name="address[state]" value="{oAddress.state}" />
                 </div>
             </li>
             <li>
