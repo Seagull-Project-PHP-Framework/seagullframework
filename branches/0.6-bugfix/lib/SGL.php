@@ -47,7 +47,7 @@
 class SGL
 {
     /**
-     * Returns the 2 letter language code, ie, de for German.
+     * Returns the 2 letter language code, ie, de for German
      *
      * @static
      *
