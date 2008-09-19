@@ -19,6 +19,11 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
 
     public function setAvailableLanguages()
     {
+        foreach ($GLOBALS['_SGL']['LANGUAGE'] as $k => $aLang) {
+            if (!preg_match('/utf-8$/', $k)) {
+                unset($GLOBALS['_SGL']['LANGUAGE'][$k]);
+            }
+        }
         $this->_aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
     }
 
