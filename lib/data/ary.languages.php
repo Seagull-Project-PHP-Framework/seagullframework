@@ -4,8 +4,6 @@
  *
  * @package default
  * @author  phpMyAdmin group
- * @version $Revision: 1.7 $
- * @since   PHP 4.1
  */
 
     //  language choices
@@ -38,6 +36,31 @@
      *
      * For Russian, we put 1251 first, because MSIE does not accept 866
      * and users would not see anything.
+     *
+     * Seagull naming:
+     *
+     * lang elements example data structure:
+        [ru-utf-8] => Array
+            (
+                [0] => ru|russian
+                [1] => russian-utf-8
+                [2] => ru
+            )
+        [zhtw-utf-8] => Array
+            (
+                [0] => zh[-_](tw|hk)|chinese traditional
+                [1] => chinese_traditional-utf-8
+                [2] => zh-TW
+            )
+     *
+     *
+     * Seagull naming of lang elements:
+        [ISO 639 language code] => Array            <-- langCodeCharset
+            (
+                [0] => regex
+                [1] => long languageNameCharset     <-- langFileName
+                [2] => RFC1766 language code        <-- langCode
+            )
      */
 
     $GLOBALS['_SGL']['LANGUAGE'] = (SGL::isMinimalInstall())
