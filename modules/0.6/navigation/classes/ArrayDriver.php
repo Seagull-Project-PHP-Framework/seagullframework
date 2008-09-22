@@ -309,7 +309,7 @@ class ArrayDriver
     function saveNodes($aNodes)
     {
         $ok = false;
-        if (is_writable(SGL_VAR_DIR . '/navigation.php')) {
+        if (is_writable(SGL_VAR_DIR)) {
             $data = var_export($aNodes, true);
             $data = "<?php\n\$aSections = $data;\n?>";
             $ok = file_put_contents(SGL_VAR_DIR . '/navigation.php', $data);
