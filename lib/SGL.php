@@ -53,7 +53,7 @@ class SGL
      *
      * @access public
      *
-     * @return string  language abbreviation
+     * @return string  langCode, ie zh-TW
      */
     function getCurrentLang()
     {
