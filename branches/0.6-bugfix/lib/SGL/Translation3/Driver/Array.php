@@ -48,9 +48,18 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
      */
     public function getDictionary($dictionary, $langCodeCharset = null)
     {
-        if (is_null($langCodeCharset)) {
-            $langCodeCharset = $this->langCodeCharset;
+        //  handle langCode as well as langCodeCharset
+        if (!is_null($langCodeCharset)) {
+            if (!preg_match('/utf-8/', $langCodeCharset)) {
+                $langCode = $langCodeCharset;
+                $langCodeCharset = self::langCodeToLangCodeCharset($langCode);
+            }
         }
+        if ($langCodeCharset === false || is_null($langCodeCharset)) {
+            $langCodeCharset = $this->langCodeCharset;
+            $langCode = $this->_aLanguages[$langCodeCharset][2];
+        }
+
         $langFileName = $this->_aLanguages[$langCodeCharset][1];
 
         // looking for a language file in paths
