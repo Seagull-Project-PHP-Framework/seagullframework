@@ -27,45 +27,45 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $this->_aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
     }
 
-    public function getFileName($dictionary = null, $lang = null)
+    public function getFileName($dictionary = null, $langCodeCharset = null)
     {
         if (is_null($dictionary)) {
             $dictionary = $this->dictionary;
         }
-        if (is_null($lang)) {
-            $lang = $this->language;
+        if (is_null($langCodeCharset)) {
+            $langCodeCharset = $this->langCodeCharset;
         }
-        $language = $this->_aLanguages[$lang][1];
-        return SGL_PATH . '/data/lang/' . $dictionary . '/' . $language . '.php';
+        $langFileName = $this->_aLanguages[$langCodeCharset][1];
+        return SGL_PATH . '/data/lang/' . $dictionary . '/' . $langFileName . '.php';
     }
 
     /**
      * Fetches a dictionary
      *
      * @param   string  $dictionary     Dictionary you want to load
-     * @param   string  $lang           Language you want the dictionary in, let null value to use
-     *                                  automaticaly discovered language
+     * @param   string  $langCodeCharset Language you want the dictionary in, let null value to use
+     *                                   automaticaly discovered language
      */
-    public function getDictionary($dictionary, $lang = null)
+    public function getDictionary($dictionary, $langCodeCharset = null)
     {
-        if (is_null($lang)) {
-            $lang = $this->language;
+        if (is_null($langCodeCharset)) {
+            $langCodeCharset = $this->langCodeCharset;
         }
-        $language = $this->_aLanguages[$lang][1];
+        $langFileName = $this->_aLanguages[$langCodeCharset][1];
 
         // looking for a language file in paths
         $projectPath    = SGL_PATH . '/data/lang/' . $dictionary;
         $modulePath     = SGL_MOD_DIR . '/' . $dictionary  . '/lang';
 
-        if (is_file($projectPath . '/' . $language . '.php')) {
-            $langFile = $projectPath . '/' . $language . '.php';
-        } elseif (is_file($modulePath . '/' . $language . '.php')) {
-            $langFile = $modulePath . '/' . $language . '.php';
+        if (is_file($projectPath . '/' . $langFileName . '.php')) {
+            $file = $projectPath . '/' . $langFileName . '.php';
+        } elseif (is_file($modulePath . '/' . $langFileName . '.php')) {
+            $file = $modulePath . '/' . $langFileName . '.php';
         }
         $words = array();
         // loading translations from php file
-        if (isset($langFile) && is_readable($langFile)) {
-            include $langFile;
+        if (isset($file) && is_readable($file)) {
+            include $file;
             if ($dictionary == 'default') {
                 $words = $defaultWords;
             }
@@ -80,39 +80,39 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
      * will be updated in for all languages
      *
      */
-    public function update(array $aString = array(), $dictionary, $lang = null)
+    public function update(array $aString = array(), $dictionary, $langCodeCharset = null)
     {
         $originalKey = $aString[0];
         $key    = $aString[1];
         $value  = $aString[2] ? $aString[2] : $aString[1];
-        if ($lang == $this->fallbackLanguage) {
+        if ($langCodeCharset == $this->fallbackLangCodeCharset) {
             $this->_updateMaster($originalKey, $key, $value, $dictionary);
             $this->_syncSlaveLanguages($originalKey, $key, $value, $dictionary);
         } else {
-            $this->_updateSlaveValue($key, $value, $dictionary, $lang);
+            $this->_updateSlaveValue($key, $value, $dictionary, $langCodeCharset);
         }
     }
 
     protected function _updateMaster($originalKey, $key, $value, $dictionary)
     {
-        $aDictionary = $this->getDictionary($dictionary, $this->fallbackLanguage);
+        $aDictionary = $this->getDictionary($dictionary, $this->fallbackLangCodeCharset);
 
         if ($originalKey != 'New Category') {
             unset($aDictionary[$originalKey]);
         }
         $aDictionary[$key] = $value;
-        $this->addTranslations($dictionary, $this->fallbackLanguage, $aDictionary);
+        $this->addTranslations($dictionary, $this->fallbackLangCodeCharset, $aDictionary);
         $this->save();
     }
 
     protected function _syncSlaveLanguages($originalKey, $key, $value, $dictionary)
     {
-        foreach ($this->_aLanguages as $lang => $aLang) {
-            if ($lang == $this->fallbackLanguage) {
+        foreach ($this->_aLanguages as $langCodeCharset => $aLang) {
+            if ($langCodeCharset == $this->fallbackLangCodeCharset) {
                 // do nothing with master language
                 continue;
             }
-            $aDictionary = $this->getDictionary($dictionary, $lang);
+            $aDictionary = $this->getDictionary($dictionary, $langCodeCharset);
             if (array_key_exists($originalKey, $aDictionary) && $originalKey != 'New Category') {
                 $oldStringValue = $aDictionary[$originalKey];
                 unset($aDictionary[$originalKey]);
@@ -120,7 +120,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
             $aDictionary[$key] = !empty($oldStringValue)
                 ? $oldStringValue
                 : $value;
-            $this->addTranslations($dictionary, $lang, $aDictionary);
+            $this->addTranslations($dictionary, $langCodeCharset, $aDictionary);
             $this->save();
         }
     }

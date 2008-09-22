@@ -86,11 +86,11 @@ class SGL_Translation3
     public static function getFallbackLangCode()
     {
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        $fallbackLanguage = self::getFallbackLanguage();
-        return $aLanguages[$fallbackLanguage][2];
+        $langCodeCharset = self::getFallbackLangCodeCharset();
+        return $aLanguages[$langCodeCharset][2];
     }
 
-    public static function getFallbackLanguage()
+    public static function getFallbackLangCodeCharset()
     {
         return str_replace('_', '-', SGL_Config::get('translation.fallbackLang'));
     }
