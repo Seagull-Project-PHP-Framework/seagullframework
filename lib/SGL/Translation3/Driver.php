@@ -138,6 +138,7 @@ abstract class SGL_Translation3_Driver
      * @param   array   $aOptions       Run ime options to overwrite default options
      *                                   When passing aOption 'clear'  => true, the translation array
      *                                   will be cleared before adding new translation strings
+     * @todo remove $GLOBALS['_SGL']['TRANSLATION'] stuff
      *
      */
     public function loadDictionary($dictionary, $langCode = null,
