@@ -341,13 +341,13 @@ class SGL_String
 
 
     /**
-     * Looks up key in current lang dictionary (SGL_Translate::language) or specific language
+     * Looks up key in current lang dictionary (SGL_Translation3) or specific language
      * and returns target value.
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
      * @param array  $aParams   Optional params
-     * @param string $langCode  Optional langCode toforce translation in this language
+     * @param string $langCode  Optional langCode to force translation in this language
      * @return string
      *
      */
