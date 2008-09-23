@@ -110,11 +110,11 @@ $(document).ready(function() {
     
     $.extend(String.prototype, {
     	translate: function() {
-    	    var ret = this;
-        	if (SGL2.Localisation && SGL2.Localisation[this]) {
-        	    ret = SGL2.Localisation[ret];
-        	}
-        	return ret;
+            var ret = this;
+            if (SGL2.Localisation && SGL2.Localisation[this]) {
+                ret = SGL2.Localisation[ret];
+            }
+            return ret;
         }
     });
 
