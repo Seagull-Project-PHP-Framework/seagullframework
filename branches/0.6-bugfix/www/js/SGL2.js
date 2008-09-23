@@ -107,14 +107,16 @@ $(document).ready(function() {
     if (typeof console == 'undefined') {
         console = { log: function() {} };
     }
-
-    if (typeof ''.translate == 'undefined') {
-        jQuery.extend(String.prototype, {
-            translate: function() {
-                return this;
-            }
-        });
-    }
+    
+    $.extend(String.prototype, {
+    	translate: function() {
+    	    var ret = this;
+        	if (SGL2.Localisation && SGL2.Localisation[this]) {
+        	    ret = SGL2.Localisation[ret];
+        	}
+        	return ret;
+        }
+    });
 
     // global error handling
     $('#message').ajaxError(function(msg, r, opts) {
