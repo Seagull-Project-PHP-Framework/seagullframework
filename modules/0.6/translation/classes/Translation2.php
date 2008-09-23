@@ -165,7 +165,7 @@ class SGL_Translation2
     {
         $c = &SGL_Config::singleton();
 
-        $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
+        $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
 
         if (count($aLangs) > 0) {
             $cache = & SGL_Cache::singleton();
@@ -236,7 +236,6 @@ class SGL_Translation2
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
             }
         }
-
         return SGL_Translation2::removeMetaData($ret);
     }
 
@@ -269,6 +268,7 @@ class SGL_Translation2
                 }
             }
             return true;
+
         case 'file':
         default:
             $aTrans = SGL_Translation2::updateMetaData($aTrans);
@@ -574,7 +574,7 @@ class SGL_Translation2
         $fileName  = $moduleName . '_' . $lang . '.lock.txt';
         $targetDir = SGL_VAR_DIR . '/translation';
 
-        $ok = SGL_Translation2::ensureDirIsWrirable($targetDir);
+        $ok = SGL_Translation2::ensureDirIsWritable($targetDir);
         if (PEAR::isError($ok)) {
             return $ok;
         }
@@ -691,7 +691,7 @@ class SGL_Translation2
     }
 
     /**
-     * Ensure that target dir exist and is writable.
+     * Ensure that target dir exists and is writable.
      *
      * @param string $dirName
      *
@@ -701,7 +701,7 @@ class SGL_Translation2
      *
      * @todo move to SGL_File
      */
-    function ensureDirIsWrirable($dirName)
+    function ensureDirIsWritable($dirName)
     {
         if (!is_writable($dirName)) {
             require_once 'System.php';
@@ -809,7 +809,6 @@ class SGL_Translation2
         } else {
             $ret = count($aTrans);
         }
-
         return $ret;
     }
 }
