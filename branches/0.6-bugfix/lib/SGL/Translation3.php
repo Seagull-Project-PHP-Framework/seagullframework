@@ -21,7 +21,7 @@ class SGL_Translation3
 
     /**
      *
-     * @param unknown_type $driver
+     * @param string $driver
      * @param array $aOptions
      * @return unknown
      */
