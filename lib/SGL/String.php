@@ -266,14 +266,16 @@ class SGL_String
      *
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
+     * @param array  $aParams
+     * @param string $langCode  Pass the lang code for the language you wish to translate
      * @return string
      *
      * @todo better integrate $lang handling
      */
-    function translate($key, $filter = false, $aParams = array(), $lang = null)
+    function translate($key, $filter = false, $aParams = array(), $langCode = null)
     {
-        if (!is_null($lang)) {
-            return SGL_String::translate2($key, $filter, $aParams, $lang);
+        if (!is_null($langCode)) {
+            return SGL_String::translate2($key, $filter, $aParams, $langCode);
         }
         $c = &SGL_Config::singleton();
         $conf = $c->getAll();
@@ -345,29 +347,16 @@ class SGL_String
      * @param string $key       Translation term
      * @param string $filter    Optional filter fn
      * @param array  $aParams   Optional params
-     * @param string $lang      Optional langCode toforce translation in this language
+     * @param string $langCode  Optional langCode toforce translation in this language
      * @return string
      *
      */
-    function translate2($key, $filter = false, $aParams = array(), $langCode = null)
+    function translate2($key, $filter = false, $aParams = array(), $langCode)
     {
-        $conf = SGL_Config::singleton()->getAll();
-        $trans = $GLOBALS['_SGL']['TRANSLATION'];
-
         require_once 'SGL/Translation3.php';
-        $tr = SGL_Translation3::singleton('array');
-        $langCode = $tr->getLangCodeCharset($langCode);
-
-        if (isset($trans[$langCode][$key])) {
-            if (!is_array($trans[$langCode][$key])
-                    && strstr($trans[$langCode][$key], '||')
-                    && $conf['translation']['container'] == 'db') {
-                preg_match_all('/([^|]*)\|([^|]*)(?=\|\|)/', $trans[$langCode][$key], $aPieces);
-                $ret = array_combine($aPieces[1], $aPieces[2]);
-            } else {
-                $ret = $trans[$langCode][$key];
-            }
-            if (!is_array($trans[$langCode][$key]) && $filter && function_exists($filter)) {
+        $trans = SGL_Translation3::singleton('array');
+        if ($ret = $trans->translate($langCode, $key)) {
+            if (!is_array($ret) && $filter && function_exists($filter)) {
                 if (is_object($aParams)) {
                     $aParams = (array)$aParams;
                 }
@@ -391,24 +380,8 @@ class SGL_String
             }
             return $ret;
         } else {
-            //  add translation
-            if (!empty($key)
-                    && isset($conf['translation']['addMissingTrans'])
-                    && $conf['translation']['addMissingTrans']
-                    && isset($conf['translation']['container'])
-                    && $conf['translation']['container'] == 'db') {
-
-                //  get a reference to the request object
-                $moduleName = SGL_Request::singleton()->get('moduleName');
-
-                //  fetch fallback lang
-                $fallbackLang = $conf['translation']['fallbackLang'];
-
-                $trans = SGL_Translation::singleton('admin');
-                $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
-            }
             SGL::logMessage('Key \''.$key.'\' Not found', PEAR_LOG_NOTICE);
-            $key = (isset($conf['debug']['showUntranslated']) && $conf['debug']['showUntranslated'])
+            $key = SGL_Config::get('debug.showUntranslated')
                 ? '>' . $key . '<'
                 : $key;
             return $key;

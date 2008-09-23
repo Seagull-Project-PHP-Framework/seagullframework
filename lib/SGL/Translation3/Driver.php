@@ -278,14 +278,17 @@ abstract class SGL_Translation3_Driver
     /**
      * Enter description here...
      *
-     * @param unknown_type $key
-     * @return unknown
+     * @param string $langCode
+     * @param string $key
+     * @return string
      *
      * @todo is this used?
      */
     public function translate($langCode, $key)
     {
-        return $this->_aDictionaries[$langCode][$key];
+        return isset($this->_aDictionaries[$langCode][$key])
+            ? $this->_aDictionaries[$langCode][$key]
+            : false;
     }
 
     public function getAvailableLanguages()
