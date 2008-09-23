@@ -80,17 +80,25 @@ class SGL_Translation3
         throw new Exception("Unknown method '$method' called!");
     }
 
+
     /******************************/
     /*       STATIC METHODS       */
     /******************************/
-    public static function getFallbackLangCode()
+
+
+    /**
+     * Performs same function as SGL::getCurrentLang() and will supersede it
+     *
+     * @return string $langCode
+     */
+    public static function getDefaultLangCode()
     {
         $aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
-        $langCodeCharset = self::getFallbackLangCodeCharset();
+        $langCodeCharset = self::getDefaultLangCodeCharset();
         return $aLanguages[$langCodeCharset][2];
     }
 
-    public static function getFallbackLangCodeCharset()
+    public static function getDefaultLangCodeCharset()
     {
         return str_replace('_', '-', SGL_Config::get('translation.fallbackLang'));
     }

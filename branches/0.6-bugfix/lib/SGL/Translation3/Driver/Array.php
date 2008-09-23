@@ -81,7 +81,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
     /**
      * Updates a string in a dictionary given its key.
      *
-     * If the language we are editing is the master (fallback) then the key
+     * If the language we are editing is the master (the default lang) then the key
      * will be updated in for all languages
      *
      */
@@ -90,7 +90,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $originalKey = $aStrings[0];
         $key    = $aStrings[1];
         $value  = $aStrings[2] ? $aStrings[2] : $aStrings[1];
-        if ($langCode == $this->fallbackLangCode) {
+        if ($langCode == $this->defaultLangCode) {
             $this->_updateMaster($originalKey, $key, $value, $dictionary);
             $this->_syncSlaveLanguages($originalKey, $key, $value, $dictionary);
         } else {
@@ -100,20 +100,20 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
 
     protected function _updateMaster($originalKey, $key, $value, $dictionary)
     {
-        $aDictionary = $this->getDictionary($dictionary, $this->fallbackLangCode);
+        $aDictionary = $this->getDictionary($dictionary, $this->defaultLangCode);
 
         if ($originalKey != 'New Category') {
             unset($aDictionary[$originalKey]);
         }
         $aDictionary[$key] = $value;
-        $this->addTranslations($dictionary, $this->fallbackLangCode, $aDictionary);
+        $this->addTranslations($dictionary, $this->defaultLangCode, $aDictionary);
         $this->save();
     }
 
     protected function _syncSlaveLanguages($originalKey, $key, $value, $dictionary)
     {
         foreach ($this->_aLanguages as $langCodeCharset => $aLang) {
-            if ($langCodeCharset == $this->fallbackLangCodeCharset) {
+            if ($langCodeCharset == $this->defaultLangCodeCharset) {
                 // do nothing with master language
                 continue;
             }
