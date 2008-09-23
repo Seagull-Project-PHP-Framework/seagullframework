@@ -261,15 +261,17 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
                     $p3pHeader .= " CP=\"" . SGL_Config::get('p3p.compactPolicy')."\"";
                 }
                 if ($p3pHeader != '') {
-                    header("P3P: $p3pHeader");
+                    $output->addHeader("P3P: $p3pHeader");
                 }
             }
             //  prepare headers during setup, can be overridden later
-            header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
-            header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
-            header('X-Powered-By: Seagull http://seagullproject.org');
-            foreach ($output->getHeaders() as $header) {
-                header($header);
+            if (!headers_sent()) {
+                header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+                header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
+                header('X-Powered-By: Seagull http://seagullproject.org');
+                foreach ($output->getHeaders() as $header) {
+                    header($header);
+                }
             }
         }
     }
