@@ -38,7 +38,13 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
             $langCodeCharset = self::langCodeToLangCodeCharset($langCode);
         }
         $langFileName = $this->_aLanguages[$langCodeCharset][1];
-        return SGL_PATH . '/data/lang/' . $dictionary . '/' . $langFileName . '.php';
+        $path = $this->getFilePath();
+        return $path .'/' . $dictionary . '/' . $langFileName . '.php';
+    }
+
+    function getFilePath()
+    {
+        return SGL_VAR_DIR . '/translation/data';
     }
 
     /**
@@ -58,7 +64,8 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $langFileName = $this->_aLanguages[$langCodeCharset][1];
 
         // looking for a language file in paths
-        $projectPath    = SGL_PATH . '/data/lang/' . $dictionary;
+        $path = $this->getFilePath();
+        $projectPath    = $path . '/' . $dictionary;
         $modulePath     = SGL_MOD_DIR . '/' . $dictionary  . '/lang';
 
         if (is_file($projectPath . '/' . $langFileName . '.php')) {
@@ -183,7 +190,6 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
             $ok = System::mkDir(array('-p', $langDir));
             @chmod($langDir, 0777);
         }
-
         if (!is_file($langFile)) {
             $ok = touch($langFile);
         }
