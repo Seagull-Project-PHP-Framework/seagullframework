@@ -17,7 +17,7 @@ abstract class SGL_Translation3_Driver
     /**
      * The default language code charset
      */
-    public $fallbackLangCodeCharset;
+    public $defaultLangCodeCharset;
 
     /**
      * The current language code charset, eg, en-utf-8
@@ -54,7 +54,7 @@ abstract class SGL_Translation3_Driver
     private function init()
     {
         $this->setAvailableLanguages();
-        $this->setFallbackLangCode();
+        $this->setDefaultLangCode();
         $this->setLangCode();
     }
 
@@ -85,11 +85,11 @@ abstract class SGL_Translation3_Driver
         }
     }
 
-    public function setFallbackLangCode()
+    public function setDefaultLangCode()
     {
-        $this->fallbackLangCode = SGL_Translation3::getFallbackLangCode();
+        $this->defaultLangCode = SGL_Translation3::getDefaultLangCode();
         // BC - as long as language list keys are $langCodeCharset we must set this
-        $this->fallbackLangCodeCharset = SGL_Translation3::getFallbackLangCodeCharset();
+        $this->defaultLangCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
     }
 
     public function getLangCodeCharset($langCode = null)
@@ -318,7 +318,7 @@ abstract class SGL_Translation3_Driver
                     if (!SGL_Config::get('translation.languageAutoDiscover')
                             || !($langCodeCharset = self::resolveLanguageFromDomain())) {
                         // 5. get default language
-                        $langCodeCharset = SGL_Translation3::getFallbackLangCodeCharset();
+                        $langCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
                     }
                 }
             // get language from settings
@@ -347,9 +347,9 @@ abstract class SGL_Translation3_Driver
         return implode('-', $aLang);
     }
 
-    public static function getFallbackCharset()
+    public static function getDefaultCharset()
     {
-        $langCodeCharset = SGL_Translation3::getFallbackLangCodeCharset();
+        $langCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
         return self::extractCharset($langCodeCharset);
     }
 
@@ -386,7 +386,7 @@ abstract class SGL_Translation3_Driver
             foreach ($aLangs as $langCode) {
                 // don't take care of locale for now, only main language
                 $langCode = substr($langCode, 0, 2);
-                $langCodeCharset = $langCode . '-' . self::getFallbackCharset();
+                $langCodeCharset = $langCode . '-' . self::getDefaultCharset();
                 if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                     $ret = $langCodeCharset;
                     break;
@@ -410,7 +410,7 @@ abstract class SGL_Translation3_Driver
             $langCode = array_pop(explode('.', $_SERVER['HTTP_HOST']));
 
             // if such language exists, then use it
-            $langCodeCharset = $langCode . '-' . self::getFallbackCharset();
+            $langCodeCharset = $langCode . '-' . self::getDefaultCharset();
             if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                 $ret = $langCodeCharset;
             }
