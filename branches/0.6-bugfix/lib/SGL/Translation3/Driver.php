@@ -30,12 +30,17 @@ abstract class SGL_Translation3_Driver
     public $langCode;
 
     /**
+     * The framework default langCode
+     */
+    public $defaultLangCode;
+
+    /**
      * Current dictionary
      */
     public $dictionary;
 
     /**
-     * A hash of translation arrays ie default (module), cms(module), pages, categories
+     * A hash of translation arrays ie default (module), cms(module), navigation, categories
      * keyed by langCode, ie zh-TW
      */
     protected $_aDictionaries = array();
@@ -102,6 +107,11 @@ abstract class SGL_Translation3_Driver
         }
     }
 
+    public function getDefaultLangCode()
+    {
+        return $this->defaultLangCode;
+    }
+
 
     /**
      * Sets current language code.
@@ -138,7 +148,6 @@ abstract class SGL_Translation3_Driver
      * @param   array   $aOptions       Run ime options to overwrite default options
      *                                   When passing aOption 'clear'  => true, the translation array
      *                                   will be cleared before adding new translation strings
-     * @todo remove $GLOBALS['_SGL']['TRANSLATION'] stuff
      *
      */
     public function loadDictionary($dictionary, $langCode = null,
@@ -151,10 +160,6 @@ abstract class SGL_Translation3_Driver
             $langCode = $this->_aLanguages[$langCodeCharset][2];
         } else {
             $langCodeCharset = self::langCodeToLangCodeCharset($langCode);
-        }
-
-        if (!isset($GLOBALS['_SGL']['TRANSLATION'])) {
-            $GLOBALS['_SGL']['TRANSLATION'] = array();
         }
 
         if (!array_key_exists($langCode, $this->_aDictionaries)) {
@@ -172,9 +177,6 @@ abstract class SGL_Translation3_Driver
                 $this->_aDictionaries[$langCode] = array_merge($this->_aDictionaries[$langCode],
                     $aDictionary);
             }
-            // for BC with SGL_Translate
-            $GLOBALS['_SGL']['TRANSLATION'] = array_merge($GLOBALS['_SGL']['TRANSLATION'], $aDictionary);
-            $GLOBALS['_SGL']['TRANSLATION'][$langCodeCharset] = $this->_aDictionaries[$langCode];
             $aDictionaries[$instance] = true;
         }
     }
@@ -192,7 +194,8 @@ abstract class SGL_Translation3_Driver
     /**
      * Loading default dictionaries following SGL process.
      *
-     * Additionaly you can add default dictionaries to be loaded in Translation ini file
+     * Additionaly you can add default dictionaries to be loaded in
+     * the Translation module's conf.ini file
      *
      */
     public function loadDefaultDictionaries()
@@ -231,6 +234,9 @@ abstract class SGL_Translation3_Driver
         foreach ($aDefaultDictionaries as $dictionary) {
             $this->loadDictionary($dictionary);
         }
+        //  BC for SGL_String::translate() method
+        //  loads currently specified user lang into $GLOBALS['_SGL']['TRANSLATION']
+        $GLOBALS['_SGL']['TRANSLATION'] = $this->_aDictionaries[$this->getLangCode()];
     }
 
     /**
@@ -306,10 +312,11 @@ abstract class SGL_Translation3_Driver
     public function _resolveLangCode()
     {
         // resolve language from request
-        $langCodeCharset = SGL_Request::singleton()->get('lang');
+        $langCode = SGL_Request::singleton()->get('lang');
+        $langCodeCharset = self::langCodeToLangCodeCharset($langCode);
 
         // 1. look for language in URL
-        if (empty($langCodeCharset) || !self::isAllowedLangCodeCharset($langCodeCharset)) {
+        if (empty($langCode) || !self::langCodeToLangCodeCharset($langCode)) {
             // 2. look for language in settings
             if (!isset($_SESSION['aPrefs']['language'])
                     || !self::isAllowedLangCodeCharset($_SESSION['aPrefs']['language'])
