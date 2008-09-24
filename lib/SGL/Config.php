@@ -358,6 +358,28 @@ class SGL_Config
                 $file = SGL_Config::getCachedFileName($file);
                 SGL_Config::ensureDirExists(dirname($file));
             }
+        } else {
+            // we're saving global so de-merge local config from global
+            $moduleConf = new SGL_Config();
+            $default = SGL_Config::get('site.defaultModule');
+            $aData = $moduleConf->load(SGL_MOD_DIR . "/$default/conf.ini");
+            foreach ($aData as $k => $aValue) {
+                if ($this->exists($k)) {
+                    $this->remove($k);
+                }
+            }
+            //  check for additional local config
+            if ($local = SGL_Config::get('localConfig.moduleName')) {
+                if ($local != $default) {
+                    $localConf = new SGL_Config();
+                    $aData = $localConf->load(SGL_MOD_DIR . "/$local/conf.ini");
+                    foreach ($aData as $k => $aValue) {
+                        if ($this->exists($k)) {
+                            $this->remove($k);
+                        }
+                    }
+                }
+            }
         }
         $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
