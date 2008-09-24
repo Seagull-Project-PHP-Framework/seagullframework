@@ -215,7 +215,7 @@ class TestTranslation extends UnitTestCase
         if (is_dir($dir)) {
             $dh = opendir($dir);
             while (($file = readdir($dh)) !== false) {
-                if ($file == '.' || $file == '..') {
+                if (!stristr($file, '.txt')) {
                     continue;
                 }
                 $ret++;
