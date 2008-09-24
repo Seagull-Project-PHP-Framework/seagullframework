@@ -101,22 +101,21 @@ if (typeof makeUrl == 'undefined') {
     }
 }
 
-$(document).ready(function() {
-
-    // Firebug's console for other browsers.
-    if (typeof console == 'undefined') {
-        console = { log: function() {} };
-    }
-    
-    $.extend(String.prototype, {
-    	translate: function() {
-            var ret = this;
-            if (SGL2.Localisation && SGL2.Localisation[this]) {
-                ret = SGL2.Localisation[ret];
-            }
-            return ret;
+// Firebug's console for other browsers.
+if (typeof console == 'undefined') {
+    console = { log: function() {} };
+}
+$.extend(String.prototype, {
+    translate: function() {
+        var ret = this;
+        if (SGL2.Localisation && SGL2.Localisation[this]) {
+            ret = SGL2.Localisation[ret];
         }
-    });
+        return ret;
+    }
+});	
+
+$(document).ready(function() {
 
     // global error handling
     $('#message').ajaxError(function(msg, r, opts) {
