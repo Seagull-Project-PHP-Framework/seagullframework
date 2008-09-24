@@ -313,17 +313,6 @@ class ConfigMgr extends SGL_Manager
         $dbType = $c->get(array('db' => 'type')); // get db type before merge
         $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
-
-        // de-merge module config
-        $moduleConf = new SGL_Config();
-        //$default = SGL_Config::get('site.defaultModule');
-        $default = 'default';
-        $aData = $moduleConf->load(SGL_MOD_DIR . "/$default/conf.ini");
-        foreach ($aData as $k => $aValue) {
-            if ($c->exists($k)) {
-                $c->remove($k);
-            }
-        }
         //  write configuration to file
         $ok = $c->save();
 
