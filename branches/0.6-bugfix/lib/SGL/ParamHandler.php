@@ -87,14 +87,6 @@ class SGL_ParamHandler
 
     function read() {}
     function write() {}
-
-//    function getAll()
-//    {
-//        if (empty($this->aParams)) {
-//            $this->read();
-//        }
-//        return $this->aParams;
-//    }
 }
 
 /**
