@@ -58,6 +58,10 @@ class Login2Mgr extends SGL_Manager
 
         $uid = SGL_Session::getUid();
         if (SGL_Session::getUid() > SGL_GUEST) {
+            if (SGL_Config::get('translation.langInUrl')) {
+                $input->lang = SGL::getCurrentLang();
+            }
+
             // cleanup remember me
             if (SGL_Config::get('cookie.rememberMeEnabled')
                 && !empty($_COOKIE['SGL_REMEMBER_ME']))
@@ -90,6 +94,9 @@ class Login2Mgr extends SGL_Manager
         $aParams['managerName'] = SGL_Config::get('site.defaultManager');
         if (SGL_Session::get('site.defaultAction')) {
             $aParams['action'] = SGL_Session::get('site.defaultAction');
+        }
+        if (!empty($input->lang)) {
+            $aParams['lang'] = $input->lang;
         }
         SGL_HTTP::redirect($input->getCurrentUrl()->makeLink($aParams));
     }
