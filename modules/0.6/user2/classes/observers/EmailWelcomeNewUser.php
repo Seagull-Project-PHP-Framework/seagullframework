@@ -25,6 +25,7 @@ class EmailWelcomeNewUser extends SGL_Observer
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $defModule = SGL_Config::get('site.defaultModule');
+        $siteName  = SGL_Config::get('site.name');
 
         // load main module's config
         $c     = new SGL_Config();
@@ -35,7 +36,8 @@ class EmailWelcomeNewUser extends SGL_Observer
                   'testMode'  => false,
                   'testEmail' => false,
                   'bccEmail'  => false,
-                  'fromEmail' => SGL_Config::get('email.admin')
+                  'fromEmail' => SGL_Config::get('email.admin'),
+                  'signature' => $siteName
               );
 
         // load translations
@@ -47,8 +49,10 @@ class EmailWelcomeNewUser extends SGL_Observer
         $aDelOpts['toEmail']      = $observable->input->user->email;
         $aDelOpts['toRealName']   = $this->_getFullName($observable->input->user);
         $aDelOpts['fromEmail']    = $aConf['fromEmail'];
-        $aDelOpts['fromRealName'] = SGL_Output::tr('email_signature_welcome_user');
-        $aDelOpts['subject']      = SGL_Output::tr('email_subject_welcome_user');
+        $aDelOpts['fromRealName'] = SGL_Output::tr('email signature %siteName%',
+            'vprintf', array('siteName' => $siteName));
+        $aDelOpts['subject']      = SGL_Output::tr('email subject %siteName%',
+            'vprintf', array('siteName' => $siteName));
 
         // test opts
         if ($aConf['testMode']) {
@@ -63,6 +67,7 @@ class EmailWelcomeNewUser extends SGL_Observer
         $aTplOpts['lang']         = SGL::getCurrentLang();
         $aTplOpts['membername']   = $aDelOpts['toRealName'];
         $aTplOpts['user']         = $observable->input->user;
+        $aTplOpts['signature']    = $aConf['signature'];
         // obligatory template options
         $aTplOpts['textTemplate'] = SGL_MOD_DIR . '/user2/templates/email/emailWelcomeNewUser.html';
         $aTplOpts['mode']         = SGL_Emailer_Builder::MODE_TEXT_ONLY;

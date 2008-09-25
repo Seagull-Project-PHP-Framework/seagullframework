@@ -47,7 +47,8 @@ class CreateUser extends SGL_Observer
         $observable->input->userId = $oUser->usr_id;
 
         if ($ok) {
-            $ok = $this->_createPreferences($oUser->usr_id);
+            $aPrefs['language'] = SGL::getCurrentLang() . '-' . SGL::getCurrentCharset();
+            $ok = $this->_createPreferences($oUser->usr_id, $aPrefs);
         }
         return $ok;
     }
@@ -58,9 +59,14 @@ class CreateUser extends SGL_Observer
         return $oPassword->create();
     }
 
-    private function _createPreferences($userId)
+    private function _createPreferences($userId, array $aUserPrefs)
     {
-        $aPrefs = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
+        $aPrefs    = $this->da->getMasterPrefs(SGL_RET_ID_VALUE);
+        $aPrefsMap = $this->da->getPrefsMapping();
+        foreach ($aUserPrefs as $prefName => $prefValue) {
+            $prefId = $aPrefsMap[$prefName];
+            $aPrefs[$prefId] = $prefValue;
+        }
         if (!PEAR::isError($aPrefs)) {
             $ok = $this->da->addPrefsByUserId($aPrefs, $userId);
         } else {
