@@ -37,6 +37,7 @@ class Login2Mgr extends SGL_Manager
         $input->masterTemplate = $this->masterTemplate;
         $input->action         = $req->get('action')
             ? $req->get('action') : 'login';
+        $input->redir          = $req->get('redir');
     }
 
     public function display(SGL_Output $output)

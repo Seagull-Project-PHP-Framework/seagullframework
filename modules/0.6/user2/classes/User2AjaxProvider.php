@@ -73,7 +73,8 @@ class User2AjaxProvider extends SGL_AjaxProvider2
 
     public function login(SGL_Registry $input, SGL_Output $output)
     {
-        $input->user = (object) $this->req->get('user');
+        $input->user  = (object) $this->req->get('user');
+        $input->redir = $this->req->get('redir');
 
         $sessStart = SGL_Session::get('startTime');
 
@@ -98,10 +99,12 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 $msg              = 'welcome returned user';
                 $persist          = true;
                 $output->isLogged = true;
-                $output->redir    = $input->getCurrentUrl()->makeLink(array(
-                    'moduleName'  => $moduleName,
-                    'managerName' => $managerName
-                ));
+                $output->redir    = !empty($input->redir)
+                    ? base64_decode($input->redir)
+                    : $input->getCurrentUrl()->makeLink(array(
+                          'moduleName'  => $moduleName,
+                          'managerName' => $managerName
+                      ));
             } else {
                 $msg = array(
                     'message' => 'username/password not recognised',
