@@ -49,9 +49,9 @@ class EmailWelcomeNewUser extends SGL_Observer
         $aDelOpts['toEmail']      = $observable->input->user->email;
         $aDelOpts['toRealName']   = $this->_getFullName($observable->input->user);
         $aDelOpts['fromEmail']    = $aConf['fromEmail'];
-        $aDelOpts['fromRealName'] = SGL_Output::tr('email signature %siteName%',
+        $aDelOpts['fromRealName'] = SGL_Output::tr('email signature welcome %siteName%',
             'vprintf', array('siteName' => $siteName));
-        $aDelOpts['subject']      = SGL_Output::tr('email subject %siteName%',
+        $aDelOpts['subject']      = SGL_Output::tr('email subject welcome %siteName%',
             'vprintf', array('siteName' => $siteName));
 
         // test opts

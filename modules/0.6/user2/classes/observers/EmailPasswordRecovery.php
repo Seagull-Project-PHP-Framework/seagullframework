@@ -26,6 +26,7 @@ class EmailPasswordRecovery extends SGL_Observer
             $observable->input->user->email
         );
         $defModule = SGL_Config::get('site.defaultModule');
+        $siteName  = SGL_Config::get('site.name');
 
         $c     = new SGL_Config();
         $aConf = $c->load(SGL_MOD_DIR . '/' . $defModule . '/conf.ini');
@@ -35,7 +36,8 @@ class EmailPasswordRecovery extends SGL_Observer
                   'testMode'  => false,
                   'testEmail' => false,
                   'bccEmail'  => false,
-                  'fromEmail' => SGL_Config::get('email.admin')
+                  'fromEmail' => SGL_Config::get('email.admin'),
+                  'signature' => $siteName
               );
 
         // load translations
@@ -47,8 +49,10 @@ class EmailPasswordRecovery extends SGL_Observer
         $aDelOpts['toEmail']      = $observable->input->user->email;
         $aDelOpts['toRealName']   = $observable->input->user->username;
         $aDelOpts['fromEmail']    = $aConf['fromEmail'];
-        $aDelOpts['fromRealName'] = SGL_Output::tr('email_signature_password_recovery');
-        $aDelOpts['subject']      = SGL_Output::tr('email_subject_password_recovery');
+        $aDelOpts['fromRealName'] = SGL_Output::tr('email signature password recovery %siteName%',
+            'vprintf', array('siteName' => $siteName));
+        $aDelOpts['subject']      = SGL_Output::tr('email subject password recovery %siteName%',
+            'vprintf', array('siteName' => $siteName));
 
         // test opts
         if ($aConf['testMode']) {
@@ -66,6 +70,7 @@ class EmailPasswordRecovery extends SGL_Observer
             'reset', 'passwordrecovery', 'user2', array(),
             'userId|' . $userId . '||k|' . $observable->input->hash
         );
+        $aTplOpts['signature']  = $aConf['signature'];
         // obligatory template options
         $aTplOpts['textTemplate'] = SGL_MOD_DIR . '/user2/templates/email/emailPasswordRecovery.html';
         $aTplOpts['mode']         = SGL_Emailer_Builder::MODE_TEXT_ONLY;
