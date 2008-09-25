@@ -405,8 +405,6 @@ class User2Observable extends SGL_Observable
         $this->input  = $input;
         $this->output = $output;
         $this->conf   = $input->getConfig();
-        $this->path   = !empty($path)
-            ? $path : dirname(__FILE__) . '/observers';
     }
 
     public function attachMany($observersString)
@@ -414,7 +412,10 @@ class User2Observable extends SGL_Observable
         if (!empty($observersString)) {
             $aObservers = explode(',', $observersString);
             foreach ($aObservers as $observer) {
-                $observerFile = "{$this->path}/$observer.php";
+                list($moduleName, $observer) = explode('_', $observer);
+                $moduleName = strtolower($moduleName);
+                $path = SGL_MOD_DIR . '/' . $moduleName . '/classes/observers';
+                $observerFile = "$path/$observer.php";
                 if (file_exists($observerFile)) {
                     require_once $observerFile;
                     $this->attach(new $observer());
