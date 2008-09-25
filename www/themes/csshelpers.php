@@ -14,6 +14,11 @@ $baseUrl  = $themeUrl; // bc
 // Current module directory
 $moduleUrl = resolveBaseUrl(resolveCurrentModule(), true);
 
+// Resolve manager name
+$manager = isset($_GET['aParams']['manager'])
+    ? $_GET['aParams']['manager']
+    : '';
+
 $isFormSubmitted = resolveFormStatus();
 
 /**
