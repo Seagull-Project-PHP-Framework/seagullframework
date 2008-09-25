@@ -66,13 +66,20 @@ class SGL_Request_Browser2 extends SGL_Request
         //   *  all available routes variants are marked with numbers.
         //
         if ($prependLang) {
+
+            // This route fixes problem, when connecting with "/",
+            // always resolves to default language
+            $m->connect('/', array(
+                'moduleName' => $defModule,
+            ));
+
             // Step zero: connect to language
             //   - index.php/ru
             //   - index.php/ru/
             $m->connect($prependRegex, array(
                 'moduleName' => $defModule,
                 // language is not resolved yet, thus default will be returned
-                'lang'       => SGL::getCurrentLang()
+//                'lang'       => SGL::getCurrentLang()
             ));
         }
 
@@ -123,7 +130,7 @@ class SGL_Request_Browser2 extends SGL_Request
 
             unset($aQueryData['params']);
         }
-        if ($prependLang) {
+        if ($prependLang && !empty($aQueryData['lang'])) {
             $aQueryData['lang'] = $aQueryData['lang'] . '-' .
                 // language is not resolved yet, thus default will be returned
                 SGL::getCurrentCharset();
