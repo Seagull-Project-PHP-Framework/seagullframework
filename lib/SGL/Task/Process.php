@@ -929,9 +929,9 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
             : 'default';
         // check if theme is affected by the current manager
         if (isset($output->manager)) {
-            $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
-            if (SGL_Config::get("$mgrName.theme")) {
-                $output->theme = SGL_Config::get("$mgrName.theme");
+            $output->managerName = SGL_Inflector::caseFix(get_class($output->manager));
+            if (SGL_Config::get($output->managerName . '.theme')) {
+                $output->theme = SGL_Config::get($output->managerName . '.theme');
             }
         }
 

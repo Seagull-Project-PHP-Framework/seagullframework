@@ -1207,12 +1207,15 @@ class SGL_Output
         $aCssHelperParams['isFormSubmitted'] = !empty($this->submitted);
         $aCssHelperParams['module']          = $module;
         $aCssHelperParams['defaultModule']   = $defaultModule;
+        $aCssHelperParams['manager']         = !empty($this->managerName)
+            ? $this->managerName
+            : '';
 
         // autoload module's css file
-        if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.css"))) {
-            $this->addCssFile("$module/css/$module.css");
-        } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.css"))) {
+        if (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.css"))) {
             $this->addCssFile("themes/$theme/css/$module.css");
+        } elseif (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.css"))) {
+            $this->addCssFile("$module/css/$module.css");
         }
         // BC
         if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.php"))) {
