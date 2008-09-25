@@ -3,7 +3,7 @@ $aRoutes = array(
     array('login', array(
         'moduleName' => 'user2',
         'controller' => 'login2',
-        'action'     => 'login'
+        'action' => 'login'
     )),
     array('register', array(
         'moduleName' => 'user2',
@@ -14,6 +14,6 @@ $aRoutes = array(
         'moduleName' => 'user2',
         'controller' => 'login2',
         'action' => 'logout'
-    ))
+    )),
 );
 ?>

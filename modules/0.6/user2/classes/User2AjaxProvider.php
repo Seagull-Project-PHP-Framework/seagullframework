@@ -192,6 +192,13 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         }
     }
 
+    /**
+     * This action creates new 'password recovery' entry and sends user
+     * an email with instructions how to reset theirs password.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
     public function recoverPassword(SGL_Registry $input, SGL_Output $output)
     {
         $input->user = (object) $this->req->get('user');
@@ -266,6 +273,13 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         }
     }
 
+    /**
+     * This action does user password renewal based on supplied
+     * 'password recovery' hash entry.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
     public function resetPasswordByHash(SGL_Registry $input, SGL_Output $output)
     {
         $input->oUser  = (object) $this->req->get('user');
@@ -301,7 +315,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                         $output->isReset = true;
                         $output->html = $this->_renderTemplate($output, array(
                             'masterTemplate' => 'passwordRecoveryReset.html',
-                            'message' => SGL_Output::tr('password successfully reset')
+                            'message' => SGL_Output::tr('password successfully updated')
                         ));
                     }
                 }

@@ -46,7 +46,6 @@ class PasswordRecoveryMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $output->addCssFile('themes/doris/css/screen/layout_simple.css');
         $output->addJavascriptFile(array(
             'js/jquery/plugins/jquery.form.js',
             'user2/js/User2.js',

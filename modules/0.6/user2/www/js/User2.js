@@ -15,8 +15,3 @@ $.ajaxSetup({
     type: 'post',
     dataType: 'json'
 });
-
-/*
-$(document).ready(function() {
-});
-*/
