@@ -124,6 +124,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         if (!is_string($ok)) {
             // register routine
             $oRegister = new User2Observable($input, $output);
+            $oRegister->rememberMeIsActive = true;
             $oRegister->attachMany(SGL_Config::get('Login2Mgr.registerObservers'));
             $oRegister->notify();
 

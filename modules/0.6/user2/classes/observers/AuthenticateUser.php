@@ -17,6 +17,12 @@ class AuthenticateUser extends SGL_Observer
     {
         $this->conf = $observable->conf;
 
+        if (SGL_Config::get('cookie.rememberMeEnabled') &&
+            !empty($observable->rememberMeIsActive))
+        {
+            $observable->input->user->rememberme = true;
+        }
+
         $rememberme = !empty($observable->input->user->rememberme) ? true : false;
         $ret        = true;
         $oUser      = $this->_getUser(
