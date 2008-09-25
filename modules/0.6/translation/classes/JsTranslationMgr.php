@@ -60,7 +60,7 @@ HELP;
         );
         // make sure default lang goes first
         $aLangs       = array_merge(array($defaultLang => $aLangs[$defaultLang]), $aLangs);
-        $aModules     = array($defaultModule);
+        $aModules     = SGL_Util::getAllModuleDirs();
         $aDefaultDict = array();
         foreach ($aLangs as $key => $langName) {
             $aDict = array();
@@ -80,7 +80,8 @@ HELP;
                     $aModDict = SGL_Translation2::removeMetaData($aModDict, true);
                     $aDict    = array_merge($aDict, $aModDict);
                 } else {
-                    $aDict    = SGL_Translation2::removeMetaData($aTrans, true);
+                    $aTrans   = SGL_Translation2::removeMetaData($aTrans, true);
+                    $aDict    = array_merge($aDict, $aTrans);
                 }
             }
 
