@@ -336,10 +336,12 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         $input->set('session', new SGL_Session($uid, $rememberMe = true));
 
         // record login if allowed
-        require_once SGL_MOD_DIR . '/user/classes/observers/RecordLogin.php';
-        if (RecordLogin::loginRecordingAllowed()) {
-            $dbh = &SGL_DB::singleton();
-            RecordLogin::insert($dbh);
+        if (!SGL::moduleIsEnabled('user2')) {
+            require_once SGL_MOD_DIR . '/user/classes/observers/RecordLogin.php';
+            if (RecordLogin::loginRecordingAllowed()) {
+                $dbh = &SGL_DB::singleton();
+                RecordLogin::insert($dbh);
+            }
         }
     }
 
