@@ -19,8 +19,8 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::__construct();
 
-        $this->da->add(UserDAO::singleton());
         $this->da->add(User2DAO::singleton());
+        $this->da->add(UserDAO::singleton());
         $this->da->add(Media2DAO::singleton());
     }
 

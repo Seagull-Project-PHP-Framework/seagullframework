@@ -20,8 +20,8 @@ class Account2Mgr extends SGL_Manager
         );
 
         $this->da = new SGL_Delegator();
-        $this->da->add(UserDAO::singleton());
         $this->da->add(User2DAO::singleton());
+        $this->da->add(UserDAO::singleton());
         $this->da->add(Media2DAO::singleton());
     }
 

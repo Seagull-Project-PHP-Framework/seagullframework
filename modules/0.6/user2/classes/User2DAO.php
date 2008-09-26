@@ -56,6 +56,26 @@ class User2DAO extends SGL_Manager
         return $this->dbh->getRow($query);
     }
 
+    public function addUser($aFields, $isAcctActive = true,
+        $roleId = SGL_MEMBER, $createdBy = SGL_ADMIN)
+    {
+        $tableName = $this->conf['table']['user'];
+
+        $aFields['usr_id']         = $this->dbh->nextId($tableName);
+        $aFields['is_acct_active'] = $isAcctActive;
+        $aFields['role_id']        = $roleId;
+        $aFields['date_created']   = SGL_Date::getTime($gmt = true);
+        $aFields['created_by']     = $createdBy;
+        $aFields['last_updated']   = $aFields['date_created'];
+        $aFields['updated_by']     = $aFields['created_by'];
+
+        $ret = $this->dbh->autoExecute($tableName, $aFields, DB_AUTOQUERY_INSERT);
+        if (!PEAR::isError($ret)) {
+            $ret = $aFields['usr_id'];
+        }
+        return $ret;
+    }
+
     public function updateUserById($userId, $aFields)
     {
         return $this->dbh->autoExecute('usr', $aFields,
