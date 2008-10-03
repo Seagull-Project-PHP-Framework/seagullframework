@@ -117,10 +117,14 @@ class SGL_Session
             SGL_Config::get('cookie.domain'),
             SGL_Config::get('cookie.secure'));
 
-        session_save_path(SGL_TMP_DIR);
+        if (is_writable(SGL_TMP_DIR)) {
+            session_save_path(SGL_TMP_DIR);
+        } else {
+            throw new Exception(SGL_TMP_DIR .' either does not exist or is not writable');
+        }
 
         //  start PHP session handler
-        session_start();
+        $ok = session_start();
 
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
