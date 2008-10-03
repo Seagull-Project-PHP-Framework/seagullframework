@@ -80,8 +80,7 @@ abstract class SGL_Controller_Abstract
     {
         $init = new SGL_TaskRunner();
         $init->addData(SGL_Registry::get('config')->getAll());
-        $init->addTask(new SGL_Task_SetupConstantsStart());
-        $init->addTask(new SGL_Task_SetupConstantsFinish());
+        $init->addTask(new SGL_Task_SetupConstants());
         $init->main();
     }
 }
