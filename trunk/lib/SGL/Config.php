@@ -348,7 +348,7 @@ class SGL_Config
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 
-            if ($modConfigPath) {
+            if (SGL::isReadable($modConfigPath)) {
                 $aModuleConfig = $this->load($modConfigPath);
 
                 if (PEAR::isError($aModuleConfig)) {
