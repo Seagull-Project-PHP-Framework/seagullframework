@@ -1,0 +1,35 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="%mgrName%" method="post" flexy:ignore id="%mgrName%">
+    <input type="hidden" name="action" value="delete" /><br />
+    {if:pager}<flexy:include src="pager.html" />{end:}
+
+    <table class="wide">
+        <tr>
+            <td colspan="2">
+                <input type="button" onclick="javascript:document.location.href='{makeUrl(#add#,#%mgrName%#,#%moduleName%#)}'" value="{translate(#Add entry#)}" />
+            </td>
+        </tr>
+        <tr>
+            %table_header%
+            <th>action</th>
+        </tr>
+
+        <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+            %table_body%
+            <td width="10%" nowrap>
+            <a href="{makeUrl(#edit#,#%mgrName%#,#%moduleName%#,aPagedData[data],#frm%MgrName%ID|%mgrName%_id#,key)}" />
+                [{translate(#edit#)}]
+            </a> <img src="{webRoot}/themes/default_admin/images/16/action_edit1.gif" alt="edit" />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3">{translate(#With selected message(s)#)}:
+                <input type="submit" name="delete" value="{translate(#Delete#)}"
+                        onclick="return confirmSubmit('message', '%mgrName%_delete_confirm')" />
+            </td>
+        </tr>
+    </table>
+</form>

@@ -1,0 +1,115 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/seagull/branches/0.6-bugfix/www/index.php/user/login/action/logout/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Home</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<!-- TEST LOGIN -->
+<tr>
+	<td>type</td>
+	<td>frm_username_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Module Manager</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+
+<!-- TEST SELECTING MTCE SCREEN -->
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Maintenance</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Maintenance</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<!-- TEST LATEST VERSION CHECK -->
+<tr>
+	<td>clickAndWait</td>
+	<td>document.checkLatestVersion.checkLatestVersion</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Your current version</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<!-- TEST DATAOBJECT GENERATION -->
+<tr>
+	<td>clickAndWait</td>
+	<td>dbgen</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Data Objects rebuilt successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+
+
+<tr>
+	<td>clickAndWait</td>
+	<td>link=logout</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>You have been successfully logged out</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>

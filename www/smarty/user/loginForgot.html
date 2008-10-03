@@ -1,0 +1,41 @@
+    <form name="forgotPasswd" method="post" flexy:ignore id="forgotPasswd">
+        <input type="hidden" name="action" value="retrieve" />
+
+        <h1 class="pageTitle">{pageTitle}</h1><span flexy:if="msgGet()">{msgGet()}</span>
+        <p class="alignCenter">{translate(#Enter the email address you registered with#)}.</p>
+        <table class="narrow">
+            <tr>
+                <td class="fieldName"><span class="error">*</span>Email</td>
+                <td>
+                    <div class="error" flexy:if="error[frmEmail]">
+                        {translate(error[frmEmail])}
+                    </div><input type="text" name="frmEmail" value="{forgotEmail}" maxlength="64" /></td>
+            </tr>
+
+            <tr>
+                <td class="fieldName"><span class="error">*</span>{translate(#Security question#)}</td>
+                <td align="left">
+                    <div class="error" flexy:if="error[frmQuestion]">
+                        {translate(error[frmQuestion])}
+                    </div><select name="frmQuestion">{generateSelect(aSecurityQuestions,question):h}</select></td>
+            </tr>
+
+            <tr>
+                <td class="fieldName"><span class="error">*</span>{translate(#Answer#)}</td>
+                <td align="left">
+                    <div class="error" flexy:if="error[frmAnswer]">
+                        {translate(error[frmAnswer])}
+                    </div><input name="frmAnswer" type="password" value="{answer}" /></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" align="center"><input type="submit" name="submitted" value="{translate(#retrieve#)}" /></td>
+            </tr>
+
+            <tr>
+                <td align="center" colspan="2">
+                    <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
+                </td>
+            </tr>
+        </table>
+    </form>
