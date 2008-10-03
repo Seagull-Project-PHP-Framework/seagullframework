@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -56,7 +56,6 @@ class SGL_Output
     var $onReadyDom = '';
     var $aOnReadyDomEvents = array();
     var $aJavascriptFiles = array();
-    var $aRawJavascriptFiles = array();
     var $aCssFiles = array();
     var $aHeaders = array();
 
@@ -70,70 +69,9 @@ class SGL_Output
      * @return  string          translated text
      * @see     setLanguage()
      */
-    function translate($key, $filter = false, $aParams = array(), $output = null)
+    function translate($key, $filter = false, $aParams = array())
     {
-        // in case translation params are specified as a string
-        // e.g. {translate(#my string to translate#,#vprintf#,#param1|value1||param2||value2#)}
-        if (!empty($aParams) && is_string($aParams)) {
-            $aResultParams = array();
-            $aStringParams = explode('||', $aParams);
-            foreach ($aStringParams as $stringPair) {
-                $aStringValues = explode('|', $stringPair);
-                if (isset($aStringValues[1])) {
-                    if ($var = SGL_Output::_extractVariableValue($aStringValues[1], $output)) {
-                        $aResultParams[$aStringValues[0]] = $var;
-                    } else {
-                        if (isset($output) && is_a($output, 'SGL_Output')) {
-                            $aResultParams[$aStringValues[0]] = isset($output->{$aStringValues[1]})
-                                ? $output->{$aStringValues[1]}
-                                : null;
-                        } elseif (is_a($this, 'SGL_Output')) {
-                            $aResultParams[$aStringValues[0]] = isset($this->{$aStringValues[1]})
-                                ? $this->{$aStringValues[1]}
-                                : null;
-                        }
-                    }
-                } else {
-                    if ($var = SGL_Output::_extractVariableValue($aStringValues[0], $output)) {
-                        $aStringValues[] = $var;
-                    } else {
-                        if (isset($output) && is_a($output, 'SGL_Output')) {
-                            $aResultParams[] = isset($output->{$aStringValues[0]})
-                                ? $output->{$aStringValues[0]}
-                                : null;
-                        } elseif (is_a($this, 'SGL_Output')) {
-                            $aResultParams[] = isset($this->{$aStringValues[0]})
-                                ? $this->{$aStringValues[0]}
-                                : null;
-                        }
-                    }
-                }
-            }
-            $aParams = $aResultParams;
-        }
         return SGL_String::translate($key, $filter, $aParams);
-    }
-
-    function _extractVariableValue($varString, $output = null)
-    {
-        $ret = false;
-        if (strpos($varString, '.') !== false) {
-            $aVar = explode('.', $varString);
-            if (isset($output) && is_a($output, 'SGL_Output')) {
-                $var = &$output->{$aVar[0]};
-            } else {
-                $var = &$this->{$aVar[0]};
-            }
-            if (isset($var) && is_object($var) && isset($var->{$aVar[1]})) {
-                $ret = $var->{$aVar[1]};
-            }
-        }
-        return $ret;
-    }
-
-    function tr($key, $filter = false, $aParams = array(), $output = null)
-    {
-        return SGL_Output::translate($key, $filter, $aParams, $output);
     }
 
     /**
@@ -309,12 +247,12 @@ class SGL_Output
                 $optionsString .= ' ' . $k . '="' . $v . '"';
             }
         }
-        if ($inTable){
+        if ($inTable == false){
             foreach ($elements as $k => $v) {
                 $i = $i + 1;
                 $html .= "<input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
                 if ($selected == $k ){
-                    $html .= " checked='checked'";
+                    $html .= " checked";
                 }
                 $html .= " />$v ";
                 if ($newline) {
@@ -331,7 +269,7 @@ class SGL_Output
                 $i = $i + 1;
                 $html .= "<td nowrap='nowrap'><input name='" . $groupname . "' type='radio' value='" . $k . "'" . $optionsString . " ";
                 if ($selected == $k ) {
-                    $html .= " checked='checked'";
+                    $html .= " checked ";
                 }
                 $html .= " />$v </td>\n";
                 if ($newline) {
@@ -519,11 +457,10 @@ class SGL_Output
 
     /**
      * Prints formatted error message to standard out.
-     * (For default_admin theme)
      *
      * @return mixed
      */
-    function msgGetAdmin()
+    function msgGet()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -650,32 +587,27 @@ class SGL_Output
     }
 
     /**
-     * For adding Javascript files to include.
+     * For adding JavaScript files to include.
      *
-     * @access public
-     *
-     * @param mixed $file  string (file) or array of strings (files)
-     *                     path/to/jsFile relative to www/ dir e.g. js/foo.js,
-     *                     can also be remote js file
-     *                     e.g. http://example.com/foo.js
-     * @param boolean $optimize
-     *
+     * @param   mixed $file or array $file path/to/jsFile, relative to www/ dir e.g. js/foo.js.
+                can also be remote js file e.g. http://example.com/foo.js
      * @return void
      */
-    function addJavascriptFile($file, $optimize = true)
+    function addJavascriptFile($file)
     {
-        if ($optimize) {
-            $aFiles = &$this->aJavascriptFiles;
+        if (is_array($file)) {
+            foreach ($file as $jsFile) {
+                if (!in_array($jsFile, $this->aJavascriptFiles)) {
+                    $this->aJavascriptFiles[] = (strpos($jsFile, 'http://') === 0)
+                        ? $jsFile
+                        : SGL_BASE_URL . '/' . $jsFile;
+                }
+            }
         } else {
-            $aFiles = &$this->aRawJavascriptFiles;
-        }
-        $aIncludeFiles = !is_array($file) ? array($file) : $file;
-        foreach ($aIncludeFiles as $jsFile) {
-            $jsFile = strpos($jsFile, 'http://') === 0
-                ? $jsFile
-                : SGL_BASE_URL . '/' . $jsFile;
-            if (!in_array($jsFile, $aFiles)) {
-                $aFiles[] = $jsFile;
+            if (!in_array($file, $this->aJavascriptFiles)) {
+                $this->aJavascriptFiles[] = (strpos($file, 'http://') === 0)
+                    ? $file
+                    : SGL_BASE_URL . '/' . $file;
             }
         }
     }
@@ -704,7 +636,7 @@ class SGL_Output
                         : SGL_BASE_URL . '/' . $file;
                 }
             } else {
-                $aFiles[] = (strpos($this->javascriptSrc, 'http://') === 0)
+            	$aFiles[] = (strpos($this->javascriptSrc, 'http://') === 0)
                     ? $this->javascriptSrc
                     : SGL_BASE_URL . '/' . $this->javascriptSrc;
             }
@@ -742,75 +674,26 @@ class SGL_Output
     }
 
     /**
-     * Wrapper for SGL_Url::makeLink.
+     * Wrapper for SGL_Url::makeLink,
      * Generates URL for easy access to modules and actions.
      *
-     * @access public
-     *
+     * @access  public
      * @param string $action
      * @param string $mgr
      * @param string $mod
      * @param array $aList
      * @param string $params
      * @param integer $idx
-     *
-     * @return string
+     * @return  string
      */
-    function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
-        $params = '', $idx = 0)
+    function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(), $params = '', $idx = 0)
     {
-        $input = SGL_Registry::singleton();
-        $req = $input->getRequest();
-        // Horde routes work only for browser request types
-        if ($req->type == SGL_REQUEST_BROWSER
-                && SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
-            $aArgs = func_get_args();
-            // new style call
-            if (count($aArgs) == 1) {
-                if (strpos($aArgs[0], '|') !== false) {
-                    $aVars = explode('||', $aArgs[0]);
-                    $aArgs = array();
-                    foreach ($aVars as $varString) {
-                        list($k, $v) = explode('|', $varString);
-                        $aArgs[$k] = isset($this->{$v})
-                            ? $this->{$v} : $v;
-                    }
-                    if (isset($aArgs['module'])) {
-                        $aArgs['moduleName'] = $aArgs['module'];
-                        unset($aArgs['module']);
-                    }
-                    if (isset($aArgs['manager'])) {
-                        $aArgs['managerName'] = $aArgs['manager'];
-                        unset($aArgs['manager']);
-                    }
-                // named route
-                } else {
-                    $aArgs = $aArgs[0];
-                }
-            // old style: params string specified as not part of array
-            } elseif (count($aArgs) == 5 && empty($aList)) {
-                $aVars = explode('||', $aArgs[4]);
-                foreach ($aVars as $varKey => $varString) {
-                    $aVar = explode('|', $varString);
-                    if (isset($aVar[1]) && isset($this->{$aVar[1]})) {
-                        $aVar[1] = $this->{$aVar[1]};
-                    }
-                    $aVars[$varKey] = implode('|', $aVar);
-                }
-                $aArgs[4] = implode('||', $aVars);
-            }
-            $url = $input->getCurrentUrl();
-            $ret = $url->makeLink($aArgs);
-        } else {
-            $ret = SGL_Url::makeLink($action, $mgr, $mod, $aList,
-                $params, $idx, $this);
-        }
-        return $ret;
+        return SGL_Url::makeLink($action, $mgr, $mod, $aList, $params, $idx, $this);
     }
 
     function getCurrentUrl()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $oCurrentUrl = $reg->getCurrentUrl();
         return $oCurrentUrl->toString();
     }
@@ -823,10 +706,10 @@ class SGL_Output
     function outputBody($templateEngine = null)
     {
         if (empty($this->template)) {
-            $this->template = 'null.html';
+            $this->template = 'docBlank.html';
         }
         $this->masterTemplate = $this->template;
-        $view = new SGL_HtmlSimpleView($this, $templateEngine);
+        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
 
         //  suppress error notices in templates
@@ -998,7 +881,11 @@ class SGL_Output
      */
     function getMemoryUsage()
     {
-        return number_format(memory_get_usage());
+        if (function_exists('memory_get_usage')) {
+            return number_format(memory_get_usage());
+        } else {
+            return 'unknown';
+        }
     }
 
     function addHeader($header)
@@ -1011,297 +898,6 @@ class SGL_Output
     function getHeaders()
     {
         return $this->aHeaders;
-    }
-
-    /**
-     * Makes optimizer link for JavaScript files.
-     *
-     * How to use:
-     *  1. in your template you need to add the following line
-     *     <script type="text/javascript" src="{makeJsOptimizerLink()}" />
-     *  2. specify global js files in $conf['site']['globalJavascriptFiles']
-     *     separated by comma e.g. 'js/SGL.js,js/SGL/Util/String.js'
-     *  3. to add module/manager specific js files just use
-     *     $output->addJavascriptFile('path/to/custom/js/file.js')
-     *
-     * @access public
-     *
-     * @return string
-     */
-    function makeJsOptimizerLink()
-    {
-        // save currently loaded files
-        $aCurrentFiles = $this->aJavascriptFiles;
-        $this->aJavascriptFiles = array();
-
-        // bc for global javascript
-        if (!SGL_Config::get('site.globalJavascriptFiles')
-                && ($_SESSION['aPrefs']['theme'] == 'default'
-                    || $this->adminGuiAllowed)) {
-            SGL_Config::set('site.globalJavascriptFiles', 'js/SGL.js');
-        }
-
-        // javascript files, which always are loaded
-        $this->addJavascriptFile(
-            SGL_Config::get('site.globalJavascriptFiles')
-                ? explode(',', SGL_Config::get('site.globalJavascriptFiles'))
-                : array()
-        );
-
-        // merge default js files with custom ones
-        // default js files will be loaded first
-        $this->addJavascriptFile($aCurrentFiles);
-
-        // remove base url from files
-        // NB! this hack should be removed
-        $aFiles = array();
-        foreach ($this->aJavascriptFiles as $fileName) {
-            $aFiles[] = substr($fileName, strlen(SGL_BASE_URL . '/'));
-        }
-
-        // actualy we should add revision number instead
-        $rev      = SGL_Output::_getFilesModifiedTime($aFiles);
-        $jsString = implode(',', $aFiles);
-        // make optimizer link
-        //  - type: javascript
-        //  - rev: current revision number (still to be implemented)
-        //  - files: loaded js files
-        $link     = SGL_BASE_URL . '/optimizer.php?type=javascript&amp;rev='
-            . $rev . '&amp;files=' . $jsString;
-        if (SGL_Config::get('cache.javascript')) {
-            $link .= '&amp;optimize=1';
-        }
-
-        $ret = "<script type=\"text/javascript\" src=\"$link\"></script>\n";
-        foreach ($this->aRawJavascriptFiles as $jsFile) {
-            $ret .= "<script type=\"text/javascript\" src=\"$jsFile\"></script>\n";
-        }
-        return $ret;
-    }
-
-    /**
-     * Makes CSS optimizer link.
-     *
-     * 1. {makeCssOptimizerLink():h}
-     *    Loads default "CSS fw" stylesheets + stylesheets specified in mgr.
-     *
-     * 2. {makeCssOptimizerLink(##,#a.css,b.css#):h}
-     *    Loads "a.css" and "b.css" from current theme + stylesheets
-     *    specified in mgr.
-     *
-     * 3. {makeCssOptimizerLink(##,##):h}
-     *    Loads only stylesheets specified in mgr.
-     *
-     * @access public
-     *
-     * @param array $aCssHelperParams    additional params passed to css helper
-     * @param mixed $aDefaultThemeFiles  if null default css files are loaded
-     *                                   otherwise custom files specified as array
-     *                                   or string (CSV)
-     * @param string $themePreloadFile   file which is "prepended" to every CSS request
-     *                                   (even in non-production mode)
-     *
-     * @return string
-     */
-    function makeCssOptimizerLink($aCssHelperParams = array(),
-            $aDefaultThemeFiles = null, $themePreloadFile = null)
-    {
-        $theme = $this->theme;
-
-        // get master layout
-        $masterLayout = !empty($this->masterLayout)
-            ? $this->masterLayout
-            : 'layout-navtop-3col.css'; // needs to be customized
-
-        // layout is specified in request for demo purpose on home page
-        $req = &SGL_Request::singleton();
-        $masterLayout = $req->get('masterLayout')
-            ? $req->get('masterLayout')
-            : $masterLayout;
-        // make sure we pass layout to output
-        $this->masterLayout = $masterLayout;
-
-        if (!empty($aDefaultThemeFiles) && is_string($aDefaultThemeFiles)) {
-            $aTmpThemeFiles = explode(',', $aDefaultThemeFiles);
-            $aDefaultThemeFiles = array();
-            foreach ($aTmpThemeFiles as $file) {
-                $aDefaultThemeFiles[] = "themes/$theme/css/$file";
-            }
-        }
-        if (!is_array($aDefaultThemeFiles) && is_null($aDefaultThemeFiles)) {
-            // default files loaded
-            $aDefaultThemeFiles = array( // we need to be able to customize it
-                "themes/$theme/css/reset.css",
-                "themes/$theme/css/tools.css",
-                "themes/$theme/css/typo.css",
-                "themes/$theme/css/forms.css",
-                "themes/$theme/css/layout.css",
-                "themes/$theme/css/blocks.css",
-                "themes/$theme/css/common.css",
-                "themes/$theme/css/$masterLayout",
-            );
-        } elseif (!is_array($aDefaultThemeFiles)) {
-            $aDefaultThemeFiles = array();
-        }
-
-        // custom loaded files
-        $aCurrentFiles = $this->aCssFiles;
-        $this->aCssFiles = array();
-
-        // add common css files
-        $this->addCssFile($aDefaultThemeFiles);
-        // add custom files
-        $this->addCssFile($aCurrentFiles);
-
-        $module = !empty($this->moduleName) ? $this->moduleName : 'default';
-        $defaultModule = SGL_Config::get('site.defaultModule')
-            ? SGL_Config::get('site.defaultModule')
-            : $module;
-
-        // params passed to csshelper
-        $aCssHelperParams['theme']           = $theme;
-        $aCssHelperParams['langDir']         = $this->langDir;
-        $aCssHelperParams['isFormSubmitted'] = !empty($this->submitted);
-        $aCssHelperParams['module']          = $module;
-        $aCssHelperParams['defaultModule']   = $defaultModule;
-
-        // autoload module's css file
-        if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.css"))) {
-            $this->addCssFile("$module/css/$module.css");
-        } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.css"))) {
-            $this->addCssFile("themes/$theme/css/$module.css");
-        }
-        // BC
-        if (is_file(realpath(SGL_WEB_ROOT . "/$module/css/$module.php"))) {
-            $this->addCssFile("$module/css/$module.php");
-        } elseif (is_file(realpath(SGL_WEB_ROOT . "/themes/$theme/css/$module.php"))) {
-            $this->addCssFile("themes/$theme/css/$module.php");
-        }
-
-        $params = '';
-        foreach ($aCssHelperParams as $k => $v) {
-            $params .= '&amp;aParams[' . urlencode($k) . ']=' . urlencode($v);
-        }
-
-        // allow to load each file in a separate request for debug purposes
-        if (!SGL_Config::get('debug.production')) {
-            $ret = '';
-            $rev = time();
-            foreach ($this->aCssFiles as $file) {
-                $aFiles = array();
-                if (!empty($themePreloadFile)) {
-                    $aFiles[] = "themes/$theme/css/$themePreloadFile";
-                }
-                $aFiles[] = $file;
-                $cssString = implode(',', $aFiles);
-                $link = SGL_BASE_URL . "/optimizer.php?type=css&amp;rev=$rev&amp;files="
-                    . $cssString . $params;
-                $ret .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
-            }
-        } else {
-            $aFiles = !empty($themePreloadFile)
-                ? array_merge(
-                      array("themes/$theme/css/$themePreloadFile"),
-                      $this->aCssFiles
-                  )
-                : $this->aCssFiles;
-            $rev = SGL_Output::_getFilesModifiedTime($aFiles);
-            $cssString = implode(',', $aFiles);
-            $link = SGL_BASE_URL . "/optimizer.php?type=css&amp;rev=$rev&amp;files="
-                . $cssString . $params;
-            $ret = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$link\" />\n";
-        }
-
-        // reset to default state in case of multiply calls
-        $this->aCssFiles = $aCurrentFiles;
-
-        return $ret;
-    }
-
-    /**
-     * Identifies latest mod time for specified files array.
-     * Is used to get "revision" number for optimizer link.
-     *
-     * @access private
-     *
-     * @param array $aFiles
-     *
-     * @return integer
-     */
-    function _getFilesModifiedTime($aFiles)
-    {
-        $lastMod = 0;
-        foreach ($aFiles as $fileName) {
-            if (is_file(realpath(SGL_WEB_ROOT . '/' . $fileName))) {
-                $lastMod = max($lastMod, filemtime(SGL_WEB_ROOT . '/' . $fileName));
-            }
-        }
-        return $lastMod;
-    }
-
-    /**
-     * Get message, which outputs html in default2 style.
-     *
-     * @access public
-     *
-     * @return void
-     */
-    function msgGet()
-    {
-        // BC for admin GUI
-        if ($this->adminGuiAllowed) {
-            return SGL_Output::msgGetAdmin();
-        }
-
-        $message     = SGL_Session::get('message');
-        $messageType = SGL_Session::get('messageType');
-        $html        = '';
-
-        // get html for SGL messages
-        if (!empty($message)) {
-            SGL_Session::remove('message');
-            SGL_Session::remove('messageType');
-
-            switch ($messageType) {
-                case SGL_MESSAGE_INFO:    $class = 'info';    break;
-                case SGL_MESSAGE_WARNING: $class = 'warning'; break;
-                default:                  $class = 'error';   break;
-            }
-            $html .= "<p class=\"message-{$class}\">$message</p>";
-
-            // required to remove message that persists
-            // when register_globals = on
-            unset($GLOBALS['message']);
-            unset($GLOBALS['messageType']);
-        }
-        // get html for SGL errors
-        if (SGL_Error::count()) {
-            // get all errors from stack
-            while ($msg = SGL_Error::pop()) {
-                $msg   = SGL_Error::toString($msg);
-                $html .= "<h4>Error</h4><p class=\"pear\">$msg</p>";
-            }
-        }
-        if (empty($html)) {
-            $html = '<!-- Do not remove, MSIE fix -->';
-        }
-        echo $html; // we need to echo, do not replace to return
-    }
-
-    function getLangDirection()
-    {
-        $ret = $this->langDir == 'rtl'
-            ? 'right'
-            : 'left';
-        return $ret;
-    }
-
-    function getLangDirectionOpposite()
-    {
-        $ret = $this->langDir == 'rtl'
-            ? 'left'
-            : 'right';
-        return $ret;
     }
 }
 ?>

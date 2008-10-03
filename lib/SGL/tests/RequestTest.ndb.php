@@ -46,16 +46,13 @@ class RequestTest extends UnitTestCase
         $this->assertEqual($req->get('foo'), 'fooValue');
     }
 
-    /**
-     * In >= php 5.2.4 it's not possible to override $_SERVER
-     *
-     */
-    function xtestCliArguments()
+    function testCliArguments()
     {
         $_SERVER['argc'] = 1;
         $_SERVER['argv'] = array('index.php');
         $req = new SGL_Request_Cli();
         $req->init();
+
         // test no params
         $this->assertFalse(count($req->getAll()));
 

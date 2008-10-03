@@ -2,8 +2,6 @@
 /**
  * File management utility methods.
  *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_File
 {

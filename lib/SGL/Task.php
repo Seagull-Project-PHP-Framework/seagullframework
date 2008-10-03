@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,20 +30,12 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.9                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Task.php                                                                  |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-
-/**
- * Abstract task class.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- * @abstract
- */
 class SGL_Task
 {
     /**
@@ -54,13 +46,26 @@ class SGL_Task
     {
         return;
     }
+
+   /**
+    * Example ...
+    * @access private
+    */
+    function &_getDal()
+    {
+        $oServiceLocator = &ServiceLocator::instance();
+        $oDal = $oServiceLocator->get('dal');
+        if (!$oDal) {
+            $oDal = &DA_FooBar::singleton();
+            $oServiceLocator->register('dal', $oDal);
+        }
+        return $oDal;
+    }
 }
 
 /**
  * Used for building and running a task list.
  *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_TaskRunner
 {
@@ -86,7 +91,7 @@ class SGL_TaskRunner
     */
     function addTask($oTask)
     {
-        if ($oTask instanceof SGL_Task) {
+        if (is_a($oTask, 'SGL_Task')) {
             $this->aTasks[] = & $oTask;
             return true;
         }
@@ -97,18 +102,7 @@ class SGL_TaskRunner
     {
         $ret = array();
         foreach ($this->aTasks as $k => $oTask) {
-            $return = $this->aTasks[$k]->run($this->data);
-            // log to system tmp dir if we're installing
-            if (!defined('SGL_INSTALLED')) {
-                $err = is_a($return, 'PEAR_Error')
-                    ? print_r($return, 1)
-                    : 'ok';
-                $data = get_class($oTask) .': '. $err;
-                error_log($data);
-            }
-            if (!isset($err) || $err == 'ok') {
-                $ret[] = $return;
-            }
+            $ret[] = $this->aTasks[$k]->run($this->data);
         }
         return implode('', $ret);
     }

@@ -56,7 +56,7 @@ FILES=/var/www/html/seagull/branches/0.6-bugfix/lib/SGL.php
 #  *
 #  * @var               string PATH_PHPDOC
 #  */
-PATH_PHPDOC=/opt/local/bin/phpdoc
+PATH_PHPDOC=/usr/bin/phpdoc
 
 #/**
 #  * where documentation will be put

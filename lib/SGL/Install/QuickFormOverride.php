@@ -128,16 +128,18 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
                 dbLoginName.value = 'not required for MySQL login';
                 dbLoginName.disabled = true;
             }
+
         }
 
-        function toggleDefaultStorageEngine(enable)
+        function toggleMysqlCluster(enable)
         {
-            var engine = document.getElementById('defaultStorageEngine');
+            var mysqlCluster = document.getElementById('mysqlCluster');
+
             if (enable) {
-                engine.disabled = false;
+                mysqlCluster.disabled = false;
             } else {
-                engine.selectedIndex = 0;
-                engine.disabled = true;
+                mysqlCluster.checked = false;
+                mysqlCluster.disabled = true;
             }
         }
 

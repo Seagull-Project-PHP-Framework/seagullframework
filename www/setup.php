@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -30,21 +30,74 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 0.9                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | setup.php                                                                 |
 // +---------------------------------------------------------------------------+
-// | Authors: Demian Turner <demian@phpkitchen.com>                            |
-// |          Gerry Lachac <glachac@tethermedia.com>                           |
-// |          Andy Crain <apcrain@fuse.net>                                    |
+// | Authors:                                                                  |
+// |            Demian Turner <demian@phpkitchen.com>                          |
+// |            Gerry Lachac <glachac@tethermedia.com>                         |
+// |            Andy Crain <apcrain@fuse.net>                                  |
 // +---------------------------------------------------------------------------+
+// $Id: setup.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-require 'init.php';
+/*
+sgl setup
+=========
+- ability to upload and unzip/tar a packaged module
+- file permission handling ideas from FUDforum installer
+- more user-friendly error messages from Gallery2
+- if no DB detected, prompt to create, otherwise offer to create tables
 
-SGL_FrontController::init();
 
+php ini
+=======
+- deal with register_globals and set session.use_trans_sid = 0
+- allow_url_fopen = Off
+- detect and deal with safe_mode
+- magic_quotes must be off
+- file_uploads ideally enabled
+
+module setup
+============
+- choose modules and permissions must be created and set at install time
+- attempt to
+    - uncompress
+    - move to correct location
+    - apply user perms
+    - apply prefs
+    - add module's db tables to Config
+    - load module's schema + data
+    - add 'section' or 'screen' navigation links
+    - register module in registry
+*/
+
+//  initialise
+
+//  set initial paths according to install type
+$pearTest = '@PHP-DIR@';
+if ($pearTest != '@' . 'PHP-DIR'. '@') {
+    define('SGL_PEAR_INSTALLED', true);
+    $rootDir = '@PHP-DIR@/Seagull';
+    $varDir = '@DATA-DIR@/Seagull/var';
+} else {
+    $rootDir = dirname(__FILE__) . '/..';
+    $varDir = dirname(__FILE__) . '/../var';
+}
+
+//  check for lib cache
+define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
+    ? true
+    : false);
+
+//  are we doing a minimal install?
+define('SGL_MINIMAL_INSTALL', (is_file($rootDir . '/MINIMAL_INSTALL.txt'))
+    ? true
+    : false);
+
+require_once $rootDir . '/lib/SGL/FrontController.php';
 require_once $rootDir . '/lib/SGL/Install/Common.php';
-
+SGL_FrontController::init();
 session_start();
 $_SESSION['ERRORS'] = array();
 
@@ -68,7 +121,8 @@ if (isset($_GET['start'])) {
     $_SESSION = array();
 
     //  clear session cookie
-    $conf = SGL_Config::singleton()->getAll();
+    $c = &SGL_Config::singleton();
+    $conf = $c->getAll();
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
 
@@ -122,18 +176,13 @@ require_once SGL_PATH . '/lib/SGL/Install/QuickFormOverride.php';
 require_once SGL_PATH . '/lib/SGL/Task/DetectEnv.php';
 require_once SGL_PATH . '/lib/SGL/Task/Install.php';
 
-//  setup temporary logging for Seagull install
-$log = "$varDir/install.log";
-$ok = @ini_set('error_log', $log);
-
-
 class ActionProcess extends HTML_QuickForm_Action
 {
     function perform(&$page, $actionName)
     {
         $data = $page->controller->exportValues();
 
-        //  is this a rebuild?
+//          is this a rebuild?
 //        $dbh = & SGL_DB::singleton();
 //        $res = false;
 //        if (!PEAR::isError($dbh)) {
@@ -157,10 +206,8 @@ class ActionProcess extends HTML_QuickForm_Action
 //            if (PEAR::isError($dbh)) {
 //                SGL_Error::pop(); // two errors produced
 //            }
-//            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
+            $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
 //        }
-        $data['aModuleList'] = SGL_Install_Common::getMinimumModuleList();
-        $data['createTables'] = 1;#REMOVE HACK
 
         //  override with custom settings if they exist
         $data = SGL_Install_Common::overrideDefaultInstallSettings($data);
@@ -171,32 +218,32 @@ class ActionProcess extends HTML_QuickForm_Action
 //        }
         $runner = new SGL_TaskRunner();
         $runner->addData($data);
-        $runner->addTask(new SGL_Task_SetTimeout());
+#        $runner->addTask(new SGL_Task_SetTimeout());
         $runner->addTask(new SGL_Task_CreateConfig());
         $runner->addTask(new SGL_Task_LoadCustomConfig());
-//        $runner->addTask(new SGL_Task_DefineTableAliases());
-//        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
-        $runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
-//        $runner->addTask(new SGL_Task_DropTables());
-//        $runner->addTask(new SGL_Task_CreateTables());
-        $runner->addTask(new SGL_Task_LoadTranslations());
-//        $runner->addTask(new SGL_Task_LoadDefaultData());
-//        $runner->addTask(new SGL_Task_LoadSampleData());
-//        $runner->addTask(new SGL_Task_LoadCustomData());
-//        $runner->addTask(new SGL_Task_SyncSequences());
-//        $runner->addTask(new $buildNavTask());
-//        $runner->addTask(new SGL_Task_LoadBlockData());
-//        $runner->addTask(new SGL_Task_CreateConstraints());
-//        $runner->addTask(new SGL_Task_SyncSequences());
-//        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
+#        $runner->addTask(new SGL_Task_DefineTableAliases());
+#        $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
+$runner->addTask(new SGL_Task_PrepareInstallationProgressTable());
+#        $runner->addTask(new SGL_Task_DropTables());
+#        $runner->addTask(new SGL_Task_CreateTables());
+#        $runner->addTask(new SGL_Task_LoadTranslations());
+#        $runner->addTask(new SGL_Task_LoadDefaultData());
+#        $runner->addTask(new SGL_Task_LoadSampleData());
+#        $runner->addTask(new SGL_Task_LoadCustomData());
+#        $runner->addTask(new SGL_Task_SyncSequences());
+#        $runner->addTask(new $buildNavTask());
+#        $runner->addTask(new SGL_Task_LoadBlockData());
+#        $runner->addTask(new SGL_Task_CreateConstraints());
+#        $runner->addTask(new SGL_Task_SyncSequences());
+#        $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
 
-        $runner->addTask(new SGL_Task_VerifyDbSetup());// it prints "launch seagull"
+$runner->addTask(new SGL_Task_VerifyDbSetup());
         $runner->addTask(new SGL_Task_CreateFileSystem());
-//        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
-//        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
+#        $runner->addTask(new SGL_Task_CreateDataObjectEntities());
+#        $runner->addTask(new SGL_Task_CreateDataObjectLinkFile());
         $runner->addTask(new SGL_Task_UnLinkWwwData());
         $runner->addTask(new SGL_Task_SymLinkWwwData());
-        //$runner->addTask(new SGL_Task_AddTestDataToConfig());
+#        $runner->addTask(new SGL_Task_AddTestDataToConfig());
         $runner->addTask(new SGL_Task_CreateAdminUser());
         $runner->addTask(new SGL_Task_InstallerCleanup());
 
@@ -205,9 +252,9 @@ class ActionProcess extends HTML_QuickForm_Action
 }
 
 //  start wizard
-$wizard = new HTML_QuickForm_Controller('installationWizard');
+$wizard =& new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
-$wizard->addPage(new WizardSetupAuth('page2'));
+//$wizard->addPage(new WizardSetupAuth('page2'));
 $wizard->addPage(new WizardDetectEnv('page3'));
 //$wizard->addPage(new WizardTestDbConnection('page4'));
 //$wizard->addPage(new WizardCreateDb('page5'));

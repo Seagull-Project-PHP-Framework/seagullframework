@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -107,27 +107,34 @@ class SGL_String
     function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        // TODO: deal with Mac OS Classic i.e. < OS X when line ending is CR
-        $crlf = (substr(PHP_OS, 0, 3) == 'WIN')
-            ? "\r\n"
-            : "\n";
+
+        if (defined(PHP_EOL)) {
+            $crlf = PHP_EOL;
+        } elseif (defined('SGL_CLIENT_OS')) {
+            // Win case
+            if (SGL_CLIENT_OS == 'Win') {
+                $crlf = "\r\n";
+            }
+            // Mac case
+            elseif (SGL_CLIENT_OS == 'Mac') {
+                $crlf = "\r";
+            } else {
+                $crlf = "\n";
+            }
+        } else {
+            $crlf = "\n";
+        }
         return $crlf;
     }
 
     function trimWhitespace($var)
     {
-        if (!isset($var)) {
-            return false;
-        }
-        if (is_array($var)) {
-            $newArray = array();
-            foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::trimWhitespace($value);
-            }
-            return $newArray;
+        if (!is_array($var)) {
+            $clean = trim($var);
         } else {
-            return trim($var);
+            $clean = array_map(array('SGL_String', 'trimWhitespace'), $var);
         }
+        return $clean;
     }
 
     /**
@@ -166,39 +173,32 @@ class SGL_String
      */
     function clean($var)
     {
-        if (!isset($var)) {
-            return false;
-        }
-        $var = SGL_String::trimWhitespace($var);
-        if (is_array($var)) {
-            $newArray = array();
-            foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::clean($value);
+        if (isset($var)) {
+            if (!is_array($var)) {
+                $clean = strip_tags($var);
+            } else {
+                $clean = array_map(array('SGL_String', 'clean'), $var);
             }
-            return $newArray;
+            return SGL_String::trimWhitespace($clean);
         } else {
-            return strip_tags($var);
+            return false;
         }
     }
 
     function removeJs($var)
     {
-        if (!isset($var)) {
-            return false;
-        }
-        $var = SGL_String::trimWhitespace($var);
-        if (is_array($var)) {
-            $newArray = array();
-            foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::removeJs($value);
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        if (isset($var)) {
+            if (!is_array($var)) {
+                $search = "/<script[^>]*?>.*?<\/script\s*>/i";
+                $replace = '';
+                $clean = preg_replace($search, $replace, $var);
+            } else {
+                $clean = array_map(array('SGL_String', 'removeJs'), $var);
             }
-            return $newArray;
-        } else {
-            $search = "/<script[^>]*?>.*?<\/script\s*>/i";
-            $replace = '';
-            $clean = preg_replace($search, $replace, $var);
-            return $clean;
         }
+        return SGL_String::trimWhitespace($clean);
     }
 
     /**
@@ -285,19 +285,10 @@ class SGL_String
                 $ret = $trans[$key];
             }
             if (!is_array($trans[$key]) && $filter && function_exists($filter)) {
-                if (is_object($aParams)) {
-                    $aParams = (array)$aParams;
-                }
-                if (!empty($aParams) && is_array($aParams) && $filter == 'vprintf') {
+                if (!empty($aParams) && is_array($aParams) && $filter = 'vprintf') {
                     $i = 1;
                     foreach ($aParams as $key => $value) {
-                        if (!empty($value) && !is_scalar($value)) {
-                            continue;
-                        }
-                        $value = str_replace('%', '%%', $value);
-                        $ret = str_replace("%$i%", $value, $ret);
                         $ret = str_replace("%$i", $value, $ret);
-                        $ret = str_replace("%$key%", $value, $ret);
                         $ret = str_replace("%$key", $value, $ret);
                         $i++;
                     }
@@ -322,7 +313,7 @@ class SGL_String
                 //  fetch fallback lang
                 $fallbackLang = $conf['translation']['fallbackLang'];
 
-                $trans = SGL_Translation::singleton('admin');
+                $trans = &SGL_Translation::singleton('admin');
                 $result = $trans->add($key, $moduleName, array($fallbackLang => $key));
             }
 
@@ -481,49 +472,28 @@ class SGL_String
     /**
      * Returns a shortened version of text string resolved by word boundaries.
      *
-     * @static
-     *
-     * @access public
-     *
-     * @param string $str           Text to be shortened.
-     * @param integer $limit        Number of words/chars to cut to.
-     * @param integer $element      What string element type to count by.
-     * @param string $appendString  Trailing string to be appended.
-     *
-     * @return string Correctly shortened text.
+     * @access  public
+     * @param   string  $str    Text to be shortened
+     * @param   integer $limit  Number of words/chars to cut to
+     * @param   integer $element What string element type to count by
+     * @param   string  $appendString  Trailing string to be appended
+     * @return  string  $processedString    Correctly shortened text
      */
-    function summarise($str, $limit = 50, $element = SGL_WORD,
-        $appendString = ' ...')
+    function summarise($str, $limit=50, $element = SGL_WORD, $appendString=' ...')
     {
         switch ($element) {
-
-        // strip by chars
         case SGL_CHAR:
-            if (extension_loaded('mbstring')) {
-                $enc = mb_detect_encoding($str);
-                $len = mb_strlen($str, $enc);
-                $ret = $len > $limit
-                    ? mb_substr($str, 0, $limit, $enc) . $appendString
-                    : $str;
-            } else {
-                $len = strlen($str);
-                $ret = $len > $limit
-                    ? substr($str, 0, $limit) . $appendString
-                    : $str;
-            }
+            $ret = (strlen($str) > $limit) ? substr($str, 0, $limit) . $appendString : $str;
             break;
 
-        // strip by words
         case SGL_WORD:
-            $aWords = explode(' ', $str);
-            if (count($aWords) > $limit) {
-                $ret = implode(' ', array_slice($aWords, 0, $limit)) . $appendString;
-            } else {
-                $ret = $str;
-            }
+            $limit--;
+            $words = explode(' ', $str);
+            $sliced = (count($words) > $limit) ? array_slice($words, 0, $limit) : $words;
+            $ret = implode(' ', $sliced);
+            $ret = (count($words) > $limit) ? $ret . $appendString : $ret;
             break;
         }
-
         return  $ret;
     }
 
@@ -689,73 +659,6 @@ class SGL_String
          return $s;
     }
 
-    function to7bit($text)
-    {
-        if (!function_exists('mb_convert_encoding')) {
-            return $text;
-        }
-        $text = mb_convert_encoding($text,'HTML-ENTITIES',mb_detect_encoding($text));
-        $text = preg_replace(
-           array('/&szlig;/','/&(..)lig;/',
-                 '/&([aouAOU])uml;/','/&(.)[^;]*;/'),
-           array('ss',"$1","$1".'e',"$1"),
-           $text);
-        return $text;
-    }
-
-    /**
-     * Replaces accents in string.
-     *
-     * @static
-     *
-     * @todo make it work with cyrillic chars
-     * @todo make it work with non utf-8 encoded strings
-     *
-     * @see SGL_String::isCyrillic()
-     *
-     * @param string $str
-     *
-     * @return string
-     */
-    function replaceAccents($str)
-    {
-        if (!SGL_String::isCyrillic($str)) {
-            $str = SGL_String::to7bit($str);
-            $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
-        }
-        return $str;
-    }
-
-    /**
-     * Checks if strings has cyrillic chars.
-     *
-     * @static
-     *
-     * @param string $str
-     *
-     * @return boolean
-     */
-    function isCyrillic($str)
-    {
-        $ret = false;
-        if (function_exists('mb_convert_encoding') && !empty($str)) {
-            // codes for Russian chars
-            $aCodes = range(1040, 1103);
-            // convert to entities
-            $encoded = mb_convert_encoding($str, 'HTML-ENTITIES',
-                mb_detect_encoding($str));
-            // get codes of the string
-            $aChars = explode(';', str_replace('&#', '', $encoded));
-            array_pop($aChars);
-            $aChars = array_unique($aChars);
-            // see if cyrillic chars there
-            $aNonCyrillicChars = array_diff($aChars, $aCodes);
-            // if string is the same -> no cyrillic chars
-            $ret = count($aNonCyrillicChars) != count($aChars);
-        }
-        return $ret;
-    }
-
     /**
      * Removes chars that are illegal in ini files.
      *
@@ -776,7 +679,7 @@ class SGL_String
      * @param string $string
      * @return integer
      */
-    public static function pseudoConstantToInt($string)
+    function pseudoConstantToInt($string)
     {
         $ret = 0;
         if (is_int($string)) {
@@ -792,6 +695,21 @@ class SGL_String
             }
         }
         return $ret;
+    }
+}
+
+if (!function_exists('array_combine')) {
+    function array_combine($a, $b)
+    {
+        $c = array();
+        if (is_array($a) && is_array($b))
+            while (list(, $va) = each($a))
+                if (list(, $vb) = each($b)) {
+                    $c[$va] = $vb;
+                } else {
+                    break 1;
+                }
+        return $c;
     }
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -225,7 +225,7 @@ HTML;
 
     function getMinimumModuleList()
     {
-        return array('default');
+        return array('block');
     }
 
     /**
@@ -254,6 +254,19 @@ HTML;
             $aRet['aModuleList'] = explode(',', $aRet['aModuleList']);
         }
         return $aRet;
+    }
+}
+
+if (!(function_exists('file_put_contents'))) {
+    function file_put_contents($location, $data)
+    {
+        if (is_file($location)) {
+            unlink($location);
+        }
+        $fileHandler = fopen ($location, "w");
+        fwrite ($fileHandler, $data);
+        fclose ($fileHandler);
+        return true;
     }
 }
 ?>

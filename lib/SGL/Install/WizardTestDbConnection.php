@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -66,16 +66,14 @@ function canConnectToDbServer()
         $host . $port . $dbName;
 
     //  attempt to get db connection
-    $dbh = SGL_DB::singleton($dsn);
+    $dbh = & SGL_DB::singleton($dsn);
 
     if (PEAR::isError($dbh)) {
         SGL_Install_Common::errorPush($dbh);
         return false;
     } else {
         //  detect and store DB info
-        if (preg_match("/mysqli/", $dbh->phptype)) {
-            $mysqlVersion = mysqli_get_server_info($dbh->connection);
-        } elseif (preg_match("/mysql/", $dbh->phptype)) {
+        if (preg_match("/mysql/", $dbh->phptype)) {
             $mysqlVersion = mysql_get_server_info();
         }
         $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
@@ -107,39 +105,26 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
             'dbPortChoices'  => array('portOption' => 3306),
             'dbPort'  => array('port' => 3306),
             'dbName'  => 'not required for MySQL login',
-            'dbSequencesInOneTable' => array('dbSequences' => 1),
             ));
         $this->setDefaults(SGL_Install_Common::overrideDefaultInstallSettings());
 
         //  type
         $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
-            "mysql_SGL", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);toggleDefaultStorageEngine(true)"');
-        $radio[] = &$this->createElement('radio', 'type',     'Database type: ',
-            "mysqli_SGL", 'mysqli_SGL', 'onClick="toggleDbNameForLogin(false);toggleDefaultStorageEngine(true)"');
+            "mysql_SGL (all sequences in one table)", 'mysql_SGL', 'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(true);"');
         $radio[] = &$this->createElement('radio', 'type',     '', "mysql",  'mysql',
-            'onClick="toggleDbNameForLogin(false);toggleDefaultStorageEngine(true);"');
-        $radio[] = &$this->createElement('radio', 'type',     '', "mysqli",  'mysqli',
-            'onClick="toggleDbNameForLogin(false);toggleDefaultStorageEngine(true);"');
+            'onClick="toggleDbNameForLogin(false);toggleMysqlCluster(false);"');
 
-        $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
-            'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
-        //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
-        //    'onClick="toggleDbNameForLogin(true);toggleDefaultStorageEngine(false);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'type',     '', "postgres", 'pgsql',
+                'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
+            //$radio[] = &$this->createElement('radio', 'type',     '', "oci8", 'oci8_SGL',
+            //    'onClick="toggleDbNameForLogin(true);toggleMysqlCluster(false);"');
+        }
         $this->addGroup($radio, 'dbType', 'Database type:', '<br />');
         $this->addGroupRule('dbType', 'Please specify a db type', 'required');
 
-        unset($radio);
-        $radio[] = &$this->createElement('radio', 'dbSequences', '', 'yes', 1);
-        $radio[] = &$this->createElement('radio', 'dbSequences', '', 'no', 0);
-        $this->addGroup($radio, 'dbSequencesInOneTable', 'Store sequences in one table:', '<br />');
-
-        $aMysqlEngines = array(
-            '0'          => 'server default',
-            'myisam'     => 'MyISAM',
-            'innodb'     => 'InnoDB',
-            'ndbcluster' => 'MySQL Cluster'
-        );
-        $this->addElement('select', 'dbMysqlDefaultStorageEngine', 'Default storage engine:', $aMysqlEngines, 'id="defaultStorageEngine"');
+        //  mysql cluster
+        $this->addElement('checkbox', 'mysqlCluster', 'Install on MySQL Cluster', 'Yes (only for mysql cluster installs!)', 'id=mysqlCluster');
 
         //  host
         $this->addElement('text',  'host',     'Host: ');
@@ -159,10 +144,12 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         unset($radio);
         $radio[] = &$this->createElement('radio', 'portOption', 'TCP port: ',"3306 (MySQL default)",
             3306, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
-            5432, 'onClick="copyValueToPortElement(this);"');
-        $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
-            1521, 'onClick="copyValueToPortElement(this);"');
+        if (SGL_MINIMAL_INSTALL == false) {
+            $radio[] = &$this->createElement('radio', 'portOption', '',"5432 (Postgres default)",
+                5432, 'onClick="copyValueToPortElement(this);"');
+            $radio[] = &$this->createElement('radio', 'portOption', '',"1521 (Oracle default)",
+                1521, 'onClick="copyValueToPortElement(this);"');
+        }
         $this->addGroup($radio, 'dbPortChoices', 'TCP port:', '<br />');
         $this->addElement('text',  'dbPort[port]',    '', 'id="targetPortElement"');
         #$this->addRule('dbPort[port]', 'Please specify a db port', 'required');

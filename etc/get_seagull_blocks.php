@@ -20,6 +20,7 @@ if (is_file($rootDir .'/lib/SGL/FrontController.php')) {
 }
 SGL_FrontController::init();
 
+
 //  main
 $output = new SGL_Output();
 $blockLoader = & new SGL_BlockLoader(0);
@@ -27,19 +28,11 @@ $aBlocks = $blockLoader->render($output);
 foreach ($aBlocks as $key => $value) {
     $blocksName = 'blocks'.$key;
     $output->$blocksName = $value;
+
+
 }
 
 $tmpl = & new SGL_HtmlSimpleView($output);
 $html = $tmpl->render();
 print $html;
-/*
-require 'SGL/Output.php';
-require 'PEAR/Config.php';
-require 'Zend/Config.php';
-$api = $SGL_Api();
-$aBlocks = $api->getBlocks(12);
-$ok = $api->doLogin($user, $pass);
-*/
-
-require 'boostrap.php';
 ?>

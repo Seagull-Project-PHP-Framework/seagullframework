@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -55,7 +55,7 @@ class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
     * @return array                An array of the querystring data
     * @access private
     */
-    function parseQuerystring(/*SGL_Url*/$url)
+    function parseQuerystring(/*SGL_Url*/$url, $conf)
     {
         $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'),
             '/') . ']/',
@@ -112,7 +112,7 @@ class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
         $conf = $c->getAll();
 
         //  get a reference to the request object
-        $req = SGL_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;

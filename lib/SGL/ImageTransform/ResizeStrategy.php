@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -34,37 +34,39 @@
 // +---------------------------------------------------------------------------+
 // | ResizeStrategy.php                                                        |
 // +---------------------------------------------------------------------------+
-// | Author: Dmitri Lakachauskis <lakiboy83@gmail.com>                         |
+// | Author: Dmitri Lakachauskis <dmitri@telenet.lv>                           |
 // +---------------------------------------------------------------------------+
 
 /**
  * Strategy for resizing images.
  *
- * @package SGL
- * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ * @package    SGL
+ * @subpackage image
+ * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageTransform_ResizeStrategy extends SGL_ImageTransformStrategy
 {
     function transform()
     {
-        $width  = isset($this->aParams['width'])
-            ? $this->aParams['width'] : null;
-        $height = isset($this->aParams['height'])
-            ? $this->aParams['height'] : null;
-        $aSize  = $this->driver->getImageSize();
-
-        $ret = true;
+        $width  = null;
+        $height = null;
+        if (isset($this->aParams['width'])) {
+            $width = $this->aParams['width'];
+        }
+        if (isset($this->aParams['height'])) {
+            $height = $this->aParams['height'];
+        }
+        $aSize = $this->driver->getImageSize();
         if (isset($width) && isset($height)) {
             if ($aSize[0] > $width || $aSize[1] > $height) {
-                $ret = $this->driver->fit($width, $height);
+                return $this->driver->fit($width, $height);
             }
         } elseif (isset($width) && $aSize[0] > $width) {
-            $ret = $this->driver->scaleByX($width);
+            return $this->driver->scaleByX($width);
         } elseif (isset($height) && $aSize[1] > $height) {
-            $ret = $this->driver->scaleByY($height);
+            return $this->driver->scaleByY($height);
         }
-
-        return $ret;
+        return true;
     }
 }
 

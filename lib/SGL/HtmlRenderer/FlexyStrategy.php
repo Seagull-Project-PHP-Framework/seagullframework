@@ -68,13 +68,8 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
                                    // the default template dir from the custom theme
                                    SGL_THEME_DIR . '/' . $data->theme . '/default'. PATH_SEPARATOR .
 
-                                   // the current module's templates dir from the default theme
-                                   SGL_MOD_DIR . '/'. $data->moduleName . '/templates' . PATH_SEPARATOR .
-
-                                   // the configured default module's templates dir
-                                   SGL_MOD_DIR . '/'. SGL_Config::get('site.defaultModule') . '/templates' . PATH_SEPARATOR .
-
                                    // the default template dir from the default theme
+                                   SGL_MOD_DIR . '/'. $data->moduleName . '/templates' . PATH_SEPARATOR .
                                    SGL_MOD_DIR . '/default/templates',
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,

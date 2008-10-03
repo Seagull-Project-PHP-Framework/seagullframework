@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -40,8 +40,6 @@
 /**
  * Performs transformations on resource names, ie, urls, classes, methods, variables.
  *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
  */
 class SGL_Inflector
 {
@@ -224,7 +222,7 @@ class SGL_Inflector
         }
     }
 
-    public static function isConstant($str)
+    function isConstant($str)
     {
         if (empty($str)) {
             return false;
@@ -246,11 +244,11 @@ class SGL_Inflector
      * @param string $lower_case_and_underscored_word String to be made more readable
      * @return string Human-readable string
      */
-    function humanise($lowerCaseAndUnderscoredWord)
-    {
-        $replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
-        return $replace;
-    }
+	function humanise($lowerCaseAndUnderscoredWord)
+	{
+		$replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+		return $replace;
+	}
 
     /**
      * Makes up for case insensitive classnames in php4 with get_class().

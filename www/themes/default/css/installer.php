@@ -1,12 +1,11 @@
 <?php
-
-    // Get some info from style.php
-    // send default cacheing headers and content type
+/* Quick fix for installer look and feel */
+// Get some info from style.php
+// send default cacheing headers and content type
     header('Pragma: cache');
     header('Cache-Control: public');
     header('Content-Type: text/css');
-
-    // get browser family
+// get browser family
     $browserFamily = 'None';
     $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
@@ -30,7 +29,8 @@
         ? 'https' : 'http';
     $baseUrl = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $baseUrl;
 
-    // Get info from vars
+// Get info from vars
+
     $fontFamily             = '"Bitstream Vera Sans", Trebuchet MS, Verdana, Arial, Helvetica, sans-serif';
     $fontSize               = 'small';
 

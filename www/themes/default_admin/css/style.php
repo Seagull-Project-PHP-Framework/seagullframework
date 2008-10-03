@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -44,7 +44,7 @@
 
     ////////////////////////////   DO NOT MODIFY   /////////////////////////////
 
-    require_once '../../csshelpers.php';
+    require_once '../../helpers.php';
 
     // send default cacheing headers and content type
     header('Pragma: cache');

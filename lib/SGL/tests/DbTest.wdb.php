@@ -14,14 +14,7 @@ class DbTest extends UnitTestCase {
     function DbTest()
     {
         $this->UnitTestCase('DB Test');
-        $this->testconf = parse_ini_file(dirname(__FILE__) . '/../../../var/test.conf.ini.php',true);
-        if ($this->testconf['db']['type'] == 'pgsql'){
-            $excludeDbName = false;
-        } else {
-            $excludeDbName = true;
-        }
-        $dsn = SGL_DB::_getDsnAsString($this->testconf,$excludeDbName);
-        $this->dsn = $dsn;
+        $this->dsn = 'mysql_SGL://root:@unix+localhost/seagull';
     }
 
     function testSingleton()
@@ -49,14 +42,14 @@ class DbTest extends UnitTestCase {
         $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
         $expected = array (
-          'phptype' => $this->testconf['db']['type'],
-          'username' => $this->testconf['db']['user'],
-          'password' => $this->testconf['db']['pass'],
-          'protocol' => $this->testconf['db']['protocol'],
+          'phptype' => 'mysql_SGL',
+          'username' => 'root',
+          'password' => '',
+          'protocol' => 'tcp',
           'socket' => false,
-          'hostspec' => $this->testconf['db']['host'],
-          'port' => $this->testconf['db']['port'],
-          'database' => $this->testconf['db']['name'],
+          'hostspec' => 'localhost',
+          'port' => false,
+          'database' => 'simpletest',
         );
         $this->assertEqual($dsn, $expected);
     }
@@ -66,13 +59,13 @@ class DbTest extends UnitTestCase {
         $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY, true);
         $expected = array (
-          'phptype' => $this->testconf['db']['type'],
-          'username' => $this->testconf['db']['user'],
-          'password' => $this->testconf['db']['pass'],
-          'protocol' => $this->testconf['db']['protocol'],
+          'phptype' => 'mysql_SGL',
+          'username' => 'root',
+          'password' => '',
+          'protocol' => 'tcp',
           'socket' => false,
-          'hostspec' => $this->testconf['db']['host'],
-          'port' => $this->testconf['db']['port'],
+          'hostspec' => 'localhost',
+          'port' => false,
         );
         $this->assertEqual($dsn, $expected);
     }
@@ -81,7 +74,7 @@ class DbTest extends UnitTestCase {
     {
         $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING);
-        $expected = $this->testconf['db']['type'].'://'.$this->testconf['db']['user'].':'.$this->testconf['db']['pass'].'@'.$this->testconf['db']['protocol'].'+'.$this->testconf['db']['host'].':'.$this->testconf['db']['port'].'/'.$this->testconf['db']['name'];
+        $expected = 'mysql_SGL://root:@tcp+localhost/simpletest';
         $this->assertEqual($dsn, $expected);
     }
 
@@ -89,7 +82,7 @@ class DbTest extends UnitTestCase {
     {
         $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
-        $expected = $this->testconf['db']['type'].'://'.$this->testconf['db']['user'].':'.$this->testconf['db']['pass'].'@'.$this->testconf['db']['protocol'].'+'.$this->testconf['db']['host'].':'.$this->testconf['db']['port'];
+        $expected = 'mysql_SGL://root:@tcp+localhost';
         $this->assertEqual($dsn, $expected);
     }
 }

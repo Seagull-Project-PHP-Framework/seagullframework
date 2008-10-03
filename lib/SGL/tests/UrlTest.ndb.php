@@ -81,27 +81,6 @@ class UrlTest extends UnitTestCase {
         $this->assertTrue(count($ret), 4);
     }
 
-    function testToPartialArrayWithEmptyUrlAndFrontScript()
-    {
-        $url = 'http://foo.com/';
-        $ret = $this->url->toPartialArray($url, 'index.php');
-        $this->assertFalse(count($ret));
-    }
-
-    function testToPartialArrayWithEmptyUrlAndWithoutFrontScript()
-    {
-        $url = 'http://foo.com/';
-        $ret = $this->url->toPartialArray($url, '');
-        $this->assertFalse(count($ret));
-    }
-
-    function testToPartialArrayWithEmptyUrlAndFalseFrontScript()
-    {
-        $url = 'http://foo.com/';
-        $ret = $this->url->toPartialArray($url, false);
-        $this->assertFalse(count($ret));
-    }
-
     function xtestElementRepetionToPartialArrayWithFullUrlAndNoFrontScriptElement()
     {
         //  full URI object as path is needed for toPartialArray calculation

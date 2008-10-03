@@ -39,12 +39,13 @@
 
 require_once 'HTTP/Download.php';
 
-/**
+/** 
 * Wrapper around PEAR HTTP/Download class to workaround some limits of
 * that class.
 *
 * @package SGL
 * @author Pierpaolo Toniolo
+* @copyright Pierpaolo Toniolo
 * @version $Revision: 1.4 $
 *
 */
@@ -59,7 +60,7 @@ class SGL_Download extends HTTP_Download
     * @param   string   $par  the value for the HTTP header Accept-Ranges
     * @return  void
     */
-    function setAcceptRanges($param)
+    function setAcceptRanges($param) 
     {
         if ($param == 'bytes') {
             $this->headers['Accept-Ranges'] = $param;
@@ -67,7 +68,7 @@ class SGL_Download extends HTTP_Download
             $this->headers['Accept-Ranges'] = 'none';
         }
     }
-
+    
     /**
     * set the Content-Transfer-Encoding HTTP header
     *
@@ -75,7 +76,7 @@ class SGL_Download extends HTTP_Download
     * @param   string   $par  the value for the HTTP header Content-Transfer-Encoding
     * @return  void
     */
-    function setContentTransferEncoding($param)
+    function setContentTransferEncoding($param) 
     {
         $this->headers['Content-Transfer-Encoding'] = $param;
         return true;

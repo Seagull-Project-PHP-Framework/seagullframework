@@ -55,7 +55,7 @@
         'FE'=>'Ferrara',
         'FI'=>'Firenze',
         'FG'=>'Foggia',
-        'FC'=>'ForlÃ¬-Cesena',
+        'FC'=>'Forlì-Cesena',
         'FR'=>'Frosinone',
         'GE'=>'Genova',
         'GO'=>'Gorizia',

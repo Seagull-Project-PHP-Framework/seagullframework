@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -55,14 +55,18 @@ class SGL_Date
      * @access public
      * @static
      * @param boolean $gmt       is time GMT or locale offset
-     * @return string $time formatted current time
+     * @return string $instance  formatted current time
+     * @todo factor out Cache and Lang methods into their own objects
      */
     function getTime($gmt = false)
     {
         //  no logMessage allowed here
-        $time = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
-                        : strftime("%Y-%m-%d %H:%M:%S", time());
-        return $time;
+        static $instance;
+        if (!isset($instance)) {
+            $instance = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
+                                : strftime("%Y-%m-%d %H:%M:%S", time());
+        }
+        return $instance;
     }
 
     /**
@@ -105,7 +109,7 @@ class SGL_Date
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_scalar($sDate)) {
             require_once 'Date.php';
-            $date = new Date($sDate);
+            $date = & new Date($sDate);
             $aDate =      array('day'    => $date->getDay(),
                                 'month'  => $date->getMonth(),
                                 'year'   => $date->getYear(),
@@ -127,7 +131,7 @@ class SGL_Date
     {
         if (is_string($date)) {
             require_once 'Date.php';
-            $date = new Date($date);
+            $date = & new Date($date);
             if ($_SESSION['aPrefs']['dateFormat'] == 'FR') {
                 $output = $date->format('%d %B %Y, %H:%M');
 
@@ -161,7 +165,7 @@ class SGL_Date
     {
         if (is_string($date)) {
             include_once 'Date.php';
-            $date = new Date($date);
+            $date = & new Date($date);
             // Neither elegant nor efficient way of doing that
             // (what if we have 30 formats/locales?).
             // We should move that to a language/locale dependent file.
@@ -251,15 +255,12 @@ class SGL_Date
         if (empty($selected) && $selected != null) {
             $selected = date('m', time());
         }
-        if (count($aMonths)) {
-            foreach ($aMonths as $k => $v) {
-                //$monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
-                $monthOptions .= "\n<option value=\"$k\" ";
-                if ($k == $selected) {
-                    $monthOptions .= 'selected="selected"';
-                }
-                $monthOptions .= '>' . $v . '</option>';
+        foreach ($aMonths as $k => $v) {
+            $monthOptions .= "\n<option value=\"" . sprintf('%02d', $k) . '" ';
+            if ($k == $selected) {
+                $monthOptions .= 'selected="selected"';
             }
+            $monthOptions .= '>' . $v . '</option>';
         }
         return $monthOptions;
     }

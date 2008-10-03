@@ -116,7 +116,7 @@ function parseIniFile()
         $ret = parse_ini_file($configPath . '/test.conf.ini.php', true);
     } else {
         // copy the default configuration file to the users tmp directory
-        if (!copy(STR_PATH . '/tests/test.my.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini.php')) {
+        if (!copy(STR_PATH . '/tests/test.conf.ini-dist', STR_TMP_DIR . '/test.conf.ini.php')) {
             die('ERROR WHEN COPYING CONFIG FILE TO ' . STR_TMP_DIR . '/test.conf.ini.php');
         }
         @chmod(STR_TMP_DIR . '/test.conf.ini.php', 0666);

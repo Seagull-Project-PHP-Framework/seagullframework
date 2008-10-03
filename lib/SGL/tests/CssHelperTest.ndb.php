@@ -1,6 +1,6 @@
 <?php
 
-require_once SGL_THEME_DIR . '/csshelpers.php';
+require_once SGL_THEME_DIR . '/helpers.php';
 
 /**
  * Test suite.

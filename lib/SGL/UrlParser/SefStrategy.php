@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -59,18 +59,18 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
      * @return array        An array to be assigned to SGL_Url::aQueryData
      * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
      */
-    function parseQueryString(/*SGL_Url*/$url)
+    function parseQueryString(/*SGL_Url*/$url, $conf)
     {
-        $aUriParts = SGL_Url::toPartialArray($url->url, SGL_Config::get('site.frontScriptName'));
+        $aUriParts = SGL_Url::toPartialArray($url->url, $conf['site']['frontScriptName']);
 
         //  remap
-        if (SGL_Config::get('site.frontScriptName')) {
+        if ($conf['site']['frontScriptName'] != false) {
             $aParsedUri['frontScriptName'] = array_shift($aUriParts);
 
             //  if frontScriptName empty, get from config
             if (empty($aParsedUri['frontScriptName'])
-                    || $aParsedUri['frontScriptName'] != SGL_Config::get('site.frontScriptName')) {
-                $aParsedUri['frontScriptName'] = SGL_Config::get('site.frontScriptName');
+                    || $aParsedUri['frontScriptName'] != $conf['site']['frontScriptName']) {
+                $aParsedUri['frontScriptName'] = $conf['site']['frontScriptName'];
             }
         }
 
@@ -82,11 +82,11 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $mgrCopy = array_shift($aUriParts);
             $aParsedUri['managerName'] = strtolower($mgrCopy);
         } else {
-            $aParsedUri['moduleName'] = SGL_Config::get('site.defaultModule');
-            $aParsedUri['managerName'] = $mgrCopy = SGL_Config::get('site.defaultManager');
-            if (SGL_Config::get('site.defaultParams')) {
+            $aParsedUri['moduleName'] = $conf['site']['defaultModule'];
+            $aParsedUri['managerName'] = $mgrCopy = $conf['site']['defaultManager'];
+            if (!empty($conf['site']['defaultParams'])) {
                 $aParams = SGL_Url::querystringArrayToHash(
-                    explode('/', SGL_Config::get('site.defaultParams')));
+                    explode('/', $conf['site']['defaultParams']));
                 foreach ($aParams as $k => $v) {
                     $aParsedUri[$k] = $v;
                 }
@@ -106,13 +106,14 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
             $aParsedUri['moduleName'] = $url->aRes[1]['moduleName'];
             $aParsedUri['managerName'] = $url->aRes[1]['managerName'];
         }
+
         //  we've got module name so load and merge local and global configs
         //  unless we're running the setup wizard
-        if (!SGL_Config::get('site.setup')  && !empty($aParsedUri['moduleName'])) {
+        if (!isset($conf['setup'])  && !empty($aParsedUri['moduleName'])) {
+            $c = &SGL_Config::singleton();
             $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
             $path = realpath($testPath);
             if ($path) {
-                $c = SGL_Config::singleton();
                 $aModuleConfig = $c->load($path);
 
                 if (PEAR::isError($aModuleConfig)) {
@@ -134,14 +135,14 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         }
         //  catch case where when manager + mod names are the same, and cookies
         //  disabled, sglsessid gets bumped into wrong slot
-        if (preg_match('/'.strtolower(SGL_Config::get('cookie.name')).'/', $aParsedUri['managerName'])) {
+        if (preg_match('/'.strtolower($conf['cookie']['name']).'/', $aParsedUri['managerName'])) {
             $cookieValue = isset($aParsedUri['managerName'][1])
                 ? $aParsedUri['managerName'][1]
                 : '';
             $cookieValue = substr($cookieValue, 0, -1);
             $aParsedUri['managerName'] = $aParsedUri['moduleName'];
             array_unshift($aUriParts, $cookieValue);
-            array_unshift($aUriParts, SGL_Config::get('cookie.name'));
+            array_unshift($aUriParts, $conf['cookie']['name']);
         }
         //  if 'action' is in manager slot, move it to querystring array, and replace
         //  manager name with default mgr name, ie, that of the module
@@ -179,11 +180,11 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
      */
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  get a reference to the request object
-        $req = SGL_Request::singleton();
+        $req = & SGL_Request::singleton();
 
         //  determine module and manager names
         $mgr = (empty($mgr)) ? $req->get('managerName') : $mgr;
@@ -254,13 +255,9 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
                             $qsParamValue = $listKey; // pass literal
                         }
                     }
-                    if (strlen($qsParamValue) > 0) {
-                        $qs .= '/' . $qsParamName . '/' . $qsParamValue;
-                    }
+                    $qs .= '/' . $qsParamName . '/' . $qsParamValue;
                 } else {
-                    if (isset($aList[$idx]->$listKey) && strlen($aList[$idx]->$listKey) > 0) {
-                        $qs .= '/' . $qsParamName . '/' . $aList[$idx]->$listKey;
-                    }
+                    $qs .= '/' . $qsParamName . '/' . $aList[$idx]->$listKey;
                 }
             }
             //  append querystring

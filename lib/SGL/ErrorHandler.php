@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -47,7 +47,6 @@
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
- * @author  Peter James
  * @version $Revision: 1.8 $
  */
 class SGL_ErrorHandler
@@ -150,7 +149,7 @@ class SGL_ErrorHandler
 
             //  if a debug sesssion has been started, or the site in in
             //  development mode, send error info to screen
-            if (!$conf['debug']['production'] || SGL_Session::get('adminMode')) {
+            if (!$conf['debug']['production'] || SGL_Session::get('debug')) {
                 $source = $this->_getSourceContext($file, $line);
                 //  generate screen debug html
                 //  type is 1st dimension element from $errorType array, ie,
@@ -177,9 +176,10 @@ LINE: $line
  --
 EOL;
                 }
-                if (!empty($conf['log']['showErrors']) && $conf['log']['showErrors'] == true) {
-                    echo $output;
-                }
+                echo $output;
+
+                //  disable block so errors can be seen
+                $c->set('site', array('blocksEnabled' => false));
 
             } else {
                 //  we're in production mode, suppress any errors from being displayed
@@ -212,6 +212,7 @@ EOL;
                 $info = print_r($aExtraInfo, true);
 
                 //  rebuild error output w/out html
+                require_once SGL_CORE_DIR . '/Util.php';
                 $crlf = SGL_String::getCrlf();
                 $output = $errStr . $crlf .
                     'type: ' . $this->errorType[$errNo][0] . $crlf .

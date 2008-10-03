@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -42,7 +42,7 @@ define('SGL_REQUEST_BROWSER',   1);
 define('SGL_REQUEST_CLI',       2);
 define('SGL_REQUEST_AJAX',      3);
 define('SGL_REQUEST_XMLRPC',    4);
-define('SGL_REQUEST_AMF',       5);
+define('SGL_REQUEST_AMF',     	5);
 
 /**
  * Loads Request driver, provides a number of filtering methods.
@@ -54,14 +54,11 @@ define('SGL_REQUEST_AMF',       5);
 class SGL_Request
 {
     var $aProps;
-    private static $instance;
 
-    function init($type = null)
+    function init()
     {
         if ($this->isEmpty()) {
-            $type = (is_null($type))
-                ? $this->_getRequestType()
-                : $type;
+            $type = $this->getRequestType();
             $typeName = $this->constantToString($type);
             $file = SGL_CORE_DIR . '/Request/' . $typeName . '.php';
             if (!is_file($file)) {
@@ -75,7 +72,6 @@ class SGL_Request
                   SGL_ERROR_NOCLASS);
             }
             $obj = new $class();
-            error_log('##########   Req type: '.$class);
             $ok = $obj->init();
 
             return PEAR::isError($ok)
@@ -89,9 +85,6 @@ class SGL_Request
         switch($constant) {
         case SGL_REQUEST_BROWSER:
             $ret = 'Browser';
-            if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
-                $ret = 'Browser2';
-            }
             break;
 
         case SGL_REQUEST_CLI:
@@ -100,9 +93,6 @@ class SGL_Request
 
         case SGL_REQUEST_AJAX:
             $ret = 'Ajax';
-            if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
-                $ret = 'Ajax2';
-            }
             break;
 
         case SGL_REQUEST_AMF:
@@ -112,12 +102,7 @@ class SGL_Request
         return $ret;
     }
 
-    /**
-     * Used internally to determine request type before Request strategy instantiated.
-     *
-     * @return integer
-     */
-    function _getRequestType()
+    function getRequestType()
     {
         if (SGL::runningFromCLI()) {
             $ret = SGL_REQUEST_CLI;
@@ -126,7 +111,7 @@ class SGL_Request
                         $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
             $ret = SGL_REQUEST_AJAX;
 
-        } elseif (isset($_SERVER['CONTENT_TYPE']) &&
+        } else if(isset($_SERVER['CONTENT_TYPE']) &&
             $_SERVER['CONTENT_TYPE'] == 'application/x-amf') {
             $ret = SGL_REQUEST_AMF;
 
@@ -149,13 +134,15 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    public static function singleton($forceNew = false, $type = null)
+    function &singleton($forceNew = false)
     {
-        if (!self::$instance || $forceNew) {
+        static $instance;
+
+        if (!isset($instance) || $forceNew) {
             $obj = new SGL_Request();
-            self::$instance = $obj->init($type);
+            $instance = $obj->init();
         }
-        return self::$instance;
+        return $instance;
     }
 
     function isEmpty()
@@ -163,11 +150,6 @@ class SGL_Request
         return count($this->aProps) ? false : true;
     }
 
-    /**
-     * Returns constant representing request type.
-     *
-     * @return integer
-     */
     function getType()
     {
         return $this->type;
@@ -204,8 +186,8 @@ class SGL_Request
             } else {
                 $clean = SGL_String::removeJs($copy);
             }
-
-            return $clean;
+            $this->set($key, $clean);
+            return $this->aProps[$key];
 
         } else {
             return null;
@@ -252,7 +234,7 @@ class SGL_Request
 
     function getManagerName()
     {
-        if (isset( $this->aProps['managerName'])) {
+        if (isset($this->aProps['managerName'])) {
             $ret = $this->aProps['managerName'];
         } else {
             $ret = 'default';
@@ -262,7 +244,7 @@ class SGL_Request
 
     function getActionName()
     {
-        if ( isset($this->aProps['action'])) {
+        if (isset($this->aProps['action'])) {
             $ret = $this->aProps['action'];
         } else {
             $ret = 'default';
@@ -273,7 +255,9 @@ class SGL_Request
     function getUri()
     {
         $uri = '';
-        $sglSessionName = SGL_Config::get('cookie.name');
+        $c = &SGL_Config::singleton();
+        $conf = $c->getAll();
+        $sglSessionName = $conf['cookie']['name'];
 
         foreach ($this->aProps as $key => $value) {
             if (is_array($value)) {

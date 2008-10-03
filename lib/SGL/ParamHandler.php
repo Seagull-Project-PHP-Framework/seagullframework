@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -48,21 +48,21 @@
 class SGL_ParamHandler
 {
     var $source;
-    private static $instances;
 
     function SGL_ParamHandler($source)
     {
         $this->source = $source;
     }
 
-    public static function singleton($source)
+    function &singleton($source)
     {
-        if (!self::$instances) {
-            self::$instances = array();
+        static $instances;
+        if (!isset($instances)) {
+            $instances = array();
         }
 
         $signature = md5($source);
-        if (!isset(self::$instances[$signature])) {
+        if (!isset($instances[$signature])) {
 
             $ext = substr($source, -3);
             switch ($ext) {
@@ -80,9 +80,9 @@ class SGL_ParamHandler
                 $ret =  new SGL_ParamHandler_Ini($source);
                 break;
             }
-            self::$instances[$signature] = $ret;
+            $instances[$signature] = $ret;
         }
-        return self::$instances[$signature];
+        return $instances[$signature];
     }
 
     function read() {}
@@ -97,12 +97,6 @@ class SGL_ParamHandler
 //    }
 }
 
-/**
- * Concrete implementation for ini files.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- */
 class SGL_ParamHandler_Ini extends SGL_ParamHandler
 {
     function read()
@@ -122,12 +116,6 @@ class SGL_ParamHandler_Ini extends SGL_ParamHandler
     }
 }
 
-/**
- * Concrete implementation for arrays.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- */
 class SGL_ParamHandler_Array extends SGL_ParamHandler
 {
     function read()
@@ -156,12 +144,6 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
     }
 }
 
-/**
- * Concrete implementation for XML files.
- *
- * @package SGL
- * @author  Demian Turner <demian@phpkitchen.com>
- */
 class SGL_ParamHandler_Xml extends SGL_ParamHandler
 {
     function read()

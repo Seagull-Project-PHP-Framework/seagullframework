@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -193,16 +193,17 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
     var $title = 'Available Modules';
     var $key = 'loaded_modules';
     var $aRequirements = array(
+        'apc' => array(SGL_FORBIDDEN => 0),
         'curl' => array(SGL_RECOMMENDED => 1),
         'gd' => array(SGL_RECOMMENDED => 1),
         'iconv' => array(SGL_RECOMMENDED => 1),
-        'mysql' => array(SGL_NEUTRAL => 0),
-        'mysqli' => array(SGL_NEUTRAL => 0),
-        'oci8' => array(SGL_NEUTRAL => 0),
-        'odbc' => array(SGL_NEUTRAL => 0),
+//        'mysql' => array(SGL_NEUTRAL => 0),
+//        'mysqli' => array(SGL_NEUTRAL => 0),
+//        'oci8' => array(SGL_NEUTRAL => 0),
+//        'odbc' => array(SGL_NEUTRAL => 0),
         'openssl' => array(SGL_RECOMMENDED => 1),
         'pcre' => array(SGL_REQUIRED => 1),
-        'pgsql' => array(SGL_NEUTRAL => 0),
+//        'pgsql' => array(SGL_NEUTRAL => 0),
         'posix' => array(SGL_RECOMMENDED => 1),
         'session' => array(SGL_REQUIRED => 1),
         'tidy' => array(SGL_RECOMMENDED => 1),
@@ -321,13 +322,11 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
         'installRoot' => array(SGL_NEUTRAL => 0),
         'varDirExists' => array(SGL_REQUIRED => 1),
         'varDirIsWritable' => array(SGL_REQUIRED => 1),
-        'wwwDirIsWritable' => array(SGL_REQUIRED => 1),
     );
     var $aErrors = array(
         'installRoot' => '',
         'varDirExists' => 'It appears you do not have a "var" folder, please create a folder with this name in the root of your Seagull install',
         'varDirIsWritable' => "Your \"var\" dir is not writable by the webserver, to make it writable type the following at the command line: chmod 777 %e",
-        'wwwDirIsWritable' => "Your \"www\" dir is not writable by the webserver, to make it writable type the following at the command line: chmod 777 %e",
     );
 
     function run()
@@ -335,7 +334,6 @@ class SGL_Task_GetFilesystemInfo extends SGL_EnvSummaryTask
         $this->aData['installRoot'] = SGL_PATH;
         $this->aData['varDirExists'] = bool2int(file_exists(SGL_VAR_DIR));
         $this->aData['varDirIsWritable'] = bool2int(is_writable(SGL_VAR_DIR));
-        $this->aData['wwwDirIsWritable'] = bool2int(is_writable(SGL_WEB_ROOT));
         return $this->render($this->aData);
     }
 }
@@ -350,6 +348,7 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
     var $mandatory = true;
 
     var $aRequirements = array(
+        'pearFolderExists' => array(SGL_REQUIRED => 1),
         'pearLibIsLoadable' => array(SGL_REQUIRED => 1),
         'pearPath' => array(SGL_NEUTRAL => 0),
         'pearSystemLibIsLoadable' => array(SGL_REQUIRED => 1),
@@ -361,9 +360,10 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
     function run()
     {
         if (defined('SGL_PEAR_INSTALLED')) {
+            $this->aData['pearFolderExists'] = true;
             $this->aData['pearLibIsLoadable'] = true;
             $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
-            $this->aData['pearPath'] = get_include_path();
+            $this->aData['pearPath'] = @ini_get('include_path');
             $this->aData['pearSystemLibIsLoadable'] = true;
             $this->aData['pearRegistryLibIsLoadable'] = true;
             require_once 'System.php';
@@ -372,11 +372,14 @@ class SGL_Task_GetPearInfo extends SGL_EnvSummaryTask
             $this->aData['pearRegistryIsObject'] = bool2int(is_object($registry));
             $this->aData['pearBundledPackages'] = $registry->_listPackages();
         } else {
-            $this->aData['pearLibIsLoadable'] = bool2int(include_once 'PEAR.php');
-            $this->aData['pearPath'] = get_include_path();
+            $this->aData['pearFolderExists'] = bool2int(file_exists(SGL_LIB_PEAR_DIR));
+            $this->aData['pearLibIsLoadable'] = bool2int(include_once SGL_LIB_PEAR_DIR . '/PEAR.php');
+            $includeSeparator = (substr(PHP_OS, 0, 3) == 'WIN') ? ';' : ':';
+            $ok = @ini_set('include_path',      '.' . $includeSeparator . SGL_LIB_PEAR_DIR);
+            $this->aData['pearPath'] = @ini_get('include_path');
             $this->aData['pearSystemLibIsLoadable'] = bool2int(require_once 'System.php');
             $this->aData['pearRegistryLibIsLoadable'] = bool2int(require_once 'PEAR/Registry.php');
-            $registry = new PEAR_Registry();
+            $registry = new PEAR_Registry(SGL_LIB_PEAR_DIR);
             $this->aData['pearRegistryIsObject'] = bool2int(is_object($registry));
             $aPackages = $registry->_listPackages();
             sort($aPackages);

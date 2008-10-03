@@ -20,7 +20,7 @@ class LocaleTest extends UnitTestCase {
         print '<pre>'; print_r($locale);
     }
 
-    function xtestSingletonWithArg()
+    function testSingletonWithArg()
     {
         require_once dirname(__FILE__) . '/../Locale.php';
         $locale = SGL_Locale::singleton('en_GB');

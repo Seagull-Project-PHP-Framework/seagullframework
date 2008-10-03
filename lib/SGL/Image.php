@@ -1,7 +1,7 @@
 <?php
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Copyright (c) 2008, Demian Turner                                         |
+// | Copyright (c) 2006, Demian Turner                                         |
 // | All rights reserved.                                                      |
 // |                                                                           |
 // | Redistribution and use in source and binary forms, with or without        |
@@ -43,6 +43,7 @@ define('SGL_IMAGE_DEFAULT_SECTION', 'default');
  * Base image class.
  *
  * @package    SGL
+ * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_Image
@@ -209,22 +210,6 @@ class SGL_Image
         return call_user_func_array($callback, $args);
     }
 
-    function isValidImage($fileName)
-    {
-        $ok = @getimagesize($fileName);
-        return $ok !== false;
-    }
-
-    function isTransformable($fileName)
-    {
-        $ret = getimagesize($fileName);
-        $mem = ini_get('memory_limit');
-
-        // implement logic here, which detects if php has enough memory
-        // to transform image
-        return true;
-    }
-
     /**
      * Upload image and create thumbnails.
      *
@@ -305,9 +290,8 @@ class SGL_Image
         if (PEAR::isError($ok)) {
             return $ok;
         }
-
         if (!file_exists($fileName)) {
-            return SGL::raiseError('SGL_Image: file not found ' . $fileName, SGL_ERROR_NOFILE);
+            return SGL::raiseError('SGL_Image: file not found', SGL_ERROR_NOFILE);
         }
         unlink($fileName);
         $ok = $this->_toThumbnails('unlink'); // delete thumbnails
@@ -323,11 +307,10 @@ class SGL_Image
      * @access public
      *
      * @param mixed $section
-     * @param string $pathOverride
      *
      * @return boolean
      */
-    function transform($section = null, $pathOverride = null)
+    function transform($section = null)
     {
         // do nothing if no strats were loaded or there is no strategy for
         // specified section (thumbnail)
@@ -342,17 +325,14 @@ class SGL_Image
             if (!is_numeric($section)) {
                 return true;
             }
-            $fileName = $pathOverride
-                ? $pathOverride . '/' . $this->fileName
-                : $this->getPath() . '/' . $this->fileName;
-            $params = &$this->_aParams;
+            $fileName = $this->getPath() . '/' . $this->fileName;
+            $params   = &$this->_aParams;
         } else {
             $thumbDir = !empty($this->_aParams['thumbDir'])
                 ? '/' . $this->_aParams['thumbDir']
                 : '';
-            $fileName = $pathOverride
-                ? "{$pathOverride}$thumbDir/{$section}_{$this->fileName}"
-                : $this->getPath() . "$thumbDir/{$section}_{$this->fileName}";
+            $fileName = $this->getPath() . $thumbDir . '/' .
+                $section . '_' . $this->fileName;
             $params = &$this->_aThumbnails[$section];
         }
         foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
@@ -396,23 +376,6 @@ class SGL_Image
             }
         }
         return true;
-    }
-
-    /**
-     * @access public
-     *
-     * @return array
-     */
-    function setImagePath($path = "")
-    {
-    	if (empty($path)) {
-    		return;
-    	}
-        if (isset($this->_aParams['path'])) {
-            $this->_aParams['path'] .= '/' . $path;
-        } else {
-            $this->_aParams['path'] = $path;
-        }
     }
 
     /**
@@ -494,20 +457,12 @@ class SGL_Image
             }
             $path = SGL_BASE_URL . '/' . $moduleName . '/images';
         } else {
-        	// if uploadDir is set in image.ini conf, overwrite
-        	// starting from 'SGL_APP_ROOT'
-        	if (SGL_Image::_isInstanceMethod() && isset($this->_aParams['uploadDir'])) {
-        		$path = SGL_APP_ROOT . '/' . $this->_aParams['uploadDir'];
-        	} elseif (!empty($moduleName)) {
+            if (!empty($moduleName)) {
                 $path = SGL_MOD_DIR . '/' . $moduleName . '/www/images';
             } else {
                 $path = SGL_UPLOAD_DIR;
             }
         }
-        if (SGL_Image::_isInstanceMethod() && isset($this->_aParams['path'])) {
-            $path .= '/' .$this->_aParams['path'];
-        }
-
         return $path;
     }
 
@@ -685,7 +640,7 @@ class SGL_Image
  * @see SGL_ImageConfig::getProperty()
  */
 $GLOBALS['_SGL']['ImageConfig']['aProps']['_aMainParams'] =
-    array('driver', 'saveQuality', 'thumbDir', 'uploadDir');
+    array('driver', 'saveQuality', 'thumbDir');
 
 /**
  * @staticvar array
@@ -698,7 +653,8 @@ $GLOBALS['_SGL']['ImageConfig']['aProps']['_aAdditionalParams'] =
 /**
  * Manipulate with SGL_Image configuration.
  *
- * @package    SGL
+ * @package    seagull
+ * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  */
 class SGL_ImageConfig
@@ -747,12 +703,6 @@ class SGL_ImageConfig
     function paramsCheck($aParams, $sectionName = '')
     {
         $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
-        //hack, remove uploadDir to keep BC.
-        // need to find a better way
-        if (!isset($aParams['uploadDir'])) {
-            $aParams['uploadDir']='';
-        }
-
         $aRet = array_diff($aMainParams, array_keys($aParams));
         if (!empty($aRet)) {
             $error = "SGL_ImageConfig: missing parameters";
@@ -981,7 +931,8 @@ class SGL_ImageConfig
 /**
  * Base image transformation strategy.
  *
- * @package    SGL
+ * @package    seagull
+ * @subpackage image
  * @author     Dmitri Lakachauskis <dmitri@telenet.lv>
  *
  * @abstract

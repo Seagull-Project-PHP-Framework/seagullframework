@@ -62,8 +62,8 @@ class STR_TestRunner
     function runAll()
     {
         $type = $GLOBALS['_STR']['test_type'];
-        $aLayers = array_keys($GLOBALS['_STR'][$type . '_layers']);
-        foreach ($aLayers as $layer) {
+        foreach ($GLOBALS['_STR'][$type . '_layers'] as $layer => $data) {
+
             // Run each layer test in turn
             STR_TestRunner::runLayer($layer);
         }
@@ -96,11 +96,7 @@ class STR_TestRunner
                 }
             }
         }
-
-        $reporter = !SGL::runningFromCLI()
-            ? new HtmlReporter()
-            : new TextReporter();
-        $test->run($reporter);
+        $test->run(new HtmlReporter());
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
@@ -133,11 +129,7 @@ class STR_TestRunner
                                    constant($type . '_TEST_STORE') . '/' . $file);
             }
         }
-
-        $reporter = !SGL::runningFromCLI()
-            ? new HtmlReporter()
-            : new TextReporter();
-        $test->run($reporter);
+        $test->run(new HtmlReporter());
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
@@ -162,11 +154,7 @@ class STR_TestRunner
         $test = &new GroupTest($testName);
         $test->addTestFile(STR_PATH . '/' . $folder . '/' .
                            constant($type . '_TEST_STORE') . '/' . $file);
-
-        $reporter = !SGL::runningFromCLI()
-            ? new HtmlReporter()
-            : new TextReporter();
-        $test->run($reporter);
+        $test->run(new HtmlReporter());
 
         // Tear down the environment for the test
         STR_TestEnv::teardown($layer);
