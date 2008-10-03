@@ -6,7 +6,7 @@
  * @package SGL
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_URL2
+class SGL_Url2
 {
     /**
      * @var Horde_Routes_Config
