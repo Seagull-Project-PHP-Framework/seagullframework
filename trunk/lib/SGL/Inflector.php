@@ -57,8 +57,9 @@ class SGL_Inflector
     * @param string $querystring    From the querystring fragment onwards, ie /user/account/userid/2/
     * @param string $sectionName    From the database
     * @return boolean
+    * @todo only needed for php4
     */
-    function isUrlSimplified($querystring, $sectionName)
+    public function isUrlSimplified($querystring, $sectionName)
     {
         if (!(empty($querystring))) {
             if (SGL_Inflector::urlContainsDuplicates($querystring)) {
@@ -81,6 +82,7 @@ class SGL_Inflector
      *
      * @param string $url
      * @return boolean
+     * @todo only needed for php4
      */
     function urlContainsDuplicates($url)
     {
@@ -101,6 +103,7 @@ class SGL_Inflector
      * @static
      * @param string $name
      * @return string
+     * @todo only needed for php4
      */
     public static function getManagerNameFromSimplifiedName($name)
     {
@@ -114,7 +117,6 @@ class SGL_Inflector
     /**
      * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
      *
-     * @static
      * @param string $name
      * @return string
      */
@@ -133,6 +135,7 @@ class SGL_Inflector
      * @static
      * @param string $name
      * @return string
+     * @todo only needed for php4
      */
     function getSimplifiedNameFromManagerName($name)
     {
@@ -151,13 +154,12 @@ class SGL_Inflector
    /**
     * Converts "string with spaces" to "camelCase" string.
     *
-    * @access  public
     * @param   string $s
     * @return  string
     *
     * @author Julien Casanova <julien_casanova AT yahoo DOT fr>
     */
-    function camelise($s)
+    public static function camelise($s)
     {
         $ret = '';
         $i = 0;
@@ -176,7 +178,7 @@ class SGL_Inflector
         return $ret;
     }
 
-    function getTitleFromCamelCase($camelCaseWord)
+    public static function getTitleFromCamelCase($camelCaseWord)
     {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
             return $camelCaseWord;
@@ -191,7 +193,7 @@ class SGL_Inflector
         return ucfirst($ret);
     }
 
-    function isCamelCase($str)
+    public static function isCamelCase($str)
     {
         //  ensure no non-alpha chars
         if (preg_match("/[^a-z].*/i", $str)) {
@@ -227,7 +229,7 @@ class SGL_Inflector
      * @param string $lower_case_and_underscored_word String to be made more readable
      * @return string Human-readable string
      */
-    function humanise($lowerCaseAndUnderscoredWord)
+    public static function humanise($lowerCaseAndUnderscoredWord)
     {
         $replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
         return $replace;

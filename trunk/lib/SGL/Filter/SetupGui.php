@@ -6,11 +6,9 @@
  */
 class SGL_Filter_SetupGui extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $this->processRequest->process($input, $output);
-
-        SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!SGL::runningFromCLI()) {
             $mgrName = SGL_Inflector::caseFix(get_class($output->manager));

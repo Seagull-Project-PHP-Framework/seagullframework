@@ -5,7 +5,7 @@
  */
 class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
-    function run($conf = array())
+    public function run($conf = array())
     {
         //  include Log.php if logging enabled
         if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {

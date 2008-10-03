@@ -7,7 +7,7 @@
  */
 class SGL_Filter_SetupLocale extends SGL_DecorateProcess
 {
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $locale = $_SESSION['aPrefs']['locale'];
         $timezone = $_SESSION['aPrefs']['timezone'];

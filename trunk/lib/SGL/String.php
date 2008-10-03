@@ -119,13 +119,13 @@ class SGL_String
      * will add entry to log with a string describing the errors and changes
      * Tidy made via SGL::logMessage().
      *
-     * @access public
      * @param string $html the text to clean
      * @param bool $logErrors
      * @return string cleaned text
      *
      * @author  Andy Crain <andy@newslogic.com>
      * @since   PHP 4.3
+     * @todo this should be a plugin
      */
     function tidy($html, $logErrors = false)
     {
@@ -166,6 +166,7 @@ class SGL_String
      * @return string
      *
      * @todo better integrate $lang handling
+     * @todo move to bugfixBC plugin
      */
     public static function translate($key, $filter = false, $aParams = array(), $langCode = null)
     {
@@ -293,6 +294,7 @@ class SGL_String
      * @return string $encoded Encoded character (or raw char if unknown encoding)
      *
      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
+     * @todo move to plugin
      */
     function char2entity($char, $encoding = 'H')
     {
@@ -342,8 +344,9 @@ class SGL_String
      * @param string $appendString  Trailing string to be appended.
      *
      * @return string Correctly shortened text.
+     * @todo move to plugin
      */
-    function summarise($str, $limit = 50, $element = SGL_WORD,
+    public function summarise($str, $limit = 50, $element = SGL_WORD,
         $appendString = ' ...')
     {
         switch ($element) {
@@ -381,11 +384,10 @@ class SGL_String
     /**
      * Converts bytes to KB/MB/GB as appropriate.
      *
-     * @access  public
      * @param   int $bytes
      * @return  int B/KB/MB/GB
      */
-     function formatBytes($size, $decimals = 1, $lang = '--')
+     public static function formatBytes($size, $decimals = 1, $lang = '--')
     {
         $aSizeList = array(1073741824, 1048576, 1024, 0);
         // Should check if string is in an array, other languages may use octets
@@ -411,7 +413,7 @@ class SGL_String
         return $formated;
     }
 
-    function toValidVariableName($str)
+    public static function toValidVariableName($str)
     {
         //  remove illegal chars
         $search = '/[^a-zA-Z1-9_]/';
@@ -423,15 +425,15 @@ class SGL_String
         return $final;
     }
 
-    function toValidFileName($origName)
+    public static function toValidFileName($origName)
     {
         return SGL_String::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
-    function dirify($s)
+    public static function dirify($s)
     {
-         $s = SGL_String::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
+         $s = self::_convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
          $s = strip_tags($s);                       ## remove HTML tags.
          // Note that &nbsp (for example) is legal in HTML 4, ie. semi-colon is optional if it is followed
@@ -443,7 +445,7 @@ class SGL_String
          return $s;
     }
 
-    function convertHighAscii($s)
+    protected function _convertHighAscii($s)
     {
         // Seems to be for Latin-1 (ISO-8859-1) and quite limited (no ae/oe, no y:/Y:, etc.)
          $aHighAscii = array(
@@ -505,7 +507,7 @@ class SGL_String
          return $s;
     }
 
-    function to7bit($text)
+    protected function _to7bit($text)
     {
         if (!function_exists('mb_convert_encoding')) {
             return $text;
@@ -533,10 +535,10 @@ class SGL_String
      *
      * @return string
      */
-    function replaceAccents($str)
+    public static function replaceAccents($str)
     {
-        if (!SGL_String::isCyrillic($str)) {
-            $str = SGL_String::to7bit($str);
+        if (!self::_isCyrillic($str)) {
+            $str = self::_to7bit($str);
             $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
         }
         return $str;
@@ -551,7 +553,7 @@ class SGL_String
      *
      * @return boolean
      */
-    function isCyrillic($str)
+    protected function _isCyrillic($str)
     {
         $ret = false;
         if (function_exists('mb_convert_encoding') && !empty($str)) {
@@ -578,7 +580,7 @@ class SGL_String
      * @param string $string
      * @return string
      */
-    function stripIniFileIllegalChars($string)
+    public static function stripIniFileIllegalChars($string)
     {
         return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
     }
@@ -613,12 +615,9 @@ class SGL_String
      * Esacape single quote.
      *
      * @param   string $string
-     *
      * @return  string
-     *
-     * @static
      */
-    function escapeSingleQuote($string)
+    public static function escapeSingleQuote($string)
     {
         $ret = str_replace('\\', '\\\\', $string);
         $ret = str_replace("'", '\\\'', $ret);

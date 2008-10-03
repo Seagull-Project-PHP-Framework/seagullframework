@@ -5,7 +5,7 @@
  */
 class SGL_Filter_BuildHtmlView extends SGL_DecorateProcess
 {
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $this->processRequest->process($input, $output);
 

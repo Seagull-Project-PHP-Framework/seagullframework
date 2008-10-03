@@ -13,7 +13,7 @@ class SGL_View_HtmlSimple extends SGL_View
      * @param SGL_Response $data
      * @param string $templateEngine
      */
-    function __construct($response, $templateEngine = null)
+    public function __construct($response, $templateEngine = null)
     {
         //  prepare renderer class
         if (is_null($templateEngine)) {

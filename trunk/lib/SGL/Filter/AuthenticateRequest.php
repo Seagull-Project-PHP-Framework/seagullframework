@@ -18,7 +18,7 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
      *
      * @return mixed
      */
-    function getRememberMeCookieData()
+    protected function _getRememberMeCookieData()
     {
         //  no 'remember me' cookie found
         if (!isset($_COOKIE['SGL_REMEMBER_ME'])) {
@@ -45,21 +45,18 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
     /**
      * Authenticate user.
      *
-     * @access protected
-     *
      * @param integer $uid
-     * @param SGL_Registry $input
      *
      * @return void
      */
-    function doLogin($uid, &$input)
+    protected function _doLogin($uid)
     {
         // if we do login here, then $uid was recovered by cookie,
         // thus activating 'remember me' functionality
-        $input->set('session', new SGL_Session($uid, $rememberMe = true));
+        SGL_Registry::set('session', new SGL_Session($uid, $rememberMe = true));
     }
 
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         // check for timeout
         $session = SGL_Registry::get('session');
@@ -81,9 +78,9 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
         if (($session->isAnonymous() || $timeout)
                 && SGL_Config::get('cookie.rememberMeEnabled')
                 && !SGL_Config::get('site.maintenanceMode')) {
-            $aCookieData = $this->getRememberMeCookieData();
+            $aCookieData = $this->_getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
-                $this->doLogin($aCookieData['uid'], $input);
+                $this->_doLogin($aCookieData['uid']);
 
                 //  session data updated
 #FIXME - what's going on here, 2nd invocation

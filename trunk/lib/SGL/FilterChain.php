@@ -11,6 +11,11 @@ class SGL_FilterChain
     public $aFilters;
     protected $_target;
 
+    public function __construct($aFilters)
+    {
+        $this->aFilters = array_map('trim', $aFilters);
+    }
+
     public function setTarget($target)
     {
         $this->_target = $target;
@@ -20,11 +25,6 @@ class SGL_FilterChain
     public function getTarget()
     {
         return $this->_target;
-    }
-
-    function __construct($aFilters)
-    {
-        $this->aFilters = array_map('trim', $aFilters);
     }
 
     public function doFilter(SGL_Request $input, SGL_Response $output)

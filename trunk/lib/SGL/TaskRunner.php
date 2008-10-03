@@ -50,7 +50,7 @@ abstract class SGL_Task
      * @abstract
      *
      */
-    abstract function run($data = null);
+    abstract public function run($data = null);
 }
 
 /**
@@ -68,7 +68,7 @@ class SGL_TaskRunner
     protected $aTasks = array();
     protected $data = null;
 
-    function addData(array $data)
+    public function addData(array $data)
     {
         $this->data = $data;
     }
@@ -79,15 +79,20 @@ class SGL_TaskRunner
     *
     * @param object $oTask of type Task
     * @return boolean true on add success false on failure
-    * @access public
     */
-    function addTask(SGL_Task $oTask)
+    public function addTask(SGL_Task $oTask)
     {
         $this->aTasks[] = $oTask;
         return true;
     }
 
-    function main()
+    /**
+     * Enter description here...
+     *
+     * @return unknown
+     * @todo maybe better named as run() to be consistent?
+     */
+    public function main()
     {
         $ret = array();
         foreach ($this->aTasks as $k => $oTask) {

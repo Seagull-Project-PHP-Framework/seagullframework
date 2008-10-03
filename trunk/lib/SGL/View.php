@@ -41,7 +41,7 @@ abstract class SGL_View
      * @param SGL_View $view
      * @return boolean
      */
-    abstract function postProcess(SGL_View $view);
+    abstract public function postProcess(SGL_View $view);
 
 
     /**

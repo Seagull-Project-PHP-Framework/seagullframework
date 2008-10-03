@@ -2,7 +2,7 @@
 
 class SGL_Request_Browser
 {
-    function init()
+    public function init()
     {
         return $_GET + $_POST;
     }

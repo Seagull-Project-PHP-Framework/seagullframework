@@ -11,12 +11,12 @@ class SGL_Url2
     /**
      * @var Horde_Routes_Config
      */
-    private $_routes;
+    protected $_routes;
 
     /**
      * @var array
      */
-    private $_aQueryData;
+    protected $_aQueryData;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ class SGL_Url2
      *     k2          => v2
      *   )
      */
-    private function _resolveOldStyleParams($aParams)
+    protected function _resolveOldStyleParams($aParams)
     {
         $aNewParams = array();
         if (!empty($aParams[0])) {
@@ -112,7 +112,7 @@ class SGL_Url2
      *
      * @return array
      */
-    private function _makeDefaultParamsArray($aParams)
+    protected function _makeDefaultParamsArray($aParams)
     {
         $aVars     = array();
         $aKeywords = array('moduleName', 'managerName', 'controller',
@@ -140,7 +140,7 @@ class SGL_Url2
      *
      * @return boolean
      */
-    private function _urlIsMatched($url)
+    protected function _urlIsMatched($url)
     {
         return strpos($url, '?') === false;
     }

@@ -5,7 +5,7 @@
  */
 class SGL_Task_SetupConstantsStart extends SGL_Task
 {
-    function run($conf = array())
+    public function run($conf = array())
     {
         // framework file structure
         if (defined('SGL_PEAR_INSTALLED')) {
