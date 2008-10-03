@@ -23,14 +23,14 @@ abstract class SGL_OutputRendererStrategy
      * Prepare renderer options.
      *
      */
-    abstract function initEngine($data);
+    abstract protected function _initEngine(SGL_Response $data);
 
     /**
      * Abstract render method.
      *
      * @param SGL_View $view
      */
-    abstract function render(SGL_View $view);
+    abstract public function render(SGL_View $view);
 }
 
 class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
@@ -42,13 +42,13 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      * @param SGL_View $view
      * @return string   rendered html output
      */
-    function render(SGL_View $view)
+    public function render(SGL_View $view)
     {
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
 
         //  prepare flexy object
-        $flexy = $this->initEngine($view->data);
+        $flexy = $this->_initEngine($view->data);
 
         $masterTemplate = isset($view->data->masterTemplate)
             ? $view->data->masterTemplate
@@ -69,7 +69,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      *
      * @todo move flexy constants to this class def
      */
-    function initEngine($response)
+    protected function _initEngine(SGL_Response $response)
     {
         //  initialise template engine
         if (!isset($response->theme)) {
@@ -102,7 +102,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
             'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
         );
 
-        $ok = $this->setupPlugins($response, $options);
+        $ok = $this->_setupPlugins($response, $options);
         $flexy = new HTML_Template_Flexy($options);
         return $flexy;
     }
@@ -114,7 +114,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      * @param array $options
      * @return boolean
      */
-    function setupPlugins($data, $options)
+    protected function _setupPlugins(SGL_Response $data, array $options)
     {
         //  Configure Flexy to use SGL ModuleOutput Plugin
         //   If an Output.php file exists in module's dir

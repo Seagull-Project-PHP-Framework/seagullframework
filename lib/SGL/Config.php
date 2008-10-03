@@ -52,7 +52,7 @@ class SGL_Config
     protected $fileName;
     private static $instance;
 
-    function __construct($autoLoad = false)
+    public function __construct($autoLoad = false)
     {
         if ($this->isEmpty() && $autoLoad) {
 
@@ -94,7 +94,7 @@ class SGL_Config
      * @param mixed $key string or array
      * @return boolean
      */
-    function exists($key)
+    public function exists($key)
     {
         if (is_array($key)) {
             $key1 = key($key);
@@ -126,7 +126,7 @@ class SGL_Config
      * @return boolean
      * @todo define add() and remove() methods, set() should only set existing keys
      */
-    function set($key, $value)
+    public function set($key, $value)
     {
         $ret = false;
         if (is_string($key) && is_scalar($value)) {
@@ -157,7 +157,7 @@ class SGL_Config
      * @return mixed
      * @todo in 0.7 make this consistent with $c->get()
      */
-    function remove($key)
+    public function remove($key)
     {
         if (is_array($key)) {
             list($key1, $key2) = $key;
@@ -168,7 +168,7 @@ class SGL_Config
         return true;
     }
 
-    function replace($aConf)
+    public function replace($aConf)
     {
         self::$aProps = $aConf;
     }
@@ -178,12 +178,12 @@ class SGL_Config
      *
      * @return array
      */
-    function getAll()
+    public function getAll()
     {
         return self::$aProps;
     }
 
-    function getFileName()
+    public function getFileName()
     {
         return $this->fileName;
     }
@@ -195,7 +195,7 @@ class SGL_Config
      * @param boolean $force If force is true, master  config file is read, not cached one
      * @return mixed An array of data on success, PEAR error on failure.
      */
-    function load($file, $force = false)
+    public function load($file, $force = false)
     {
         //  create cached copy if module config and cache does not exist
         //  if file has php extension it must be global config
@@ -204,7 +204,7 @@ class SGL_Config
                 if (!$force) {
                     $cachedFileName = $this->getCachedFileName($file);
                     if (!is_file($cachedFileName)) {
-                        $ok = $this->createCachedFile($cachedFileName);
+                        $ok = $this->_createCachedFile($cachedFileName);
                     }
                     //  ensure module config reads are done from cached copy
                     $file = $cachedFileName;
@@ -226,7 +226,7 @@ class SGL_Config
         }
     }
 
-    function getCachedFileName($path)
+    public function getCachedFileName($path)
     {
         /*
         get module name - expecting:
@@ -256,7 +256,7 @@ class SGL_Config
         return $cachedFileName;
     }
 
-    function ensureCacheDirExists()
+    public function ensureCacheDirExists()
     {
         $varConfigDir = SGL_VAR_DIR . '/config';
         if (!is_dir($varConfigDir)) {
@@ -266,7 +266,7 @@ class SGL_Config
         }
     }
 
-    function getModulesDir()
+    protected function _getModulesDir()
     {
         static $modDir;
         if (is_null($modDir)) {
@@ -280,7 +280,7 @@ class SGL_Config
         return $modDir;
     }
 
-    function createCachedFile($cachedModuleConfigFile)
+    protected function _createCachedFile($cachedModuleConfigFile)
     {
         $filename = basename($cachedModuleConfigFile);
         list($module, $ext) = split('\.', $filename);
@@ -290,7 +290,7 @@ class SGL_Config
         return $ok;
     }
 
-    function save($file = null)
+    public function save($file = null)
     {
         if (is_null($file)) {
             if (empty($this->fileName)) {
@@ -302,7 +302,7 @@ class SGL_Config
         //  determine if we're saving a module config file
         //  $file is only defined for module config saving
         if ($file != $this->fileName) {
-            $modDir = $this->getModulesDir();
+            $modDir = $this->_getModulesDir();
 
             if (stristr($file, $modDir) || stristr($file, 'modules')) {
                 $this->ensureCacheDirExists();
@@ -313,7 +313,7 @@ class SGL_Config
         return $ph->write(self::$aProps);
     }
 
-    function merge($aConf)
+    public function merge($aConf)
     {
         $this->aProps = SGL_Array::mergeReplace(self::$aProps, $aConf);
     }
@@ -323,7 +323,7 @@ class SGL_Config
      *
      * @return boolean
      */
-    function isEmpty()
+    public function isEmpty()
     {
         return count(self::$aProps) ? false : true;
     }
@@ -338,8 +338,9 @@ class SGL_Config
      *
      * @param string $moduleName
      * @return mixed    array on success, PEAR_Error on failure
+     * @todo this should be hanlded internally
      */
-    function ensureModuleConfigLoaded($moduleName)
+    public function ensureModuleConfigLoaded($moduleName)
     {
         $ret = false;
         if (!defined('SGL_MODULE_CONFIG_LOADED')

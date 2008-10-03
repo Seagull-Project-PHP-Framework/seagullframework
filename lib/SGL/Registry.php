@@ -95,7 +95,7 @@ class SGL_Registry
         $reg->aProps[$key] = $value;
     }
 
-    function exists($key) {
+    public function exists($key) {
         return array_key_exists($key, $this->aProps);
     }
 
@@ -105,7 +105,7 @@ class SGL_Registry
      * @return unknown
      * @todo forget about url object
      */
-    function getCurrentUrl()
+    public function getCurrentUrl()
     {
         return $this->get('currentUrl');
     }
@@ -117,7 +117,7 @@ class SGL_Registry
      * @param unknown_type $url
      * @todo forget about url object
      */
-    function setCurrentUrl($url)
+    public function setCurrentUrl($url)
     {
         $this->set('currentUrl', $url);
     }

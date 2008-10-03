@@ -60,36 +60,36 @@ class SGL_Response
      * @param unknown_type $k
      * @param unknown_type $v
      */
-    function __set($k, $v)
+    protected function __set($k, $v)
     {
         if (!isset($this->$k)) {
             $this->aProps[$k] = $v;
         }
     }
 
-    function __get($k)
+    protected function __get($k)
     {
         if (isset($this->aProps[$k])) {
             return $this->aProps[$k];
         }
     }
 
-    function getHeaders()
+    public function getHeaders()
     {
         return $this->aHeaders;
     }
 
-    function getBody()
+    public function getBody()
     {
         return $this->aProps;
     }
 
-    function setBody($body)
+    public function setBody($body)
     {
         $this->data = $body;
     }
 
-    function addHeader($header)
+    public function addHeader($header)
     {
         if (!in_array($header, $this->aHeaders)) {
             $this->aHeaders[] = $header;
@@ -101,7 +101,7 @@ class SGL_Response
         $this->_code = $code;
     }
 
-    function __toString()
+    protected function __toString()
     {
         return $this->data;
     }

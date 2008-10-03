@@ -12,26 +12,22 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
     /**
      * Main routine.
      *
-     * @access public
-     *
      * @param SGL_Request $input
-     * @param SGL_Output $output
+     * @param SGL_Response $output
      */
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $this->processRequest->process($input, $output);
 
-        $this->addOutputData($output);
+        $this->_addOutputData($output);
     }
 
     /**
-     * Adds output vars to SGL_Output object.
+     * Adds output vars to SGL_Response object.
      *
-     * @access public
-     *
-     * @param SGL_Output $output
+     * @param SGL_Response $output
      */
-    function addOutputData(SGL_Response $output)
+    protected function _addOutputData(SGL_Response $output)
     {
         // setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
@@ -44,7 +40,7 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
         // request data
         if (!SGL::runningFromCLI()) {
             $output->remoteIp = $_SERVER['REMOTE_ADDR'];
-            $output->currUrl  = self::getCurrentUrlFromRoutes();
+            $output->currUrl  = $this->_getCurrentUrlFromRoutes();
         }
         // lang data
         $output->currLang     = SGL_Translation3::getDefaultLangCode();
@@ -76,7 +72,7 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
      *
      * @return string
      */
-    function getCurrentUrlFromRoutes()
+    protected function _getCurrentUrlFromRoutes()
     {
         $input   = SGL_Registry::singleton();
         $url     = $input->getCurrentUrl();

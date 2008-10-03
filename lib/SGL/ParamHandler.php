@@ -45,12 +45,19 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.49 $
  */
-class SGL_ParamHandler
+
+interface SGL_Config_Interface
+{
+    public function read();
+    public function write($data);
+}
+
+class SGL_ParamHandler implements SGL_Config_Interface
 {
     public $source;
     private static $instances;
 
-    function __construct($source)
+    public function __construct($source)
     {
         $this->source = $source;
     }
@@ -85,7 +92,7 @@ class SGL_ParamHandler
     }
 
     function read() {}
-    function write() {}
+    function write($data) {}
 }
 
 /**
@@ -96,13 +103,13 @@ class SGL_ParamHandler
  */
 class SGL_ParamHandler_Ini extends SGL_ParamHandler
 {
-    function read()
+    public function read()
     {
         $ret = @parse_ini_file($this->source, true);
         return (count($ret)) ? $ret : false;
     }
 
-    function write($data)
+    public function write($data)
     {
         //  load PEAR::Config
         require_once 'Config.php';
@@ -121,7 +128,7 @@ class SGL_ParamHandler_Ini extends SGL_ParamHandler
  */
 class SGL_ParamHandler_Array extends SGL_ParamHandler
 {
-    function read()
+    public function read()
     {
         if (is_file($this->source)) {
             $ok = require $this->source;
@@ -136,7 +143,7 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
         return $ret;
     }
 
-    function write($data)
+    public function write($data)
     {
         //  load PEAR::Config
         require_once 'Config.php';
@@ -155,12 +162,12 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
  */
 class SGL_ParamHandler_Xml extends SGL_ParamHandler
 {
-    function read()
+    public function read()
     {
         return simplexml_load_file($this->source);
     }
 
-    function write($data)
+    public function write($data)
     {
         //  load PEAR::Config
         require_once 'Config.php';

@@ -143,13 +143,10 @@ class SGL
       *
       * All region lists should be UTF-8 encoded.
       *
-      * @todo remove presence of $GLOBALS
-      *
-      * @static
-      *
       * @param string $regionType
-      *
       * @return mixed
+      * @todo remove presence of $GLOBALS
+      * @todo move to plugin
       */
     function loadRegionList($regionType)
     {
@@ -204,7 +201,7 @@ class SGL
      *
      * @param string $v
      */
-    function _toCurrentCharset(&$v)
+    protected function _toCurrentCharset(&$v)
     {
         $v = function_exists('iconv')
             ? iconv('UTF-8', SGL::getCurrentCharset(), $v)
@@ -214,11 +211,10 @@ class SGL
      /**
       * Returns true if a module is installed, ie has a record in the module table.
       *
-      * @static
       * @param string $moduleName
       * @return boolean
       */
-    function moduleIsEnabled($moduleName)
+    public static function moduleIsEnabled($moduleName)
     {
         static $aInstances;
         if (!isset($aInstances)) {

@@ -10,7 +10,7 @@
  */
 class SGL_Filter_LoadController extends SGL_DecorateProcess
 {
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $moduleName = $input->get('moduleName');
         $controllerName = $input->get('controller');

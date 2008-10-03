@@ -101,7 +101,7 @@ class SGL_Session
      * @param   boolean $rememberMe  set remember me cookie
      * @return  void
      */
-    function __construct($uid = -1, $rememberMe = null)
+    public function __construct($uid = -1, $rememberMe = null)
     {
         //  customise session
         $sessName = SGL_Config::get('cookie.name')
@@ -133,7 +133,7 @@ class SGL_Session
             $sessUser->get($uid);
             $this->_init($sessUser, $rememberMe);
             if ($rememberMe) {
-                $this->setRememberMeCookie();
+                $this->_setRememberMeCookie();
             }
 
         //  if session doesn't exist, initialise
@@ -142,7 +142,7 @@ class SGL_Session
         }
     }
 
-    public function setRememberMeCookie()
+    protected function _setRememberMeCookie()
     {
         $conf = SGL_Config::singleton()->getAll();
         $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
@@ -296,7 +296,7 @@ class SGL_Session
      *
      * @return boolean
      */
-    function isAnonymous()
+    public function isAnonymous()
     {
         $ret = !((bool) $_SESSION['uid']);
         return $ret;
@@ -308,7 +308,7 @@ class SGL_Session
      * @access  public
      * @return  boolean true if session is timed out
      */
-    function isTimedOut()
+    public function isTimedOut()
      {
         //  check for session timeout
         $currentTime = time();
@@ -330,10 +330,9 @@ class SGL_Session
     /**
      * Updates the idle time.
      *
-     * @access  public
      * @return  boolean true if session idle time delayed
      */
-    function updateIdle()
+    public function updateIdle()
      {
         $ret = false;
         //  check for session timeout
@@ -350,11 +349,10 @@ class SGL_Session
     /**
      * Returns true if specified permission exists in the session.
      *
-     * @access  public
      * @param   int $permId the permission id
      * @return  boolean if perm exists or not
      */
-    function hasPerms($permId)
+    public function hasPerms($permId)
     {
         if (!isset($_SESSION) || !count($_SESSION)) {
             return false;
@@ -372,7 +370,14 @@ class SGL_Session
         return $ret;
     }
 
-    function currentUserIsOwner($ownerId)
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $ownerId
+     * @return unknown
+     * @todo is this used?
+     */
+    public function currentUserIsOwner($ownerId)
     {
         if (!isset($_SESSION)) {
             return false;
@@ -380,7 +385,7 @@ class SGL_Session
         return $_SESSION['uid'] == $ownerId;
     }
 
-    function hasAdminGui()
+    public function hasAdminGui()
     {
         $aRoles = explode(',', SGL_Config::get('site.rolesHaveAdminGui'));
         foreach ($aRoles as $k => $role) {
@@ -401,10 +406,9 @@ class SGL_Session
     /**
      * Returns the current user's id.
      *
-     * @access  public
      * @return  int the id
      */
-    function getUid()
+    public static function getUid()
     {
         if (count($_SESSION && isset($_SESSION['uid']))) {
             return $_SESSION['uid'];
@@ -416,10 +420,9 @@ class SGL_Session
     /**
      * Returns the current user's username.
      *
-     * @access  public
      * @return  int the role id
      */
-    function getUsername()
+    public static function getUsername()
     {
         if (count($_SESSION && isset($_SESSION['username']))) {
             return $_SESSION['username'];
@@ -445,12 +448,10 @@ class SGL_Session
     /**
      * Removes specified var from session.
      *
-     * @access  public
-     * @static
      * @param   string  $sessVarName   name of session var
      * @return  boolean
      */
-    function remove($sessVarName)
+    public static function remove($sessVarName)
     {
         if (isset($sessVarName)) {
             unset($_SESSION[$sessVarName]);
@@ -494,8 +495,6 @@ class SGL_Session
     /**
      * Dumps session contents.
      *
-     * @access  public
-     * @static
      * @return  void
      */
     public static function debug()

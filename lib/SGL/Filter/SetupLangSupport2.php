@@ -11,17 +11,15 @@
 class SGL_Filter_SetupLangSupport2 extends SGL_DecorateProcess
 {
     /**
-     * Main workflow.
+     * Initialises multi-language support.
      *
      * langCodeCharset still set in prefs for BC, ie
      *  $_SESSION[aPrefs][language] => es-utf-8
      *
-     * @access public
-     *
-     * @param SGL_Registry $input
-     * @param SGL_Output $output
+     * @param SGL_Request $input
+     * @param SGL_Response $output
      */
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         //  sets default language for framework, checks for lang param used to set
         //  user lang

@@ -2,7 +2,7 @@
 
 class SGL_Router
 {
-    function __construct()
+    public function __construct()
     {
         $this->init();
     }
@@ -52,7 +52,7 @@ class SGL_Router
         // create mapper
         $m = new Horde_Routes_Mapper(array(
             'explicit'       => true, // do not connect to Horder defaults
-            'controllerScan' => array('SGL_Router', 'getAvailableManagers'),
+            'controllerScan' => array('SGL_Router', '_getAvailableManagers'),
         ));
 
         foreach ($aRoutes as $aRouteData) {
@@ -148,9 +148,12 @@ class SGL_Router
      * Get list of all available managers. Used as callback for Horde_Routes
      * to generate correct regex.
      *
+     * This has to be a public method to be recognised as is_callable
+     *
      * @return array
+     * @todo fixme
      */
-    public static function getAvailableManagers()
+    public static function _getAvailableManagers()
     {
         return array();
 
@@ -176,7 +179,7 @@ class SGL_Router
      *
      * @return array
      */
-    private function _urlParamStringToArray($params)
+    protected function _urlParamStringToArray($params)
     {
         $aParams = explode('/', $params);
         $aRet    = array();
@@ -196,7 +199,7 @@ class SGL_Router
      *
      * @return mixed string or null
      */
-    private static function _getManagerName($sectionName)
+    protected static function _getManagerName($sectionName)
     {
         $ret = null;
         if (substr($sectionName, -3) === 'Mgr') {
@@ -211,7 +214,7 @@ class SGL_Router
      *
      * @return array
      */
-    private function _getCustomRoutes()
+    protected function _getCustomRoutes()
     {
         $routesFile = SGL_VAR_DIR . '/routes.php';
         if (!file_exists($routesFile)) {
@@ -238,7 +241,7 @@ class SGL_Router
      *
      * @return array
      */
-    private function _prependRegex($aRoutes, $regex)
+    protected function _prependRegex($aRoutes, $regex)
     {
         foreach ($aRoutes as $k => $v) {
             $index = is_string($v[0]) ? 0 : 1;

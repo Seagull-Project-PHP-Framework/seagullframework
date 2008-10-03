@@ -11,7 +11,7 @@
  */
 class SGL_Filter_LoadManager extends SGL_DecorateProcess
 {
-    function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL_Request $input, SGL_Response $output)
     {
         $req = SGL_Registry::get('request');
         $moduleName = $req->get('moduleName');

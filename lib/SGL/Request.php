@@ -57,13 +57,13 @@ class SGL_Request
     protected $_aTainted;
     private static $instance;
 
-    function __construct($type = null)
+    public function __construct($type = null)
     {
         if ($this->isEmpty()) {
             $type = (is_null($type))
                 ? $this->_getRequestType()
                 : $type;
-            $typeName = $this->constantToString($type);
+            $typeName = $this->_constantToString($type);
             $strat = 'SGL_Request_' . $typeName;
             $obj = new $strat();
             error_log('##########   Req type: '.$strat);
@@ -71,7 +71,7 @@ class SGL_Request
         }
     }
 
-    function constantToString($constant)
+    protected function _constantToString($constant)
     {
         switch($constant) {
         case SGL_REQUEST_BROWSER:
@@ -101,14 +101,14 @@ class SGL_Request
      *
      * @return integer
      */
-    function _getRequestType()
+    protected function _getRequestType()
     {
         $ret = SGL_REQUEST_BROWSER;
         return $ret;
     }
 
 
-    function isEmpty()
+    public function isEmpty()
     {
         return count($this->aProps) ? false : true;
     }
@@ -119,7 +119,7 @@ class SGL_Request
      *
      * @return integer
      */
-    function getType()
+    public function getType()
     {
         return $this->type;
     }
@@ -132,7 +132,7 @@ class SGL_Request
      * @param   boolean $allowTags  If html/php tags are allowed or not
      * @return  mixed               Request param value or null if not exists
      */
-    function get($key, $allowTags = false)
+    public function get($key, $allowTags = false)
     {
         if (isset($this->aProps[$key])) {
 
@@ -163,29 +163,29 @@ class SGL_Request
      * @param   mixed   $value  Request param value
      * @return  void
      */
-    function set($key, $value)
+    public function set($key, $value)
     {
         $this->aProps[$key] = $value;
     }
 
-    function __set($key, $value)
+    protected function __set($key, $value)
     {
         $this->aProps[$key] = $value;
     }
 
-    function __get($key)
+    protected function __get($key)
     {
         if (isset($this->aProps[$key])) {
             return $this->aProps[$key];
         }
     }
 
-    function add(array $aParams)
+    public function add(array $aParams)
     {
         $this->aProps = array_merge_recursive($this->aProps, $aParams);
     }
 
-    function reset()
+    public function reset()
     {
         unset($this->aProps);
         $this->aProps = array();
@@ -195,7 +195,7 @@ class SGL_Request
      *
      * @return array
      */
-    function getClean()
+    public function getClean()
     {
         return $this->aProps;
     }
@@ -205,18 +205,18 @@ class SGL_Request
      *
      * @return array
      */
-    function getTainted()
+    public function getTainted()
     {
         return $this->_aTainted;
     }
 
 
-    function getModuleName()
+    public function getModuleName()
     {
         return $this->aProps['moduleName'];
     }
 
-    function getManagerName()
+    public function getManagerName()
     {
         if (isset( $this->aProps['managerName'])) {
             $ret = $this->aProps['managerName'];
@@ -226,7 +226,7 @@ class SGL_Request
         return $ret;
     }
 
-    function getActionName()
+    public function getActionName()
     {
         if ( isset($this->aProps['action'])) {
             $ret = $this->aProps['action'];
@@ -242,7 +242,7 @@ class SGL_Request
      * @return unknown
      * @todo what's this?
      */
-    function getName()
+    public function getName()
     {
         if (isset( $this->aProps['controller'])) {
             $ret = $this->aProps['controller'];
