@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Manages an array of filters.
+ *
+ * @package SGL
+ * @author  Demian Turner <demian@phpkitchen.com>
+ */
+class SGL_FilterChain
+{
+    public $aFilters;
+    protected $_target;
+
+    public function setTarget($target)
+    {
+        $this->_target = $target;
+        return true;
+    }
+
+    public function getTarget()
+    {
+        return $this->_target;
+    }
+
+    function __construct($aFilters)
+    {
+        $this->aFilters = array_map('trim', $aFilters);
+    }
+
+    public function doFilter(SGL_Request $input, SGL_Response $output)
+    {
+        array_push($this->aFilters, $this->getTarget());
+        $filters = '';
+        $closeParens = '';
+        $code = '$process = ';
+        foreach ($this->aFilters as $filter) {
+            if (class_exists($filter)) {
+                $filters .= "new $filter(\n";
+                $closeParens .= ')';
+            }
+        }
+        $code = $filters . $closeParens;
+        eval("\$process = $code;");
+
+        $process->process($input, $output);
+    }
+}
+?>
