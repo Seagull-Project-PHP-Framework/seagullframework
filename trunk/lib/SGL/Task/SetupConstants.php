@@ -3,7 +3,7 @@
 /**
  * @package Task
  */
-class SGL_Task_SetupConstantsStart extends SGL_Task
+class SGL_Task_SetupConstants extends SGL_Task
 {
     public function run($conf = array())
     {

@@ -1,16 +1,5 @@
 <?php
 
-//  Flexy template settings, include with Flexy Renderer only
-define('SGL_FLEXY_FORCE_COMPILE',       0);
-define('SGL_FLEXY_DEBUG',               0);
-define('SGL_FLEXY_FILTERS',             'SimpleTags');
-define('SGL_FLEXY_ALLOW_PHP',           true);
-define('SGL_FLEXY_LOCALE',              'en');
-define('SGL_FLEXY_COMPILER',            'Flexy');
-define('SGL_FLEXY_VALID_FNS',           'include');
-define('SGL_FLEXY_GLOBAL_FNS',          true);
-define('SGL_FLEXY_IGNORE',              0); //  don't parse forms when set to true
-
 /**
  * Abstract renderer strategy
  *
@@ -35,6 +24,15 @@ abstract class SGL_OutputRendererStrategy
 
 class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
 {
+    const FORCE_COMPILE = 0;
+    const DEBUG = 0;
+    const FILTERS = 'SimpleTags';
+    const ALLOW_PHP = true;
+    const LOCALE = 'en';
+    const COMPILER = 'Flexy';
+    const VALID_FNS = 'include';
+    const GLOBAL_FNS = true;
+    const IGNORE =  0; //  don't parse forms when set to true
 
     /**
      * Director for html Flexy renderer.
@@ -90,16 +88,16 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
             'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $response->theme,
-            'forceCompile'      => SGL_FLEXY_FORCE_COMPILE,
-            'debug'             => SGL_FLEXY_DEBUG,
-            'allowPHP'          => SGL_FLEXY_ALLOW_PHP,
-            'filters'           => SGL_FLEXY_FILTERS,
-            'locale'            => SGL_FLEXY_LOCALE,
-            'compiler'          => SGL_FLEXY_COMPILER,
-            'valid_functions'   => SGL_FLEXY_VALID_FNS,
-            'flexyIgnore'       => SGL_FLEXY_IGNORE,
+            'forceCompile'      => self::FORCE_COMPILE,
+            'debug'             => self::DEBUG,
+            'allowPHP'          => self::ALLOW_PHP,
+            'filters'           => self::FILTERS,
+            'locale'            => self::LOCALE,
+            'compiler'          => self::COMPILER,
+            'valid_functions'   => self::VALID_FNS,
+            'flexyIgnore'       => self::IGNORE,
             'globals'           => true,
-            'globalfunctions'   => SGL_FLEXY_GLOBAL_FNS,
+            'globalfunctions'   => self::GLOBAL_FNS,
         );
 
         $ok = $this->_setupPlugins($response, $options);
