@@ -135,7 +135,7 @@ class SGL_Router
         }
 
         // SGL_URL2
-        $url = new SGL_URL2($aQueryData);
+        $url = new SGL_Url2($aQueryData);
         $url->setRoutes(new Horde_Routes_Utils($m));
 
         // assign to registry
