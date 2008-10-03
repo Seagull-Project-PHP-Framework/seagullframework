@@ -197,7 +197,7 @@ abstract class SGL_Controller_Page
      * @param SGL_Request $input
      * @return mixed true on success, array of class/method names on failure
      */
-    function _authorise($ctlrPerm, $ctlrName, $input)
+    protected function _authorise($ctlrPerm, $ctlrName, $input)
     {
         // if user has no global manager perms check for each action
         if (!SGL_Session::hasPerms($ctlrPerm) && !SGL::runningFromCLI()) {

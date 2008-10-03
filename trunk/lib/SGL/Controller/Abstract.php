@@ -9,7 +9,7 @@
  */
 abstract class SGL_ProcessRequest
 {
-    abstract function process(SGL_Request $input, SGL_Response $output);
+    abstract public function process(SGL_Request $input, SGL_Response $output);
 }
 
 /**
