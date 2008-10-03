@@ -29,7 +29,7 @@ abstract class SGL_View
      * @param SGL_OutputRendererStrategy $rendererStrategy
      * @return SGL_View
      */
-    function __construct($response, SGL_OutputRendererStrategy $rendererStrategy)
+    public function __construct($response, SGL_OutputRendererStrategy $rendererStrategy)
     {
         $this->data = $response;
         $this->rendererStrategy = $rendererStrategy;

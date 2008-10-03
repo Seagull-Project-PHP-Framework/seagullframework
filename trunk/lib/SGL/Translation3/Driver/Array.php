@@ -7,7 +7,7 @@ require_once 'SGL/Translation3/Driver.php';
 */
 class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
 {
-    function __construct(array $aOptions = array())
+    public function __construct(array $aOptions = array())
     {
         // Driver specific options
         $_aOptions = array(
