@@ -216,8 +216,10 @@ class SGL_Router
         $routesFile = SGL_VAR_DIR . '/routes.php';
         if (!file_exists($routesFile)) {
             // copy the default configuration file to the users tmp directory
-            if (!copy(SGL_ETC_DIR . '/routes.php.dist', $routesFile)) {
-                die('error copying routes file');
+            try {
+                copy(SGL_ETC_DIR . '/routes.php.dist', $routesFile);
+            } catch (Exception $e) {
+                throw new Exception('error copying routes file, is sgl/var writable?');
             }
             @chmod($routesFile, 0666);
         }
