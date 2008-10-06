@@ -66,10 +66,9 @@ abstract class SGL_Controller_Abstract
 
     public function init()
     {
-        $reg = SGL_Registry::singleton();
-        $reg->set('request', new SGL_Request());
-        $reg->set('response', new SGL_Response());
-        $reg->set('config', new SGL_Config($autoLoad = true));
+        SGL_Registry::set('request',    new SGL_Request());
+        SGL_Registry::set('response',   new SGL_Response());
+        SGL_Registry::set('config',     new SGL_Config($autoLoad = true));
 
         $this->setupEnv();
 

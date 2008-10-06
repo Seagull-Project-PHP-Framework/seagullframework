@@ -47,22 +47,32 @@
  */
 class SGL_Registry
 {
-    protected $aProps = array();
-    private static $instance;
+    protected static $_aProps = array();
+    private static $_instance = null;
 
     /**
      * Enter description here...
      *
      * @return unknown
-     * @todo use php5 singleton
      */
     public static function singleton()
     {
-        if (!self::$instance) {
+        if (!self::$_instance) {
             $class = __CLASS__;
-            self::$instance = new $class();
+            self::$_instance = new $class();
         }
-        return self::$instance;
+        return self::$_instance;
+    }
+
+    public static function _unsetSingleton()
+    {
+        self::singleton();
+        self::$_instance = null;
+    }
+
+    private function __construct()
+    {
+        // do nothing;
     }
 
     /**
@@ -74,9 +84,10 @@ class SGL_Registry
      */
     public static function get($key)
     {
-        $reg = SGL_Registry::singleton();
-        if (array_key_exists($key, $reg->aProps)) {
-            $ret =  $reg->aProps[$key];
+        self::singleton();
+        $a = self::$_aProps;
+        if (array_key_exists($key, $a)) {
+            $ret =  $a[$key];
         } else {
             $ret = null;
         }
@@ -91,12 +102,15 @@ class SGL_Registry
      */
     public static function set($key, $value)
     {
-        $reg = SGL_Registry::singleton();
-        $reg->aProps[$key] = $value;
+        self::singleton();
+        self::$_aProps[$key] = $value;
     }
 
-    public function exists($key) {
-        return array_key_exists($key, $this->aProps);
+    public function exists($key)
+    {
+        self::singleton();
+        $a = self::$_aProps;
+        return array_key_exists($key, $a);
     }
 
     /**

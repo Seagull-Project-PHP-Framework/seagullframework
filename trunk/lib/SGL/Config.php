@@ -48,9 +48,9 @@
  */
 class SGL_Config
 {
-    protected static $aProps = array();
-    protected $fileName;
-    private static $instance;
+    protected static $_aProps = array();
+    protected $_fileName;
+    private static $_instance = null;
 
     public function __construct($autoLoad = false)
     {
@@ -74,18 +74,18 @@ class SGL_Config
                 }
             }
             $conf = $this->load($configFile);
-            $this->fileName = $configFile;
+            $this->_fileName = $configFile;
             $this->replace($conf);
         }
     }
 
     public static function singleton($autoLoad = true)
     {
-        if (!self::$instance) {
+        if (!self::$_instance) {
             $class = __CLASS__;
-            self::$instance = new $class($autoLoad);
+            self::$_instance = new $class($autoLoad);
         }
-        return self::$instance;
+        return self::$_instance;
     }
 
     /**
@@ -99,17 +99,17 @@ class SGL_Config
         if (is_array($key)) {
             $key1 = key($key);
             $key2 = $key[$key1];
-            return isset($this->aProps[$key1][$key2]);
+            return isset(self::$_aProps[$key1][$key2]);
         } else {
-            return isset($this->aProps[$key]);
+            return isset(self::$_aProps[$key]);
         }
     }
 
     public static function get($key)
     {
         $aKeys = split('\.', trim($key));
-        if (isset($aKeys[0]) && isset($aKeys[1]) && isset(self::$aProps[$aKeys[0]][$aKeys[1]])) {
-            $ret = self::$aProps[$aKeys[0]][$aKeys[1]];
+        if (isset($aKeys[0]) && isset($aKeys[1]) && isset(self::$_aProps[$aKeys[0]][$aKeys[1]])) {
+            $ret = self::$_aProps[$aKeys[0]][$aKeys[1]];
         } else {
             $ret = false;
         }
@@ -138,7 +138,7 @@ class SGL_Config
                 $ret = $c->set($aKeys[0], array($aKeys[1] => $value));
             //  else it's an object call with scalar second arg
             } else {
-                $this->aProps[$key] = $value;
+                $this->_aProps[$key] = $value;
                 $ret = true;
             }
         }
@@ -161,16 +161,16 @@ class SGL_Config
     {
         if (is_array($key)) {
             list($key1, $key2) = $key;
-            unset(self::$aProps[$key1][$key2]);
+            unset(self::$_aProps[$key1][$key2]);
         } else {
-            unset(self::$aProps[$key]);
+            unset(self::$_aProps[$key]);
         }
         return true;
     }
 
     public function replace($aConf)
     {
-        self::$aProps = $aConf;
+        self::$_aProps = $aConf;
     }
 
     /**
@@ -180,12 +180,12 @@ class SGL_Config
      */
     public function getAll()
     {
-        return self::$aProps;
+        return self::$_aProps;
     }
 
     public function getFileName()
     {
-        return $this->fileName;
+        return $this->_fileName;
     }
 
     /**
@@ -202,7 +202,7 @@ class SGL_Config
         if (defined('SGL_INSTALLED')) {
             if (substr($file, -3, 3) != 'php') {
                 if (!$force) {
-                    $cachedFileName = $this->getCachedFileName($file);
+                    $cachedFileName = $this->_getCachedFileName($file);
                     if (!is_file($cachedFileName)) {
                         $ok = $this->_createCachedFile($cachedFileName);
                     }
@@ -226,7 +226,7 @@ class SGL_Config
         }
     }
 
-    public function getCachedFileName($path)
+    protected function _getCachedFileName($path)
     {
         /*
         get module name - expecting:
@@ -256,7 +256,7 @@ class SGL_Config
         return $cachedFileName;
     }
 
-    public function ensureCacheDirExists()
+    protected function _ensureCacheDirExists()
     {
         $varConfigDir = SGL_VAR_DIR . '/config';
         if (!is_dir($varConfigDir)) {
@@ -285,7 +285,7 @@ class SGL_Config
         $filename = basename($cachedModuleConfigFile);
         list($module, $ext) = split('\.', $filename);
         $masterModuleConfigFile = SGL_MOD_DIR . "/$module/conf.ini";
-        $this->ensureCacheDirExists();
+        $this->_ensureCacheDirExists();
         $ok = copy($masterModuleConfigFile, $cachedModuleConfigFile);
         return $ok;
     }
@@ -293,29 +293,28 @@ class SGL_Config
     public function save($file = null)
     {
         if (is_null($file)) {
-            if (empty($this->fileName)) {
-                return SGL::raiseError('No filename specified',
-                    SGL_ERROR_NOFILE);
+            if (empty($this->_fileName)) {
+                throw new Exception('No filename specified', SGL_ERROR_NOFILE);
             }
-            $file = $this->fileName;
+            $file = $this->_fileName;
         }
         //  determine if we're saving a module config file
         //  $file is only defined for module config saving
-        if ($file != $this->fileName) {
+        if ($file != $this->_fileName) {
             $modDir = $this->_getModulesDir();
 
             if (stristr($file, $modDir) || stristr($file, 'modules')) {
-                $this->ensureCacheDirExists();
-                $file = $this->getCachedFileName($file);
+                $this->_ensureCacheDirExists();
+                $file = $this->_getCachedFileName($file);
             }
         }
         $ph = SGL_ParamHandler::singleton($file);
-        return $ph->write(self::$aProps);
+        return $ph->write(self::$_aProps);
     }
 
     public function merge($aConf)
     {
-        $this->aProps = SGL_Array2::mergeReplace(self::$aProps, $aConf);
+        $this->_aProps = SGL_Array2::mergeReplace(self::$_aProps, $aConf);
     }
 
     /**
@@ -325,7 +324,7 @@ class SGL_Config
      */
     public function isEmpty()
     {
-        return count(self::$aProps) ? false : true;
+        return count(self::$_aProps) ? false : true;
     }
 
     /**
@@ -344,8 +343,8 @@ class SGL_Config
     {
         $ret = false;
         if (!defined('SGL_MODULE_CONFIG_LOADED')
-                || (isset($this->aProps['localConfig']['moduleName']) &&
-                $this->aProps['localConfig']['moduleName'] != $moduleName)) {
+                || (isset($this->_aProps['localConfig']['moduleName']) &&
+                $this->_aProps['localConfig']['moduleName'] != $moduleName)) {
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 
