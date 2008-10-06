@@ -38,12 +38,6 @@
 // +---------------------------------------------------------------------------+
 // $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
-define('SGL_REQUEST_BROWSER',   1);
-define('SGL_REQUEST_CLI',       2);
-define('SGL_REQUEST_AJAX',      3);
-define('SGL_REQUEST_XMLRPC',    4);
-define('SGL_REQUEST_AMF',       5);
-
 /**
  * Loads Request driver, provides a number of filtering methods.
  *
@@ -53,47 +47,54 @@ define('SGL_REQUEST_AMF',       5);
  */
 class SGL_Request
 {
+    const BROWSER   = 1;
+    const CLI       = 2;
+    const AJAX      = 3;
+    const XMLRPC    = 4;
+    const AMF       = 5;
+
     protected $aProps;
     protected $_aTainted;
-    private static $instance;
+    protected $_driver = null;
+    protected $_type;
 
     public function __construct($type = null)
     {
         if ($this->isEmpty()) {
             $type = (is_null($type))
-                ? $this->_getRequestType()
+                ? $this->_resolveType()
                 : $type;
-            $typeName = $this->_constantToString($type);
-            $strat = 'SGL_Request_' . $typeName;
-            $obj = new $strat();
+            $this->setType($type);
+            $strat = 'SGL_Request_' . $this->_getTypeName();
+            $this->_driver = new $strat();
             error_log('##########   Req type: '.$strat);
-            $this->_aTainted = $obj->init();
+            $this->_aTainted = $this->_driver->init();
         }
     }
 
-    protected function _constantToString($constant)
+    public function setType($type)
     {
-        switch($constant) {
-        case SGL_REQUEST_BROWSER:
-            $ret = 'Browser';
-            break;
+        $this->_type = $type;
+    }
 
-        case SGL_REQUEST_CLI:
-            $ret = 'Cli';
-            break;
+    protected function _getTypeName()
+    {
+        $class = new ReflectionClass(get_class($this));
+        $aConstants = $class->getConstants();
+        $aConstantsIntIndexed = array_flip($aConstants);
+        $const = $aConstantsIntIndexed[$this->_type];
+        $name = ucfirst(strtolower($const));
+        return $name;
+    }
 
-        case SGL_REQUEST_AJAX:
-            $ret = 'Ajax';
-            if (SGL_Config::get('site.inputUrlHandlers') == 'Horde_Routes') {
-                $ret = 'Ajax2';
-            }
-            break;
-
-        case SGL_REQUEST_AMF:
-            $ret = 'Amf';
-            break;
-        }
-        return $ret;
+    /*
+        $r = new SGL_Request(SGL_Request::CLI)
+        $type = $r->getType();
+        if (SGL_Registry('request')->getType() == SGL_Request::CLI) { ...}
+    */
+    public function getType()
+    {
+        return $this->_type;
     }
 
     /**
@@ -101,27 +102,48 @@ class SGL_Request
      *
      * @return integer
      */
-    protected function _getRequestType()
+    protected function _resolveType()
     {
-        $ret = SGL_REQUEST_BROWSER;
+        if ($this->_isCli()) {
+            $ret = self::CLI;
+
+        } elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                        $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+            $ret = self::AJAX;
+
+        } elseif (isset($_SERVER['CONTENT_TYPE']) &&
+            $_SERVER['CONTENT_TYPE'] == 'application/x-amf') {
+            $ret = self::AMF;
+
+        } else {
+            $ret = self::BROWSER;
+        }
         return $ret;
+    }
+
+    /**
+     * Determines current server API, ie, are we running from commandline or webserver.
+     *
+     * @return boolean
+     */
+    protected function _isCli()
+    {
+        $sapi = php_sapi_name();
+        if ($sapi != 'cgi') {
+            if (!defined('STDIN')) {
+                return false;
+            } else {
+                return @is_resource(STDIN);
+            }
+        } else {
+            return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
+        }
     }
 
 
     public function isEmpty()
     {
         return count($this->aProps) ? false : true;
-    }
-
-#FIXME // get object
-    /**
-     * Returns constant representing request type.
-     *
-     * @return integer
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 
     /**
@@ -230,22 +252,6 @@ class SGL_Request
     {
         if ( isset($this->aProps['action'])) {
             $ret = $this->aProps['action'];
-        } else {
-            $ret = 'default';
-        }
-        return $ret;
-    }
-
-    /**
-     * Enter description here...
-     *
-     * @return unknown
-     * @todo what's this?
-     */
-    public function getName()
-    {
-        if (isset( $this->aProps['controller'])) {
-            $ret = $this->aProps['controller'];
         } else {
             $ret = 'default';
         }
