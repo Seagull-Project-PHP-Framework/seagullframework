@@ -14,7 +14,4 @@ $libPath = realpath(dirname(__FILE__).'/../lib');
 define('SGL_PATH', $sglPath);
 set_include_path($libPath.PATH_SEPARATOR.get_include_path());
 
-$erh = SGL_ErrorHandler2::singleton();
-$ech = SGL_ExceptionHandler::singleton();
-
 ?>

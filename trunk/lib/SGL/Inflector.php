@@ -205,6 +205,7 @@ class SGL_Inflector
                 return true;
             }
         }
+        return false;
     }
 
     public static function isConstant($str)

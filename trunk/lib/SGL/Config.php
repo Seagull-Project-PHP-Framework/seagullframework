@@ -315,7 +315,7 @@ class SGL_Config
 
     public function merge($aConf)
     {
-        $this->aProps = SGL_Array::mergeReplace(self::$aProps, $aConf);
+        $this->aProps = SGL_Array2::mergeReplace(self::$aProps, $aConf);
     }
 
     /**
