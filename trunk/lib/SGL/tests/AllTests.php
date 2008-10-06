@@ -6,9 +6,7 @@ $ phpunit AllTests.php
 
 */
 
-
-require_once '../../../www/init.php';
-
+require_once dirname(__FILE__) . '/../../../www/init.php';
 require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
 class SGL_AllTests {
