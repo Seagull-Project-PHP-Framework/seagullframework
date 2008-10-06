@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__) . '/../Registry.php';
 
 /**
  * Test suite.
@@ -18,16 +17,32 @@ class RegistryTest extends PHPUnit_Framework_TestCase
         $thing = 'thing';
         $registry->set('a', $thing);
         $this->assertTrue($registry->exists('a'));
-        #$this->assertReference($registry->get('a'), $thing);
+        $this->assertSame($registry->get('a'), $thing);
     }
 
-    function testSingleton()
+//    function testSingleton()
+//    {
+//        SGL_Registry::_unsetSingleton();
+//
+//        $this->assertSame(
+//            SGL_Registry::singleton(),
+//            SGL_Registry::singleton());
+//        $this->assertEquals(get_class(SGL_Registry::singleton()), 'SGL_Registry');
+//    }
+
+    function testSettingRegistryObjectValues()
     {
-        $this->assertReference(
-                SGL_Registry::singleton(),
-                SGL_Registry::singleton());
-        $this->assertIsA(SGL_Registry::singleton(), 'SGL_Registry');
+        SGL_Registry::_unsetSingleton();
+        $foo = new TestFoo();
+        SGL_Registry::set('foo', $foo);
+        $foo->bar = 'baz';
+        $this->assertEquals(SGL_Registry::get('foo')->bar, $foo->bar);
     }
+}
+
+class TestFoo
+{
+
 }
 
 ?>

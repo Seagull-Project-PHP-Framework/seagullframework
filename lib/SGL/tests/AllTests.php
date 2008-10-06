@@ -9,6 +9,7 @@ $ phpunit AllTests.php
 require_once dirname(__FILE__) . '/../../../www/init.php';
 require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
+require_once 'RegistryTest.php';
 class SGL_AllTests {
 
     public static function main()
@@ -22,6 +23,7 @@ class SGL_AllTests {
         $suite->setName('SGL libs');
         $suite->addTestSuite('ArrayTest');
         $suite->addTestSuite('InflectorTest');
+        $suite->addTestSuite('RegistryTest');
         return $suite;
     }
 }
