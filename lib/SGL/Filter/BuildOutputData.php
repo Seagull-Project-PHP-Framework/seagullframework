@@ -74,8 +74,7 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
      */
     protected function _getCurrentUrlFromRoutes()
     {
-        $input   = SGL_Registry::singleton();
-        $url     = $input->getCurrentUrl();
+        $url     = SGL_Registry::getCurrentUrl();
         $currUrl = $url->toString();
         $baseUrl = $url->getBaseUrl($skipProto = false, $includeFc = false);
         return str_replace($baseUrl, '', $currUrl);

@@ -9,30 +9,36 @@
  */
 class RegistryTest extends PHPUnit_Framework_TestCase
 {
-    function testAccess()
+    public function testAccess()
     {
-        $registry = SGL_Registry::singleton();
-        $this->assertFalse($registry->exists('a'));
-        $this->assertNull($registry->get('a'));
+        $this->assertFalse(SGL_Registry::exists('a'));
+
+        try {
+            SGL_Registry::get('a');
+            $this->fail('Expected exception when trying to fetch a non-existent key.');
+        } catch (Exception $e) {
+            $this->assertContains('No entry is registered for key', $e->getMessage());
+        }
         $thing = 'thing';
-        $registry->set('a', $thing);
-        $this->assertTrue($registry->exists('a'));
-        $this->assertSame($registry->get('a'), $thing);
+        SGL_Registry::set('a', $thing);
+        $this->assertTrue(SGL_Registry::exists('a'));
+        $this->assertSame(SGL_Registry::get('a'), $thing);
     }
 
-//    function testSingleton()
-//    {
-//        SGL_Registry::_unsetSingleton();
-//
-//        $this->assertSame(
-//            SGL_Registry::singleton(),
-//            SGL_Registry::singleton());
-//        $this->assertEquals(get_class(SGL_Registry::singleton()), 'SGL_Registry');
-//    }
-
-    function testSettingRegistryObjectValues()
+    public function testCannotSetTwice()
     {
-        SGL_Registry::_unsetSingleton();
+        $c = new TestFoo();
+        SGL_Registry::set('c', $c);
+        try {
+            SGL_Registry::set('c', $c);
+            $this->fail('Expected exception when trying to set an existing key.');
+        } catch (Exception $e) {
+            $this->assertContains('An entry is already registered for key', $e->getMessage());
+        }
+    }
+
+    public function testSettingRegistryObjectValues()
+    {
         $foo = new TestFoo();
         SGL_Registry::set('foo', $foo);
         $foo->bar = 'baz';

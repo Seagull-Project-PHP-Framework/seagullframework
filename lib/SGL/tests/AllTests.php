@@ -10,11 +10,12 @@ require_once dirname(__FILE__) . '/../../../www/init.php';
 require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
 require_once 'RegistryTest.php';
+
 class SGL_AllTests {
 
     public static function main()
     {
-        PHPUnit_TextUI_TestRunner::run(self::suite(), array());
+        PHPUnit_TextUI_TestRunner::run(self::suite());
     }
 
     public static function suite()
@@ -27,7 +28,5 @@ class SGL_AllTests {
         return $suite;
     }
 }
-
-SGL_AllTests::main();
 
 ?>
