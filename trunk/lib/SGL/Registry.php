@@ -39,7 +39,7 @@
 // $Id: Registry.php,v 1.5 2005/02/03 11:29:01 demian Exp $
 
 /**
- * Generic data storage object, referred to as $input.
+ * Generic data storage object.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -47,33 +47,14 @@
  */
 class SGL_Registry
 {
-    protected static $_aProps = array();
-    private static $_instance = null;
+    private static $_aProps = array();
 
     /**
-     * Enter description here...
      *
-     * @return unknown
+     * Constructor is disabled to enforce a singleton pattern.
+     *
      */
-    public static function singleton()
-    {
-        if (!self::$_instance) {
-            $class = __CLASS__;
-            self::$_instance = new $class();
-        }
-        return self::$_instance;
-    }
-
-    public static function _unsetSingleton()
-    {
-        self::singleton();
-        self::$_instance = null;
-    }
-
-    private function __construct()
-    {
-        // do nothing;
-    }
+    final private function __construct() {}
 
     /**
      * Enter description here...
@@ -84,33 +65,29 @@ class SGL_Registry
      */
     public static function get($key)
     {
-        self::singleton();
-        $a = self::$_aProps;
-        if (array_key_exists($key, $a)) {
-            $ret =  $a[$key];
-        } else {
-            $ret = null;
+        if (!self::exists($key)) {
+            throw new Exception("No entry is registered for key: $key");
         }
-        return $ret;
+        return self::$_aProps[$key];
     }
 
     /**
-     * Add or modify registry data.
+     * Register a new object.
      *
      * @param string $key
-     * @param mixed $value
+     * @param object $obj
      */
-    public static function set($key, $value)
+    public static function set($key, $obj)
     {
-        self::singleton();
-        self::$_aProps[$key] = $value;
+        if (self::exists($key)) {
+            throw new Exception("An entry is already registered for key: $key");
+        }
+        SGL_Registry::$_aProps[$key] = $obj;
     }
 
-    public function exists($key)
+    public static function exists($key)
     {
-        self::singleton();
-        $a = self::$_aProps;
-        return array_key_exists($key, $a);
+        return ! empty(self::$_aProps[$key]);
     }
 
     /**
@@ -119,9 +96,9 @@ class SGL_Registry
      * @return unknown
      * @todo forget about url object
      */
-    public function getCurrentUrl()
+    public static function getCurrentUrl()
     {
-        return $this->get('currentUrl');
+        return self::get('currentUrl');
     }
 
 
@@ -131,9 +108,9 @@ class SGL_Registry
      * @param unknown_type $url
      * @todo forget about url object
      */
-    public function setCurrentUrl($url)
+    public static function setCurrentUrl($url)
     {
-        $this->set('currentUrl', $url);
+        self::set('currentUrl', $url);
     }
 }
 ?>
