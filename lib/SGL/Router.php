@@ -139,7 +139,7 @@ class SGL_Router
         $url->setRoutes(new Horde_Routes_Utils($m));
 
         // assign to registry
-        SGL_Registry::setCurrentUrl($url);
+        SGL_Registry::set('url', $url);
 
         return true;
     }

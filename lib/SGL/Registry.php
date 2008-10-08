@@ -89,28 +89,5 @@ class SGL_Registry
     {
         return ! empty(self::$_aProps[$key]);
     }
-
-    /**
-     * Enter description here...
-     *
-     * @return unknown
-     * @todo forget about url object
-     */
-    public static function getCurrentUrl()
-    {
-        return self::get('currentUrl');
-    }
-
-
-    /**
-     * Enter description here...
-     *
-     * @param unknown_type $url
-     * @todo forget about url object
-     */
-    public static function setCurrentUrl($url)
-    {
-        self::set('currentUrl', $url);
-    }
 }
 ?>

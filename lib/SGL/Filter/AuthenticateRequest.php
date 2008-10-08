@@ -97,7 +97,7 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
             if (!$session->isValid() || $timeout) {
 
                 //  prepare referer info for redirect after login
-                $url = $input->getCurrentUrl();
+                $url = SGL_Registry::get('url');
                 $redir = $url->toString();
                 $loginPage = array(
                     'moduleName'    => 'user',
