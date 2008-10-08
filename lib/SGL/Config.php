@@ -94,7 +94,7 @@ class SGL_Config
      * @param mixed $key string or array
      * @return boolean
      */
-    public function exists($key)
+    public static function exists($key)
     {
         if (is_array($key)) {
             $key1 = key($key);
@@ -178,7 +178,7 @@ class SGL_Config
      *
      * @return array
      */
-    public function getAll()
+    public static function getAll()
     {
         return self::$_aProps;
     }
@@ -316,7 +316,7 @@ class SGL_Config
      *
      * @return boolean
      */
-    public function isEmpty()
+    public static function isEmpty()
     {
         return count(self::$_aProps) ? false : true;
     }
