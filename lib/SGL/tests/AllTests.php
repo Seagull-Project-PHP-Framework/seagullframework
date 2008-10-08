@@ -10,6 +10,7 @@ require_once dirname(__FILE__) . '/../../../www/init.php';
 require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
 require_once 'RegistryTest.php';
+require_once 'RequestTest.php';
 
 class SGL_AllTests {
 
@@ -25,8 +26,13 @@ class SGL_AllTests {
         $suite->addTestSuite('ArrayTest');
         $suite->addTestSuite('InflectorTest');
         $suite->addTestSuite('RegistryTest');
+        $suite->addTestSuite('RequestTest');
         return $suite;
     }
+}
+
+if (PHP_SAPI != 'cli') {
+    SGL_AllTests::main();
 }
 
 ?>

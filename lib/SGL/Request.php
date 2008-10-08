@@ -53,8 +53,8 @@ class SGL_Request
     const XMLRPC    = 4;
     const AMF       = 5;
 
-    protected $aProps;
-    protected $_aTainted;
+    protected $aProps = array();
+    protected $_aTainted = array();
     protected $_driver = null;
     protected $_type;
 
@@ -66,8 +66,11 @@ class SGL_Request
                 : $type;
             $this->setType($type);
             $strat = 'SGL_Request_' . $this->_getTypeName();
+            if (!SGL::isReadable(SGL_Inflector::classToFile($strat))) {
+                throw new Exception('Request driver not found');
+            }
             $this->_driver = new $strat();
-            error_log('##########   Req type: '.$strat);
+            //error_log('##########   Req type: '.$strat);
             $this->_aTainted = $this->_driver->init();
         }
     }
@@ -104,7 +107,7 @@ class SGL_Request
      */
     protected function _resolveType()
     {
-        if ($this->_isCli()) {
+        if (PHP_SAPI == 'cli') {
             $ret = self::CLI;
 
         } elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
@@ -121,26 +124,6 @@ class SGL_Request
         return $ret;
     }
 
-    /**
-     * Determines current server API, ie, are we running from commandline or webserver.
-     *
-     * @return boolean
-     */
-    protected function _isCli()
-    {
-        $sapi = php_sapi_name();
-        if ($sapi != 'cgi') {
-            if (!defined('STDIN')) {
-                return false;
-            } else {
-                return @is_resource(STDIN);
-            }
-        } else {
-            return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
-        }
-    }
-
-
     public function isEmpty()
     {
         return count($this->aProps) ? false : true;
@@ -153,6 +136,7 @@ class SGL_Request
      * @param   mixed   $paramName  Request param name
      * @param   boolean $allowTags  If html/php tags are allowed or not
      * @return  mixed               Request param value or null if not exists
+     * @todo make additional arg for defalut value
      */
     public function get($key, $allowTags = false)
     {

@@ -10,6 +10,11 @@
  */
 class RequestTest extends PHPUnit_Framework_TestCase
 {
+    public function setup()
+    {
+        SGL_Registry::set('request', new SGL_Request());
+    }
+
     function tearDown()
     {
         $_REQUEST = array();
@@ -21,18 +26,17 @@ class RequestTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    function testAdd()
+    public function testAdd()
     {
-        $req = SGL_Request::singleton($forceNew = true);
-        $count = count($req->getAll());
+        $req = SGL_Registry::get('request');
+        $count = count($req->getClean());
         $aParams = array('foo' => 'fooValue', 'bar' => 'barValue');
         $req->add($aParams);
-        $total = count($req->getAll());
-
-        $this->assertEqual($total, $count + 2);
-        $this->assertTrue(array_key_exists('foo', $req->getAll()));
-        $this->assertTrue(array_key_exists('bar', $req->getAll()));
-        $this->assertEqual($req->get('foo'), 'fooValue');
+        $total = count($req->getClean());
+        $this->assertEquals($total, $count + 2);
+        $this->assertTrue(array_key_exists('foo', $req->getClean()));
+        $this->assertTrue(array_key_exists('bar', $req->getClean()));
+        $this->assertEquals($req->get('foo'), 'fooValue');
     }
 
     /**
