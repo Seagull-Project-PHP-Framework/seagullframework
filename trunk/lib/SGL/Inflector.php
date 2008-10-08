@@ -235,5 +235,19 @@ class SGL_Inflector
         $replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
         return $replace;
     }
+
+    /**
+     *
+     * Returns "Class_Name" as "Class/Name.php".
+     *
+     * @param string $str The class name.
+     * @return string The class as a file name.
+     * @author Thanks to Solar fw
+     *
+     */
+    public static function classToFile($str)
+    {
+        return str_replace('_', '/', $str) . '.php';
+    }
 }
 ?>
