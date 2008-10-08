@@ -62,7 +62,7 @@ class SGL_File
     public static function load($file)
     {
         self::$_file = self::exists($file);
-        if (! self::$_file) {
+        if (!self::$_file) {
             // could not open the file for reading
             throw new Exception('File does not exist or is not readable: '.$file);
         }

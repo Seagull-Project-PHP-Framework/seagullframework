@@ -58,10 +58,10 @@ class SGL_Config
 
             $siteName   = 'seagull_trunk';
             $configFile = SGL_PATH  . '/var/' . $siteName . '.conf.php';
-            if (!is_file($configFile)) {
+            if (!SGL_File::exists($configFile)) {
                 $confMapFile = SGL_PATH  . '/var/confmap.php';
                 $configFile  = null;
-                if ($ok = require_once $confMapFile) {
+                if ($confMap = SGL_File::load($confMapFile)) {
                     foreach ($confMap as $key => $value) {
                         if (preg_match("/^$key$/", $siteName, $aMatches)) {
                             $configFile = $value;
