@@ -33,4 +33,5 @@ $conf['p3p']['policies'] = "1";
 $conf['p3p']['policyLocation'] = "";
 $conf['p3p']['compactPolicy'] = "CUR ADM OUR NOR STA NID";
 $conf['tuples']['version'] = "0.9.1";
+return $conf;
 ?>

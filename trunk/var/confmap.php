@@ -12,5 +12,6 @@
 */
 
 $confMap['.*']           = 'default.conf.php';   // default conf for all sites
+return $confMap;
 
 ?>
