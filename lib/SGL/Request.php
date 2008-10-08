@@ -53,9 +53,9 @@ class SGL_Request
     const XMLRPC    = 4;
     const AMF       = 5;
 
-    protected $aProps = array();
-    protected $_aTainted = array();
-    protected $_driver = null;
+    protected $_aClean      = array();
+    protected $_aTainted    = array();
+    protected $_driver      = null;
     protected $_type;
 
     public function __construct($type = null)
@@ -71,7 +71,12 @@ class SGL_Request
             }
             $this->_driver = new $strat();
             //error_log('##########   Req type: '.$strat);
-            $this->_aTainted = $this->_driver->init();
+            $aData = $this->_driver->init();
+            $this->_aTainted = $aData;
+            //  data is implicitly trusted for CLI
+            if ($this->getType() == self::CLI) {
+                $this->_aClean = $aData;
+            }
         }
     }
 
@@ -126,7 +131,7 @@ class SGL_Request
 
     public function isEmpty()
     {
-        return count($this->aProps) ? false : true;
+        return count($this->_aClean) ? false : true;
     }
 
     /**
@@ -140,10 +145,10 @@ class SGL_Request
      */
     public function get($key, $allowTags = false)
     {
-        if (isset($this->aProps[$key])) {
+        if (isset($this->_aClean[$key])) {
 
             //  don't operate on reference to avoid segfault :-(
-            $copy = $this->aProps[$key];
+            $copy = $this->_aClean[$key];
 
             //  if html not allowed, run an enhanced strip_tags()
             if (!$allowTags) {
@@ -171,30 +176,30 @@ class SGL_Request
      */
     public function set($key, $value)
     {
-        $this->aProps[$key] = $value;
+        $this->_aClean[$key] = $value;
     }
 
     protected function __set($key, $value)
     {
-        $this->aProps[$key] = $value;
+        $this->_aClean[$key] = $value;
     }
 
     protected function __get($key)
     {
-        if (isset($this->aProps[$key])) {
-            return $this->aProps[$key];
+        if (isset($this->_aClean[$key])) {
+            return $this->_aClean[$key];
         }
     }
 
     public function add(array $aParams)
     {
-        $this->aProps = array_merge_recursive($this->aProps, $aParams);
+        $this->_aClean = array_merge_recursive($this->_aClean, $aParams);
     }
 
     public function reset()
     {
-        unset($this->aProps);
-        $this->aProps = array();
+        unset($this->_aClean);
+        $this->_aClean = array();
     }
     /**
      * Return an array of all filtered Request properties.
@@ -203,7 +208,7 @@ class SGL_Request
      */
     public function getClean()
     {
-        return $this->aProps;
+        return $this->_aClean;
     }
 
     /**
@@ -219,13 +224,13 @@ class SGL_Request
 
     public function getModuleName()
     {
-        return $this->aProps['moduleName'];
+        return $this->_aClean['moduleName'];
     }
 
     public function getManagerName()
     {
-        if (isset( $this->aProps['managerName'])) {
-            $ret = $this->aProps['managerName'];
+        if (isset( $this->_aClean['managerName'])) {
+            $ret = $this->_aClean['managerName'];
         } else {
             $ret = 'default';
         }
@@ -234,8 +239,8 @@ class SGL_Request
 
     public function getActionName()
     {
-        if ( isset($this->aProps['action'])) {
-            $ret = $this->aProps['action'];
+        if ( isset($this->_aClean['action'])) {
+            $ret = $this->_aClean['action'];
         } else {
             $ret = 'default';
         }

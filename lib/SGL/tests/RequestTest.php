@@ -17,13 +17,15 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     function tearDown()
     {
-        $_REQUEST = array();
-        if (isset($_SERVER['argc'])) {
-            unset($_SERVER['argc']);
-        }
-        if (isset($_SERVER['argv'])) {
-            unset($_SERVER['argv']);
-        }
+        SGL_Registry::reset();
+
+//        $_REQUEST = array();
+//        if (isset($_SERVER['argc'])) {
+//            unset($_SERVER['argc']);
+//        }
+//        if (isset($_SERVER['argv'])) {
+//            unset($_SERVER['argv']);
+//        }
     }
 
     public function testAdd()
@@ -39,38 +41,53 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($req->get('foo'), 'fooValue');
     }
 
+    public function testForcingABrowserRequest()
+    {
+        $r = new SGL_Request(SGL_Request::BROWSER);
+        $this->assertEquals($r->getType(), SGL_Request::BROWSER);
+    }
+
+    public function testReset()
+    {
+        $req = SGL_Registry::get('request');
+        $aParams = array('foo' => 'fooValue', 'bar' => 'barValue');
+        $req->add($aParams);
+        $total = count($req->getClean());
+        $this->assertEquals($total, 2);
+        $req->reset();
+        $this->assertNull($req->getClean());
+    }
+
     /**
      * In >= php 5.2.4 it's not possible to override $_SERVER
+     * conflict with params used to run test script
      *
      */
     function xtestCliArguments()
     {
         $_SERVER['argc'] = 1;
         $_SERVER['argv'] = array('index.php');
-        $req = new SGL_Request_Cli();
-        $req->init();
+        $req = new SGL_Request(SGL_Request::CLI);
         // test no params
-        $this->assertFalse(count($req->getAll()));
+        $this->assertEquals(count($req->getClean()), 0);
 
         unset($req);
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default');
-        $req = new SGL_Request_Cli();
-        $req->init();
+        $req = new SGL_Request(SGL_Request::CLI);
 
         // test module name is caught
-        $this->assertTrue(count($req->getAll()) == 1);
-        $this->assertTrue($req->get('moduleName') == 'default');
+        $this->assertEquals(count($req->getClean()), 1);
+        $this->assertEquals($req->get('moduleName'), 'default');
 
         unset($req);
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default',
             '--managerName=translation', '--action=update');
-        $req = new SGL_Request_Cli();
-        $req->init();
+        $req = new SGL_Request(SGL_Request::CLI);
 
         // test module name, manager and action are recognized
-        $this->assertTrue(count($req->getAll()) == 3);
+        $this->assertTrue(count($req->getClean()) == 3);
         $this->assertTrue($req->get('moduleName') == 'default');
         $this->assertTrue($req->get('managerName') == 'translation');
         $this->assertTrue($req->get('action') == 'update');
@@ -86,11 +103,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
             '--paramNumberTwo=secondParameter',
             '--paramNumberThree=thirdParameter'
         );
-        $req = new SGL_Request_Cli();
-        $req->init();
+        $req = new SGL_Request(SGL_Request::CLI);
 
         // test optional params
-        $this->assertTrue(count($req->getAll()) == 6);
+        $this->assertTrue(count($req->getClean()) == 6);
         $this->assertTrue($req->get('moduleName') == 'default');
         $this->assertTrue($req->get('managerName') == 'translation');
         $this->assertTrue($req->get('action') == 'update');
