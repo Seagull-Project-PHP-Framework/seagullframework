@@ -130,13 +130,8 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
 {
     public function read()
     {
-        if (is_file($this->source)) {
-            $ok = require $this->source;
-            if ($ok) {
-                $ret = $conf;
-            } else {
-                $ret = $ok;
-            }
+        if (SGL_File::exists($this->source)) {
+            $ret = SGL_File::load($this->source);
         } else {
             $ret = false;
         }
