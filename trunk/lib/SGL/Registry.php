@@ -50,7 +50,6 @@ class SGL_Registry
     private static $_aProps = array();
 
     /**
-     *
      * Constructor is disabled to enforce a singleton pattern.
      *
      */
@@ -59,8 +58,8 @@ class SGL_Registry
     /**
      * Enter description here...
      *
-     * @param unknown_type $key
-     * @return unknown
+     * @param string $key
+     * @return object
      * @todo make it work like Config
      */
     public static function get($key)
@@ -88,6 +87,11 @@ class SGL_Registry
     public static function exists($key)
     {
         return ! empty(self::$_aProps[$key]);
+    }
+
+    public static function reset()
+    {
+        self::$_aProps = null;
     }
 }
 ?>

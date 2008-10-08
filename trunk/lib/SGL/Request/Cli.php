@@ -21,7 +21,6 @@ class SGL_Request_Cli
         if (!is_array($options) ) {
             throw new Exception("CLI parameters invalid");
         }
-
         $aProps = array();
 
         /* Take all _valid_ parameters and add them into aProps. */
