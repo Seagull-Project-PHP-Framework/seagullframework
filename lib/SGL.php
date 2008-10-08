@@ -35,8 +35,19 @@
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
 // | Authors: Demian Turner <demian@phpkitchen.com>                            |
-// |          Gilles Laborderie <gillesl@users.sourceforge.net>                |
 // +---------------------------------------------------------------------------+
+
+/**
+ * Register SGL::autoload() with SPL.
+ */
+spl_autoload_register(array('SGL', 'autoload'));
+
+$sglPath = realpath(dirname(__FILE__).'/..');
+$libPath = realpath(dirname(__FILE__).'/../lib');
+
+define('SGL_PATH', $sglPath);
+set_include_path($libPath.PATH_SEPARATOR.get_include_path());
+require_once 'SGL/File.php';
 
 /**
  * Provides a set of static utility methods used by most modules.
@@ -46,6 +57,44 @@
  */
 class SGL
 {
+    /**
+     *
+     * Loads a class or interface file from the include_path.
+     *
+     * @param string $name A Seagull (or other) class or interface name.
+     * @author Thanks to Solar
+     * @return void
+     *
+     */
+    public static function autoload($name)
+    {
+        // did we ask for a non-blank name?
+        if (trim($name) == '') {
+            new Exception('No class or interface named for loading');
+        }
+
+        // pre-empt further searching for the named class or interface.
+        // do not use autoload, because this method is registered with
+        // spl_autoload already.
+        if (class_exists($name, false) || interface_exists($name, false)) {
+            return;
+        }
+
+        // convert the class name to a file path.
+        $file = str_replace('_', DIRECTORY_SEPARATOR, $name) . '.php';
+
+        // include the file and check for failure. we use Solar_File::load()
+        // instead of require() so we can see the exception backtrace.
+        SGL_File::load($file);
+
+        // if the class or interface was not in the file, we have a problem.
+        // do not use autoload, because this method is registered with
+        // spl_autoload already.
+        if (! class_exists($name, false) && ! interface_exists($name, false)) {
+            throw new Exception('Class or interface does not exist in loaded file');
+        }
+    }
+
     /**
      * Returns the 2 letter language code, ie, de for German
      *
@@ -242,22 +291,6 @@ class SGL
             }
         }
         return ! is_null($aInstances[$moduleName]);
-    }
-
-    /**
-     * Returns TRUE if the $filename is readable, or FALSE otherwise.
-     * This function uses the PHP include_path, where PHP's is_readable()
-     * does not.
-     *
-     * @param string   $filename
-     * @return boolean
-     */
-    public static function isReadable($filename)
-    {
-        if (! @fopen($filename, 'r', true)) {
-            return false;
-        }
-        return true;
     }
 }
 ?>

@@ -18,14 +18,6 @@ class RequestTest extends PHPUnit_Framework_TestCase
     function tearDown()
     {
         SGL_Registry::reset();
-
-//        $_REQUEST = array();
-//        if (isset($_SERVER['argc'])) {
-//            unset($_SERVER['argc']);
-//        }
-//        if (isset($_SERVER['argv'])) {
-//            unset($_SERVER['argv']);
-//        }
     }
 
     public function testAdd()

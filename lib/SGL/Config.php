@@ -216,13 +216,7 @@ class SGL_Config
         if ($data !== false) {
             return $data;
         } else {
-            if (defined('SGL_INITIALISED')) {
-                throw new Exception('Problem reading config file',
-                    SGL_ERROR_INVALIDFILEPERMS);
-            } else {
-                SGL::displayStaticPage('No global config file could be found, '.
-                    'file searched for was ' .$file);
-            }
+            throw new Exception('Problem reading config file');
         }
     }
 
@@ -348,7 +342,7 @@ class SGL_Config
             $path = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
             $modConfigPath = realpath($path);
 
-            if (SGL::isReadable($modConfigPath)) {
+            if (SGL_File::exists($modConfigPath)) {
                 $aModuleConfig = $this->load($modConfigPath);
 
                 if (PEAR::isError($aModuleConfig)) {

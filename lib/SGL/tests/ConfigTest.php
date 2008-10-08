@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Test suite.
  *
@@ -8,7 +7,8 @@
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: UrlTest.ndb.php,v 1.1 2005/06/23 14:56:01 demian Exp $
  */
-class ConfigTest extends PHPUnit_Framework_TestCase {
+class ConfigTest extends PHPUnit_Framework_TestCase
+{
 
     function setup()
     {
@@ -103,7 +103,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
     function testGetArrayProperty()
     {
         $var = $this->c->get(array('cache' => 'lifetime'));
-        $this->assertEqual($var, 86400);
+        $this->assertEquals($var, 86400);
     }
 
     function testConfigGetScalarProperty()
@@ -118,13 +118,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
           'writeControl' => '1',
           'javascript' => '0',
         );
-        $this->assertEqual($var, $expected);
+        $this->assertEquals($var, $expected);
     }
 
     function testImprovedConfigGet()
     {
         $lifetime = SGL_Config::get('cache.lifetime');
-        $this->assertEqual($lifetime, 86400);
+        $this->assertEquals($lifetime, 86400);
     }
 
     function testConfigGetEmptyValue()
@@ -161,7 +161,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
     {
         $d = 'cache';
         $lifetime = SGL_Config::get("$d.lifetime");
-        $this->assertEqual($lifetime, 86400);
+        $this->assertEquals($lifetime, 86400);
     }
 
     function testImprovedConfigGetWithVars2()
@@ -171,57 +171,45 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(SGL_Config::get("$mgr.filterChain"));
     }
 
-    function test_getCommandTarget()
-    {
-        $str = 'module^manager^action';
-        $aExpected = array(
-            'moduleName'    => 'module',
-            'managerName'   => 'manager',
-            'action'        => 'action',
-            );
-        $aRet = SGL_Config::getCommandTarget($str);
-        $this->assertEqual($aExpected, $aRet);
-    }
+//    function testGetCachedFileName()
+//    {
+//        $fileName = SGL_MOD_DIR . '/default/conf.ini';
+//        $ret = SGL_Config::getCachedFileName($fileName);
+//        $this->assertEquals(SGL_VAR_DIR . '/config/default.ini', $ret);
+//
+//        $fileName = SGL_MOD_DIR . '/default/other.ini';
+//        $ret = SGL_Config::_getCachedFileName($fileName);
+//        $this->assertEquals(SGL_VAR_DIR . '/default/other.ini', $ret);
+//    }
 
-    function testGetCachedFileName()
-    {
-        $fileName = SGL_MOD_DIR . '/default/conf.ini';
-        $ret = SGL_Config::getCachedFileName($fileName);
-        $this->assertEqual(SGL_VAR_DIR . '/config/default.ini', $ret);
-
-        $fileName = SGL_MOD_DIR . '/default/other.ini';
-        $ret = SGL_Config::getCachedFileName($fileName);
-        $this->assertEqual(SGL_VAR_DIR . '/default/other.ini', $ret);
-    }
-
-    function testCreateCachedFile()
-    {
-        $aTest = array(
-            SGL_VAR_DIR . '/config/user.ini',
-            SGL_VAR_DIR . '/media2/image.ini'
-        );
-
-        foreach ($aTest as $cachedFile) {
-            SGL_Config::ensureDirExists(dirname($cachedFile));
-
-            // copy cached file if exists
-            if (file_exists($cachedFile)) {
-                $ok = copy($cachedFile, $cachedFile . '.copy');
-                $ok = unlink($cachedFile);
-            }
-
-            $ok = SGL_Config::createCachedFile($cachedFile);
-            $this->assertTrue(file_exists($cachedFile));
-
-            // cleanup
-            unlink($cachedFile);
-
-            // restore
-            if (file_exists($cachedFile . '.copy')) {
-                $ok = copy($cachedFile . '.copy', $cachedFile);
-                $ok = unlink($cachedFile . '.copy');
-            }
-        }
-    }
+//    function testCreateCachedFile()
+//    {
+//        $aTest = array(
+//            SGL_VAR_DIR . '/config/user.ini',
+//            SGL_VAR_DIR . '/media2/image.ini'
+//        );
+//
+//        foreach ($aTest as $cachedFile) {
+//            SGL_Config::ensureDirExists(dirname($cachedFile));
+//
+//            // copy cached file if exists
+//            if (file_exists($cachedFile)) {
+//                $ok = copy($cachedFile, $cachedFile . '.copy');
+//                $ok = unlink($cachedFile);
+//            }
+//
+//            $ok = SGL_Config::createCachedFile($cachedFile);
+//            $this->assertTrue(file_exists($cachedFile));
+//
+//            // cleanup
+//            unlink($cachedFile);
+//
+//            // restore
+//            if (file_exists($cachedFile . '.copy')) {
+//                $ok = copy($cachedFile . '.copy', $cachedFile);
+//                $ok = unlink($cachedFile . '.copy');
+//            }
+//        }
+//    }
 }
 ?>

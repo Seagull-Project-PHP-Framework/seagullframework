@@ -66,7 +66,7 @@ class SGL_Request
                 : $type;
             $this->setType($type);
             $strat = 'SGL_Request_' . $this->_getTypeName();
-            if (!SGL::isReadable(SGL_Inflector::classToFile($strat))) {
+            if (!SGL_File::exists(SGL_Inflector::classToFile($strat))) {
                 throw new Exception('Request driver not found');
             }
             $this->_driver = new $strat();

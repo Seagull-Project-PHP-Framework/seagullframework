@@ -22,14 +22,7 @@ class SGL_View_HtmlSimple extends SGL_View
         $templateEngine =  ucfirst($templateEngine);
         $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';
         $rendererFile   = $templateEngine.'Strategy.php';
-
         $path =  'SGL/HtmlRenderer/' . $rendererFile;
-        if (SGL::isReadable($path)) {
-            require_once  $path;
-        } else {
-            throw new Exception('Could not find renderer, ' . $path,
-                SGL_ERROR_NOFILE);
-        }
         parent::__construct($response, new $rendererClass);
     }
 
