@@ -38,7 +38,7 @@ SGL2.Util.enableSubmit = function(className, context) {
     }
     $.browser.msie
         ? $(className, context).attr('disabled', null)
-        : $(className, context).attr('disabled', null).css('opacity', null);
+        : $(className, context).attr('disabled', null).css('opacity', 1);
 }
 SGL2.Util.makeUrl = function(params) {
     var ret         = SGL_FC != '' ? SGL_WEBROOT + '/' + SGL_FC : SGL_WEBROOT;
