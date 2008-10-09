@@ -264,7 +264,8 @@ class MaintenanceMgr extends SGL_Manager
         $ok = $runner->main();
 
         // reload local config
-        SGL_Config::singleton()->ensureModuleConfigLoaded('default');
+        $c = &SGL_Config::singleton();
+        $c->ensureModuleConfigLoaded('default');
 
         if (SGL_Error::count()) {
             $oError = SGL_Error::getLast();
