@@ -99,7 +99,6 @@ class InflectorTest extends PHPUnit_Framework_TestCase
     {
         $url = 'foobar';
         //  set key so caseFix can work
-        $c = SGL_Config::singleton();
         $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEquals($ret, 'FoobarMgr');
 
