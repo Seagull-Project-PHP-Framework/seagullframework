@@ -246,12 +246,10 @@ class SGL_Session
 
         //  make session more secure if possible
         if  (function_exists('session_regenerate_id')) {
-            $c = SGL_Config::singleton();
-            $conf = $c->getAll();
             $oldSessionId = session_id();
             session_regenerate_id();
 
-            if ($conf['session']['handler'] == 'file') {
+            if (SGL_Config::get('session.handler') == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
                 $ok = unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
@@ -528,9 +526,6 @@ class SGL_Session
      */
     public static function destroy()
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
         foreach ($_SESSION as $sessVarName => $sessVarValue) {
             if (isset($_SESSION)) {
                 unset($sessVarName);
@@ -540,12 +535,12 @@ class SGL_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
-                    $conf['cookie']['domain'], $conf['cookie']['secure']);
+        setcookie(  SGL_Config::get('cookie.name'), null, 0, SGL_Config::get('cookie.path'),
+                    SGL_Config::get('cookie.domain'), SGL_Config::get('cookie.secure'));
         //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
-        if (!empty($conf['cookie']['rememberMeEnabled'])) {
-            $ok = setcookie('SGL_REMEMBER_ME', null, 0, $conf['cookie']['path'],
-                $conf['cookie']['domain'], $conf['cookie']['secure']);
+        if (SGL_Config::get('cookie.rememberMeEnabled')) {
+            $ok = setcookie('SGL_REMEMBER_ME', null, 0, SGL_Config::get('cookie.path'),
+                SGL_Config::get('cookie.domain'), SGL_Config::get('cookie.secure'));
         }
         new SGL_Session();
     }

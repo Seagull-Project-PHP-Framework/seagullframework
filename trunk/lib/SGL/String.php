@@ -129,10 +129,7 @@ class SGL_String
      */
     function tidy($html, $logErrors = false)
     {
-        $c = &SGL_Config::singleton();
-        $conf = $c->getAll();
-
-        if (       !$conf['site']['tidyhtml']
+        if (       !SGL_Config::get('site.tidyhtml')
                 || !extension_loaded('tidy')) {
             return $html;
         }

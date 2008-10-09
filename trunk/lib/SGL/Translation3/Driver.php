@@ -200,7 +200,6 @@ abstract class SGL_Translation3_Driver
      */
     public function loadDefaultDictionaries()
     {
-        $conf = SGL_Config::singleton()->ensureModuleConfigLoaded('translation');
         // Look for default dictionaries to be loaded
         $defaultDictionaries = SGL_Config::get('TranslationMgr.defaultDictionaries');
         $aDefaultDictionaries = !empty($defaultDictionaries)
