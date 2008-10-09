@@ -25,6 +25,10 @@ class User2DAO extends SGL_Manager
         return $instance;
     }
 
+    // -------------
+    // --- Users ---
+    // -------------
+
     public function getUserById($userId)
     {
         $query = "
@@ -84,13 +88,119 @@ class User2DAO extends SGL_Manager
 
     public function updatePasswordByUserId($userId, $password)
     {
-        $query = "
-            UPDATE usr
-            SET    passwd = " . $this->dbh->quoteSmart(md5($password)) . "
-            WHERE  usr_id = " . intval($userId) . "
-        ";
-        return $this->dbh->query($query);
+        return $this->updateUserById($userId, array('passwd' => md5($password)));
     }
+
+    // -------------------
+    // --- Preferences ---
+    // -------------------
+
+    /**
+     * Retuns array of master prefs.
+     *
+     * Array
+     * (
+     *     [1] => 1800
+     *     [2] => UTC
+     *     [3] => default
+     *     [4] => UK
+     *     [5] => ru-utf-8
+     *     [6] => 10
+     *     [7] => 1
+     *     [8] => en_GB
+     * )
+     *
+     * @return array
+     */
+    public function getMasterPrefs()
+    {
+        $query = "
+            SELECT preference_id, default_value
+            FROM   " . SGL_Config::get('table.preference');
+        return $this->dbh->getAssoc($query);
+    }
+
+    /**
+     * Returns assoc array.
+     *
+     * Array
+     * (
+     *     [admin theme] => 9
+     *     [sessionTimeout] => 1
+     *     [timezone] => 2
+     *     [theme] => 3
+     *     [dateFormat] => 4
+     *     [language] => 5
+     *     [resPerPage] => 6
+     *     [showExecutionTimes] => 7
+     *     [locale] => 8
+     * )
+     *
+     * @return array
+     */
+    public function getPrefsMapping()
+    {
+        $query = "
+            SELECT  preference_id, name
+            FROM    " . SGL_Config::get('table.preference');
+        $aRet = $this->dbh->getAssoc($query);
+        if (!PEAR::isError($aRet)) {
+            $aRet = array_flip($aRet);
+        }
+        return $aRet;
+    }
+
+    /**
+     * Add preferences to user.
+     *
+     * @param integer $userId
+     * @param array $aPrefs
+     *
+     * @return boolean
+     */
+    public function addPrefsByUserId($userId, array $aPrefs)
+    {
+        $tableName = SGL_Config::get('table.user_preference');
+        $ret       = true;
+        foreach ($aPrefs as $prefId => $prefValue) {
+            $aFields = array(
+                'user_preference_id' => $this->dbh->nextId($tableName),
+                'usr_id'             => $userId,
+                'preference_id'      => $prefId,
+                'value'              => $prefValue
+            );
+            $ret = $this->dbh->autoExecute($tableName, $aFields,
+                DB_AUTOQUERY_INSERT);
+            if (PEAR::isError($ret)) {
+                break;
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     * Add master preference to user.
+     *
+     * @param integer $userId
+     * @param array $aPrefsOverride
+     *
+     * @return boolean
+     */
+    public function addMasterPrefsByUserId($userId, $aPrefsOverride = array())
+    {
+        $aPrefs    = $this->getMasterPrefs();
+        $aPrefsMap = $this->getPrefsMapping();
+        // override master prefs
+        foreach ($aPrefsOverride as $prefName => $prefValue) {
+            $prefId = $aPrefsMap[$prefName];
+            $aPrefs[$prefId] = $prefValue;
+        }
+        return $this->addPrefsByUserId($userId, $aPrefs);
+    }
+
+    // ---------------------
+    // --- Password hash ---
+    // ---------------------
 
     public function getPasswordHashByUserIdAndHash($userId, $hash)
     {
@@ -128,6 +238,10 @@ class User2DAO extends SGL_Manager
         return $this->dbh->query($query);
     }
 
+    // -------------
+    // --- Media ---
+    // -------------
+
     public function getProfileImageByUserId($userId)
     {
         $query = "
@@ -144,6 +258,10 @@ class User2DAO extends SGL_Manager
         $query = $this->dbh->modifyLimitQuery($query, 0, 1);
         return $this->dbh->getRow($query);
     }
+
+    // -----------------
+    // --- Addresses ---
+    // -----------------
 
     public function getAddressByUserId($userId, $addressType = 'home')
     {
