@@ -344,25 +344,6 @@ abstract class SGL_Translation3_Driver
     /******************************/
 
     /**
-     * @todo make work with langCode
-     */
-    public static function extractCharset($langCodeCharset)
-    {
-        $aLang = explode('-', $langCodeCharset);
-        array_shift($aLang);
-        if ($aLang[0] == 'tw') {
-            array_shift($aLang);
-        }
-        return implode('-', $aLang);
-    }
-
-    public static function getDefaultCharset()
-    {
-        $langCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
-        return self::extractCharset($langCodeCharset);
-    }
-
-    /**
      * Is a language allowed ?
      *
      * @param   string  $langCodeCharset   language id, e.g. en-utf-8, fr-utf-8, ...
@@ -395,7 +376,7 @@ abstract class SGL_Translation3_Driver
             foreach ($aLangs as $langCode) {
                 // don't take care of locale for now, only main language
                 $langCode = substr($langCode, 0, 2);
-                $langCodeCharset = $langCode . '-' . self::getDefaultCharset();
+                $langCodeCharset = $langCode . '-' . SGL_Translation3::getDefaultCharset();
                 if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                     $ret = $langCodeCharset;
                     break;
@@ -419,7 +400,7 @@ abstract class SGL_Translation3_Driver
             $langCode = array_pop(explode('.', $_SERVER['HTTP_HOST']));
 
             // if such language exists, then use it
-            $langCodeCharset = $langCode . '-' . self::getDefaultCharset();
+            $langCodeCharset = $langCode . '-' . SGL_Translation3::getDefaultCharset();
             if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                 $ret = $langCodeCharset;
             }

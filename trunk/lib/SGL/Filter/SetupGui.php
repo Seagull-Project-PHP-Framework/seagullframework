@@ -10,7 +10,7 @@ class SGL_Filter_SetupGui extends SGL_DecorateProcess
     {
         $this->processRequest->process($input, $output);
 
-        if (!SGL::runningFromCLI()) {
+        if ($input->getType() != SGL_Request::CLI) {
             $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
             $adminGuiAllowed = $adminGuiRequested = false;
 

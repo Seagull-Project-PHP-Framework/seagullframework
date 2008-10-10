@@ -21,7 +21,7 @@ class SGL_Filter_LoadController extends SGL_DecorateProcess
         //  build path to controller class
         $classPath = $ctlrPath . $ctlr . '.php';
         try {
-            SGL_File::load($classPath);
+            SGL2_File::load($classPath);
             SGL_Registry::set('controller', new $ctlr);
         } catch (Exception $e) {
             throw new Exception("Controller '$ctlr' could not be found at $classPath");
