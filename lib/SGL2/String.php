@@ -129,7 +129,7 @@ class SGL2_String
      */
     function tidy($html, $logErrors = false)
     {
-        if (       !SGL2_Config2::get('site.tidyhtml')
+        if (       !SGL2_Config::get('site.tidyhtml')
                 || !extension_loaded('tidy')) {
             return $html;
         }
@@ -191,7 +191,7 @@ class SGL2_String
             }
             return $ret;
         } else {
-            $key = SGL2_Config2::get('debug.showUntranslated')
+            $key = SGL2_Config::get('debug.showUntranslated')
                 ? '>' . $key . '<'
                 : $key;
             return $key;

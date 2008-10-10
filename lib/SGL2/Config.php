@@ -46,7 +46,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-class SGL2_Config2
+class SGL2_Config
 {
     protected static $_aProps = array();
     protected $_fileName;

@@ -104,8 +104,8 @@ class SGL2_Session
     public function __construct($uid = -1, $rememberMe = null)
     {
         //  customise session
-        $sessName = SGL2_Config2::get('cookie.name')
-            ? SGL2_Config2::get('cookie.name')
+        $sessName = SGL2_Config::get('cookie.name')
+            ? SGL2_Config::get('cookie.name')
             : 'SGLSESSID';
         session_name($sessName);
 
@@ -113,9 +113,9 @@ class SGL2_Session
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
             0,
-            SGL2_Config2::get('cookie.path'),
-            SGL2_Config2::get('cookie.domain'),
-            SGL2_Config2::get('cookie.secure'));
+            SGL2_Config::get('cookie.path'),
+            SGL2_Config::get('cookie.domain'),
+            SGL2_Config::get('cookie.secure'));
 
         if (is_writable(SGL2_TMP_DIR)) {
             session_save_path(SGL2_TMP_DIR);
@@ -129,7 +129,7 @@ class SGL2_Session
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
             require_once 'DB/DataObject.php';
-            $sessUser = DB_DataObject::factory(SGL2_Config2::get('table.user'));
+            $sessUser = DB_DataObject::factory(SGL2_Config::get('table.user'));
             $sessUser->get($uid);
             $this->_init($sessUser, $rememberMe);
             if ($rememberMe) {
@@ -149,9 +149,9 @@ class SGL2_Session
             'SGL2_REMEMBER_ME',
             $cookie,
             time() + 31104000, // 360 days
-            SGL2_Config2::get('cookie.path'),
-            SGL2_Config2::get('cookie.domain'),
-            SGL2_Config2::get('cookie.secure')
+            SGL2_Config::get('cookie.path'),
+            SGL2_Config::get('cookie.domain'),
+            SGL2_Config::get('cookie.secure')
         );
     }
 
@@ -188,7 +188,7 @@ class SGL2_Session
             if ($oUser->role_id == SGL2_ADMIN) {
                 $aPerms = array();
             // check for customized perms
-            } elseif (($method = SGL2_Config2::get('session.permsRetrievalMethod'))
+            } elseif (($method = SGL2_Config::get('session.permsRetrievalMethod'))
                     && is_callable(array($da, $method))) {
                 $aPerms = $da->$method($oUser);
             // get permissions by user
@@ -248,7 +248,7 @@ class SGL2_Session
             $oldSessionId = session_id();
             session_regenerate_id();
 
-            if (SGL2_Config2::get('session.handler') == 'file') {
+            if (SGL2_Config::get('session.handler') == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
                 $ok = unlink(SGL2_TMP_DIR . '/sess_'.$oldSessionId);
@@ -384,7 +384,7 @@ class SGL2_Session
 
     public function hasAdminGui()
     {
-        $aRoles = explode(',', SGL2_Config2::get('site.rolesHaveAdminGui'));
+        $aRoles = explode(',', SGL2_Config::get('site.rolesHaveAdminGui'));
         foreach ($aRoles as $k => $role) {
             $aRoles[$k] = SGL2_String::pseudoConstantToInt($role);
         }
@@ -513,7 +513,7 @@ class SGL2_Session
     {
         return defined('SID') && SID !=''
             ? SID
-            : SGL2_Config2::get('cookie.name') . '='. session_id();
+            : SGL2_Config::get('cookie.name') . '='. session_id();
     }
 
     /**
@@ -534,12 +534,12 @@ class SGL2_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  SGL2_Config2::get('cookie.name'), null, 0, SGL2_Config2::get('cookie.path'),
-                    SGL2_Config2::get('cookie.domain'), SGL2_Config2::get('cookie.secure'));
+        setcookie(  SGL2_Config::get('cookie.name'), null, 0, SGL2_Config::get('cookie.path'),
+                    SGL2_Config::get('cookie.domain'), SGL2_Config::get('cookie.secure'));
         //  clear SGL2_REMEMBER_ME cookie to actually destroy the permanent session
-        if (SGL2_Config2::get('cookie.rememberMeEnabled')) {
-            $ok = setcookie('SGL2_REMEMBER_ME', null, 0, SGL2_Config2::get('cookie.path'),
-                SGL2_Config2::get('cookie.domain'), SGL2_Config2::get('cookie.secure'));
+        if (SGL2_Config::get('cookie.rememberMeEnabled')) {
+            $ok = setcookie('SGL2_REMEMBER_ME', null, 0, SGL2_Config::get('cookie.path'),
+                SGL2_Config::get('cookie.domain'), SGL2_Config::get('cookie.secure'));
         }
         new SGL2_Session();
     }

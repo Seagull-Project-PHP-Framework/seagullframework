@@ -28,8 +28,8 @@ class Config2Test extends PHPUnit_Framework_TestCase
     public function testGettingValue()
     {
         //$path = realpath(dirname(__FILE__) . '/../../../var/default.conf.php');
-        $conf = new SGL2_Config2($autoLoad = true);
-        $this->assertEquals(SGL2_Config2::get('site.name'), 'Seagull Framework');
+        $conf = new SGL2_Config($autoLoad = true);
+        $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
     }
 
     public function testSettingValue()
@@ -40,24 +40,24 @@ class Config2Test extends PHPUnit_Framework_TestCase
     public function testMergingConfigs()
     {
         //  initial config object
-        //  new SGL2_Config2(); // autoloads global config array
+        //  new SGL2_Config(); // autoloads global config array
 
         //  config object ready for static calls
-        //  $val = SGL2_Config2::get('site.name');
-        //  SGL2_Config2::set('site.name', 'my site name');
+        //  $val = SGL2_Config::get('site.name');
+        //  SGL2_Config::set('site.name', 'my site name');
 
         //  load additional config (data not loaded in config object)
-        //  $data = SGL2_Config2::load('path/to/config2.php');
+        //  $data = SGL2_Config::load('path/to/config2.php');
 
         //  load module config compared to global config
 
         //  merge loaded data with existing config object
-        //  SGL2_Config2::merge($data);
+        //  SGL2_Config::merge($data);
 
         //  saving config data
-        //  $str = var_export(SGL2_Config2::getAll(), true);
+        //  $str = var_export(SGL2_Config::getAll(), true);
         //  file_put_contents($str, '/path/to/file.php');
-        //  SGL2_Config2::save('/path/to/file.php');
+        //  SGL2_Config::save('/path/to/file.php');
 
         //  config caches
 

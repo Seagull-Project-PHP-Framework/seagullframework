@@ -76,8 +76,8 @@ class SGL2_Filter_AuthenticateRequest extends SGL2_DecorateProcess
 
         //  test for anonymous session and rememberMe cookie
         if (($session->isAnonymous() || $timeout)
-                && SGL2_Config2::get('cookie.rememberMeEnabled')
-                && !SGL2_Config2::get('site.maintenanceMode')) {
+                && SGL2_Config::get('cookie.rememberMeEnabled')
+                && !SGL2_Config::get('site.maintenanceMode')) {
             $aCookieData = $this->_getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
                 $this->_doLogin($aCookieData['uid']);
@@ -89,8 +89,8 @@ class SGL2_Filter_AuthenticateRequest extends SGL2_DecorateProcess
             }
         }
         //  if page requires authentication and we're not debugging
-        if (   SGL2_Config2::get("$ctlrName.requiresAuth")
-            && SGL2_Config2::get('debug.authorisationEnabled')
+        if (   SGL2_Config::get("$ctlrName.requiresAuth")
+            && SGL2_Config::get('debug.authorisationEnabled')
             && $input->getType() != SGL2_Request::CLI)
         {
             //  check that session is valid or timed out

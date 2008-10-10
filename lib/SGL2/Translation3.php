@@ -51,14 +51,12 @@ class SGL2_Translation3
     public function setDriver($driver = null, array $aOptions = array())
     {
         if (is_null($driver)) {
-            $driver = strtolower(SGL2_Config2::get('translation.container'));
+            $driver = strtolower(SGL2_Config::get('translation.container'));
             // BC with SGL translation config option
             $driver = ($driver == 'file') ? 'array' : $driver;
         }
         $className = 'SGL2_Translation3_Driver_' . $driver;
-        $fileName = 'SGL2/Translation3/Driver/' . ucfirst($driver) . '.php';
-        require_once $fileName;
-        if (!class_exists($className)) {
+        if (!SGL2_File::exists(SGL2_Inflector::classToFile($className))) {
             throw new Exception("Driver $driver not implemented", 1);
         }
         $this->_driver = new $className($aOptions);
@@ -99,7 +97,7 @@ class SGL2_Translation3
 
     public static function getDefaultLangCodeCharset()
     {
-        return str_replace('_', '-', SGL2_Config2::get('translation.fallbackLang'));
+        return str_replace('_', '-', SGL2_Config::get('translation.fallbackLang'));
     }
 
     /**
