@@ -23,7 +23,7 @@ class SGL2_Filter_SetupLangSupport extends SGL2_DecorateProcess
     {
         //  sets default language for framework, checks for lang param used to set
         //  user lang
-        $trans = SGL2_Translation3::singleton('array');
+        $trans = SGL2_Translation::singleton('array');
         try {
             $trans->loadDefaultDictionaries();
         } catch (Exception $e) {
