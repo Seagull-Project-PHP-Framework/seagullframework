@@ -38,16 +38,16 @@
 // +---------------------------------------------------------------------------+
 
 /**
- * Register SGL::autoload() with SPL.
+ * Register SGL2::autoload() with SPL.
  */
-spl_autoload_register(array('SGL', 'autoload'));
+spl_autoload_register(array('SGL2', 'autoload'));
 
 $sglPath = realpath(dirname(__FILE__).'/..');
 $libPath = realpath(dirname(__FILE__).'/../lib');
 
 define('SGL_PATH', $sglPath);
 set_include_path($libPath.PATH_SEPARATOR.get_include_path());
-require_once 'SGL/File.php';
+require_once 'SGL2/File.php';
 
 /**
  * Provides a set of static utility methods used by most modules.
@@ -55,7 +55,7 @@ require_once 'SGL/File.php';
  * @package SGL
  * @author Demian Turner <demian@phpkitchen.com>
  */
-class SGL
+class SGL2
 {
     /**
      *
@@ -85,7 +85,7 @@ class SGL
 
         // include the file and check for failure. we use Solar_File::load()
         // instead of require() so we can see the exception backtrace.
-        SGL_File::load($file);
+        SGL2_File::load($file);
 
         // if the class or interface was not in the file, we have a problem.
         // do not use autoload, because this method is registered with
@@ -134,46 +134,26 @@ class SGL
      * @param unknown_type $messageType
      * @todo move to SGL_Controller_Page#_raiseMsg()
      */
-    public static function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
-    {
-        //  must not log message here
-        if (is_string($messageKey) && !empty($messageKey)) {
-
-            $message = SGL_String::translate($messageKey);
-
-            //  catch error message that results for 'logout' where trans file is not loaded
-            if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
-                        && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
-                        || (!$getTranslation)) {
-                SGL_Session::set('message', $messageKey);
-            } else {
-                SGL_Session::set('message', $message);
-            }
-            SGL_Session::set('messageType', $messageType);
-        } else {
-            SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
-        }
-    }
-
-    /**
-     * Determines current server API, ie, are we running from commandline or webserver.
-     *
-     * @return boolean
-     */
-    public static function runningFromCLI()
-    {
-        // STDIN isn't a CLI constant before 4.3.0
-        $sapi = php_sapi_name();
-        if (version_compare(PHP_VERSION, '4.3.0') >= 0 && $sapi != 'cgi') {
-            if (!defined('STDIN')) {
-                return false;
-            } else {
-                return @is_resource(STDIN);
-            }
-        } else {
-            return in_array($sapi, array('cli', 'cgi')) && empty($_SERVER['REMOTE_ADDR']);
-        }
-    }
+//    public static function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
+//    {
+//        //  must not log message here
+//        if (is_string($messageKey) && !empty($messageKey)) {
+//
+//            $message = SGL_String::translate($messageKey);
+//
+//            //  catch error message that results for 'logout' where trans file is not loaded
+//            if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
+//                        && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
+//                        || (!$getTranslation)) {
+//                SGL_Session::set('message', $messageKey);
+//            } else {
+//                SGL_Session::set('message', $message);
+//            }
+//            SGL_Session::set('messageType', $messageType);
+//        } else {
+//            SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
+//        }
+//    }
 
     /**
      * Very useful static method when dealing with PEAR libs ;-)
@@ -201,13 +181,13 @@ class SGL
     {
         $aAllowedTypes = array('countries', 'states', 'counties');
         if (!in_array($regionType, $aAllowedTypes)) {
-            return SGL::raiseError('Invalid argument', SGL_ERROR_INVALIDARGS);
+            throw new Exception('Invalid argument', SGL_ERROR_INVALIDARGS);
         }
         if (!empty($GLOBALS['_SGL'][strtoupper($regionType)])) {
             return $GLOBALS['_SGL'][strtoupper($regionType)];
         }
 
-        $lang = SGL::getCurrentLang();
+        $lang = SGL_Translation3::getDefaultLangCode();
         $file = SGL_DAT_DIR . "/ary.$regionType.$lang.php";
         if (!file_exists($file)) {
             // get data with default language
@@ -253,7 +233,7 @@ class SGL
     protected function _toCurrentCharset(&$v)
     {
         $v = function_exists('iconv')
-            ? iconv('UTF-8', SGL::getCurrentCharset(), $v)
+            ? iconv('UTF-8', SGL_Translation3::getDefaultCharset(), $v)
             : $v;
     }
 }

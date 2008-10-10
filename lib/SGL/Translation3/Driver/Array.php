@@ -162,7 +162,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $filename = $this->getFileName($myDict, $langCode);
         $this->_ensureLangFileExists($filename);
         if (!is_writable($filename)) {
-            return SGL::raiseError('Please give perms to write ' . $filename,
+            throw new Exception('Please give perms to write ' . $filename,
                 SGL_ERROR_INVALIDFILEPERMS);
         }
         $arrayName = ($this->dictionary == 'default') ? 'defaultWords' : 'words';

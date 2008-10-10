@@ -22,7 +22,7 @@ class SGL_Filter_LoadManager extends SGL_DecorateProcess
 
         //  build path to manager class
         $classPath = $mgrPath . $mgr . '.php';
-        if (SGL::isReadable($classPath)) {
+        if (SGL_File::exists($classPath)) {
             $input->set('manager', new $managerName);
         } else {
             throw new Exception("Manager '$mgr' could not be found at $classPath");

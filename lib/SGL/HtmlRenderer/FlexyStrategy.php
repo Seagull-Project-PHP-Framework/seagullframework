@@ -43,7 +43,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
     public function render(SGL_View $view)
     {
         //  suppress error notices in templates
-        SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
+        SGL2::setNoticeBehaviour(SGL_NOTICES_DISABLED);
 
         //  prepare flexy object
         $flexy = $this->_initEngine($view->data);
@@ -55,7 +55,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
 
         $data = $flexy->bufferedOutputObject($view->data, array());
 
-        SGL::setNoticeBehaviour(SGL_NOTICES_ENABLED);
+        SGL2::setNoticeBehaviour(SGL_NOTICES_ENABLED);
         return $data;
     }
 

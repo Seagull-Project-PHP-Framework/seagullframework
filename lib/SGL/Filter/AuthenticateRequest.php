@@ -91,7 +91,7 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
         //  if page requires authentication and we're not debugging
         if (   SGL_Config2::get("$ctlrName.requiresAuth")
             && SGL_Config2::get('debug.authorisationEnabled')
-            && !SGL::runningFromCLI())
+            && $input->getType() != SGL_Request::CLI)
         {
             //  check that session is valid or timed out
             if (!$session->isValid() || $timeout) {
@@ -106,11 +106,11 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
                     );
 
                 if (!$session->isValid()) {
-                    SGL::raiseMsg('authentication required');
+//SGL::raiseMsg('authentication required');
                     SGL_Response::redirect($loginPage);
                 } else {
                     $session->destroy();
-                    SGL::raiseMsg('session timeout');
+//SGL::raiseMsg('session timeout');
                     SGL_Response::redirect($loginPage);
                 }
             }

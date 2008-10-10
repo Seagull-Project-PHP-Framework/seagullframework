@@ -153,7 +153,7 @@ abstract class SGL_Controller_Page
                             SGL_ERROR_RECURSION);
                     }
                    // redirect to current or default screen
-                    SGL::raiseMsg('authorisation failed');
+//SGL::raiseMsg('authorisation failed');
                     $aHistory = SGL_Session::get('aRequestHistory');
                     $aLastRequest = isset($aHistory[1]) ? $aHistory[1] : false;
                     if ($aLastRequest) {
@@ -199,8 +199,8 @@ abstract class SGL_Controller_Page
      */
     protected function _authorise($ctlrPerm, $ctlrName, $input)
     {
-        // if user has no global manager perms check for each action
-        if (!SGL_Session::hasPerms($ctlrPerm) && !SGL::runningFromCLI()) {
+        // if user has no global controller perms check for each action
+        if (!SGL_Session::hasPerms($ctlrPerm) && $input->getType() != SGL_Request::CLI) {
 
             // and if chained methods to be called are allowed
             $ret = true;

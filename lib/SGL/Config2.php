@@ -51,22 +51,16 @@ class SGL_Config2
     protected static $_aProps = array();
     protected $_fileName;
 
-    /**
-     * Enter description here...
-     * @todo determine sitename dynamically
-     *
-     */
-    public function __construct()
+    public function __construct($autoLoad = false)
     {
-        if ($this->isEmpty()) {
+        if ($this->isEmpty() && $autoLoad) {
 
-
-            $siteName   = 'seagull_trunk';//make dynamic
+            $siteName   = 'seagull_trunk';
             $configFile = SGL_PATH  . '/var/' . $siteName . '.conf.php';
-            if (!SGL_File::exists($configFile)) {
+            if (!SGL2_File::exists($configFile)) {
                 $confMapFile = SGL_PATH  . '/var/confmap.php';
                 $configFile  = null;
-                if ($confMap = SGL_File::load($confMapFile)) {
+                if ($confMap = SGL2_File::load($confMapFile)) {
                     foreach ($confMap as $key => $value) {
                         if (preg_match("/^$key$/", $siteName, $aMatches)) {
                             $configFile = $value;
@@ -216,7 +210,7 @@ class SGL_Config2
 
     /**
      * Enter description here...
-     * @todo move to SGL_File
+     * @todo move to SGL2_File
      *
      */
     protected function _ensureCacheDirExists()

@@ -19,7 +19,7 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
     {
         $this->processRequest->process($input, $output);
 
-        $this->_addOutputData($output);
+        $this->_addOutputData($input, $output);
     }
 
     /**
@@ -27,7 +27,7 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
      *
      * @param SGL_Response $output
      */
-    protected function _addOutputData(SGL_Response $output)
+    protected function _addOutputData(SGL_Request $input, SGL_Response $output)
     {
         // setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
@@ -38,13 +38,13 @@ class SGL_Filter_BuildOutputData extends SGL_DecorateProcess
             $output->isMember       = true;
         }
         // request data
-        if (!SGL::runningFromCLI()) {
+        if ($input->getType() != SGL_Request::CLI) {
             $output->remoteIp = $_SERVER['REMOTE_ADDR'];
             $output->currUrl  = $this->_getCurrentUrlFromRoutes();
         }
         // lang data
         $output->currLang     = SGL_Translation3::getDefaultLangCode();
-        $output->charset      = SGL::getCurrentCharset();
+        $output->charset      = SGL_Translation3::getDefaultLangCodeCharset();
         $output->currFullLang = $_SESSION['aPrefs']['language'];
         $output->langDir      = ($output->currLang == 'ar'
                 || $output->currLang == 'he')

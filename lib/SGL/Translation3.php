@@ -87,7 +87,6 @@ class SGL_Translation3
 
 
     /**
-     * Performs same function as SGL::getCurrentLang() and will supersede it
      *
      * @return string $langCode
      */
@@ -101,6 +100,25 @@ class SGL_Translation3
     public static function getDefaultLangCodeCharset()
     {
         return str_replace('_', '-', SGL_Config2::get('translation.fallbackLang'));
+    }
+
+    /**
+     * @todo make work with langCode
+     */
+    public static function extractCharset($langCodeCharset)
+    {
+        $aLang = explode('-', $langCodeCharset);
+        array_shift($aLang);
+        if ($aLang[0] == 'tw') {
+            array_shift($aLang);
+        }
+        return implode('-', $aLang);
+    }
+
+    public static function getDefaultCharset()
+    {
+        $langCodeCharset = self::getDefaultLangCodeCharset();
+        return self::extractCharset($langCodeCharset);
     }
 }
 ?>

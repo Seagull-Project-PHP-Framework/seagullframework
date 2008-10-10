@@ -6,7 +6,7 @@ $ phpunit AllTests.php
 
 */
 
-require_once dirname(__FILE__) . '/../../SGL.php';
+require_once dirname(__FILE__) . '/../../SGL2.php';
 require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
 require_once 'RegistryTest.php';

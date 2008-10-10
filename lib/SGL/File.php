@@ -5,7 +5,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_File
+class SGL2_File
 {
     protected static $_file;
 
@@ -127,7 +127,7 @@ class SGL_File
                             }
                             mkdir($dest . '/' . $file); // make subdirectory before subdirectory is copied
                         }
-                        SGL_File::copyDir($path, $dest . '/' . $file, $overwrite); //recurse
+                        SGL2_File::copyDir($path, $dest . '/' . $file, $overwrite); //recurse
                     }
                 }
             }

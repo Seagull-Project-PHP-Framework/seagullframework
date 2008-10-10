@@ -24,7 +24,7 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_DAT_DIR',                   SGL_APP_ROOT . '/lib/data');
         define('SGL_CORE_DIR',                  SGL_APP_ROOT . '/lib/SGL');
 
-        //  error codes to use with SGL::raiseError()
+        //  error codes
         //  start at -100 in order not to conflict with PEAR::DB error codes
 
         /**
@@ -156,10 +156,6 @@ class SGL_Task_SetupConstants extends SGL_Task
         define('SGL_NEXT_ID',                   0);
         define('SGL_NOTICES_DISABLED',          0);
         define('SGL_NOTICES_ENABLED',           1);
-
-        //  with logging, you can optionally show the file + line no. where
-        //  SGL::logMessage was called from
-        define('SGL_DEBUG_SHOW_LINE_NUMBERS',   false);
 
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
