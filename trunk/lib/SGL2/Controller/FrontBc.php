@@ -18,7 +18,7 @@ class SGL2_Controller_FrontBc extends SGL2_Controller_Abstract
            //'SGL2_Filter_LoadManager',
            'SGL2_Filter_LoadController',
            'SGL2_Filter_CreateSession',
-           'SGL2_Filter_SetupLangSupport2',
+           'SGL2_Filter_SetupLangSupport',
            'SGL2_Filter_SetupLocale',
            'SGL2_Filter_AuthenticateRequest',
 

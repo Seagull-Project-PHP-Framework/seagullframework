@@ -8,7 +8,7 @@
  * @author Julien Casanova <julien@soluo.fr>
  */
 
-class SGL2_Filter_SetupLangSupport2 extends SGL2_DecorateProcess
+class SGL2_Filter_SetupLangSupport extends SGL2_DecorateProcess
 {
     /**
      * Initialises multi-language support.
