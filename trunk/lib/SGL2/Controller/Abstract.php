@@ -68,8 +68,6 @@ abstract class SGL2_Controller_Abstract
     {
         SGL2_Registry::set('request',    new SGL2_Request());
         SGL2_Registry::set('response',   new SGL2_Response());
-        SGL2_Registry::set('config',     new SGL2_Config());
-
         $this->setupEnv();
 
         define('SGL2_INITIALISED', true);
