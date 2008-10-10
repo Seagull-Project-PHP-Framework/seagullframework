@@ -51,7 +51,7 @@ class SGL_Translation3
     public function setDriver($driver = null, array $aOptions = array())
     {
         if (is_null($driver)) {
-            $driver = strtolower(SGL_Config::get('translation.container'));
+            $driver = strtolower(SGL_Config2::get('translation.container'));
             // BC with SGL translation config option
             $driver = ($driver == 'file') ? 'array' : $driver;
         }
@@ -100,7 +100,7 @@ class SGL_Translation3
 
     public static function getDefaultLangCodeCharset()
     {
-        return str_replace('_', '-', SGL_Config::get('translation.fallbackLang'));
+        return str_replace('_', '-', SGL_Config2::get('translation.fallbackLang'));
     }
 }
 ?>

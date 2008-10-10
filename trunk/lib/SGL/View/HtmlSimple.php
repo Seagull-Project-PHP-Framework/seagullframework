@@ -17,7 +17,7 @@ class SGL_View_HtmlSimple extends SGL_View
     {
         //  prepare renderer class
         if (is_null($templateEngine)) {
-            $templateEngine = SGL_Config::get('site.templateEngine');
+            $templateEngine = SGL_Config2::get('site.templateEngine');
         }
         $templateEngine =  ucfirst($templateEngine);
         $rendererClass  = 'SGL_HtmlRenderer_' . $templateEngine . 'Strategy';

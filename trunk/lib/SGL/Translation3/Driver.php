@@ -201,13 +201,13 @@ abstract class SGL_Translation3_Driver
     public function loadDefaultDictionaries()
     {
         // Look for default dictionaries to be loaded
-        $defaultDictionaries = SGL_Config::get('TranslationMgr.defaultDictionaries');
+        $defaultDictionaries = SGL_Config2::get('TranslationMgr.defaultDictionaries');
         $aDefaultDictionaries = !empty($defaultDictionaries)
             ? explode(',', $defaultDictionaries)
             : array();
         // Or load default dictionaries the Seagull way
         if (!count($aDefaultDictionaries)) {
-            $moduleDefault = SGL_Config::get('site.defaultModule');
+            $moduleDefault = SGL_Config2::get('site.defaultModule');
             $current = SGL_Registry::get('request')->get('moduleName');
             $moduleCurrent = $current
                 ? $current
@@ -222,7 +222,7 @@ abstract class SGL_Translation3_Driver
             }
         }
         // Look for additional dictionaries to load each request
-        $additionalDictionaries = SGL_Config::get('TranslationMgr.otherDictionaries');
+        $additionalDictionaries = SGL_Config2::get('TranslationMgr.otherDictionaries');
         if (!empty($additionalDictionaries)) {
             $aAdditionalDictionaries = explode(',', $additionalDictionaries);
             foreach ($aAdditionalDictionaries as $dictionary) {
@@ -321,10 +321,10 @@ abstract class SGL_Translation3_Driver
                     || !self::isAllowedLangCodeCharset($_SESSION['aPrefs']['language'])
                     || SGL_Session::isFirstAnonRequest()) {
                 // 3. look for language in browser settings
-                if (!SGL_Config::get('translation.languageAutoDiscover')
+                if (!SGL_Config2::get('translation.languageAutoDiscover')
                         || !($langCodeCharset = self::resolveLanguageFromBrowser())) {
                     // 4. look for language in domain
-                    if (!SGL_Config::get('translation.languageAutoDiscover')
+                    if (!SGL_Config2::get('translation.languageAutoDiscover')
                             || !($langCodeCharset = self::resolveLanguageFromDomain())) {
                         // 5. get default language
                         $langCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();

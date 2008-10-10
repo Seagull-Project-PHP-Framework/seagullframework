@@ -256,41 +256,5 @@ class SGL
             ? iconv('UTF-8', SGL::getCurrentCharset(), $v)
             : $v;
     }
-
-     /**
-      * Returns true if a module is installed, ie has a record in the module table.
-      *
-      * @param string $moduleName
-      * @return boolean
-      */
-    public static function moduleIsEnabled($moduleName)
-    {
-        static $aInstances;
-        if (!isset($aInstances)) {
-            $aInstances = array();
-        }
-        if (!isset($aInstances[$moduleName])) {
-
-            $locator = &SGL_ServiceLocator::singleton();
-            $dbh = $locator->get('DB');
-            if (!$dbh) {
-                $dbh = & SGL_DB::singleton();
-                $locator->register('DB', $dbh);
-            }
-            $c = SGL_Config::singleton();
-            $conf = $c->getAll();
-            $query = "
-                SELECT  module_id
-                FROM    {$conf['table']['module']}
-                WHERE   name = " .$dbh->quoteSmart($moduleName);
-            $ret = $dbh->getOne($query);
-            if (PEAR::isError($ret)) {
-                return false;
-            } else {
-                $aInstances[$moduleName] = $ret;
-            }
-        }
-        return ! is_null($aInstances[$moduleName]);
-    }
 }
 ?>

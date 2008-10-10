@@ -104,8 +104,8 @@ class SGL_Session
     public function __construct($uid = -1, $rememberMe = null)
     {
         //  customise session
-        $sessName = SGL_Config::get('cookie.name')
-            ? SGL_Config::get('cookie.name')
+        $sessName = SGL_Config2::get('cookie.name')
+            ? SGL_Config2::get('cookie.name')
             : 'SGLSESSID';
         session_name($sessName);
 
@@ -113,9 +113,9 @@ class SGL_Session
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
             0,
-            SGL_Config::get('cookie.path'),
-            SGL_Config::get('cookie.domain'),
-            SGL_Config::get('cookie.secure'));
+            SGL_Config2::get('cookie.path'),
+            SGL_Config2::get('cookie.domain'),
+            SGL_Config2::get('cookie.secure'));
 
         if (is_writable(SGL_TMP_DIR)) {
             session_save_path(SGL_TMP_DIR);
@@ -129,7 +129,7 @@ class SGL_Session
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
             require_once 'DB/DataObject.php';
-            $sessUser = DB_DataObject::factory(SGL_Config::get('table.user'));
+            $sessUser = DB_DataObject::factory(SGL_Config2::get('table.user'));
             $sessUser->get($uid);
             $this->_init($sessUser, $rememberMe);
             if ($rememberMe) {
@@ -144,15 +144,14 @@ class SGL_Session
 
     protected function _setRememberMeCookie()
     {
-        $conf = SGL_Config::singleton()->getAll();
         $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
         $ok = setcookie(
             'SGL_REMEMBER_ME',
             $cookie,
             time() + 31104000, // 360 days
-            $conf['cookie']['path'],
-            $conf['cookie']['domain'],
-            $conf['cookie']['secure']
+            SGL_Config2::get('cookie.path'),
+            SGL_Config2::get('cookie.domain'),
+            SGL_Config2::get('cookie.secure')
         );
     }
 
@@ -189,7 +188,7 @@ class SGL_Session
             if ($oUser->role_id == SGL_ADMIN) {
                 $aPerms = array();
             // check for customized perms
-            } elseif (($method = SGL_Config::get('session.permsRetrievalMethod'))
+            } elseif (($method = SGL_Config2::get('session.permsRetrievalMethod'))
                     && is_callable(array($da, $method))) {
                 $aPerms = $da->$method($oUser);
             // get permissions by user
@@ -249,7 +248,7 @@ class SGL_Session
             $oldSessionId = session_id();
             session_regenerate_id();
 
-            if (SGL_Config::get('session.handler') == 'file') {
+            if (SGL_Config2::get('session.handler') == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
                 $ok = unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
@@ -385,7 +384,7 @@ class SGL_Session
 
     public function hasAdminGui()
     {
-        $aRoles = explode(',', SGL_Config::get('site.rolesHaveAdminGui'));
+        $aRoles = explode(',', SGL_Config2::get('site.rolesHaveAdminGui'));
         foreach ($aRoles as $k => $role) {
             $aRoles[$k] = SGL_String::pseudoConstantToInt($role);
         }
@@ -514,7 +513,7 @@ class SGL_Session
     {
         return defined('SID') && SID !=''
             ? SID
-            : SGL_Config::get('cookie.name') . '='. session_id();
+            : SGL_Config2::get('cookie.name') . '='. session_id();
     }
 
     /**
@@ -535,12 +534,12 @@ class SGL_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  SGL_Config::get('cookie.name'), null, 0, SGL_Config::get('cookie.path'),
-                    SGL_Config::get('cookie.domain'), SGL_Config::get('cookie.secure'));
+        setcookie(  SGL_Config2::get('cookie.name'), null, 0, SGL_Config2::get('cookie.path'),
+                    SGL_Config2::get('cookie.domain'), SGL_Config2::get('cookie.secure'));
         //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
-        if (SGL_Config::get('cookie.rememberMeEnabled')) {
-            $ok = setcookie('SGL_REMEMBER_ME', null, 0, SGL_Config::get('cookie.path'),
-                SGL_Config::get('cookie.domain'), SGL_Config::get('cookie.secure'));
+        if (SGL_Config2::get('cookie.rememberMeEnabled')) {
+            $ok = setcookie('SGL_REMEMBER_ME', null, 0, SGL_Config2::get('cookie.path'),
+                SGL_Config2::get('cookie.domain'), SGL_Config2::get('cookie.secure'));
         }
         new SGL_Session();
     }
