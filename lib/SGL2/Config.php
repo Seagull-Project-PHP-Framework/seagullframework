@@ -128,7 +128,7 @@ class SGL2_Config
 
     public function merge($aConf)
     {
-        self::$_aProps = SGL2_Array2::mergeReplace(self::$_aProps, $aConf);
+        self::$_aProps = SGL2_Array::mergeReplace(self::$_aProps, $aConf);
     }
 
     public function replace($aConf)

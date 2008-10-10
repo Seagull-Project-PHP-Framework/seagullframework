@@ -14,7 +14,7 @@ class SGL2_LegacyErrorException extends Exception
 
 }
 
-class SGL2_ErrorHandler2
+class SGL2_ErrorHandler
 {
     private static $instance = null;
 
@@ -31,7 +31,7 @@ class SGL2_ErrorHandler2
     public static function singleton()
     {
         if (!self::$instance) {
-            self::$instance = new SGL2_ErrorHandler2();
+            self::$instance = new self();
         }
         return self::$instance;
     }

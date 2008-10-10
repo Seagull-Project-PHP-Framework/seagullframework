@@ -118,14 +118,14 @@ class SGL2_Response
     function redirect($url = '')
     {
         //  check for absolute uri as specified in RFC 2616
-        SGL2_Url2::toAbsolute($url);
+        SGL2_Url::toAbsolute($url);
 
         //  add a slash if one is not present
         if (substr($url, -1) != '/') {
             $url .= '/';
         }
         //  determine is session propagated in cookies or URL
-        SGL2_Url2::addSessionInfo($url);
+        SGL2_Url::addSessionInfo($url);
 
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
