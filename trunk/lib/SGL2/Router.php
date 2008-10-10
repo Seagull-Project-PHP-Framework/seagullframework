@@ -134,8 +134,8 @@ class SGL2_Router
             $oRoute->encoding = null;
         }
 
-        // SGL2_URL2
-        $url = new SGL2_Url2($aQueryData);
+        // SGL2_URL
+        $url = new SGL2_Url($aQueryData);
         $url->setRoutes(new Horde_Routes_Utils($m));
 
         // assign to registry

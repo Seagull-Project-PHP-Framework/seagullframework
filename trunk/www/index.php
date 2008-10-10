@@ -2,7 +2,7 @@
 
 require '../lib/SGL2.php';
 
-$erh = SGL2_ErrorHandler2::singleton();
+$erh = SGL2_ErrorHandler::singleton();
 $ech = SGL2_ExceptionHandler::singleton();
 
 try {
