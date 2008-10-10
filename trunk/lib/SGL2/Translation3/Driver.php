@@ -3,7 +3,7 @@
 /**
 *
 */
-abstract class SGL_Translation3_Driver
+abstract class SGL2_Translation3_Driver
 {
     protected $_aOptions = array(
         'clear'     => false,
@@ -92,9 +92,9 @@ abstract class SGL_Translation3_Driver
 
     public function setDefaultLangCode()
     {
-        $this->defaultLangCode = SGL_Translation3::getDefaultLangCode();
+        $this->defaultLangCode = SGL2_Translation3::getDefaultLangCode();
         // BC - as long as language list keys are $langCodeCharset we must set this
-        $this->defaultLangCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
+        $this->defaultLangCodeCharset = SGL2_Translation3::getDefaultLangCodeCharset();
     }
 
     public function getLangCodeCharset($langCode = null)
@@ -201,14 +201,14 @@ abstract class SGL_Translation3_Driver
     public function loadDefaultDictionaries()
     {
         // Look for default dictionaries to be loaded
-        $defaultDictionaries = SGL_Config2::get('TranslationMgr.defaultDictionaries');
+        $defaultDictionaries = SGL2_Config2::get('TranslationMgr.defaultDictionaries');
         $aDefaultDictionaries = !empty($defaultDictionaries)
             ? explode(',', $defaultDictionaries)
             : array();
         // Or load default dictionaries the Seagull way
         if (!count($aDefaultDictionaries)) {
-            $moduleDefault = SGL_Config2::get('site.defaultModule');
-            $current = SGL_Registry::get('request')->get('moduleName');
+            $moduleDefault = SGL2_Config2::get('site.defaultModule');
+            $current = SGL2_Registry::get('request')->get('moduleName');
             $moduleCurrent = $current
                 ? $current
                 : $moduleDefault;
@@ -222,7 +222,7 @@ abstract class SGL_Translation3_Driver
             }
         }
         // Look for additional dictionaries to load each request
-        $additionalDictionaries = SGL_Config2::get('TranslationMgr.otherDictionaries');
+        $additionalDictionaries = SGL2_Config2::get('TranslationMgr.otherDictionaries');
         if (!empty($additionalDictionaries)) {
             $aAdditionalDictionaries = explode(',', $additionalDictionaries);
             foreach ($aAdditionalDictionaries as $dictionary) {
@@ -233,7 +233,7 @@ abstract class SGL_Translation3_Driver
         foreach ($aDefaultDictionaries as $dictionary) {
             $this->loadDictionary($dictionary);
         }
-        //  BC for SGL_String::translate() method
+        //  BC for SGL2_String::translate() method
         //  loads currently specified user lang into $GLOBALS['_SGL']['TRANSLATION']
         $GLOBALS['_SGL']['TRANSLATION'] = $this->_aDictionaries[$this->getLangCode()];
     }
@@ -245,7 +245,7 @@ abstract class SGL_Translation3_Driver
      * @param   string  $langCode
      * @param   array   $aTranslations
      *
-     * @return  object  Specific SGL_Translation3_Driver instance (this method is chainable)
+     * @return  object  Specific SGL2_Translation3_Driver instance (this method is chainable)
      */
     public function addTranslations($dictionary, $langCode, array $aTranslations = array())
     {
@@ -268,9 +268,9 @@ abstract class SGL_Translation3_Driver
     protected function _removeMetaData($aTranslations, $removeAll = false)
     {
         foreach ($aTranslations as $k => $v) {
-            if (strpos($k, '__SGL_') === 0) {
-                if (((strpos($k, '__SGL_CATEGORY_') === 0)
-                        || (strpos($k, '__SGL_COMMENT_') === 0))
+            if (strpos($k, '__SGL2_') === 0) {
+                if (((strpos($k, '__SGL2_CATEGORY_') === 0)
+                        || (strpos($k, '__SGL2_COMMENT_') === 0))
                         && !$removeAll) {
                     continue;
                 }
@@ -311,7 +311,7 @@ abstract class SGL_Translation3_Driver
     public function _resolveLangCode()
     {
         // resolve language from request
-        $langCode = SGL_Registry::get('request')->get('lang');
+        $langCode = SGL2_Registry::get('request')->get('lang');
         $langCodeCharset = self::langCodeToLangCodeCharset($langCode);
 
         // 1. look for language in URL
@@ -319,15 +319,15 @@ abstract class SGL_Translation3_Driver
             // 2. look for language in settings
             if (!isset($_SESSION['aPrefs']['language'])
                     || !self::isAllowedLangCodeCharset($_SESSION['aPrefs']['language'])
-                    || SGL_Session::isFirstAnonRequest()) {
+                    || SGL2_Session::isFirstAnonRequest()) {
                 // 3. look for language in browser settings
-                if (!SGL_Config2::get('translation.languageAutoDiscover')
+                if (!SGL2_Config2::get('translation.languageAutoDiscover')
                         || !($langCodeCharset = self::resolveLanguageFromBrowser())) {
                     // 4. look for language in domain
-                    if (!SGL_Config2::get('translation.languageAutoDiscover')
+                    if (!SGL2_Config2::get('translation.languageAutoDiscover')
                             || !($langCodeCharset = self::resolveLanguageFromDomain())) {
                         // 5. get default language
-                        $langCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
+                        $langCodeCharset = SGL2_Translation3::getDefaultLangCodeCharset();
                     }
                 }
             // get language from settings
@@ -376,7 +376,7 @@ abstract class SGL_Translation3_Driver
             foreach ($aLangs as $langCode) {
                 // don't take care of locale for now, only main language
                 $langCode = substr($langCode, 0, 2);
-                $langCodeCharset = $langCode . '-' . SGL_Translation3::getDefaultCharset();
+                $langCodeCharset = $langCode . '-' . SGL2_Translation3::getDefaultCharset();
                 if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                     $ret = $langCodeCharset;
                     break;
@@ -400,7 +400,7 @@ abstract class SGL_Translation3_Driver
             $langCode = array_pop(explode('.', $_SERVER['HTTP_HOST']));
 
             // if such language exists, then use it
-            $langCodeCharset = $langCode . '-' . SGL_Translation3::getDefaultCharset();
+            $langCodeCharset = $langCode . '-' . SGL2_Translation3::getDefaultCharset();
             if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                 $ret = $langCodeCharset;
             }

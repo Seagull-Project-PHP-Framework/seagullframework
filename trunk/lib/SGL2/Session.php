@@ -76,7 +76,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Session
+class SGL2_Session
 {
     const UPDATE_WINDOW = 10;
     /**
@@ -104,8 +104,8 @@ class SGL_Session
     public function __construct($uid = -1, $rememberMe = null)
     {
         //  customise session
-        $sessName = SGL_Config2::get('cookie.name')
-            ? SGL_Config2::get('cookie.name')
+        $sessName = SGL2_Config2::get('cookie.name')
+            ? SGL2_Config2::get('cookie.name')
             : 'SGLSESSID';
         session_name($sessName);
 
@@ -113,14 +113,14 @@ class SGL_Session
         //  then use user timeout in isTimedOut() method
         session_set_cookie_params(
             0,
-            SGL_Config2::get('cookie.path'),
-            SGL_Config2::get('cookie.domain'),
-            SGL_Config2::get('cookie.secure'));
+            SGL2_Config2::get('cookie.path'),
+            SGL2_Config2::get('cookie.domain'),
+            SGL2_Config2::get('cookie.secure'));
 
-        if (is_writable(SGL_TMP_DIR)) {
-            session_save_path(SGL_TMP_DIR);
+        if (is_writable(SGL2_TMP_DIR)) {
+            session_save_path(SGL2_TMP_DIR);
         } else {
-            throw new Exception(SGL_TMP_DIR .' either does not exist or is not writable');
+            throw new Exception(SGL2_TMP_DIR .' either does not exist or is not writable');
         }
 
         //  start PHP session handler
@@ -129,7 +129,7 @@ class SGL_Session
         //  if user id is passed in constructor, ie, during login, init user
         if ($uid > 0) {
             require_once 'DB/DataObject.php';
-            $sessUser = DB_DataObject::factory(SGL_Config2::get('table.user'));
+            $sessUser = DB_DataObject::factory(SGL2_Config2::get('table.user'));
             $sessUser->get($uid);
             $this->_init($sessUser, $rememberMe);
             if ($rememberMe) {
@@ -137,7 +137,7 @@ class SGL_Session
             }
 
         //  if session doesn't exist, initialise
-        } elseif (!SGL_Session::exists()) {
+        } elseif (!SGL2_Session::exists()) {
             $this->_init();
         }
     }
@@ -146,12 +146,12 @@ class SGL_Session
     {
         $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
         $ok = setcookie(
-            'SGL_REMEMBER_ME',
+            'SGL2_REMEMBER_ME',
             $cookie,
             time() + 31104000, // 360 days
-            SGL_Config2::get('cookie.path'),
-            SGL_Config2::get('cookie.domain'),
-            SGL_Config2::get('cookie.secure')
+            SGL2_Config2::get('cookie.path'),
+            SGL2_Config2::get('cookie.domain'),
+            SGL2_Config2::get('cookie.secure')
         );
     }
 
@@ -171,7 +171,7 @@ class SGL_Session
         //  user object is passed only during login
         if (is_object($oUser)) {
             //  get UserDAO object
-            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+            require_once SGL2_MOD_DIR . '/user/classes/UserDAO.php';
             $da = UserDAO::singleton();
 
             $aSessVars = array(
@@ -185,10 +185,10 @@ class SGL_Session
             );
 
             // for admin we don't need any perms
-            if ($oUser->role_id == SGL_ADMIN) {
+            if ($oUser->role_id == SGL2_ADMIN) {
                 $aPerms = array();
             // check for customized perms
-            } elseif (($method = SGL_Config2::get('session.permsRetrievalMethod'))
+            } elseif (($method = SGL2_Config2::get('session.permsRetrievalMethod'))
                     && is_callable(array($da, $method))) {
                 $aPerms = $da->$method($oUser);
             // get permissions by user
@@ -198,14 +198,14 @@ class SGL_Session
             $aSessVars['aPerms'] = $aPerms;
 
             //  check for rememberMe cookie
-            list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
+            list(, $cookieValue) = @unserialize($_COOKIE['SGL2_REMEMBER_ME']);
             //  if 'remember me' cookie is set remove it
             if (!empty($cookieValue)) {
                 $da->deleteUserLoginCookieByUserId($oUser->usr_id, $cookieValue);
             }
             //  add new 'remember me' cookie
             if (!empty($rememberMe)) {
-                $salt = 'SGL_SALT'; // @todo: make salt configurable
+                $salt = 'SGL2_SALT'; // @todo: make salt configurable
                 $cookieValue = md5($salt . $aSessVars['key']);
                 $da->addUserLoginCookie($oUser->usr_id, $cookieValue);
                 $aSessVars['cookie'] = $cookieValue;
@@ -248,10 +248,10 @@ class SGL_Session
             $oldSessionId = session_id();
             session_regenerate_id();
 
-            if (SGL_Config2::get('session.handler') == 'file') {
+            if (SGL2_Config2::get('session.handler') == 'file') {
 
                 //  manually remove old session file, see http://ilia.ws/archives/47-session_regenerate_id-Improvement.html
-                $ok = unlink(SGL_TMP_DIR . '/sess_'.$oldSessionId);
+                $ok = unlink(SGL2_TMP_DIR . '/sess_'.$oldSessionId);
 
             } else {
                 die('Internal Error: unknown session handler');
@@ -355,7 +355,7 @@ class SGL_Session
             return false;
         }
         //  if admin role, give perms by default
-        if ($_SESSION['rid'] == SGL_ADMIN) {
+        if ($_SESSION['rid'] == SGL2_ADMIN) {
             $ret = true;
         } else {
             if (is_array($_SESSION['aPerms'])) {
@@ -384,13 +384,13 @@ class SGL_Session
 
     public function hasAdminGui()
     {
-        $aRoles = explode(',', SGL_Config2::get('site.rolesHaveAdminGui'));
+        $aRoles = explode(',', SGL2_Config2::get('site.rolesHaveAdminGui'));
         foreach ($aRoles as $k => $role) {
-            $aRoles[$k] = SGL_String::pseudoConstantToInt($role);
+            $aRoles[$k] = SGL2_String::pseudoConstantToInt($role);
         }
         //  at least admin must have admin gui rights
-        if (!in_array(SGL_ADMIN, $aRoles)) {
-            $aRoles[] = SGL_ADMIN;
+        if (!in_array(SGL2_ADMIN, $aRoles)) {
+            $aRoles[] = SGL2_ADMIN;
         }
         if (!isset($_SESSION['rid'])) {
             $ret = false;
@@ -513,7 +513,7 @@ class SGL_Session
     {
         return defined('SID') && SID !=''
             ? SID
-            : SGL_Config2::get('cookie.name') . '='. session_id();
+            : SGL2_Config2::get('cookie.name') . '='. session_id();
     }
 
     /**
@@ -534,14 +534,14 @@ class SGL_Session
         $_SESSION = array();
 
         //  clear session cookie so theme comes from DB and not session
-        setcookie(  SGL_Config2::get('cookie.name'), null, 0, SGL_Config2::get('cookie.path'),
-                    SGL_Config2::get('cookie.domain'), SGL_Config2::get('cookie.secure'));
-        //  clear SGL_REMEMBER_ME cookie to actually destroy the permanent session
-        if (SGL_Config2::get('cookie.rememberMeEnabled')) {
-            $ok = setcookie('SGL_REMEMBER_ME', null, 0, SGL_Config2::get('cookie.path'),
-                SGL_Config2::get('cookie.domain'), SGL_Config2::get('cookie.secure'));
+        setcookie(  SGL2_Config2::get('cookie.name'), null, 0, SGL2_Config2::get('cookie.path'),
+                    SGL2_Config2::get('cookie.domain'), SGL2_Config2::get('cookie.secure'));
+        //  clear SGL2_REMEMBER_ME cookie to actually destroy the permanent session
+        if (SGL2_Config2::get('cookie.rememberMeEnabled')) {
+            $ok = setcookie('SGL2_REMEMBER_ME', null, 0, SGL2_Config2::get('cookie.path'),
+                SGL2_Config2::get('cookie.domain'), SGL2_Config2::get('cookie.secure'));
         }
-        new SGL_Session();
+        new SGL2_Session();
     }
 
     /**
@@ -561,7 +561,7 @@ class SGL_Session
                 unset($ret);
             }
             return true;
-        } elseif (SGL_Session::getRoleId() == SGL_GUEST && !isset($ret)) {
+        } elseif (SGL2_Session::getRoleId() == SGL2_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAnonRequest']);
             if (!isset($_SESSION['isFirstAnonRequest'])) {
                 $_SESSION['isFirstAnonRequest'] = true;
@@ -587,7 +587,7 @@ class SGL_Session
                 unset($ret);
             }
             return true;
-        } elseif (SGL_Session::getRoleId() > SGL_GUEST && !isset($ret)) {
+        } elseif (SGL2_Session::getRoleId() > SGL2_GUEST && !isset($ret)) {
             $ret = !isset($_SESSION['isFirstAuthRequest']);
             if (!isset($_SESSION['isFirstAuthRequest'])) {
                 $_SESSION['isFirstAuthRequest'] = true;

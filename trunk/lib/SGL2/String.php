@@ -45,7 +45,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.14 $
  */
-class SGL_String
+class SGL2_String
 {
 
     public static function trimWhitespace($var)
@@ -56,7 +56,7 @@ class SGL_String
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::trimWhitespace($value);
+                $newArray[$key] = SGL2_String::trimWhitespace($value);
             }
             return $newArray;
         } else {
@@ -80,11 +80,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL_String::trimWhitespace($var);
+        $var = SGL2_String::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::clean($value);
+                $newArray[$key] = SGL2_String::clean($value);
             }
             return $newArray;
         } else {
@@ -97,11 +97,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL_String::trimWhitespace($var);
+        $var = SGL2_String::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::removeJs($value);
+                $newArray[$key] = SGL2_String::removeJs($value);
             }
             return $newArray;
         } else {
@@ -129,7 +129,7 @@ class SGL_String
      */
     function tidy($html, $logErrors = false)
     {
-        if (       !SGL_Config2::get('site.tidyhtml')
+        if (       !SGL2_Config2::get('site.tidyhtml')
                 || !extension_loaded('tidy')) {
             return $html;
         }
@@ -153,7 +153,7 @@ class SGL_String
     }
 
     /**
-     * Looks up key in current lang dictionary (SGL_Translation3) or specific language
+     * Looks up key in current lang dictionary (SGL2_Translation3) or specific language
      * and returns target value.
      *
      * @param string $key       Translation term
@@ -165,7 +165,7 @@ class SGL_String
      */
     public static function translate($key, $filter = false, $aParams = array(), $langCode)
     {
-        $trans = SGL_Translation3::singleton('array');
+        $trans = SGL2_Translation3::singleton('array');
         if ($ret = $trans->translate($langCode, $key)) {
             if (!is_array($ret) && $filter && function_exists($filter)) {
                 if (is_object($aParams)) {
@@ -191,7 +191,7 @@ class SGL_String
             }
             return $ret;
         } else {
-            $key = SGL_Config2::get('debug.showUntranslated')
+            $key = SGL2_Config2::get('debug.showUntranslated')
                 ? '>' . $key . '<'
                 : $key;
             return $key;
@@ -262,13 +262,13 @@ class SGL_String
      * @return string Correctly shortened text.
      * @todo move to plugin
      */
-    public function summarise($str, $limit = 50, $element = SGL_WORD,
+    public function summarise($str, $limit = 50, $element = SGL2_WORD,
         $appendString = ' ...')
     {
         switch ($element) {
 
         // strip by chars
-        case SGL_CHAR:
+        case SGL2_CHAR:
             if (extension_loaded('mbstring')) {
                 $enc = mb_detect_encoding($str);
                 $len = mb_strlen($str, $enc);
@@ -284,7 +284,7 @@ class SGL_String
             break;
 
         // strip by words
-        case SGL_WORD:
+        case SGL2_WORD:
             $aWords = explode(' ', $str);
             if (count($aWords) > $limit) {
                 $ret = implode(' ', array_slice($aWords, 0, $limit)) . $appendString;
@@ -343,7 +343,7 @@ class SGL_String
 
     public static function toValidFileName($origName)
     {
-        return SGL_String::dirify($origName);
+        return SGL2_String::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
@@ -445,7 +445,7 @@ class SGL_String
      * @todo make it work with cyrillic chars
      * @todo make it work with non utf-8 encoded strings
      *
-     * @see SGL_String::isCyrillic()
+     * @see SGL2_String::isCyrillic()
      *
      * @param string $str
      *
@@ -518,7 +518,7 @@ class SGL_String
         if (is_numeric($string)) {
             $ret = (int)$string;
         }
-        if (SGL_Inflector::isConstant($string)) {
+        if (SGL2_Inflector::isConstant($string)) {
             $const = str_replace("'", '', $string);
             if (defined($const)) {
                 $ret = constant($const);

@@ -177,11 +177,11 @@ class VariousTest extends PHPUnit_Framework_TestCase
 
     function test_hasAdminGui()
     {
-        $rid = SGL_Session::getRoleId();
-        if ($rid == SGL_ADMIN) {
-            $this->assertTrue(SGL_Session::hasAdminGui());
+        $rid = SGL2_Session::getRoleId();
+        if ($rid == SGL2_ADMIN) {
+            $this->assertTrue(SGL2_Session::hasAdminGui());
         } else {
-            $this->assertFalse(SGL_Session::hasAdminGui());
+            $this->assertFalse(SGL2_Session::hasAdminGui());
         }
     }
 

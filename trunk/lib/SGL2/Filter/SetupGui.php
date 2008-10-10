@@ -4,29 +4,29 @@
  *
  * @package Task
  */
-class SGL_Filter_SetupGui extends SGL_DecorateProcess
+class SGL2_Filter_SetupGui extends SGL2_DecorateProcess
 {
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         $this->processRequest->process($input, $output);
 
-        if ($input->getType() != SGL_Request::CLI) {
-            $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
+        if ($input->getType() != SGL2_Request::CLI) {
+            $mgrName = SGL2_Inflector::caseFix(get_class($output->manager));
             $adminGuiAllowed = $adminGuiRequested = false;
 
             //  setup which GUI to load depending on user and manager
             $output->adminGuiAllowed = false;
 
             // first check if userRID allows to switch to adminGUI
-            if (SGL_Session::hasAdminGui()) {
+            if (SGL2_Session::hasAdminGui()) {
                 $adminGuiAllowed = true;
             }
 
-            $c = &SGL_Config::singleton();
+            $c = &SGL2_Config::singleton();
             $conf = $c->getAll();
             if (!$c->get($mgrName)) {
                 //  get current module
-                $req = SGL_Request::singleton();
+                $req = SGL2_Request::singleton();
                 $moduleName = $req->getModuleName();
 
                 //  load current module's config if not present
@@ -34,7 +34,7 @@ class SGL_Filter_SetupGui extends SGL_DecorateProcess
 
                 if (PEAR::isError($conf)) {
                     SGL::raiseError('could not locate module\'s config file',
-                        SGL_ERROR_NOFILE);
+                        SGL2_ERROR_NOFILE);
                 }
             }
             // then check if manager requires to switch to adminGUI

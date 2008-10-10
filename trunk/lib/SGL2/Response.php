@@ -1,5 +1,5 @@
 <?php
-class SGL_Response
+class SGL2_Response
 {
     /**
      * Response data
@@ -118,14 +118,14 @@ class SGL_Response
     function redirect($url = '')
     {
         //  check for absolute uri as specified in RFC 2616
-        SGL_Url2::toAbsolute($url);
+        SGL2_Url2::toAbsolute($url);
 
         //  add a slash if one is not present
         if (substr($url, -1) != '/') {
             $url .= '/';
         }
         //  determine is session propagated in cookies or URL
-        SGL_Url2::addSessionInfo($url);
+        SGL2_Url2::addSessionInfo($url);
 
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
@@ -150,11 +150,11 @@ class SGL_Response
         unset($aData['x'], $aData['_t'], $aData['this']);
         $resp = (object) $aData;
 
-        $view = new SGL_View_HtmlSimple($resp, $templateEngine);
+        $view = new SGL2_View_HtmlSimple($resp, $templateEngine);
         echo $view->render();
 
         //  suppress error notices in templates
-        //SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
+        //SGL::setNoticeBehaviour(SGL2_NOTICES_DISABLED);
     }
 }
 ?>

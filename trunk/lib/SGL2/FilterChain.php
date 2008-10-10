@@ -6,7 +6,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_FilterChain
+class SGL2_FilterChain
 {
     public $aFilters;
     protected $_target;
@@ -27,7 +27,7 @@ class SGL_FilterChain
         return $this->_target;
     }
 
-    public function doFilter(SGL_Request $input, SGL_Response $output)
+    public function doFilter(SGL2_Request $input, SGL2_Response $output)
     {
         array_push($this->aFilters, $this->getTarget());
         $filters = '';

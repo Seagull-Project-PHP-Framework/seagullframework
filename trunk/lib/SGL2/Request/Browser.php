@@ -1,6 +1,6 @@
 <?php
 
-class SGL_Request_Browser
+class SGL2_Request_Browser
 {
     public function init()
     {

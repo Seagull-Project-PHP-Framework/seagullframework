@@ -3,9 +3,9 @@
 /**
  * @package Task
  */
-class SGL_Filter_BuildHtmlView extends SGL_DecorateProcess
+class SGL2_Filter_BuildHtmlView extends SGL2_DecorateProcess
 {
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -19,7 +19,7 @@ class SGL_Filter_BuildHtmlView extends SGL_DecorateProcess
         $templateEngine = isset($output->templateEngine)
             ? $output->templateEngine
             : null;
-        $view = new SGL_View_HtmlSimple($output, $templateEngine);
+        $view = new SGL2_View_HtmlSimple($output, $templateEngine);
         $output->setBody($view->render());
     }
 }

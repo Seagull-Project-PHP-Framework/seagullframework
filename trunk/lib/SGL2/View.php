@@ -6,30 +6,30 @@
  * @abstract
  * @package SGL
  */
-abstract class SGL_View
+abstract class SGL2_View
 {
     /**
      * Response object.
      *
-     * @var SGL_Response
+     * @var SGL2_Response
      */
     public $data;
 
     /**
      * Reference to renderer strategy.
      *
-     * @var SGL_OutputRendererStrategy
+     * @var SGL2_OutputRendererStrategy
      */
     public $rendererStrategy;
 
     /**
      * Constructor.
      *
-     * @param SGL_Response $data
-     * @param SGL_OutputRendererStrategy $rendererStrategy
-     * @return SGL_View
+     * @param SGL2_Response $data
+     * @param SGL2_OutputRendererStrategy $rendererStrategy
+     * @return SGL2_View
      */
-    public function __construct($response, SGL_OutputRendererStrategy $rendererStrategy)
+    public function __construct($response, SGL2_OutputRendererStrategy $rendererStrategy)
     {
         $this->data = $response;
         $this->rendererStrategy = $rendererStrategy;
@@ -38,16 +38,16 @@ abstract class SGL_View
     /**
      * Post processing tasks specific to view type.
      *
-     * @param SGL_View $view
+     * @param SGL2_View $view
      * @return boolean
      */
-    abstract public function postProcess(SGL_View $view);
+    abstract public function postProcess(SGL2_View $view);
 
 
     /**
      * Delegates rendering strategy based on view.
      *
-     * @param SGL_View $this
+     * @param SGL2_View $this
      * @return string   Rendered output data
      */
     public function render()

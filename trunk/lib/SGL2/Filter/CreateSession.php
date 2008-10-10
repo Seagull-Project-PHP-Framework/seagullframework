@@ -6,11 +6,11 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Filter_CreateSession extends SGL_DecorateProcess
+class SGL2_Filter_CreateSession extends SGL2_DecorateProcess
 {
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        SGL_Registry::set('session', new SGL_Session());
+        SGL2_Registry::set('session', new SGL2_Session());
         $this->processRequest->process($input, $output);
     }
 }

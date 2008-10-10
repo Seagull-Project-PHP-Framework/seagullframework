@@ -6,11 +6,11 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Controller_Main extends SGL_ProcessRequest
+class SGL2_Controller_Main extends SGL2_ProcessRequest
 {
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        $ctlr = SGL_Registry::get('controller');
+        $ctlr = SGL2_Registry::get('controller');
 
         //  process data if valid
         if ($ctlr->validate($input)) {

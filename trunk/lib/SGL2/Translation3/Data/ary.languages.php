@@ -76,7 +76,7 @@
                     'zh-utf-8'  => array('zh|chinese simplified', 'chinese_simplified-utf-8', 'zh'),
     );
 
-    function SGL_cmp(&$a, $b)
+    function SGL2_cmp(&$a, $b)
     {
         return (strcmp($a[1], $b[1]));
     }

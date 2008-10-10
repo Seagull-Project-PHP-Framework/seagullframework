@@ -40,7 +40,7 @@ class ArrayTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($ret['db']['type'] == $confOld['db']['type']);
 
         //  Miha's improve method gives expected results
-        $ret = SGL_Array2::mergeReplace($confOld, $confNew);
+        $ret = SGL2_Array2::mergeReplace($confOld, $confNew);
         $this->assertTrue($ret['db']['type'] == $confNew['db']['type']);
         $this->assertFalse($ret['db']['type'] == $confOld['db']['type']);
     }

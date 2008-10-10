@@ -48,7 +48,7 @@
  * @version $Revision: 1.19 $
  * @abstract
  */
-abstract class SGL_Controller_Page
+abstract class SGL2_Controller_Page
 {
     /**
      * Page master-template name.
@@ -92,26 +92,26 @@ abstract class SGL_Controller_Page
      */
     public function __construct()
     {
-        $this->masterTemplate = SGL_Config2::get('site.masterTemplate');
+        $this->masterTemplate = SGL2_Config2::get('site.masterTemplate');
     }
 
     /**
      * Specific validations are implemented in sub classes.
      *
-     * @param   SGL_Request     $req    SGL_Request object received from user agent
+     * @param   SGL2_Request     $req    SGL2_Request object received from user agent
      * @return  boolean
      */
-    abstract public function validate(SGL_Request $input);
+    abstract public function validate(SGL2_Request $input);
 
     /**
      * Super class for implementing authorisation checks, delegates specific processing
      * to child classses.
      *
-     * @param   SGL_Registry    $input  Input object received from validate()
-     * @param   SGL_Output      $output Processed result
+     * @param   SGL2_Registry    $input  Input object received from validate()
+     * @param   SGL2_Output      $output Processed result
      * @return  mixed           true on success or PEAR_Error on failure
      */
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         $ctlrName = get_class($this);
 
@@ -122,7 +122,7 @@ abstract class SGL_Controller_Page
         {
             //  determine global manager perm, ie that is valid for all actions
             //  in the mgr
-            $ctlrPerm = SGL_String::pseudoConstantToInt('SGL_PERMS_' .
+            $ctlrPerm = SGL2_String::pseudoConstantToInt('SGL2_PERMS_' .
                 strtoupper($ctlrName));
 
             //  check authorisation
@@ -135,26 +135,26 @@ abstract class SGL_Controller_Page
                     list($className, $methodName) = $ok;
 
                     //  make sure no infinite redirections
-                    $lastRedirected = SGL_Session::get('redirected');
+                    $lastRedirected = SGL2_Session::get('redirected');
                     $now = time();
-                    SGL_Session::set('redirected', $now);
+                    SGL2_Session::set('redirected', $now);
 
                     //  if redirects happen less than 2 seconds apart, and there are greater
                     //  than 2 of them, recursion is happening
                     if ($now - $lastRedirected < 2) {
-                        $redirectTimes = SGL_Session::get('redirectedTimes');
+                        $redirectTimes = SGL2_Session::get('redirectedTimes');
                         $redirectTimes ++;
-                        SGL_Session::set('redirectedTimes', $redirectTimes);
+                        SGL2_Session::set('redirectedTimes', $redirectTimes);
                     } else {
-                        SGL_Session::set('redirectedTimes', 0);
+                        SGL2_Session::set('redirectedTimes', 0);
                     }
-                    if (SGL_Session::get('redirectedTimes') > 2) {
+                    if (SGL2_Session::get('redirectedTimes') > 2) {
                         throw new Exception('infinite loop detected, clear cookies and check perms',
-                            SGL_ERROR_RECURSION);
+                            SGL2_ERROR_RECURSION);
                     }
                    // redirect to current or default screen
 //SGL::raiseMsg('authorisation failed');
-                    $aHistory = SGL_Session::get('aRequestHistory');
+                    $aHistory = SGL2_Session::get('aRequestHistory');
                     $aLastRequest = isset($aHistory[1]) ? $aHistory[1] : false;
                     if ($aLastRequest) {
                         $aRedir = array(
@@ -164,10 +164,10 @@ abstract class SGL_Controller_Page
                     } else {
                         $aRedir = $this->getDefaultPageParams();
                     }
-                    SGL_Response::redirect($aRedir);
+                    SGL2_Response::redirect($aRedir);
                 } else {
                     throw new Exception('unexpected response during authorisation check',
-                        SGL_ERROR_INVALIDAUTH);
+                        SGL2_ERROR_INVALIDAUTH);
                 }
             }
         }
@@ -184,23 +184,23 @@ abstract class SGL_Controller_Page
      * Parent page display method.
      *
      * @access  public
-     * @param   SGL_Output  $output Input object that has passed through validation
+     * @param   SGL2_Output  $output Input object that has passed through validation
      * @return  void
      */
-    abstract public function display(SGL_Response $output);
+    abstract public function display(SGL2_Response $output);
 
     /**
      * Perform authorisation on specified action methods.
      *
      * @param integer $ctlrPerm
      * @param string  $ctlrName
-     * @param SGL_Request $input
+     * @param SGL2_Request $input
      * @return mixed true on success, array of class/method names on failure
      */
     protected function _authorise($ctlrPerm, $ctlrName, $input)
     {
         // if user has no global controller perms check for each action
-        if (!SGL_Session::hasPerms($ctlrPerm) && $input->getType() != SGL_Request::CLI) {
+        if (!SGL2_Session::hasPerms($ctlrPerm) && $input->getType() != SGL2_Request::CLI) {
 
             // and if chained methods to be called are allowed
             $ret = true;
@@ -213,11 +213,11 @@ abstract class SGL_Controller_Page
                 $methodName = '_cmd_' . $methodName;
 
                 //  build relevant perms constant
-                $perm = SGL_String::pseudoConstantToInt('SGL_PERMS_' .
+                $perm = SGL2_String::pseudoConstantToInt('SGL2_PERMS_' .
                     strtoupper($ctlrName . $methodName));
 
                 //  return false if user doesn't have method specific or classwide perms
-                if (SGL_Session::hasPerms($perm) === false) {
+                if (SGL2_Session::hasPerms($perm) === false) {
                     $ret = array($ctlrName, $methodName);
                     break;
                 }

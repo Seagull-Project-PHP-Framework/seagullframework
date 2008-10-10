@@ -102,7 +102,7 @@ class SGL2_File
     {
         if (!is_dir($dest)) {
             if (!is_writable(dirname($dest))) {
-                return SGL::raiseError('filesystem not writable', SGL_ERROR_INVALIDFILEPERMS);
+                return SGL::raiseError('filesystem not writable', SGL2_ERROR_INVALIDFILEPERMS);
             }
             mkdir($dest);
         }
@@ -116,14 +116,14 @@ class SGL2_File
                         if (!is_file($dest . '/' . $file) || $overwrite) {
                             if (!@copy($path, $dest . '/' . $file)){
                                 return SGL::raiseError('filesystem not writable',
-                                    SGL_ERROR_INVALIDFILEPERMS);
+                                    SGL2_ERROR_INVALIDFILEPERMS);
                             }
                         }
                     } elseif (is_dir($path)) {
                         if (!is_dir($dest . '/' . $file)) {
                             if (!is_writable(dirname($dest . '/' . $file))) {
                                 return SGL::raiseError('filesystem not writable',
-                                    SGL_ERROR_INVALIDFILEPERMS);
+                                    SGL2_ERROR_INVALIDFILEPERMS);
                             }
                             mkdir($dest . '/' . $file); // make subdirectory before subdirectory is copied
                         }

@@ -1,13 +1,13 @@
 <?php
 
-class SGL_Router
+class SGL2_Router
 {
     public function __construct()
     {
         $this->init();
     }
 
-    public function route(SGL_Request $req)
+    public function route(SGL2_Request $req)
     {
         foreach ($this->_aData as $k => $v) {
             $req->set($k, $v);
@@ -21,24 +21,24 @@ class SGL_Router
      */
     public function init()
     {
-        if (SGL_Config2::get('site.frontScriptName')) {
+        if (SGL2_Config2::get('site.frontScriptName')) {
             $qs = isset($_SERVER['PATH_INFO'])
                 ? $_SERVER['PATH_INFO']
                 : '/';
         } else {
-            $baseUrl       = SGL_Config2::get('site.baseUrl');
+            $baseUrl       = SGL2_Config2::get('site.baseUrl');
             list($proto, ) = explode('://', $baseUrl, 2);
             $host          = $_SERVER['HTTP_HOST'];
             $url           = $proto . '://' . $host . $_SERVER['REQUEST_URI'];
             $qs            = urldecode(str_replace($baseUrl, '', $url));
         }
 
-        $defModule  = SGL_Config2::get('site.defaultModule');
-        $defManager = SGL_Config2::get('site.defaultManager');
-        $defParams  = SGL_Config2::get('site.defaultParams');
+        $defModule  = SGL2_Config2::get('site.defaultModule');
+        $defManager = SGL2_Config2::get('site.defaultManager');
+        $defParams  = SGL2_Config2::get('site.defaultParams');
 
         // show lang in URL
-        $prependLang  = SGL_Config2::get('translation.langInUrl');
+        $prependLang  = SGL2_Config2::get('translation.langInUrl');
         $prependRegex = $prependLang ? ':lang/' : '';
 
         // Connect to custom routes.
@@ -52,7 +52,7 @@ class SGL_Router
         // create mapper
         $m = new Horde_Routes_Mapper(array(
             'explicit'       => true, // do not connect to Horder defaults
-            'controllerScan' => array('SGL_Router', '_getAvailableManagers'),
+            'controllerScan' => array('SGL2_Router', '_getAvailableManagers'),
         ));
 
         foreach ($aRoutes as $aRouteData) {
@@ -134,12 +134,12 @@ class SGL_Router
             $oRoute->encoding = null;
         }
 
-        // SGL_URL2
-        $url = new SGL_Url2($aQueryData);
+        // SGL2_URL2
+        $url = new SGL2_Url2($aQueryData);
         $url->setRoutes(new Horde_Routes_Utils($m));
 
         // assign to registry
-        SGL_Registry::set('url', $url);
+        SGL2_Registry::set('url', $url);
 
         return true;
     }
@@ -157,10 +157,10 @@ class SGL_Router
     {
         return array();
 
-        $aModules  = SGL_Util::getAllModuleDirs();
+        $aModules  = SGL2_Util::getAllModuleDirs();
         $aManagers = array();
         foreach ($aModules as $moduleName) {
-            $configFile = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
+            $configFile = SGL2_MOD_DIR . '/' . $moduleName . '/conf.ini';
             if (file_exists($configFile)) {
                 $aDefault  = array(ucfirst($moduleName) . 'Mgr');
                 $aSections = array_keys(parse_ini_file($configFile, true));
@@ -216,11 +216,11 @@ class SGL_Router
      */
     protected function _getCustomRoutes()
     {
-        $routesFile = SGL_VAR_DIR . '/routes.php';
+        $routesFile = SGL2_VAR_DIR . '/routes.php';
         if (!file_exists($routesFile)) {
             // copy the default configuration file to the users tmp directory
             try {
-                copy(SGL_ETC_DIR . '/routes.php.dist', $routesFile);
+                copy(SGL2_ETC_DIR . '/routes.php.dist', $routesFile);
             } catch (Exception $e) {
                 throw new Exception('error copying routes file, is sgl/var writable?');
             }

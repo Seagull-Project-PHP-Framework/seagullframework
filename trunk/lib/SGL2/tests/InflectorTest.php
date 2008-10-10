@@ -12,7 +12,7 @@ class InflectorTest extends PHPUnit_Framework_TestCase
     function testGetTitleFromCamelCase()
     {
         $camelWord = 'thisIsAnotherCamelWord';
-        $ret = SGL_Inflector::getTitleFromCamelCase($camelWord);
+        $ret = SGL2_Inflector::getTitleFromCamelCase($camelWord);
         $this->assertEquals($ret, 'This Is Another Camel Word');
     }
 
@@ -25,7 +25,7 @@ class InflectorTest extends PHPUnit_Framework_TestCase
         $expected   = 'hereIsAStringToCamelise';
 
         foreach ($aControl as $k => $control) {
-            $ret = SGL_Inflector::camelise($control);
+            $ret = SGL2_Inflector::camelise($control);
             $this->assertEquals($expected, $ret);
         }
     }
@@ -33,46 +33,46 @@ class InflectorTest extends PHPUnit_Framework_TestCase
     function testIsCamelCase()
     {
         $str = 'thisIsCamel';
-        $this->assertTrue(SGL_Inflector::isCamelCase($str));
+        $this->assertTrue(SGL2_Inflector::isCamelCase($str));
 
         $str = 'ThisIsCamel';
-        $this->assertTrue(SGL_Inflector::isCamelCase($str));
+        $this->assertTrue(SGL2_Inflector::isCamelCase($str));
 
         $str = 'this_Is_not_Camel';
-        $this->assertFalse(SGL_Inflector::isCamelCase($str));
+        $this->assertFalse(SGL2_Inflector::isCamelCase($str));
 
         $str = 'thisisnotcamel';
-        $this->assertFalse(SGL_Inflector::isCamelCase($str));
+        $this->assertFalse(SGL2_Inflector::isCamelCase($str));
 
         $str = 'Thisisnotcamel';
-        $this->assertFalse(SGL_Inflector::isCamelCase($str));
+        $this->assertFalse(SGL2_Inflector::isCamelCase($str));
 
         $str = 'thisisnotcameL';
-        $this->assertFalse(SGL_Inflector::isCamelCase($str));
+        $this->assertFalse(SGL2_Inflector::isCamelCase($str));
     }
 
     function testUrlContainsDuplicates()
     {
         $url = '/index.php/faq/faq/';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue(SGL2_Inflector::urlContainsDuplicates($url));
 
         $url = 'http://example.com/index.php/foo/foo';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue(SGL2_Inflector::urlContainsDuplicates($url));
 
         //  ignores whitespace
         $url = 'http://example.com/index.php/foo/foo /';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue(SGL2_Inflector::urlContainsDuplicates($url));
 
         $url = 'http://example.com/index.php/foo/fooo';
-        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertFalse(SGL2_Inflector::urlContainsDuplicates($url));
 
         //  case sensitive
         $url = 'FOO/foo';
-        $this->assertFalse(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertFalse(SGL2_Inflector::urlContainsDuplicates($url));
 
         //  minimal
         $url = 'baz/baz';
-        $this->assertTrue(SGL_Inflector::urlContainsDuplicates($url));
+        $this->assertTrue(SGL2_Inflector::urlContainsDuplicates($url));
     }
 
     function testIsUrlSimplified1()
@@ -80,26 +80,26 @@ class InflectorTest extends PHPUnit_Framework_TestCase
         //  basic example
         $url = 'example.com/index.php/faq';
         $sectionName = 'example.com/index.php/faq/faq';
-        $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
+        $this->assertTrue(SGL2_Inflector::isUrlSimplified($url, $sectionName));
 
         //  minimal
         $url = 'index.php/faq';
         $sectionName = 'index.php/faq/faq';
-        $this->assertTrue(SGL_Inflector::isUrlSimplified($url, $sectionName));
+        $this->assertTrue(SGL2_Inflector::isUrlSimplified($url, $sectionName));
     }
 
     function testIsUrlSimplified2()
     {
         $url = 'contactus/contactus';
         $sectionName = $url;
-        $this->assertFalse(SGL_Inflector::isUrlSimplified($url, $sectionName));
+        $this->assertFalse(SGL2_Inflector::isUrlSimplified($url, $sectionName));
     }
 
     function testGetManagerNameFromSimplifiedName()
     {
         $url = 'foobar';
         //  set key so caseFix can work
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = SGL2_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEquals($ret, 'FoobarMgr');
 
         //  test case sensitivity
@@ -107,50 +107,50 @@ class InflectorTest extends PHPUnit_Framework_TestCase
 
         //  cannot deal with arbitrary bumpy caps
         $url = 'foobarbaz';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = SGL2_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertNotEquals($ret, 'FooBarBazMgr'); //  returns FoobarbazMgr
 
         //  does not fix incorrect case
         $url = 'FoObArMGr';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = SGL2_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertNotEquals($ret, 'FoobarMgr'); // returns FoObArMGr
 
         $url = 'FooBarMgr';
-        $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $ret = SGL2_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEquals($ret, 'FooBarMgr');
     }
 
     function testGetSimplifiedNameFromManagerName()
     {
         $url = 'FooBarMgr';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = SGL2_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEquals($ret, 'foobar');
 
         $url = 'FooBar';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = SGL2_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEquals($ret, 'foobar');
 
         $url = 'FooBarMgr.php';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = SGL2_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEquals($ret, 'foobar');
 
         $url = 'FooBar.php';
-        $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
+        $ret = SGL2_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEquals($ret, 'foobar');
     }
 
     function testIsConstant()
     {
-        $this->assertTrue(SGL_Inflector::isConstant('THIS_IS_A_CONSTANT'));
-        $this->assertTrue(SGL_Inflector::isConstant('CONSTANT'));
-        $this->assertTrue(SGL_Inflector::isConstant("'CONSTANT'"));
-        $this->assertFalse(SGL_Inflector::isConstant('CONSTANTa'));
-        $this->assertFalse(SGL_Inflector::isConstant('1'));
-        $this->assertFalse(SGL_Inflector::isConstant(''));
-        $this->assertFalse(SGL_Inflector::isConstant('127.0.0.1'));
-        $this->assertFalse(SGL_Inflector::isConstant('/'));
-        $this->assertFalse(SGL_Inflector::isConstant('SGLSESSID'));
-        $this->assertFalse(SGL_Inflector::isConstant('CUR ADM OUR NOR STA NID'));
+        $this->assertTrue(SGL2_Inflector::isConstant('THIS_IS_A_CONSTANT'));
+        $this->assertTrue(SGL2_Inflector::isConstant('CONSTANT'));
+        $this->assertTrue(SGL2_Inflector::isConstant("'CONSTANT'"));
+        $this->assertFalse(SGL2_Inflector::isConstant('CONSTANTa'));
+        $this->assertFalse(SGL2_Inflector::isConstant('1'));
+        $this->assertFalse(SGL2_Inflector::isConstant(''));
+        $this->assertFalse(SGL2_Inflector::isConstant('127.0.0.1'));
+        $this->assertFalse(SGL2_Inflector::isConstant('/'));
+        $this->assertFalse(SGL2_Inflector::isConstant('SGLSESSID'));
+        $this->assertFalse(SGL2_Inflector::isConstant('CUR ADM OUR NOR STA NID'));
     }
 }
 

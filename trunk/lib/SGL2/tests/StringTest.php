@@ -13,35 +13,35 @@ class StringTest extends UnitTestCase
     {
         $target = 'these are legal chars';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)));
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)));
 
         $target = 'contains illegal " character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal | character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal & character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal ~ character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal ! character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal ( character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
 
         $target = 'contains illegal ) character';
         $targetLen = strlen($target);
-        $this->assertEqual($targetLen, strlen(SGL_String::stripIniFileIllegalChars($target)) +1);
+        $this->assertEqual($targetLen, strlen(SGL2_String::stripIniFileIllegalChars($target)) +1);
     }
 
     function testRemoveEmptyElements()
@@ -59,7 +59,7 @@ class StringTest extends UnitTestCase
                 0 => 'foo',
                 2 => -1,
                 );
-        $arr = SGL_Array::removeBlanks($arr);
+        $arr = SGL2_Array::removeBlanks($arr);
         $this->assertEqual($arr, $target);
     }
 
@@ -72,7 +72,7 @@ class StringTest extends UnitTestCase
         $aExpected[] = '_here_is_a_sentence-like_string';
         $aExpected[] = '_here_is_a_sentence-like_string';
         foreach ($aControl as $k => $control) {
-            $ret = SGL_String::dirify($control);
+            $ret = SGL2_String::dirify($control);
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
@@ -80,12 +80,12 @@ class StringTest extends UnitTestCase
     function test_pseudoConstantToInt()
     {
         define('TMP_CONSTANT', 23);
-        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'TMP_CONSTANT'")));
-        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('TMP_CONSTANT')));
-        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("23")));
-        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt(23)));
-        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt("'UNDEFINED_TEST_CONSTANT'")));
-        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL_String::pseudoConstantToInt('UNDEFINED_TEST_CONSTANT')));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt("'TMP_CONSTANT'")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt('TMP_CONSTANT')));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt("23")));
+        $this->assertTrue($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt(23)));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt("'UNDEFINED_TEST_CONSTANT'")));
+        $this->assertFalse($this->_isValidPseudoConstantToIntRetVal(SGL2_String::pseudoConstantToInt('UNDEFINED_TEST_CONSTANT')));
     }
 
     function _isValidPseudoConstantToIntRetVal($val)
@@ -100,7 +100,7 @@ class StringTest extends UnitTestCase
         $aExpected[] = 'hsdfsdY_sdfdfsSDDFD';
         $aExpected[] = 'dsdfsdY_sdfdfsSDDFD';
         foreach ($aControl as $k => $control) {
-            $ret = SGL_String::toValidVariableName($control);
+            $ret = SGL2_String::toValidVariableName($control);
             $this->assertEqual($aExpected[$k], $ret);
         }
     }
@@ -109,14 +109,14 @@ class StringTest extends UnitTestCase
     {
         // with a string
         $string = '<p>here is a string with tags<p>';
-        $clean  = SGL_String::clean($string);
+        $clean  = SGL2_String::clean($string);
         $this->assertEqual($clean, 'here is a string with tags');
         // recursive on an array
         $array  = array(
             'foo1'  => '<p>here is a string with tags<p>',
             'foo2'  => '<span>bar2</span>'
         );
-        $cleanArray = SGL_String::clean($array);
+        $cleanArray = SGL2_String::clean($array);
         $expectedArray = array(
             'foo1'  => 'here is a string with tags',
             'foo2'  => 'bar2'
@@ -130,7 +130,7 @@ class StringTest extends UnitTestCase
             ),
             'foo2'  => '<p>Another tagged string</p>'
         );
-        $cleanArray = SGL_String::clean($array);
+        $cleanArray = SGL2_String::clean($array);
         $expectedArray = array(
             'foo1'  => array(
                 'bar1' => 'here is a string with tags',
@@ -145,7 +145,7 @@ class StringTest extends UnitTestCase
     {
         $str = "äöüßÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûüÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÖØÙÚÛÜÝàáâãäåæçèéêëìíîïðñòóôöøùúûüýĆćČčŁłŃńŘřŚśš";
         $this->assertEqual(mb_detect_encoding($str), 'UTF-8');
-        $ret = SGL_String::replaceAccents($str);
+        $ret = SGL2_String::replaceAccents($str);
         $pattern = '/[^A-Z^a-z^0-9()\s]/';
         $this->assertNoUnwantedPattern($pattern, $ret);
         $this->assertEqual(mb_detect_encoding($ret), 'ASCII');
@@ -159,7 +159,7 @@ class StringTest extends UnitTestCase
         for ($i = $start; $i < $end; $i++) {
             $str .= "&#$i;";
         }
-        $ret = SGL_String::replaceAccents($str);
+        $ret = SGL2_String::replaceAccents($str);
         $pattern = '/[^A-Z^a-z^0-9()\s]/';
         $this->assertNoUnwantedPattern($pattern, $ret);
     }

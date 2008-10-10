@@ -43,7 +43,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Inflector
+class SGL2_Inflector
 {
     /**
     * Returns true if querystring has been simplified.
@@ -62,14 +62,14 @@ class SGL_Inflector
     public function isUrlSimplified($querystring, $sectionName)
     {
         if (!(empty($querystring))) {
-            if (SGL_Inflector::urlContainsDuplicates($querystring)) {
+            if (SGL2_Inflector::urlContainsDuplicates($querystring)) {
                 $ret = false;
             } else {
                 $aUrlPieces = explode('/', $querystring);
                 $moduleName = $aUrlPieces[0];
                 $aSections =  explode('/', $sectionName);
                 $ret = in_array($moduleName, $aSections)
-                    && (SGL_Inflector::urlContainsDuplicates($sectionName));
+                    && (SGL2_Inflector::urlContainsDuplicates($sectionName));
             }
         } else {
             $ret = false;
@@ -180,7 +180,7 @@ class SGL_Inflector
 
     public static function getTitleFromCamelCase($camelCaseWord)
     {
-        if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
+        if (!SGL2_Inflector::isCamelCase($camelCaseWord)) {
             return $camelCaseWord;
         }
         $ret = '';

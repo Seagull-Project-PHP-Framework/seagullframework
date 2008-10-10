@@ -8,7 +8,7 @@
  * @author Julien Casanova <julien@soluo.fr>
  */
 
-class SGL_Filter_SetupLangSupport2 extends SGL_DecorateProcess
+class SGL2_Filter_SetupLangSupport2 extends SGL2_DecorateProcess
 {
     /**
      * Initialises multi-language support.
@@ -16,14 +16,14 @@ class SGL_Filter_SetupLangSupport2 extends SGL_DecorateProcess
      * langCodeCharset still set in prefs for BC, ie
      *  $_SESSION[aPrefs][language] => es-utf-8
      *
-     * @param SGL_Request $input
-     * @param SGL_Response $output
+     * @param SGL2_Request $input
+     * @param SGL2_Response $output
      */
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         //  sets default language for framework, checks for lang param used to set
         //  user lang
-        $trans = SGL_Translation3::singleton('array');
+        $trans = SGL2_Translation3::singleton('array');
         try {
             $trans->loadDefaultDictionaries();
         } catch (Exception $e) {
