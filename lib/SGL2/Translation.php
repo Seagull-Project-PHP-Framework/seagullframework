@@ -55,10 +55,8 @@ class SGL2_Translation
             // BC with SGL translation config option
             $driver = ($driver == 'file') ? 'array' : $driver;
         }
-        $className = 'SGL2_Translation_Driver_' . $driver;
-        $fileName = 'SGL/Translation3/Driver/' . ucfirst($driver) . '.php';
-        require_once $fileName;
-        if (!class_exists($className)) {
+        $className = 'SGL2_Translation_Driver_' . ucfirst($driver);
+        if (!SGL2_File::exists(SGL2_Inflector::classToFile($className))) {
             throw new Exception("Driver $driver not implemented", 1);
         }
         $this->_driver = new $className($aOptions);
