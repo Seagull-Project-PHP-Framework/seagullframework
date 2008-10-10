@@ -10,14 +10,14 @@
 class Config2Test extends PHPUnit_Framework_TestCase
 {
 
-    function xsetup()
+    function setup()
     {
-        $this->c = SGL2_Config::singleton();
+        new SGL2_Config();
     }
 
-    function xtearDown()
+    function tearDown()
     {
-        $this->c = null;
+        SGL2_Config::reset();
     }
 
     public function testLoadingFile()
@@ -27,19 +27,17 @@ class Config2Test extends PHPUnit_Framework_TestCase
 
     public function testGettingValue()
     {
-        //$path = realpath(dirname(__FILE__) . '/../../../var/default.conf.php');
-        $conf = new SGL2_Config($autoLoad = true);
         $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
     }
 
     public function testSettingValue()
     {
+        $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
+        SGL2_Config::set('site.name', 'my site');
+        $this->assertEquals(SGL2_Config::get('site.name'), 'my site');
 
     }
-
-    public function testMergingConfigs()
-    {
-        //  initial config object
+        //  initialise config object
         //  new SGL2_Config(); // autoloads global config array
 
         //  config object ready for static calls
@@ -61,13 +59,47 @@ class Config2Test extends PHPUnit_Framework_TestCase
 
         //  config caches
 
+    public function testLoadGlobalConfigSeparately()
+    {
+        $path = realpath(dirname(__FILE__) . '/../../../var/default.conf.php');
+        $aConf = SGL2_Config::load($path);
+        SGL2_Config::reset();
+        $this->assertTrue(SGL2_Config::isEmpty());
+        SGL2_Config::replace($aConf);
+        $this->assertFalse(SGL2_Config::isEmpty());
+    }
 
+    public function testConfigMergeAndCount()
+    {
+        SGL2_Config::reset();
+        $path = realpath(dirname(__FILE__) . '/../../../var/default.conf.php');
+        $aConf = SGL2_Config::load($path);
+        $c1 = count($aConf);
+        $this->assertEquals(SGL2_Config::count(), 0);
+        SGL2_Config::replace($aConf);
+        $this->assertEquals(SGL2_Config::count(), $c1);
+        $a = array('foo', 'bar', 'bar');
+        $c2 = count($a);
+        SGL2_Config::merge($a);
+        $c3 = $c1 + $c2;
+        $this->assertEquals(SGL2_Config::count(), $c3);
+    }
 
+    public function testGetDefaultValue()
+    {
+        $default = SGL2_Config::get('doesnt.exist', 'foo');
+        $this->assertEquals($default, 'foo');
+    }
+
+    public function testLoadingModuleConfig()
+    {
+        $path = realpath(dirname(__FILE__).'/config/conf.ini');
+        $aConf = SGL2_Config::load($path);
+        $this->assertEquals(count($aConf), 1);
     }
 
     public function testSavingConfigFiles()
     {
-
     }
 }
 ?>

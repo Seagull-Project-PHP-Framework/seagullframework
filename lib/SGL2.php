@@ -48,6 +48,7 @@ $libPath = realpath(dirname(__FILE__).'/../lib');
 define('SGL2_PATH', $sglPath);
 set_include_path($libPath.PATH_SEPARATOR.get_include_path());
 require_once 'SGL2/File.php';
+new SGL2_Config();
 
 /**
  * Provides a set of static utility methods used by most modules.

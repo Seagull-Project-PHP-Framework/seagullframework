@@ -78,16 +78,6 @@ class SGL2_Config
         }
     }
 
-    /**
-     * Returns true if the current config object contains no data keys.
-     *
-     * @return boolean
-     */
-    public static function isEmpty()
-    {
-        return count(self::$_aProps) ? false : true;
-    }
-
 
     public static function get($key, $default = false)
     {
@@ -126,6 +116,16 @@ class SGL2_Config
         return $ret;
     }
 
+    /**
+     * Returns true if the current config object contains no data keys.
+     *
+     * @return boolean
+     */
+    public static function isEmpty()
+    {
+        return count(self::$_aProps) ? false : true;
+    }
+
     public function merge($aConf)
     {
         self::$_aProps = SGL2_Array::mergeReplace(self::$_aProps, $aConf);
@@ -146,6 +146,16 @@ class SGL2_Config
         return self::$_aProps;
     }
 
+    public function reset()
+    {
+        self::$_aProps = null;
+    }
+
+    public static function count()
+    {
+        return count(self::$_aProps);
+    }
+
     /**
      * Reads in data from supplied $file.
      *
@@ -155,6 +165,12 @@ class SGL2_Config
      */
     public function load($file, $force = false)
     {
+        if (!strlen($file)) {
+            throw new Exception('A filename must be provided');
+        }
+        if (!SGL2_File::exists($file)) {
+            throw new Exception('The provided filename does not exist or is not readable:' . $file);
+        }
         //  create cached copy if module config and cache does not exist
         //  if file has php extension it must be global config
         if (defined('SGL2_INSTALLED')) {

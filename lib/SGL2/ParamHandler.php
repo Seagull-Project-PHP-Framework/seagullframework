@@ -85,6 +85,8 @@ class SGL2_ParamHandler implements SGL2_Config_Interface
             case 'ini':
                 $ret =  new SGL2_ParamHandler_Ini($source);
                 break;
+            default:
+                throw new Exception('Unrecognised file extension for '.$source);
             }
             self::$instances[$signature] = $ret;
         }
