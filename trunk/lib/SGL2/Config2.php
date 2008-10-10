@@ -51,9 +51,9 @@ class SGL2_Config2
     protected static $_aProps = array();
     protected $_fileName;
 
-    public function __construct($autoLoad = false)
+    public function __construct()
     {
-        if ($this->isEmpty() && $autoLoad) {
+        if ($this->isEmpty()) {
 
             $siteName   = 'seagull_trunk';
             $configFile = SGL2_PATH  . '/var/' . $siteName . '.conf.php';

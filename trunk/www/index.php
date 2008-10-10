@@ -1,6 +1,6 @@
 <?php
 
-require '../lib/SGL.php';
+require '../lib/SGL2.php';
 
 $erh = SGL2_ErrorHandler2::singleton();
 $ech = SGL2_ExceptionHandler::singleton();
