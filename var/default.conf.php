@@ -32,6 +32,6 @@ $conf['translation']['fallbackLang'] = "en_utf_8";
 $conf['p3p']['policies'] = "1";
 $conf['p3p']['policyLocation'] = "";
 $conf['p3p']['compactPolicy'] = "CUR ADM OUR NOR STA NID";
-$conf['tuples']['version'] = "0.9.1";
+$conf['tuples']['version'] = "2.0.0";
 return $conf;
 ?>
