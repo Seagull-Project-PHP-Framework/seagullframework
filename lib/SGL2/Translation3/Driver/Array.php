@@ -1,6 +1,5 @@
 <?php
 #require_once 'Config.php'; // replace with Zend_Config
-require_once 'SGL/Translation3/Driver.php';
 
 /**
 *
@@ -19,7 +18,7 @@ class SGL2_Translation3_Driver_Array extends SGL2_Translation3_Driver
 
     public function setAvailableLanguages()
     {
-        require 'SGL/Translation3/Data/ary.languages.php';
+        require 'SGL2/Translation3/Data/ary.languages.php';
         $this->_aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
     }
 
