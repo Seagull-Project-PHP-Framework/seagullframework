@@ -3,7 +3,7 @@
 /**
 *
 */
-abstract class SGL2_Translation3_Driver
+abstract class SGL2_Translation_Driver
 {
     protected $_aOptions = array(
         'clear'     => false,
@@ -92,9 +92,9 @@ abstract class SGL2_Translation3_Driver
 
     public function setDefaultLangCode()
     {
-        $this->defaultLangCode = SGL2_Translation3::getDefaultLangCode();
+        $this->defaultLangCode = SGL2_Translation::getDefaultLangCode();
         // BC - as long as language list keys are $langCodeCharset we must set this
-        $this->defaultLangCodeCharset = SGL2_Translation3::getDefaultLangCodeCharset();
+        $this->defaultLangCodeCharset = SGL2_Translation::getDefaultLangCodeCharset();
     }
 
     public function getLangCodeCharset($langCode = null)
@@ -245,7 +245,7 @@ abstract class SGL2_Translation3_Driver
      * @param   string  $langCode
      * @param   array   $aTranslations
      *
-     * @return  object  Specific SGL2_Translation3_Driver instance (this method is chainable)
+     * @return  object  Specific SGL2_Translation_Driver instance (this method is chainable)
      */
     public function addTranslations($dictionary, $langCode, array $aTranslations = array())
     {
@@ -327,7 +327,7 @@ abstract class SGL2_Translation3_Driver
                     if (!SGL2_Config::get('translation.languageAutoDiscover')
                             || !($langCodeCharset = self::resolveLanguageFromDomain())) {
                         // 5. get default language
-                        $langCodeCharset = SGL2_Translation3::getDefaultLangCodeCharset();
+                        $langCodeCharset = SGL2_Translation::getDefaultLangCodeCharset();
                     }
                 }
             // get language from settings
@@ -376,7 +376,7 @@ abstract class SGL2_Translation3_Driver
             foreach ($aLangs as $langCode) {
                 // don't take care of locale for now, only main language
                 $langCode = substr($langCode, 0, 2);
-                $langCodeCharset = $langCode . '-' . SGL2_Translation3::getDefaultCharset();
+                $langCodeCharset = $langCode . '-' . SGL2_Translation::getDefaultCharset();
                 if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                     $ret = $langCodeCharset;
                     break;
@@ -400,7 +400,7 @@ abstract class SGL2_Translation3_Driver
             $langCode = array_pop(explode('.', $_SERVER['HTTP_HOST']));
 
             // if such language exists, then use it
-            $langCodeCharset = $langCode . '-' . SGL2_Translation3::getDefaultCharset();
+            $langCodeCharset = $langCode . '-' . SGL2_Translation::getDefaultCharset();
             if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                 $ret = $langCodeCharset;
             }

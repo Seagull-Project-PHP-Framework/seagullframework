@@ -153,7 +153,7 @@ class SGL2_String
     }
 
     /**
-     * Looks up key in current lang dictionary (SGL2_Translation3) or specific language
+     * Looks up key in current lang dictionary (SGL2_Translation) or specific language
      * and returns target value.
      *
      * @param string $key       Translation term
@@ -165,7 +165,7 @@ class SGL2_String
      */
     public static function translate($key, $filter = false, $aParams = array(), $langCode)
     {
-        $trans = SGL2_Translation3::singleton('array');
+        $trans = SGL2_Translation::singleton('array');
         if ($ret = $trans->translate($langCode, $key)) {
             if (!is_array($ret) && $filter && function_exists($filter)) {
                 if (is_object($aParams)) {

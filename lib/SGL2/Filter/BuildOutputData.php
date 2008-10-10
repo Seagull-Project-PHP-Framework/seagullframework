@@ -43,8 +43,8 @@ class SGL2_Filter_BuildOutputData extends SGL2_DecorateProcess
             $output->currUrl  = $this->_getCurrentUrlFromRoutes();
         }
         // lang data
-        $output->currLang     = SGL2_Translation3::getDefaultLangCode();
-        $output->charset      = SGL2_Translation3::getDefaultLangCodeCharset();
+        $output->currLang     = SGL2_Translation::getDefaultLangCode();
+        $output->charset      = SGL2_Translation::getDefaultLangCodeCharset();
         $output->currFullLang = $_SESSION['aPrefs']['language'];
         $output->langDir      = ($output->currLang == 'ar'
                 || $output->currLang == 'he')

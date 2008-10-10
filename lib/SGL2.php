@@ -187,7 +187,7 @@ class SGL2
             return $GLOBALS['_SGL'][strtoupper($regionType)];
         }
 
-        $lang = SGL2_Translation3::getDefaultLangCode();
+        $lang = SGL2_Translation::getDefaultLangCode();
         $file = SGL2_DAT_DIR . "/ary.$regionType.$lang.php";
         if (!file_exists($file)) {
             // get data with default language
@@ -233,7 +233,7 @@ class SGL2
     protected function _toCurrentCharset(&$v)
     {
         $v = function_exists('iconv')
-            ? iconv('UTF-8', SGL2_Translation3::getDefaultCharset(), $v)
+            ? iconv('UTF-8', SGL2_Translation::getDefaultCharset(), $v)
             : $v;
     }
 }

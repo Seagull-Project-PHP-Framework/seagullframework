@@ -4,7 +4,7 @@
 /**
 *
 */
-class SGL2_Translation3_Driver_Array extends SGL2_Translation3_Driver
+class SGL2_Translation_Driver_Array extends SGL2_Translation_Driver
 {
     public function __construct(array $aOptions = array())
     {
@@ -18,7 +18,7 @@ class SGL2_Translation3_Driver_Array extends SGL2_Translation3_Driver
 
     public function setAvailableLanguages()
     {
-        require 'SGL2/Translation3/Data/ary.languages.php';
+        require 'SGL2/Translation/Data/ary.languages.php';
         $this->_aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
     }
 
