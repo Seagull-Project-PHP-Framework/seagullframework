@@ -13,7 +13,7 @@ require_once 'RegistryTest.php';
 require_once 'RequestTest.php';
 require_once 'Config2Test.php';
 
-class SGL_AllTests {
+class SGL2_AllTests {
 
     public static function main()
     {
@@ -34,7 +34,7 @@ class SGL_AllTests {
 }
 
 if (PHP_SAPI != 'cli') {
-    SGL_AllTests::main();
+    SGL2_AllTests::main();
 }
 
 ?>

@@ -12,17 +12,17 @@ class RequestTest extends PHPUnit_Framework_TestCase
 {
     public function setup()
     {
-        SGL_Registry::set('request', new SGL_Request());
+        SGL2_Registry::set('request', new SGL2_Request());
     }
 
     function tearDown()
     {
-        SGL_Registry::reset();
+        SGL2_Registry::reset();
     }
 
     public function testAdd()
     {
-        $req = SGL_Registry::get('request');
+        $req = SGL2_Registry::get('request');
         $count = count($req->getClean());
         $aParams = array('foo' => 'fooValue', 'bar' => 'barValue');
         $req->add($aParams);
@@ -35,13 +35,13 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
     public function testForcingABrowserRequest()
     {
-        $r = new SGL_Request(SGL_Request::BROWSER);
-        $this->assertEquals($r->getType(), SGL_Request::BROWSER);
+        $r = new SGL2_Request(SGL2_Request::BROWSER);
+        $this->assertEquals($r->getType(), SGL2_Request::BROWSER);
     }
 
     public function testReset()
     {
-        $req = SGL_Registry::get('request');
+        $req = SGL2_Registry::get('request');
         $aParams = array('foo' => 'fooValue', 'bar' => 'barValue');
         $req->add($aParams);
         $total = count($req->getClean());
@@ -59,14 +59,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['argc'] = 1;
         $_SERVER['argv'] = array('index.php');
-        $req = new SGL_Request(SGL_Request::CLI);
+        $req = new SGL2_Request(SGL2_Request::CLI);
         // test no params
         $this->assertEquals(count($req->getClean()), 0);
 
         unset($req);
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default');
-        $req = new SGL_Request(SGL_Request::CLI);
+        $req = new SGL2_Request(SGL2_Request::CLI);
 
         // test module name is caught
         $this->assertEquals(count($req->getClean()), 1);
@@ -76,7 +76,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $_SERVER['argc'] = 2;
         $_SERVER['argv'] = array('index.php', '--moduleName=default',
             '--managerName=translation', '--action=update');
-        $req = new SGL_Request(SGL_Request::CLI);
+        $req = new SGL2_Request(SGL2_Request::CLI);
 
         // test module name, manager and action are recognized
         $this->assertTrue(count($req->getClean()) == 3);
@@ -95,7 +95,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             '--paramNumberTwo=secondParameter',
             '--paramNumberThree=thirdParameter'
         );
-        $req = new SGL_Request(SGL_Request::CLI);
+        $req = new SGL2_Request(SGL2_Request::CLI);
 
         // test optional params
         $this->assertTrue(count($req->getClean()) == 6);

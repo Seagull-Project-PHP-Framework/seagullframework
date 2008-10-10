@@ -11,7 +11,7 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
+class SGL2_Filter_AuthenticateRequest extends SGL2_DecorateProcess
 {
     /**
      * Returns 'remember me' cookie data.
@@ -21,17 +21,17 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
     protected function _getRememberMeCookieData()
     {
         //  no 'remember me' cookie found
-        if (!isset($_COOKIE['SGL_REMEMBER_ME'])) {
+        if (!isset($_COOKIE['SGL2_REMEMBER_ME'])) {
             return false;
         }
-        $cookie = $_COOKIE['SGL_REMEMBER_ME'];
+        $cookie = $_COOKIE['SGL2_REMEMBER_ME'];
         list($username, $cookieValue) = @unserialize($cookie);
         //  wrong cookie value was saved
         if (!$username || !$cookieValue) {
             return false;
         }
         //  get UID by cookie value
-        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
+        require_once SGL2_MOD_DIR . '/user/classes/UserDAO.php';
         $da  = UserDAO::singleton();
         $uid = $da->getUserIdByCookie($username, $cookieValue);
         if ($uid) {
@@ -53,51 +53,51 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
     {
         // if we do login here, then $uid was recovered by cookie,
         // thus activating 'remember me' functionality
-        SGL_Registry::set('session', new SGL_Session($uid, $rememberMe = true));
+        SGL2_Registry::set('session', new SGL2_Session($uid, $rememberMe = true));
     }
 
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         // check for timeout
-        $session = SGL_Registry::get('session');
+        $session = SGL2_Registry::get('session');
         $timeout = !$session->updateIdle();
 
         //  store request in session
-        $aRequestHistory = SGL_Session::get('aRequestHistory');
+        $aRequestHistory = SGL2_Session::get('aRequestHistory');
         if (empty($aRequestHistory)) {
             $aRequestHistory = array();
         }
         array_unshift($aRequestHistory, $input->getClean());
         $aTruncated = array_slice($aRequestHistory, 0, 2);
-        SGL_Session::set('aRequestHistory', $aTruncated);
+        SGL2_Session::set('aRequestHistory', $aTruncated);
 
-        $ctlr = SGL_Registry::get('controller');
+        $ctlr = SGL2_Registry::get('controller');
         $ctlrName = get_class($ctlr);
 
         //  test for anonymous session and rememberMe cookie
         if (($session->isAnonymous() || $timeout)
-                && SGL_Config2::get('cookie.rememberMeEnabled')
-                && !SGL_Config2::get('site.maintenanceMode')) {
+                && SGL2_Config2::get('cookie.rememberMeEnabled')
+                && !SGL2_Config2::get('site.maintenanceMode')) {
             $aCookieData = $this->_getRememberMeCookieData();
             if (!empty($aCookieData['uid'])) {
                 $this->_doLogin($aCookieData['uid']);
 
                 //  session data updated
 #FIXME - what's going on here, 2nd invocation
-                $session = SGL_Registry::get('session');
+                $session = SGL2_Registry::get('session');
                 $timeout = !$session->updateIdle();
             }
         }
         //  if page requires authentication and we're not debugging
-        if (   SGL_Config2::get("$ctlrName.requiresAuth")
-            && SGL_Config2::get('debug.authorisationEnabled')
-            && $input->getType() != SGL_Request::CLI)
+        if (   SGL2_Config2::get("$ctlrName.requiresAuth")
+            && SGL2_Config2::get('debug.authorisationEnabled')
+            && $input->getType() != SGL2_Request::CLI)
         {
             //  check that session is valid or timed out
             if (!$session->isValid() || $timeout) {
 
                 //  prepare referer info for redirect after login
-                $url = SGL_Registry::get('url');
+                $url = SGL2_Registry::get('url');
                 $redir = $url->toString();
                 $loginPage = array(
                     'moduleName'    => 'user',
@@ -107,11 +107,11 @@ class SGL_Filter_AuthenticateRequest extends SGL_DecorateProcess
 
                 if (!$session->isValid()) {
 //SGL::raiseMsg('authentication required');
-                    SGL_Response::redirect($loginPage);
+                    SGL2_Response::redirect($loginPage);
                 } else {
                     $session->destroy();
 //SGL::raiseMsg('session timeout');
-                    SGL_Response::redirect($loginPage);
+                    SGL2_Response::redirect($loginPage);
                 }
             }
         }

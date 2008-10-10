@@ -1,6 +1,6 @@
 <?php
 
-class SGL_Request_Cli
+class SGL2_Request_Cli
 {
     function init()
     {

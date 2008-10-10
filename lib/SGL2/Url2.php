@@ -6,7 +6,7 @@
  * @package SGL
  * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL_Url2
+class SGL2_Url2
 {
     /**
      * @var Horde_Routes_Config
@@ -53,7 +53,7 @@ class SGL_Url2
     }
 
     /**
-     * Format params specified in old SGL_Output::makeUrl() style
+     * Format params specified in old SGL2_Output::makeUrl() style
      * to new system.
      *
      * @param array $aParams
@@ -97,7 +97,7 @@ class SGL_Url2
                 $aNewParams[$k] = $v;
             }
         }
-        // in case of SGL_Output(#edit#,#user#,##,..)
+        // in case of SGL2_Output(#edit#,#user#,##,..)
         if (isset($aNewParams['managerName'])
                 && !isset($aNewParams['moduleName'])) {
             $aNewParams['moduleName'] = $aNewParams['managerName'];
@@ -117,7 +117,7 @@ class SGL_Url2
         $aVars     = array();
         $aKeywords = array('moduleName', 'managerName', 'controller',
             'anchor', 'host');
-        if (SGL_Config2::get('translation.langInUrl')) {
+        if (SGL2_Config2::get('translation.langInUrl')) {
             array_push($aKeywords, 'lang');
         }
         foreach ($aParams as $k => $v) {
@@ -194,7 +194,7 @@ class SGL_Url2
         }
 
         // set current language if none specified
-        if (SGL_Config2::get('translation.langInUrl') && empty($aParams['lang'])) {
+        if (SGL2_Config2::get('translation.langInUrl') && empty($aParams['lang'])) {
             $aParams['lang'] = 'en';
         }
 
@@ -245,11 +245,11 @@ class SGL_Url2
     public function getBaseUrl($skipProtocol = false, $includeFc = true)
     {
         if ($skipProtocol) {
-            $baseUrl = substr(SGL_BASE_URL, strpos(SGL_BASE_URL, '://') + 3);
+            $baseUrl = substr(SGL2_BASE_URL, strpos(SGL2_BASE_URL, '://') + 3);
         } else {
-            $baseUrl = SGL_BASE_URL;
+            $baseUrl = SGL2_BASE_URL;
         }
-        $fcName = SGL_Config2::get('site.frontScriptName');
+        $fcName = SGL2_Config2::get('site.frontScriptName');
         if (!empty($fcName) && $includeFc) {
             $baseUrl .= '/' . $fcName;
         }
@@ -257,7 +257,7 @@ class SGL_Url2
     }
 
     /**
-     * Get query string as in SGL_Url1.
+     * Get query string as in SGL2_Url1.
      *
      * @return string
      */

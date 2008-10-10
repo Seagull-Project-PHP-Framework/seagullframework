@@ -1,12 +1,12 @@
 <?php
 
-require '../lib/SGL2.php';
+require '../lib/SGL.php';
 
-$erh = SGL_ErrorHandler2::singleton();
-$ech = SGL_ExceptionHandler::singleton();
+$erh = SGL2_ErrorHandler2::singleton();
+$ech = SGL2_ExceptionHandler::singleton();
 
 try {
-    $front = new SGL_Controller_FrontBc();
+    $front = new SGL2_Controller_FrontBc();
     $front->run();
 
 } catch (Exception $e) {

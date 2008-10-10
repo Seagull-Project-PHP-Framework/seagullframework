@@ -46,13 +46,13 @@
  * @version $Revision: 1.49 $
  */
 
-interface SGL_Config_Interface
+interface SGL2_Config_Interface
 {
     public function read();
     public function write($data);
 }
 
-class SGL_ParamHandler implements SGL_Config_Interface
+class SGL2_ParamHandler implements SGL2_Config_Interface
 {
     public $source;
     private static $instances;
@@ -75,15 +75,15 @@ class SGL_ParamHandler implements SGL_Config_Interface
             switch ($ext) {
 
             case 'xml':
-                $ret = new SGL_ParamHandler_Xml($source);
+                $ret = new SGL2_ParamHandler_Xml($source);
                 break;
 
             case 'php':
-                $ret = new SGL_ParamHandler_Array($source);
+                $ret = new SGL2_ParamHandler_Array($source);
                 break;
 
             case 'ini':
-                $ret =  new SGL_ParamHandler_Ini($source);
+                $ret =  new SGL2_ParamHandler_Ini($source);
                 break;
             }
             self::$instances[$signature] = $ret;
@@ -101,7 +101,7 @@ class SGL_ParamHandler implements SGL_Config_Interface
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_ParamHandler_Ini extends SGL_ParamHandler
+class SGL2_ParamHandler_Ini extends SGL2_ParamHandler
 {
     public function read()
     {
@@ -126,7 +126,7 @@ class SGL_ParamHandler_Ini extends SGL_ParamHandler
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_ParamHandler_Array extends SGL_ParamHandler
+class SGL2_ParamHandler_Array extends SGL2_ParamHandler
 {
     public function read()
     {
@@ -155,7 +155,7 @@ class SGL_ParamHandler_Array extends SGL_ParamHandler
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_ParamHandler_Xml extends SGL_ParamHandler
+class SGL2_ParamHandler_Xml extends SGL2_ParamHandler
 {
     public function read()
     {

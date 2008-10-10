@@ -1,6 +1,6 @@
 <?php
 
-class SGL_LegacyErrorException extends Exception
+class SGL2_LegacyErrorException extends Exception
 {
     private $context = null;
 
@@ -14,7 +14,7 @@ class SGL_LegacyErrorException extends Exception
 
 }
 
-class SGL_ErrorHandler2
+class SGL2_ErrorHandler2
 {
     private static $instance = null;
 
@@ -31,7 +31,7 @@ class SGL_ErrorHandler2
     public static function singleton()
     {
         if (!self::$instance) {
-            self::$instance = new SGL_ErrorHandler2();
+            self::$instance = new SGL2_ErrorHandler2();
         }
         return self::$instance;
     }
@@ -48,7 +48,7 @@ class SGL_ErrorHandler2
         if (error_reporting() == 0) {
             return null;
         }
-        $legacyErrorException = new SGL_LegacyErrorException($message, $code, $file,
+        $legacyErrorException = new SGL2_LegacyErrorException($message, $code, $file,
             $line, $context);
         throw $legacyErrorException;
     }

@@ -44,7 +44,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @abstract
  */
-abstract class SGL_Task
+abstract class SGL2_Task
 {
     /**
      * @abstract
@@ -59,7 +59,7 @@ abstract class SGL_Task
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_TaskRunner
+class SGL2_TaskRunner
 {
    /**
     * collection of Task objects
@@ -80,7 +80,7 @@ class SGL_TaskRunner
     * @param object $oTask of type Task
     * @return boolean true on add success false on failure
     */
-    public function addTask(SGL_Task $oTask)
+    public function addTask(SGL2_Task $oTask)
     {
         $this->aTasks[] = $oTask;
         return true;

@@ -1,6 +1,6 @@
 <?php
 
-class SGL_ExceptionHandler
+class SGL2_ExceptionHandler
 {
     private static $instance = null;
 
@@ -18,7 +18,7 @@ class SGL_ExceptionHandler
     public static function singleton()
     {
         if (!self::$instance) {
-            self::$instance = new SGL_ExceptionHandler();
+            self::$instance = new SGL2_ExceptionHandler();
         }
         return self::$instance;
     }

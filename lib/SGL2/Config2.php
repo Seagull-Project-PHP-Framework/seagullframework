@@ -46,7 +46,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.5 $
  */
-class SGL_Config2
+class SGL2_Config2
 {
     protected static $_aProps = array();
     protected $_fileName;
@@ -56,9 +56,9 @@ class SGL_Config2
         if ($this->isEmpty() && $autoLoad) {
 
             $siteName   = 'seagull_trunk';
-            $configFile = SGL_PATH  . '/var/' . $siteName . '.conf.php';
+            $configFile = SGL2_PATH  . '/var/' . $siteName . '.conf.php';
             if (!SGL2_File::exists($configFile)) {
-                $confMapFile = SGL_PATH  . '/var/confmap.php';
+                $confMapFile = SGL2_PATH  . '/var/confmap.php';
                 $configFile  = null;
                 if ($confMap = SGL2_File::load($confMapFile)) {
                     foreach ($confMap as $key => $value) {
@@ -69,7 +69,7 @@ class SGL_Config2
                     }
                 }
                 if ($configFile) {
-                    $configFile = SGL_PATH  . '/var/' . $configFile;
+                    $configFile = SGL2_PATH  . '/var/' . $configFile;
                 }
             }
             $conf = $this->load($configFile);
@@ -103,7 +103,7 @@ class SGL_Config2
     /**
      * Sets a config property.
      *
-     * Using new shorthand method you can do $ok = SGL_Config::set('river.boat', 'green');
+     * Using new shorthand method you can do $ok = SGL2_Config::set('river.boat', 'green');
      *
      * @param string $key
      * @param mixed $value
@@ -128,7 +128,7 @@ class SGL_Config2
 
     public function merge($aConf)
     {
-        self::$_aProps = SGL_Array2::mergeReplace(self::$_aProps, $aConf);
+        self::$_aProps = SGL2_Array2::mergeReplace(self::$_aProps, $aConf);
     }
 
     public function replace($aConf)
@@ -157,7 +157,7 @@ class SGL_Config2
     {
         //  create cached copy if module config and cache does not exist
         //  if file has php extension it must be global config
-        if (defined('SGL_INSTALLED')) {
+        if (defined('SGL2_INSTALLED')) {
             if (substr($file, -3, 3) != 'php') {
                 if (!$force) {
                     $cachedFileName = $this->_getCachedFileName($file);
@@ -169,7 +169,7 @@ class SGL_Config2
                 }
             }
         }
-        $ph = SGL_ParamHandler::singleton($file);
+        $ph = SGL2_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
             return $data;
@@ -204,7 +204,7 @@ class SGL_Config2
         $moduleName = $aMatches[2];
 
         //  ensure we operate on copy of master
-        $cachedFileName = SGL_VAR_DIR . '/config/' .$moduleName.'.ini';
+        $cachedFileName = SGL2_VAR_DIR . '/config/' .$moduleName.'.ini';
         return $cachedFileName;
     }
 
@@ -215,7 +215,7 @@ class SGL_Config2
      */
     protected function _ensureCacheDirExists()
     {
-        $varConfigDir = SGL_VAR_DIR . '/config';
+        $varConfigDir = SGL2_VAR_DIR . '/config';
         if (!is_dir($varConfigDir)) {
             require_once 'System.php';
             $ok = System::mkDir(array('-p', $varConfigDir));
@@ -227,7 +227,7 @@ class SGL_Config2
     {
         $filename = basename($cachedModuleConfigFile);
         list($module, $ext) = split('\.', $filename);
-        $masterModuleConfigFile = SGL_MOD_DIR . "/$module/conf.ini";
+        $masterModuleConfigFile = SGL2_MOD_DIR . "/$module/conf.ini";
         $this->_ensureCacheDirExists();
         $ok = copy($masterModuleConfigFile, $cachedModuleConfigFile);
         return $ok;

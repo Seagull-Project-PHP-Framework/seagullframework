@@ -12,7 +12,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     function setup()
     {
-        $this->c = SGL_Config::singleton();
+        $this->c = SGL2_Config::singleton();
     }
 
     function tearDown()
@@ -93,11 +93,11 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     {
         $file = dirname(__FILE__) . '/test.conf.ini';
         $conf = $this->c->load($file, $force = true);
-        $ok = SGL_Config::set('river.boat', 'green');
+        $ok = SGL2_Config::set('river.boat', 'green');
         $aRes = $this->c->getAll();
         $this->assertTrue(array_key_exists('river', $aRes));
         $this->assertTrue($ok);
-        $this->assertEqual(SGL_Config2::get('river.boat'), 'green');
+        $this->assertEqual(SGL2_Config2::get('river.boat'), 'green');
     }
 
     function testGetArrayProperty()
@@ -123,74 +123,74 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     function testImprovedConfigGet()
     {
-        $lifetime = SGL_Config2::get('cache.lifetime');
+        $lifetime = SGL2_Config2::get('cache.lifetime');
         $this->assertEquals($lifetime, 86400);
     }
 
     function testConfigGetEmptyValue()
     {
-        $res = SGL_Config2::get('db.collation');
+        $res = SGL2_Config2::get('db.collation');
         $this->assertTrue(empty($res));
     }
 
     function testConfigGetFalseValue()
     {
-        $res = SGL_Config2::get('db.collation');
+        $res = SGL2_Config2::get('db.collation');
         $this->assertTrue(!($res));
     }
 
     function testConfigGetNonExistentValue()
     {
-        $res = SGL_Config2::get('foo.bar');
+        $res = SGL2_Config2::get('foo.bar');
         $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimension()
     {
-        $res = SGL_Config2::get('foo.');
+        $res = SGL2_Config2::get('foo.');
         $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimensionNoSeparator()
     {
-        $res = SGL_Config2::get('foo');
+        $res = SGL2_Config2::get('foo');
         $this->assertFalse($res);
     }
 
     function testImprovedConfigGetWithVars()
     {
         $d = 'cache';
-        $lifetime = SGL_Config2::get("$d.lifetime");
+        $lifetime = SGL2_Config2::get("$d.lifetime");
         $this->assertEquals($lifetime, 86400);
     }
 
     function testImprovedConfigGetWithVars2()
     {
         $mgr = 'default';
-        $ret = SGL_Config2::get("$mgr.filterChain");
-        $this->assertFalse(SGL_Config2::get("$mgr.filterChain"));
+        $ret = SGL2_Config2::get("$mgr.filterChain");
+        $this->assertFalse(SGL2_Config2::get("$mgr.filterChain"));
     }
 
 //    function testGetCachedFileName()
 //    {
-//        $fileName = SGL_MOD_DIR . '/default/conf.ini';
-//        $ret = SGL_Config2::getCachedFileName($fileName);
-//        $this->assertEquals(SGL_VAR_DIR . '/config/default.ini', $ret);
+//        $fileName = SGL2_MOD_DIR . '/default/conf.ini';
+//        $ret = SGL2_Config2::getCachedFileName($fileName);
+//        $this->assertEquals(SGL2_VAR_DIR . '/config/default.ini', $ret);
 //
-//        $fileName = SGL_MOD_DIR . '/default/other.ini';
-//        $ret = SGL_Config::_getCachedFileName($fileName);
-//        $this->assertEquals(SGL_VAR_DIR . '/default/other.ini', $ret);
+//        $fileName = SGL2_MOD_DIR . '/default/other.ini';
+//        $ret = SGL2_Config::_getCachedFileName($fileName);
+//        $this->assertEquals(SGL2_VAR_DIR . '/default/other.ini', $ret);
 //    }
 
 //    function testCreateCachedFile()
 //    {
 //        $aTest = array(
-//            SGL_VAR_DIR . '/config/user.ini',
-//            SGL_VAR_DIR . '/media2/image.ini'
+//            SGL2_VAR_DIR . '/config/user.ini',
+//            SGL2_VAR_DIR . '/media2/image.ini'
 //        );
 //
 //        foreach ($aTest as $cachedFile) {
-//            SGL_Config::ensureDirExists(dirname($cachedFile));
+//            SGL2_Config::ensureDirExists(dirname($cachedFile));
 //
 //            // copy cached file if exists
 //            if (file_exists($cachedFile)) {
@@ -198,7 +198,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 //                $ok = unlink($cachedFile);
 //            }
 //
-//            $ok = SGL_Config::createCachedFile($cachedFile);
+//            $ok = SGL2_Config::createCachedFile($cachedFile);
 //            $this->assertTrue(file_exists($cachedFile));
 //
 //            // cleanup

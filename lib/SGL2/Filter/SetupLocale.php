@@ -5,9 +5,9 @@
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Filter_SetupLocale extends SGL_DecorateProcess
+class SGL2_Filter_SetupLocale extends SGL2_DecorateProcess
 {
-    public function process(SGL_Request $input, SGL_Response $output)
+    public function process(SGL2_Request $input, SGL2_Response $output)
     {
         $locale = $_SESSION['aPrefs']['locale'];
         $timezone = $_SESSION['aPrefs']['timezone'];
@@ -18,7 +18,7 @@ class SGL_Filter_SetupLocale extends SGL_DecorateProcess
         //  and php numeric calculations will break.  The solution for these users
         //  is to select the LC_TIME category.  For a global effect change this in
         //  Config.
-        if (setlocale(SGL_String::pseudoConstantToInt(SGL_Config2::get('site.localeCategory')),
+        if (setlocale(SGL2_String::pseudoConstantToInt(SGL2_Config2::get('site.localeCategory')),
                 $locale) == false) {
             setlocale(LC_TIME, $locale);
         }

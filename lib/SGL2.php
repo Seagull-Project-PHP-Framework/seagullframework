@@ -45,7 +45,7 @@ spl_autoload_register(array('SGL2', 'autoload'));
 $sglPath = realpath(dirname(__FILE__).'/..');
 $libPath = realpath(dirname(__FILE__).'/../lib');
 
-define('SGL_PATH', $sglPath);
+define('SGL2_PATH', $sglPath);
 set_include_path($libPath.PATH_SEPARATOR.get_include_path());
 require_once 'SGL2/File.php';
 
@@ -107,7 +107,7 @@ class SGL2
     public static function getCurrentLang()
     {
         $aLangs   = $GLOBALS['_SGL']['LANGUAGE'];
-        $lang     = SGL_Translation::getLangID(SGL_LANG_ID_SGL);
+        $lang     = SGL2_Translation::getLangID(SGL2_LANG_ID_SGL);
         $langCode = $aLangs[$lang][2];
         return $langCode;
     }
@@ -132,26 +132,26 @@ class SGL2
      * @param unknown_type $messageKey
      * @param unknown_type $getTranslation
      * @param unknown_type $messageType
-     * @todo move to SGL_Controller_Page#_raiseMsg()
+     * @todo move to SGL2_Controller_Page#_raiseMsg()
      */
-//    public static function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
+//    public static function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL2_MESSAGE_ERROR)
 //    {
 //        //  must not log message here
 //        if (is_string($messageKey) && !empty($messageKey)) {
 //
-//            $message = SGL_String::translate($messageKey);
+//            $message = SGL2_String::translate($messageKey);
 //
 //            //  catch error message that results for 'logout' where trans file is not loaded
 //            if ( (   isset($GLOBALS['_SGL']['ERRORS'][0])
-//                        && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL_ERROR_INVALIDTRANSLATION)
+//                        && $GLOBALS['_SGL']['ERRORS'][0]->code == SGL2_ERROR_INVALIDTRANSLATION)
 //                        || (!$getTranslation)) {
-//                SGL_Session::set('message', $messageKey);
+//                SGL2_Session::set('message', $messageKey);
 //            } else {
-//                SGL_Session::set('message', $message);
+//                SGL2_Session::set('message', $message);
 //            }
-//            SGL_Session::set('messageType', $messageType);
+//            SGL2_Session::set('messageType', $messageType);
 //        } else {
-//            SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
+//            SGL::raiseError('supplied message not recognised', SGL2_ERROR_INVALIDARGS);
 //        }
 //    }
 
@@ -160,7 +160,7 @@ class SGL2
      *
      * @param unknown_type $mode
      */
-    public static function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
+    public static function setNoticeBehaviour($mode = SGL2_NOTICES_ENABLED)
     {
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
@@ -181,17 +181,17 @@ class SGL2
     {
         $aAllowedTypes = array('countries', 'states', 'counties');
         if (!in_array($regionType, $aAllowedTypes)) {
-            throw new Exception('Invalid argument', SGL_ERROR_INVALIDARGS);
+            throw new Exception('Invalid argument', SGL2_ERROR_INVALIDARGS);
         }
         if (!empty($GLOBALS['_SGL'][strtoupper($regionType)])) {
             return $GLOBALS['_SGL'][strtoupper($regionType)];
         }
 
-        $lang = SGL_Translation3::getDefaultLangCode();
-        $file = SGL_DAT_DIR . "/ary.$regionType.$lang.php";
+        $lang = SGL2_Translation3::getDefaultLangCode();
+        $file = SGL2_DAT_DIR . "/ary.$regionType.$lang.php";
         if (!file_exists($file)) {
             // get data with default language
-            $file = SGL_DAT_DIR . "/ary.$regionType.en.php";
+            $file = SGL2_DAT_DIR . "/ary.$regionType.en.php";
         }
 
         // load data
@@ -204,7 +204,7 @@ class SGL2
 
             // replace accents for utf-8 encoded string
             array_walk($aList, create_function('&$v',
-                '$v = SGL_String::replaceAccents($v);'));
+                '$v = SGL2_String::replaceAccents($v);'));
 
             // sort values
             asort($aList);
@@ -233,7 +233,7 @@ class SGL2
     protected function _toCurrentCharset(&$v)
     {
         $v = function_exists('iconv')
-            ? iconv('UTF-8', SGL_Translation3::getDefaultCharset(), $v)
+            ? iconv('UTF-8', SGL2_Translation3::getDefaultCharset(), $v)
             : $v;
     }
 }

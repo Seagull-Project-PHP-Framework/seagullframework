@@ -1,6 +1,6 @@
 <?php
 
-class DefaultController extends SGL_Controller_Page
+class DefaultController extends SGL2_Controller_Page
 {
     public function __construct()
     {
@@ -13,7 +13,7 @@ class DefaultController extends SGL_Controller_Page
         );
     }
 
-    public function validate(SGL_Request $input)
+    public function validate(SGL2_Request $input)
     {
         $input->masterTemplate = $this->masterTemplate;
         $input->template    = $this->template;
@@ -44,13 +44,13 @@ class DefaultController extends SGL_Controller_Page
         return $ret;
     }
 
-    protected function _doList(SGL_Request $input, SGL_Response $output)
+    protected function _doList(SGL2_Request $input, SGL2_Response $output)
     {
         $input->foo = 'myFoo';
         $output->bar = 'myBar';
     }
 
-    public function display(SGL_Response $output)
+    public function display(SGL2_Response $output)
     {
         $output->baz = 'myBaz';
     }

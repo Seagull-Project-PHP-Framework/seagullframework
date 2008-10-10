@@ -45,7 +45,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.49 $
  */
-class SGL_Registry
+class SGL2_Registry
 {
     private static $_aProps = array();
 
@@ -81,7 +81,7 @@ class SGL_Registry
         if (self::exists($key)) {
             throw new Exception("An entry is already registered for key: $key");
         }
-        SGL_Registry::$_aProps[$key] = $obj;
+        SGL2_Registry::$_aProps[$key] = $obj;
     }
 
     public static function exists($key)

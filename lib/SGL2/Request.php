@@ -45,7 +45,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @version $Revision: 1.36 $
  */
-class SGL_Request
+class SGL2_Request
 {
     const BROWSER   = 1;
     const CLI       = 2;
@@ -65,8 +65,8 @@ class SGL_Request
                 ? $this->_resolveType()
                 : $type;
             $this->setType($type);
-            $strat = 'SGL_Request_' . $this->_getTypeName();
-            if (!SGL2_File::exists(SGL_Inflector::classToFile($strat))) {
+            $strat = 'SGL2_Request_' . $this->_getTypeName();
+            if (!SGL2_File::exists(SGL2_Inflector::classToFile($strat))) {
                 throw new Exception('Request driver not found');
             }
             $this->_driver = new $strat();
@@ -96,9 +96,9 @@ class SGL_Request
     }
 
     /*
-        $r = new SGL_Request(SGL_Request::CLI)
+        $r = new SGL2_Request(SGL2_Request::CLI)
         $type = $r->getType();
-        if (SGL_Registry('request')->getType() == SGL_Request::CLI) { ...}
+        if (SGL2_Registry('request')->getType() == SGL2_Request::CLI) { ...}
     */
     public function getType()
     {
@@ -152,11 +152,11 @@ class SGL_Request
 
             //  if html not allowed, run an enhanced strip_tags()
             if (!$allowTags) {
-                $clean = SGL_String::clean($copy);
+                $clean = SGL2_String::clean($copy);
 
             //  if html is allowed, at least remove javascript
             } else {
-                $clean = SGL_String::removeJs($copy);
+                $clean = SGL2_String::removeJs($copy);
             }
 
             return $clean;

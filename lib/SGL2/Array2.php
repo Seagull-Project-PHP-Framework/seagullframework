@@ -43,7 +43,7 @@
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
  */
-class SGL_Array2
+class SGL2_Array2
 {
     /**
      * Strips 'empty' elements from supplied array.
@@ -90,7 +90,7 @@ class SGL_Array2
      * not combined in a new sub array.
      *
      * Usage:
-     *        $newArray = SGL_Array2::mergeReplace($array, $newValues);
+     *        $newArray = SGL2_Array2::mergeReplace($array, $newValues);
      *
      * @param array $array First Array with 'replaceable' Values
      * @param array $newValues Array which will be merged into first one

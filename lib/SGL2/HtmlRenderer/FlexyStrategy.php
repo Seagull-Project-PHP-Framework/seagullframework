@@ -6,23 +6,23 @@
  * @abstract
  * @package SGL
  */
-abstract class SGL_OutputRendererStrategy
+abstract class SGL2_OutputRendererStrategy
 {
     /**
      * Prepare renderer options.
      *
      */
-    abstract protected function _initEngine(SGL_Response $data);
+    abstract protected function _initEngine(SGL2_Response $data);
 
     /**
      * Abstract render method.
      *
-     * @param SGL_View $view
+     * @param SGL2_View $view
      */
-    abstract public function render(SGL_View $view);
+    abstract public function render(SGL2_View $view);
 }
 
-class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
+class SGL2_HtmlRenderer_FlexyStrategy extends SGL2_OutputRendererStrategy
 {
     const FORCE_COMPILE = 0;
     const DEBUG = 0;
@@ -37,13 +37,13 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
     /**
      * Director for html Flexy renderer.
      *
-     * @param SGL_View $view
+     * @param SGL2_View $view
      * @return string   rendered html output
      */
-    public function render(SGL_View $view)
+    public function render(SGL2_View $view)
     {
         //  suppress error notices in templates
-        SGL2::setNoticeBehaviour(SGL_NOTICES_DISABLED);
+        SGL2::setNoticeBehaviour(SGL2_NOTICES_DISABLED);
 
         //  prepare flexy object
         $flexy = $this->_initEngine($view->data);
@@ -55,19 +55,19 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
 
         $data = $flexy->bufferedOutputObject($view->data, array());
 
-        SGL2::setNoticeBehaviour(SGL_NOTICES_ENABLED);
+        SGL2::setNoticeBehaviour(SGL2_NOTICES_ENABLED);
         return $data;
     }
 
     /**
      * Initialise Flexy options.
      *
-     * @param SGL_Output $data
+     * @param SGL2_Output $data
      * @return boolean
      *
      * @todo move flexy constants to this class def
      */
-    protected function _initEngine(SGL_Response $response)
+    protected function _initEngine(SGL2_Response $response)
     {
         //  initialise template engine
         if (!isset($response->theme)) {
@@ -75,19 +75,19 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
         }
         $aTemplateDirs = array(
             // the current module's templates dir from the custom theme
-            SGL_THEME_DIR . '/' . $response->theme . '/' . $response->moduleName,
+            SGL2_THEME_DIR . '/' . $response->theme . '/' . $response->moduleName,
             // the default template dir from the custom theme
-            SGL_THEME_DIR . '/' . $response->theme . '/default',
+            SGL2_THEME_DIR . '/' . $response->theme . '/default',
             // the configured default module's templates dir
-            SGL_MOD_DIR . '/'. SGL_Config2::get('site.defaultModule') . '/templates',
+            SGL2_MOD_DIR . '/'. SGL2_Config2::get('site.defaultModule') . '/templates',
             // the default template dir from the default theme
-            SGL_MOD_DIR . '/default/templates'
+            SGL2_MOD_DIR . '/default/templates'
             );
         $options = array(
             'templateDir'       => implode(PATH_SEPARATOR, array_unique($aTemplateDirs)),
             'templateDirOrder'  => 'reverse',
             'multiSource'       => true,
-            'compileDir'        => SGL_CACHE_DIR . '/tmpl/' . $response->theme,
+            'compileDir'        => SGL2_CACHE_DIR . '/tmpl/' . $response->theme,
             'forceCompile'      => self::FORCE_COMPILE,
             'debug'             => self::DEBUG,
             'allowPHP'          => self::ALLOW_PHP,
@@ -108,15 +108,15 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
     /**
      * Setup Flexy plugins if specified.
      *
-     * @param SGL_Output $data
+     * @param SGL2_Output $data
      * @param array $options
      * @return boolean
      */
-    protected function _setupPlugins(SGL_Response $data, array $options)
+    protected function _setupPlugins(SGL2_Response $data, array $options)
     {
         //  Configure Flexy to use SGL ModuleOutput Plugin
         //   If an Output.php file exists in module's dir
-        $customOutput = SGL_MOD_DIR . '/' . $data->moduleName . '/classes/Output.php';
+        $customOutput = SGL2_MOD_DIR . '/' . $data->moduleName . '/classes/Output.php';
         if (is_readable($customOutput)) {
             $className = ucfirst($data->moduleName) . 'Output';
             if (isset($options['plugins'])) {

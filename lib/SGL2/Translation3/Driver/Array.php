@@ -5,7 +5,7 @@ require_once 'SGL/Translation3/Driver.php';
 /**
 *
 */
-class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
+class SGL2_Translation3_Driver_Array extends SGL2_Translation3_Driver
 {
     public function __construct(array $aOptions = array())
     {
@@ -40,7 +40,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
 
     function getFilePath()
     {
-        return SGL_VAR_DIR . '/translation/data';
+        return SGL2_VAR_DIR . '/translation/data';
     }
 
     /**
@@ -62,7 +62,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         // looking for a language file in paths
         $path = $this->getFilePath();
         $projectPath    = $path . '/' . $dictionary;
-        $modulePath     = SGL_MOD_DIR . '/' . $dictionary  . '/lang';
+        $modulePath     = SGL2_MOD_DIR . '/' . $dictionary  . '/lang';
 
         if (is_file($projectPath . '/' . $langFileName . '.php')) {
             $file = $projectPath . '/' . $langFileName . '.php';
@@ -153,7 +153,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
             : $myLangCode;
         $aDictionary    = $this->_aDictionaries[$langCode];
         $this->_updateMetaData();
-        $aDictionaryEscaped = SGL_String::escapeSingleQuoteInArrayKeys($aDictionary);
+        $aDictionaryEscaped = SGL2_String::escapeSingleQuoteInArrayKeys($aDictionary);
 
         //  read translation data and get reference to root
         $c = new Config();
@@ -163,7 +163,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $this->_ensureLangFileExists($filename);
         if (!is_writable($filename)) {
             throw new Exception('Please give perms to write ' . $filename,
-                SGL_ERROR_INVALIDFILEPERMS);
+                SGL2_ERROR_INVALIDFILEPERMS);
         }
         $arrayName = ($this->dictionary == 'default') ? 'defaultWords' : 'words';
         $result = $c->writeConfig($filename, 'phparray', array('name' => $arrayName));
@@ -199,9 +199,9 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $langCode   = $this->getLangCode();
         $aDictionary = $this->_aDictionaries[$langCode];
         $aMetaData = array(
-            '__SGL_UPDATED_BY'    => SGL_Session::getUsername(),
-            '__SGL_UPDATED_BY_ID' => SGL_Session::getUid(),
-            '__SGL_LAST_UPDATED'  => SGL_Date::getTime(true)
+            '__SGL2_UPDATED_BY'    => SGL2_Session::getUsername(),
+            '__SGL2_UPDATED_BY_ID' => SGL2_Session::getUid(),
+            '__SGL2_LAST_UPDATED'  => SGL2_Date::getTime(true)
         );
         // we do it in this way to put meta data first in array
         foreach ($aMetaData as $k => $v) {
