@@ -11,7 +11,7 @@ require_once 'ArrayTest.php';
 require_once 'InflectorTest.php';
 require_once 'RegistryTest.php';
 require_once 'RequestTest.php';
-require_once 'ConfigTest.php';
+require_once 'Config2Test.php';
 
 class SGL_AllTests {
 
@@ -28,7 +28,7 @@ class SGL_AllTests {
         $suite->addTestSuite('InflectorTest');
         $suite->addTestSuite('RegistryTest');
         $suite->addTestSuite('RequestTest');
-        //$suite->addTestSuite('ConfigTest');
+        $suite->addTestSuite('Config2Test');
         return $suite;
     }
 }

@@ -97,7 +97,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $aRes = $this->c->getAll();
         $this->assertTrue(array_key_exists('river', $aRes));
         $this->assertTrue($ok);
-        $this->assertEqual(SGL_Config::get('river.boat'), 'green');
+        $this->assertEqual(SGL_Config2::get('river.boat'), 'green');
     }
 
     function testGetArrayProperty()
@@ -123,58 +123,58 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     function testImprovedConfigGet()
     {
-        $lifetime = SGL_Config::get('cache.lifetime');
+        $lifetime = SGL_Config2::get('cache.lifetime');
         $this->assertEquals($lifetime, 86400);
     }
 
     function testConfigGetEmptyValue()
     {
-        $res = SGL_Config::get('db.collation');
+        $res = SGL_Config2::get('db.collation');
         $this->assertTrue(empty($res));
     }
 
     function testConfigGetFalseValue()
     {
-        $res = SGL_Config::get('db.collation');
+        $res = SGL_Config2::get('db.collation');
         $this->assertTrue(!($res));
     }
 
     function testConfigGetNonExistentValue()
     {
-        $res = SGL_Config::get('foo.bar');
+        $res = SGL_Config2::get('foo.bar');
         $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimension()
     {
-        $res = SGL_Config::get('foo.');
+        $res = SGL_Config2::get('foo.');
         $this->assertFalse($res);
     }
 
     function testConfigGetValueWithMissingDimensionNoSeparator()
     {
-        $res = SGL_Config::get('foo');
+        $res = SGL_Config2::get('foo');
         $this->assertFalse($res);
     }
 
     function testImprovedConfigGetWithVars()
     {
         $d = 'cache';
-        $lifetime = SGL_Config::get("$d.lifetime");
+        $lifetime = SGL_Config2::get("$d.lifetime");
         $this->assertEquals($lifetime, 86400);
     }
 
     function testImprovedConfigGetWithVars2()
     {
         $mgr = 'default';
-        $ret = SGL_Config::get("$mgr.filterChain");
-        $this->assertFalse(SGL_Config::get("$mgr.filterChain"));
+        $ret = SGL_Config2::get("$mgr.filterChain");
+        $this->assertFalse(SGL_Config2::get("$mgr.filterChain"));
     }
 
 //    function testGetCachedFileName()
 //    {
 //        $fileName = SGL_MOD_DIR . '/default/conf.ini';
-//        $ret = SGL_Config::getCachedFileName($fileName);
+//        $ret = SGL_Config2::getCachedFileName($fileName);
 //        $this->assertEquals(SGL_VAR_DIR . '/config/default.ini', $ret);
 //
 //        $fileName = SGL_MOD_DIR . '/default/other.ini';

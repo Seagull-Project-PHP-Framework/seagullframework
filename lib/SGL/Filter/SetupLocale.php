@@ -18,7 +18,7 @@ class SGL_Filter_SetupLocale extends SGL_DecorateProcess
         //  and php numeric calculations will break.  The solution for these users
         //  is to select the LC_TIME category.  For a global effect change this in
         //  Config.
-        if (setlocale(SGL_String::pseudoConstantToInt(SGL_Config::get('site.localeCategory')),
+        if (setlocale(SGL_String::pseudoConstantToInt(SGL_Config2::get('site.localeCategory')),
                 $locale) == false) {
             setlocale(LC_TIME, $locale);
         }
