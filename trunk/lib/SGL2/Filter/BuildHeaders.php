@@ -15,16 +15,16 @@ class SGL2_Filter_BuildHeaders extends SGL2_DecorateProcess
         $this->processRequest->process($input, $output);
 
         //  set compression as specified in init, can only be done here :-)
-        ini_set('zlib.output_compression', (int)SGL2_Config2::get('site.compression'));
+        ini_set('zlib.output_compression', (int)SGL2_Config::get('site.compression'));
 
         //  build P3P headers
-        if (SGL2_Config2::get('p3p.policies')) {
+        if (SGL2_Config::get('p3p.policies')) {
             $p3pHeader = '';
-            if (SGL2_Config2::get('p3p.policyLocation')) {
-                $p3pHeader .= " policyref=\"" . SGL2_Config2::get('p3p.policyLocation')."\"";
+            if (SGL2_Config::get('p3p.policyLocation')) {
+                $p3pHeader .= " policyref=\"" . SGL2_Config::get('p3p.policyLocation')."\"";
             }
-            if (SGL2_Config2::get('p3p.compactPolicy')) {
-                $p3pHeader .= " CP=\"" . SGL2_Config2::get('p3p.compactPolicy')."\"";
+            if (SGL2_Config::get('p3p.compactPolicy')) {
+                $p3pHeader .= " CP=\"" . SGL2_Config::get('p3p.compactPolicy')."\"";
             }
             if ($p3pHeader != '') {
                 $output->addHeader("P3P: $p3pHeader");

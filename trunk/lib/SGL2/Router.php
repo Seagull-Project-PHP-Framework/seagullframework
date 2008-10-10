@@ -21,24 +21,24 @@ class SGL2_Router
      */
     public function init()
     {
-        if (SGL2_Config2::get('site.frontScriptName')) {
+        if (SGL2_Config::get('site.frontScriptName')) {
             $qs = isset($_SERVER['PATH_INFO'])
                 ? $_SERVER['PATH_INFO']
                 : '/';
         } else {
-            $baseUrl       = SGL2_Config2::get('site.baseUrl');
+            $baseUrl       = SGL2_Config::get('site.baseUrl');
             list($proto, ) = explode('://', $baseUrl, 2);
             $host          = $_SERVER['HTTP_HOST'];
             $url           = $proto . '://' . $host . $_SERVER['REQUEST_URI'];
             $qs            = urldecode(str_replace($baseUrl, '', $url));
         }
 
-        $defModule  = SGL2_Config2::get('site.defaultModule');
-        $defManager = SGL2_Config2::get('site.defaultManager');
-        $defParams  = SGL2_Config2::get('site.defaultParams');
+        $defModule  = SGL2_Config::get('site.defaultModule');
+        $defManager = SGL2_Config::get('site.defaultManager');
+        $defParams  = SGL2_Config::get('site.defaultParams');
 
         // show lang in URL
-        $prependLang  = SGL2_Config2::get('translation.langInUrl');
+        $prependLang  = SGL2_Config::get('translation.langInUrl');
         $prependRegex = $prependLang ? ':lang/' : '';
 
         // Connect to custom routes.

@@ -68,7 +68,7 @@ abstract class SGL2_Controller_Abstract
     {
         SGL2_Registry::set('request',    new SGL2_Request());
         SGL2_Registry::set('response',   new SGL2_Response());
-        SGL2_Registry::set('config',     new SGL2_Config2());
+        SGL2_Registry::set('config',     new SGL2_Config());
 
         $this->setupEnv();
 
@@ -78,7 +78,7 @@ abstract class SGL2_Controller_Abstract
     public function setupEnv()
     {
         $init = new SGL2_TaskRunner();
-        $init->addData(SGL2_Config2::getAll());
+        $init->addData(SGL2_Config::getAll());
         $init->addTask(new SGL2_Task_SetupConstants());
         $init->main();
     }

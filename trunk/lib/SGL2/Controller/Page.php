@@ -92,7 +92,7 @@ abstract class SGL2_Controller_Page
      */
     public function __construct()
     {
-        $this->masterTemplate = SGL2_Config2::get('site.masterTemplate');
+        $this->masterTemplate = SGL2_Config::get('site.masterTemplate');
     }
 
     /**

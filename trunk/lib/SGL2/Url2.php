@@ -117,7 +117,7 @@ class SGL2_Url2
         $aVars     = array();
         $aKeywords = array('moduleName', 'managerName', 'controller',
             'anchor', 'host');
-        if (SGL2_Config2::get('translation.langInUrl')) {
+        if (SGL2_Config::get('translation.langInUrl')) {
             array_push($aKeywords, 'lang');
         }
         foreach ($aParams as $k => $v) {
@@ -194,7 +194,7 @@ class SGL2_Url2
         }
 
         // set current language if none specified
-        if (SGL2_Config2::get('translation.langInUrl') && empty($aParams['lang'])) {
+        if (SGL2_Config::get('translation.langInUrl') && empty($aParams['lang'])) {
             $aParams['lang'] = 'en';
         }
 
@@ -249,7 +249,7 @@ class SGL2_Url2
         } else {
             $baseUrl = SGL2_BASE_URL;
         }
-        $fcName = SGL2_Config2::get('site.frontScriptName');
+        $fcName = SGL2_Config::get('site.frontScriptName');
         if (!empty($fcName) && $includeFc) {
             $baseUrl .= '/' . $fcName;
         }
