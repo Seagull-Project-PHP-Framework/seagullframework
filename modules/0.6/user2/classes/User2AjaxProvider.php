@@ -197,6 +197,29 @@ class User2AjaxProvider extends SGL_AjaxProvider2
     }
 
     /**
+     * Update user table data with supplied values (array).
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
+    public function updateUserMainInfo(SGL_Registry $input, SGL_Output $output)
+    {
+        $aUser = $this->req->get('user');
+
+        $aData          = array();
+        $aAllowedFields = array('first_name', 'last_name');
+        foreach ($aAllowedFields as $fieldName) {
+            $aData[$fieldName] = isset($aUser[$fieldName])
+                ? $aUser[$fieldName] : '';
+        }
+
+        $ok = $this->da->updateUserById(SGL_Session::getUid(), $aData);
+        if (!PEAR::isError($ok)) {
+            $this->_raiseMsg('user information updated', $trans = true);
+        }
+    }
+
+    /**
      * This action creates new 'password recovery' entry and sends user
      * an email with instructions how to reset theirs password.
      *

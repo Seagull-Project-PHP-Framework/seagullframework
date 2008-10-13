@@ -68,4 +68,5 @@ $words['password successfully updated'] = 'Password was successfully updated';
 $words['email is not found'] = 'The email address you entered is not in our records';
 $words['wrong current password'] = 'Wrong current password';
 $words['password is too short'] = 'Password must be at least 5 characters, no spaces';
+$words['user information updated'] = 'User information was successfully updated';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $words['__SGL_UPDATED_BY'] = 'admin';
 $words['__SGL_UPDATED_BY_ID'] = '1';
-$words['__SGL_LAST_UPDATED'] = '2008-10-13 17:49:12';
+$words['__SGL_LAST_UPDATED'] = '2008-10-13 18:16:47';
 $words['auth required'] = 'Пожалуйста, введите имя пользователя и пароль.';
 $words['login (header)'] = 'Вход';
 $words['username'] = 'Имя пользователя';
@@ -45,4 +45,5 @@ $words['passwords are not the same'] = 'Пароли не совпадают';
 $words['password successfully updated'] = 'Пароль успешно обновлен';
 $words['wrong current password'] = 'Неправильный текущий пароль';
 $words['password is too short'] = 'Пароль не должен быть короче 5-ти символов (без пробелов)';
+$words['user information updated'] = 'Информация о пользователе успешно обновлена';
 ?>
