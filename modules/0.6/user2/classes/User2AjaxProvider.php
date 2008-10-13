@@ -219,6 +219,54 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         }
     }
 
+    public function updateUserPreferences(SGL_Registry $input, SGL_Output $output)
+    {
+        $aPrefs      = $this->req->get('prefs');
+        $moduleName  = $this->req->get('redirModuleName');
+        $managerName = $this->req->get('redirManagerName');
+
+        // ensure we update allowed props
+        $aData          = array();
+        $aAllowedFields = array('language');
+        foreach ($aAllowedFields as $fieldName) {
+            if (isset($aPrefs[$fieldName])) {
+                $aData[$fieldName] = $aPrefs[$fieldName];
+            }
+        }
+        $output->redir = false;
+
+        $ok = $this->da->updatePreferencesByUserId(SGL_Session::getUid(), $aData);
+        if (!PEAR::isError($ok)) {
+            // if language was changed -> redir
+            if (!empty($aData['language'])
+                && $aData['language'] != $_SESSION['aPrefs']['language'])
+            {
+                // default values
+                if (empty($moduleName) || empty($managerName)) {
+                    $moduleName  = 'user2';
+                    $managerName = 'account2';
+                }
+                $langCode = $aData['language'];
+                // we need only lang code for 'langInUrl' option
+                if (SGL_Config::get('translation.langInUrl')) {
+                    $langCode = reset(explode('-', $langCode));
+                }
+                $output->redir = $input->getCurrentUrl()->makeLink(array(
+                    'moduleName'  => $moduleName,
+                    'managerName' => $managerName,
+                    'lang'        => $langCode
+                ));
+                $persistMsg = true;
+            } else {
+                $persistMsg = false;
+            }
+
+            // update session
+            $_SESSION['aPrefs'] = array_merge($_SESSION['aPrefs'], $aData);
+            $this->_raiseMsg('user preferences updated', $trans = true, $persistMsg);
+        }
+    }
+
     /**
      * This action creates new 'password recovery' entry and sends user
      * an email with instructions how to reset theirs password.

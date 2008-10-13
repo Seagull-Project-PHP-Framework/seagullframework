@@ -42,6 +42,9 @@ $words['new password'] = 'New password';
 $words['update'] = 'Update';
 $words['cancel'] = 'Cancel';
 $words['password successfully updated (string)'] = 'Password was successfully updated.';
+$words['__SGL_CATEGORY_update_user_preferences'] = 'User preferences management';
+$words['preferences'] = 'Preferences';
+$words['language'] = 'Language';
 $words['__SGL_CATEGORY_change_address'] = 'Change address';
 $words['change address'] = 'Change address';
 $words['address 1'] = 'Address Line 1';
@@ -69,4 +72,5 @@ $words['email is not found'] = 'The email address you entered is not in our reco
 $words['wrong current password'] = 'Wrong current password';
 $words['password is too short'] = 'Password must be at least 5 characters, no spaces';
 $words['user information updated'] = 'User information was successfully updated';
+$words['user preferences updated'] = 'User preferences successfully updated';
 ?>

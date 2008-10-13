@@ -186,7 +186,7 @@ class User2DAO extends SGL_Manager
      *
      * @return boolean
      */
-    public function addMasterPrefsByUserId($userId, $aPrefsOverride = array())
+    public function addMasterPrefsByUserId($userId, array $aPrefsOverride = array())
     {
         $aPrefs    = $this->getMasterPrefs();
         $aPrefsMap = $this->getPrefsMapping();
@@ -196,6 +196,60 @@ class User2DAO extends SGL_Manager
             $aPrefs[$prefId] = $prefValue;
         }
         return $this->addPrefsByUserId($userId, $aPrefs);
+    }
+
+    public function getPreferencesByUserId($userId)
+    {
+        $aPrefsMap = $this->getPrefsMapping();
+        $aPrefs    = $this->getRawPreferencesByUserId($userId);
+        $aRet      = array();
+        foreach ($aPrefs as $prefId => $prefValue) {
+            $prefName = array_search($prefId, $aPrefsMap);
+            if (false !== $prefName) {
+                $aRet[$prefName] = $prefValue;
+            }
+        }
+        return $aRet;
+    }
+
+    public function getRawPreferencesByUserId($userId)
+    {
+        $tableName = SGL_Config::get('table.user_preference');
+        $query     = "
+            SELECT preference_id, value
+            FROM   $tableName
+            WHERE  usr_id = " . intval($userId) . "
+        ";
+        return $this->dbh->getAssoc($query);
+    }
+
+    public function updatePreferencesByUserId($userId, array $aPrefs)
+    {
+        $aPrefsMap = $this->getPrefsMapping();
+        $aData     = array();
+        foreach ($aPrefs as $prefName => $prefValue) {
+        	if (isset($aPrefsMap[$prefName])) {
+        	    $prefId = $aPrefsMap[$prefName];
+        	    $aData[$prefId] = $prefValue;
+        	}
+        }
+        return $this->updateRawPreferencesByUserId($userId, $aData);
+    }
+
+    public function updateRawPreferencesByUserId($userId, array $aPrefs)
+    {
+        $tableName = SGL_Config::get('table.user_preference');
+        $ret       = true;
+        foreach ($aPrefs as $prefId => $prefValue) {
+            $where = "usr_id = " . intval($userId)
+                . " AND preference_id = " . intval($prefId);
+            $ret = $this->dbh->autoExecute($tableName,
+                array('value' => $prefValue), DB_AUTOQUERY_UPDATE, $where);
+            if (PEAR::isError($ret)) {
+                break;
+            }
+        }
+        return $ret;
     }
 
     // ---------------------
