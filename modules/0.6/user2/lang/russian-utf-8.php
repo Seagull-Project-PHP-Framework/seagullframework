@@ -1,7 +1,7 @@
 <?php
 $words['__SGL_UPDATED_BY'] = 'admin';
 $words['__SGL_UPDATED_BY_ID'] = '1';
-$words['__SGL_LAST_UPDATED'] = '2008-09-25 10:02:33';
+$words['__SGL_LAST_UPDATED'] = '2008-10-13 17:49:12';
 $words['auth required'] = 'Пожалуйста, введите имя пользователя и пароль.';
 $words['login (header)'] = 'Вход';
 $words['username'] = 'Имя пользователя';
@@ -26,6 +26,12 @@ $words['recover password (button)'] = 'Восстановить пароль';
 $words['repeat password'] = 'Повторить пароль';
 $words['reset key is outdated'] = 'Вы уже восстановили свой пароль. Если этого не произошло, пожалуйста, сбросьте пароль еще раз.';
 $words['know your password, log in'] = 'Вспомнили свой пароль? Войти';
+$words['change password'] = 'Смена пароля';
+$words['current password'] = 'Текущий пароль';
+$words['new password'] = 'Новый пароль';
+$words['update'] = 'Обновить';
+$words['cancel'] = 'Отменить';
+$words['password successfully updated (string)'] = 'Пароль успешно обновлен.';
 $words['fill in required data'] = 'Пожалуйста, заполните обязательные поля';
 $words['username/password not recognised'] = 'Вы уверены, что ввели логин и/или пароль правильно?';
 $words['username min length error'] = 'Имя пользоватетя должно состоять из латинских букв и/или цифр, а также не должно быть короче 5-ти символов';
@@ -36,5 +42,7 @@ $words['registration failed'] = 'Произошла ошибка при реги
 $words['user not found'] = 'Пользователь с веденными данными не существует';
 $words['password reset email sent'] = 'Мы послали Вам инструкции по сбросе пароля на указанный адрес эл. почты';
 $words['passwords are not the same'] = 'Пароли не совпадают';
-$words['password successfully updated'] = 'Пароль успешно обновлен.';
+$words['password successfully updated'] = 'Пароль успешно обновлен';
+$words['wrong current password'] = 'Неправильный текущий пароль';
+$words['password is too short'] = 'Пароль не должен быть короче 5-ти символов (без пробелов)';
 ?>

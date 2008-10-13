@@ -271,6 +271,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 $ok = $this->da->updatePasswordByUserId($userId,
                     $input->passwordNew);
                 if (!PEAR::isError($ok)) {
+                    $this->_raiseMsg('password successfully updated', $trans = true);
                     $output->isUpdated = true;
                 }
             }
@@ -319,7 +320,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                         $output->isReset = true;
                         $output->html = $this->_renderTemplate($output, array(
                             'masterTemplate' => 'passwordRecoveryReset.html',
-                            'message' => SGL_Output::tr('password successfully updated')
+                            'message' => SGL_Output::tr('password successfully updated (string)')
                         ));
                     }
                 }
