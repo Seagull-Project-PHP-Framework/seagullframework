@@ -30,6 +30,24 @@ class Config2Test extends PHPUnit_Framework_TestCase
         $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
     }
 
+    function testGettingNonExistentValue()
+    {
+        $res = SGL2_Config::get('foo.bar');
+        $this->assertFalse($res);
+    }
+
+    function testConfigGetEmptyValue()
+    {
+        $res = SGL2_Config::get('site.compression');
+        $this->assertTrue(empty($res));
+    }
+
+    function testEmptyValueIsFalse()
+    {
+        $res = SGL2_Config::get('site.compression');
+        $this->assertFalse($res);
+    }
+
     public function testSettingValue()
     {
         $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
@@ -66,9 +84,14 @@ class Config2Test extends PHPUnit_Framework_TestCase
         SGL2_Config::reset();
         $this->assertTrue(SGL2_Config::isEmpty());
         SGL2_Config::replace($aConf);
+        $this->assertTrue(is_array(SGL2_Config::getAll()));
         $this->assertFalse(SGL2_Config::isEmpty());
     }
 
+    /**
+     * Tests the loading of a PHP array in a .php file
+     *
+     */
     public function testConfigMergeAndCount()
     {
         SGL2_Config::reset();
@@ -91,6 +114,10 @@ class Config2Test extends PHPUnit_Framework_TestCase
         $this->assertEquals($default, 'foo');
     }
 
+    /**
+     * Tests loading of an ini file
+     *
+     */
     public function testLoadingModuleConfig()
     {
         $path = realpath(dirname(__FILE__).'/config/conf.ini');

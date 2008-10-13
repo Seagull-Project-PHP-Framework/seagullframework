@@ -81,9 +81,12 @@ class SGL2_Config
 
     public static function get($key, $default = false)
     {
-        $aKeys = split('\.', trim($key));
-        if (isset($aKeys[0]) && isset($aKeys[1]) && isset(self::$_aProps[$aKeys[0]][$aKeys[1]])) {
-            $ret = self::$_aProps[$aKeys[0]][$aKeys[1]];
+        list($dim1, $dim2) = split('\.', trim($key));
+        if (isset($dim1) && isset($dim2) && isset(self::$_aProps[$dim1][$dim2])) {
+            $ret = self::$_aProps[$dim1][$dim2];
+            if (empty($ret)) {
+                $ret = false;
+            }
         } else {
             $ret = $default;
         }
@@ -93,22 +96,20 @@ class SGL2_Config
     /**
      * Sets a config property.
      *
-     * Using new shorthand method you can do $ok = SGL2_Config::set('river.boat', 'green');
+     * Example usage:  $ok = SGL2_Config::set('river.boat', 'green');
      *
      * @param string $key
      * @param mixed $value
      * @return boolean
-     * @todo incomplete
      */
     public function set($key, $value)
     {
         $ret = false;
         if (is_string($key) && is_scalar($value)) {
-            $aKeys = split('\.', trim($key));
-
-            if (isset($aKeys[0]) && isset($aKeys[1])) {
-                if (isset(self::$_aProps[$aKeys[0]][$aKeys[1]])) {
-                    self::$_aProps[$aKeys[0]][$aKeys[1]] = $value;
+            list($dim1, $dim2) = split('\.', trim($key));
+            if (isset($dim1) && isset($dim2)) {
+                if (isset(self::$_aProps[$dim1][$dim2])) {
+                    self::$_aProps[$dim1][$dim2] = $value;
                     $ret = true;
                 }
             }
@@ -177,7 +178,7 @@ class SGL2_Config
             if (substr($file, -3, 3) != 'php') {
                 if (!$force) {
                     $cachedFileName = $this->_getCachedFileName($file);
-                    if (!is_file($cachedFileName)) {
+                    if (!SGL2_File::exists($cachedFileName)) {
                         $ok = $this->_createCachedFile($cachedFileName);
                     }
                     //  ensure module config reads are done from cached copy
