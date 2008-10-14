@@ -7,7 +7,7 @@
  * @author  Demian Turner <demian@phpkitchen.net>
  * @version $Id: UrlTest.ndb.php,v 1.1 2005/06/23 14:56:01 demian Exp $
  */
-class Config2Test extends PHPUnit_Framework_TestCase
+class ConfigTest extends PHPUnit_Framework_TestCase
 {
 
     function setup()
