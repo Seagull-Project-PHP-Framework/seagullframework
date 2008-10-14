@@ -48,12 +48,38 @@ class Config2Test extends PHPUnit_Framework_TestCase
         $this->assertFalse($res);
     }
 
+    function testGetValueWithMissingDimension()
+    {
+        $res = SGL2_Config::get('foo.');
+        $this->assertFalse($res);
+    }
+
+    function testGetValueWithMissingDimensionNoSeparator()
+    {
+        $res = SGL2_Config::get('foo');
+        $this->assertFalse($res);
+    }
+
     public function testSettingValue()
     {
         $this->assertEquals(SGL2_Config::get('site.name'), 'Seagull Framework');
         SGL2_Config::set('site.name', 'my site');
         $this->assertEquals(SGL2_Config::get('site.name'), 'my site');
 
+    }
+
+    function testGetWithVars()
+    {
+        $d = 'cookie';
+        $cookieName = SGL2_Config::get("$d.name");
+        $this->assertEquals($cookieName, 'SGLSESSID');
+    }
+
+    function testGetWithVars2()
+    {
+        $mgr = 'default';
+        $ret = SGL2_Config::get("$mgr.filterChain");
+        $this->assertFalse(SGL2_Config::get("$mgr.filterChain"));
     }
         //  initialise config object
         //  new SGL2_Config(); // autoloads global config array
@@ -66,6 +92,7 @@ class Config2Test extends PHPUnit_Framework_TestCase
         //  $data = SGL2_Config::load('path/to/config2.php');
 
         //  load module config compared to global config
+        //  $data = SGL2_Config::load('modules/$module/conf.ini');
 
         //  merge loaded data with existing config object
         //  SGL2_Config::merge($data);
@@ -73,7 +100,9 @@ class Config2Test extends PHPUnit_Framework_TestCase
         //  saving config data
         //  $str = var_export(SGL2_Config::getAll(), true);
         //  file_put_contents($str, '/path/to/file.php');
-        //  SGL2_Config::save('/path/to/file.php');
+        //  SGL2_Config::save('/path/to/file.php', SGL2_Config::SAVE_ALL_KEYS);
+        //  SGL2_Config::save('/path/to/file.php', SGL2_Config::SAVE_MODULE_KEYS);
+        //  SGL2_Config::save('/path/to/file.php', SGL2_Config::SAVE_GLOBAL_KEYS);
 
         //  config caches
 
