@@ -121,7 +121,7 @@ class PreferenceMgr extends SGL_Manager
             if (empty($input->pref->name)) {
                 $aErrors['name'] = 'You must enter a preference name';
             }
-            if (empty($input->pref->default_value)) {
+            if (!isset($input->pref->default_value)) {
                 $aErrors['default_value'] = 'You must enter a default value';
             }
         }
