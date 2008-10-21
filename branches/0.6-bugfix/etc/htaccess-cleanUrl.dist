@@ -1,16 +1,26 @@
-#allow to have Url without index.php
-Options +FollowSymlinks
-RewriteEngine on
+#<IfModule mod_rewrite.c>
 
-#allow cool urls
-RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule ^(.*) index.php [L]
+############################################
+## enable rewrites
 
-# NOTE:  Symlinks in www are now supported by default.  If you want to list the
-#        contents of directories, comment -l line and uncomment -d.  You can't
-#        have both options.
-#
-#        See http://trac.seagullproject.org/wiki/TroubleShooting/RemovingIndex.php
-#        for full explanation.
+    Options +FollowSymlinks
+    RewriteEngine on
+
+############################################
+## always send 404 on missing files in these folders
+
+    RewriteCond %{REQUEST_URI} !^/.*(themes|wysiwyg|images|js)/
+
+############################################
+## never rewrite for existing files, directories and links
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+
+############################################
+## rewrite everything else to index.php
+
+    RewriteRule .* index.php
+
+#</IfModule>
