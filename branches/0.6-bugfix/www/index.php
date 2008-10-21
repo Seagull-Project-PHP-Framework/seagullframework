@@ -40,7 +40,8 @@ if (!is_file($varDir . '/INSTALL_COMPLETE.php')) {
         ? 'https'
         : 'http';
     $webRoot = $protocol . '://'. $_SERVER['HTTP_HOST'] .
-        str_replace('\\','/',(dirname($_SERVER['SCRIPT_NAME']))) . '/setup.php';
+        str_replace('\\','/',(dirname($_SERVER['SCRIPT_NAME'])));
+    $webRoot = $webRoot.((substr($webRoot,-1) !== '/')?'/':''). 'setup.php';
     header('Location: '.$webRoot);
     exit;
 } else {
