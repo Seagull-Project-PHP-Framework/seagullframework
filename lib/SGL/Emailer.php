@@ -126,6 +126,7 @@ class SGL_Emailer
         $this->headers['Return-Path'] = $this->options['fromEmail'];
         $this->headers['To'] = $this->options['toEmail'];
         $this->headers['Reply-To'] = $this->options['replyTo'];
+        $this->headers['Date'] = date('r');
         return true;
     }
 
