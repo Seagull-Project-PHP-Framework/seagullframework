@@ -169,6 +169,13 @@ function toggleTransElements() {
                 <input type="text" name="conf[site][masterTemplate]" id="conf[site][masterTemplate]" value="{conf[site][masterTemplate]}" />
             </p>
             <p>
+                <label class="tipOwner" for="conf[site][masterLayout]">{translate(#Default master css layout#)}
+                <span class="tipText">{translate(#This is the master css layout that will be loaded#)}</span>
+                </label>
+                <span class="error" flexy:if="error[masterLayout]">{error[masterLayout]}</span>
+                <input type="text" name="conf[site][masterLayout]" id="conf[site][masterLayout]" value="{conf[site][masterLayout]}" />
+            </p>
+            <p>
                 <label class="tipOwner" for="conf[site][wysiwygEditor]">{translate(#Editor type#)}
                 <span class="tipText">{translate(#Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir#)}</span>
                 </label>

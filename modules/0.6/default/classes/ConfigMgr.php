@@ -161,6 +161,10 @@ class ConfigMgr extends SGL_Manager
                 $aErrors['masterTemplate'] = 'Please enter a valid template name';
             }
 
+            if (empty($input->conf['site']['masterLayout'])) {
+                $aErrors['masterLayout'] = 'Please enter a valid layout name';
+            }
+
             //  paths
             if (empty($input->conf['path']['webRoot'])) {
                 $aErrors['webRoot'] = 'Please enter a valid path';

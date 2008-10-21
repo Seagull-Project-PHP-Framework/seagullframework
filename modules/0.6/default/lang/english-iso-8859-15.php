@@ -141,6 +141,8 @@
         'Not Registered' => 'Not Registered?',
         'Email' => 'Email',
         'Remember me' => 'Remember me',
+        'Mr' => ' Mr',
+        'Mrs' => ' Mrs',
 
 /* Bug Reporter */
         'Bug Report' => 'Bug Report',
@@ -233,6 +235,8 @@ Author: Rafael Ferreira Silva <rafael@webphp.com.br>
         'Default manager'=>'Default manager',
         'Default master template'=>'Default master template',
         'This is the master template that will be loaded'=>'This is the master template that will be loaded',
+        'Default master css layout'=>'Default master css layout',
+        'This is the master css layout that will be loaded'=>'This is the master css layout that will be loaded',
         'Navigation Options'=>'Navigation Options',
         'Enable Navigation'=>'Enable Navigation',
         'Navigation driver'=>'Navigation driver',
