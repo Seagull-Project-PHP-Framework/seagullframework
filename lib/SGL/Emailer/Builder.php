@@ -60,11 +60,11 @@ class SGL_Emailer_Builder
         }
         // check tpl options
         if ((empty($aTplOpts['htmlTemplate']) || empty($aTplOpts['moduleName']))
-            && empty($aTplOpts['textTemplate']))
-        {
+             && (empty($aTplOpts['textTemplate']) && empty($aTplOpts['rawHtml']) && empty($aTplOpts['rawText']))) {
             $msg = __CLASS__ . ': template options is not specified';
-        	throw new Exception($msg);
+            throw new Exception($msg);
         }
+
         $aDefaultTplOpts = array(
             'mode'     => self::MODE_HTML_AND_TEXT,
             'siteUrl'  => SGL_BASE_URL,
@@ -99,9 +99,20 @@ class SGL_Emailer_Builder
         if (PEAR::isError($bodyHtml)) {
             throw new Exception(__CLASS__ . ': ' . $bodyHtml->getMessage());
         }
-        // get plain text version of email
+
+        //use 'raw' bodies
         if (empty($bodyTxt)) {
-            $ok = @require_once 'Horde/Text/Filter.php';
+            $bodyTxt  = !empty($aTplOpts['rawText'])
+                     ? $aTplOpts['rawText'] : '';
+        }
+        if (empty($bodyHtml)) {
+            $bodyHtml = !empty($aTplOpts['rawHtml'])
+                     ? $aTplOpts['rawHtml'] : '';
+        }
+
+        // get plain text version of email
+        if (empty($bodyTxt) && $aTplOpts['mode'] == self::MODE_HTML_AND_TEXT) {
+            $ok = @include_once 'Horde/Text/Filter.php';
             if ($ok) {
                 $oFilter = new Text_Filter();
                 $bodyTxt = $oFilter->filter(
@@ -150,6 +161,9 @@ class SGL_Emailer_Builder
             $aHeaders['From']        = !empty($aOpts['fromRealName'])
                 ? SGL_Emailer2::formatAddress($aOpts['fromEmail'], $aOpts['fromRealName'])
                 : $aOpts['fromEmail'];
+        }
+        if (!empty($aOpts['Return-Path'])) {
+            $aHeaders['Return-Path'] = $aOpts['Return-Path'];
         }
         if (!empty($aOpts['subject'])) {
             $aHeaders['Subject'] = $aOpts['subject'];
@@ -302,6 +316,7 @@ class SGL_Emailer_Builder
             $aRetHeaders['Subject'] = $aHeaders['Subject'];
         }
         $aRetHeaders = SGL_Emailer2::cleanMailInjection($aRetHeaders);
+
         // return results
         return array(
             'headers' => $aRetHeaders,

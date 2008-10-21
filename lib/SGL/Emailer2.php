@@ -36,6 +36,8 @@ class SGL_Emailer2
      *                * htmlTemplate
      *                * moduleName (for htmlTemplate only)
      *                * textTemplate
+     *                * rawText
+     *                * rawHtml
      *               default keys (can be overwritten):
      *                * siteUrl
      *                * siteName
