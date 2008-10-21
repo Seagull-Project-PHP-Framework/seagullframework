@@ -498,6 +498,10 @@ class SGL
             $dbh = $locator->get('DB');
             if (!$dbh) {
                 $dbh = & SGL_DB::singleton();
+                //  catch connection failure
+                if (PEAR::isError($dbh)) {
+                    return $dbh;
+                }
                 $locator->register('DB', $dbh);
             }
             $c = &SGL_Config::singleton();

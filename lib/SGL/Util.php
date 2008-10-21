@@ -134,7 +134,7 @@ class SGL_Util
     }
 
     /**
-     * Returns an hash of strings containing the installed (and registered) Modules
+     * Returns an hash of strings listing the installed (and registered) Modules
      *
         Array
         (
@@ -163,7 +163,11 @@ class SGL_Util
             create_function('$a', 'return preg_match("/[^CVS]/", $a);'));
 
         foreach ($ret as $module) {
-            if ($onlyRegistered && !SGL::moduleIsEnabled($module)) {
+            $enabled = SGL::moduleIsEnabled($module);
+            if (PEAR::isError($enabled)) {
+                return $enabled;
+            }
+            if ($onlyRegistered && !$enabled) {
                 unset($ret[$module]);
             }
         }
