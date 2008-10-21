@@ -221,6 +221,14 @@ class SGL_FrontController
     {
         $originalErrorLevel = error_reporting(0);
 
+        //  clear error stack of existing db errors
+        if (SGL_Error::count()) {
+            while ($oError = SGL_Error::getLast()) {
+                if (PEAR::isError($oError, DB_ERROR_CONNECT_FAILED)) {
+                    SGL_Error::reset(); break;
+                }
+            }
+        }
         // test db connection
         if (defined('SGL_INSTALLED')) {
             $dbh = &SGL_DB::singleton();

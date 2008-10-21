@@ -62,7 +62,7 @@ class SGL_DB
      * @access  public
      * @static
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
-     * @return  mixed           reference to DB resource or false on failure to connect
+     * @return  mixed           reference to DB resource or PEAR error on failure to connect
      */
     function &singleton($dsn = null)
     {
@@ -82,19 +82,18 @@ class SGL_DB
         if (!isset($aInstances[$signature])) {
             $conn = DB::connect($dsn);
             if (PEAR::isError($conn)) {
-                //  remove sensitve details, ie, db password
+                //  remove sensitive details, ie, db password
                 if ($conn->getCode() == DB_ERROR_CONNECT_FAILED) {
                     $oLastStackError = SGL_Error::pop();
                     $oLastStackError->userinfo = ''; //crude but give me an API!
                     SGL_Error::push($oLastStackError);
+                    $conn = $oLastStackError;
                 }
                 if (is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php') && defined('SGL_INSTALLED')) {
                     $msg .= 'If you remove the file seagull/var/INSTALL_COMPLETE.php you will be'.
                     ' able to run the setup again.';
                 }
-                $err = SGL::raiseError($msg,
-                    SGL_ERROR_DBFAILURE);
-                return $err;
+                return $conn;
             }
             if (!empty($conf['db']['postConnect'])) {
                 $conn->query($conf['db']['postConnect']);

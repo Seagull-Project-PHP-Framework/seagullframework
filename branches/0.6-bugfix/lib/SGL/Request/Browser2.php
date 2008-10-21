@@ -168,6 +168,9 @@ class SGL_Request_Browser2 extends SGL_Request
     public static function getAvailableManagers()
     {
         $aModules  = SGL_Util::getAllModuleDirs();
+        if (PEAR::isError($aModules)) {
+            return array();
+        }
         $aManagers = array();
         foreach ($aModules as $moduleName) {
             $configFile = SGL_MOD_DIR . '/' . $moduleName . '/conf.ini';
