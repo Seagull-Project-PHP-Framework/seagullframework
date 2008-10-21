@@ -68,6 +68,7 @@
         : array(
                     'cs-iso-8859-2'=> array('cs|czech', 'czech-iso-8859-2', 'cs'),
                     'de-iso-8859-1'=> array('de([-_][[:alpha:]]{2})?|german', 'german-iso-8859-1', 'de'),
+                    'de-utf-8'=> array('de([-_][[:alpha:]]{2})?|german', 'german-utf-8', 'de'),
                     'en-iso-8859-15'=> array('en([-_][[:alpha:]]{2})?|english',  'english-iso-8859-15', 'en'),
                     'en-utf-8'=> array('en([-_][[:alpha:]]{2})?|english',  'english-utf-8', 'en'),
                     'es-iso-8859-1'=> array('es([-_][[:alpha:]]{2})?|spanish', 'spanish-iso-8859-1', 'es'),

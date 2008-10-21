@@ -9,6 +9,7 @@ BUGFIXES
             (lakiboy)
 
 IMPROVEMENTS
+06-08-08    Added German utf-8 support (michas)
 06-08-08    Consolidated translation features (SGL_Translation, SGL_Translation2)
             into new SGL_Translation3 PHP5 only package
 06-08-08    Added media2 module which makes ajax uploads easier and will provide
