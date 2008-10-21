@@ -22,7 +22,17 @@
  * Configuration file for the File Manager Connector for PHP.
  */
 
-include '../../../../../../../lib/SGL/FrontController.php';
+$pearTest = '@PHP-DIR@';
+
+//  set initial paths according to install type
+if ($pearTest != '@' . 'PHP-DIR'. '@') {
+    define('SGL_PEAR_INSTALLED', true);
+    $rootDir = '@PHP-DIR@/Seagull';
+} else {
+    $rootDir = '../../../../../../..';
+}
+
+include $rootDir.'/lib/SGL/FrontController.php';
 SGL_FrontController::init();
 session_start();
 
