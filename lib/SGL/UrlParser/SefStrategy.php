@@ -111,7 +111,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
         if (!SGL_Config::get('site.setup')  && !empty($aParsedUri['moduleName'])) {
             $testPath = SGL_MOD_DIR  . '/' . $aParsedUri['moduleName'] . '/conf.ini';
             $path = realpath($testPath);
-            if ($path) {
+            if ($path && file_exists($path)) {
                 $c = &SGL_Config::singleton();
                 $aModuleConfig = $c->load($path);
 
