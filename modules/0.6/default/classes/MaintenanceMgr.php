@@ -265,6 +265,8 @@ class MaintenanceMgr extends SGL_Manager
 
         // reload local config
         $c = &SGL_Config::singleton();
+        // we want to reload default module
+        $c->set('localConfig', array('moduleName' => 'non existent module'));
         $c->ensureModuleConfigLoaded('default');
 
         if (SGL_Error::count()) {
