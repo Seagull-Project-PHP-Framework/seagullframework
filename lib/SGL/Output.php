@@ -1154,7 +1154,7 @@ class SGL_Output
         // get master layout
         $masterLayout = !empty($this->masterLayout)
             ? $this->masterLayout
-            : 'layout-navtop-3col.css'; // needs to be customized
+            : (SGL_Config::get('site.masterLayout') ? SGL_Config::get('site.masterLayout') : 'layout-navtop-3col.css');
 
         // layout is specified in request for demo purpose on home page
         $req = &SGL_Request::singleton();
