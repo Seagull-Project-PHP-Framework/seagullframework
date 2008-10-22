@@ -52,4 +52,14 @@ class SGL2_ErrorHandler
             $line, $context);
         throw $legacyErrorException;
     }
+
+    /**
+     * Very useful static method when dealing with PEAR libs ;-)
+     *
+     * @param unknown_type $mode
+     */
+    public static function setNoticeBehaviour($mode = SGL2_NOTICES_ENABLED)
+    {
+        $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
+    }
 }

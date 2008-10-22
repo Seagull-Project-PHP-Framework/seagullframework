@@ -152,9 +152,6 @@ class SGL2_Response
 
         $view = new SGL2_View_HtmlSimple($resp, $templateEngine);
         echo $view->render();
-
-        //  suppress error notices in templates
-        //SGL::setNoticeBehaviour(SGL2_NOTICES_DISABLED);
     }
 }
 ?>
