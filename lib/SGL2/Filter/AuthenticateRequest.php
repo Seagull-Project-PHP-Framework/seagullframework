@@ -101,7 +101,7 @@ class SGL2_Filter_AuthenticateRequest extends SGL2_DecorateProcess
                 $redir = $url->toString();
                 $loginPage = array(
                     'moduleName'    => 'user',
-                    'managerName'   => 'login',
+                    'controllerName'=> 'login',
                     'redir'         => base64_encode($redir)
                     );
 

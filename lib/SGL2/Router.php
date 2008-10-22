@@ -151,7 +151,7 @@ class SGL2_Router
      * This has to be a public method to be recognised as is_callable
      *
      * @return array
-     * @todo fixme
+     * @todo move to BC plugin
      */
     public static function _getAvailableManagers()
     {
@@ -196,8 +196,9 @@ class SGL2_Router
      * Get manager name from congif directive. Callback for array_map.
      *
      * @param string $sectionName
-     *
      * @return mixed string or null
+     * @todo move to BC plugin
+     *
      */
     protected static function _getManagerName($sectionName)
     {

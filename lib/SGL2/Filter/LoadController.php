@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Resolves request params into Manager model object.
+ * Instaniates a controller based on request params.
  *
  * The module is resolved from Request parameter
  *

@@ -227,10 +227,10 @@ class SGL2_Request
         return $this->_aClean['moduleName'];
     }
 
-    public function getManagerName()
+    public function getControllerName()
     {
-        if (isset( $this->_aClean['managerName'])) {
-            $ret = $this->_aClean['managerName'];
+        if (isset( $this->_aClean['controllerName'])) {
+            $ret = $this->_aClean['controllerName'];
         } else {
             $ret = 'default';
         }
