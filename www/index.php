@@ -6,7 +6,7 @@ $erh = SGL2_ErrorHandler::singleton();
 $ech = SGL2_ExceptionHandler::singleton();
 
 try {
-    $front = new SGL2_Controller_FrontBc();
+    $front = new SGL2_Controller_Front();
     $front->run();
 
 } catch (Exception $e) {

@@ -6,7 +6,7 @@ class SGL2_Request_Cli
     {
         require_once 'Console/Getopt.php';
         $shortOptions = '';
-        $longOptions = array('moduleName=', 'managerName=', 'action=');
+        $longOptions = array('moduleName=', 'controllerName=', 'action=');
 
         $console = new Console_Getopt();
         $arguments = $console->readPHPArgv();

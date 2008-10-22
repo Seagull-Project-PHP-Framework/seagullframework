@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo move to BC plugin
+ *
+ */
 class SGL2_Controller_FrontBc extends SGL2_Controller_Abstract
 {
     public function run()
@@ -15,8 +19,7 @@ class SGL2_Controller_FrontBc extends SGL2_Controller_Abstract
 
         $aFilters = array(
             //  pre-process (order: top down)
-           //'SGL2_Filter_LoadManager',
-           'SGL2_Filter_LoadController',
+           'SGL2_Filter_LoadManager',
            'SGL2_Filter_CreateSession',
            'SGL2_Filter_SetupLangSupport',
            'SGL2_Filter_SetupLocale',
@@ -28,8 +31,7 @@ class SGL2_Controller_FrontBc extends SGL2_Controller_Abstract
 //                'SGL2_Filter_SetupGui',
             'SGL2_Filter_BuildOutputData',
         );
-        //$target = 'SGL2_MainProcessBc';
-        $target = 'SGL2_Controller_Main';
+        $target = 'SGL2_Controller_MainBc';
         $chain = new SGL2_FilterChain($aFilters);
         $chain->setTarget($target);
         $chain->doFilter($request, $response);
