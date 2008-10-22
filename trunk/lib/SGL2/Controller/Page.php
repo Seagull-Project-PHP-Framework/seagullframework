@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 // | Seagull 2.0                                                               |
 // +---------------------------------------------------------------------------+
-// | Manager.php                                                               |
+// | Page.php                                                                  |
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
@@ -120,7 +120,7 @@ abstract class SGL2_Controller_Page
                 && $this->conf[$ctlrName]['requiresAuth'] == true
                 && $this->conf['debug']['authorisationEnabled'])
         {
-            //  determine global manager perm, ie that is valid for all actions
+            //  determine global controller perm, ie that is valid for all actions
             //  in the mgr
             $ctlrPerm = SGL2_String::pseudoConstantToInt('SGL2_PERMS_' .
                 strtoupper($ctlrName));

@@ -8,16 +8,16 @@
  *
  * @package Filter
  * @author  Demian Turner <demian@phpkitchen.com>
+ * @todo move to BC plugin
  */
 class SGL2_Filter_LoadManager extends SGL2_DecorateProcess
 {
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        $req = SGL2_Registry::get('request');
-        $moduleName = $req->get('moduleName');
-        $managerName = $req->get('managerName');
+        $moduleName = $input->get('moduleName');
+        $managerName = $input->get('managerName');
 
-        $mgr = SGL2_Inflector::getManagerNameFromSimplifiedName($managerName);
+        $mgr = SGL_Inflector::getManagerNameFromSimplifiedName($managerName);
         $mgrPath = SGL2_MOD_DIR . '/' . $moduleName . '/classes/';
 
         //  build path to manager class

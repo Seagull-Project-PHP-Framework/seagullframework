@@ -45,74 +45,6 @@
  */
 class SGL2_Inflector
 {
-    /**
-    * Returns true if querystring has been simplified.
-    *
-    * This happens when a manager name is the same as its module name, ie
-    * UserManger in the 'user' module would become user/user which gets
-    * reduced to user
-    *
-    * $querystring does not include the frontScriptName, ie, index.php
-    *
-    * @param string $querystring    From the querystring fragment onwards, ie /user/account/userid/2/
-    * @param string $sectionName    From the database
-    * @return boolean
-    * @todo only needed for php4
-    */
-    public function isUrlSimplified($querystring, $sectionName)
-    {
-        if (!(empty($querystring))) {
-            if (SGL2_Inflector::urlContainsDuplicates($querystring)) {
-                $ret = false;
-            } else {
-                $aUrlPieces = explode('/', $querystring);
-                $moduleName = $aUrlPieces[0];
-                $aSections =  explode('/', $sectionName);
-                $ret = in_array($moduleName, $aSections)
-                    && (SGL2_Inflector::urlContainsDuplicates($sectionName));
-            }
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-
-    /**
-     * Returns true if manager name is the same of module name, ie, index.php/faq/faq/.
-     *
-     * @param string $url
-     * @return boolean
-     * @todo only needed for php4
-     */
-    function urlContainsDuplicates($url)
-    {
-        if (!empty($url)) {
-            $aPieces = explode('/', $url);
-            $initial = count($aPieces);
-            $unique = count(array_unique($aPieces));
-            $ret = $initial != $unique;
-        } else {
-            $ret = false;
-        }
-        return $ret;
-    }
-
-    /**
-     * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
-     *
-     * @static
-     * @param string $name
-     * @return string
-     * @todo only needed for php4
-     */
-    public static function getManagerNameFromSimplifiedName($name)
-    {
-        //  if Mgr suffix has been left out, append it
-        if (strtolower(substr($name, -3)) != 'mgr') {
-            $name .= 'Mgr';
-        }
-        return ucfirst($name);
-    }
 
     /**
      * Returns the full Manager name given the short name, ie, faq becomes FaqMgr.
@@ -127,28 +59,6 @@ class SGL2_Inflector
             $name .= 'Controller';
         }
         return ucfirst($name);
-    }
-
-    /**
-     * Returns the short name given the full Manager name, ie FaqMgr becomes faq.
-     *
-     * @static
-     * @param string $name
-     * @return string
-     * @todo only needed for php4
-     */
-    function getSimplifiedNameFromManagerName($name)
-    {
-        //  strip file extension if exists
-        if (substr($name, -4) == '.php') {
-            $name = substr($name, 0, -4);
-        }
-
-        //  strip 'Mgr' if exists
-        if (strtolower(substr($name, -3)) == 'mgr') {
-            $name = substr($name, 0, -3);
-        }
-        return strtolower($name);
     }
 
    /**
@@ -180,7 +90,7 @@ class SGL2_Inflector
 
     public static function getTitleFromCamelCase($camelCaseWord)
     {
-        if (!SGL2_Inflector::isCamelCase($camelCaseWord)) {
+        if (!self::isCamelCase($camelCaseWord)) {
             return $camelCaseWord;
         }
         $ret = '';
