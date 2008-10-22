@@ -3,6 +3,7 @@
  * Setup which admin Graphical User Interface to use.
  *
  * @package Task
+ * @todo only  present if admin module installed
  */
 class SGL2_Filter_SetupGui extends SGL2_DecorateProcess
 {
