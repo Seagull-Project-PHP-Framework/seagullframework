@@ -6,7 +6,7 @@ class SGL2_Response
      *
      * @var array
      */
-    protected $aProps;
+    protected $_aProps;
 
     /**
      * HTTP status code
@@ -20,7 +20,7 @@ class SGL2_Response
      *
      * @var string
      */
-    protected $data;
+    protected $_data;
 
     /**
      * List of messages to be returned to user
@@ -38,13 +38,13 @@ class SGL2_Response
 
     public function set($k, $v)
     {
-        $this->aProps[$k] = $v;
+        $this->_aProps[$k] = $v;
     }
 
     public function add(array $aData)
     {
         foreach ($aData as $k => $v) {
-            $this->aProps[$k] = $v;
+            $this->_aProps[$k] = $v;
         }
     }
 
@@ -63,14 +63,14 @@ class SGL2_Response
     protected function __set($k, $v)
     {
         if (!isset($this->$k)) {
-            $this->aProps[$k] = $v;
+            $this->_aProps[$k] = $v;
         }
     }
 
     protected function __get($k)
     {
-        if (isset($this->aProps[$k])) {
-            return $this->aProps[$k];
+        if (isset($this->_aProps[$k])) {
+            return $this->_aProps[$k];
         }
     }
 
@@ -81,12 +81,12 @@ class SGL2_Response
 
     public function getBody()
     {
-        return $this->aProps;
+        return $this->_aProps;
     }
 
     public function setBody($body)
     {
-        $this->data = $body;
+        $this->_data = $body;
     }
 
     public function addHeader($header)
@@ -103,7 +103,7 @@ class SGL2_Response
 
     protected function __toString()
     {
-        return $this->data;
+        return $this->_data;
     }
 
     /**

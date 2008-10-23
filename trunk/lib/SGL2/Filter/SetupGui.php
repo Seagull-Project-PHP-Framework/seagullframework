@@ -9,7 +9,7 @@ class SGL2_Filter_SetupGui extends SGL2_DecorateProcess
 {
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
 
         $ctrlName = $input->getControllerName();
         $adminGuiAllowed = false;

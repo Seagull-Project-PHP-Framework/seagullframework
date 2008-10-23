@@ -54,12 +54,12 @@ interface SGL2_Config_Interface
 
 class SGL2_ParamHandler implements SGL2_Config_Interface
 {
-    public $source;
+    protected $_source;
     private static $instances;
 
     public function __construct($source)
     {
-        $this->source = $source;
+        $this->_source = $source;
     }
 
     public static function singleton($source)
@@ -107,7 +107,7 @@ class SGL2_ParamHandler_Ini extends SGL2_ParamHandler
 {
     public function read()
     {
-        $ret = @parse_ini_file($this->source, true);
+        $ret = @parse_ini_file($this->_source, true);
         return (count($ret)) ? $ret : false;
     }
 
@@ -117,7 +117,7 @@ class SGL2_ParamHandler_Ini extends SGL2_ParamHandler
         require_once 'Config.php';
         $c = new Config();
         $c->parseConfig($data, 'phparray');
-        $ok = $c->writeConfig($this->source, 'inifile');
+        $ok = $c->writeConfig($this->_source, 'inifile');
         return $ok;
     }
 }
@@ -132,8 +132,8 @@ class SGL2_ParamHandler_Array extends SGL2_ParamHandler
 {
     public function read()
     {
-        if (SGL2_File::exists($this->source)) {
-            $ret = SGL2_File::load($this->source);
+        if (SGL2_File::exists($this->_source)) {
+            $ret = SGL2_File::load($this->_source);
         } else {
             $ret = false;
         }
@@ -146,7 +146,7 @@ class SGL2_ParamHandler_Array extends SGL2_ParamHandler
         require_once 'Config.php';
         $c = new Config();
         $c->parseConfig($data, 'phparray');
-        $ok = $c->writeConfig($this->source, 'phparray');
+        $ok = $c->writeConfig($this->_source, 'phparray');
         return $ok;
     }
 }
@@ -161,7 +161,7 @@ class SGL2_ParamHandler_Xml extends SGL2_ParamHandler
 {
     public function read()
     {
-        return simplexml_load_file($this->source);
+        return simplexml_load_file($this->_source);
     }
 
     public function write($data)
@@ -170,7 +170,7 @@ class SGL2_ParamHandler_Xml extends SGL2_ParamHandler
         require_once 'Config.php';
         $c = new Config();
         $c->parseConfig($data, 'phparray');
-        $ok = $c->writeConfig($this->source, 'xml');
+        $ok = $c->writeConfig($this->_source, 'xml');
         return $ok;
     }
 }

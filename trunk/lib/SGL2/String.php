@@ -39,7 +39,7 @@
 // $Id: String.php,v 1.14 2005/06/01 11:11:23 demian Exp $
 
 /**
- * Various string helper methods.
+ * Various static string helper methods.
  *
  * @package SGL
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -56,7 +56,7 @@ class SGL2_String
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL2_String::trimWhitespace($value);
+                $newArray[$key] = self::trimWhitespace($value);
             }
             return $newArray;
         } else {
@@ -80,11 +80,11 @@ class SGL2_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL2_String::trimWhitespace($var);
+        $var = self::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL2_String::clean($value);
+                $newArray[$key] = self::clean($value);
             }
             return $newArray;
         } else {
@@ -97,11 +97,11 @@ class SGL2_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL2_String::trimWhitespace($var);
+        $var = self::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL2_String::removeJs($value);
+                $newArray[$key] = self::removeJs($value);
             }
             return $newArray;
         } else {
@@ -124,7 +124,6 @@ class SGL2_String
      * @return string cleaned text
      *
      * @author  Andy Crain <andy@newslogic.com>
-     * @since   PHP 4.3
      * @todo this should be a plugin
      */
     function tidy($html, $logErrors = false)
@@ -148,7 +147,6 @@ class SGL2_String
             $tidy->cleanRepair();
             $ret = $tidy->body();
         }
-
         return $ret;
     }
 
@@ -212,7 +210,7 @@ class SGL2_String
      * @author  Philippe Lhoste <PhiLho(a)GMX.net>
      * @todo move to plugin
      */
-    function char2entity($char, $encoding = 'H')
+    public function char2entity($char, $encoding = 'H')
     {
         $pad = 1;
         if ($encoding == 'R' || $encoding == 'E') {
@@ -250,9 +248,6 @@ class SGL2_String
     /**
      * Returns a shortened version of text string resolved by word boundaries.
      *
-     * @static
-     *
-     * @access public
      *
      * @param string $str           Text to be shortened.
      * @param integer $limit        Number of words/chars to cut to.
@@ -262,7 +257,7 @@ class SGL2_String
      * @return string Correctly shortened text.
      * @todo move to plugin
      */
-    public function summarise($str, $limit = 50, $element = SGL2_WORD,
+    public static function summarise($str, $limit = 50, $element = SGL2_WORD,
         $appendString = ' ...')
     {
         switch ($element) {
@@ -343,7 +338,7 @@ class SGL2_String
 
     public static function toValidFileName($origName)
     {
-        return SGL2_String::dirify($origName);
+        return self::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/

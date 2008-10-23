@@ -20,11 +20,11 @@ abstract class SGL2_ProcessRequest
  */
 abstract class SGL2_DecorateProcess extends SGL2_ProcessRequest
 {
-    protected $processRequest;
+    protected $_processRequest;
 
     public function __construct(SGL2_ProcessRequest $pr)
     {
-        $this->processRequest = $pr;
+        $this->_processRequest = $pr;
     }
 }
 

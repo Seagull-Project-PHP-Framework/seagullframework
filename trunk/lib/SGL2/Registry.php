@@ -47,10 +47,10 @@
  */
 class SGL2_Registry
 {
-    private static $_aProps = array();
+    protected static $_aProps = array();
 
     /**
-     * Constructor is disabled to enforce a singleton pattern.
+     * Constructor is disabled to enforce static usage.
      *
      */
     final private function __construct() {}

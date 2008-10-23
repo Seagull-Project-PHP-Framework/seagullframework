@@ -32,7 +32,7 @@ class SGL2_Filter_SetupLocale extends SGL2_DecorateProcess
             putenv('LANGUAGE=' . $locale);
         }
 
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 

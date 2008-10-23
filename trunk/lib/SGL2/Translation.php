@@ -5,8 +5,8 @@
 */
 class SGL2_Translation
 {
-    private $_driver;
-    private static $aInstances;
+    protected $_driver;
+    protected static $_aInstances;
 
     /**
      * FIXME: setDriver possible exception must be caught
@@ -28,11 +28,11 @@ class SGL2_Translation
     public static function singleton($driver = null, array $aOptions = array())
     {
         $driver = strtolower($driver);
-        if (!isset(self::$aInstances[$driver])) {
+        if (!isset(self::$_aInstances[$driver])) {
             $class = __CLASS__;
-            self::$aInstances[$driver] = new $class($driver, $aOptions);
+            self::$_aInstances[$driver] = new $class($driver, $aOptions);
         }
-        return self::$aInstances[$driver];
+        return self::$_aInstances[$driver];
     }
 
     /**
@@ -100,6 +100,12 @@ class SGL2_Translation
         return str_replace('_', '-', SGL2_Config::get('translation.fallbackLang'));
     }
 
+    public static function getDefaultCharset()
+    {
+        $langCodeCharset = self::getDefaultLangCodeCharset();
+        return self::extractCharset($langCodeCharset);
+    }
+
     /**
      * @todo make work with langCode
      */
@@ -111,12 +117,6 @@ class SGL2_Translation
             array_shift($aLang);
         }
         return implode('-', $aLang);
-    }
-
-    public static function getDefaultCharset()
-    {
-        $langCodeCharset = self::getDefaultLangCodeCharset();
-        return self::extractCharset($langCodeCharset);
     }
 }
 ?>

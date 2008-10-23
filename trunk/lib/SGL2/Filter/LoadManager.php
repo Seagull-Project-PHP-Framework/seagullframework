@@ -28,7 +28,7 @@ class SGL2_Filter_LoadManager extends SGL2_DecorateProcess
             throw new Exception("Manager '$mgr' could not be found at $classPath");
         }
 
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 

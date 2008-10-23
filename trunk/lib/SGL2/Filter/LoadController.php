@@ -26,7 +26,7 @@ class SGL2_Filter_LoadController extends SGL2_DecorateProcess
         } catch (Exception $e) {
             throw new Exception("Controller '$ctlr' could not be found at $classPath");
         }
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 

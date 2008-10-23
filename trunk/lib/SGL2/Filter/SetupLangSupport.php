@@ -33,7 +33,7 @@ class SGL2_Filter_SetupLangSupport extends SGL2_DecorateProcess
         $_SESSION['aPrefs']['language'] = $trans->langCodeCharset;
 
         // continue chain execution
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 ?>

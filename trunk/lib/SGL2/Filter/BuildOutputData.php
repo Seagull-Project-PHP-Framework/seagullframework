@@ -17,7 +17,7 @@ class SGL2_Filter_BuildOutputData extends SGL2_DecorateProcess
      */
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
 
         $this->_addOutputData($input, $output);
     }

@@ -20,7 +20,7 @@ abstract class SGL2_View
      *
      * @var SGL2_OutputRendererStrategy
      */
-    public $rendererStrategy;
+    protected $_rendererStrategy;
 
     /**
      * Constructor.
@@ -32,7 +32,7 @@ abstract class SGL2_View
     public function __construct($response, SGL2_OutputRendererStrategy $rendererStrategy)
     {
         $this->data = $response;
-        $this->rendererStrategy = $rendererStrategy;
+        $this->_rendererStrategy = $rendererStrategy;
     }
 
     /**
@@ -52,7 +52,7 @@ abstract class SGL2_View
      */
     public function render()
     {
-        return $this->rendererStrategy->render($this);
+        return $this->_rendererStrategy->render($this);
     }
 }
 

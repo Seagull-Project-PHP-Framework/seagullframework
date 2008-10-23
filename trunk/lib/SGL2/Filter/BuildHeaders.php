@@ -12,7 +12,7 @@ class SGL2_Filter_BuildHeaders extends SGL2_DecorateProcess
 {
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
 
         //  set compression as specified in init, can only be done here :-)
         ini_set('zlib.output_compression', (int)SGL2_Config::get('site.compression'));

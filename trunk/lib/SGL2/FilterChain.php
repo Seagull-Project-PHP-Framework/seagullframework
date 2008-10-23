@@ -8,12 +8,12 @@
  */
 class SGL2_FilterChain
 {
-    public $aFilters;
+    protected $_aFilters;
     protected $_target;
 
     public function __construct($aFilters)
     {
-        $this->aFilters = array_map('trim', $aFilters);
+        $this->_aFilters = array_map('trim', $aFilters);
     }
 
     public function setTarget($target)
@@ -29,11 +29,11 @@ class SGL2_FilterChain
 
     public function doFilter(SGL2_Request $input, SGL2_Response $output)
     {
-        array_push($this->aFilters, $this->getTarget());
+        array_push($this->_aFilters, $this->getTarget());
         $filters = '';
         $closeParens = '';
         $code = '$process = ';
-        foreach ($this->aFilters as $filter) {
+        foreach ($this->_aFilters as $filter) {
             if (class_exists($filter)) {
                 $filters .= "new $filter(\n";
                 $closeParens .= ')';
