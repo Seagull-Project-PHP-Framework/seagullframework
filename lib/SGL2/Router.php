@@ -161,7 +161,7 @@ class SGL2_Router
         $aManagers = array();
         foreach ($aModules as $moduleName) {
             $configFile = SGL2_MOD_DIR . '/' . $moduleName . '/conf.ini';
-            if (file_exists($configFile)) {
+            if (SGL2_File::exists($configFile)) {
                 $aDefault  = array(ucfirst($moduleName) . 'Mgr');
                 $aSections = array_keys(parse_ini_file($configFile, true));
                 $aManagers = array_merge($aManagers, $aSections, $aDefault);
@@ -218,7 +218,7 @@ class SGL2_Router
     protected function _getCustomRoutes()
     {
         $routesFile = SGL2_VAR_DIR . '/routes.php';
-        if (!file_exists($routesFile)) {
+        if (!SGL2_File::exists($routesFile)) {
             // copy the default configuration file to the users tmp directory
             try {
                 copy(SGL2_ETC_DIR . '/routes.php.dist', $routesFile);

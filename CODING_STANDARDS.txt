@@ -444,6 +444,13 @@ should only be used when necessary. Instead try to use !`empty()` or
 .. isarray(): http://www.php.net/manual/en/function.is-array.php
 .. array_key_exists(): http://www.php.net/manual/en/function.array-key-exists.php
 
+File Checking
+=============
+
+Rather than use PHP's is_file(), file_exists() or is_readable() use SGL2_File::exists()
+which gets around the PHP 5.2.4 bug where different OSs return different responses
+which leads to errors.
+
 
 Quotes
 ======
