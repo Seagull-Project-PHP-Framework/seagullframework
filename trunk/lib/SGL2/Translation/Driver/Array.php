@@ -63,14 +63,14 @@ class SGL2_Translation_Driver_Array extends SGL2_Translation_Driver
         $projectPath    = $path . '/' . $dictionary;
         $modulePath     = SGL2_MOD_DIR . '/' . $dictionary  . '/lang';
 
-        if (is_file($projectPath . '/' . $langFileName . '.php')) {
+        if (SGL2_File::exists($projectPath . '/' . $langFileName . '.php')) {
             $file = $projectPath . '/' . $langFileName . '.php';
-        } elseif (is_file($modulePath . '/' . $langFileName . '.php')) {
+        } elseif (SGL2_File::exists($modulePath . '/' . $langFileName . '.php')) {
             $file = $modulePath . '/' . $langFileName . '.php';
         }
         $words = array();
         // loading translations from php file
-        if (isset($file) && is_readable($file)) {
+        if (isset($file) && SGL2_File::exists($file)) {
             include $file;
             if ($dictionary == 'default') {
                 $words = $defaultWords;
@@ -185,7 +185,7 @@ class SGL2_Translation_Driver_Array extends SGL2_Translation_Driver
             $ok = System::mkDir(array('-p', $langDir));
             @chmod($langDir, 0777);
         }
-        if (!is_file($langFile)) {
+        if (!SGL2_File::exists($langFile)) {
             $ok = touch($langFile);
         }
     }

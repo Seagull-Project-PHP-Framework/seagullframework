@@ -158,7 +158,7 @@ class SGL2_Task_SetupConstants extends SGL2_Task
         define('SGL2_NOTICES_ENABLED',           1);
 
         // On install, $conf is empty let's load it
-        if (empty($conf) && file_exists(SGL2_ETC_DIR . '/customInstallDefaults.ini')) {
+        if (empty($conf) && SGL2_File::exists(SGL2_ETC_DIR . '/customInstallDefaults.ini')) {
             $c = SGL2_Config::singleton();
             $conf1 = $c->load(SGL2_ETC_DIR . '/customInstallDefaults.ini');
             if (isset($conf1['path']['moduleDirOverride'])) {

@@ -117,7 +117,7 @@ class SGL2_HtmlRenderer_FlexyStrategy extends SGL2_OutputRendererStrategy
         //  Configure Flexy to use SGL ModuleOutput Plugin
         //   If an Output.php file exists in module's dir
         $customOutput = SGL2_MOD_DIR . '/' . $data->moduleName . '/classes/Output.php';
-        if (is_readable($customOutput)) {
+        if (SGL2_File::exists($customOutput)) {
             $className = ucfirst($data->moduleName) . 'Output';
             if (isset($options['plugins'])) {
                 $options['plugins'] = $options['plugins'] + array($className => $customOutput);

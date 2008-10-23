@@ -74,22 +74,6 @@ class SGL2_File
     }
 
     /**
-     * Returns TRUE if the $filename is readable, or FALSE otherwise.
-     * This function uses the PHP include_path, where PHP's is_readable()
-     * does not.
-     *
-     * @param string   $filename
-     * @return boolean
-     */
-//    public static function isReadable($filename)
-//    {
-//        if (! @fopen($filename, 'r', true)) {
-//            return false;
-//        }
-//        return true;
-//    }
-
-    /**
      * Copies directories recursively.
      *
      * @param string $source
@@ -112,8 +96,8 @@ class SGL2_File
             while (false !== ($file = readdir($handle))) {
                 if ($file != '.' && $file != '..') {
                     $path = $source . '/' . $file;
-                    if (is_file($path)) {
-                        if (!is_file($dest . '/' . $file) || $overwrite) {
+                    if (self::exists($path)) {
+                        if (!self::exists($dest . '/' . $file) || $overwrite) {
                             if (!@copy($path, $dest . '/' . $file)){
                                 return SGL::raiseError('filesystem not writable',
                                     SGL2_ERROR_INVALIDFILEPERMS);
