@@ -162,7 +162,7 @@ class SGL2_Config
      *
      * @param string $file
      * @param boolean $force If force is true, master  config file is read, not cached one
-     * @return mixed An array of data on success, PEAR error on failure.
+     * @return mixed An array of data on success
      */
     public function load($file, $force = false)
     {

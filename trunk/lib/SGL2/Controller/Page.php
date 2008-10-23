@@ -109,7 +109,7 @@ abstract class SGL2_Controller_Page
      *
      * @param   SGL2_Registry    $input  Input object received from validate()
      * @param   SGL2_Output      $output Processed result
-     * @return  mixed           true on success or PEAR_Error on failure
+     * @return  mixed           true on success
      */
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
