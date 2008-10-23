@@ -11,7 +11,7 @@ class SGL2_Filter_CreateSession extends SGL2_DecorateProcess
     public function process(SGL2_Request $input, SGL2_Response $output)
     {
         SGL2_Registry::set('session', new SGL2_Session());
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 

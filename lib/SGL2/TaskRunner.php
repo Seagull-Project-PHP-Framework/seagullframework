@@ -65,12 +65,12 @@ class SGL2_TaskRunner
     * collection of Task objects
     * @var array
     */
-    protected $aTasks = array();
-    protected $data = null;
+    protected $_aTasks = array();
+    protected $_data = null;
 
     public function addData(array $data)
     {
-        $this->data = $data;
+        $this->_data = $data;
     }
 
    /**
@@ -82,7 +82,7 @@ class SGL2_TaskRunner
     */
     public function addTask(SGL2_Task $oTask)
     {
-        $this->aTasks[] = $oTask;
+        $this->_aTasks[] = $oTask;
         return true;
     }
 
@@ -95,8 +95,8 @@ class SGL2_TaskRunner
     public function main()
     {
         $ret = array();
-        foreach ($this->aTasks as $k => $oTask) {
-            $return = $this->aTasks[$k]->run($this->data);
+        foreach ($this->_aTasks as $k => $oTask) {
+            $return = $this->_aTasks[$k]->run($this->_data);
             $ret[] = $return;
         }
         return implode('', $ret);

@@ -2,7 +2,7 @@
 
 class SGL2_ExceptionHandler
 {
-    private static $instance = null;
+    private static $_instance = null;
 
     private function __construct()
     {
@@ -17,10 +17,10 @@ class SGL2_ExceptionHandler
 
     public static function singleton()
     {
-        if (!self::$instance) {
-            self::$instance = new SGL2_ExceptionHandler();
+        if (!self::$_instance) {
+            self::$_instance = new SGL2_ExceptionHandler();
         }
-        return self::$instance;
+        return self::$_instance;
     }
 
     public static function exceptionHandler($exception)

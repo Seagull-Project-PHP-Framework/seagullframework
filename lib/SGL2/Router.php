@@ -4,7 +4,7 @@ class SGL2_Router
 {
     public function __construct()
     {
-        $this->init();
+        $this->_init();
     }
 
     public function route(SGL2_Request $req)
@@ -19,7 +19,7 @@ class SGL2_Router
      *
      * @return void
      */
-    public function init()
+    protected function _init()
     {
         if (SGL2_Config::get('site.frontScriptName')) {
             $qs = isset($_SERVER['PATH_INFO'])

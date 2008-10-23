@@ -2,12 +2,12 @@
 
 class SGL2_LegacyErrorException extends Exception
 {
-    private $context = null;
+    private $_context = null;
 
     public function __construct($message, $code, $file, $line, $context = null)
     {
         parent::__construct($message = null, $code = 0);
-        $this->context = $context;
+        $this->_context = $context;
         $this->file = $file;
         $this->line = $line;
     }
@@ -16,7 +16,7 @@ class SGL2_LegacyErrorException extends Exception
 
 class SGL2_ErrorHandler
 {
-    private static $instance = null;
+    private static $_instance = null;
 
     private function __construct()
     {
@@ -30,10 +30,10 @@ class SGL2_ErrorHandler
 
     public static function singleton()
     {
-        if (!self::$instance) {
-            self::$instance = new self();
+        if (!self::$_instance) {
+            self::$_instance = new self();
         }
-        return self::$instance;
+        return self::$_instance;
     }
 
     public static function errorHandler($message, $code, $file, $line, $context = null)

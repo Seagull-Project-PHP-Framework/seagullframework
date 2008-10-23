@@ -117,7 +117,7 @@ class SGL2_Session
             SGL2_Config::get('cookie.domain'),
             SGL2_Config::get('cookie.secure'));
 
-        if (is_writable(SGL2_TMP_DIR)) {
+        if (SGL2_File::exists(SGL2_TMP_DIR)) {
             session_save_path(SGL2_TMP_DIR);
         } else {
             throw new Exception(SGL2_TMP_DIR .' either does not exist or is not writable');

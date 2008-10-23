@@ -160,7 +160,7 @@ class SGL2_Translation_Driver_Array extends SGL2_Translation_Driver
         //  write translation to file
         $filename = $this->getFileName($myDict, $langCode);
         $this->_ensureLangFileExists($filename);
-        if (!is_writable($filename)) {
+        if (!SGL2_File::exists($filename)) {
             throw new Exception('Please give perms to write ' . $filename,
                 SGL2_ERROR_INVALIDFILEPERMS);
         }

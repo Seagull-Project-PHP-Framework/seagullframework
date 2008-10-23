@@ -116,7 +116,7 @@ class SGL2_Filter_AuthenticateRequest extends SGL2_DecorateProcess
             }
         }
 
-        $this->processRequest->process($input, $output);
+        $this->_processRequest->process($input, $output);
     }
 }
 ?>
