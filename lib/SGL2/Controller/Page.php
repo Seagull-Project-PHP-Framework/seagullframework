@@ -132,6 +132,11 @@ abstract class SGL2_Controller_Page
         return $this->_pageTitle;
     }
 
+    public function addActionMapping(array $aActionMap)
+    {
+        $this->_aActionsMapping = $aActionMap;
+    }
+
     /**
      * Specific validations are implemented in sub classes.
      *

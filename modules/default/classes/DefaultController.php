@@ -8,10 +8,9 @@ class DefaultController extends SGL2_Controller_Page
 
         $this->setPageTitle('Home');
         $this->setTemplate('default.html');
-
-        $this->_aActionsMapping =  array(
+        $this->addActionMapping(array(
             'list'  => array('list'),
-        );
+        ));
     }
 
     public function validate(SGL2_Request $input)
