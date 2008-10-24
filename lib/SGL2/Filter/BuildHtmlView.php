@@ -15,10 +15,11 @@ class SGL2_Filter_BuildHtmlView extends SGL2_DecorateProcess
 //        $output->onReadyDom = $output->getOnReadyDomEvents();
 //        $output->javascriptSrc = $output->getJavascriptFiles();
 
-        //  build view
         $templateEngine = isset($output->templateEngine)
             ? $output->templateEngine
             : null;
+
+        //  build view
         $view = new SGL2_View_HtmlSimple($output, $templateEngine);
         $output->setBody($view->render());
     }

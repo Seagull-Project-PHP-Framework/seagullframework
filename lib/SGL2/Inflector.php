@@ -142,7 +142,7 @@ class SGL2_Inflector
      */
     public static function humanise($lowerCaseAndUnderscoredWord)
     {
-        $replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+        $replace = ucwords(str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
         return $replace;
     }
 

@@ -6,8 +6,9 @@ class DefaultController extends SGL2_Controller_Page
     {
         parent::__construct();
 
-        $this->_pageTitle    = 'Home';
-        $this->_template     = 'default.html';
+        $this->setPageTitle('Home');
+        $this->setTemplate('default.html');
+
         $this->_aActionsMapping =  array(
             'list'  => array('list'),
         );
@@ -15,10 +16,7 @@ class DefaultController extends SGL2_Controller_Page
 
     public function validate(SGL2_Request $input)
     {
-        $input->layout      = $this->_layout;
-        $input->template    = $this->_template;
-        $input->pageTitle   = $this->_pageTitle;
-        $input->action      = ($input->get('action')) ? $input->get('action') : 'list';
+        $input->action = ($input->get('action')) ? $input->get('action') : 'list';
 
         // filtering and validation example
         // see http://framework.zend.com/manual/en/zend.filter.input.html

@@ -21,8 +21,19 @@ class SGL2_View_HtmlSimple extends SGL2_View
         }
         $templateEngine =  ucfirst($templateEngine);
         $rendererClass  = 'SGL2_HtmlRenderer_' . $templateEngine . 'Strategy';
-        $rendererFile   = $templateEngine.'Strategy.php';
-        $path =  'SGL/HtmlRenderer/' . $rendererFile;
+
+        // setup page data
+        $ctlr = SGL2_Registry::get('controller');
+        if (!isset($response->layout)) {
+            $response->layout = $ctlr->getLayout();
+        }
+        if (!isset($response->template)) {
+            $response->template = $ctlr->getTemplate();
+        }
+        if (!isset($response->pageTitle)) {
+            $response->pageTitle = $ctlr->getPageTitle();
+        }
+
         parent::__construct($response, new $rendererClass);
     }
 

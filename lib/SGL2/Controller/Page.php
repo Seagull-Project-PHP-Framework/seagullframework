@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Manager.php,v 1.19 2005/06/13 12:00:25 demian Exp $
+// $Id: Page.php,v 1.19 2005/06/13 12:00:25 demian Exp $
 
 #FIXME: incomplete
 
@@ -55,14 +55,14 @@ abstract class SGL2_Controller_Page
      *
      * @var     string
      */
-    protected $_layout = 'layout.html';
+    protected $_layout;
 
     /**
      * Page template name.
      *
      * @var     string
      */
-    protected $_template = '';
+    protected $_template;
 
     /**
      * Page title, displayed in template and HTML title tags.
@@ -89,7 +89,47 @@ abstract class SGL2_Controller_Page
      */
     public function __construct()
     {
-        $this->_layout = SGL2_Config::get('site.layout');
+        $this->setLayout(SGL2_Config::get('site.layout'));
+    }
+
+    /**
+     * Assembles layout which is built from header, banner, main body, footer, etc
+     *
+     * @param string $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->_layout = $layout;
+    }
+
+    public function getLayout()
+    {
+        return $this->_layout;
+    }
+
+    /**
+     * Sets template for main content in page.
+     *
+     * @param string $template
+     */
+    public function setTemplate($template)
+    {
+        $this->_template = $template;
+    }
+
+    public function getTemplate()
+    {
+        return $this->_template;
+    }
+
+    public function setPageTitle($title)
+    {
+        $this->_pageTitle = $title;
+    }
+
+    public function getPageTitle()
+    {
+        return $this->_pageTitle;
     }
 
     /**

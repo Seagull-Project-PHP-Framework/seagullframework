@@ -23,7 +23,7 @@ class SGL2_Filter_BuildOutputData extends SGL2_DecorateProcess
     }
 
     /**
-     * Adds output vars to SGL2_Response object.
+     * Adds output data to SGL2_Response object.
      *
      * @param SGL2_Response $output
      */
@@ -49,10 +49,12 @@ class SGL2_Filter_BuildOutputData extends SGL2_DecorateProcess
         $output->langDir      = ($output->currLang == 'ar'
                 || $output->currLang == 'he')
             ? 'rtl' : 'ltr';
+
         // setup theme
         $output->theme = isset($_SESSION['aPrefs']['theme'])
             ? $_SESSION['aPrefs']['theme']
             : 'default';
+
         // Setup SGL data
         $output->webRoot          = SGL2_BASE_URL;
         $output->imagesDir        = SGL2_BASE_URL . '/themes/' . $output->theme . '/images';
