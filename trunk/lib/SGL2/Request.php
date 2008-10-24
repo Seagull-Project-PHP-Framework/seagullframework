@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
+// $Id$
 
 /**
  * Loads Request driver, provides a number of filtering methods.

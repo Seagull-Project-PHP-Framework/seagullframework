@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Permissions.php,v 1.5 2005/02/03 11:29:01 demian Exp $
+// $Id$
 
 /**
  * Handles reading and writing of config files.
