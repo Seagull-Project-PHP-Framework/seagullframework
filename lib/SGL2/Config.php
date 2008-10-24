@@ -37,7 +37,7 @@
 // +---------------------------------------------------------------------------+
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
-// $Id: Controller.php,v 1.49 2005/06/23 19:15:25 demian Exp $
+// $Id$
 
 /**
  * Config file parsing and handling, acts as a registry for config data.
