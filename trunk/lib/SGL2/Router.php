@@ -68,7 +68,7 @@ class SGL2_Router
         }
 
         $defModule  = SGL2_Config::get('site.defaultModule');
-        $defManager = SGL2_Config::get('site.defaultManager');
+        $defCtlr    = SGL2_Config::get('site.defaultController');
         $defParams  = SGL2_Config::get('site.defaultParams');
 
         // show lang in URL
@@ -120,7 +120,7 @@ class SGL2_Router
         //   6. index.php/module/manager/
         // NB: we specify :controller variable instead of :managerName
         //     to invoke controller scan, later in the code we rename
-        //     contoller -> managerName
+        //     controller -> controllerName
         $m->connect($prependRegex . ':moduleName/:controller');
         // Step three: connect to module, manager and parameters
         //   7. index.php/module/manager/and/a/lot/of/params/here
@@ -133,16 +133,17 @@ class SGL2_Router
         // resolve default manager
         if (!isset($aQueryData['controller'])) {
             $aQueryData['controller'] = $aQueryData['moduleName'] == $defModule
-                ? $defManager
+                ? $defCtlr
                 : $aQueryData['moduleName'];
         }
-        // rename controller -> manager
-        $aQueryData['managerName'] = $aQueryData['controller'];
+        // rename controller -> controllerName
+        $aQueryData['controllerName'] = $aQueryData['controller'];
         // resolve default params
         if (!isset($aQueryData['params'])) {
             if ($defParams
                     && $aQueryData['moduleName'] == $defModule
-                    && $aQueryData['managerName'] == $defManager) {
+                    && $aQueryData['controllerName'] == $defCtlr)
+            {
                 $aDefParams = $this->_urlParamStringToArray($defParams);
                 $aQueryData = array_merge($aQueryData, $aDefParams);
             }

@@ -107,7 +107,7 @@ class SGL2_Url
             $aNewParams['action'] = $aParams[0];
         }
         if (!empty($aParams[1])) {
-            $aNewParams['managerName'] = $aParams[1];
+            $aNewParams['controllerName'] = $aParams[1];
         }
         if (!empty($aParams[2])) {
             $aNewParams['moduleName'] = $aParams[2];
@@ -132,9 +132,9 @@ class SGL2_Url
             }
         }
         // in case of SGL2_Output(#edit#,#user#,##,..)
-        if (isset($aNewParams['managerName'])
+        if (isset($aNewParams['controllerName'])
                 && !isset($aNewParams['moduleName'])) {
-            $aNewParams['moduleName'] = $aNewParams['managerName'];
+            $aNewParams['moduleName'] = $aNewParams['controllerName'];
         }
         return $aNewParams;
     }
@@ -149,7 +149,7 @@ class SGL2_Url
     protected function _makeDefaultParamsArray($aParams)
     {
         $aVars     = array();
-        $aKeywords = array('moduleName', 'managerName', 'controller',
+        $aKeywords = array('moduleName', 'controllerName', 'controller',
             'anchor', 'host');
         if (SGL2_Config::get('translation.langInUrl')) {
             array_push($aKeywords, 'lang');
@@ -207,24 +207,15 @@ class SGL2_Url
             // 1. we are in same module
             if ($aParams['moduleName'] == $this->_aQueryData['moduleName']
                     // 2. it was not specified
-                    && !isset($aParams['managerName'])
-                    // 3. moduleName neq managerName
-                    && $this->_aQueryData['moduleName'] != $this->_aQueryData['managerName']) {
-                $aParams['managerName'] = $this->_aQueryData['managerName'];
+                    && !isset($aParams['controllerName'])
+                    // 3. moduleName neq controllerName
+                    && $this->_aQueryData['moduleName'] != $this->_aQueryData['controllerName'])
+            {
+                $aParams['controllerName'] = $this->_aQueryData['controllerName'];
             }
         // named route
         } else {
             $namedRoute = true;
-        }
-
-        // rename managerName -> controller
-        if (is_array($aParams) && isset($aParams['managerName'])) {
-            if (($aParams['moduleName'] != $aParams['managerName'])
-                || !empty($namedRoute))
-            {
-                $aParams['controller'] = $aParams['managerName'];
-            }
-            unset($aParams['managerName']);
         }
 
         // set current language if none specified
@@ -299,7 +290,7 @@ class SGL2_Url
     {
         $ret = '/';
         foreach ($this->_aQueryData as $k => $v) {
-            if (!in_array($k, array('moduleName', 'managerName'))) {
+            if (!in_array($k, array('moduleName', 'controllerName'))) {
                 $ret .= $k . '/';
             }
             $ret .= $v . '/';
