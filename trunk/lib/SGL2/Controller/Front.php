@@ -24,7 +24,7 @@ class SGL2_Controller_Front extends SGL2_Controller_Abstract
             //  post-process (order: bottom up)
             'SGL2_Filter_BuildHeaders',
             'SGL2_Filter_BuildHtmlView',
-            'SGL2_Filter_BuildOutputData',
+            'SGL2_Filter_DecorateResponse',
         );
         $target = 'SGL2_Controller_Main';
         $chain = new SGL2_FilterChain($aFilters);

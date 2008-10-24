@@ -7,7 +7,7 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
-class SGL2_Filter_BuildOutputData extends SGL2_DecorateProcess
+class SGL2_Filter_DecorateResponse extends SGL2_DecorateProcess
 {
     /**
      * Main routine.
