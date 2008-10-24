@@ -72,7 +72,7 @@ class SGL2_HtmlRenderer_FlexyStrategy extends SGL2_OutputRendererStrategy
     {
         //  initialise template engine
         if (!isset($response->theme)) {
-            $response->theme = 'default';
+            $response->theme = SGL2_Config::get('site.defaultTheme');
         }
         $aTemplateDirs = array(
             // the current module's templates dir from the custom theme

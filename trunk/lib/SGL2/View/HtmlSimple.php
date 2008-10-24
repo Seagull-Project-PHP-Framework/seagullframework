@@ -34,6 +34,12 @@ class SGL2_View_HtmlSimple extends SGL2_View
             $response->pageTitle = $ctlr->getPageTitle();
         }
 
+        //  get all html onLoad events and js files
+//        $response->onLoad = $response->getOnLoadEvents();
+//        $response->onUnload = $response->getOnUnloadEvents();
+//        $response->onReadyDom = $response->getOnReadyDomEvents();
+//        $response->javascriptSrc = $response->getJavascriptFiles();
+
         parent::__construct($response, new $rendererClass);
     }
 

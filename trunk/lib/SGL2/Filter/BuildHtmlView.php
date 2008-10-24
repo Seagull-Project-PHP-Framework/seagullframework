@@ -9,18 +9,8 @@ class SGL2_Filter_BuildHtmlView extends SGL2_DecorateProcess
     {
         $this->_processRequest->process($input, $output);
 
-        //  get all html onLoad events and js files
-//        $output->onLoad = $output->getOnLoadEvents();
-//        $output->onUnload = $output->getOnUnloadEvents();
-//        $output->onReadyDom = $output->getOnReadyDomEvents();
-//        $output->javascriptSrc = $output->getJavascriptFiles();
-
-        $templateEngine = isset($output->templateEngine)
-            ? $output->templateEngine
-            : null;
-
         //  build view
-        $view = new SGL2_View_HtmlSimple($output, $templateEngine);
+        $view = new SGL2_View_HtmlSimple($output);
         $output->setBody($view->render());
     }
 }
