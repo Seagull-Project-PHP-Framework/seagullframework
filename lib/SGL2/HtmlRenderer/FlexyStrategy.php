@@ -48,10 +48,11 @@ class SGL2_HtmlRenderer_FlexyStrategy extends SGL2_OutputRendererStrategy
         //  prepare flexy object
         $flexy = $this->_initEngine($view->data);
 
-        $masterTemplate = isset($view->data->masterTemplate)
-            ? $view->data->masterTemplate
-            : 'master.html';
-        $ok = $flexy->compile($masterTemplate);
+#fixme:
+        $layout = isset($view->data->layout)
+            ? $view->data->layout
+            : 'layout.html';
+        $ok = $flexy->compile($layout);
 
         $data = $flexy->bufferedOutputObject($view->data, array());
 
