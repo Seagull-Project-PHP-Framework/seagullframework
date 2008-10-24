@@ -34,7 +34,6 @@
 // +---------------------------------------------------------------------------+
 // $Id$
 
-
 class SGL2_ExceptionHandler
 {
     private static $_instance = null;

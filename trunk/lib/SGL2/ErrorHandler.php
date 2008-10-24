@@ -34,7 +34,6 @@
 // +---------------------------------------------------------------------------+
 // $Id$
 
-
 class SGL2_LegacyErrorException extends Exception
 {
     private $_context = null;
