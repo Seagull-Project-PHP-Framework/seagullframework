@@ -107,6 +107,28 @@ class SGL2_Response
     }
 
     /**
+     * Used for outputting template in layout
+     *
+     * @param string $templateEngine
+     */
+    public function outputBody($templateEngine = null)
+    {
+        if (!$this->template) {
+            return;
+        }
+        $this->layout = $this->template;
+
+#FIXME
+        //  considerable hack to workaround recursive Flexy call
+        $aData = $this->getBody();
+        unset($aData['x'], $aData['_t'], $aData['this']);
+        $resp = (object) $aData;
+
+        $view = new SGL2_View_HtmlSimple($resp, $templateEngine);
+        echo $view->render();
+    }
+
+    /**
      * Wrapper for PHP header() redirects.
      *
      * Simplified version of Wolfram's HTTP_Header class
@@ -130,28 +152,6 @@ class SGL2_Response
         //  must be absolute URL, ie, string
         header('Location: ' . $url);
         exit;
-    }
-
-    /**
-     * Used for outputting sub template in master
-     *
-     * @param string $templateEngine
-     */
-    public function outputBody($templateEngine = null)
-    {
-        if (!$this->template) {
-            return;
-        }
-        $this->masterTemplate = $this->template;
-
-#FIXME
-        //  considerable hack to workaround recursive Flexy call
-        $aData = $this->getBody();
-        unset($aData['x'], $aData['_t'], $aData['this']);
-        $resp = (object) $aData;
-
-        $view = new SGL2_View_HtmlSimple($resp, $templateEngine);
-        echo $view->render();
     }
 }
 ?>

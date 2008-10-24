@@ -51,28 +51,25 @@
 abstract class SGL2_Controller_Page
 {
     /**
-     * Page master-template name.
+     * Layout template name.
      *
-     * @access  public
      * @var     string
      */
+    protected $_layout = 'layout.html';
 
-    public $masterTemplate = 'master.html';
     /**
      * Page template name.
      *
-     * @access  public
      * @var     string
      */
-    public $template = '';
+    protected $_template = '';
 
     /**
      * Page title, displayed in template and HTML title tags.
      *
-     * @access  public
      * @var     string
      */
-    public $pageTitle = 'default';
+    protected $_pageTitle = 'default';
 
     /**
      * Array of action permitted by mgr subclass.
@@ -92,7 +89,7 @@ abstract class SGL2_Controller_Page
      */
     public function __construct()
     {
-        $this->masterTemplate = SGL2_Config::get('site.masterTemplate');
+        $this->_layout = SGL2_Config::get('site.layout');
     }
 
     /**
@@ -107,8 +104,8 @@ abstract class SGL2_Controller_Page
      * Super class for implementing authorisation checks, delegates specific processing
      * to child classses.
      *
-     * @param   SGL2_Registry    $input  Input object received from validate()
-     * @param   SGL2_Output      $output Processed result
+     * @param   SGL2_Request    $input  Input object received from validate()
+     * @param   SGL2_Response   $output Processed result
      * @return  mixed           true on success
      */
     public function process(SGL2_Request $input, SGL2_Response $output)

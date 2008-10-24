@@ -6,8 +6,8 @@ class DefaultController extends SGL2_Controller_Page
     {
         parent::__construct();
 
-        $this->pageTitle    = 'Home';
-        $this->template     = 'default.html';
+        $this->_pageTitle    = 'Home';
+        $this->_template     = 'default.html';
         $this->_aActionsMapping =  array(
             'list'  => array('list'),
         );
@@ -15,9 +15,9 @@ class DefaultController extends SGL2_Controller_Page
 
     public function validate(SGL2_Request $input)
     {
-        $input->masterTemplate = $this->masterTemplate;
-        $input->template    = $this->template;
-        $input->pageTitle   = $this->pageTitle;
+        $input->layout      = $this->_layout;
+        $input->template    = $this->_template;
+        $input->pageTitle   = $this->_pageTitle;
         $input->action      = ($input->get('action')) ? $input->get('action') : 'list';
 
         // filtering and validation example

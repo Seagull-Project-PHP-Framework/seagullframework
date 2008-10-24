@@ -28,7 +28,7 @@ class SGL2_Filter_SetupGui extends SGL2_DecorateProcess
             // if adminGUI is allowed then change theme
             $output->adminGuiAllowed = true;
             $output->theme = SGL2_Config::get('site.adminGuiTheme');
-            $output->masterTemplate = 'admin_master.html';
+            $output->layout = 'admin_master.html';
             $output->template = 'admin_' . $output->template;
             if (!empty($output->submitted)) {
                 $output->addOnLoadEvent("formErrorCheck()");
