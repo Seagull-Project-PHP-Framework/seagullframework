@@ -74,7 +74,7 @@ class JsTranslationMgr extends SGL_Manager
         $input->tty = <<< HELP
 
 Available actions:
-  1. createFiles                  create JavasScript localisation files
+  1. createFiles                  create JavaScript localisation files
        --targetModule               module where JS translations will be stored
        --modulesToScan              comma-separated list of modules
 
