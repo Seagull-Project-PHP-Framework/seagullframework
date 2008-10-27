@@ -34,6 +34,37 @@ class JsTranslationMgr extends SGL_Manager
         $this->validated = true;
         $input->tty      = "\n";
         $input->action   = $req->get('action') ? $req->get('action') : 'list';
+
+        $input->targetModule  = $req->get('targetModule');
+        $input->modulesToScan = $req->get('modulesToScan');
+
+        $input->aModules = SGL_Util::getAllModuleDirs();
+
+        // 'create files' action validation
+        if ($input->action == 'createFiles' && !empty($input->targetModule)) {
+            if (!in_array($input->targetModule, $input->aModules)) {
+                $input->tty .= "Error: --targetModule module doesn't exists\n";
+                $this->validated = false;
+            }
+        }
+        if ($input->action == 'createFiles' && !empty($input->modulesToScan)) {
+            $aModules = explode(',', $input->modulesToScan);
+            foreach ($aModules as $moduleName) {
+                if (!in_array($moduleName, $input->aModules)) {
+                    $msg = "Error: --modulesToScan '%s' module doesn't exist\n";
+                    $input->tty .= sprintf($msg, $moduleName);
+                    $this->validated = false;
+                }
+            }
+            if ($this->validated) {
+                $input->aModules = $aModules;
+            }
+        }
+    }
+
+    public function display(SGL_Output $output)
+    {
+        $this->_cmd_cliResult($output, $output);
     }
 
     public function _cmd_list(SGL_Reqistry $input, SGL_Output $output)
@@ -43,7 +74,9 @@ class JsTranslationMgr extends SGL_Manager
         $input->tty = <<< HELP
 
 Available actions:
-  1. createFiles    create JavasScript localisation files
+  1. createFiles                  create JavasScript localisation files
+       --targetModule               module where JS translations will be stored
+       --modulesToScan              comma-separated list of modules
 
 HELP;
     }
@@ -53,14 +86,16 @@ HELP;
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $aLangs        = SGL_Util::getLangsDescriptionMap();
-        $defaultModule = SGL_Config::get('site.defaultModule');
+        $defaultModule = !empty($input->targetModule)
+            ? $input->targetModule
+            : SGL_Config::get('site.defaultModule');
         $defaultLang   = SGL_Translation2::transformLangID(
             SGL_Translation2::getFallbackLangID(),
             SGL_LANG_ID_SGL
         );
         // make sure default lang goes first
         $aLangs       = array_merge(array($defaultLang => $aLangs[$defaultLang]), $aLangs);
-        $aModules     = SGL_Util::getAllModuleDirs();
+        $aModules     = $input->aModules;
         $aDefaultDict = array();
         foreach ($aLangs as $key => $langName) {
             $aDict = array();
