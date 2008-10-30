@@ -91,6 +91,20 @@ class User2DAO extends SGL_Manager
         return $this->updateUserById($userId, array('passwd' => md5($password)));
     }
 
+    public function findUsersByPattern($q, $includeFirstnameLastname = true)
+    {
+        $query = "
+            SELECT username, email, first_name, last_name
+            FROM   usr
+            WHERE  username LIKE '%" . $this->dbh->escapeSimple($q) . "%'
+        ";
+        if ($includeFirstnameLastname) {
+            $query .= " OR first_name LIKE '%" . $this->dbh->escapeSimple($q) . "%'";
+            $query .= " OR last_name LIKE '%" . $this->dbh->escapeSimple($q) . "%'";
+        }
+        return $this->dbh->getAll($query);
+    }
+
     // -------------------
     // --- Preferences ---
     // -------------------
