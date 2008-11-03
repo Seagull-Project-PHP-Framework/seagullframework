@@ -91,6 +91,14 @@ class User2DAO extends SGL_Manager
         return $this->updateUserById($userId, array('passwd' => md5($password)));
     }
 
+    public function getUsers()
+    {
+        $query = "
+            SELECT * FROM usr WHERE role_id > " . SGL_GUEST . "
+        ";
+        return $this->dbh->getAll($query);
+    }
+
     public function findUsersByPattern($q, $includeFirstnameLastname = true)
     {
         $query = "
