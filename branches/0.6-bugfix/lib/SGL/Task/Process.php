@@ -389,7 +389,15 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
 
                 //  prepare referer info for redirect after login
                 $url = $input->getCurrentUrl();
-                $redir = $url->toString();
+                if (!SGL_Config::get('translation.langInUrl')) {
+                    $redir = $url->toString();
+                } else {
+                    // creates proper current link,
+                    // we need to specify lang param explicitly to avoid URLs
+                    // like "http://sgl/index.php/ru-utf-8/default"
+                    $redir = $url->makeCurrentLink(
+                        array('lang' => SGL::getCurrentLang()));
+                }
 
                 $loginPage = SGL_Config::get('site.loginTarget')
                     ? SGL_Config::getCommandTarget(SGL_Config::get('site.loginTarget'))
