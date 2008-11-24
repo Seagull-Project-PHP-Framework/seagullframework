@@ -25,6 +25,7 @@ class EmailPasswordRecovery extends SGL_Observer
             $observable->input->user->username,
             $observable->input->user->email
         );
+        $aPrefs    = $this->da->getPreferencesByUserId($userId);
         $defModule = SGL_Config::get('site.defaultModule');
         $siteName  = SGL_Config::get('site.name');
 
@@ -41,9 +42,10 @@ class EmailPasswordRecovery extends SGL_Observer
               );
 
         // load translations
-        $lang = SGL::getCurrentLang() . '-' . SGL::getCurrentCharset();
-        SGL_Translation2::loadDictionary($defModule . '_email', $lang);
-        SGL_Translation2::loadDictionary('user2_email', $lang);
+        $langCode = reset(explode('-', $aPrefs['language']));
+//        $lang = SGL::getCurrentLang() . '-' . SGL::getCurrentCharset();
+        SGL_Translation2::loadDictionary($defModule . '_email', $aPrefs['language']);
+        SGL_Translation2::loadDictionary('user2_email', $aPrefs['language']);
 
         // delivery options
         $aDelOpts['toEmail']      = $observable->input->user->email;
@@ -64,11 +66,12 @@ class EmailPasswordRecovery extends SGL_Observer
         }
 
         // template vars
-        $aTplOpts['lang']       = SGL::getCurrentLang();
+        $aTplOpts['lang']       = $aPrefs['language'];
         $aTplOpts['membername'] = $aDelOpts['toRealName'];
         $aTplOpts['resetUrl']   = $observable->output->makeUrl(
             'reset', 'passwordrecovery', 'user2', array(),
             'userId|' . $userId . '||k|' . $observable->input->hash
+                . '||lang|' . $langCode
         );
         $aTplOpts['signature']  = $aConf['signature'];
         // obligatory template options
