@@ -396,7 +396,11 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
                     : array('moduleName'    => 'user',
                             'managerName'   => 'login');
                 $loginPage['redir'] = base64_encode($redir);
-
+                // we need to create proper URL for redirect,
+                // which SGL_HTTP::redirect() can't do
+                if (SGL_Config::get('translation.langInUrl')) {
+                    $loginPage = $url->makeLink($loginPage);
+                }
                 if (!$session->isValid()) {
                     SGL::raiseMsg('authentication required');
                     SGL_HTTP::redirect($loginPage);
