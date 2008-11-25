@@ -228,7 +228,7 @@ class SGL_Translation
                     $cache->save($serialized, $module, 'translation_'. $lang);
                     SGL::logMessage('translations from file', PEAR_LOG_DEBUG);
                 }
-                $ret = $words;
+                $ret = isset($words) ? $words : array();
             } elseif ($module == 'default') {
                 SGL::raiseError('could not locate the global language file', SGL_ERROR_NOFILE);
             }
