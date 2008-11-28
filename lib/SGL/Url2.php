@@ -256,11 +256,6 @@ class SGL_URL2
         return $baseUrl;
     }
 
-    public function setParam($k, $v)
-    {
-        $this->_aQueryData[$k] = $v;
-    }
-
     /**
      * Get query string as in SGL_Url1.
      *
