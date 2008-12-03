@@ -372,7 +372,8 @@ class ArrayDriver
             if (!empty($aNode['action'])) {
                 $ret = $req->getActionName() == $aNode['action'];
             } else {
-                $ret = $req->getActionName() == 'default';
+//                $ret = $req->getActionName() == 'default';
+                $ret = true;
             }
             // compare node's params with current
             if (!empty($aNode['params'])) {
@@ -541,5 +542,4 @@ class ArrayDriver
             : SGL_Config::get('site.name');
     }
 }
-
 ?>
