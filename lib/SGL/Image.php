@@ -133,6 +133,11 @@ class SGL_Image
                 if (PEAR::isError($params)) {
                     return $params;
                 }
+                if (!array_key_exists($container, $params)) {
+                    $msg = "SGL_Image: container '$container' was not "
+                        . "found in image.ini";
+                    return SGL::raiseError($msg);
+                }
                 $params = $params[$container];
             } else {
                 return SGL::raiseError("SGL_Image: file '$params' not found");
