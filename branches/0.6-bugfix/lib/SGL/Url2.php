@@ -9,33 +9,38 @@
 class SGL_URL2
 {
     /**
-     * @var Horde_Routes_Config
+     * @var SGL_Request
+     */
+    private $_request;
+
+    /**
+     * @var Horde_Routes_Util
      */
     private $_routes;
 
     /**
-     * @var array
-     */
-    private $_aQueryData;
-
-    /**
      * Constructor.
      *
-     * @param array $aQueryData
+     * @param Horde_Routes_Util $oRoutes
      */
-    public function __construct($aQueryData = array())
+    public function __construct(Horde_Routes_Util $oRoutes)
     {
-        $this->_aQueryData = $aQueryData;
+        $this->_routes = $oRoutes;
     }
 
     /**
-     * Set routes.
+     * Set request.
      *
-     * @param Horde_Routes_Config $oRoutes
+     * @param SGL_Request $oRequest
      */
-    public function setRoutes(Horde_Routes_Utils $oRoutes)
+    public function setRequest(SGL_Request $oRequest)
     {
-        $this->_routes = $oRoutes;
+        $this->_request = $oRequest;
+    }
+
+    public function getRequest()
+    {
+        return $this->_request;
     }
 
     /**
@@ -48,7 +53,7 @@ class SGL_URL2
     public function setMapperOptions($aOpts)
     {
         foreach ($aOpts as $k => $v) {
-            $this->_routes->mapper->{$k} = $v;
+            $this->_routes->mapper->$k = $v;
         }
     }
 
@@ -165,18 +170,21 @@ class SGL_URL2
             if (!isset($aParams['host'])) {
                 $aParams['host'] = $this->getBaseUrl(true);
             }
+
+            $aQueryData = $this->_request->getAll();
+
             // use current module if nothing specified
             if (!isset($aParams['moduleName'])) {
-                $aParams['moduleName'] = $this->_aQueryData['moduleName'];
+                $aParams['moduleName'] = $aQueryData['moduleName'];
             }
             // use current manager only if
             // 1. we are in same module
-            if ($aParams['moduleName'] == $this->_aQueryData['moduleName']
+            if ($aParams['moduleName'] == $aQueryData['moduleName']
                     // 2. it was not specified
                     && !isset($aParams['managerName'])
                     // 3. moduleName neq managerName
-                    && $this->_aQueryData['moduleName'] != $this->_aQueryData['managerName']) {
-                $aParams['managerName'] = $this->_aQueryData['managerName'];
+                    && $aQueryData['moduleName'] != $aQueryData['managerName']) {
+                $aParams['managerName'] = $aQueryData['managerName'];
             }
         // named route
         } else {
@@ -219,7 +227,7 @@ class SGL_URL2
      */
     public function makeCurrentLink($aQueryData = array())
     {
-        return $this->makeLink(array_merge($this->_aQueryData, $aQueryData));
+        return $this->makeLink(array_merge($this->_request->getAll(), $aQueryData));
     }
 
     /**
@@ -260,11 +268,15 @@ class SGL_URL2
      * Get query string as in SGL_Url1.
      *
      * @return string
+     *
+     * @deprecated
      */
     public function getQueryString()
     {
+        $aQueryData = $this->_request->getAll();
+
         $ret = '/';
-        foreach ($this->_aQueryData as $k => $v) {
+        foreach ($aQueryData as $k => $v) {
             if (!in_array($k, array('moduleName', 'managerName'))) {
                 $ret .= $k . '/';
             }
@@ -273,5 +285,4 @@ class SGL_URL2
         return $ret;
     }
 }
-
 ?>
