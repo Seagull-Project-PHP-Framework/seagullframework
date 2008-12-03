@@ -146,15 +146,15 @@ class SGL_Request_Browser2 extends SGL_Request
         }
 
         // SGL_URL2
-        $url = new SGL_URL2($aQueryData);
-        $url->setRoutes(new Horde_Routes_Utils($m));
+        $url = new SGL_Url2(new Horde_Routes_Utils($m));
+        $url->setRequest($this);
 
         // assign to registry
         SGL_Registry::singleton()->setCurrentUrl($url);
 
         // merge REQUEST AND FILES superglobal arrays
         $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
-        $this->type = SGL_REQUEST_BROWSER;
+        $this->type   = SGL_REQUEST_BROWSER;
 
         return true;
     }
