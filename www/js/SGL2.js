@@ -14,7 +14,8 @@ SGL2.State = {};
 /**
  * Keys.
  */
-SGL2.Key.ENTER = 13;
+SGL2.Key.ENTER     = 13;
+SGL2.Key.BACKSPACE = 8;
 
 /**
  * States.
