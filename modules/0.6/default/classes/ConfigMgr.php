@@ -162,7 +162,8 @@ class ConfigMgr extends SGL_Manager
             }
 
             if (empty($input->conf['site']['masterLayout'])) {
-                $aErrors['masterLayout'] = 'Please enter a valid layout name';
+                $input->conf['site']['masterLayout'] = 'layout-navtop-3col.css';
+                //$aErrors['masterLayout'] = 'Please enter a valid layout name';
             }
 
             //  paths
