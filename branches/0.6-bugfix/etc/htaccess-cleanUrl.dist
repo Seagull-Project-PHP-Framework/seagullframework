@@ -12,6 +12,11 @@
     RewriteCond %{REQUEST_URI} !^/.*(themes|wysiwyg|images|js)/
 
 ############################################
+## always send 404 on missing favicon
+
+	RewriteRule ^favicon.ico$ favicon.ico [L]
+
+############################################
 ## never rewrite for existing files, directories and links
 
     RewriteCond %{REQUEST_FILENAME} !-f
