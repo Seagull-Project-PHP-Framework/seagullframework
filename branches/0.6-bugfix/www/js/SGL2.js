@@ -29,17 +29,17 @@ SGL2.Util.disableSubmit = function(className, context) {
     if (typeof className == undefined) {
         className = '.save';
     }
-    $.browser.msie
-        ? $(className, context).attr('disabled', 'disabled')
-        : $(className, context).attr('disabled', 'disabled').css('opacity', .5);
+    jQuery.browser.msie
+        ? jQuery(className, context).attr('disabled', 'disabled')
+        : jQuery(className, context).attr('disabled', 'disabled').css('opacity', .5);
 }
 SGL2.Util.enableSubmit = function(className, context) {
     if (typeof className == undefined) {
         className = '.save';
     }
-    $.browser.msie
-        ? $(className, context).attr('disabled', null)
-        : $(className, context).attr('disabled', null).css('opacity', 1);
+    jQuery.browser.msie
+        ? jQuery(className, context).attr('disabled', null)
+        : jQuery(className, context).attr('disabled', null).css('opacity', 1);
 }
 SGL2.Util.makeUrl = function(params) {
     var ret         = SGL_FC != '' ? SGL_WEBROOT + '/' + SGL_FC : SGL_WEBROOT;
@@ -75,13 +75,13 @@ SGL2.showMessage = function(elem, message, type, speed) {
         SGL2.State.msgIsVisible = false;
     }
     if (SGL2.State.msgIsVisible == false) {
-        $('p', elem).addClass(typeClass).text(message)
+        jQuery('p', elem).addClass(typeClass).text(message)
             .parent('div').show()
             .children('p').effect('highlight', {}, speed * 500);
         setTimeout(function() {
-            $(elem).fadeOut(speed * 500);
+            jQuery(elem).fadeOut(speed * 500);
             setTimeout(function() {
-                $('p', elem).removeClass(typeClass);
+                jQuery('p', elem).removeClass(typeClass);
                 SGL2.State.msgIsVisible = false;
             }, speed * 500);
         }, speed * 1000);
@@ -106,7 +106,7 @@ if (typeof makeUrl == 'undefined') {
 if (typeof console == 'undefined') {
     console = { log: function() {} };
 }
-$.extend(String.prototype, {
+jQuery.extend(String.prototype, {
     translate: function() {
         var ret = this;
         if (SGL2.Localisation && SGL2.Localisation[this]) {
@@ -116,10 +116,10 @@ $.extend(String.prototype, {
     }
 });	
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
 
     // global error handling
-    $('#message').ajaxError(function(msg, r, opts) {
+    jQuery('#message').ajaxError(function(msg, r, opts) {
         if (opts.dataType == 'json') {
             var msg = eval('(' + r.responseText + ')'), ret = '';
             ret += msg.errorType + ': ';
@@ -140,7 +140,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#cLang").change(function() {
+    jQuery("#cLang").change(function() {
         var selectedLang = jQuery(this).val();
         if (!selectedLang) {
             return false;
