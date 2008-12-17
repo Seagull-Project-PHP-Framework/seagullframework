@@ -144,7 +144,7 @@ HELP;
             if (!empty($jsLocasation)) {
                 // create js string
                 $jsLocasation = substr($jsLocasation, 0, -2);
-                $jsLocasation = "SGL2.Localisation = {\n$jsLocasation\n}";
+                $jsLocasation = "SGL2.Localisation = {\n$jsLocasation\n};";
 
                 $filePath = sprintf('%s/%s/www/js/Localisation/%s.js',
                     SGL_MOD_DIR, $defaultModule, $key);
