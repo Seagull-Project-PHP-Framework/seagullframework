@@ -10,6 +10,8 @@ BUGFIXES
             (lakiboy)
 
 IMPROVEMENTS
+23-12-08	Updated Horde_Routes_Util type hint to Horde_Routes_Utils for compat with
+			Horde/Routes 0.3.1
 21-10-08    Better handling when DB connection is down
 21-10-08    Updated FCKeditor to 2.6.3
 21-10-08    Added German utf-8 support (michas)
