@@ -23,7 +23,7 @@ class SGL_URL2
      *
      * @param Horde_Routes_Util $oRoutes
      */
-    public function __construct(Horde_Routes_Util $oRoutes)
+    public function __construct(Horde_Routes_Utils $oRoutes)
     {
         $this->_routes = $oRoutes;
     }
