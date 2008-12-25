@@ -1,0 +1,36 @@
+<h1 class="pageTitle">{$result->translate($result->pageTitle)}</h1>
+{if $result->msgGet()}
+<span>{$result->msgGet()}</span>
+{/if}
+<table border=3>
+    <tr>
+        {foreach from=$result->aModules key=key item=valueObj}
+            <td class="{$valueObj->bgnd}" valign="top">
+                {if $valueObj->is_configurable}
+                <a href="{$result->makeUrl('',$valueObj->manager,$valueObj->module)}">
+                {/if}
+                <table class="moduleOverview">
+                    <tr>
+                        <td colspan="2" class="title">{$valueObj->title}</td>
+                    </tr>
+                    <tr>
+                        <td align="center" valign="top">                           
+                            {if $valueObj->is_configurable}<a href="{$result->makeUrl('',$valueObj->manager,$valueObj->module)}">{/if}                                                       
+                            <img src="{$result->webRoot}/themes/{$result->theme}/images/{$valueObj->icon}" alt="{valueObj->title}" />
+                            {if $valueObj->is_configurable}</a>{/if}
+                        </td>
+                        <td valign="top">
+                            {$valueObj->description}
+                        </td>
+                    </tr>
+                </table>
+                {if $valueObj->is_configurable}
+                </a>
+                {/if}
+            </td>
+            {if $valueObj->breakRow}
+                </tr><tr>
+            {/if}
+        {/foreach}
+    </tr>
+</table>

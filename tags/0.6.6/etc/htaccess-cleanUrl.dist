@@ -1,0 +1,31 @@
+#<IfModule mod_rewrite.c>
+
+############################################
+## enable rewrites
+
+    Options +FollowSymlinks
+    RewriteEngine on
+
+############################################
+## always send 404 on missing files in these folders
+
+    RewriteCond %{REQUEST_URI} !^/.*(themes|wysiwyg|images|js)/
+
+############################################
+## always send 404 on missing favicon
+
+	RewriteRule ^favicon.ico$ favicon.ico [L]
+
+############################################
+## never rewrite for existing files, directories and links
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+
+############################################
+## rewrite everything else to index.php
+
+    RewriteRule .* index.php
+
+#</IfModule>
