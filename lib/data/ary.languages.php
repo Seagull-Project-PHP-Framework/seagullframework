@@ -78,6 +78,7 @@
                     'it-iso-8859-1'=> array('it|italian', 'italian-iso-8859-1', 'it'),
                     'ja-euc-jp' => array('ja|japanese', 'japanese-euc-jp', 'ja'),
                     'ja-utf-8' => array('ja|japanese', 'japanese-utf-8', 'ja'),
+                    'lv-utf-8' => array('lv|latvian', 'latvian-utf-8', 'lv'),
                     'nl-iso-8859-1'=> array('nl([-_][[:alpha:]]{2})?|dutch', 'dutch-iso-8859-1', 'nl'),
                     'no-iso-8859-1'=> array('no|norwegian', 'norwegian-iso-8859-1', 'no'),
                     'ptbr-iso-8859-1' => array('pt[-_]br|brazilian portuguese', 'brazilian_portuguese-iso-8859-1', 'pt-BR'),
