@@ -223,7 +223,8 @@ class SGL_FrontController
 
         //  clear error stack of existing db errors
         if (SGL_Error::count()) {
-            while ($oError = SGL_Error::getLast()) {
+            $oTmpErrors = SGL_Error::getAll();
+            while ($oError = array_pop($oTmpErrors)) {
                 if (PEAR::isError($oError, DB_ERROR_CONNECT_FAILED)) {
                     SGL_Error::reset(); break;
                 }

@@ -77,6 +77,17 @@ class SGL_Error
     }
 
     /**
+     * Returns stack of errors.
+     *
+     * @return PEAR_Error
+     */
+    function getAll()
+    {
+        $aErrors = $GLOBALS['_SGL']['ERRORS'];
+        return $aErrors;
+    }
+
+    /**
      * Remove first error off stack.
      *
      * @return PEAR_Error
