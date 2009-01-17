@@ -105,6 +105,7 @@ class PreferenceMgr extends SGL_Manager
         $input->action          = ($req->get('action')) ? $req->get('action') : 'list';
         $input->from            = ($req->get('frmFrom'))?$req->get('frmFrom'):0;
         $input->prefId          = $req->get('frmPrefId');
+        $input->prefRoleId      = $req->get('frmPrefRoleId');
         $input->currentModule   = $req->get('frmCurrentModule');
         $input->themeName       = $req->get('frmThemeName');
         $input->pref            = (object) $req->get('pref');
@@ -156,6 +157,9 @@ class PreferenceMgr extends SGL_Manager
         $output->aThemes = $this->aThemes;
         require_once SGL_DAT_DIR . '/ary.timezones.en.php';
         $output->aTimezones = $tz;
+        $aRoles = $this->da->getRoles();
+        unset($aRoles[SGL_ADMIN]); // admin prefs cannot be set generically
+        $output->aRoles = $aRoles;
     }
 
     function _cmd_add(&$input, &$output)
@@ -229,17 +233,37 @@ class PreferenceMgr extends SGL_Manager
         SGL::raiseMsg('pref successfully updated', true, SGL_MESSAGE_INFO);
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $input
+     * @param unknown_type $output
+     * @todo should be renamed to _cmd_updatePreferencesForAllRoles
+     */
     function _cmd_updatePreferencesForAllMembers(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (is_array($input->aDelete)) {
+            $aRoles = $this->da->getRoles();
+            unset($aRoles[SGL_ADMIN]);
+
             foreach ($input->aDelete as $index => $prefId) {
-                $oPref = DB_DataObject::factory($this->conf['table']['preference']);
-                $oPref->get($prefId);
-                $ok = $this->da->updatePrefByRoleId($oPref->name, $oPref->default_value,
-                    $roleId = SGL_MEMBER);
-                unset($oPref);
+                if ($input->prefRoleId != -1) { // only update for a single role
+                    $oPref = DB_DataObject::factory($this->conf['table']['preference']);
+                    $oPref->get($prefId);
+                    $ok = $this->da->updatePrefByRoleId($oPref->name, $oPref->default_value,
+                        $input->prefRoleId);
+                    unset($oPref);
+                } else { // else for all roles
+                    foreach ($aRoles as $roleId => $roleName) {
+                        $oPref = DB_DataObject::factory($this->conf['table']['preference']);
+                        $oPref->get($prefId);
+                        $ok = $this->da->updatePrefByRoleId($oPref->name, $oPref->default_value,
+                            $roleId);
+                        unset($oPref);
+                    }
+                }
             }
             SGL::raiseMsg('Selected prefs have been set for all users', true,
                 SGL_MESSAGE_INFO);

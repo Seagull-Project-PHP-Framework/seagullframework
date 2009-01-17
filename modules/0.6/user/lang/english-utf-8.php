@@ -173,7 +173,7 @@ $words = array(
     // + user template
     'General'                                      => 'General',
     'Selected prefs have been set for all users'   => 'Selected prefs have been set for all users',
-    'synchonise selected preference(s) globally'   => 'synchonise selected preference(s) globally',
+    'synchronise selected preference(s) for selected roles'  => 'synchronise selected preference(s) for selected roles',
 
     // messages
     'details successfully updated' => 'User details have been successfully updated',
