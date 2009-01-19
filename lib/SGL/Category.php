@@ -40,7 +40,6 @@
 // $Id: Category.php,v 1.10 2005/04/27 23:32:41 demian Exp $
 
 require_once SGL_CORE_DIR. '/NestedSet.php';
-require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
 define('SGL_MAX_RECURSION', 100);
 
@@ -66,6 +65,8 @@ class SGL_Category
     function SGL_Category()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
+
+        require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
 
         $this->da = & UserDAO::singleton();
         $this->dbh = & SGL_DB::singleton();
