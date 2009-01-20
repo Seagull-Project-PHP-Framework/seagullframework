@@ -40,7 +40,6 @@
 // +---------------------------------------------------------------------------+
 
 require_once 'Config.php';
-require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
 require_once SGL_MOD_DIR  . '/translation/classes/Translation2.php';
 
 /**
@@ -70,7 +69,6 @@ class TranslationMgr extends SGL_Manager
             'summary'           => array('summary')
         );
 
-        $this->da        = &DefaultDAO::singleton();
         $this->container = SGL_Config::get('translation.container');
 
         SGL_Task_SetupExtraLanguages::setup();
