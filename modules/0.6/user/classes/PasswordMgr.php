@@ -126,9 +126,9 @@ class PasswordMgr extends SGL_Manager
         $query = "
             SELECT  *
             FROM    " . $this->conf['table']['user'] ."
-            WHERE   email = " . $this->dbh->quote($input->forgotEmail) . "
+            WHERE   email = " . $this->dbh->quoteSmart($input->forgotEmail) . "
             AND     security_question = " . $input->question. "
-            AND     security_answer = '" . $input->answer . "'";
+            AND     security_answer = " . $this->dbh->quoteSmart($input->answer);
         $userId = $this->dbh->getOne($query);
         if ($userId) {
             $aRet = $this->_resetPassword($userId);

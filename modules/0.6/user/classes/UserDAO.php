@@ -1314,10 +1314,10 @@ class UserDAO extends SGL_Manager
             SELECT  u.usr_id
             FROM    {$this->conf['table']['user']} u,
                     {$this->conf['table']['user_cookie']} uc
-            WHERE   u.username = " . $this->dbh->quote($username) . "
+            WHERE   u.username = " . $this->dbh->quoteSmart($username) . "
                       AND u.is_acct_active = 1
                       AND uc.usr_id = u.usr_id
-                      AND uc.cookie_name = " . $this->dbh->quote($cookie);
+                      AND uc.cookie_name = " . $this->dbh->quoteSmart($cookie);
         $uid = $this->dbh->getOne($query);
         return $uid;
     }

@@ -97,8 +97,8 @@ class MediaDAO extends SGL_Manager
                         $dateBegins->setMinute(0);
                         $dateBegins->setSecond(0);
 
-                        $dateClause =   'm.date_created >= ' . $this->dbh->quote($dateBegins->getDate()) .
-                                        ' AND m.date_created <= ' . $this->dbh->quote($dateEnds->getDate());
+                        $dateClause =   'm.date_created >= ' . $this->dbh->quoteSmart($dateBegins->getDate()) .
+                                        ' AND m.date_created <= ' . $this->dbh->quoteSmart($dateEnds->getDate());
 
                         break;
 
@@ -119,8 +119,8 @@ class MediaDAO extends SGL_Manager
                         $dateBegins->setMinute(0);
                         $dateBegins->setSecond(0);
 
-                        $dateClause =   'm.date_created >= ' . $this->dbh->quote($dateBegins->getDate()) .
-                                        ' AND m.date_created <= ' . $this->dbh->quote($dateEnds->getDate());
+                        $dateClause =   'm.date_created >= ' . $this->dbh->quoteSmart($dateBegins->getDate()) .
+                                        ' AND m.date_created <= ' . $this->dbh->quoteSmart($dateEnds->getDate());
                         break;
 
                     case 'thisMonth':
@@ -129,8 +129,8 @@ class MediaDAO extends SGL_Manager
                         $dateBegins->setMinute(0);
                         $dateBegins->setSecond(0);
 
-                        $dateClause =   'm.date_created >= ' . $this->dbh->quote($dateBegins->getDate()) .
-                                        ' AND m.date_created <= ' . $this->dbh->quote($dateEnds->getDate());
+                        $dateClause =   'm.date_created >= ' . $this->dbh->quoteSmart($dateBegins->getDate()) .
+                                        ' AND m.date_created <= ' . $this->dbh->quoteSmart($dateEnds->getDate());
                         break;
 
                     case 'beforeThisMonth':
@@ -146,7 +146,7 @@ class MediaDAO extends SGL_Manager
                         $dateEnds->setMinute(59);
                         $dateEnds->setSecond(59);
 
-                        $dateClause = 'm.date_created <= ' . $this->dbh->quote($dateEnds->getDate());
+                        $dateClause = 'm.date_created <= ' . $this->dbh->quoteSmart($dateEnds->getDate());
                         break;
 
                     default:

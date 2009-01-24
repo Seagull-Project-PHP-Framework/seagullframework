@@ -257,7 +257,7 @@ class User_DoLogin extends SGL_Observable
         $query = "
             SELECT  usr_id, role_id
             FROM " . $this->conf['table']['user'] . "
-            WHERE   username = " . $this->dbh->quote($username) . "
+            WHERE   username = " . $this->dbh->quoteSmart($username) . "
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
 
