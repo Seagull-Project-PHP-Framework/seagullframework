@@ -1,0 +1,103 @@
+<?php $result = $this->result ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="<?php $this->_($result->currLang) ?>" xml:lang="<?php $this->_($result->currLang) ?>">
+<head>
+    <?php if (isset($result->leadArticle)) { ?> 
+	<title><?php $this->_($result->conf['site']['name']) ?> :: <?php $this->_($result->currentSectionName) ?> </title>
+    <?php } else { ?> 
+	<title><?php $this->_($result->conf['site']['name']) ?> :: <?php $this->_($result->currentSectionName) ?> </title>
+    <?php } //if  ?> 
+    <meta http-equiv="Content-Type" content="text/html; charset=<?php $this->_($result->charset) ?>" />
+    <meta http-equiv="Content-Language" content="<?php $this->_($result->currLang) ?>" />
+    <meta name="robots" content="ALL" />
+    <meta name="copyright" content="Copyright (c) 2005 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="rating" content="General" />
+    <meta name="generator" content="Seagull Framework v<?php $this->_($result->versionAPI) ?>" />
+    <link rel="help" href="http://seagull.phpkitchen.com/docs/" title="Seagull Documentation." />
+    
+    <style type="text/css" media="screen">
+        @import url("<?php $this->_($result->webRoot) ?>/themes/default/css/style.php?navStylesheet=<?php $this->_($result->conf['navigation']['stylesheet']) ?>");
+    </style>
+
+    <script type="text/javascript">
+        var SGL_JS_WEBROOT="<?php $this->_($result->webRoot) ?>";
+        var SGL_JS_WINHEIGHT=<?php $this->_($result->conf['popup']['winHeight']) ?>;
+        var SGL_JS_WINWIDTH=<?php $this->_($result->conf['popup']['winWidth']) ?>;
+        var SGL_JS_SESSID="<?php $this->_($result->sessID) ?>";
+        var SGL_JS_CURRURL="<?php $this->_($result->currUrl) ?>";
+    </script>
+
+    <?php if ($result->isAdmin) { ?> 
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/mainAdmin.js"></script>
+    <?php } //if  ?>
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/mainPublic.js"></script>
+
+    <?php foreach ($result->javascriptSrc as $item) { ?> 
+        <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/js/<?php $this->_($item) ?>"></script>
+    <?php } //foreach ?> 
+
+    <?php if (isset($result->wysiwyg)) { ?> 
+    <?php if (isset($result->wysiwyg_htmlarea)) { ?> 
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/htmlarea/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/htmlarea/htmlarea.js"></script>
+    <script type="text/javascript">
+        HTMLArea.loadPlugin("CharacterMap");
+        function initDocument() 
+        {
+            var config = new HTMLArea.Config();
+            config.toolbar = [
+        		[ "fontname", "space",
+        		  "fontsize", "space",
+        		  "formatblock", "space",
+        		  "bold", "italic", "underline", "strikethrough", "separator",
+        		  "subscript", "superscript", "separator",
+        		  "copy", "cut", "paste", "space"],
+        		[ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
+        		  "lefttoright", "righttoleft", "separator",
+        		  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
+        		  "forecolor", "hilitecolor", "separator",
+        		  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
+        		  "popupeditor", "separator", "showhelp"]
+            ];
+            var editor = new HTMLArea("frmBodyName", config);
+            editor.registerPlugin(CharacterMap);
+            editor.generate();
+         } 
+        HTMLArea.onload = initDocument;
+    </script>
+    <?php } //if  ?> 
+    <?php if ($result->wysiwyg_xinha) { ?> 
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/xinha/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/xinha/htmlarea.js"></script>
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/xinha/sgl_config.js"></script>   
+    <?php } //if  ?> 
+    <?php if ($result->wysiwyg_fck) { ?> 
+    <script type="text/javascript" src="<?php $this->_($result->webRoot) ?>/fck/fckeditor.js"></script>
+
+    <script type="text/javascript">
+        function fck_init() 
+        { 
+            <?php if ($result->wysiwygElementName) { ?> 
+        	var oFCKeditor = new FCKeditor('<?php $this->_($result->wysiwygElementName) ?> ');
+        	<?php } else { ?> 
+        	var oFCKeditor = new FCKeditor('frmBodyName');
+        	<?php } //if ?> 
+    		oFCKeditor.BasePath = SGL_JS_WEBROOT + "/fck/";
+    		oFCKeditor.ReplaceTextarea() ;
+        } 
+    </script>
+    <?php } //if  ?> 
+    <?php } //if  ?> 
+</head>
+<?php if (!$result->onLoad) { ?> 
+<body>
+<?php } else { ?> 
+<body onload="<?php $this->_($result->onLoad) ?> ">
+<?php } //if  ?> 
+<div id="sgl">

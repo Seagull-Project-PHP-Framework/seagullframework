@@ -30,7 +30,7 @@ These include ``if``, ``for``, ``while``, ``switch``, etc.  Here is an example
 Multi-line if conditions are braced this way::
 
   if ((condition1) || (condition2) || (condition3) ||
-        (condition4)) {
+      (condition4)) {
       action1;
   }
 
@@ -75,6 +75,12 @@ readability::
 
   $short         = foo($bar);
   $longvariable  = foo($baz);
+
+If assigning a reference to a variable, place the ampersand next to the
+referenced object, not the equal sign::
+
+  $reference = &$foo;
+  $reference = &foo();
 
 
 Function Definitions
@@ -130,6 +136,7 @@ Quick example function definition for Seagull::
      * [Once again, insert 2 spaces after the datatype, and line up all
      *  subsequent lines, if any, with this character.]
      *
+     * @abstract [Only if necessary]
      */
 
 
@@ -276,7 +283,7 @@ Note the psuedo name-spacing convention to ensure class name uniqueness:
 
 This convention is especially important for all files in your lib directory.
 
-See the PEAR/Zend projects for many examples.
+See the PEAR repository for many examples.
 
 Database Naming Conventions
 ===========================
@@ -294,15 +301,8 @@ an example:
 Other general guidelines: Table names should be singular (faq); field names
 should be also be singular (username).
 
-Join Tables
-===========
-
-Join tables must be named as follows
-    author-book
-
 Foreign Key Naming Conventions
 ==============================
-
 If table_foo.field_foo references table_bar.field_bar, write the constraint
 as follows:
 
@@ -331,6 +331,15 @@ and much more efficient and much faster than `ereg`.
 .. strtr(): http://www.php.net/manual/en/function.strtr.php
 
 
+Parameter Passing
+=================
+
+Objects should be passed by reference.  Everything else, including arrays,
+should be passed by value wherever semantically possible.
+
+This practice takes full advantage of reference counting.
+
+
 Long Lines
 ==========
 
@@ -357,11 +366,11 @@ type in the vi command you have to pad it first using the special ``^V``
 character.)
 
 
-Private and Protected Variables
-===============================
+Private Variables
+=================
 
 Variables used exclusively within a class should begin with a underscore ('_')
-character.  An example class variable definition:  ``private $_variablename;``
+character.  An example class variable definition:  ``var $_variablename;``
 
 
 Array Definitions
@@ -444,13 +453,6 @@ should only be used when necessary. Instead try to use !`empty()` or
 .. isarray(): http://www.php.net/manual/en/function.is-array.php
 .. array_key_exists(): http://www.php.net/manual/en/function.array-key-exists.php
 
-File Checking
-=============
-
-Rather than use PHP's is_file(), file_exists() or is_readable() use SGL2_File::exists()
-which gets around the PHP 5.2.4 bug where different OSs return different responses
-which leads to errors.
-
 
 Quotes
 ======
@@ -510,5 +512,5 @@ loop. Instead, declare the variable a single time before the loop is run.
 Preferred PHP Conventions
 =========================
 
-Instead of file_exists() or is_file() use SGL::isReadable() which takes into
-account the include path.
+Instead of file_exists() use is_file(), the former returns true for directories
+which can be misleading.
