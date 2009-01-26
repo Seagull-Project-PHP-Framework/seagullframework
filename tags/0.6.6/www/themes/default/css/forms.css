@@ -1,0 +1,166 @@
+
+/**
+ * Forms.
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+/* Fieldset / legend */
+fieldset {
+    margin-bottom: 0.6em;
+    padding: 1em 0 0.5em;
+    #padding-top: 0; /* fix MSIE fieldsetPadding behaviour */
+}
+fieldset.noLegend {
+    padding-top: 0;
+}
+fieldset.hr {
+    border-top: 1px solid black;
+}
+fieldset.lastChild {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+    fieldset legend {
+        #margin-bottom: 0.8em; /* fix MSIE behaviour */
+        #margin-left: -7px;
+        #padding-bottom: 0.2em;
+
+        padding-right: 0.5em;
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #333;
+    }
+
+
+/* Form elements */
+input.text, select, textarea {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #7c7c7c #c3c3c3 #ddd #c3c3c3;
+    width: 170px;
+    padding: 2px;
+    background: #fff url(<?php echo $baseUrl ?>/images/bg/form_input_m.gif) repeat-x left top;
+    font-size: 0.9em;
+    color: #666;
+}
+textarea {
+    height: 6em;
+}
+label {
+    color: #333;
+}
+
+
+/* Ordered list for displaying form elements */
+form fieldset ol {
+    margin: 0;
+    list-style: none;
+    line-height: 1em;
+}
+    form fieldset ol li {
+        clear: left;
+        margin: 0;
+        padding-bottom: 0.6em;
+        padding-left: 160px;
+        <?php if ($isFormSubmitted) { echo "#margin-bottom: 0.6em; /* fix MSIE behaviour on submit */"; } ?>
+    }
+        form fieldset ol li div {
+            <?php if ($isFormSubmitted) { echo "#float: left; /* fix MSIE behaviour on submit */"; } ?>
+            #display: inline; /* fix MSIE */
+            margin-bottom: 0;
+        }
+        form fieldset ol li label {
+            float: left;
+            margin-left: -160px;
+            width: 140px;
+            text-align: right;
+        }
+        form fieldset ol li p { /* field comments */
+            margin-top: 0.2em;
+            margin-bottom: 0;
+            font-size: 0.9em;
+        }
+        form fieldset ol li p.error { /* field error */
+            margin-top: 0;
+            margin-bottom: 0.3em;
+            color: #f00;
+        }
+
+
+/* Fields on top */
+form fieldset ol.onTop {
+}
+    form fieldset ol.onTop li {
+        clear: none;
+        padding-left: 0;
+        <?php if ($isFormSubmitted) { echo "#margin-bottom: 0; /* restore behaviour */"; } ?>
+    }
+        <?php if ($isFormSubmitted) { echo "form fieldset ol.onTop li div {  /* restore behaviour */ #float: none; }"; } ?>
+
+        form fieldset ol.onTop li label {
+            float: none;
+            display: block;
+            margin-left: 0;
+            margin-bottom: 0.2em;
+            width: auto;
+            text-align: left;
+        }
+
+
+/* Additional */
+form em {
+    font-style: normal;
+    color: #f00;
+}
+form div,
+form p {
+    margin-bottom: 0.6em;
+}
+form .fieldIndent {
+    margin-left: 160px;
+}
+
+
+/* No forms layout */
+div.fieldsetlike {
+    padding-bottom: 0.6em;
+}
+    div.fieldsetlike h3 {
+        margin-bottom: 0.6em;
+        font-weight: bold;
+        font-size: 1.1em;
+        line-height: 1.1em;
+        color: #333;
+    }
+    div.fieldsetlike dl {
+        margin-left: 160px;
+        margin-bottom: 0;
+        line-height: 1em;
+    }
+        div.fieldsetlike dl dt {
+            float: left;
+            display: inline;
+
+            overflow: hidden; /* one row label only */
+            height: 1.2em;
+
+            margin-left: -160px;
+            width: 140px;
+            text-align: right;
+            font-weight: normal;
+            color: #333;
+        }
+        div.fieldsetlike dl dd {
+            margin-left: 0;
+            margin-bottom: 0.4em;
+
+            min-height: 1.2em;
+            _height: 1.2em; /* min height for ie6 */
+
+            padding-bottom: 0.2em; /* fix MSIE bug */
+            color: #666;
+        }
+/* END no forms layout */

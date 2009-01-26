@@ -1,0 +1,152 @@
+
+/**
+ * Site specific layout.
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Julien Casanova <julien_casanova@yahoo.fr>
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+html { /* inforces screen to show scrollbar */
+    height: 100%;
+    margin-bottom: 1px;
+}
+body {
+    padding-bottom: 10px;
+    background: #bbb url(<?php echo $baseUrl ?>/images/bg/body.gif) repeat left top;
+}
+
+
+/* Wrappers */
+div#wrapper-outer {
+    margin: 10px auto 0;
+    width: 950px;
+}
+div#wrapper-inner {
+    padding: 0 2px 2px;
+    background-color: #fff;
+}
+
+
+/* Header */
+div#header {
+    border-bottom: 2px solid #fff;
+    padding-right: 20px;
+    background: url(<?php echo $baseUrl ?>/images/bg/header_tr.gif) no-repeat right top;
+}
+    div#header div.wrap-left {
+        padding-left: 20px;
+        background: url(<?php echo $baseUrl ?>/images/bg/header_tl.gif) no-repeat left top;
+    }
+    div#header div.wrap-right {
+        position: relative;
+        height: 70px;
+        background: #99CC00 url(<?php echo $baseUrl ?>/images/bg/header_tm.gif) repeat-x center top;
+    }
+
+    div#header h1 {
+        position: absolute;
+        top: 7px;
+        padding-top: 20px;
+        background: url(<?php echo $baseUrl ?>/images/logo.gif) no-repeat left top;
+
+        font-size: 30px;
+        font-family: "Trebuchet MS";
+    }
+        div#header h1 a {
+            background-color: transparent;
+            text-decoration: none;
+            color: #fff;
+
+            display: block;
+            width: 305px;
+            height: 40px;
+        }
+            div#header h1 a span {
+                display: block;
+                text-indent: -9999px;
+            }
+    div#header #bugReporter {
+        position: absolute;
+        right: -10px;
+        bottom: 2px;
+        display: block;
+        width: 100px;
+        min-height: 10px;
+        _height: 10px; /* min-height for ie6 */
+        background: url(<?php echo $baseUrl ?>/images/bug.gif) no-repeat right center;
+    }
+/* END header */
+
+
+/* Footer */
+div#footer {
+    padding-right: 20px;
+    background: url(<?php echo $baseUrl ?>/images/bg/footer_br.gif) no-repeat right bottom;
+}
+    div#footer div.wrap-left {
+        padding-left: 20px;
+        background: url(<?php echo $baseUrl ?>/images/bg/footer_bl.gif) no-repeat left bottom;
+    }
+    div#footer div.wrap-right {
+        padding: 0.8em 0 0.5em;
+        background: #99CC00 url(<?php echo $baseUrl ?>/images/bg/footer_bm.gif) repeat-x left bottom;
+        text-align: center;
+    }
+    div#footer p {
+        margin-bottom: 0.1em;
+        font-size: 0.8em;
+        color: #666666;
+    }
+/* END footer */
+
+
+/* Content */
+div#content {
+    background-color: #fff;
+    background-image: url(<?php echo $baseUrl ?>/images/bg/column_tm.gif);
+    background-repeat: repeat-x;
+}
+
+    /* Main */
+    div#main {
+        min-height: 350px;
+        _height: 350px;  /* min height for ie6 */
+        padding: 0.6em 10px 5px;
+        background-color: #fff;
+    }
+
+    /* Sub */
+    div#sub {
+        padding: 2.6em 4px 4px 0;
+        background-color: #fff;
+    }
+        div#sub div.inner {
+            border: 1px solid #bbb;
+            padding: 0.8em 5px 5px;
+        }
+
+    /* Local */
+    div#local {
+        padding-top: 0.8em;
+    }
+/* END content */
+
+
+/* Left/right blocks */
+div.block {
+    margin-bottom: 1.5em;
+}
+    div.block h2 {
+        margin: 0 10px 8px;
+        border-bottom: 1px solid #09c;
+        padding-bottom: 0.4em;
+        font-size: 1.1em;
+        color: #09c;
+    }
+    div.block div.content {
+        padding: 0.4em 10px;
+        font-size: 0.9em;
+    }
+/* END left/right blocks */

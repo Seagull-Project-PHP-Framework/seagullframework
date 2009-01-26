@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Example routes. Uncomment to see it in action.
+ *
+ * Every route specification is an array consisting of max three elements.
+ *
+ * Possible usage.
+ *   1. Route name (@string)
+ *   2. First element (@string) - route to connect
+ *   3. Second element (@array)
+ *      a) moduleName index - name of module to map
+ *      b) controller index  - name of manager to map (NB! don't use managerName)
+ *      c) k/v pairs        - optional variable name and it's value pairs
+ *
+ * @author Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+$aRoutes = array(
+
+/**
+ * Named routes
+ */
+
+    // 1. index.php/account -> index.php/user/account/
+    //    in template: <a href="{makeUrl(#useraccount#)}">account</a>
+//    array('useraccount', '/account', array('moduleName' => 'user', 'controller' => 'account')),
+
+    // 2. index.php/admin_edit -> index.php/user/action/edit/frmUserID/1/
+    //    in template: <a href="{makeUrl(#superuser#)}">admin_edit</a>
+//    array('superuser', '/admin_edit', array('moduleName' => 'user', 'action' => 'edit', 'frmUserID' => 1)),
+
+/**
+ * "Unnamed" routes
+ */
+
+    // 3. index.php/profile -> index.php/user/account/
+    //    in template: <a href="{makeUrl(#module|user||manager|account#)}">account</a>
+//    array('/account', array('moduleName' => 'user', 'controller' => 'account')),
+
+    // 4. index.php/admin_edit -> index.php/user/action/edit/frmUserID/1/
+    //    in template: <a href="{makeUrl(#module|user||action|edit||frmUserID|1#)}">admin_edit</a>
+//    array('/admin_edit', array('moduleName' => 'user', 'action' => 'edit', 'frmUserID' => 1)),
+
+);
+
+?>
