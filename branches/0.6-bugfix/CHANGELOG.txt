@@ -5,6 +5,7 @@ CHANGELOG
 +-----------------------+
 
 BUGFIXES
+18-01-09	Fixed infinite loop on DB failure
 21-10-08    Fixed .htaccess example for clean URLs
 06-08-08    Fixed SGL_Category which was not using a singleton database resource
             (lakiboy)
