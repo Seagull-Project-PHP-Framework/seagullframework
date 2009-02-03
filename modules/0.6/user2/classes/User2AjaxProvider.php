@@ -227,7 +227,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
 
         // ensure we update allowed props
         $aData          = array();
-        $aAllowedFields = array('language');
+        $aAllowedFields = array('language', 'color');
         foreach ($aAllowedFields as $fieldName) {
             if (isset($aPrefs[$fieldName])) {
                 $aData[$fieldName] = $aPrefs[$fieldName];
