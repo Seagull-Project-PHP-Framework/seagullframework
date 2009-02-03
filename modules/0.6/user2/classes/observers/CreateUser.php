@@ -22,7 +22,10 @@ class CreateUser extends SGL_Observer
         $this->conf = $observable->conf;
 
         // set pass
-        $password                          = $this->_generatePassword();
+        $password = !empty($observable->input->user->password)
+            ? $observable->input->user->password
+            // generate temporary password
+            : $password = $this->_generatePassword();
         $observable->input->user->password = $password;
         $observable->input->user->passwd   = md5($password);
 

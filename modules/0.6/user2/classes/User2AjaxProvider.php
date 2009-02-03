@@ -460,6 +460,10 @@ class User2AjaxProvider extends SGL_AjaxProvider2
             $ret = $msg;
         } elseif (!$this->da->isUniqueEmail($oUser->email)) {
             $ret = 'email is not unique error';
+        } elseif (!empty($oUser->password) && strlen($oUser->password) < 5) {
+            $ret = 'password is too short';
+        } elseif (!empty($oUser->password) && ($oUser->password != $oUser->password_repeat)) {
+            $ret = 'passwords are not the same';
         } else {
             $ret = true;
         }

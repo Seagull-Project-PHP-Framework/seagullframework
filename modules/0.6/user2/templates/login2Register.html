@@ -55,6 +55,31 @@
                            name="user[last_name]" value="{last_name}" />
                 </div>
             </li>
+            <li>
+                <label for="user_password">
+                    {tr(#password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password]">
+                        {tr(error[password])}
+                    </p>
+                    <input id="user_password" class="text" type="password"
+                           name="user[password]" value="{password}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_password-repeat">
+                    {tr(#repeat password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password_repeat]">
+                        {tr(error[password_repeat])}
+                    </p>
+                    <input id="user_password-repeat"
+                           class="text" type="password"
+                           name="user[password_repeat]" value="{password_repeat}" />
+                </div>
+            </li>
         </ol>
     </fieldset>
 
