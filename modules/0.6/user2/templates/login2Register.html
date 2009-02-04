@@ -31,7 +31,7 @@
                            name="user[email]" value="{email}" />
                 </div>
             </li>
-            <li>
+            <!--li>
                 <label for="user_first-name">
                     {tr(#first name#)}
                 </label>
@@ -54,10 +54,10 @@
                     <input id="user_last-name" class="text" type="text"
                            name="user[last_name]" value="{last_name}" />
                 </div>
-            </li>
+            </li-->
             <li>
                 <label for="user_password">
-                    {tr(#password#)}
+                    <em>*</em> {tr(#password#)}
                 </label>
                 <div>
                     <p class="error" flexy:if="error[password]">
@@ -69,7 +69,7 @@
             </li>
             <li>
                 <label for="user_password-repeat">
-                    {tr(#repeat password#)}
+                    <em>*</em> {tr(#repeat password#)}
                 </label>
                 <div>
                     <p class="error" flexy:if="error[password_repeat]">

@@ -122,6 +122,13 @@ class User2AjaxProvider extends SGL_AjaxProvider2
 
         $ok = $this->_validateUser($input->user);
         if (!is_string($ok)) {
+            if (!isset($input->user->first_name)) {
+                $input->user->first_name = '';
+            }
+            if (!isset($input->user->last_name)) {
+                $input->user->last_name = '';
+            }
+
             // register routine
             $oRegister = new User2Observable($input, $output);
             $oRegister->rememberMeIsActive = true;
@@ -460,9 +467,9 @@ class User2AjaxProvider extends SGL_AjaxProvider2
             $ret = $msg;
         } elseif (!$this->da->isUniqueEmail($oUser->email)) {
             $ret = 'email is not unique error';
-        } elseif (!empty($oUser->password) && strlen($oUser->password) < 5) {
+        } elseif (strlen($oUser->password) < 5) {
             $ret = 'password is too short';
-        } elseif (!empty($oUser->password) && ($oUser->password != $oUser->password_repeat)) {
+        } elseif ($oUser->password != $oUser->password_repeat) {
             $ret = 'passwords are not the same';
         } else {
             $ret = true;
