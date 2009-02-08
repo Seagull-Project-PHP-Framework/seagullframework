@@ -263,14 +263,12 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                     'managerName' => $managerName,
                     'lang'        => $langCode
                 ));
-                $persistMsg = true;
-            } else {
-                $persistMsg = false;
             }
 
             // update session
             $_SESSION['aPrefs'] = array_merge($_SESSION['aPrefs'], $aData);
-            $this->_raiseMsg('user preferences updated', $trans = true, $persistMsg);
+            $this->_raiseMsg('user preferences updated', $trans = true,
+                $persistMsg = true);
         }
     }
 
