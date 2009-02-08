@@ -456,7 +456,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         require_once 'Validate.php';
         $v = new Validate();
 
-        $aVal = array('format' => VALIDATE_NUM . VALIDATE_ALPHA . '\.', 'min_length' => 5);
+        $aVal = array('format' => VALIDATE_NUM . VALIDATE_ALPHA . '\.', 'min_length' => 3);
         if (!$v->string($oUser->username, $aVal)) {
             $ret = 'username min length error';
         } elseif (!$this->da->isUniqueUsername($oUser->username)) {
