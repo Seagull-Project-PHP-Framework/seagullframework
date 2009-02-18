@@ -24,7 +24,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
             $unserializer->setOption('tagAsClass', true);
             $unserializer->setOption('ignoreKeys', $this->getKeysToIgnore());
             $unserializer->setOption('complexType', $this->getComplexTypes());
-
+            $xml = stripslashes($xml);
             $result = $unserializer->unserialize($xml);
             if (PEAR::isError($result)) {
                 return $result;
