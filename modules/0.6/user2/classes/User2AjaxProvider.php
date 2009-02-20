@@ -118,7 +118,8 @@ class User2AjaxProvider extends SGL_AjaxProvider2
 
     public function register(SGL_Registry $input, SGL_Output $output)
     {
-        $input->user = (object) $this->req->get('user');
+        $input->user  = (object) $this->req->get('user');
+        $input->redir = $this->req->get('redir');
 
         $ok = $this->_validateUser($input->user);
         if (!is_string($ok)) {
@@ -150,13 +151,19 @@ class User2AjaxProvider extends SGL_AjaxProvider2
         $output->isRegistered = false;
         if (!PEAR::isError($ok) || (is_bool($ok) && !$ok)) {
             if ($ok) {
-                $msg                  = 'welcome new user';
-                $persist              = true;
+                if (!$input->redir) {
+                    $msg           = 'welcome new user';
+                    $persist       = true;
+                    $output->redir = $input->getCurrentUrl()->makeLink(array(
+                        'moduleName'  => SGL_Config::get('site.defaultModule'),
+                        'managerName' => SGL_Config::get('site.defaultManager')
+                    ));
+                // skip message and use specified URL
+                } else {
+                    $msg           = '';
+                    $output->redir = $input->redir;
+                }
                 $output->isRegistered = true;
-                $output->redir        = $input->getCurrentUrl()->makeLink(array(
-                    'moduleName'  => SGL_Config::get('site.defaultModule'),
-                    'managerName' => SGL_Config::get('site.defaultManager')
-                ));
             } else {
                 $msg = array(
                     'message' => $msg,
@@ -164,7 +171,9 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 );
                 $persist = false;
             }
-            $this->_raiseMsg($msg, $trans = true, $persist);
+            if ($msg) {
+                $this->_raiseMsg($msg, $trans = true, $persist);
+            }
         }
     }
 
