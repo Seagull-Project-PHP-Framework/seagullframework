@@ -86,6 +86,7 @@ class Login2Mgr extends SGL_Manager
             && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'iphone') !== false)
         {
             $output->template = 'mobile_login2Register.html';
+            $output->mobile   = true;
         }
     }
 
