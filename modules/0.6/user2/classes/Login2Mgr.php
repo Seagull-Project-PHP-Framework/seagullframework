@@ -81,13 +81,6 @@ class Login2Mgr extends SGL_Manager
 
         $output->pageTitle = 'Register';
         $output->template  = 'login2Register.html';
-
-        if (isset($_SERVER['HTTP_USER_AGENT'])
-            && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'iphone') !== false)
-        {
-            $output->template = 'mobile_login2Register.html';
-            $output->mobile   = true;
-        }
     }
 
     public function _cmd_login(SGL_Registry $input, SGL_Output $output)
