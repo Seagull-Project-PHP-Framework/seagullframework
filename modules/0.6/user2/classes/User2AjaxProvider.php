@@ -162,6 +162,11 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 } else {
                     $msg           = '';
                     $output->redir = $input->redir;
+                    // if custom URL wants username back, give it
+                    if (strpos($output->redir, 'USERNAME') !== false) {
+                        $output->redir = str_replace('USERNAME',
+                            $input->user->username, $output->redir);
+                    }
                 }
                 $output->isRegistered = true;
             } else {

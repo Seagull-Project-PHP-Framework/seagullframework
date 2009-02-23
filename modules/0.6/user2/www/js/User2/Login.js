@@ -52,7 +52,6 @@ User2.Login =
                 return ret;
             },
             success: function(r, msg, f) {
-                console.log(r);
                 if (r.isRegistered) {
                     location.href = r.redir;
                 } else {
