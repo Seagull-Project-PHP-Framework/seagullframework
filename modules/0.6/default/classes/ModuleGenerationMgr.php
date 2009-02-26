@@ -552,7 +552,7 @@ EOD;
                 '%mgrName%'    => $output->managerName,
                 '%MgrName%'    => $output->managerLongName,
                 '%field_list%' => implode(', ', array_keys($output->modelFields)),
-                '%crud%'       => $input->createModule->createCRUD ? 'true' : 'false',
+                '%crud%'       => isset($input->createModule->createCRUD) ? 'true' : 'false',
             );
             foreach ($aMethods as $method) {
                 if (isset($input->createModule->$method)) {
