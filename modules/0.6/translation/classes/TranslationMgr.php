@@ -241,6 +241,11 @@ class TranslationMgr extends SGL_Manager
         $output->currentLang       = $currentLang;
         $output->currentLangName   = $aLangs[$currentLang];
         $output->currentModuleName = ucfirst($output->currentModule);
+
+        if (SGL_Config::get('TranslationMgr.showUntranslated') == false) {
+            $c = &SGL_Config::singleton();
+            $c->set('debug', array('showUntranslated' => false));
+        }
     }
 
     function _cmd_list(&$input, &$output)
