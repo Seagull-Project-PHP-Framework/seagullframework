@@ -201,9 +201,14 @@ class SGL_URL2
             unset($aParams['managerName']);
         }
 
-        // set current language if none specified
-        if (SGL_Config::get('translation.langInUrl') && empty($aParams['lang'])) {
-            $aParams['lang'] = SGL::getCurrentLang();
+        if (SGL_Config::get('translation.langInUrl')) {
+            // set current language if none specified
+            if (empty($aParams['lang'])) {
+                $aParams['lang'] = SGL::getCurrentLang();
+            // ensure we don't pass encoding
+            } elseif (strpos($aParams['lang'], '-') !== false) {
+                $aParams['lang'] = reset(explode('-', $aParams['lang']));
+            }
         }
 
         // try to match URL in new style
