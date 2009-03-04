@@ -2,6 +2,8 @@
 /**
  * Add extra languages (in config) to global language array.
  *
+ * Add this to the filter chain after SGL_Task_CreateSession.
+ *
  * @package Task
  * @author  Dmitri Lakachauskis <lakiboy83@gmail.com>
  */
