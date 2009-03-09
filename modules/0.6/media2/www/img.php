@@ -22,7 +22,15 @@ function create_session($varDir)
     session_start();
 }
 
-function send_file($fileName)
+function get_uploaddir($varDir)
+{
+    require "$varDir/localhost.conf.php";
+    return !empty($conf['site']['uploadDirOverride'])
+        ? $conf['site']['uploadDirOverride']
+        : $varDir . '/uploads';
+}
+
+function send_file($fileName, $type)
 {
     $fp = fopen($fileName, 'rb');
 
@@ -48,9 +56,15 @@ create_session($varDir);
 // --- Find path ---
 // -----------------
 
-$allowed  = true;
-$query    = isset($_REQUEST['path']) ? $_REQUEST['path'] : 'missing';
-$fileName = $rootDir . '/' . $query;
+$allowed   = true;
+$query     = isset($_REQUEST['path']) ? $_REQUEST['path'] : 'missing';
+$fileName  = $rootDir . '/' . $query;
+$uploadDir = get_uploaddir($varDir);
+
+// check if file is within upload ir
+if (strpos($fileName, $uploadDir) !== 0) {
+    $allowed = false;
+}
 
 // ------------------
 // --- Validation ---
