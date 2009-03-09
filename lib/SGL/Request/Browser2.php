@@ -156,8 +156,6 @@ class SGL_Request_Browser2 extends SGL_Request
         $this->aProps = array_merge($_GET, $_FILES, $aQueryData, $_POST);
         $this->type   = SGL_REQUEST_BROWSER;
 
-        SGL::logMessage(print_r($_POST, 1), PEAR_LOG_DEBUG);
-
         return true;
     }
 
