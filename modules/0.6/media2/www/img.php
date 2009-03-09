@@ -30,7 +30,7 @@ function get_uploaddir($varDir)
         : $varDir . '/uploads';
 }
 
-function send_file($fileName, $type)
+function send_file($fileName)
 {
     $fp = fopen($fileName, 'rb');
 
