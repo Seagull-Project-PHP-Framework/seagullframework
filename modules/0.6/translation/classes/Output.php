@@ -179,8 +179,8 @@ class TranslationOutput
         if (!empty($aMetaData)) {
 
             // get user name
-            require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $_da  = UserDAO::singleton();
+            require_once SGL_MOD_DIR . '/user2/classes/User2DAO.php';
+            $_da  = User2DAO::singleton();
             $user = $_da->getUserById($aMetaData['__SGL_UPDATED_BY_ID']);
             $displayName = trim($user->first_name . ' ' . $user->last_name);
             if (empty($displayName)) {
