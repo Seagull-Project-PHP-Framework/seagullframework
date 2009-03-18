@@ -50,6 +50,13 @@ class SGL_Request_Browser2 extends SGL_Request
         $aRoutes = $this->_getCustomRoutes();
         if ($prependRegex) {
             $aRoutes = $this->_prependRegex($aRoutes, $prependRegex);
+        } else {
+
+            // fixme
+            foreach ($aRoutes as $k => $aRoute) {
+                $this->_ignoreRouteModification($aRoute);
+                $aRoutes[$k] = $aRoute;
+            }
         }
 
         // create mapper
@@ -255,6 +262,10 @@ class SGL_Request_Browser2 extends SGL_Request
     private function _prependRegex($aRoutes, $regex)
     {
         foreach ($aRoutes as $k => $v) {
+            if (self::_ignoreRouteModification($v)) {
+                $aRoutes[$k] = $v;
+                continue;
+            }
             $index = is_string($v[0]) ? 0 : 1;
             $route = $v[$index];
             if ($route[0] == '/' && $regex[strlen($regex)-1] == '/') {
@@ -264,6 +275,35 @@ class SGL_Request_Browser2 extends SGL_Request
             }
         }
         return $aRoutes;
+    }
+
+    /**
+     * Looks if custom route option is set to ignore prepending of :lang.
+     *
+     * @todo make method names more obvious
+     *
+     * @see self::_prependRegex()
+     *
+     * @param array $aRoute
+     *
+     * @return boolean
+     */
+    private function _ignoreRouteModification(&$aRoute)
+    {
+        $ret          = false;
+        $aRouteParams = end($aRoute);
+
+        // check route preferences
+        if (!isset($aRouteParams['moduleName'])
+            && isset($aRouteParams['ignore_modification']))
+        {
+            $ret = true;
+            unset($aRoute[count($aRoute)-1]['ignore_modification']);
+            if (empty($aRoute[count($aRoute)-1])) {
+                array_pop($aRoute);
+            }
+        }
+        return $ret;
     }
 }
 ?>
