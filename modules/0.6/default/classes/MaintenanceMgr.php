@@ -255,6 +255,13 @@ class MaintenanceMgr extends SGL_Manager
         if (!empty($this->conf['site']['customRebuildTasks'])) {
             $aTasks = explode(',', $this->conf['site']['customRebuildTasks']);
             foreach ($aTasks as $task) {
+                // attempt to load task if one is missing
+                if (!class_exists($task)) {
+                    $path = str_replace('_', '/', $task);
+                    if (file_exists(SGL_LIB_DIR . '/' . $path . '.php')) {
+                        require_once SGL_LIB_DIR . '/' . $path . '.php';
+                    }
+                }
                 if (class_exists($task)) {
                     $runner->addTask(new $task());
                 }
