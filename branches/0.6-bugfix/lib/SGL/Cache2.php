@@ -71,6 +71,8 @@ class SGL_Cache2
             ? $fOpts['writeControl'] : SGL_Config::get('cache.writeControl');
         $fOpts['cleaningFactor'] = isset($fOpts['cleaningFactor'])
             ? $fOpts['cleaningFactor'] : SGL_Config::get('cache.cleaningFactor');
+        $fOpts['automaticSerialization'] = isset($fOpts['automaticSerialization'])
+            ? $fOpts['automaticSerialization'] : true;
 
         // ensure minimum backend options are set
         $bOpts['cacheDir'] = isset($bOpts['cacheDir'])
@@ -86,7 +88,9 @@ class SGL_Cache2
                 // fix frontend options
                 $fOpts['write_control'] = $fOpts['writeControl'];
                 $fOpts['automatic_cleaning_factor'] = $fOpts['cleaningFactor'];
-                unset($fOpts['writeControl'], $fOpts['cleaningFactor']);
+                $fOpts['automatic_serialization'] = $fOpts['automaticSerialization'];
+                unset($fOpts['writeControl'], $fOpts['cleaningFactor'],
+                    $fOpts['automaticSerialization']);
 
                 // fix backend options
                 $bOpts['cache_dir'] = $bOpts['cacheDir'];
