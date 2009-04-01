@@ -34,6 +34,10 @@ class SGL_Request_Browser2 extends SGL_Request
             $host          = $_SERVER['HTTP_HOST'];
             $url           = $proto . '://' . $host . $_SERVER['REQUEST_URI'];
             $qs            = urldecode(str_replace($baseUrl, '', $url));
+
+            // we want to be able to resolve routes with question marks at the end,
+            // but without adding * to each route path
+            $qs            = reset(explode('?', $qs));
         }
 
         $defModule  = SGL_Config::get('site.defaultModule');
