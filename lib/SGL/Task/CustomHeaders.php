@@ -29,6 +29,9 @@ class SGL_Task_CustomHeaders extends SGL_DecorateProcess
         header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
         header("Content-Type: $output->contentType");
         header('X-Powered-By: Seagull http://seagullproject.org');
+        foreach ($output->getHeaders() as $header) {
+            header($header);
+        }
     }
 }
 ?>
