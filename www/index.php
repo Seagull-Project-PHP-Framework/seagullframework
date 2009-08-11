@@ -6,7 +6,7 @@
  */
 function getSystemTime()
 {
-    $time = gettimeofday();
+    $time = @gettimeofday();
     $resultTime = $time['sec'] * 1000;
     $resultTime += floor($time['usec'] / 1000);
     return $resultTime;

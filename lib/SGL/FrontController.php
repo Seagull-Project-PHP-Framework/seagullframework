@@ -98,7 +98,7 @@ class SGL_FrontController
         $c->ensureModuleConfigLoaded($req->getModuleName());
 
         $outputClass = SGL_FrontController::getOutputClass();
-        $output = &new $outputClass();
+        $output = new $outputClass();
 
         // test db connection
         SGL_FrontController::testDbConnection($output);
@@ -323,6 +323,7 @@ class SGL_FrontController
     function setupMinimumEnv()
     {
         $init = new SGL_TaskRunner();
+        $init->addTask(new SGL_Task_EnsureFC());
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
         $init->addTask(new SGL_Task_EnsureBC());
