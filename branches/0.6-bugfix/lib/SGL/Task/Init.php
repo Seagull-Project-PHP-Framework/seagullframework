@@ -511,7 +511,7 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
                 && $conf['debug']['customErrorHandler'] == true
                 && !defined('SGL_TEST_MODE')) {
             require_once SGL_CORE_DIR . '/ErrorHandler.php';
-            $eh = & new SGL_ErrorHandler();
+            $eh = new SGL_ErrorHandler();
             $eh->startHandler();
 
             //  clean start for logs
@@ -684,6 +684,21 @@ class SGL_Task_EnsureBC extends SGL_Task
                 $resultTime += floor($time['usec'] / 1000);
                 return $resultTime;
             }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
+class SGL_Task_EnsureFC extends SGL_Task
+{
+    function run($data)
+    {
+        //  load BC functions depending on PHP version detected
+        if (version_compare(phpversion(), "5.3.0", '>=')) {
+            date_default_timezone_set('UTC');
+            error_reporting(E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR);
         }
     }
 }
