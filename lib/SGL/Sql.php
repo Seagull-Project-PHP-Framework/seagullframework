@@ -170,6 +170,10 @@ class SGL_Sql
                     return $res;
                 }
             }
+            // support for php 5.3
+            if (version_compare(phpversion(), "5.3.0", '>=')) {
+                $sql = $sql[0];
+            }
             $aLines[] = $sql;
             $sql = '';
         }
