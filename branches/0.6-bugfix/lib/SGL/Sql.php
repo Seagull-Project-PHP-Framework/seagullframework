@@ -158,6 +158,11 @@ class SGL_Sql
 
             // Execute the statement.
             if (!is_null($executerCallback) && is_callable($executerCallback)) {
+
+                // support for php 5.3
+                if (version_compare(phpversion(), "5.3.0", '>=')) {
+                    $sql = array($sql);
+                }
                 $res = call_user_func_array(
                     array($executerCallback[0], $executerCallback[1]), $sql);
                 //  handle error
