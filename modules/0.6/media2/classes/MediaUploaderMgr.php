@@ -50,7 +50,8 @@ class MediaUploaderMgr extends SGL_Manager
                 // check for allowed mime type
                 $aMimeTypes = !empty($input->typeId)
                     ? $this->da->getMimeTypesByMediaTypeId($input->typeId)
-                    : $this->da->getMimeTYpes();
+                    : $this->da->getMimeTypes();
+                    
                 $mimeType = SGL_Media_Util::getFileIdent(
                     $input->oMedia->tmp_name, $aMimeTypes);
                 if (!$mimeType
@@ -139,10 +140,14 @@ class MediaUploaderMgr extends SGL_Manager
 
         // upload regular media
         } else {
-            $ok = SGL_Media_Util::ensureDirIsWritable(SGL_UPLOAD_DIR);
+            
+            $c     = new SGL_Config();
+            $aConf = $c->load(SGL_MOD_DIR . '/media2/image.ini');
+            $uploadDir = SGL_VAR_DIR . '/../' . $aConf['product']['uploadDir'];
+            $ok = SGL_Media_Util::ensureDirIsWritable($uploadDir);
             if (!PEAR::isError($ok)) {
                 if (!($ok = @move_uploaded_file($input->oMedia->tmp_name,
-                    SGL_UPLOAD_DIR . "/$fileName")))
+                    $uploadDir . "/$fileName")))
                 {
                     SGL::raiseError('can not move uploaded file');
                 }

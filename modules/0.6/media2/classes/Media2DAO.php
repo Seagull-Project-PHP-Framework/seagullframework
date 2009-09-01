@@ -206,5 +206,53 @@ class Media2DAO extends SGL_Manager
         ";
         return $this->dbh->getAll($query);
     }
+
+    public function getMediasByFileType($typeId = null, $fkId = null)
+    {
+		SGL::logMessage(NULL, PEAR_LOG_DEBUG);
+
+        if (!empty($typeId)) {
+            $aConstraints[] = 'm.media_type_id = ' . intval($typeId);
+        }
+        if (!empty($fkId)) {
+            $aConstraints[] = 'm.fk_id = ' . intval($fkId);
+        }
+        $constraint = !empty($aConstraints)
+            ? ' WHERE ' . implode(' AND ', $aConstraints)
+            : '';
+        $query = "
+            SELECT    m.mime_type, m.*, m.mime_type as mime, mt.name AS media_type
+            FROM      media AS m
+                      LEFT JOIN media_type AS mt
+                        ON m.media_type_id = mt.media_type_id
+                      $constraint
+            ORDER BY  m.item_order ASC, m.date_created DESC
+        ";
+        
+        $list = $this->dbh->getAssoc( $query, false, null, DB_FETCHMODE_ASSOC, true);
+        
+        $aTypes = array(
+            'images' =>array('image/gif', 'image/jpeg', 'image/png'),
+            'sound' =>array('audio/mp3'),
+            'movies' =>array('application/x-shockwave-flash', 'video/x-flv', 'video/mpeg', 'video/youtube'),
+            'docs' =>array('application/pdf', 'application/msword'),
+        );
+        
+        $aMedias = array();
+
+        foreach($aTypes as $type => $aMime) {
+            foreach($aMime as $mime) {
+                if (isset($list[$mime])) {
+                    if (!isset($aMedias[$type])) $aMedias[$type] = array();
+                    foreach($list[$mime] as $media) {
+                        $aMedias[$type][] = (object)$media;
+                    }
+                }
+            }
+        }
+    
+        return $aMedias;
+    }
+
 }
 ?>

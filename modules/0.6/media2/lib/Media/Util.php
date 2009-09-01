@@ -112,6 +112,9 @@ class SGL_Media_Util
             case 'application/pdf':
                 $ret = 'doc_pdf.png';
                 break;
+            case 'audio/mp3':
+                $ret = 'doc_mp3.png';
+                break;
             case 'application/msword':
                 $ret = 'doc_msword.png';
                 break;
