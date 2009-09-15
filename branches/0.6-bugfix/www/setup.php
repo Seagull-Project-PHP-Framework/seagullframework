@@ -258,7 +258,7 @@ class ActionProcess extends HTML_QuickForm_Action
 }
 
 //  start wizard
-$wizard =& new HTML_QuickForm_Controller('installationWizard');
+$wizard = new HTML_QuickForm_Controller('installationWizard');
 $wizard->addPage(new WizardLicenseAgreement('page1'));
 $wizard->addPage(new WizardSetupAuth('page2'));
 $wizard->addPage(new WizardDetectEnv('page3'));
