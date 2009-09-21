@@ -506,6 +506,9 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
     function run($conf)
     {
+        if (version_compare(phpversion(), "5.3.0", '>=')) {
+            return;
+        }
         //  start custom PHP error handler
         if (isset( $conf['debug']['customErrorHandler'])
                 && $conf['debug']['customErrorHandler'] == true

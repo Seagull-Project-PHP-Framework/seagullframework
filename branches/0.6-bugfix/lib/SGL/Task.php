@@ -114,7 +114,7 @@ class SGL_TaskRunner
         foreach ($this->aTasks as $k => $oTask) {
             $return = $this->aTasks[$k]->run($this->data);
             // log to system tmp dir if we're installing
-            if (!defined('SGL_INSTALLED')) {
+            if (!defined('SGL_INSTALLED') && !SGL::runningFromCLI()) {
                 $err = is_a($return, 'PEAR_Error')
                     ? print_r($return, 1)
                     : 'ok';
