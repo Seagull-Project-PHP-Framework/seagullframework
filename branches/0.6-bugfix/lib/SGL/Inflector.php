@@ -195,6 +195,17 @@ class SGL_Inflector
         return $ret;
     }
 
+	/**
+	 * accepts strings with underscores
+	 *
+	 * @param string $lowerCaseAndUnderscoredWord
+	 * @return string
+	 */
+	function camelise2($lowerCaseAndUnderscoredWord)
+	{
+		return str_replace(" ", "", ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord)));
+	}
+
     function getTitleFromCamelCase($camelCaseWord)
     {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
@@ -209,6 +220,19 @@ class SGL_Inflector
         }
         return ucfirst($ret);
     }
+
+	function variable($string)
+	{
+		$string = SGL_Inflector::camelise2(SGL_Inflector::underscore($string));
+		$replace = strtolower(substr($string, 0, 1));
+		$variable = preg_replace('/\\w/', $replace, $string, 1);
+		return $variable;
+	}
+
+    function underscore($camelCasedWord)
+    {
+		return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+	}
 
     function isCamelCase($str)
     {
