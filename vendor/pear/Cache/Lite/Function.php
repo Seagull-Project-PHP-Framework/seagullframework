@@ -11,7 +11,7 @@
 * Technical choices are described in the 'docs/technical' file
 *
 * @package Cache_Lite
-* @version $Id: Function.php,v 1.10 2006/02/04 18:36:36 fab Exp $
+* @version $Id: Function.php,v 1.11 2006/12/14 12:59:43 cweiske Exp $
 * @author Sebastian BERGMANN <sb@sebastian-bergmann.de>
 * @author Fabien MARTY <fab@php.net>
 */
@@ -113,14 +113,14 @@ class Cache_Lite_Function extends Cache_Lite
         $data = $this->get($id, $this->_defaultGroup);
         if ($data !== false) {
             if ($this->_debugCacheLiteFunction) {
-                SGL::logMessage('---------------------- Cache hit !', PEAR_LOG_WARNING);
+                echo "Cache hit !\n";
             }
             $array = unserialize($data);
             $output = $array['output'];
             $result = $array['result'];
         } else {
             if ($this->_debugCacheLiteFunction) {
-                SGL::logMessage('---------------------- Cache missed !', PEAR_LOG_WARNING);
+                echo "Cache missed !\n";
             }
             ob_start();
             ob_implicit_flush(false);
@@ -185,7 +185,7 @@ class Cache_Lite_Function extends Cache_Lite
     function drop()
     {
         $id = $this->_makeId(func_get_args());
-        $this->remove($id, $this->_defaultGroup);
+        return $this->remove($id, $this->_defaultGroup);
     }
 
     /**
