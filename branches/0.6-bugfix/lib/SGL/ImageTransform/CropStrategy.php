@@ -24,6 +24,11 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
 
         // find sizes
         if ($width != $height) {
+            $scaleWidth    = $newWidth / $width;
+            $scaleHeight   = $newHeight / $height;
+            $percentChange = max($scaleHeight, $scaleWidth);
+
+            /*
             if ($newWidth > $newHeight) {
                 $percentChange = $width > $height
                     ? $newWidth / $width
@@ -33,6 +38,8 @@ class SGL_ImageTransform_CropStrategy extends SGL_ImageTransformStrategy
                     ? $newHeight / $height
                     : $newWidth / $width;
             }
+            */
+
             $scaleWidth  = round($width * $percentChange);
             $scaleHeight = round($height * $percentChange);
 
