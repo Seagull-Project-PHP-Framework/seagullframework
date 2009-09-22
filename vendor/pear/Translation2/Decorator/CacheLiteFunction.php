@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: CacheLiteFunction.php,v 1.21 2007/11/19 20:31:21 quipo Exp $
+ * @version   CVS: $Id: CacheLiteFunction.php,v 1.23 2008/11/14 16:18:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -51,7 +51,7 @@ require_once 'Cache/Lite/Function.php';
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: CacheLiteFunction.php,v 1.21 2007/11/19 20:31:21 quipo Exp $
+ * @version   CVS: $Id: CacheLiteFunction.php,v 1.23 2008/11/14 16:18:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
@@ -189,7 +189,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
      * @param string $name  name of the option
      * @param string $value new value of the option
      *
-     * @return void
+     * @return self
      * @access public
      * @see Cache_Lite::setOption()
      */
@@ -197,6 +197,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
     {
         $this->_prepare();
         $this->cacheLiteFunction->setOption($name, $value);
+        return $this;
     }
 
     // }}}
@@ -215,7 +216,7 @@ class Translation2_Decorator_CacheLiteFunction extends Translation2_Decorator
      */
     function getLang($langID = null, $format = 'name')
     {
-        $langs = $this->getLangs();
+        $langs = $this->getLangs('array');
 
         if (is_null($langID)) {
             if (!isset($this->lang['id']) || !array_key_exists($this->lang['id'], $langs)) {

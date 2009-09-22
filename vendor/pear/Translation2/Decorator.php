@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2005 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Decorator.php,v 1.22 2007/10/28 23:14:49 quipo Exp $
+ * @version   CVS: $Id: Decorator.php,v 1.25 2008/11/14 16:18:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -105,7 +105,7 @@ class Translation2_Decorator extends Translation2
      *
      * @param array $options decorator options
      *
-     * @return void
+     * @return self
      */
     function setOptions($options=array())
     {
@@ -114,6 +114,7 @@ class Translation2_Decorator extends Translation2
                 $this->setOption($option, $value);
             }
         }
+        return $this;
     }
 
     // }}}
@@ -125,7 +126,7 @@ class Translation2_Decorator extends Translation2
      * @param string $option option name
      * @param mixed  $value  option value
      *
-     * @return void
+     * @return self
      */
     function setOption($option, $value=null)
     {
@@ -134,6 +135,7 @@ class Translation2_Decorator extends Translation2
         } elseif (is_a($this->translation2, 'Translation2_Decorator')) {
             $this->translation2->setOption($option, $value);
         }
+        return $this;
     }
 
     // }}}
@@ -198,11 +200,11 @@ class Translation2_Decorator extends Translation2
      *
      * @param string $langID language ID
      *
-     * @return void
+     * @return true|PEAR_Error
      */
     function setLang($langID)
     {
-        $this->translation2->setLang($langID);
+        return $this->translation2->setLang($langID);
     }
 
     // }}}

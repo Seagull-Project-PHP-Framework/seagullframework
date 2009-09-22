@@ -30,9 +30,9 @@
  * @category  Internationalization
  * @package   Translation2
  * @author    Alan Knowles <alan@akbkhome.com>
- * @copyright 2004-2007 Alan Knowles
+ * @copyright 2004-2008 Alan Knowles
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: dataobjectsimple.php,v 1.16 2007/10/28 23:26:40 quipo Exp $
+ * @version   CVS: $Id: dataobjectsimple.php,v 1.18 2008/05/18 17:56:54 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -69,9 +69,9 @@ require_once 'DB/DataObject.php';
  * @category  Internationalization
  * @package   Translation2
  * @author    Alan Knowles <alan@akbkhome.com>
- * @copyright 2004-2007 Alan Knowles
+ * @copyright 2004-2008 Alan Knowles
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: dataobjectsimple.php,v 1.16 2007/10/28 23:26:40 quipo Exp $
+ * @version   CVS: $Id: dataobjectsimple.php,v 1.18 2008/05/18 17:56:54 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Container_dataobjectsimple extends Translation2_Container
@@ -147,7 +147,7 @@ class Translation2_Container_dataobjectsimple extends Translation2_Container
      *
      * @return array
      */
-    function &getPage($pageID = null, $langID = null)
+    function getPage($pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
         if (PEAR::isError($langID)) {
@@ -197,7 +197,7 @@ class Translation2_Container_dataobjectsimple extends Translation2_Container
      *
      * @return string
      */
-    function getOne($stringID, $pageID = null, $langID = null)
+    function getOne($string, $pageID = null, $langID = null)
     {
         $langID = $langID ? $langID : (isset($this->currentLang['id']) ? $this->currentLang['id'] : '-');
         // get the string id

@@ -30,9 +30,9 @@
  * @category  Internationalization
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
- * @copyright 2004-2007 Lorenzo Alberton
+ * @copyright 2004-2008 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Translation2.php,v 1.39 2007/10/29 21:03:09 quipo Exp $
+ * @version   CVS: $Id: Translation2.php,v 1.42 2008/11/14 16:18:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -74,7 +74,7 @@ define('TRANSLATION2_ERROR_UNSUPPORTED',         -11);
  * @category  Internationalization
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
- * @copyright 2004-2007 Lorenzo Alberton
+ * @copyright 2004-2008 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
  * @link      http://pear.php.net/package/Translation2
  */
@@ -150,7 +150,7 @@ class Translation2
      */
     function & factory($driver, $options = '', $params = array())
     {
-        $tr =& new Translation2;
+        $tr = new Translation2;
         $tr->storage = Translation2::_storageFactory($driver, $options);
         if (PEAR::isError($tr->storage)) {
             return $tr->storage;
@@ -179,7 +179,7 @@ class Translation2
         $storage_path  = 'Translation2/Container/'.strtolower($driver).'.php';
         $storage_class = 'Translation2_Container_'.strtolower($driver);
         include_once $storage_path;
-        $storage =& new $storage_class;
+        $storage = new $storage_class;
         $err = $storage->init($options);
         if (PEAR::isError($err)) {
             return $err;
@@ -261,9 +261,9 @@ class Translation2
         include_once $decorator_path;
         if (func_num_args() > 1) {
             $obj = func_get_arg(1);
-            $new_decorator =& new $decorator_class($obj);
+            $new_decorator = new $decorator_class($obj);
         } else {
-            $new_decorator =& new $decorator_class($this);
+            $new_decorator = new $decorator_class($this);
         }
         return $new_decorator;
     }
@@ -296,7 +296,7 @@ class Translation2
      *
      * @param string $langID language code (for instance, 'en' or 'it')
      *
-     * @return void|PEAR_Error
+     * @return true|PEAR_Error
      */
     function setLang($langID)
     {
@@ -305,6 +305,7 @@ class Translation2
             return $res;
         }
         $this->lang = $res;
+        return true;
     }
 
     // }}}
@@ -318,11 +319,12 @@ class Translation2
      *
      * @param string $pageID ID of the default page
      *
-     * @return void
+     * @return self
      */
     function setPageID($pageID = null)
     {
         $this->currentPageID = $pageID;
+        return $this;
     }
 
     // }}}
@@ -373,7 +375,7 @@ class Translation2
      *
      * @param string $format ['ids', 'names', 'array']
      *
-     * @return array
+     * @return array|PEAR_Error
      */
     function getLangs($format = 'name')
     {
@@ -391,7 +393,7 @@ class Translation2
      *
      * @param array $params array of replacement parameters
      *
-     * @return void
+     * @return self
      */
     function setParams($params = null)
     {
@@ -402,6 +404,7 @@ class Translation2
         } else {
             $this->params = array($params);
         }
+        return $this;
     }
 
     // }}}

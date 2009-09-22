@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: CacheMemory.php,v 1.12 2007/10/29 21:03:09 quipo Exp $
+ * @version   CVS: $Id: CacheMemory.php,v 1.13 2007/12/03 07:35:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -62,7 +62,7 @@ if (!defined('TRANSLATION2_NULL_PAGEID_KEY')) {
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: CacheMemory.php,v 1.12 2007/10/29 21:03:09 quipo Exp $
+ * @version   CVS: $Id: CacheMemory.php,v 1.13 2007/12/03 07:35:50 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_CacheMemory extends Translation2_Decorator
@@ -77,14 +77,6 @@ class Translation2_Decorator_CacheMemory extends Translation2_Decorator
      * @access protected
      */
     var $rawData = array();
-
-    /**
-     * Translated strings array
-     * Used for cache purposes.
-     * @var array
-     * @access protected
-     */
-    var $data = array();
 
     /**
      * set prefetch on/off
@@ -140,16 +132,19 @@ class Translation2_Decorator_CacheMemory extends Translation2_Decorator
         $pageID_key = $this->_getPageIDKey($pageID);
         $langID_key = empty($langID) ? $this->translation2->lang['id'] : $langID;
 
-        if (!array_key_exists($langID_key, $this->data)) {
-            $this->data[$langID_key] = array();
+        if (!array_key_exists($langID_key, $this->rawData)) {
+            $this->rawData[$langID_key] = array();
         }
 
         if ($this->prefetch) {
             $this->getRawPage($pageID, $langID);
         }
-        if (array_key_exists($pageID_key, $this->data[$langID_key])) {
-            $str = (isset($this->data[$langID_key][$pageID_key][$stringID]) ?
-                    $this->data[$langID_key][$pageID_key][$stringID] : ''); //empty string or null value?
+        if (array_key_exists($pageID_key, $this->rawData[$langID_key])) {
+            if (PEAR::isError($this->rawData[$langID_key][$pageID_key])) {
+                return $this->rawData[$langID_key][$pageID_key];
+            }
+            $str = (isset($this->rawData[$langID_key][$pageID_key][$stringID]) ?
+                    $this->rawData[$langID_key][$pageID_key][$stringID] : ''); //empty string or null value?
         } else {
             $str = $this->translation2->getRaw($stringID, $pageID, $langID, $defaultText);
         }
@@ -175,22 +170,7 @@ class Translation2_Decorator_CacheMemory extends Translation2_Decorator
      */
     function get($stringID, $pageID = TRANSLATION2_DEFAULT_PAGEID, $langID = null, $defaultText = null)
     {
-        $pageID_key = $this->_getPageIDKey($pageID);
-        $langID_key = empty($langID) ? $this->translation2->lang['id'] : $langID;
-
-        if (!array_key_exists($langID_key, $this->data)) {
-            $this->data[$langID_key] = array();
-        }
-
-        if ($this->prefetch) {
-            $this->getRawPage($pageID, $langID);
-        }
-        if (array_key_exists($pageID_key, $this->data[$langID_key])) {
-            $str = (isset($this->data[$langID_key][$pageID_key][$stringID]) ?
-                    $this->data[$langID_key][$pageID_key][$stringID] : ''); //empty string or null value?
-        } else {
-            $str = $this->translation2->get($stringID, $pageID, $langID, $defaultText);
-        }
+        $str = $this->getRaw($stringID, $pageID, $langID, $defaultText);
         return $this->_replaceParams($str);
     }
 
@@ -240,15 +220,8 @@ class Translation2_Decorator_CacheMemory extends Translation2_Decorator
         $pageID_key = $this->_getPageIDKey($pageID);
         $langID_key = empty($langID) ? $this->translation2->lang['id'] : $langID;
 
-        if (!array_key_exists($langID_key, $this->data)) {
-            $this->data[$langID_key] = array();
-        }
-        if (!array_key_exists($pageID_key, $this->data[$langID_key])) {
-            $this->data[$langID_key][$pageID_key] =
-                $this->translation2->getPage($pageID, $langID);
-        }
-        $this->data[$langID_key][$pageID_key] = $this->_replaceParams($this->data[$langID_key][$pageID_key]);
-        return $this->data[$langID_key][$pageID_key];
+        $this->getRawPage($pageID, $langID);
+        return $this->_replaceParams($this->rawData[$langID_key][$pageID_key]);
     }
 
     // }}}

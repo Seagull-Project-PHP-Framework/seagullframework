@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2005 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Container.php,v 1.23 2007/10/29 21:03:09 quipo Exp $
+ * @version   CVS: $Id: Container.php,v 1.26 2008/08/31 13:58:30 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -157,11 +157,14 @@ class Translation2_Container
      *
      * @param string $langID language ID
      *
-     * @return array language information
+     * @return array|PEAR_Error language information
      */
     function setLang($langID)
     {
-        $this->getLangs(); //load available languages, if not loaded yet (ignore return value)
+        $res = $this->getLangs(); //load available languages, if not loaded yet
+        if (PEAR::isError($res)) {
+            return $res;
+        }
         if (!array_key_exists($langID, $this->langs)) {
             return $this->raiseError('unknown language: "'.$langID.'"',
                                     TRANSLATION2_ERROR_UNKNOWN_LANG,
@@ -212,13 +215,16 @@ class Translation2_Container
      *
      * @param string $format ['array' | 'ids' | 'names' | 'encodings']
      *
-     * @return array
+     * @return array|PEAR_Error
      */
     function getLangs($format = 'array')
     {
         //if not cached yet, fetch langs data from the container
         if (empty($this->langs) || !count($this->langs)) {
-            $this->fetchLangs(); //container-specific method
+            $res = $this->fetchLangs(); //container-specific method
+            if (PEAR::isError($res)) {
+                return $res;
+            }
         }
 
         $tmp = array();
@@ -229,16 +235,19 @@ class Translation2_Container
                 $tmp[$aLang['id']] = $aLang;
             }
             break;
+        case 'id':
         case 'ids':
             foreach ($this->langs as $aLang) {
                 $tmp[] = $aLang['id'];
             }
             break;
+        case 'encoding':
         case 'encodings':
             foreach ($this->langs as $aLang) {
                 $tmp[] = $aLang['encoding'];
             }
             break;
+        case 'name':
         case 'names':
         default:
             foreach ($this->langs as $aLang) {
@@ -275,7 +284,7 @@ class Translation2_Container
      *
      * @return array
      */
-    function getPage($pageID, $langID)
+    function getPage($pageID = null, $langID = null)
     {
         return $this->raiseError('method "getPage" not supported',
                                  TRANSLATION_ERROR_METHOD_NOT_SUPPORTED);
@@ -311,7 +320,7 @@ class Translation2_Container
      *
      * @return string
      */
-    function getStringID($string, $pageID)
+    function getStringID($string, $pageID = null)
     {
         return $this->raiseError('method "getStringID" not supported',
                                  TRANSLATION_ERROR_METHOD_NOT_SUPPORTED);

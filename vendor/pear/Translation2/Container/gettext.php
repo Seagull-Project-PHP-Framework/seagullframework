@@ -31,9 +31,9 @@
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @author    Michael Wallner <mike@php.net>
- * @copyright 2004-2007 Lorenzo Alberton, Michael Wallner
+ * @copyright 2004-2008 Lorenzo Alberton, Michael Wallner
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: gettext.php,v 1.31 2007/11/10 00:01:18 quipo Exp $
+ * @version   CVS: $Id: gettext.php,v 1.32 2008/02/02 18:05:06 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -57,9 +57,9 @@ require_once 'I18Nv2.php';
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @author    Michael Wallner <mike@php.net>
- * @copyright 2004-2007 Lorenzo Alberton, Michael Wallner
+ * @copyright 2004-2008 Lorenzo Alberton, Michael Wallner
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: gettext.php,v 1.31 2007/11/10 00:01:18 quipo Exp $
+ * @version   CVS: $Id: gettext.php,v 1.32 2008/02/02 18:05:06 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  * @see       /docs/gettext_readme.txt for an usage example
  */
@@ -322,12 +322,12 @@ class Translation2_Container_gettext extends Translation2_Container
     /**
      * Get the stringID for the given string
      *
-     * @param string $stringID string ID
-     * @param string $pageID   page/group ID
+     * @param string $string string
+     * @param string $pageID page/group ID
      *
      * @return string|PEAR_Error
      */
-    function getStringID($stringID, $pageID = null)
+    function getStringID($string, $pageID = null)
     {
         if (empty($pageID) || $pageID == TRANSLATION2_DEFAULT_PAGEID) {
             $pageID = $this->options['default_domain'];

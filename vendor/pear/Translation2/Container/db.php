@@ -31,9 +31,9 @@
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @author    Ian Eure <ieure@php.net>
- * @copyright 2004-2007 Lorenzo Alberton, Ian Eure
+ * @copyright 2004-2008 Lorenzo Alberton, Ian Eure
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: db.php,v 1.37 2007/11/24 11:47:30 quipo Exp $
+ * @version   CVS: $Id: db.php,v 1.39 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -52,9 +52,9 @@ require_once 'Translation2/Container.php';
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @author    Ian Eure <ieure@php.net>
- * @copyright 2004-2007 Lorenzo Alberton, Ian Eure
+ * @copyright 2004-2008 Lorenzo Alberton, Ian Eure
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: db.php,v 1.37 2007/11/24 11:47:30 quipo Exp $
+ * @version   CVS: $Id: db.php,v 1.39 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Container_db extends Translation2_Container
@@ -149,6 +149,7 @@ class Translation2_Container_db extends Translation2_Container
         $this->options['strings_tables']        = array(); // 'lang_id' => 'table_name'
         $this->options['string_id_col']         = 'id';
         $this->options['string_page_id_col']    = 'page_id';
+        $this->options['string_page_id_col_length'] = 50;
         $this->options['string_text_col']       = '%s'; // col_name if one table per lang is used,
                                                         // or a pattern (i.e. "tr_%s" => "tr_EN_US")
     }
@@ -212,7 +213,7 @@ class Translation2_Container_db extends Translation2_Container
      *
      * @return array
      */
-    function &getPage($pageID = null, $langID = null)
+    function getPage($pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
         if (PEAR::isError($langID)) {

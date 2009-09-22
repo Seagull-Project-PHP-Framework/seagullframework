@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Lang.php,v 1.14 2007/10/28 23:42:35 quipo Exp $
+ * @version   CVS: $Id: Lang.php,v 1.15 2008/11/09 19:56:04 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -49,7 +49,7 @@ require_once 'Translation2/Decorator.php';
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2007 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Lang.php,v 1.14 2007/10/28 23:42:35 quipo Exp $
+ * @version   CVS: $Id: Lang.php,v 1.15 2008/11/09 19:56:04 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Decorator_Lang extends Translation2_Decorator
@@ -73,15 +73,15 @@ class Translation2_Decorator_Lang extends Translation2_Decorator
      * @param string $option option name
      * @param mixed  $value  option value
      *
-     * @return void
+     * @return self
      */
     function setOption($option, $value=null)
     {
         if ($option == 'fallbackLang') {
             $this->fallbackLang = $value;
-        } else {
-            parent::setOption($option, $value);
+            return $this;
         }
+        return parent::setOption($option, $value);
     }
 
     // }}}

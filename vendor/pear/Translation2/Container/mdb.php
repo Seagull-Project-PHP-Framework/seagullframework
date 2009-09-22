@@ -30,9 +30,9 @@
  * @category  Internationalization
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
- * @copyright 2004-2007 Lorenzo Alberton
+ * @copyright 2004-2008 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: mdb.php,v 1.28 2007/10/28 23:26:40 quipo Exp $
+ * @version   CVS: $Id: mdb.php,v 1.30 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -50,9 +50,9 @@ require_once 'Translation2/Container.php';
  * @category  Internationalization
  * @package   Translation2
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
- * @copyright 2004-2007 Lorenzo Alberton
+ * @copyright 2004-2008 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: mdb.php,v 1.28 2007/10/28 23:26:40 quipo Exp $
+ * @version   CVS: $Id: mdb.php,v 1.30 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 class Translation2_Container_mdb extends Translation2_Container
@@ -147,6 +147,7 @@ class Translation2_Container_mdb extends Translation2_Container
         $this->options['strings_tables']        = array(); // 'lang_id' => 'table_name'
         $this->options['string_id_col']         = 'id';
         $this->options['string_page_id_col']    = 'page_id';
+        $this->options['string_page_id_col_length'] = 50;
         $this->options['string_text_col']       = '%s'; // col_name if one table per lang is used,
                                                         // or a pattern (i.e. "tr_%s" => "tr_EN_US")
     }
@@ -192,7 +193,7 @@ class Translation2_Container_mdb extends Translation2_Container
      *
      * @return array|PEAR_Error on error
      */
-    function &getPage($pageID = null, $langID = null)
+    function getPage($pageID = null, $langID = null)
     {
         $langID = $this->_getLangID($langID);
         if (PEAR::isError($langID)) {
@@ -264,12 +265,12 @@ class Translation2_Container_mdb extends Translation2_Container
     /**
      * Get the stringID for the given string
      *
-     * @param string $stringID string ID
-     * @param string $pageID   page/group ID
+     * @param string $string string
+     * @param string $pageID page/group ID
      *
      * @return string
      */
-    function getStringID($stringID, $pageID = null)
+    function getStringID($string, $pageID = null)
     {
         $lang_col = $this->_getLangCol($this->currentLang['id']);
         $table = $this->_getLangTable($this->currentLang['id']);

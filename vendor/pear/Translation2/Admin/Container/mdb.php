@@ -33,7 +33,7 @@
  * @author    Ian Eure <ieure@php.net>
  * @copyright 2004-2007 Lorenzo Alberton, Ian Eure
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: mdb.php,v 1.37 2007/11/24 11:47:30 quipo Exp $
+ * @version   CVS: $Id: mdb.php,v 1.38 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -93,11 +93,12 @@ class Translation2_Admin_Container_mdb extends Translation2_Container_mdb
         //table does not exist
         $queries = array();
         $queries[] = sprintf('CREATE TABLE %s ( '
-                             .'%s VARCHAR(50) default NULL, '
+                             .'%s VARCHAR(%d) default NULL, '
                              .'%s TEXT NOT NULL, '
                              .'%s TEXT )',
             $this->db->quoteIdentifier($langData['table_name']),
             $this->db->quoteIdentifier($this->options['string_page_id_col']),
+            (int)$this->options['string_page_id_col_length'],
             $this->db->quoteIdentifier($this->options['string_id_col']),
             $this->db->quoteIdentifier($lang_col)
         );

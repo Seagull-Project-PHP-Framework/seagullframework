@@ -32,7 +32,7 @@
  * @author    Lorenzo Alberton <l.alberton@quipo.it>
  * @copyright 2004-2005 Lorenzo Alberton
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: Admin.php,v 1.24 2007/11/10 00:02:50 quipo Exp $
+ * @version   CVS: $Id: Admin.php,v 1.25 2008/05/03 09:17:59 quipo Exp $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -78,7 +78,7 @@ class Translation2_Admin extends Translation2
      */
     function & factory($driver, $options = '', $params = array())
     {
-        $tr =& new Translation2_Admin;
+        $tr = new Translation2_Admin;
         $tr->storage = Translation2_Admin::_storageFactory($driver, $options);
         if (PEAR::isError($tr->storage)) {
             return $tr->storage;
@@ -112,7 +112,7 @@ class Translation2_Admin extends Translation2
         $storage_path  = 'Translation2/Admin/Container/'.strtolower($driver).'.php';
         $storage_class = 'Translation2_Admin_Container_'.strtolower($driver);
         include_once $storage_path;
-        $storage =& new $storage_class;
+        $storage = new $storage_class;
         $err = $storage->init($options);
         if (PEAR::isError($err)) {
             return $err;
