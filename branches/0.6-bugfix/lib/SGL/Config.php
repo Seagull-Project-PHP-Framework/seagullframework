@@ -113,7 +113,7 @@ class SGL_Config
         //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
             $c = &SGL_Config::singleton();
-            $aKeys = split('\.', trim($key));
+            $aKeys = preg_split("/\./", trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
 
