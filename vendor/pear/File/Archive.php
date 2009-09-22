@@ -27,7 +27,7 @@
  * @author     Vincent Lascaux <vincentlascaux@php.net>
  * @copyright  1997-2005 The PHP Group
  * @license    http://www.gnu.org/copyleft/lesser.html  LGPL
- * @version    CVS: $Id: Archive.php,v 1.85 2005/08/16 08:48:59 vincentlascaux Exp $
+ * @version    CVS: $Id: Archive.php,v 1.90 2008/05/28 19:58:07 cbrunet Exp $
  * @link       http://pear.php.net/package/File_Archive
  */
 
@@ -333,7 +333,6 @@ class File_Archive
         //If the URL can be interpreted as a directory, and we are reading from the file system
         if ((empty($URL) || is_dir($URL)) && $source === null) {
             require_once "File/Archive/Reader/Directory.php";
-            require_once "File/Archive/Reader/ChangeName.php";
 
             if ($uncompressionLevel != 0) {
                 require_once "File/Archive/Reader/Uncompress.php";
@@ -360,7 +359,8 @@ class File_Archive
                 if ($symbolic === null) {
                     $realSymbolic = '';
                 }
-                $tmp =& new File_Archive_Reader_AddBaseName(
+                require_once "File/Archive/Reader/ChangeName/AddDirectory.php";
+                $tmp =& new File_Archive_Reader_ChangeName_AddDirectory(
                     $realSymbolic,
                     $result
                 );
@@ -433,6 +433,7 @@ class File_Archive
 
             if ($directoryDepth >= 0) {
                 //Limit the maximum depth if necessary
+                require_once "File/Archive/Reader/Filter.php";
                 require_once "File/Archive/Predicate/MaxDepth.php";
 
                 $tmp = new File_Archive_Reader_Filter(
@@ -447,10 +448,10 @@ class File_Archive
             }
 
             if ($std != $realSymbolic) {
-                require_once "File/Archive/Reader/ChangeName.php";
+                require_once "File/Archive/Reader/ChangeName/Directory.php";
 
                 //Change the base name to the symbolic one if necessary
-                $tmp = new File_Archive_Reader_ChangeBaseName(
+                $tmp = new File_Archive_Reader_ChangeName_Directory(
                     $std,
                     $realSymbolic,
                     $result
@@ -569,7 +570,8 @@ class File_Archive
             $cacheCondition = File_Archive::getOption('cacheCondition');
             if ($cacheCondition !== false &&
                 preg_match($cacheCondition, $source)) {
-                return File_Archive::cache(File_Archive::read($source));
+                $obj = File_Archive::cache(File_Archive::read($source));
+                return $obj;
             } else {
                 $obj = File_Archive::read($source);
                 return $obj;
@@ -588,16 +590,18 @@ class File_Archive
      *
      * @access private
      */
-    function _convertToWriter(&$dest)
+    function &_convertToWriter(&$dest)
     {
         if (is_string($dest)) {
-            return File_Archive::appender($dest);
+            $obj =& File_Archive::appender($dest);
+            return $obj;
         } else if (is_array($dest)) {
             require_once 'File/Archive/Writer/Multi.php';
             $writer = new File_Archive_Writer_Multi();
             foreach($dest as $key => $foo) {
                 $writer->addWriter($dest[$key]);
             }
+            return $writer;
         } else {
             return $dest;
         }
@@ -610,13 +614,14 @@ class File_Archive
      *
      * @param string $extension the checked extension
      * @return bool whether this file can be understood reading its extension
-     *         Currently, supported extensions are tar, zip, gz, tgz, tbz, bz2,
-     *         bzip2, ar, deb
+     *         Currently, supported extensions are tar, zip, jar, gz, tgz,
+     *         tbz, bz2, bzip2, ar, deb
      */
     function isKnownExtension($extension)
     {
         return $extension == 'tar'   ||
                $extension == 'zip'   ||
+               $extension == 'jar'   ||
                $extension == 'gz'    ||
                $extension == 'tgz'   ||
                $extension == 'tbz'   ||
@@ -669,6 +674,7 @@ class File_Archive
             return new File_Archive_Reader_Gzip($source, $sourceOpened);
 
         case 'zip':
+        case 'jar':
             require_once 'File/Archive/Reader/Zip.php';
             return new File_Archive_Reader_Zip($source, $sourceOpened);
 
@@ -741,7 +747,7 @@ class File_Archive
      * Make the files of a source appear as one large file whose content is the
      * concatenation of the content of all the files
      *
-     * @param File_Archive_Reader $source The source whose files must be
+     * @param File_Archive_Reader $toConvert The source whose files must be
      *        concatened
      * @param string $filename name of the only file of the created reader
      * @param array $stat statistics of the file. Index 7 (size) will be
@@ -759,6 +765,30 @@ class File_Archive
 
         require_once "File/Archive/Reader/Concat.php";
         return new File_Archive_Reader_Concat($source, $filename, $stat, $mime);
+    }
+
+    /**
+     * Changes the name of each file in a reader by applying a custom function
+     * The function must return false if the file is to be discarded, or the new
+     * name of the file else
+     *
+     * @param Callable $function Function called to modify the name of the file
+     *        $function takes the name of the file as a parameter and returns the
+     *        new name, or false if the file must be discarded
+     * @param File_Archive_Reader $toConvert The files of this source will be
+     *        modified
+     * @return File_Archive_Reader a new reader that contains the same files
+     *        as $toConvert but with a different name
+     */
+    function changeName($function, &$toConvert)
+    {
+        $source =& File_Archive::_convertToReader($toConvert);
+        if (PEAR::isError($source)) {
+            return $source;
+        }
+
+        require_once "File/Archive/Reader/ChangeName.php";
+        return new File_Archive_Reader_RemoveDirectory($source);
     }
 
     /**
