@@ -102,7 +102,7 @@ class HTML_Template_Flexy_Token {
 
         $t = new HTML_Template_Flexy_Token;
 
-        if (class_exists($c, false)) {
+        if (class_exists($c)) {
             $t = new $c;
         }
         $t->token = $token;

@@ -140,7 +140,7 @@ class Log
          * a failure as fatal.  The caller may have already included their own
          * version of the named class.
          */
-        if (!class_exists($class, false)) {
+        if (!class_exists($class)) {
             include_once $classfile;
         }
 
