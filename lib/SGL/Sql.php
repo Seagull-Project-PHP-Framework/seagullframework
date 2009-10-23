@@ -77,7 +77,8 @@ class SGL_Sql
                 || $conf['db']['type'] == 'mysqli'
                 || $conf['db']['type'] == 'mysqli_SGL') {
             $aEnvData = unserialize(file_get_contents(SGL_VAR_DIR . '/env.php'));
-            if (isset($aEnvData['db_info']) && ereg('3.23', $aEnvData['db_info']['version'])) {
+            //if (isset($aEnvData['db_info']) && ereg('3.23', $aEnvData['db_info']['version'])) {
+            if (isset($aEnvData['db_info']) && preg_match("/3\.23/", $aEnvData['db_info']['version'])) {
                 $isMysql323 = true;
             }
         }

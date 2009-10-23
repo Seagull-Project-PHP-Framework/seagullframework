@@ -24,7 +24,7 @@ class TestRunnerInit extends SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $output = new SGL_Output();
 
         $process =  new SGL_Task_Init(
                     new SGL_Task_DiscoverClientOs(

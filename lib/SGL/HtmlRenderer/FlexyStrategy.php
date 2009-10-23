@@ -93,7 +93,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
 
         $ok = $this->setupPlugins($data, $options);
 
-        $flexy = & new HTML_Template_Flexy();
+        $flexy = new HTML_Template_Flexy();
         return $flexy;
     }
 
