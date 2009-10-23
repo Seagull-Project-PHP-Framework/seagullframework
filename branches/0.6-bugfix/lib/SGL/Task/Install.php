@@ -1668,7 +1668,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 if ($table != $conf['table']['sequence']) {
                     $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                     foreach ($info as $field) {
-                        if (isset($field['flags']) && eregi('primary_key', $field['flags'])) {
+                        if (isset($field['flags']) && preg_match('/primary_key/', $field['flags'])) {
                             $primary_field = $field['name'];
                             break;
                         }

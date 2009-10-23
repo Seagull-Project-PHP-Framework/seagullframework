@@ -183,7 +183,7 @@ class SGL_Category
 
         // Update perms
         require_once SGL_CORE_DIR . '/CategoryPerms.php';
-        $perms = & new SGL_CategoryPerms($category_id);
+        $perms = new SGL_CategoryPerms($category_id);
         $perms->set('aPerms', $values['perms']);
         $perms->update();
 

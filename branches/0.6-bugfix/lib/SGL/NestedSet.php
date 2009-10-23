@@ -91,7 +91,7 @@ class SGL_NestedSet
 
         $signature = md5(serialize($params));
         if (!isset($aInstances[$signature])) {
-            $aInstances[$signature] = & new SGL_NestedSet($params);
+            $aInstances[$signature] = new SGL_NestedSet($params);
         }
 
         return $aInstances[$signature];
