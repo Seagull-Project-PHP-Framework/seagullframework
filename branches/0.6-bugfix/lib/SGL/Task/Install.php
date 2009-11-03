@@ -1912,6 +1912,9 @@ PHP;
         if (PEAR::isError($ok)) {
             SGL_Install_Common::errorPush($ok);
         }
+        //  clean up errors stored in session
+        unset($_SESSION['ERRORS']);
+
         //  update tz in admin prefs
         $tzPrefId = $aMapping['timezone'];
         $ok = $da->updatePrefsByUserId(array($tzPrefId => $tz), SGL_ADMIN);
