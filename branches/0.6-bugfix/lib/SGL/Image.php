@@ -646,7 +646,7 @@ class SGL_Image
                 if (!class_exists($stratClass)) {
                     return SGL::raiseError("SGL_Image: class '$stratClass' does not exist");
                 }
-                $this->_aStrats[$container][$strategyName] = & new $stratClass(
+                $this->_aStrats[$container][$strategyName] = new $stratClass(
                     $aDrivers[$driverSignature]);
             }
         }
