@@ -949,6 +949,7 @@ class SGL_Output
      */
     function assign(&$a, $b)
     {
+        //  detect is $b is a function/method
         $a = $b;
         return;
     }
@@ -1102,7 +1103,7 @@ class SGL_Output
             $this->aHeaders[] = $header;
         }
     }
-    
+
     function setStatusCode($code)
     {
         if (array_key_exists($code, $this->aStatusCodes)) {

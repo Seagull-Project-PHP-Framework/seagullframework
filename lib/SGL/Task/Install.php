@@ -633,6 +633,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
 
                 //  Load the module's schema
                 if (file_exists($modulePath . $this->filename1)) {
+                    SGL::logMessage("creating schemas for '$module' module", PEAR_LOG_DEBUG);
                     $result = SGL_Sql::parse($modulePath . $this->filename1, 0, array('SGL_Sql', 'execute'));
                     if (PEAR::isError($result)) {
                         return $result;
@@ -679,6 +680,7 @@ class SGL_Task_LoadDefaultData extends SGL_UpdateHtmlTask
                 $modulePath = SGL_MOD_DIR . '/' . $module  . '/data';
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename2)) {
+                    SGL::logMessage("loading default data for '$module'", PEAR_LOG_DEBUG);
                     $result = SGL_Sql::parse($modulePath . $this->filename2, 0, array('SGL_Sql', 'execute'));
                     if (PEAR::isError($result)) {
                         return $result;
@@ -714,6 +716,7 @@ class SGL_Task_LoadSampleData extends SGL_UpdateHtmlTask
 
                 //  Load the module's data
                 if (file_exists($modulePath . $this->filename3)) {
+                    SGL::logMessage("loading sample data for '$module'", PEAR_LOG_DEBUG);
                     $result = SGL_Sql::parse($modulePath . $this->filename3, 0, array('SGL_Sql', 'execute'));
                     $displayHtml = $result ? $this->success : $this->failure;
                     $this->updateHtml($module . '_dataSample', $displayHtml);
