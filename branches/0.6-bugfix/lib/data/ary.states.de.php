@@ -12,9 +12,9 @@
         'NRW'   =>'Nordrhein-Westfalen',
         'RP'    =>'Rheinland-Pfalz',
         'SA'    =>'Sachsen',
-        'SAAN'  =>'Sachsen-Anahlt',
+        'SAAN'  =>'Sachsen-Anhalt',
         'SAAR'  =>'Saarland',
-        'SH'    =>'Schleswig-Hostein',
+        'SH'    =>'Schleswig-Holstein',
         'TH'    =>'Thüringen',
     );
 ?>
