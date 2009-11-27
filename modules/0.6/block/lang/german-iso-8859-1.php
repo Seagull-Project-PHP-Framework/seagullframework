@@ -73,4 +73,5 @@ $words['Left column'] = 'Linke Spalte';
 $words['Right column'] = 'Rechte Spalte';
 $words['No section'] = 'Keine Sektion';
 $words['All sections'] = 'Alle Sektionen';
+$words['Manage Blocks'] = 'Blöcke verwalten';
 ?>

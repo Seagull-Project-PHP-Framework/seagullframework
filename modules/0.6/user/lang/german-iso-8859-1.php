@@ -293,4 +293,10 @@ $words['You must enter an organisation type name'] = 'Bitte geben Sie einen Name
 $words['No data was updated'] = 'Keine Daten aktualisiert';
 $words['Organisation type saved successfully'] = 'Organisationstyp erfolgreich gespeichert';
 $words['Organisation type has been updated successfully'] = 'Organisationstyp erfolgreich aktualisiert';
+$words['Manage users'] = 'User verwalten';
+$words['Manage permissions'] = 'Rechte verwalten';
+$words['Manage roles'] = 'Rollen verwalten';
+$words['Manage preferences'] = 'Präferenzen verwalten';
+$words['session timeout'] = 'Sitzung abgelaufen';
+$words['Remember me'] = 'Passwort merken';
 ?>

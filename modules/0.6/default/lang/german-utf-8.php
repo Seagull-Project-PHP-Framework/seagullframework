@@ -460,6 +460,7 @@ $defaultWords['please enter module name'] = 'Bitte geben Sie einen Modulnamen an
 $defaultWords['please enter manager name'] = 'Bitte geben Sie einen Managernamen an';
 $defaultWords['navigation'] = 'Navigation';
 $defaultWords['blocks'] = 'Blöcke';
+$defaultWords['Blocks'] = 'Blöcke';
 $defaultWords['categories'] = 'Kategorien';
 $defaultWords['permissions'] = 'Rechte';
 $defaultWords['Create a module'] = 'Modul erstellen';
@@ -501,4 +502,9 @@ $defaultWords['Translated Value'] = 'Übersetzung';
 $defaultWords['Save Translation'] = 'Übersetzung speichern';
 $defaultWords['Language auto discover'] = 'Automatische Spracherkennung';
 $defaultWords['Translation from default module (BC)'] = 'Hole Übersetzungen aus dem Default-Modul (abwärtskompatibel)';
+$defaultWords['CMS'] = 'CMS';
+$defaultWords['My Account'] = 'Mein Account';
+$defaultWords['User and security'] = 'Nutzerverwaltung';
+$defaultWords['Manage Modules'] = 'Modulverwaltung';
+$defaultWords['Module Generator'] = 'Module erzeugen';
 ?>
