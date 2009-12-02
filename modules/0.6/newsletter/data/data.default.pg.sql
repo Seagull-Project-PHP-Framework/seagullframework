@@ -46,6 +46,16 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_updateList', NULL, (
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_deleteLists', NULL, (
     SELECT max(module_id) FROM module
     ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_exportSubscribers', NULL, (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_addSubscriber', NULL, (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_insertSubscriber', NULL, (
+    SELECT max(module_id) FROM module
+    ));
+    
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'newslettermgr', NULL, (
     SELECT max(module_id) FROM module
     ));

@@ -7,7 +7,21 @@ SELECT @memberId := 2;
 --
 -- Add permissions
 --
+
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr_cmd_list', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr_cmd_upload', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr_cmd_edit', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr_cmd_download', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'media2mgr_cmd_preview', '', @moduleId);
+
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'mediaassocmgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'mediaassocmgr_cmd_list', '', @moduleId);
+
 INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'mediauploadermgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'mediauploadermgr_cmd_upload', '', @moduleId);
+
+
 SELECT @permissionId := `permission_id` FROM `permission` WHERE `name` = 'mediauploadermgr';
 INSERT INTO `role_permission` VALUES ({SGL_NEXT_ID}, @memberId, @permissionId);
 

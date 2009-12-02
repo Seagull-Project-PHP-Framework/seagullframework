@@ -2,6 +2,16 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'faq', 'FAQs', 'Use the ''FAQ'' mod
 
 SELECT @moduleId := MAX(module_id) FROM module;
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_add', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_insert', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_reorder', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_reorderUpdate', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_delete', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_list', '', @moduleId);
+
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_cmd_add', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_cmd_insert', '', @moduleId);

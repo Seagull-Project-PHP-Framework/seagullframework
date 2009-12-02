@@ -7,6 +7,15 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'faq', 'FAQs', 'Use the ''FAQ'' mod
 --
 -- Dumping data for table permission
 --
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_add', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_insert', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_edit', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_update', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_reorder', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_reorderUpdate', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_delete', '', (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'adminfaqmgr_cmd_list', '', (SELECT MAX(module_id) FROM module));
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr', '', (SELECT MAX(module_id) FROM module));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'faqmgr_cmd_add', '', (SELECT MAX(module_id) FROM module));

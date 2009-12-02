@@ -30,6 +30,21 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_edit', '', (
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_update', '', (
     SELECT max(module_id) FROM module
     ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_detect', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_install', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_uninstall', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_reinstall', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_deregister', '', (
+    SELECT max(module_id) FROM module
+    ));
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'configmgr', '', (
     SELECT max(module_id) FROM module
@@ -51,13 +66,16 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'defaultmgr_cmd_list', '', (
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr', '', (
     SELECT max(module_id) FROM module
     ));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_list', NULL, (
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_list', '', (
     SELECT max(module_id) FROM module
     ));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_send', NULL, (
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_send', '', (
     SELECT max(module_id) FROM module
     ));
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr', '', (
+    SELECT max(module_id) FROM module
+    ));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_edit', '', (
     SELECT max(module_id) FROM module
     ));
@@ -76,9 +94,6 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_clearCache', '
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_list', '', (
     SELECT max(module_id) FROM module
     ));
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr', '', (
-    SELECT max(module_id) FROM module
-    ));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_verify', '', (
     SELECT max(module_id) FROM module
     ));
@@ -94,6 +109,12 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_createModule',
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_checkLatestVersion', '', (
     SELECT max(module_id) FROM module
     ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_rebuildSeagull', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_deleteConfigs', '', (
+    SELECT max(module_id) FROM module
+    ));
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr', '', (
     SELECT max(module_id) FROM module
@@ -102,6 +123,26 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_list', '', (
     SELECT max(module_id) FROM module
     ));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_doRequest', '', (
+    SELECT max(module_id) FROM module
+    ));
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr_cmd_edit', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr_cmd_update', '', (
+    SELECT max(module_id) FROM module
+    ));
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr_cmd_createModule', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr_cmd_list', '', (
     SELECT max(module_id) FROM module
     ));
 

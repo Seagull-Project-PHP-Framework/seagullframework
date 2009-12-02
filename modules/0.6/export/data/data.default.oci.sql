@@ -11,6 +11,9 @@ INSERT INTO module VALUES ({SGL_NEXT_ID}, 0, 'export', 'Export Data', 'Used for 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rssmgr', NULL, (SELECT MAX(module_id) FROM module));
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rssmgr_cmd_news', '', (SELECT MAX(module_id) FROM module));
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rss2mgr', NULL, (SELECT MAX(module_id) FROM module));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rss2mgr_cmd_list', NULL, (SELECT MAX(module_id) FROM module));
+
 -- guest role perms
 -- INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 0, (SELECT permission_id FROM permission WHERE name = 'rssmgr_cmd_news'));
 

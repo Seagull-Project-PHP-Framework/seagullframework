@@ -16,6 +16,18 @@ SELECT @memberId := 2;
 -- Add permissions
 --
 INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'account2mgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'account2mgr_cmd_list', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'login2mgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'login2mgr_cmd_logout', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'login2mgr_cmd_register', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'login2mgr_cmd_login', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'passwordrecoverymgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'passwordrecoverymgr_cmd_list', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'passwordrecoverymgr_cmd_reset', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'profile2mgr', '', @moduleId);
+INSERT INTO `permission` VALUES ({SGL_NEXT_ID}, 'profile2mgr_cmd_list', '', @moduleId);
+
+#member role perms
 SELECT @permissionId := `permission_id` FROM `permission` WHERE `name` = 'account2mgr';
 INSERT INTO `role_permission` VALUES ({SGL_NEXT_ID}, @memberId, @permissionId);
 

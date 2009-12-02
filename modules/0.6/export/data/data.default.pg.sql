@@ -13,6 +13,14 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rssmgr_cmd_news', '', (
     SELECT max(module_id) FROM module
     ));
 
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rss2mgr', '', (
+    SELECT max(module_id) FROM module
+    ));
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'rss2mgr_cmd_list', '', (
+    SELECT max(module_id) FROM module
+    ));
+
 -- member role perms
 INSERT INTO role_permission VALUES ({SGL_NEXT_ID}, 2, (
     SELECT permission_id FROM permission WHERE name = 'rssmgr_cmd_news'

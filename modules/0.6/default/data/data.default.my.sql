@@ -10,6 +10,11 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_list', '', @moduleI
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_overview', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_edit', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_update', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_detect', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_install', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_uninstall', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_reinstall', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulemgr_cmd_deregister', '', @moduleId);
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'configmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'configmgr_cmd_edit', 'Permission to view and edit config settings', @moduleId);
@@ -19,24 +24,35 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'defaultmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'defaultmgr_cmd_list', '', @moduleId);
 
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_list', NULL, @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_send', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_list', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'bugmgr_cmd_send', '', @moduleId);
 
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_edit', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_update', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_append', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_dbgen', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_clearCache', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_list', '', @moduleId);
-INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_verify', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_checkAllModules', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_rebuildSequences', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_createModule', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_checkLatestVersion', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_rebuildSeagull', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'maintenancemgr_cmd_deleteConfigs', '', @moduleId);
+
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_list', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'pearmgr_cmd_doRequest', '', @moduleId);
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr_cmd_edit', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'moduleconfigmgr_cmd_update', '', @moduleId);
+
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr_cmd_createModule', '', @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'modulegenerationmgr_cmd_list', '', @moduleId);
 
 #member role perms
 SELECT @permissionId := permission_id FROM permission WHERE name = 'bugmgr';

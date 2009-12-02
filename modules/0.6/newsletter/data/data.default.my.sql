@@ -15,6 +15,10 @@ INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_addList', NULL, @modu
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_editList', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_updateList', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_deleteLists', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_exportSubscribers', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_addSubscriber', NULL, @moduleId);
+INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'listmgr_cmd_insertSubscriber', NULL, @moduleId);
+
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'newslettermgr', NULL, @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'newslettermgr_cmd_list', '', @moduleId);
 INSERT INTO permission VALUES ({SGL_NEXT_ID}, 'newslettermgr_cmd_subscribe', NULL, @moduleId);
