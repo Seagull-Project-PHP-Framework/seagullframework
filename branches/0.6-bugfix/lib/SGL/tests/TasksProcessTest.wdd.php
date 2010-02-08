@@ -196,9 +196,11 @@ class TasksProcessTest extends UnitTestCase {
         SGL_Session::isFirstAuthenticatedRequest($clean = true);
         // clean settings
         unset($_SESSION['aPrefs']['language']);
+        // change domain to something more neutral
+        $_SERVER['HTTP_HOST'] = 'localdomain.localhost';
 
 
-        // 7. test default language resolval
+        // 7. test default language resolution
         $proc = new SGL_Task_SetupLangSupport($foo);
         $proc->processRequest = $foo;
         $proc->process($input, $output);
