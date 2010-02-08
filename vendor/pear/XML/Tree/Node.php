@@ -18,7 +18,7 @@
 // |          Michele Manzato <michele.manzato@verona.miz.it>             |
 // +----------------------------------------------------------------------+
 //
-// $Id: Node.php,v 1.22 2004/05/26 15:03:25 davey Exp $
+// $Id: Node.php 288859 2009-09-27 04:46:10Z clockwerx $
 //
 
 /**

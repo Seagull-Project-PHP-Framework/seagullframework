@@ -19,7 +19,7 @@
 // |          Michele Manzato <michele.manzato@verona.miz.it>             |
 // +----------------------------------------------------------------------+
 //
-// $Id: Tree.php,v 1.35 2004/05/26 14:58:18 davey Exp $
+// $Id: Tree.php 288859 2009-09-27 04:46:10Z clockwerx $
 //
 
 require_once 'XML/Parser.php';
@@ -226,13 +226,14 @@ class XML_Tree extends XML_Parser
     /**
      * Maps a XML file to a XML_Tree
      *
+     * @param string $encoding XML Files encoding, use NULL (default) to use whatever the document specifies
      * @return mixed The XML tree root (an XML_Tree_Node), or PEAR_Error upon error.
      * @access public
      */
-    function &getTreeFromFile ()
+    function &getTreeFromFile ($encoding = null)
     {
         $this->folding = false;
-        $this->XML_Parser(null, 'event');
+        $this->XML_Parser($encoding, 'event');
         $err = $this->setInputFile($this->filename);
         if (PEAR::isError($err)) {
             return $err;
@@ -248,14 +249,15 @@ class XML_Tree extends XML_Parser
     /**
      * Maps an XML string to an XML_Tree.
      *
+     * @param string $encoding XML Files encoding, use NULL (default) to use whatever the document specifies
      * @return mixed The XML tree root (an XML_Tree_Node), or PEAR_Error upon error.
      * @access public
      */
-    function &getTreeFromString($str)
+    function &getTreeFromString($str, $encoding = null)
     {
         $this->i = null;
         $this->folding = false;
-        $this->XML_Parser(null, 'event');
+        $this->XML_Parser($encoding, 'event');
         $this->cdata = null;
         $err = $this->parseString($str);
         if (PEAR::isError($err)) {
