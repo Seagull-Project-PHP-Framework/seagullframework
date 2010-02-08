@@ -3,7 +3,7 @@
 
 /**
  * The action for a 'submit' button.
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -15,9 +15,9 @@
  * @category    HTML
  * @package     HTML_QuickForm_Controller
  * @author      Alexey Borzov <avb@php.net>
- * @copyright   2003-2007 The PHP Group
+ * @copyright   2003-2009 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id: Submit.php,v 1.5 2007/05/18 09:34:18 avb Exp $
+ * @version     SVN: $Id: Submit.php 289084 2009-10-02 06:53:09Z avb $
  * @link        http://pear.php.net/package/HTML_QuickForm_Controller
  */
 
@@ -32,7 +32,7 @@ require_once 'HTML/QuickForm/Action.php';
  * @category    HTML
  * @package     HTML_QuickForm_Controller
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 1.0.8
+ * @version     Release: 1.0.10
  */
 class HTML_QuickForm_Action_Submit extends HTML_QuickForm_Action
 {

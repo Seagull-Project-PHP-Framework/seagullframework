@@ -3,7 +3,7 @@
 
 /**
  * Class representing an action to perform on HTTP request.
- * 
+ *
  * PHP versions 4 and 5
  *
  * LICENSE: This source file is subject to version 3.01 of the PHP license
@@ -15,23 +15,23 @@
  * @category    HTML
  * @package     HTML_QuickForm_Controller
  * @author      Alexey Borzov <avb@php.net>
- * @copyright   2003-2007 The PHP Group
+ * @copyright   2003-2009 The PHP Group
  * @license     http://www.php.net/license/3_01.txt PHP License 3.01
- * @version     CVS: $Id: Action.php,v 1.3 2007/05/18 09:34:18 avb Exp $
+ * @version     SVN: $Id: Action.php 289084 2009-10-02 06:53:09Z avb $
  * @link        http://pear.php.net/package/HTML_QuickForm_Controller
  */
 
 /**
- * Class representing an action to perform on HTTP request. 
- * 
+ * Class representing an action to perform on HTTP request.
+ *
  * The Controller will select the appropriate Action to call on the request and
- * call its perform() method. The subclasses of this class should implement all 
+ * call its perform() method. The subclasses of this class should implement all
  * the necessary business logic.
  *
  * @category    HTML
  * @package     HTML_QuickForm_Controller
  * @author      Alexey Borzov <avb@php.net>
- * @version     Release: 1.0.8
+ * @version     Release: 1.0.10
  * @abstract
  */
 class HTML_QuickForm_Action
