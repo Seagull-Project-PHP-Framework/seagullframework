@@ -1,7 +1,7 @@
 <?php
 $words['__SGL_UPDATED_BY'] = 'admin';
 $words['__SGL_UPDATED_BY_ID'] = '1';
-$words['__SGL_LAST_UPDATED'] = '2008-12-03 05:59:24';
+$words['__SGL_LAST_UPDATED'] = '2009-02-26 02:15:38';
 $words['Section Manager'] = 'Section管理';
 $words['New section'] = '新建Section';
 $words['Reorder sections'] = '重排顺序';
@@ -10,8 +10,9 @@ $words['Parent ID'] = '父页';
 $words['Order'] = '顺序';
 $words['Navigation Style Manager'] = '选单风格管理';
 $words['Access Key'] = '访问键';
+$words['Rel Marker'] = '标记';
 $words['Any number, which can be pressed with the ALT-key to load the page.'] = '任意数，可以和ALT组合成快捷键来打开页面';
-$words['Additional navigation aids for better accessibility. Use values like \\"home\\", \\"prev\\" or \\"next\\".'] = '其它的辅助导航方法。可用的值有\'home\',\'prev\',\'next\'';
+$words['Additional navigation aids for better accessibility. Use values like \\"home\\", \\"prev\\" or \\"next\\".'] = '其它的辅助导航浏览的快捷键，可以用“home”“prev”“next”';
 $words['Add section'] = '新增section';
 $words['Edit section'] = '编辑section';
 $words['Section Title'] = 'section标题';

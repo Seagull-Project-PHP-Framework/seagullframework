@@ -1,7 +1,7 @@
 <?php
 $words['__SGL_UPDATED_BY'] = 'admin';
 $words['__SGL_UPDATED_BY_ID'] = '1';
-$words['__SGL_LAST_UPDATED'] = '2008-12-03 05:35:49';
+$words['__SGL_LAST_UPDATED'] = '2009-02-26 02:12:33';
 $words['Blocks Manager'] = '版块管理';
 $words['Browse'] = '浏览';
 $words['Edit block'] = '编辑版块';

@@ -1,7 +1,7 @@
 <?php
 $words['__SGL_UPDATED_BY'] = 'admin';
 $words['__SGL_UPDATED_BY_ID'] = '1';
-$words['__SGL_LAST_UPDATED'] = '2008-12-03 06:34:20';
+$words['__SGL_LAST_UPDATED'] = '2009-02-26 02:16:00';
 $words['My Account'] = '我的帐户';
 $words['My Profile :: Edit'] = '我的资料::编辑';
 $words['Role'] = '角色';
@@ -104,7 +104,6 @@ $words['Results per page'] = '每页显示笔数';
 $words['Show execution times?'] = '显示执行时间?';
 $words['General'] = '基本设定';
 $words['Selected prefs have been set for all users'] = '为所有用户设定了选中的偏好';
-$words['synchonise selected preference(s) globally'] = '全局同步选中的偏好';
 $words['details successfully updated'] = '完成资料更新';
 $words['User Profile'] = '用户资料';
 $words['Real Name'] = '真实姓名';
