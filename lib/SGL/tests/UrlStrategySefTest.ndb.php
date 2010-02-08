@@ -103,8 +103,9 @@ class UrlStrategySefTest extends UnitTestCase
         $aUrlSegments = array (
           0 => 'index.php',
           1 => 'contactus',
-          2 => 'foo',
-          3 => 'bar',
+          2 => 'contactus',
+          3 => 'foo',
+          4 => 'bar',
 
         );
         $this->obj->url = $this->exampleUrl . implode('/', $aUrlSegments);
