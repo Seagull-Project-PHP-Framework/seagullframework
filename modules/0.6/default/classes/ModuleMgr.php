@@ -319,12 +319,24 @@ class ModuleMgr extends SGL_Manager
                 );
             define('SGL_ADMIN_REBUILD', 1);// rename to HIDE_OUTPUT
 
+            //  if we're installing cms, remove sections from 'page' table
+            $installingCms = false;
+            if ($input->moduleName == 'cms' || SGL::moduleIsEnabled('cms')) {
+                $removeNavTask = 'SGL_Task_RemoveNavigation2';
+                require_once SGL_MOD_DIR . '/cms/init.php';
+                if (!SGL::moduleIsEnabled('cms')) {
+                    $installingCms = true;
+                }
+            } else {
+                $removeNavTask = 'SGL_Task_RemoveNavigation';
+            }
+
             $runner = new SGL_TaskRunner();
             $runner->addData($data);
             $runner->addTask(new SGL_Task_DisableForeignKeyChecks());
             $runner->addTask(new SGL_Task_DropTables());
             $runner->addTask(new SGL_Task_RemoveDefaultData());
-            $runner->addTask(new SGL_Task_RemoveNavigation());
+            $runner->addTask(new $removeNavTask());
             $runner->addTask(new SGL_Task_RemoveBlockData());
             $runner->addTask(new SGL_Task_EnableForeignKeyChecks());
             $runner->addTask(new SGL_Task_SyncSequences());
