@@ -25,8 +25,8 @@ function create_session($varDir)
 function get_uploaddir($varDir)
 {
     require "$varDir/localhost.conf.php";
-    return !empty($conf['site']['uploadDirOverride'])
-        ? $conf['site']['uploadDirOverride']
+    return !empty($conf['path']['uploadDirOverride'])
+        ? $conf['path']['uploadDirOverride']
         : $varDir . '/uploads';
 }
 
@@ -61,7 +61,7 @@ $query     = isset($_REQUEST['path']) ? $_REQUEST['path'] : 'missing';
 $fileName  = $rootDir . '/' . $query;
 $uploadDir = get_uploaddir($varDir);
 
-// check if file is within upload ir
+// check if file is within upload dir
 if (strpos($fileName, $uploadDir) !== 0) {
     $allowed = false;
 }
