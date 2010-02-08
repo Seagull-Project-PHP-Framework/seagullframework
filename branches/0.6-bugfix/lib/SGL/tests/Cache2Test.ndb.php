@@ -50,12 +50,12 @@ class TestCache2 extends UnitTestCase
         $aOpts = array(
             'frontend' => 'Function',
             'backend'  => 'File',
-            'backendOptions' => array('incorrect option name' => 'my value')
+            'backendOptions' => array(1 => 'my value')
         );
         $oCache = SGL_Cache2::singleton($aOpts);
 
         // test Pear_Error when wrong params are passed.
-        $msg = 'SGL_Cache2: Incorrect option name : incorrect option name';
+        $msg = 'SGL_Cache2: Incorrect option name : 1';
         $this->assertTrue($oCache instanceof PEAR_Error);
         $this->assertEqual($oCache->getMessage(), $msg);
     }
