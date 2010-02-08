@@ -48,7 +48,7 @@ class SessionTest extends UnitTestCase
     {
         $aStack = SGL_Session::get('sessionStack');
 
-        $this->assertIdentical($aStack, '');
+        $this->assertIdentical($aStack, null);
         $this->assertEqual(SGL_Session::getUid(), 1);
         $this->assertEqual(SGL_Session::getUsername(), 'admin');
 
