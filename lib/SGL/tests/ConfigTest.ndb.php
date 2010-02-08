@@ -121,7 +121,7 @@ class ConfigTest extends UnitTestCase {
           'cleaningFactor' => '0',
           'readControl' => '1',
           'writeControl' => '1',
-          'javascript' => '0',
+          'javascript' => '',
         );
         $this->assertEqual($var, $expected);
     }
