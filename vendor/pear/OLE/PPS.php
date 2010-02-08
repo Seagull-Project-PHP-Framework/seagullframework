@@ -17,11 +17,11 @@
 // | Based on OLE::Storage_Lite by Kawai, Takanori                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: PPS.php,v 1.5 2003/12/14 18:12:28 xnoguer Exp $
+// $Id: PPS.php,v 1.7 2007/02/13 21:00:42 schmidt Exp $
 
 
-require_once('PEAR.php');
-require_once('OLE.php');
+require_once 'PEAR.php';
+require_once 'OLE.php';
 
 /**
 * Class for creating PPS's for OLE containers
@@ -105,17 +105,24 @@ class OLE_PPS extends PEAR
     var $children = array();
 
     /**
+    * Pointer to OLE container
+    * @var OLE
+    */
+    var $ole;
+
+    /**
     * The constructor
     *
     * @access public
     * @param integer $No   The PPS index
-    * @param string $name  The PPS name (in Unicode)
+    * @param string  $name The PPS name
     * @param integer $type The PPS type. Dir, Root or File
     * @param integer $prev The index of the previous PPS
     * @param integer $next The index of the next PPS
     * @param integer $dir  The index of it's first child if this is a Dir or Root PPS
     * @param integer $time_1st A timestamp
     * @param integer $time_2nd A timestamp
+    * @param string  $data  The (usually binary) source data of the PPS
     * @param array   $children Array containing children PPS for this PPS
     */
     function OLE_PPS($No, $name, $type, $prev, $next, $dir, $time_1st, $time_2nd, $data, $children)
@@ -132,8 +139,7 @@ class OLE_PPS extends PEAR
         $this->children   = $children;
         if ($data != '') {
             $this->Size = strlen($data);
-        }
-        else {
+        } else {
             $this->Size = 0;
         }
     }
@@ -149,13 +155,11 @@ class OLE_PPS extends PEAR
         if (!isset($this->_data)) {
             return 0;
         }
-        if (isset($this->_PPS_FILE))
-        {
+        if (isset($this->_PPS_FILE)) {
             fseek($this->_PPS_FILE, 0);
             $stats = fstat($this->_PPS_FILE);
             return $stats[7];
-        }
-        else {
+        } else {
             return strlen($this->_data);
         }
     }
@@ -209,8 +213,7 @@ class OLE_PPS extends PEAR
         $this->NextPps = 0xFFFFFFFF;
         if (count($this->children) > 0) {
             $this->DirPps = $this->children[0]->_savePpsSetPnt($pps_array);
-        }
-        else {
+        } else {
             $this->DirPps = 0xFFFFFFFF;
         }
         return $this->No;

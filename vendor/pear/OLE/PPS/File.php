@@ -17,10 +17,11 @@
 // | Based on OLE::Storage_Lite by Kawai, Takanori                        |
 // +----------------------------------------------------------------------+
 //
-// $Id: File.php,v 1.8 2003/12/12 21:10:10 xnoguer Exp $
+// $Id: File.php,v 1.12 2008/02/02 21:00:37 schmidt Exp $
 
 
-require_once ('OLE/PPS.php');
+require_once 'OLE/PPS.php';
+require_once 'System.php';
 
 /**
 * Class for creating File PPS's for OLE containers
@@ -46,7 +47,7 @@ class OLE_PPS_File extends OLE_PPS
     */
     function OLE_PPS_File($name)
     {
-        $this->_tmp_dir = '';
+        $this->_tmp_dir = System::tmpdir();
         $this->OLE_PPS(
             null, 
             $name,
@@ -93,6 +94,8 @@ class OLE_PPS_File extends OLE_PPS
         if ($this->_PPS_FILE) {
             fseek($this->_PPS_FILE, 0);
         }
+
+        return true;
     }
     
     /**
@@ -105,10 +108,18 @@ class OLE_PPS_File extends OLE_PPS
     {
         if ($this->_PPS_FILE) {
             fwrite($this->_PPS_FILE, $data);
-        }
-        else {
+        } else {
             $this->_data .= $data;
         }
+    }
+
+    /**
+     * Returns a stream for reading this file using fread() etc.
+     * @return  resource  a read-only stream
+     */
+    function getStream()
+    {
+        $this->ole->getStream($this);
     }
 }
 ?>

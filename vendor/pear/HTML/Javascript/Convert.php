@@ -16,7 +16,7 @@
 // | Authors: Tal Peer <tal@php.net>                                      |
 // |          Pierre-Alain Joye <paj@pearfr.org>                          |
 // +----------------------------------------------------------------------+
-// $Id: Convert.php,v 1.15 2005/08/18 08:55:07 alan_k Exp $
+// $Id: Convert.php 196165 2005-09-16 02:31:18Z alan_k $
 /**
  * A class for converting PHP variables into JavaScript variables
  *
@@ -279,11 +279,24 @@ class HTML_Javascript_Convert
                                 HTML_JAVASCRIPT_NL;
                     $var    .= "tmp$level = null".HTML_JAVASCRIPT_NL;
                 } else {
-                    $value  = is_string($cell)?
-                                '"' .
-                                HTML_Javascript_Convert::escapeString($cell) .
-                                '"'
-                                :$cell;
+                    switch(gettype($cell)) { 
+                        case 'string':
+                            $value = '"' .HTML_Javascript_Convert::escapeString($cell) . '"';
+                            break;
+                            
+                        case 'double':
+                        case 'integer':
+                            $value = $cell;
+                            break; 
+                            
+                        case 'NULL':
+                            $value = 'null';
+                            break;
+                            
+                        default:
+                           $value = '"unsupported type"';
+                           
+                    }
                     $var    .= $varname . "[$jskey] = $value".
                                 HTML_JAVASCRIPT_NL;
                 }
