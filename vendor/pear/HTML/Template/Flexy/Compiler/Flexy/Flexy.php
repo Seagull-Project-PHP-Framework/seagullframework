@@ -14,9 +14,10 @@
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
 // | Authors:  Alan Knowles <alan@akkbhome.com>                           |
+// | Authors:  Tobias dot eberle at gmx dot de (include with vars)        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Flexy.php,v 1.8 2006/09/11 03:52:32 alan_k Exp $
+// $Id: Flexy.php,v 1.14 2009/03/06 08:45:17 alan_k Exp $
 //
 //  Handler code for the <flexy: namespace
 //
@@ -31,7 +32,7 @@
 *
 *
 *
-* @version    $Id: Flexy.php,v 1.8 2006/09/11 03:52:32 alan_k Exp $
+* @version    $Id: Flexy.php,v 1.14 2009/03/06 08:45:17 alan_k Exp $
 */
 
 class HTML_Template_Flexy_Compiler_Flexy_Flexy  {
@@ -111,10 +112,60 @@ class HTML_Template_Flexy_Compiler_Flexy_Flexy  {
         $ret .= $this->compiler->appendHTML("</script>");
         return $ret;
     }
+    
+    /**
+    * toJavascript handler
+    * <flexy:toJSON  javascriptval="php.val" ....>
+    * 
+    * @see parent::toString()
+    */
+    
+    function toJSONToString($element) 
+    {
+        // maybe should use extnsion_exists....
+        $ret = "";
+        if (!function_exists('json_encode')) {
+            $ret = $this->compiler->appendPhp( 
+                'require_once "Services/JSON.php"; $_json = new Services_JSON();'
+            );
+        } 
+        
+        //$ret = $this->compiler->appendPhp( "require_once 'HTML/Javascript/Convert.php';");
+        $ret .= $this->compiler->appendHTML("\n<script type='text/javascript'>\n");
+        //$prefix = ''. $element->getAttribute('FLEXY:PREFIX');
+        
+        
+        foreach ($element->attributes as $k=>$v) {
+            // skip directives..
+            if (strpos($k,':')) {
+                continue;
+            }
+            if ($k == '/') {
+                continue;
+            }
+            $v = substr($v,1,-1);
+            if (function_exists('json_encode')) {
+                $ret .= $this->compiler->appendPhp(
+                    'echo "var '. $k .'=" . json_encode('.$element->toVar($v).') . ";\n";'
+                );
+                $ret .= $this->compiler->appendHTML("\n");
+                continue;
+            }
+            $ret .= $this->compiler->appendPhp(
+                    'echo "var '.$k.'=" . $_json->encode('.$element->toVar($v).') . ";\n";'
+            );
+           
+            $ret .= $this->compiler->appendHTML("\n");
+        }
+        $ret .= $this->compiler->appendHTML("</script>");
+        return $ret;
+    }
+    
     /**
     * include handler
     * <flexy:include src="test.html">
-    * 
+    * <flexy:include src="{test}">
+    * <flexy:include src="{test}.html">
     * @see parent::toString()
     */
     function includeToString($element) 
@@ -125,10 +176,55 @@ class HTML_Template_Flexy_Compiler_Flexy_Flexy  {
     
     
        
-        $arg = $element->getAttribute('SRC');
-        if (!$arg) {
-            return $this->compiler->appendHTML("<B>Flexy:Include without a src=filename</B>");
+        
+        if (!isset($element->ucAttributes['SRC'])) {
+            return $this->compiler->appendHTML("<B>Flexy:Include without a src=filename (Line: {$element->line})</B>");
         }
+        $arg = $element->ucAttributes['SRC'];
+         
+        // it's a string so its easy to handle
+        switch (true) {
+            case is_string($arg):
+                if ($arg == '""') {
+                    return $this->compiler->appendHTML("<B>Flexy:Include src attribute is empty. (Line: {$element->line})</B>");
+                }
+                $arg = "'". $element->getAttribute('SRC')."'";
+                break;
+            
+            case is_array($arg): // it's an array -> strings and variables possible
+                $string = '"';
+                foreach($arg as $item) {
+                    //it's a string
+                    if (is_string($item)) {
+                        if ($item != '' && $item != '"' && $item != '""' && 
+                            $item != "''") {
+                            $string .= $item;
+                        }
+                    } else {
+                        //it's a variable
+                        if (is_a($item, 'HTML_Template_Flexy_Token_Var')) {
+                            $value = $item->toVar($item->value);
+                            if (is_a($value, 'PEAR_Error')) {
+                                return $value;
+                            }
+                            $string .= "{{$value}}";
+                        }
+                    }
+                }
+                $arg = $string . '"';
+                break;
+            
+            default:
+            //something unexspected
+                return HTML_Template_Flexy::raiseError(
+                    ' Flexy:Include SRC needs a string or variable/method as value. '.
+                    " Error on Line {$element->line} &lt;{$element->tag}&gt;",
+                    null, HTML_TEMPLATE_FLEXY_ERROR_DIE); 
+            
+                
+            
+        }
+ 
         // ideally it would be nice to embed the results of one template into another.
         // however that would involve some complex test which would have to stat
         // the child templates anyway..
@@ -136,10 +232,10 @@ class HTML_Template_Flexy_Compiler_Flexy_Flexy  {
         // output... include $this->options['compiled_templates'] . $arg . $this->options['locale'] . '.php'
         return $this->compiler->appendPHP( "\n".
                 "\$x = new HTML_Template_Flexy(\$this->options);\n".
-                "\$x->compile('{$arg}');\n".
+                "\$x->compile({$arg});\n".
                 "\$_t = function_exists('clone') ? clone(\$t) : \$t;\n".
-                "foreach(get_defined_vars()  as \$k=>\$v) {\n" .
-                "    if (\$k != 't') { \$_t->\$k = \$v; }\n" .
+                "foreach(".$element->scopeVarsToArrayString(). "  as \$k) {\n" .
+                "    if (\$k != 't') { \$_t->\$k = \$\$k; }\n" .
                 "}\n" .
                 "\$x->outputObject(\$_t, \$this->elements);\n"
             );

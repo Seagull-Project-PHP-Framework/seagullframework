@@ -17,7 +17,7 @@
 // | Based on HTML_Common by: Adam Daniel <adaniel1@eesus.jnj.com>        |
 // +----------------------------------------------------------------------+
 //
-// $Id: Element.php,v 1.46 2005/12/20 01:45:06 alan_k Exp $
+// $Id: Element.php,v 1.52 2009/03/02 07:58:38 alan_k Exp $
 
 /**
  * Lightweight HTML Element builder and render
@@ -257,7 +257,8 @@ class HTML_Template_Flexy_Element {
                                 ) {
                                 $this->attributes['checked'] =  true;
                             }
-                            return;
+                            // removed - see bug 15279 - not sure if there is any knock on effects from this.
+                            ///return;
                         }
                         if ($this->attributes['value'] == $value) {
                             $this->attributes['checked'] =  true;
@@ -372,6 +373,7 @@ class HTML_Template_Flexy_Element {
                 }
                 return;
             case 'textarea':
+            case 'label':
                 $charset = empty($GLOBALS['HTML_Template_Flexy']['options']['charset']) ? 'ISO-8859-1' : $GLOBALS['HTML_Template_Flexy']['options']['charset'];
                 $this->children = array(htmlspecialchars($value,ENT_COMPAT,$charset));
                 return;
@@ -419,7 +421,8 @@ class HTML_Template_Flexy_Element {
      * @access   public
      */
      
-    function setOptions($array,$noValue=false) {
+    function setOptions($array,$noValue=false) 
+    {
         if (!is_array($array)) {
             $this->children = array();
             return;
@@ -471,6 +474,73 @@ class HTML_Template_Flexy_Element {
         }
        
     }
+    
+    
+    
+    /**
+     *  Returns THIS select element's options as an associative array
+     *  Validates that $this element is "select"
+     * @return array $options
+     * @access public
+    */
+    function getOptions()
+    {
+
+        $tag = strtolower($this->tag);
+        $namespace = '';
+        if (false !== strpos($this->tag, ':')) {
+            $bits = explode(':',$this->tag);
+            $namespace = $bits[0] . ':';
+            $tag = strtolower($bits[1]);
+        }
+
+        // this is not a select element
+        if (strlen($tag) && ($tag != 'select'))  {
+            return false;
+        }
+
+        // creates an associative array that can be used by setOptions()
+        // null does work for no value ( a "Please Choose" option, for example)
+        foreach ($this->children as $child) {
+            if (is_object($child)) {
+                $child->attributes['value'] = isset($child->attributes['value']) ? $child->attributes['value'] : '';
+                $children[$child->attributes['value']] = $child->children[0];
+            }
+        }
+        return $children;
+    }
+
+     /**
+     *  Removes all of this element's options
+     *  Validates that $this element is "select"
+     * @return bool result
+     * @access public
+    */
+    function clearOptions($children = array())
+    {
+        $tag = strtolower($this->tag);
+        $namespace = '';
+        if (false !== strpos($this->tag, ':')) {
+            $bits = explode(':',$this->tag);
+            $namespace = $bits[0] . ':';
+            $tag = strtolower($bits[1]);
+        }
+
+        // this is not a select element
+        if (strlen($tag) && ($tag != 'select')) {
+            return false;
+        }
+
+        // clear this select's options
+        $this->children = array(null);
+        $this->values = array(null);
+
+        // If called with an array of new options go ahead and set them
+        $this->setOptions($children);
+
+        return true;
+    }
+    
     /**
      * Sets the HTML attributes
      * @param    mixed   $attributes     Either a typical HTML attribute string or an associative array
@@ -547,8 +617,13 @@ class HTML_Template_Flexy_Element {
         }
         // tags that never should have closers  
         $close = "</{$ret->tag}>";
-        if (in_array(strtoupper($tag),array("INPUT","IMG"))) {
+         
+        if (in_array(strtoupper($tag),array("INPUT","IMG", "LINK", "META", "HR", "BR"))) {
             $close = '';
+            if (isset($ret->attributes['flexy:xhtml'])) {
+                $this->attributes['/'] = true;
+            }
+
         }
         if (isset($this->attributes['/'])) {
             $close = '';
@@ -556,7 +631,7 @@ class HTML_Template_Flexy_Element {
 
         $close .= $suffix ;
        
-        return "{$prefix}<{$ret->tag}".$ret->attributesToHTML() . '>'.$ret->childrenToHTML() .$close;
+        return "{$prefix}<{$ret->tag}" . $ret->attributesToHTML() . '>' .  $ret->childrenToHTML() . $close;
         
          
     } // end func toHtml

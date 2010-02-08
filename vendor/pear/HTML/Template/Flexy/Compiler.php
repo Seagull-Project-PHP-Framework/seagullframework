@@ -16,7 +16,7 @@
 // | Authors: Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: Compiler.php,v 1.7 2004/07/08 04:56:30 alan_k Exp $
+// $Id: Compiler.php,v 1.8 2007/10/18 03:41:42 alan_k Exp $
 //
 //  Base Compiler Class (Interface)
 //
@@ -56,14 +56,31 @@ class HTML_Template_Flexy_Compiler {
         if (empty($options['compiler'])) {
             $options['compiler'] = 'Flexy';
         }
-    
+        if ( is_object($options['compiler']) &&  $this->is_a($options['compiler'], 'HTML_Template_Flexy_Compiler')) {
+            $options['compiler']->options = $options;
+            return $options['compiler'];
+        }
+       
         require_once 'HTML/Template/Flexy/Compiler/'.ucfirst( $options['compiler'] ) .'.php';
         $class = 'HTML_Template_Flexy_Compiler_'.$options['compiler'];
         $ret = new $class;
         $ret->options = $options;
         return $ret;
     }
-    
+    /**
+     * Php4 is_a compat !
+     */
+    function is_a($obj, $class)  // which f***wit depreciated is_a....
+    {
+        if (version_compare(phpversion(),"5","<")) {
+           return is_a($obj, $class);
+           
+        } 
+        $test=false; 
+        @eval("\$test = \$obj instanceof ".$class.";");
+        return $test;
+
+    }
     
     /**
     * The compile method.

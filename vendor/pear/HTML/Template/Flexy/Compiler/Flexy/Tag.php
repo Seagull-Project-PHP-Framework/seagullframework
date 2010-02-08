@@ -16,7 +16,7 @@
 // | Authors:  Alan Knowles <alan@akbkhome>                               |
 // +----------------------------------------------------------------------+
 //
-// $Id: Tag.php,v 1.27 2005/12/20 01:42:08 alan_k Exp $
+// $Id: Tag.php,v 1.37 2009/03/05 05:37:33 alan_k Exp $
 /* FC/BC compatibility with php5 */
 if ( (substr(phpversion(),0,1) < 5) && !function_exists('clone')) {
     eval('function clone($t) { return $t; }');
@@ -31,7 +31,7 @@ if ( (substr(phpversion(),0,1) < 5) && !function_exists('clone')) {
 * one instance of these exists for each namespace.
 *
 *
-* @version    $Id: Tag.php,v 1.27 2005/12/20 01:42:08 alan_k Exp $
+* @version    $Id: Tag.php,v 1.37 2009/03/05 05:37:33 alan_k Exp $
 */
 
 class HTML_Template_Flexy_Compiler_Flexy_Tag 
@@ -69,7 +69,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         }
         
         $class = 'HTML_Template_Flexy_Compiler_Flexy_' . $type;
-        if (class_exists($class)) {
+        if ($compiler->classExists($class)) {
             $ret = new $class;
             $ret->compiler = &$compiler;
             return $ret;    
@@ -88,7 +88,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         include_once 'HTML/Template/Flexy/Compiler/Flexy/' . ucfirst(strtolower($type)) . '.php';
         
         $class = 'HTML_Template_Flexy_Compiler_Flexy_' . $type;
-        if (!class_exists($class)) {
+        if (!$compiler->classExists($class)) {
             $ret = false;
             return $ret;
         }
@@ -167,6 +167,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         $this->reWriteURL("HREF");
         $this->reWriteURL("SRC");
+        $this->reWriteURL("BACKGROUND");
         
         // handle elements
         if (($ret =$this->_parseTags()) !== false) {
@@ -177,7 +178,92 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         $ret  = $this->parseAttributeForeach();
         $ret .= $this->parseAttributeIf();
         
-        // spit ou the tag and attributes.
+        // support Custom Attributes...
+        require_once 'HTML/Template/Flexy/Compiler/Flexy/CustomFlexyAttributes.php';
+		$customFlexyAttributes = new HTML_Template_Flexy_Compiler_Flexy_CustomFlexyAttributes();
+		$customFlexyAttributes->doCustomAttributes($element);
+		
+        
+        $add = $this->toStringOpenTag($element,$ret);
+        
+        if (is_a($add,'PEAR_Error')) {
+            return $add;
+        }
+        
+        
+        
+        
+         
+        // post stuff this is probably in the wrong place...
+        
+        if ($element->postfix) {
+            foreach ($element->postfix as $e) {
+                $add = $e->compile($this->compiler);
+                if (is_a($add,'PEAR_Error')) {
+                    return $add;
+                }
+                $ret .= $add;
+            }
+        } else if ($this->element->postfix) { // if postfixed by self..
+            foreach ($this->element->postfix as $e) {
+                $add = $e->compile($this->compiler);
+                if (is_a($add,'PEAR_Error')) {
+                    return $add;
+                }
+            
+                $ret .= $add;
+            }
+        }
+         
+        
+        $tmp = $this->toStringChildren($element,$ret);
+        if (is_a($tmp,'PEAR_Error')) {
+            return  $tmp;
+        }
+        $tmp = $this->toStringCloseTag($element,$ret);
+        if (is_a($tmp,'PEAR_Error')) {
+            return  $tmp;
+        }
+        
+        
+        // reset flexyignore
+        
+        $_HTML_TEMPLATE_FLEXY_TOKEN['flexyIgnore'] = $flexyignore;
+        
+        if (isset($_HTML_TEMPLATE_FLEXY['currentOptions']['output.block']) && 
+            ($_HTML_TEMPLATE_FLEXY['currentOptions']['output.block'] == $element->getAttribute('ID'))) {
+                
+           // echo $_HTML_TEMPLATE_FLEXY['compiledTemplate'];
+            
+            $fh = fopen($_HTML_TEMPLATE_FLEXY['compiledTemplate'],'w');
+            fwrite($fh,$ret);
+            fclose($fh);   
+           
+        }
+            
+        
+        
+        return $ret;
+    }
+    
+    /**
+     * convert a tag into compiled version
+     * @arg object Element 
+     * @arg inout output string to template
+     * @return none? or pear error.
+     * 
+     */
+    
+    function toStringOpenTag(&$element,&$ret)
+	{
+		// START ADDITION...
+		if ((empty($element->tag)) || (empty($element->oTag))) {
+			return;
+		}
+		// ...END ADDITION
+
+
+		// spit ou the tag and attributes.
         
         if ($element->oTag{0} == '?') {
             $ret .= '<?php echo "<"; ?>';
@@ -192,10 +278,10 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             
             if (strtoupper($k) == 'FLEXY:RAW') {
                 if (!is_array($v) || !isset($v[1]) || !is_object($v[1])) {
-                    return HTML_Template_Flexy::raiseError(
+                    return $this->_raiseErrorWithPositionAndTag(
                         'flexy:raw only accepts a variable or method call as an argument, eg.'.
                         ' flexy:raw="{somevalue}" you provided something else.' .
-                        " Error on Line {$this->element->line} &lt;{$this->element->tag}&gt;",
+                      
                          null,   HTML_TEMPLATE_FLEXY_ERROR_DIE);
                 }
                 $add = $v[1]->compile($this->compiler);
@@ -258,30 +344,21 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             }
         }
         $ret .= ">";
-        
-        // post stuff this is probably in the wrong place...
-        
-        if ($element->postfix) {
-            foreach ($element->postfix as $e) {
-                $add = $e->compile($this->compiler);
-                if (is_a($add,'PEAR_Error')) {
-                    return $add;
-                }
-                $ret .= $add;
-            }
-        } else if ($this->element->postfix) { // if postfixed by self..
-            foreach ($this->element->postfix as $e) {
-                $add = $e->compile($this->compiler);
-                if (is_a($add,'PEAR_Error')) {
-                    return $add;
-                }
-            
-                $ret .= $add;
-            }
-        }
-        // dump contents of script raw - to prevent gettext additions..
+	}
+    /**
+     * compile children to string.
+     * @arg object Element 
+     * @arg inout output string to template
+     * @return none? or pear error.
+     */
+	
+	function toStringChildren(&$element,&$ret)
+	{
+		 // dump contents of script raw - to prevent gettext additions..
         //  print_r($element);
-        if ($element->tag == 'SCRIPT') {
+		//  make sure tag isn't empty because it wouldn't make sense to output script without script tags
+        if (((! empty($element->tag)) && ($element->tag == 'SCRIPT')) 
+			|| ((! empty($element->oTag)) && ($element->oTag == 'SCRIPT'))) {
             foreach($element->children as $c) {
                 //print_R($c);
                 if (!$c) {
@@ -294,45 +371,68 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
                 // techically we shouldnt have anything else inside of script tags.
                 // as the tokeinzer is supposted to ignore it..
             }
-        } else {
-            $add = $element->compileChildren($this->compiler);
-            if (is_a($add,'PEAR_Error')) {
-                return $add;
-            }
-            $ret .= $add;
+            return;
+        } 
+        $add = $element->compileChildren($this->compiler);
+        if (is_a($add,'PEAR_Error')) {
+            return $add;
         }
-        
-        
-        
-        // output the closing tag.
-        
-        if ($element->close) {
+        $ret .= $add;
+
+	}
+  /**
+     * compile closing tag to string.
+     * @arg object Element 
+     * @arg inout output string to template
+     * @return none? or pear error.
+     */
+	
+	function toStringCloseTag(&$element,&$ret)
+	{
+		// output the closing tag.
+		//  If the tag is empty don't output closing tags, just output postfixes if any exist...
+        if ( !$element->close) {
+            return;
+        }
+    
+        if ((! empty($element->tag)) && (! empty($element->oTag)))
+        {
             $add = $element->close->compile($this->compiler);
             if (is_a($add,'PEAR_Error')) {
                 return $add;
             }
             $ret .= $add;
-        }
-        
-        // reset flexyignore
-        
-        $_HTML_TEMPLATE_FLEXY_TOKEN['flexyIgnore'] = $flexyignore;
-        
-        if (isset($_HTML_TEMPLATE_FLEXY['currentOptions']['output.block']) && 
-            ($_HTML_TEMPLATE_FLEXY['currentOptions']['output.block'] == $element->getAttribute('ID'))) {
-                
-           // echo $_HTML_TEMPLATE_FLEXY['compiledTemplate'];
+            return;
+        } 
+        // RICK - added by me
+        // element has a seperate closing tag (eg. </something>) and opening and closing tags should be removed 
+        // because FLEXY:OMITTAG element attribute is set, but still need postfix stuff like for ending ifs and foreach
+        // so this is NOT OPTIONAL if foreach and if are not optional.
+        if ($element->close->postfix)  {
+            foreach ($element->close->postfix as $e)  {
+                $add = $e->compile($this->compiler);
+                if (is_a($add,'PEAR_Error'))  {
+                    return $add;
+                }
+                $ret .= $add;
+            }
+            return;
+        }  
+        if ($this->element->close->postfix)  { // if postfixed by self..
+            foreach ($this->element->close->postfix as $e)  {
+                $add = $e->compile($this->compiler);
+                if (is_a($add,'PEAR_Error'))  {
+                    return $add;
+                }
             
-            $fh = fopen($_HTML_TEMPLATE_FLEXY['compiledTemplate'],'w');
-            fwrite($fh,$ret);
-            fclose($fh);   
-           
+                $ret .= $add;
+            }
+            return;
         }
-            
-        
-        
-        return $ret;
-    }
+		
+	}
+
+    
     /**
     * Reads an flexy:foreach attribute - 
     *
@@ -384,10 +484,9 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         if ($foreachObj === false) {
             
-            return HTML_Template_Flexy::raiseError(
-                "Missing Arguments: An flexy:foreach attribute was foundon Line {$this->element->line} 
-                in tag &lt;{$this->element->tag} flexy:foreach=&quot;$foreach&quot; .....&gt;<BR>
-                the syntax is  &lt;sometag flexy:foreach=&quot;onarray,withvariable[,withanothervar] &gt;<BR>",
+            return $this->_raiseErrorWithPositionAndTag(
+                "Missing Arguments: An flexy:foreach attribute was found. flexy:foreach=&quot;$foreach&quot;<BR>
+                 the syntax is  &lt;sometag flexy:foreach=&quot;onarray,withvariable[,withanothervar] &gt;<BR>",
                  null,  HTML_TEMPLATE_FLEXY_ERROR_DIE);
         }
         
@@ -399,10 +498,9 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             if ($this->element->getAttribute('/') === false) {
                
             
-                return HTML_Template_Flexy::raiseError(
-                    "A flexy:foreach attribute was found in &lt;{$this->element->tag} tag without a corresponding &lt;/{$this->element->tag}
-                        tag on {$_HTML_TEMPLATE_FLEXY['filename']}:{$this->element->line} ",
-                     null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+                return $this->_raiseErrorWithPositionAndTag(
+                    "A flexy:foreach attribute was found without a corresponding &lt;/{$this->element->tag} tag",
+                    null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
             }
             // it's an xhtml tag!
             $this->element->postfix = array($this->element->factory("End", '', $this->element->line));
@@ -431,9 +529,8 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         }
         
         if (isset($this->element->hasForeach)) {
-            return HTML_Template_Flexy::raiseError(
-                "You may not use FOREACH and IF tags in the same tag on Line {$this->element->line} &lt;{$this->element->tag}&gt;",
-                 null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+            return $this->_raiseErrorWithPositionAndTag("You may not use FOREACH and IF tags in the same tag",
+                  null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
         }
         
         // allow if="!somevar"
@@ -451,11 +548,10 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         if (!preg_match('/^[_A-Z][A-Z0-9_]*(\[[0-9]+\])?((\[|%5B)[A-Z0-9_]+(\]|%5D))*'.
                 '(\.[_A-Z][A-Z0-9_]*((\[|%5B)[A-Z0-9_]+(\]|%5D))*)*(\\([^)]*\))?$/i',$if)) {
-            return HTML_Template_Flexy::raiseError(
-                "IF tags only accept simple object.variable or object.method() values on 
-                    Line {$this->element->line} &lt;{$this->element->tag}&gt;
-                    {$if}",
-                 null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+            return $this->_raiseErrorWithPositionAndTag(
+                "IF tags only accept simple object.variable or object.method() values. {$if}",
+                null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+
         }
         
         if (substr($if,-1) == ')') {
@@ -506,10 +602,10 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
                 $this->element->postfix = array($this->element->factory("End",'', $this->element->line));
             } else {
             
-                return HTML_Template_Flexy::raiseError(
-                    "An flexy:if attribute was found in &lt;{$this->element->name} tag without a corresponding &lt;/{$this->element->name}
-                        tag on Line {$this->element->line} &lt;{$this->element->tag}&gt;",
-                     null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+                 return $this->_raiseErrorWithPositionAndTag(
+                    "An flexy:if attribute was found in &lt;{$this->element->name} tag without a corresponding &lt;/{$this->element->name} tag",
+                    null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+
                 }
         } else {
         
@@ -604,18 +700,16 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         if (!$id) {
             
-            return HTML_Template_Flexy::raiseError(
-                "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line} &lt;{$this->element->tag}&gt;: " .
-                " Dynamic tags require an ID value",
-                null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+              return $this->_raiseErrorWithPositionAndTag("Dynamic tags require an ID value",
+                 null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+
         }
         
         // dont mix and match..
         if (($this->element->getAttribute('FLEXY:IF') !== false) || 
             ($this->element->getAttribute('FLEXY:FOREACH') !== false) )
         {
-            return HTML_Template_Flexy::raiseError(
-                "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line} &lt;{$this->element->tag}&gt;: " .
+            return $this->_raiseErrorWithPositionAndTag(
                 " You can not mix flexy:if= or flexy:foreach= with dynamic form elements  " . 
                 " (turn off tag to element code with flexyIgnore=0, use flexy:ignore=&quot;yes&quot; in the tag" .
                 " or put the conditional outside in a span tag",
@@ -640,10 +734,9 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         if (isset($_HTML_TEMPLATE_FLEXY['elements'][$id])) {
            // echo "<PRE>";print_r($this);print_r($_HTML_TEMPLATE_FLEXY['elements']);echo "</PRE>";
-            return HTML_Template_Flexy::raiseError(
-                "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line} in Tag &lt;{$this->element->tag}&gt;:<BR> " . 
-                 "The Dynamic tag Name '$id' has already been used previously by  tag &lt;{$_HTML_TEMPLATE_FLEXY['elements'][$id]->tag}&gt;",
-                 null,HTML_TEMPLATE_FLEXY_ERROR_DIE);
+            return $this->_raiseErrorWithPositionAndTag(
+                "The Dynamic tag Name '$id' has already been used previously by  tag &lt;{$_HTML_TEMPLATE_FLEXY['elements'][$id]->tag}&gt;",
+                null,HTML_TEMPLATE_FLEXY_ERROR_DIE);
         }
         
         $ret = '';
@@ -663,7 +756,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
                         $str .= '. ' . $ar[0] . $ar[$i] . $ar[0];
                         break;
                     default: 
-                        return HTML_Template_Flexy::raiseError(
+                        return $this->_raiseErrorWithPositionAndTag(
                             "unsupported type found in attribute, use flexy:ignore to prevent parsing or remove it. " . 
                                 print_r($this->element,true),
                             null,HTML_TEMPLATE_FLEXY_ERROR_DIE);
@@ -708,7 +801,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
                         continue;
                     }
                     if (!is_object($item) || !is_a($item, 'HTML_Template_Flexy_Token_Var')) {
-                        return HTML_Template_Flexy::raiseError(
+                        return $this->_raiseErrorWithPositionAndTag(
                             "unsupported type found in attribute, use flexy:ignore to prevent parsing or remove it. " . 
                                 print_r($this->element,true),
                             null,HTML_TEMPLATE_FLEXY_ERROR_DIE);
@@ -766,16 +859,14 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
                 $idreplace = '$this->elements['.$printfvar.']->attributes[\'id\'] = '.$idvar.';';
             }
             return  $ret . '
-                if (!isset($this->elements['.$printfvar.'])) {
-                   $this->elements['.$printfvar.']= $this->elements[\''.$id.'\'];
-                }
-                $this->elements['.$printfvar.'] = $this->mergeElement(
+                $_element = $this->mergeElement(
                     $this->elements[\''.$id.'\'],
-                    $this->elements['.$printfnamevar .']
+                    isset('.$this->element->toVar($var).') && isset($this->elements['.$printfnamevar .']) ? $this->elements['.$printfnamevar .'] : false
                 );
-                $this->elements['.$printfvar.']->attributes[\'name\'] = '.$printfnamevar. ';
+                $_element->attributes[\'name\'] = '.$printfnamevar. ';
                 ' . $idreplace . '
-                echo $this->elements['.$printfvar.']->toHtml();' .$unset; 
+                echo $_element->toHtml();' .$unset; 
+ 
         }
         
         
@@ -784,14 +875,20 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             //if ((strtolower($this->element->getAttribute('TYPE')) == 'checkbox') && (substr($name,-2) == '[]')) {
             //    $name = substr($name,0,-2);
             //}
-            return  $ret . 
-                '
-                $element = $this->elements[\''.$id.'\'];
-                if (isset($this->elements[\''.$name.'\'])) {
-                    $element = $this->mergeElement($element,$this->elements[\''.$name.'\']);
-                }
-                echo  $element->toHtml();' . $unset; 
-        
+            if (!$name) {
+                return $ret .'
+                    $_element = $this->elements[\''.$id.'\'];
+                    echo  $_element->toHtml();' . $unset; 
+            } else {
+                return  $ret . 
+                    '
+                    $_element = $this->elements[\''.$id.'\'];
+                    if (isset($this->elements[\''.$name.'\'])) {
+                        $_element = $this->mergeElement($_element,$this->elements[\''.$name.'\']);
+                    }
+                    echo  $_element->toHtml();' . $unset; 
+            }
+
         }
         return $ret . 'echo $this->elements[\''.$id.'\']->toHtml();'. $unset;
         
@@ -823,7 +920,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             if ($allow == 'delete') {
                 return '';
             }
-            return HTML_Template_Flexy::raiseError('PHP code found in script (script)',
+           return $this->_raiseErrorWithPositionAndTag('PHP code found in script (script)',
                 HTML_TEMPLATE_FLEXY_ERROR_SYNTAX,HTML_TEMPLATE_FLEXY_ERROR_RETURN
             );
         }
@@ -856,44 +953,41 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
         
         
         if (isset($this->element->ucAttributes['FLEXY:RAW'])) {
-            return HTML_Template_Flexy::raiseError(
-                    "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line} ".
-                    "in Tag &lt;{$this->element->tag}&gt;:<BR>".
+            return $this->_raiseErrorWithPositionAndTag(
                     "Flexy:raw can only be used with flexy:ignore, to prevent conversion of html ".
                     "elements to flexy elements",
                     null, HTML_TEMPLATE_FLEXY_ERROR_DIE
             );
         }
         // checkboxes need more work.. - at the momemnt assume one with the same value...
-        if (in_array(strtoupper($this->element->getAttribute('TYPE')), array('RADIO'))) {
-            
-            if (!isset($_HTML_TEMPLATE_FLEXY['elements'][$id])) {
-                // register it..  - so we dont overwrite it...
-                $_HTML_TEMPLATE_FLEXY['elements'][$id] = false;
-            } else if ($_HTML_TEMPLATE_FLEXY['elements'][$id] != false) {
-                
-           
-                return HTML_Template_Flexy::raiseError(
-                    "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line} ".
-                    "in Tag &lt;{$this->element->tag}&gt;:<BR>".
-                    "The Dynamic tag Name '$id' has already been used previously by ".
-                    "tag &lt;{$_HTML_TEMPLATE_FLEXY['elements'][$id]->tag}&gt;",
-                     null, HTML_TEMPLATE_FLEXY_ERROR_DIE
-                );
-            }
-           
-            $id = $this->element->getAttribute('ID');
+        if (!in_array(strtoupper($this->element->getAttribute('TYPE')), array('RADIO'))) {
             if (!$id) {
-                return HTML_Template_Flexy::raiseError("Error on Line {$this->element->line} &lt;{$this->element->tag}&gt;: 
-                 Radio Input's require an ID attribute (eg &lt;input type='radio' id='1' name='xxxx' value='yyy'&gt;..",
-                 null, HTML_TEMPLATE_FLEXY_ERROR_DIE);
+                return false;
             }
-            $mergeWithName = true;
+            return $this->compiler->appendPhp($this->getElementPhp( $id,$mergeWithName));
+             
+        }
+        // now we are only dealing with radio buttons.. which are a bit odd...
+        
+        // we need to create a generic holder for this based on the name..
+        // this is only really available for use with setting stuff...
+        
+        if (!isset($_HTML_TEMPLATE_FLEXY['elements'][$id])) {
+            $_HTML_TEMPLATE_FLEXY['elements'][$id] = new HTML_Template_Flexy_Element("input", 
+                array('type'=>'radio'));
             
         }
+        // we dont really care if it is getting reused loads of times.. (expected as each radio button will use it.
+        $name = $id;
+        $id = $this->element->getAttribute('ID');
         if (!$id) {
-            return false;
+            $id = $name . '_' . $this->element->getAttribute('VALUE');
         }
+        // this get's tricky as we could end up with elements with the same name... (if value was not set..,
+        // or two elements have the same name..
+         
+        $mergeWithName = true;
+         
         return $this->compiler->appendPhp($this->getElementPhp( $id,$mergeWithName));
 
     }
@@ -1010,7 +1104,7 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
             }
             $parts = explode (':', $bit);
             if (!isset($parts[1])) {
-                return HTML_Template_Flexy::raiseError('HTML_Template_Flexy: url_rewrite syntax incorrect'. 
+                return $this->_raiseErrorWithPositionAndTag('HTML_Template_Flexy: url_rewrite syntax incorrect'. 
                     print_r(array($bits,$bits),true),null,HTML_TEMPLATE_FLEXY_ERROR_DIE);
             }
             $new = preg_replace('#^'.$parts[0].'#',$parts[1], $new);
@@ -1170,7 +1264,20 @@ class HTML_Template_Flexy_Compiler_Flexy_Tag
     }
       
     
-
+    /**
+    * calls HTML_Template_Flexy::raiseError() with the current file, line and tag
+    * @param    string  Message to display
+    * @param    type   (see HTML_Template_Flexy::raiseError())
+    * @param    boolean  isFatal.
+    * 
+    * @access   private
+    */
+    function _raiseErrorWithPositionAndTag($message, $type = null, $fatal = HTML_TEMPLATE_FLEXY_ERROR_RETURN ) {
+        global $_HTML_TEMPLATE_FLEXY;
+        $message = "Error:{$_HTML_TEMPLATE_FLEXY['filename']} on Line {$this->element->line}" .
+                   " in Tag &lt;{$this->element->tag}&gt;:<BR>\n" . $message;
+        return HTML_Template_Flexy::raiseError($message, $type, $fatal);
+    }
+    
+   
 }
-
- 

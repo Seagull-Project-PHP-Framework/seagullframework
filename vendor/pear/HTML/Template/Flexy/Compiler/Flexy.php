@@ -16,7 +16,7 @@
 // | Authors: Alan Knowles <alan@akbkhome.com>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: Flexy.php,v 1.20 2005/10/25 02:21:16 alan_k Exp $
+// $Id: Flexy.php,v 1.26 2009/03/02 08:16:14 alan_k Exp $
 //
 //  Base Compiler Class
 //  Standard 'Original Flavour' Flexy compiler
@@ -127,7 +127,7 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
         // technically we shouldnt get here as we dont cache errors..
         if (is_a($res, 'PEAR_Error')) {
             return $res;
-        }   
+        }
         
         // turn tokens into Template..
         
@@ -254,7 +254,8 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
                 //echo $n;
             }
             $this->options['Translation2']->setPageID($n);
-        } else {
+        } elseif (defined('LC_ALL'))  {
+            // not sure what we should really use here... - used to be LC_MESSAGES.. but that did not make sense...
             setlocale(LC_ALL, $this->options['locale']);
         }
         
@@ -799,7 +800,7 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
             return;
         }
         
-        if (!preg_match('/[a-z]+/i', $string)) {
+        if (!preg_match('/\w+/i', $string)) {
             return;
         }
         $string = trim($string);
@@ -943,13 +944,16 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
     function toStringTag($element) {
         
         $original = $element->getAttribute('ALT');
-        if (($element->tag == 'IMG') && is_string($original) && strlen($original)) {
+        // techncially only input type=(submit|button|input) alt=.. applies, but we may 
+        // as well translate any occurance...
+        if ( (($element->tag == 'IMG') || ($element->tag == 'INPUT'))
+                && is_string($original) && strlen($original)) {
             $this->addStringToGettext($original);
             $quote = $element->ucAttributes['ALT']{0};
             $element->ucAttributes['ALT'] = $quote  . $this->translateString($original). $quote;
         }
         $original = $element->getAttribute('TITLE');
-        if (($element->tag == 'A') && is_string($original) && strlen($original)) {
+        if (is_string($original) && strlen($original)) {
             $this->addStringToGettext($original);
             $quote = $element->ucAttributes['TITLE']{0};
             $element->ucAttributes['TITLE'] = $quote  . $this->translateString($original). $quote;
@@ -980,6 +984,14 @@ class HTML_Template_Flexy_Compiler_Flexy extends HTML_Template_Flexy_Compiler {
         
         
     }
-    
+     /**
+     * PHP5 compat - arg...
+     * - where else does this affect
+     */
+    function classExists($class)
+    {
+        return (substr(phpversion(),0,1) < 5) ? class_exists($class) :  class_exists($class,false);
+    }
+
 
 }

@@ -16,7 +16,7 @@
 // | Authors:  nobody <nobody@localhost>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Assign.php,v 1.5 2004/06/03 03:25:11 alan_k Exp $
+// $Id: Assign.php,v 1.7 2007/02/20 03:06:57 alan_k Exp $
 //
 //  Provider for Assign API ( Eg. $flexy->assign(...) )
 //
@@ -120,7 +120,7 @@ class HTML_Template_Flexy_Assign {
         if (is_array($args[0]) && $count == 1) {
             
             foreach ($args[0] as $key=>$val) {
-                $this->assign($key, $val);
+                $this->assign(array($key, $val));
             }
             
             // done!
@@ -133,7 +133,7 @@ class HTML_Template_Flexy_Assign {
             // get the object properties
             $data = get_object_vars($args[0]);
             foreach ($data as $key=>$val) {
-                $this->assign($key, $val);
+                $this->assign(array($key, $val));
             }
             
             // done!
@@ -199,6 +199,6 @@ class HTML_Template_Flexy_Assign {
         );
     }
     
- 
 
-}
+}
+

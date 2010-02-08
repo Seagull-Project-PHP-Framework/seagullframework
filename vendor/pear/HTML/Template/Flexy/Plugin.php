@@ -16,7 +16,7 @@
 // | Authors:  nobody <nobody@localhost>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Plugin.php,v 1.10 2005/05/14 03:44:26 alan_k Exp $
+// $Id: Plugin.php,v 1.13 2009/03/24 00:34:12 alan_k Exp $
 //
 // Plugin API provides support for  < ? = $this->plugin(".....",.....); ? >
 //  or {this.plugin(#xxxxx#,#xxxx#):h}
@@ -25,7 +25,8 @@
 // @author Paul M. Jones <pmjones@ciaweb.net>
  
  
-class HTML_Template_Flexy_Plugin {
+class HTML_Template_Flexy_Plugin 
+{
     
     /**
     * reference to main engine..
@@ -106,7 +107,7 @@ class HTML_Template_Flexy_Plugin {
         
         foreach ($this->plugins as $class=>$o) {
             //echo "checking :". get_class($o). ":: $name\n";
-            if (method_exists($o,$name)) {
+            if (is_callable(array($o,$name),true)) {
                 return $class;
             }
         }

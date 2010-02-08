@@ -16,7 +16,7 @@
 // | Authors:  nobody <nobody@localhost>                                  |
 // +----------------------------------------------------------------------+
 //
-// $Id: Translator.php,v 1.9 2006/06/26 00:59:40 alan_k Exp $
+// $Id: Translator.php,v 1.10 2006/11/24 07:03:59 alan_k Exp $
 //
 //  Controller Type Class providing translation faciliites
 //
@@ -137,7 +137,8 @@ class HTML_Template_Flexy_Translator {
     */
     
     
-    function process($get,$post) {
+    function process($get,$post)
+    {
         //DB_DataObject::debugLevel(1);
         
         $displayLang = isset($get['translate']) ? $get['translate'] : 
@@ -234,7 +235,10 @@ class HTML_Template_Flexy_Translator {
                 // we posted something..
                 if (isset($post[$displayLangClean][$md5])) {
                     // eak we shouldnt really deal with magic_quotes!!!
-                    $nval = str_replace("\r\n", "\n", get_magic_quotes_gpc() ? stripslashes($post[$_displayLang][$md5]) : $post[$_displayLang][$md5]);
+                    $nval = str_replace("\r\n", "\n", 
+                        get_magic_quotes_gpc() ? 
+                            stripslashes($post[$displayLangClean][$md5]) : 
+                            $post[$displayLangClean][$md5]);
                     
                     if ($value != $nval) {
                         $trd->add($word,$page,array($displayLang=>$nval));
