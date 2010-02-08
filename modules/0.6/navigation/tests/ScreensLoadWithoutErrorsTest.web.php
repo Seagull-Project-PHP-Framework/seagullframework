@@ -25,10 +25,6 @@ class NavigationScreensLoadWithoutErrorsTest extends WebTestCase
         $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/section/action/add/');
         $this->assertTitle($this->conf['site']['name'] . ' :: Section Manager');
         $this->assertNoUnwantedPattern("/errorContent/");
-
-        $this->get($this->conf['site']['baseUrl'] . '/index.php/navigation/navstyle/action/list/');
-        $this->assertTitle($this->conf['site']['name'] . ' :: Navigation Style Manager');
-        $this->assertNoUnwantedPattern("/errorContent/");
     }
 }
 ?>
