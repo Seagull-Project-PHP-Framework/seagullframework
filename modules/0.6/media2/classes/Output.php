@@ -49,11 +49,11 @@ class Media2Output
 
     public function getImagePath($oMedia, $thumb = false)
     {
-        $var =SGL_Media_Util::getImagePathByMimeType(
+        $var = SGL_Media_Util::getImagePathByMimeType(
             $oMedia->file_name,
             $oMedia->mime_type,
             $thumb
-        ); 
+        );
         SGL::logMessage($var, PEAR_LOG_DEBUG);
         return $var;
     }
