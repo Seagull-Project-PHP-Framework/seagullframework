@@ -96,6 +96,7 @@ class FileMgr extends SGL_Manager
             SGL::raiseError('There was an error attempting to download the file',
                 SGL_ERROR_NOFILE);
         }
+        exit;
     }
 
     function _cmd_downloadZipped(&$input, &$output)
