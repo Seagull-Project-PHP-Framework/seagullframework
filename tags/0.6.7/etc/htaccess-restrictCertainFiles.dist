@@ -1,0 +1,4 @@
+<Files ~ "(\.ini|etc|lib|modules|var|themes|\.svn|\.html)$">
+  Order deny,allow
+  Deny from all
+</Files>

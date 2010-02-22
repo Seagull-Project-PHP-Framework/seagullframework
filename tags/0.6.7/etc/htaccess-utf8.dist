@@ -1,0 +1,4 @@
+<IfModule mod_php4.c>
+  php_value mbstring.internal_encoding UTF-8
+  php_value mbstring.func_overload 6
+</IfModule>

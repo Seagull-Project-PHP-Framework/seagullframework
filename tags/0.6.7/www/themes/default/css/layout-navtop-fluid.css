@@ -1,0 +1,25 @@
+
+/**
+ * Common fluid styles.
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+div#wrapper-outer {
+    margin-left: 30px;
+    margin-right: 30px;
+    width: auto;
+    min-width: 890px;
+}
+
+div#nav-main {
+}
+    div#nav-main div.inner {
+        border-left: none;
+        border-right: none;
+    }
+    div#nav-main div#toolbar {
+        border: none;
+    }

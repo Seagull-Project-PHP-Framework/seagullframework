@@ -1,0 +1,137 @@
+
+/**
+ * Common.
+ *   - error messages
+ *   - debug panel
+ *   - tooltips
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Julien Casanova <julien_casanova@yahoo.fr>
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+/* Messages & errors */
+div.message {
+    width: 80%;
+    margin: 0 auto;
+}
+    div.message p {
+        margin-bottom: 1em;
+        border-width: 2px;
+        border-style: solid;
+        padding: 0.5em;
+        text-align: center;
+    }
+    div.message p.message-error {
+        border-color: #f30;
+        color: #f30;
+    }
+    div.message p.message-info {
+        border-color: #66a326;
+        color: #66a326;
+    }
+    div.message p.message-warning {
+        border-color: #999;
+        color: #999;
+    }
+    /* PEAR */
+    div.message p.pear {
+        border-top: none;
+        border-color: #f30;
+        text-align: left;
+    }
+    div.message h4 {
+        border: 2px solid #f30;
+        border-bottom: none;
+        margin-bottom: 0;
+        padding: 0.5em;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #f30;
+    }
+div#broadcastMessage {
+    position: absolute;
+    z-index: 300;
+    left: 30px;
+    top: 30px;
+    width: 300px;
+    padding: 10px 20px;
+    background-color: #ffe9d9;
+    color: #333;
+}
+    div#broadcastMessage a {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+    }
+#message {
+    position: absolute;
+    z-index: 200;
+    right: 50px;
+    top: 15px;
+    max-width: 500px;
+    overflow: hidden;
+}
+    #message p {
+        margin-bottom: 0;
+        padding: 5px 10px;
+        text-align: left;
+    }
+    #message .success {
+        background-color: green;
+        color: #fff;
+    }
+    #message .error {
+        background-color: red;
+        color: #fff;
+    }
+/* END messages & errors */
+
+
+/* Debug panel */
+div#debugPanel {
+    position: absolute;
+    z-index: 9999;
+    top: 0;
+    right: 0;
+    overflow: auto;
+    border: 1px black solid;
+    margin: 10px;
+    min-width: 150px;
+    height: 300px;
+    padding: 5px 10px;
+    background-color: #808080;
+    opacity: 0.9;
+    font-size: 0.9em;
+    color: #333;
+}
+    div#debugPanel h3 {
+        margin-bottom: 0.5em;
+        color: #fff;
+    }
+    div#debugPanel a {
+        color: #ccc;
+        text-decoration: none;
+    }
+    div#debugPanel dl {
+        margin-bottom: 0;
+    }
+        div#debugPanel dl dt {
+            margin-bottom: 0.2em;
+            font-weight: normal
+        }
+        div#debugPanel dl dd {
+            margin-left: 0;
+            margin-bottom: 0.5em;
+        }
+/* END debug panel */
+
+
+/* Turn of tooltips */
+.tipOwner .tipText {
+    display: none;
+}
