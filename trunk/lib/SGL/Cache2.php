@@ -24,7 +24,7 @@ class SGL_Cache2
      *
      * @return object
      */
-    public static function &singleton($aOptions = array(), $lib = 'Zend_Cache')
+    public static function singleton($aOptions = array(), $lib = 'Zend_Cache')
     {
         $frontend = !empty($aOptions['frontend'])
             ? $aOptions['frontend'] : 'Core';

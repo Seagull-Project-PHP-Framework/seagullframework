@@ -148,7 +148,7 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function &singleton($forceNew = false, $type = null)
+    function singleton($forceNew = false, $type = null)
     {
         static $instance;
 

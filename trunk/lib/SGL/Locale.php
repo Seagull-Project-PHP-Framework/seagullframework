@@ -62,7 +62,7 @@ class SGL_Locale
      * @param string $locale Overrides getting the locale from session/usr
      * @return I18Nv2 Returns a single instance of I18Nv2
      */
-    function &singleton($newLocale = false)
+    function singleton($newLocale = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

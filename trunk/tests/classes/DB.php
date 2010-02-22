@@ -62,7 +62,7 @@ class STR_DB
      * @param string $dsn The datasource details if supplied: see {@link DB::parseDSN()} for format
      * @return mixed Reference to DB resource or false on failure to connect
      */
-    function &singleton($dsn = null)
+    function singleton($dsn = null)
     {
         if (is_null($dsn)) {
             $dsn = STR_DB::getDsn();

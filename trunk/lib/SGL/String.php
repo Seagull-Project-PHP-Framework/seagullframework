@@ -227,35 +227,19 @@ class SGL_String
                 || !extension_loaded('tidy')) {
             return $html;
         }
-        //  PHP5 version
-        if (SGL::isPhp5()) {
-            $options = array(
-                'wrap' => 0,
-                'indent' => true,
-                'indent-spaces' => 4,
-                'output-xhtml' => true,
-                'drop-font-tags' => false,
-                'clean' => false,
-            );
-            if (strlen($html)) {
-                $tidy = new Tidy();
-                $tidy->parseString($html, $options, 'utf8');
-                $tidy->cleanRepair();
-                $ret = $tidy->body();
-            }
-        //  PHP4 version
-        } else {
-            //  so we don't get doctype, html, head, body etc. tags added; default is false
-            tidy_setopt('show-body-only', true);
-            //  no wrapping of lines
-            tidy_setopt('wrap', 0);
-            tidy_setopt('indent', 1);
-            tidy_setopt('indent-spaces', 1);
-            tidy_parse_string($html);
-            if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
-                SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
-            }
-            $ret = tidy_get_output();
+        $options = array(
+            'wrap' => 0,
+            'indent' => true,
+            'indent-spaces' => 4,
+            'output-xhtml' => true,
+            'drop-font-tags' => false,
+            'clean' => false,
+        );
+        if (strlen($html)) {
+            $tidy = new Tidy();
+            $tidy->parseString($html, $options, 'utf8');
+            $tidy->cleanRepair();
+            $ret = $tidy->body();
         }
         return $ret;
     }

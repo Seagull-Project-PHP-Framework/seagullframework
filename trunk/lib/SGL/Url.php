@@ -356,7 +356,7 @@ class SGL_URL
      *
      * @return SGL_Url
      */
-    function &singleton()
+    function singleton()
     {
         static $instance;
         if (!isset($instance)) {

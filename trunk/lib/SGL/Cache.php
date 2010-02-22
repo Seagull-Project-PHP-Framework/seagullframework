@@ -80,7 +80,7 @@ class SGL_Cache
      *
      * @return Cache_Lite
      */
-    function &singleton($type = 'default', $aOptions = array(), $forceNew = false)
+    function singleton($type = 'default', $aOptions = array(), $forceNew = false)
     {
         static $aInstances;
 

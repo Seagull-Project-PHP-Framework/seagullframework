@@ -67,7 +67,7 @@ class SGL_Translation
      *
      *
      */
-    function &singleton($type = 'translation')
+    function singleton($type = 'translation')
     {
         static $instance;
 
