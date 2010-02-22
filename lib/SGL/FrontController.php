@@ -305,11 +305,7 @@ class SGL_FrontController
                 require_once $file;
                 if ($cachedLibsEnabled) {
                     // 270kb vs 104kb
-                    if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
-                        $fileCache .= php_strip_whitespace($file);
-                    } else {
-                        $fileCache .= file_get_contents($file);
-                    }
+                    $fileCache .= php_strip_whitespace($file);
                 }
             }
             if ($cachedLibsEnabled) {
@@ -326,7 +322,6 @@ class SGL_FrontController
         $init->addTask(new SGL_Task_EnsureFC());
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
-        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
     }
 }

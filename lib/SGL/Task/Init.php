@@ -657,43 +657,6 @@ class SGL_Task_InitialiseModules extends SGL_Task
 /**
  * @package Task
  */
-class SGL_Task_EnsureBC extends SGL_Task
-{
-    function run($data)
-    {
-        //  load BC functions depending on PHP version detected
-        if (!function_exists('version_compare') || version_compare(phpversion(), "4.3.0", 'lt')) {
-            require_once SGL_ETC_DIR . '/bc.php';
-        }
-
-        if (!(function_exists('file_put_contents'))) {
-            function file_put_contents($location, $data)
-            {
-                if (is_file($location)) {
-                    unlink($location);
-                }
-                $fileHandler = fopen($location, "w");
-                fwrite ($fileHandler, $data);
-                fclose ($fileHandler);
-                return true;
-            }
-        }
-
-        if (!function_exists('getSystemTime')) {
-            function getSystemTime()
-            {
-                $time = gettimeofday();
-                $resultTime = $time['sec'] * 1000;
-                $resultTime += floor($time['usec'] / 1000);
-                return $resultTime;
-            }
-        }
-    }
-}
-
-/**
- * @package Task
- */
 class SGL_Task_EnsureFC extends SGL_Task
 {
     function run($data)
