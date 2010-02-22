@@ -134,7 +134,7 @@ class LoginMgr extends SGL_Manager
             list(, $cookieValue) = @unserialize($_COOKIE['SGL_REMEMBER_ME']);
             if (!empty($cookieValue)) {
                 require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-                $_da = &UserDAO::singleton();
+                $_da = UserDAO::singleton();
                 $_da->deleteUserLoginCookieByUserId($uid, $cookieValue);
             }
         }
@@ -165,7 +165,7 @@ class LoginMgr extends SGL_Manager
         $uid = SGL_Session::getUid();
         if ($uid > SGL_GUEST
                 && !empty($this->conf['cookie']['rememberMeEnabled'])) {
-            $_da = &UserDAO::singleton();
+            $_da = UserDAO::singleton();
             $_da->deleteUserLoginCookiesByUserId($uid);
 
             SGL::raiseMsg('Persistent cookies successfully removed',
@@ -195,10 +195,10 @@ class User_DoLogin extends SGL_Observable
 
     function &_getDb()
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh =  SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;

@@ -58,7 +58,7 @@ class ModuleConfigMgr extends SGL_Manager
 
         $this->pageTitle    = 'Module Config Manager';
         $this->template     = 'moduleConfigEdit.html';
-        $this->da           = &DefaultDAO::singleton();
+        $this->da           = DefaultDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'edit'      => array('edit'),

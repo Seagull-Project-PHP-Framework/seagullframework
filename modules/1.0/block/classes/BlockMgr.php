@@ -69,7 +69,7 @@ class BlockMgr extends SGL_Manager
             require_once SGL_DAT_DIR . '/ary.blocksNames.php';
             $this->aBlocksNames = $aBlocksNames;
         }
-        $daUser             = &UserDAO::singleton();
+        $daUser             = UserDAO::singleton();
         $daNav = (SGL::moduleIsEnabled('cms'))
             ? CmsNavigationDAO::singleton()
             : NavigationDAO::singleton();

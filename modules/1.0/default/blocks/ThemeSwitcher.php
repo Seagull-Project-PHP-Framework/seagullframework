@@ -10,7 +10,7 @@ class Default_Block_ThemeSwitcher
     function init()
     {
         $this->aThemes = SGL_Util::getAllThemes();
-        $req = & SGL_Request::singleton();
+        $req =  SGL_Request::singleton();
 
         $theme = $req->get('frmThemeSwitcher');
         if (!is_null($theme)) {
@@ -25,7 +25,7 @@ class Default_Block_ThemeSwitcher
     {
         $options = SGL_Output::generateSelect($this->aThemes, $_SESSION['aPrefs']['theme']);
 
-        $req = & SGL_Request::singleton();
+        $req =  SGL_Request::singleton();
         $url = SGL_Url::makeLink() . 'frmThemeSwitcher/';
         $html = <<< HTML
         <p>Change the current theme:</p>

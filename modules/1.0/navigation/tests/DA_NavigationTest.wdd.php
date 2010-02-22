@@ -17,7 +17,7 @@ class NavigationDAOTest extends UnitTestCase {
 
     function setup()
     {
-        $this->da = & NavigationDAO::singleton($forceNew = true);
+        $this->da =  NavigationDAO::singleton($forceNew = true);
     }
 
     function testAddSection()
@@ -171,7 +171,7 @@ class xSGL_Task_BuildNavigation extends SGL_Task
             );
 
 #        require_once SGL_MOD_DIR . '/navigation/classes/NavigationDAO.php';
-        $da = & NavigationDAO::singleton();
+        $da =  NavigationDAO::singleton();
 //        $aModuleList = SGL_Util::getAllModuleDirs($onlyRegistered = true);
 
         #foreach ($aModuleList as $module) {

@@ -38,7 +38,7 @@ class RecordLogin extends SGL_Observer
      */
     function loginRecordingAllowed()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->load(SGL_MOD_DIR . '/user/conf.ini');
         return (boolean) $conf['LoginMgr']['recordLogin'];
     }

@@ -58,7 +58,7 @@ class MaintenanceMgr extends SGL_Manager
         $this->pageTitle = 'Maintenance';
         $this->template  = 'maintenance.html';
         $this->redirect  = true;
-        $this->da        = &DefaultDAO::singleton();
+        $this->da        = DefaultDAO::singleton();
 
         $this->_aActionsMapping = array(
             'dbgen'              => array('dbgen'),
@@ -192,7 +192,7 @@ class MaintenanceMgr extends SGL_Manager
 
         //  retrieve admin user
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $oUserDao    = &UserDAO::singleton();
+        $oUserDao    = UserDAO::singleton();
         $aAdminUserIds = $oUserDao->getUsersByRoleId(SGL_ADMIN);
         $oAdmin      = $oUserDao->getUserById($aAdminUserIds[0]); // get first admin user
         $aMasterPrefs= $oUserDao->getMasterPrefs();
@@ -271,7 +271,7 @@ class MaintenanceMgr extends SGL_Manager
         $ok = $runner->main();
 
         // reload local config
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         // we want to reload default module
         $c->set('localConfig', array('moduleName' => 'non existent module'));
         $c->ensureModuleConfigLoaded('default');

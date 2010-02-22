@@ -56,7 +56,7 @@ class AccountMgr extends RegisterMgr
         parent::RegisterMgr();
 
         $this->pageTitle = 'My Account';
-        $this->da = & UserDAO::singleton();
+        $this->da =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'edit'          => array('edit'),

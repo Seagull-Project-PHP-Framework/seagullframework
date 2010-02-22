@@ -55,7 +55,7 @@ class Block
 
     function Block()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf  = $c->getAll();
         $this->dbh   = $this->_getDb();
         $this->block = DB_DataObject::factory($this->conf['table']['block']);
@@ -63,10 +63,10 @@ class Block
 
     function &_getDb()
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh =  SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;

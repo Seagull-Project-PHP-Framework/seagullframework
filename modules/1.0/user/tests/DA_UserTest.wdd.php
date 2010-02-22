@@ -20,7 +20,7 @@ class UserDAOTest extends UnitTestCase {
     {
         //  get UserDAO object
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $this->da = & UserDAO::singleton();
+        $this->da =  UserDAO::singleton();
     }
 
 

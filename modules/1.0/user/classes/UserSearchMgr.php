@@ -57,7 +57,7 @@ class UserSearchMgr extends SGL_Manager
 
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';
-        $this->da = & UserDAO::singleton();
+        $this->da =  UserDAO::singleton();
 
         $this->sortBy = 'usr_id';
         $this->validated = true;

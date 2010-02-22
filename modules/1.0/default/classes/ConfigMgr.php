@@ -314,7 +314,7 @@ class ConfigMgr extends SGL_Manager
             }
         }
         //  add version info which is not available in form
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $dbType = $c->get(array('db' => 'type')); // get db type before merge
         $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
@@ -327,7 +327,7 @@ class ConfigMgr extends SGL_Manager
                 //  we need to remove DB service, or SyncSequences will
                 //  use it and think the db type is the old one and run the
                 //  wrong sync code.
-                $locator = & SGL_ServiceLocator::singleton();
+                $locator =  SGL_ServiceLocator::singleton();
                 $locator->remove('DB');
                 //  rebuild sequences
                 require_once SGL_CORE_DIR . '/Task/Install.php';

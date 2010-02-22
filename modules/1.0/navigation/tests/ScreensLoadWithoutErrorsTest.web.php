@@ -5,7 +5,7 @@ class NavigationScreensLoadWithoutErrorsTest extends WebTestCase
     function NavigationScreensLoadWithoutErrorsTest()
     {
         $this->WebTestCase('Load without errors Test');
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf = $c->getAll();
     }
 

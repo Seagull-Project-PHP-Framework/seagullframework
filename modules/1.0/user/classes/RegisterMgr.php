@@ -61,7 +61,7 @@ class RegisterMgr extends SGL_Manager
 
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),
@@ -281,7 +281,7 @@ class User_AddUser extends SGL_Observable
         $defaultRoleId = $this->conf['RegisterMgr']['defaultRoleId'];
         $defaultOrgId  = $this->conf['RegisterMgr']['defaultOrgId'];
 
-        $da = & UserDAO::singleton();
+        $da =  UserDAO::singleton();
         $oUser = $da->getUserById();
         $oUser->setFrom($this->input->user);
         $oUser->passwdClear = $this->input->user->passwd;

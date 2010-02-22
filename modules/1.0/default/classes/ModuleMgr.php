@@ -63,7 +63,7 @@ class ModuleMgr extends SGL_Manager
 
         $this->pageTitle = 'Module Manager';
         $this->template  = 'moduleOverview.html';
-        $this->da        = &DefaultDAO::singleton();
+        $this->da        = DefaultDAO::singleton();
 
         $this->_aActionsMapping = array(
             'add'        => array('add'),

@@ -54,7 +54,7 @@ class UserAjaxProvider extends SGL_AjaxProvider
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::SGL_AjaxProvider();
         $this->responseFormat = SGL_RESPONSEFORMAT_JSON;
-        $this->da = &UserDAO::singleton();
+        $this->da = UserDAO::singleton();
     }
 
     function singleton()
@@ -77,7 +77,7 @@ class UserAjaxProvider extends SGL_AjaxProvider
      */
     function isUniqueUsername()
     {
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $username = $req->get('username');
         $ok = $this->da->isUniqueUsername($username);
         if ($ok) {

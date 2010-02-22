@@ -67,7 +67,7 @@ class RoleMgr extends SGL_Manager
 
         $this->template     = 'roleManager.html';
         $this->pageTitle    = 'Role Manager';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

@@ -84,7 +84,7 @@ class NavigationDAO extends SGL_Manager
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            $this->trans = &SGL_Translation::singleton('admin');
+            $this->trans = SGL_Translation::singleton('admin');
         }
     }
 
@@ -188,7 +188,7 @@ class NavigationDAO extends SGL_Manager
 
                 //  adjust friendly mgr name to class filename
                 if (SGL::moduleIsEnabled($parsed['module'])) {
-                    $c = &SGL_Config::singleton();
+                    $c = SGL_Config::singleton();
                     $moduleConf = $c->load(SGL_MOD_DIR . '/' . $parsed['module'] . '/conf.ini', true);
                     $c->merge($moduleConf);
                     $className  = SGL_Inflector::getManagerNameFromSimplifiedName($section['manager']);

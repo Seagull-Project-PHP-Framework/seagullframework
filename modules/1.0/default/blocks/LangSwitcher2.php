@@ -82,7 +82,7 @@ class Default_Block_LangSwitcher2
             ? $output->imagesDir
             : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
 
-        $input = &SGL_Registry::singleton();
+        $input = SGL_Registry::singleton();
         $conf  = $input->getConfig();
         $url   = $input->getCurrentUrl();
 

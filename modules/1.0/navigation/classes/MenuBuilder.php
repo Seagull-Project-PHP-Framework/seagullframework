@@ -56,9 +56,9 @@ class MenuBuilder
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $this->_options = $options;
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
-        $this->GUI = & $this->_factory($type, $conf, $options);
+        $this->GUI =  $this->_factory($type, $conf, $options);
         $this->GUI->dbCatTableName  = (isset($options['table'])) ? $options['table']:
             $conf['table']['category'];
     }
@@ -105,7 +105,7 @@ class MenuBuilder
             break;
 
         case 'menu_selectbox':
-            $cache = & SGL_Cache::singleton();
+            $cache =  SGL_Cache::singleton();
             $cacheId = 'categorySelect' . $this->_startId . serialize($this->_options);
             if ($data = $cache->get($cacheId, 'categorySelect')) {
                 $ret = unserialize($data);

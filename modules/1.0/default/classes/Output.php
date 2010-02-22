@@ -106,7 +106,7 @@ class DefaultOutput
 
     function actionToRadioState($radioAction)
     {
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $action = $req->get('action');
         return ($radioAction == $action) ? ' checked="checked"' : '';
     }

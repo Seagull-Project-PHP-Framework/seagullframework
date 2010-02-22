@@ -54,7 +54,7 @@ class SimpleRenderer
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->driver = &$navDriver;
+        $this->driver = $navDriver;
     }
 
     /**

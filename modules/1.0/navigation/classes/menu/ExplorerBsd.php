@@ -56,13 +56,13 @@ class Menu_ExplorerBsd
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  style definition .treeMenuDefault in <head>
-        $tree = &$this->createFromSQL($id);
+        $tree = $this->createFromSQL($id);
 
         //  initialise the class options
         require_once 'HTML/TreeMenu.php';
 
         //  build url for current page
-        $req = & SGL_Request::singleton();
+        $req =  SGL_Request::singleton();
         $action = ($req->get('managerName') == 'articleview')
             ? 'summary'
             : '';
@@ -107,7 +107,7 @@ class Menu_ExplorerBsd
 
         require_once 'HTML/Tree.php';
 
-        $dbh = &SGL_DB::singleton();
+        $dbh = SGL_DB::singleton();
         $roleId = SGL_Session::get('rid');
         $query = "  SELECT  category_id as id, parent_id, label AS text
                     FROM
@@ -131,7 +131,7 @@ class Menu_ExplorerBsd
 
                 // Parent node has already been added to tree
                 } elseif (!empty($nodeList[$row['parent_id']])) {
-                    $parentNode = &$nodeList[$row['parent_id']];
+                    $parentNode = $nodeList[$row['parent_id']];
                     unset($row['parent_id']);
                     $nodeList[$row['id']] = new Tree_Node($row);
                     $parentNode->nodes->addNode($nodeList[$row['id']]);

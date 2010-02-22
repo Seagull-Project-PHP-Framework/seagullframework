@@ -75,7 +75,7 @@ class User_Block_Login2
             : SGL_BASE_URL  . '/themes/' . $theme . '/image' ;
         $blockOutput->imagesDir = $imageDir;
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $blockOutput->conf = $c->ensureModuleConfigLoaded('user');
 
         if ($this->uid == SGL_GUEST) {

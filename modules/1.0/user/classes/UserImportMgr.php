@@ -57,7 +57,7 @@ class UserImportMgr extends UserMgr
 
         $this->pageTitle    = 'User Import Manager';
         $this->template     = 'userImport.html';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'list' => array('list'),

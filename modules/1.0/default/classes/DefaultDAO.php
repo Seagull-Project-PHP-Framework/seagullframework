@@ -61,7 +61,7 @@ class DefaultDAO extends SGL_Manager
      * Returns a singleton DefaultDAO instance.
      *
      * example usage:
-     * $da = & DefaultDAO::singleton();
+     * $da =  DefaultDAO::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference

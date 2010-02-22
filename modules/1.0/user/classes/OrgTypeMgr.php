@@ -57,7 +57,7 @@ class OrgTypeMgr extends SGL_Manager
 
         $this->pageTitle    = 'OrgType Manager';
         $this->template     = 'orgTypeList.html';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

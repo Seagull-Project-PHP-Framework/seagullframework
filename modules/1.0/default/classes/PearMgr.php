@@ -149,10 +149,10 @@ class PearMgr extends SGL_Manager
         require_once 'PEAR/Command.php';
 
         // Init PEAR Installer Code and WebFrontend
-        #$config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton();
+        #$config  = $GLOBALS['_PEAR_Frontend_Web_config'] = PEAR_Config::singleton();
         $config  = $GLOBALS['_PEAR_Frontend_Web_config'] =
             &PEAR_Config::singleton($this->getPearConfigPath(), $this->getPearConfigPath());
-#        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = &PEAR_Config::singleton('', SGL_MOD_DIR . '/default/pear.conf');
+#        $config  = $GLOBALS['_PEAR_Frontend_Web_config'] = PEAR_Config::singleton('', SGL_MOD_DIR . '/default/pear.conf');
 
 #        $config->set('php_dir', SGL_LIB_PEAR_DIR);
         #$config->set('php_dir', SGL_LIB_PEAR_DIR, $layer='system'); <- this is ignored ??
@@ -167,7 +167,7 @@ class PearMgr extends SGL_Manager
         $config->set('preferred_state', 'devel');
 
         PEAR_Command::setFrontendType("WebSGL");
-        $ui = &PEAR_Command::getFrontendObject();
+        $ui = PEAR_Command::getFrontendObject();
 
         $verbose = $config->get("verbose");
         $cmdopts = array();
@@ -198,7 +198,7 @@ class PearMgr extends SGL_Manager
 
         #PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($ui, "displayFatalError"));
 
-        $cache = & SGL_Cache::singleton();
+        $cache =  SGL_Cache::singleton();
         $cacheId = 'pear'.$input->command.$input->mode;
 
         switch ($input->command) {
@@ -269,7 +269,7 @@ class PearMgr extends SGL_Manager
     function getPearConfigPath()
     {
         if (!is_file(SGL_TMP_DIR . '/pear.conf')) {
-            $conf = &PEAR_Config::singleton();
+            $conf = PEAR_Config::singleton();
 
             $conf->set('default_channel', 'pear.php.net');
             $conf->set('http_proxy', SGL_LIB_PEAR_DIR);

@@ -67,7 +67,7 @@ class OrgMgr extends SGL_Manager
 
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

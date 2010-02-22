@@ -189,14 +189,14 @@ class ArrayDriver
                 if (empty($rootId) || $parentId != SGL_NODE_GROUP) {
                     $rootId       = $parentId;
                     $parentNodeId = ArrayDriver::_getNextNodeId($aTree[$rootId]);
-                    $aNode        = &$aTree[$rootId][$parentNodeId];
+                    $aNode        = $aTree[$rootId][$parentNodeId];
 
                 // assign relevant node ID to current node
                 // under current parent node ID
                 } else {
                     $nodeId = ArrayDriver::_getNextNodeId(
                         $aTree[$rootId][$parentNodeId]['sub']);
-                    $aNode  = &$aTree[$rootId][$parentNodeId]['sub'][$nodeId];
+                    $aNode  = $aTree[$rootId][$parentNodeId]['sub'][$nodeId];
                 }
 
                 // process subtrees populating proper node IDs
@@ -225,7 +225,7 @@ class ArrayDriver
 
         // create second level item
         } else {
-            $subNav = &$aMenu[$sectionRootId][$currentNodeId]['sub'];
+            $subNav = $aMenu[$sectionRootId][$currentNodeId]['sub'];
             if (empty($subNav)) {
                 $subNav = array();
             }
@@ -362,7 +362,7 @@ class ArrayDriver
      */
     function _isCurrentNode($aNode)
     {
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $ret = false;
 
         // compare node's module and manager with current

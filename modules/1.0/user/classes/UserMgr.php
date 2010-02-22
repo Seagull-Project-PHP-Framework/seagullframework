@@ -64,8 +64,8 @@ class UserMgr extends RegisterMgr
         $this->template = 'userManager.html';
         $this->sortBy = 'usr_id';
 
-        $daUser    = &UserDAO::singleton();
-        $daDefault = &DefaultDAO::singleton();
+        $daUser    = UserDAO::singleton();
+        $daDefault = DefaultDAO::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daDefault);

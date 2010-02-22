@@ -213,10 +213,10 @@ class SimpleDriver
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf      = $c->getAll();
-        $this->da        = &NavigationDAO::singleton();
-        $this->req       = &SGL_Request::singleton();
+        $this->da        = NavigationDAO::singleton();
+        $this->req       = SGL_Request::singleton();
         $this->output    = $output;
         $this->_rid      = (int)SGL_Session::get('rid');
         $this->_staticId = $this->req->get('staticId');
@@ -261,9 +261,9 @@ class SimpleDriver
 
         //  get a unique token by considering url, role ID and if page
         //  is static or not
-        $reg     = &SGL_Registry::singleton();
+        $reg     = SGL_Registry::singleton();
         $url     = $reg->getCurrentUrl();
-        $cache   = &SGL_Cache::singleton();
+        $cache   = SGL_Cache::singleton();
         $cacheId = $url->getQueryString() . $this->_rid . $this->_staticId
             . $this->_startParentNode . $this->_startLevel . $this->_levelsToRender
             . $this->_collapsed . $this->_showAlways
@@ -288,13 +288,13 @@ class SimpleDriver
 
                 //  detect if trans2 support required
                 if ($this->conf['translation']['container'] == 'db') {
-                    $this->trans = &SGL_Translation::singleton();
+                    $this->trans = SGL_Translation::singleton();
                     if (empty($aTranslations)) {
                         $navLang = SGL_Translation::getLangID();
                         $aTranslations =
                             SGL_Translation::getTranslations('nav', $navLang);
                     }
-                    $this->_aTranslations = &$aTranslations;
+                    $this->_aTranslations = $aTranslations;
                 }
 
                 $aSectionNodes    = $this->getSectionsById($this->_startParentNode);
@@ -501,7 +501,7 @@ class SimpleDriver
 
             //  wiki:
             } elseif (preg_match("@^publisher/wikiscrape/url@", $section->resource_uri)) {
-                $req = & SGL_Request::singleton();
+                $req =  SGL_Request::singleton();
                 $req->set('articleTitle', $section->title);
 
             //  external uri:

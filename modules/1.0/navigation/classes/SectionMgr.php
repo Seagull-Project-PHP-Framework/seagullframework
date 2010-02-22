@@ -62,9 +62,9 @@ class SectionMgr extends SGL_Manager
         $this->masterTemplate = 'masterMinimal.html';
         $this->template       = 'sectionList.html';
 
-        $daDefault = &DefaultDAO::singleton();
-        $daUser    = &UserDAO::singleton();
-        $daNav     = &NavigationDAO::singleton();
+        $daDefault = DefaultDAO::singleton();
+        $daUser    = UserDAO::singleton();
+        $daNav     = NavigationDAO::singleton();
         $this->da  = new SGL_Delegator();
         $this->da->add($daDefault);
         $this->da->add($daUser);
@@ -72,7 +72,7 @@ class SectionMgr extends SGL_Manager
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            $this->trans = &SGL_Translation::singleton('admin');
+            $this->trans = SGL_Translation::singleton('admin');
         }
 
         $this->_aActionsMapping =  array(
@@ -302,7 +302,7 @@ class SectionMgr extends SGL_Manager
 
         //  get all sections
         $aSections        = $this->da->getSectionTree();
-        $output->results  = &$aSections;
+        $output->results  = $aSections;
 
         $output->sectionArrayJS = $this->_createNodesArrayJS($aSections);
         if ($this->conf['translation']['container'] == 'db') {

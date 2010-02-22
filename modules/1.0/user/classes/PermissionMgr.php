@@ -62,8 +62,8 @@ class PermissionMgr extends SGL_Manager
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';
 
-        $daUser    = &UserDAO::singleton();
-        $daDefault = &DefaultDAO::singleton();
+        $daUser    = UserDAO::singleton();
+        $daDefault = DefaultDAO::singleton();
         $this->da = new SGL_Delegator();
         $this->da->add($daUser);
         $this->da->add($daDefault);

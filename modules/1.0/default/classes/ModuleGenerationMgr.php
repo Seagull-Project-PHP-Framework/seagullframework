@@ -56,7 +56,7 @@ class ModuleGenerationMgr extends SGL_Manager
 
         $this->pageTitle    = 'Maintenance';
         $this->template     = 'moduleGenerator.html';
-        $this->da = &DefaultDAO::singleton();
+        $this->da = DefaultDAO::singleton();
         $this->_aActionsMapping =  array(
             'createModule' => array('createModule', 'redirectToDefault'),
             'list'         => array('list'),
@@ -176,7 +176,7 @@ class ModuleGenerationMgr extends SGL_Manager
         }
 
         // add table to <servername>.conf.php if it doesn't exist
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         if (!isset($this->conf['table'][$output->managerName])) {
             $c->set('table', array($output->managerName => $output->managerName));
             $ok = $c->save();
@@ -497,7 +497,7 @@ EOD;
     {
         //  initialise template engine
         require_once 'HTML/Template/Flexy.php';
-        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        $options = PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
             'templateDir'       => SGL_MOD_DIR . '/default/classes/',
             'compileDir'        => SGL_TMP_DIR,

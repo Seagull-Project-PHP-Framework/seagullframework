@@ -66,7 +66,7 @@ class UserDAO extends SGL_Manager
      * Returns a singleton UserDAO instance.
      *
      * example usage:
-     * $da = & UserDAO::singleton();
+     * $da =  UserDAO::singleton();
      * warning: in order to work correctly, the DA
      * singleton must be instantiated statically and
      * by reference
@@ -682,7 +682,7 @@ class UserDAO extends SGL_Manager
 
         //  set default theme from config
         $key = ($type == SGL_RET_NAME_VALUE) ? 'theme' : 3;
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $defaultTheme = $c->get(array('site' => 'defaultTheme'));
         $aRes[$key] = $defaultTheme;
 

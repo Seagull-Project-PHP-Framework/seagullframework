@@ -57,7 +57,7 @@ class PreferenceMgr extends SGL_Manager
 
         $this->template     = 'prefManager.html';
         $this->pageTitle    = 'Preference Manager';
-        $this->da           = & UserDAO::singleton();
+        $this->da           =  UserDAO::singleton();
 
         $this->_aActionsMapping =  array(
             'add'       => array('add'),

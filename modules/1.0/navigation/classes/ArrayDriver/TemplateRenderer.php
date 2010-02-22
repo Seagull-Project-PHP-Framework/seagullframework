@@ -56,7 +56,7 @@ class ArrayDriver_TemplateRenderer
         $output->masterTemplate = !empty($aParams['template'])
             ? $aParams['template']
             : 'arrayDriverTemplateRenderer.html';
-        $output->renderer       = &$this;
+        $output->renderer       = $this;
 
         SGL_Task_BuildOutputData::addOutputData($output);
         $this->_output  = $output;
@@ -77,7 +77,7 @@ class ArrayDriver_TemplateRenderer
     {
         $ret = '';
         if (!empty($aSections)) {
-            $output            = &$this->_output;
+            $output            = $this->_output;
             $output->aSections = $aSections;
             $ret               = $this->_view->render();
         }

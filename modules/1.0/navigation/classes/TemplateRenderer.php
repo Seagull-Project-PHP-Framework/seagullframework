@@ -54,17 +54,17 @@ class TemplateRenderer
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $this->driver           = &$navDriver;
+        $this->driver           = $navDriver;
         $this->output           = new SGL_Output();
         $this->view             = new SGL_HtmlSimpleView($this->output);
 
-        $output                 = &$this->output;
+        $output                 = $this->output;
         $output->theme          = (isset($navDriver->output->theme)) ? 
                                   $navDriver->output->theme :
                                   $_SESSION['aPrefs']['theme'];
 
         $output->moduleName     = 'navigation';
-        $output->renderer       = &$this;
+        $output->renderer       = $this;
         $output->masterTemplate = $navDriver->_template
             ? $navDriver->_template : 'templateRenderer.html';
     }
@@ -92,7 +92,7 @@ class TemplateRenderer
             && (empty($this->driver->_collapsed) || empty($parentSectionId)
                 || array_key_exists($parentSectionId, $this->driver->_aAllCurrentPages)))
         {
-            $output            = &$this->output;
+            $output            = $this->output;
             $output->level     = $currentRenderedLevel;
             $output->aSections = $aSectionNodes;
             $html              = $this->view->render();

@@ -11,17 +11,17 @@ class TestUserMgr extends UnitTestCase {
 
     function TestUserMgr()
     {
-        $this->da = & UserDAO::singleton();
+        $this->da =  UserDAO::singleton();
         $this->UnitTestCase('UserMgr Test');
         Mock::generatePartial('UserMgr', 'PartialUserMgr', array('_getUserPermsByRole'));
     }
 
     function setup()
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $this->dbh = $locator->get('DB');
         if (!$this->dbh) {
-            $this->dbh = & SGL_DB::singleton();
+            $this->dbh =  SGL_DB::singleton();
             $locator->register('DB', $this->dbh);
         }
         SGL_DB::setConnection();
@@ -139,7 +139,7 @@ class TestUserMgr extends UnitTestCase {
         $oOutput = new stdClass();
 
         // get initial count of usr records
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         $doUser = DB_DataObject::factory($conf['table']['user']);
         $initialCountUser = $doUser->count();
@@ -229,7 +229,7 @@ class TestUserMgr extends UnitTestCase {
         $oOutput = new stdClass();
 
         //  get initial count of usr records
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         $doUser = DB_DataObject::factory($conf['table']['user']);
         $initialCountUser = $doUser->count();
