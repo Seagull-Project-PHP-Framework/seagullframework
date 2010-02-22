@@ -1,0 +1,25 @@
+        <div id="header">
+            <div class="wrap-left">
+                <div class="wrap-right">
+
+                    <!-- Logo -->
+                    <h1>
+                        <a href="{webRoot}/{conf[site][frontScriptName]}"
+                           title="{translate(#Home#)}">
+                            <span>{conf[site][name]}</span></a>
+                    </h1>
+
+                    <!-- Bug reporter -->
+                    <a flexy:if="conf[debug][showBugReporterLink]"
+                       id="bugReporter" class="replace"
+                       href="{makeUrl(##,#bug#,#default#)}"
+                       title="{translate(#send bug report#)}">
+                        <span>{translate(#send bug report#)}</span></a>
+
+                    <div id="message" style="display: none;"><p><!-- place holder --></p></div>
+
+                </div>
+            </div>
+
+            <hr />
+        </div><!-- end header -->

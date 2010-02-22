@@ -1,0 +1,99 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<form id="bugReport" method="post" action="" flexy:ignore="">
+    <p>
+        Found a bug? Please fill out and submit the form below - help us make
+        Seagull better software.<br />
+         -- Thanks
+    </p>
+    <fieldset class="hide">
+        <input type="hidden" name="action" value="send" />
+    </fieldset>
+    <fieldset class="lastChild">
+        <legend>Fill in the form</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="bug_reporterFirstName">
+                    {translate(#First Name#)}
+                </label>
+                <div>
+                    <input id="bug_reporterFirstName" class="text" type="text"
+                           name="bug[reporter_first_name]"
+                           value="{bug.reporter_first_name}" />
+                </div>
+            </li>
+            <li>
+                <label for="bug_reporterLastName">
+                    {translate(#Last Name#)}
+                </label>
+                <div>
+                    <input id="bug_reporterLastName" class="text" type="text"
+                           name="bug[reporter_last_name]"
+                           value="{bug.reporter_last_name}" />
+                </div>
+            </li>
+            <li>
+                <label for="bug_reporterEmail">
+                    <em>*</em> {translate(#Email#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[reporter_email]">
+                        {translate(error[reporter_email])}
+                    </p>
+                    <input id="bug_reporterEmail" class="text" type="text"
+                           name="bug[reporter_email]"
+                           value="{bug.reporter_email}" />
+                </div>
+            </li>
+            <li>
+                <label for="bug_severity">
+                    <em>*</em> {translate(#Severity of bug#)}
+                </label>
+                <div>
+                    <select id="bug_severity" name="bug[severity]">
+                        {generateSelect(aSeverityTypes,bug.severity):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="bug_description">
+                    <em>*</em> {translate(#Description#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[description]">
+                        {translate(error[description])}
+                    </p>
+                    <input id="bug_description" class="text" type="text"
+                           name="bug[description]" value="{bug.description}" />
+                </div>
+            </li>
+            <li>
+                <label for="bug_comment">
+                    <em>*</em> {translate(#Comment#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[comment]">
+                    {translate(error[comment])}
+                    </p>
+                    <textarea id="bug_comment" name="bug[comment]" cols="60"
+                              rows="5">{bug.comment}</textarea>
+                </div>
+            </li>
+            <li>
+                <label for="bug_environment">{translate(#Your environment#)}</label>
+                <div>
+                    <textarea id="bug_environment" name="bug[environment]"
+                              cols="60" rows="11" readonly="readonly">
+                        {environment}
+                    </textarea>
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    <p class="fieldIndent">
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#Send#)}" />
+        [bugs sent to bugs@phpkitchen.com]
+    </p>
+</form>

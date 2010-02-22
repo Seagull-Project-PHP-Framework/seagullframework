@@ -1,0 +1,29 @@
+    {foreach:aParams,valueObj}
+        {if:isEqual(valueObj.type,#wysiwyg#)}
+            <dl class="on-top">
+                <dt><label for="{valueObj.name}">{translate(valueObj.label)}</label></dt>
+                <dd>
+                    <textarea flexy:ignore name="{valueObj.name}" id="frmBodyName" class="wysiwyg">{valueObj.value:h}</textarea>
+                </dd>
+            </dl>
+        {else:}
+            <p>
+            {if:valueObj.description}
+                <label for="{valueObj.name}" class="tipOwner">{translate(valueObj.label)}
+                    <span class="tipText">{translate(valueObj.description)}</span>
+                </label>
+            {else:}
+                <label for="{valueObj.name}">{translate(valueObj.label)}</label>
+            {end:}
+            {if:isEqual(valueObj.type,#text#)}
+                <input type="text" name="{valueObj.name}" id="{valueObj.name}" value="{valueObj.value}" />
+            {end:}
+            {if:isEqual(valueObj.type,#textarea#)}
+                <textarea flexy:ignore name="{valueObj.name}" id="{valueObj.name}">{valueObj.value}</textarea>
+            {end:}
+            {if:isEqual(valueObj.type,#yesno#)}
+                {generateRadioPair(valueObj.name,valueObj.value):h}
+            {end:}
+            </p>
+        {end:}
+    {end:}

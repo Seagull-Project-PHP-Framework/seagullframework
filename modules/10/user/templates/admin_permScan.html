@@ -1,0 +1,38 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a flexy:if="isNewForm" class="action save" href="javascript:formSubmit('frmPermScan');">
+        {translate(#Save#)}
+    </a>
+    <a flexy:if="!isNewForm" class="action save" href="javascript:formSubmit('frmPermScan');">
+        {translate(#Delete#)}
+    </a>
+    <a class="action cancel" href="{makeUrl(##,#permission#,#user#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmPermScan" id="frmPermScan" flexy:ignore>
+        <h3 flexy:if="isNewForm">{translate(#Detected Perms#)}</h3>
+        <h3 flexy:if="!isNewForm">{translate(#Detected Orphaned Perms#)}</h3>
+        <fieldset class="inside">
+            {if:isNewForm}<input type="hidden" name="action" value="insertNew"/>
+            {else:}<input type="hidden" name="action" value="deleteOrphaned"/>
+            {end:}
+            <p>
+                <label for="scannedPerms[]">
+                    {if:isNewForm}
+                    <span class="detail">{translate(#detected perms description#)}</span>
+                    {else:}
+                    <span class="detail">{translate(#orphaned perms description#)}</span>
+                    {end:}
+                </label>
+                <select class="longText" name="scannedPerms[]" id="scannedPerms" size="15" multiple="multiple">
+                    {scannedOptions:h}
+                </select>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
