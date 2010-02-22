@@ -525,7 +525,7 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
             if (!empty($conf['debug']['production'])) {
                 ini_set('display_errors', false);
             }
-            if (!empty($conf['log']['enabled'])) {
+            if (!empty($conf['log']['enabled']) && $conf['log']['enabled']) {
                 ini_set('log_errors', true);
             }
         }
