@@ -1,0 +1,61 @@
+{$result->sectionArrayJS:h not sure about this ...}
+    <form name="frmSectionMgr" method="post" id="frmSectionMgr">
+        <input type="hidden" name="action" value="delete" />
+
+        <h1 class="$result->pageTitle">{$result->translate($result->pageTitle)} :: {$result->translate('Browse')}</h1>
+        <span flexy:if="msgGet()">{$result->msgGet()}</span>
+        {if $result->pager}{include file="default/pager.html"}{/if}
+        
+        <table class="wide">
+            <tr>
+                <td colspan="8">
+                    <input type="button" value="{$result->translate('new section')}" 
+                        onclick="javascript:document.location.href='{$result->makeUrl('add','page','navigation')}'" />
+                    <input type="button" value="{$result->translate('Modify nav bar appearance')}" 
+                        onclick="javascript:document.location.href='{$result->makeUrl('list','navstyle','navigation')}'" />
+                </td>
+            </tr>
+
+            <tr>
+                <th>{$result->translate('Select')}</th>
+                <th>{$result->translate('Title')}</th>
+                <th>{$result->translate('Move/Edit')}</th>
+                <th>{$result->translate('ID')}</th>
+                <th>{$result->translate('Resource URI')}</th>
+                <th>{$result->translate('Parent ID')}</th>
+                <th>{$result->translate('Order')}</th>
+                <th>{$result->translate('Status')}</th>
+            </tr>
+
+            {foreach from=$result->results key=key item=section}
+            <tr class="{$result->switchRowClass()}">
+                <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[{$result->section[section_id]}]" value="{$result->section[section_id]}" /></td>
+                <td><nobr>{foreach from=$section.images.treePad item=image}<img src="{$result->webRoot}/themes/{$result->theme}/{$image}" alt="{$section.title}" />{/foreach} <strong>{$section.title}</strong></nobr></td>
+                <td align="center">&nbsp;
+                    {if $section.images.moveDownTarget}
+                        <a href="{$result->makeUrl('reorder','page','navigation',results,'frmSectionId|section_id||targetId|images[moveDownTarget]||move|down',{$key})}">
+                            <img src="{$result->webRoot}/themes/{$result->theme}/{$section.images.moveDownImg}" alt="Move {$section.title} down" width="10" height="9" /></a> 
+                    {else} <img src="{$result->webRoot}/themes/{$result->theme}/{$result->section.images.moveDownImg}" alt="Move {$result->section.title} down" width="10" height="9" /> 
+                    {/if} 
+                    
+                    {if $section.images.moveUpTarget} 
+                        <a href="{$result->makeUrl('reorder','page','navigation',results,'frmSectionId|section_id||targetId|images[moveUpTarget]||move|up',{$key})}">                        
+                            <img src="{$result->webRoot}/themes/{$result->theme}/{$section.images.moveUpImg}" alt="Move {$section.title} up" width="10" height="9" /></a> 
+                    {else} <img src="{$result->webRoot}/themes/{$result->theme}/{$section.images.moveUpImg}" alt="Move {$section.title} up" width="10" height="9" /> 
+                    {/if}&nbsp;&nbsp; 
+                    
+                    <a href="{$result->makeUrl('edit','page','navigation',results,'frmSectionId|section_id',{$key})}">{$result->translate('Edit')}</a>
+                </td>
+                <td align="center">{$section.section_id}</td>
+                <td>{$result->summarise($section.resource_uri)}</td>
+                <td align="center">{$section.parent_id}</td>
+                <td align="center">{$section.order_id}</td>
+                <td align="center">{if $section.is_enabled} {$result->translate('Enabled')} {else} {$result->translate('Disabled')} {/if}</td>
+            </tr>
+            {/foreach}
+
+            <tr>
+                <td colspan="8">{$result->translate('With selected section(s)')} : <input type="submit" name="Delete" value="{$result->translate('delete')}" onclick="return confirmDelete('section', 'frmSectionMgr')" /></td>
+            </tr>
+        </table>
+    </form>
