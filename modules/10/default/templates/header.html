@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{currLang}"
+      lang="{currLang}" dir="{langDir}">
+<head>
+    <title>{conf[site][name]} :: {currentSectionName}</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
+    <meta name="rating" content="General" />
+    <meta name="generator" content="Seagull PHP Framework" />
+    <meta flexy:if="!conf[debug][production]" name="robots" content="noindex,nofollow" />
+    <meta flexy:if="conf[debug][production]" name="robots" content="index,follow" />
+    <meta flexy:if="!conf[debug][production]" name="googlebot" content="noindex,nofollow" />
+    <meta flexy:if="conf[debug][production]" name="googlebot" content="index,follow" />
+    <meta name="copyright" content="Copyright (c) 2008 {conf[site][name]}" />
+
+    <link rel="shortcut icon" type="images/x-icon" href="{webRoot}/themes/{theme}/images/favicon.ico" />
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation" />
+
+    {scriptOpen:h}
+        var SGL_JS_WEBROOT          = "{webRoot}";
+        var SGL_JS_WINHEIGHT        = {conf[popup][winHeight]};
+        var SGL_JS_WINWIDTH         = {conf[popup][winWidth]};
+        var SGL_JS_SESSID           = "{sessID}";
+        var SGL_JS_CURRURL          = "{currUrl}";
+        var SGL_JS_THEME            = "{theme}";
+        var SGL_JS_ADMINGUI         = "0";
+        var SGL_JS_DATETEMPLATE     = "{getDateFormat()}";
+        var SGL_JS_URL_STRATEGY     = "{conf[site][outputUrlHandler]}";
+        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
+        {getExportedJsVars():h}
+    {scriptClose:h}
+
+    {makeCssOptimizerLink():h}
+    {makeJsOptimizerLink():h}
+
+    {scriptOpen:h}
+
+    {if:onReadyDom}
+        if (typeof SGL2 != 'undefined') {
+            $(document).ready(function() {
+                {foreach:onReadyDom,eventHandler}
+                {eventHandler};
+                {end:}
+            });
+        } else if (typeof SGL != 'undefined') {
+            {foreach:onReadyDom,eventHandler}
+            SGL.ready("{eventHandler}");
+            {end:}
+        }
+    {end:}
+
+    {if:onLoad}
+    window.onload = function() {
+        {foreach:onLoad,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {if:onUnload}
+    window.onunload = function() {
+        {foreach:onUnload,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {scriptClose:h}
+</head>
+
+<body id="page-home">
+
+    <div id="wrapper-outer">

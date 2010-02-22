@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}" dir="{langDir}">
+<head>
+    <title>{conf[site][name]} :: {translate(pageTitle):h}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
+    <meta name="robots" content="ALL" />
+    <meta name="copyright" content="Copyright (c) 2008 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="rating" content="General" />
+    <meta name="generator" content="Seagull Framework v{versionAPI}" />
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
+
+    {makeCssOptimizerLink(##,#core.php,block.php,blockStyle.php,tools.css#,#vars.php#):h}
+
+    {if:conf[debug][production]}
+    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/themes/default_admin/css/warning.css" />
+    {end:}
+
+    {scriptOpen:h}
+        // bc
+        var SGL_JS_WEBROOT          = "{webRoot}";
+        var SGL_JS_SESSID           = "{sessID}";
+        var SGL_JS_CURRURL          = "{currUrl}";
+        var SGL_JS_THEME            = "{theme}";
+        var SGL_JS_ADMINGUI         = "1";
+        var SGL_JS_URL_STRATEGY     = "{conf[site][outputUrlHandler]}";
+        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
+        var SGL_JS_DATETEMPLATE     = "{getDateFormat()}";
+
+        {getExportedJsVars():h}
+    {scriptClose:h}
+
+    <script type="text/javascript" src="{webRoot}/themes/{theme}/js/mainAdmin.js"></script>
+    <script type="text/javascript" src="{webRoot}/themes/{theme}/js/mainPublic.js"></script>
+    <script type="text/javascript" src="{webRoot}/themes/{theme}/js/hack-IE-hover.js"></script>
+
+    {makeJsOptimizerLink():h}
+
+    {scriptOpen:h}
+
+    // onload event
+    {if:onReadyDom}
+        if (typeof SGL2 != 'undefined') {
+            $(document).ready(function() {
+                {foreach:onReadyDom,eventHandler}
+                {eventHandler};
+                {end:}
+            });
+        } else if (typeof SGL != 'undefined') {
+            {foreach:onReadyDom,eventHandler}
+            SGL.ready("{eventHandler}");
+            {end:}
+        }
+    {end:}
+
+    {if:onLoad}
+    window.onload = function() {
+        {foreach:onLoad,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {if:onUnload}
+    window.onunload = function() {
+        {foreach:onUnload,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {scriptClose:h}
+
+    {if:wysiwyg}
+    {if:wysiwyg_fck}
+    <script type="text/javascript" src="{webRoot}/wysiwyg/fckeditor/fckeditor.js"></script>
+    <script type="text/javascript">
+        var oFCKEditors = new Array;
+
+        /* initalises an instance of FCK and returns the object. */
+        function fck_add(id)
+        {
+            i = oFCKEditors.length;
+            oFCKEditors[i] = new FCKeditor(id, '100%', 300);
+            oFCKEditors[i].ToolbarSet = 'Basic' ;
+            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/wysiwyg/fckeditor/";
+            oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
+            oFCKEditors[i].ReplaceTextarea();
+        }
+        function fck_init()
+        {
+            if( document.getElementsByTagName ) {
+                areas = document.getElementsByTagName('textarea');
+
+                for( var i=0; i<areas.length; i++ ){
+                    if( areas[i].className.match("wysiwyg") ) {
+                        fck_add(areas[i].id);
+                    }
+                    else if( areas[i].id.match('frmBodyName') ) {
+                        /* fallback for old templates */
+                        fck_add('frmBodyName');
+                    }
+               }
+            }
+        }
+    </script>
+    {end:}
+    {end:}
+</head>
+<body>

@@ -1,0 +1,26 @@
+<!--  Main wrapper holding the page -->
+<div id="outer-wrapper">
+    <!-- Logo and header -->
+    <div id="header">
+        <div id="left">
+            <h1><a href="{webRoot}/{conf[site][frontScriptName]}" title="Back to the frontend home page"><span>{conf[site][name]}</span></a></h1>
+        </div>
+        <div id="right">
+            <span class="info">
+                {translate(#currently_logged_on_as#)} : <a href="{makeUrl(#view#,#profile#,#user#,##,#frmUserID|loggedOnUserID#)}" title="{translate(#user profile#)}">{loggedOnUser}</a>
+            </span>
+            <span class="info">
+                {translate(#session started at#)} : {loggedOnSince}
+            </span>
+            <span class="info">
+                <a href="{makeUrl(#logout#,#login#,#user#)}" title="{translate(#logout#)}">{translate(#logout#)}</a>
+            </span>
+            <span class="info" flexy:if="conf[debug][showBugReporterLink]">
+                <a id="bug-report" href="{makeUrl(##,#bug#,#default#)}" title="{translate(#send bug report#)}"><img src="{webRoot}/themes/{theme}/images/bug.gif" alt="{translate(#send bug report#)}" /></a>
+            </span>
+        </div>
+    </div> <!-- end of #header -->
+
+    <!-- Wrapper for rest of page -->
+    <div id="inner-wrapper">
+        <div id="container">
