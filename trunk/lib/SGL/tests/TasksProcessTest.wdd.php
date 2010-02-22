@@ -30,7 +30,7 @@ class TasksProcessTest extends UnitTestCase {
         $req   = &SGL_Request::singleton();
         $req->set('moduleName', 'doesnotexist');
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $output = new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
@@ -50,7 +50,7 @@ class TasksProcessTest extends UnitTestCase {
         $req->set('moduleName', 'default');
         $req->set('managerName', 'doesnotexist');
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $output = new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
@@ -77,7 +77,7 @@ class TasksProcessTest extends UnitTestCase {
         $ret = $dbh->query($query);
         $req->set('moduleName', 'bar');
         $input->setRequest($req);
-        $output = &new SGL_Output();
+        $output = new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
