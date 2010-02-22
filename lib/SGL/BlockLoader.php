@@ -212,7 +212,7 @@ class SGL_BlockLoader
                     if (is_scalar($aParams = @unserialize($oBlock->params))) {
                         $aParams = array();
                     }
-                    @$obj = & new $blockClass();
+                    @$obj = new $blockClass();
                     if ($data = $obj->init($this->output, $oBlock->block_id, $aParams)) {
                         $this->_aData[$index]->content = $data;
                     } else {

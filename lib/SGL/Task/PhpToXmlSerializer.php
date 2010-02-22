@@ -27,7 +27,7 @@ class SGL_Task_PhpToXmlSerializer extends SGL_DecorateProcess
             "addDecl" => true,
         );
 
-        $serializer = &new XML_Serializer($options);
+        $serializer = new XML_Serializer($options);
         $result = $serializer->serialize($input->result);
         if ($result === true ) {
             $xml = $serializer->getSerializedData();

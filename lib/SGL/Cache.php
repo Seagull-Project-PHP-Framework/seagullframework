@@ -125,7 +125,7 @@ class SGL_Cache
                 default:
                     $className = 'SGL_Cache_Lite';
             }
-            $aInstances[$key] = & new $className($aOptions);
+            $aInstances[$key] = new $className($aOptions);
         }
         return $aInstances[$key];
     }

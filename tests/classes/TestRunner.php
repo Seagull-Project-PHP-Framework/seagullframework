@@ -87,7 +87,7 @@ class STR_TestRunner
         // Add the test files to a SimpleTest group
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] .' Tests';
-        $test = &new GroupTest($testName);
+        $test = new GroupTest($testName);
         foreach ($tests as $layerCode => $folders) {
             foreach ($folders as $folder => $files) {
                 foreach ($files as $index => $file) {
@@ -126,7 +126,7 @@ class STR_TestRunner
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] . ': Tests in ' . $folder;
 
-        $test = &new GroupTest($testName);
+        $test = new GroupTest($testName);
         foreach ($tests as $folder => $data) {
             foreach ($data as $index => $file) {
                 $test->addTestFile(STR_PATH . '/' . $folder . '/' .
@@ -159,7 +159,7 @@ class STR_TestRunner
         // Add the test file to a SimpleTest group
         $testName = strtoupper($type) . ': ' .
             $GLOBALS['_STR'][$type . '_layers'][$layer][0] . ': ' . $folder . '/' . $file;
-        $test = &new GroupTest($testName);
+        $test = new GroupTest($testName);
         $test->addTestFile(STR_PATH . '/' . $folder . '/' .
                            constant($type . '_TEST_STORE') . '/' . $file);
 

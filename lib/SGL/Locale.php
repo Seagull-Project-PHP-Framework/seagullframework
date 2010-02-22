@@ -85,13 +85,13 @@ class SGL_Locale
                     $country = strtoupper($country);
 
                     if (!$country) {
-                        $neg = &new I18Nv2_Negotiator();
+                        $neg = new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
                     $localeId = empty($country) ? $langCode : $langCode . "_" . $country;
 
                 } else {
-                    $neg = &new I18Nv2_Negotiator();
+                    $neg = new I18Nv2_Negotiator();
                     $localeId = $neg->getLocaleMatch();
                 }
                 $locale = &I18Nv2::createLocale($localeId);

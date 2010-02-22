@@ -917,7 +917,7 @@ class SGL_Output
             $this->template = 'null.html';
         }
         $this->masterTemplate = $this->template;
-        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
+        $view = new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
 
         //  suppress error notices in templates
