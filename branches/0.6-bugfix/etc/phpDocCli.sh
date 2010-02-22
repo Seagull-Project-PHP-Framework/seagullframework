@@ -42,14 +42,14 @@ PACKAGES="SGL"
 #  *
 #  * @var               string PATH_PROJECT
 #  */
-PATH_PROJECT=/var/www/html/seagull/branches/0.6-bugfix/lib/SGL
+PATH_PROJECT=/Users/demian/Sites/seagull/branches/0.6-bugfix/lib/SGL
 
 #/**
 #  * name of a file(s) to parse file1,file2
 #  *
 #  * @var               string FILES
 #  */
-FILES=/var/www/html/seagull/branches/0.6-bugfix/lib/SGL.php
+FILES=/Users/demian/Sites/seagull/branches/0.6-bugfix/lib/SGL.php
 
 #/**
 #  * path of PHPDoc executable
