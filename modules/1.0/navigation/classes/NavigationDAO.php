@@ -327,7 +327,7 @@ class NavigationDAO extends SGL_Manager
             FROM {$this->conf['table']['uri_alias']}
             WHERE section_id = $id";
         $result = $this->dbh->limitQuery($query,0,1);
-        $row =& $result->fetchRow();
+        $row = $result->fetchRow();
         $result = (is_object($row)) ? $row->uri_alias : false;
         return $result;
     }
