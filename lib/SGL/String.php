@@ -64,7 +64,7 @@ class SGL_String
     function censor($text)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $editedText = $text;
@@ -220,7 +220,7 @@ class SGL_String
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (       !$conf['site']['tidyhtml']
@@ -261,10 +261,10 @@ class SGL_String
         if (!is_null($langCode)) {
             return SGL_String::translate2($key, $filter, $aParams, $langCode);
         }
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $trans = &$GLOBALS['_SGL']['TRANSLATION'];
+        $trans = $GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
             if (!is_array($trans[$key])
                     && strstr($trans[$key], '||')
@@ -306,7 +306,7 @@ class SGL_String
                     && $conf['translation']['container'] == 'db') {
 
                 //  get a reference to the request object
-                $req = & SGL_Request::singleton();
+                $req =  SGL_Request::singleton();
                 $moduleName = $req->get('moduleName');
 
                 //  fetch fallback lang

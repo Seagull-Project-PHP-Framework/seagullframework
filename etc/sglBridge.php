@@ -16,7 +16,7 @@ class TestRunnerInit extends SGL_FrontController
             SGL_FrontController::init();
         }
         //  assign request to registry
-        $input = &SGL_Registry::singleton();
+        $input = SGL_Registry::singleton();
         $req = SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
@@ -50,7 +50,7 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
             $excludeDbName = true;
         }
         $dsn = SGL_DB::_getDsnAsString($conf,$excludeDbName);
-        $dbh = &SGL_DB::singleton($dsn);
+        $dbh = SGL_DB::singleton($dsn);
         if (PEAR::isError($dbh)) {
             die($dbh->getMessage());
         }
@@ -67,7 +67,7 @@ class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 {
     function process($input, $output)
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         //  in case
         $locator->remove('DB');
         $dbh =& STR_DB::singleton();

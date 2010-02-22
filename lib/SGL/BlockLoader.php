@@ -111,7 +111,7 @@ class SGL_BlockLoader
     {
         //  put data generated so far into class scope
         $this->output = $output;
-        $cache = & SGL_Cache::singleton();
+        $cache =  SGL_Cache::singleton();
         $currLang = (isset($output->currLang))
             ? $output->currLang
             : '';
@@ -143,7 +143,7 @@ class SGL_BlockLoader
      */
     function _loadBlocks($getAll = true)
     {
-        $dbh = & SGL_DB::singleton();
+        $dbh =  SGL_DB::singleton();
         $addWhere = $getAll ? '' : "AND b.is_cached = 0 ";
 
         $b  = SGL_Config::get('table.block');

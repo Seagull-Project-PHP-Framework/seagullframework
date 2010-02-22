@@ -65,7 +65,7 @@ class SGL_Savant2 extends Savant2
      * Returns a singleton Savant2 instance.
      *
      * example usage:
-     * $savant2 = & SGL_Savant2::singleton($theme, $moduleName);
+     * $savant2 =  SGL_Savant2::singleton($theme, $moduleName);
      * warning: in order to work correctly, the cache
      * singleton must be instantiated statically and
      * by reference
@@ -104,7 +104,7 @@ class SGL_HtmlRenderer_Savant2Strategy extends SGL_OutputRendererStrategy
         $moduleName = isset($view->data->moduleName)
             ? $view->data->moduleName
             : 'default';
-        $savant2 = &SGL_Savant2::singleton($view->data->theme, $moduleName);
+        $savant2 = SGL_Savant2::singleton($view->data->theme, $moduleName);
 
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);

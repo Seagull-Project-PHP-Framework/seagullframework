@@ -54,7 +54,7 @@ class SGL_DB
      * Returns a singleton reference to the DB resource.
      *
      * example usage:
-     * $dbh = & SGL_DB::singleton();
+     * $dbh =  SGL_DB::singleton();
      * warning: in order to work correctly, DB handle
      * singleton must be instantiated statically and
      * by reference
@@ -71,7 +71,7 @@ class SGL_DB
         if (empty($dsn['phptype'])) {
             return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
         }
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         static $aInstances;
@@ -114,13 +114,13 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         if (!count($conf)) {
             return false;
         }
 
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if ($dbh && count($dbh->dsn)) {
             $locatorDsn = $dbh->dsn;
@@ -209,17 +209,17 @@ class SGL_DB
      */
     function setConnection($dsn = null)
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $singleton = $locator->get('DB');
         if (!$singleton) {
-            $singleton = & SGL_DB::singleton();
+            $singleton =  SGL_DB::singleton();
             $locator->register('DB', $singleton);
         }
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
 
         unset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]);
-        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = &$singleton;
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = $singleton;
     }
 
     /**
@@ -364,7 +364,7 @@ class SGL_ServiceLocator
      */
     function register($serviceName, &$oService)
     {
-        $this->aServices[$serviceName] = &$oService;
+        $this->aServices[$serviceName] = $oService;
         return true;
     }
 
@@ -405,7 +405,7 @@ class SGL_ServiceLocator
      */
     function &staticGet($serviceName)
     {
-        $oServiceLocator = &SGL_ServiceLocator::singleton();
+        $oServiceLocator = SGL_ServiceLocator::singleton();
         return $oServiceLocator->get($serviceName);
     }
 }

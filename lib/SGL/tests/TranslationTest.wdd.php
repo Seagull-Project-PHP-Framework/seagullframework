@@ -15,14 +15,14 @@ class TranslationTest extends UnitTestCase
         $this->UnitTestCase('Translation Test');
 
         // enforce t2 usage
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('translation', array('container' => 'db'));
 
         // common data for all case
-        $this->trans = &SGL_Translation::singleton('admin');
+        $this->trans = SGL_Translation::singleton('admin');
 
         // use connection to simpletest base
-        $this->trans->storage->db = &SGL_DB::singleton();
+        $this->trans->storage->db = SGL_DB::singleton();
         if (in_array($this->trans->storage->db->phptype, array('mysqli', 'mysqli_SGL'))) {
             $this->trans->storage->db->phptype = 'mysql';
         }
@@ -42,7 +42,7 @@ class TranslationTest extends UnitTestCase
             $ok = $this->trans->removeLang($langId, true);
         }
         // restore config
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         foreach ($this->oldConf as $section => $aParam) {
             foreach ($aParam as $key => $value) {
                 $c->set($section, array($key => $value));
@@ -52,11 +52,11 @@ class TranslationTest extends UnitTestCase
 
     function setUp()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         // clear current tables
-        $tables = &$this->trans->storage->options['strings_tables'];
+        $tables = $this->trans->storage->options['strings_tables'];
         $tables = array();
 
         $aLangs = SGL_Util::getLangsDescriptionMap();
@@ -84,8 +84,8 @@ class TranslationTest extends UnitTestCase
             array('installedLanguages' => implode(',', $aConfigLangs)));
 
         // make sure user singleton has same options and connection
-        $foo = &SGL_Translation::singleton();
-        $foo->storage->db = &$this->trans->storage->db;
+        $foo = SGL_Translation::singleton();
+        $foo->storage->db = $this->trans->storage->db;
         $foo->storage->options = $this->trans->storage->options;
     }
 

@@ -75,7 +75,7 @@ class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 {
     function SGL_UrlParser_AliasStrategy()
     {
-        $this->da = & NavigationDAO::singleton();
+        $this->da =  NavigationDAO::singleton();
     }
     /**
      * Analyzes querystring content and parses it into module/manager/action and params.

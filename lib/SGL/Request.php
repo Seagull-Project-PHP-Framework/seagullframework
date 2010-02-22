@@ -139,7 +139,7 @@ class SGL_Request
      * Returns a singleton Request instance.
      *
      * example usage:
-     * $req = & SGL_Request::singleton();
+     * $req =  SGL_Request::singleton();
      * warning: in order to work correctly, the request
      * singleton must be instantiated statically and
      * by reference
@@ -299,7 +299,7 @@ class SGL_Request
 
     function debug()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('site', array('blocksEnabled' => 0));
         print '<pre>';
         print_r($this->aProps);

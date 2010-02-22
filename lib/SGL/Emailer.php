@@ -82,7 +82,7 @@ class SGL_Emailer
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf = $c->getAll();
 
         $siteName = $this->conf['site']['name'];
@@ -106,7 +106,7 @@ class SGL_Emailer
         if (!is_readable($includePath)) {
 
             // try fallback with default template dir
-            $req = &SGL_Request::singleton();
+            $req = SGL_Request::singleton();
             $moduleName = $req->get('moduleName');
             $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $template;
         }
@@ -196,7 +196,7 @@ class SGL_Emailer
                       $this->options['groupID'] );
         // else send email straight away
         } else {
-            $mail = &SGL_Emailer::factory();
+            $mail = SGL_Emailer::factory();
             $ok = $mail->send($this->options['toEmail'], $headers, $body);
         }
         return $ok;

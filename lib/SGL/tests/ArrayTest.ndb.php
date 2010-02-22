@@ -77,7 +77,7 @@ class ArrayTest extends UnitTestCase {
         $confNew['db']['postConnect'] = 'i';
         $confNew['db']['prefix'] = 'j';
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->replace($confOld);
 
         $c->merge($confNew);

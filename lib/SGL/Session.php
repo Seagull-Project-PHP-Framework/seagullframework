@@ -105,7 +105,7 @@ class SGL_Session
     function SGL_Session($uid = -1, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  customise session
@@ -135,7 +135,7 @@ class SGL_Session
 
         //  start PHP session handler
 //        if (!(defined('SID'))) {
-//            $req = & SGL_Request::singleton();
+//            $req =  SGL_Request::singleton();
 //            define('SID', $conf['cookie']['name'] . '=' . $req->get('SGLSESSID'));
 //        }
         @session_start();
@@ -159,7 +159,7 @@ class SGL_Session
     function setRememberMeCookie()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         $cookie = serialize(array($_SESSION['username'], $_SESSION['cookie']));
         $ok = setcookie(
@@ -185,7 +185,7 @@ class SGL_Session
 
         //  get UserDAO object
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da = & UserDAO::singleton();
+        $da =  UserDAO::singleton();
 
         //  set secure session key
         $startTime = mktime();
@@ -265,7 +265,7 @@ class SGL_Session
 
         //  make session more secure if possible
         if  (function_exists('session_regenerate_id')) {
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $conf = $c->getAll();
             $oldSessionId = session_id();
             @session_regenerate_id();
@@ -630,7 +630,7 @@ class SGL_Session
      */
     function getId()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         return defined('SID') && SID !=''
@@ -650,7 +650,7 @@ class SGL_Session
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         foreach ($_SESSION as $sessVarName => $sessVarValue) {
@@ -680,8 +680,8 @@ class SGL_Session
      */
     function getUserSessionCount($uid, $sessId = -1)
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         if ($sessId == -1) {
@@ -708,8 +708,8 @@ class SGL_Session
     function destroyUserSessions($uid, $sessId = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         if ($sessId == -1) {
@@ -729,8 +729,8 @@ class SGL_Session
      */
     function getGuestSessionCount()
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username = 'guest'";
@@ -745,8 +745,8 @@ class SGL_Session
      */
     function getMemberSessionCount()
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $query = "SELECT count(*) FROM {$conf['table']['user_session']} WHERE username != 'guest'";
@@ -761,8 +761,8 @@ class SGL_Session
      */
     function getSessionCount()
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $query = "SELECT count(*) FROM {$conf['table']['user_session']}";
@@ -801,8 +801,8 @@ class SGL_Session
      */
     function dbRead($sessId)
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $user_session = $conf['table']['user_session'];
@@ -850,8 +850,8 @@ class SGL_Session
             return true;
         }
 
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $timeStamp = SGL_Date::getTime(true);
@@ -889,8 +889,8 @@ class SGL_Session
      */
     function dbDestroy($sessId)
     {
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $query = "DELETE FROM {$conf['table']['user_session']} WHERE session_id = '$sessId'";
@@ -906,8 +906,8 @@ class SGL_Session
     function dbGc($max_expiry)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $dbh = & SGL_DB::singleton();
-        $c = &SGL_Config::singleton();
+        $dbh =  SGL_DB::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         $timeStamp = SGL_Date::getTime(true);

@@ -20,11 +20,11 @@ class UrlStrategyAliasTest extends UnitTestCase
 
     function setup()
     {
-        $c = &SGL_Config::singleton();
-        $this->da = & NavigationDAO::singleton($forceNew = true);
+        $c = SGL_Config::singleton();
+        $this->da =  NavigationDAO::singleton($forceNew = true);
         $this->conf = $c->getAll();
         $this->obj = new stdClass();
-        $this->dbh = & SGL_DB::singleton();
+        $this->dbh =  SGL_DB::singleton();
         $this->exampleUrl = 'http://example.com/';
     }
 

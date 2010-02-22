@@ -290,7 +290,7 @@ class SGL_Inflector
         if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;
         }
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);

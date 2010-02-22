@@ -122,7 +122,7 @@ if (isset($_GET['start'])) {
     $_SESSION = array();
 
     //  clear session cookie
-    $c = &SGL_Config::singleton();
+    $c = SGL_Config::singleton();
     $conf = $c->getAll();
     setcookie(  $conf['cookie']['name'], null, 0, $conf['cookie']['path'],
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
@@ -189,7 +189,7 @@ class ActionProcess extends HTML_QuickForm_Action
         $data = $page->controller->exportValues();
 
         //  is this a rebuild?
-        $dbh = & SGL_DB::singleton();
+        $dbh =  SGL_DB::singleton();
         $res = false;
         if (!PEAR::isError($dbh)) {
             require_once SGL_CORE_DIR . '/Sql.php';

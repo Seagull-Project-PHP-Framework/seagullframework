@@ -18,7 +18,7 @@ class UrlStrategySefTest extends UnitTestCase
     function setup()
     {
         $this->strategy = new SGL_UrlParser_SefStrategy();
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->obj = new stdClass();
         $this->exampleUrl = 'http://example.com/';

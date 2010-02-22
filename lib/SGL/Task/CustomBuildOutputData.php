@@ -15,7 +15,7 @@ class SGL_Task_CustomBuildOutputData extends SGL_DecorateProcess
         $output->theme      = SGL_Config::get('site.defaultTheme');
         $output->webRoot    = SGL_BASE_URL;
         $output->imagesDir  = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $output->conf       = $c->getAll();
     }
 }

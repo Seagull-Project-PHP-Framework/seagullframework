@@ -350,7 +350,7 @@ class SGL_Image
             $fileName = $pathOverride
                 ? $pathOverride . '/' . $this->fileName
                 : $this->getPath() . '/' . $this->fileName;
-            $params = &$this->_aParams;
+            $params = $this->_aParams;
         } else {
             $thumbDir = !empty($this->_aParams['thumbDir'])
                 ? '/' . $this->_aParams['thumbDir']
@@ -358,7 +358,7 @@ class SGL_Image
             $fileName = $pathOverride
                 ? "{$pathOverride}$thumbDir/{$section}_{$this->fileName}"
                 : $this->getPath() . "$thumbDir/{$section}_{$this->fileName}";
-            $params = &$this->_aThumbnails[$section];
+            $params = $this->_aThumbnails[$section];
         }
         foreach ($this->_aStrats[$section] as $stratName => $stratObj) {
             $configString = $params[$stratName];
@@ -615,11 +615,11 @@ class SGL_Image
                 $driverSignature = md5($aParams['driver']);
                 if (!isset($aDrivers[$driverSignature])) {
                     require_once 'Image/Transform.php';
-                    $oDriver = &Image_Transform::factory($aParams['driver']);
+                    $oDriver = Image_Transform::factory($aParams['driver']);
                     if (PEAR::isError($oDriver)) {
                         return $oDriver;
                     }
-                    $aDrivers[$driverSignature] = &$oDriver;
+                    $aDrivers[$driverSignature] = $oDriver;
                 }
             }
 
@@ -632,7 +632,7 @@ class SGL_Image
 
                 // while testing a mock obejct can be passed
                 if (is_object($aParams[$strategyName])) {
-                    $this->_aStrats[$container][$strategyName] = &$aParams[$strategyName];
+                    $this->_aStrats[$container][$strategyName] = $aParams[$strategyName];
                     continue;
                 }
 
@@ -730,7 +730,7 @@ class SGL_ImageConfig
             return;
         }
         reset($aParams);
-        $aAddParams = &SGL_ImageConfig::getProperty('_aAdditionalParams');
+        $aAddParams = SGL_ImageConfig::getProperty('_aAdditionalParams');
         foreach ($aAddParams as $param) {
             if (isset($aParams[$param]) && is_scalar($aParams[$param])) {
                 unset($aParams[$param]);
@@ -751,7 +751,7 @@ class SGL_ImageConfig
      */
     function paramsCheck($aParams, $sectionName = '')
     {
-        $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
+        $aMainParams = SGL_ImageConfig::getProperty('_aMainParams');
         //hack, remove uploadDir to keep BC.
         // need to find a better way
         if (!isset($aParams['uploadDir'])) {
@@ -780,8 +780,8 @@ class SGL_ImageConfig
      */
     function getAvailableParams()
     {
-        $aAddParams  = &SGL_ImageConfig::getProperty('_aAdditionalParams');
-        $aMainParams = &SGL_ImageConfig::getProperty('_aMainParams');
+        $aAddParams  = SGL_ImageConfig::getProperty('_aAdditionalParams');
+        $aMainParams = SGL_ImageConfig::getProperty('_aMainParams');
         return array_merge($aAddParams, $aMainParams);
     }
 
@@ -975,7 +975,7 @@ class SGL_ImageConfig
      */
     function &getProperty($name)
     {
-        $aProps = &$GLOBALS['_SGL']['ImageConfig']['aProps'];
+        $aProps = $GLOBALS['_SGL']['ImageConfig']['aProps'];
         if (!isset($aProps[$name])) {
             $aProps[$name] = null;
         }
@@ -1016,7 +1016,7 @@ class SGL_ImageTransformStrategy
      */
     function SGL_ImageTransformStrategy(&$driver)
     {
-        $this->driver = &$driver;
+        $this->driver = $driver;
     }
 
     /**

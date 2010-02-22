@@ -84,8 +84,8 @@ class SGL_FrontController
             SGL_FrontController::init();
         }
         //  assign request to registry
-        $input = &SGL_Registry::singleton();
-        $req   = &SGL_Request::singleton();
+        $input = SGL_Registry::singleton();
+        $req   = SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
             //  stop with error page
@@ -94,7 +94,7 @@ class SGL_FrontController
         $input->setRequest($req);
 
         //  ensure local config loaded and merged
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->ensureModuleConfigLoaded($req->getModuleName());
 
         $outputClass = SGL_FrontController::getOutputClass();
@@ -232,7 +232,7 @@ class SGL_FrontController
         }
         // test db connection
         if (defined('SGL_INSTALLED')) {
-            $dbh = &SGL_DB::singleton();
+            $dbh = SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 // stop with error page
                 SGL::displayErrorPage($output);
@@ -250,7 +250,7 @@ class SGL_FrontController
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
-        $c = &SGL_Config::singleton($autoLoad);
+        $c = SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());

@@ -355,7 +355,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
         }
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $conf1 = $c->load(SGL_ETC_DIR . '/customInstallDefaults.ini');
             if (isset($conf1['path']['moduleDirOverride'])) {
                 $conf['path']['moduleDirOverride'] = $conf1['path']['moduleDirOverride'];
@@ -412,7 +412,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
     function run()
     {
-        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
             'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
             'schema_location'       => SGL_ENT_DIR,
@@ -438,7 +438,7 @@ class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
         // for 0.6.x versions
         if (!empty($conf['db']['prefix'])
                 && $conf['db']['prefix'] == 'not implemented yet') {
-            $config = &SGL_Config::singleton();
+            $config = SGL_Config::singleton();
             $config->set('db', array('prefix' => ''));
             $config->save();
         }
@@ -471,7 +471,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
         #$old_error_handler = set_error_handler("myErrorHandler");
         PEAR::setErrorHandling(PEAR_ERROR_CALLBACK, array($this, 'pearErrorHandler'));
         if (!SGL_Config::get('debug.showBacktrace')) {
-           $options = &PEAR::getStaticProperty('PEAR_Error', 'skiptrace');
+           $options = PEAR::getStaticProperty('PEAR_Error', 'skiptrace');
            $options = true;
         }
     }
@@ -619,15 +619,15 @@ class SGL_Task_InitialiseModules extends SGL_Task
 {
     function run()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  skip if we're in installer
         if (defined('SGL_INSTALLED')) {
-            $locator = &SGL_ServiceLocator::singleton();
+            $locator = SGL_ServiceLocator::singleton();
             $dbh = $locator->get('DB');
             if (!$dbh) {
-                $dbh = & SGL_DB::singleton();
+                $dbh =  SGL_DB::singleton();
                 $locator->register('DB', $dbh);
             }
             //  this task can be called when installing a new module
@@ -726,7 +726,7 @@ class SGL_View
      */
     function SGL_View(&$data, $rendererStrategy)
     {
-        $this->data = &$data;
+        $this->data = $data;
         $this->rendererStrategy = $rendererStrategy;
     }
 

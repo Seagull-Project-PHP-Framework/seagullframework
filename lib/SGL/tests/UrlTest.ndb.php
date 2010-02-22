@@ -27,7 +27,7 @@ class UrlTest extends UnitTestCase {
 
     function setup()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
         $this->url = new SGL_Url(null, false, new stdClass());
         $this->baseUrlString = SGL_BASE_URL . '/' . $conf['site']['frontScriptName'] . '/';
