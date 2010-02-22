@@ -196,7 +196,7 @@ class SGL_Output
         if (strpos($varString, '.') !== false) {
             $aVar = explode('.', $varString);
             if (isset($output) && is_a($output, 'SGL_Output')) {
-                $var = &$output->{$aVar[0]};
+                $var = $output->{$aVar[0]};
             } else {
                 $var = &$this->{$aVar[0]};
             }

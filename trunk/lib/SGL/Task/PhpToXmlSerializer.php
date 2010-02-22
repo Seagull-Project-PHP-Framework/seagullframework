@@ -13,7 +13,7 @@ require_once 'XML/Serializer.php';
  */
 class SGL_Task_PhpToXmlSerializer extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

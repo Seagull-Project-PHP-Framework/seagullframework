@@ -107,10 +107,10 @@ class SGL_BlockLoader
      * @access  private
      * @return  array   array of block objects
      */
-    function render(&$output)
+    function render($output)
     {
         //  put data generated so far into class scope
-        $this->output = &$output;
+        $this->output = $output;
         $cache = & SGL_Cache::singleton();
         $currLang = (isset($output->currLang))
             ? $output->currLang

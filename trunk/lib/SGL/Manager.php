@@ -163,7 +163,7 @@ class SGL_Manager
      * @param   SGL_Output      $output Processed result
      * @return  mixed           true on success or PEAR_Error on failure
      */
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -303,7 +303,7 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display(&$output)
+    function display($output)
     {
         //  reinstate dynamically added css
         if (!$output->manager->isValid()) {
@@ -333,7 +333,7 @@ class SGL_Manager
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    function _cmd_redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault($input, $output)
     {
         //  must not logmessage here
 
@@ -389,7 +389,7 @@ class SGL_Manager
         return $aMergedParams;
     }
 
-    function handleError($oError, &$output)
+    function handleError($oError, $output)
     {
         $output->template = 'error.html';
         $output->masterTemplate = 'masterNoCols.html';

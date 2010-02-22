@@ -15,7 +15,7 @@ class SGL_FilterChain
         $this->aFilters = array_map('trim', $aFilters);
     }
 
-    function doFilter(&$input, &$output)
+    function doFilter($input, $output)
     {
         $this->loadFilters();
 

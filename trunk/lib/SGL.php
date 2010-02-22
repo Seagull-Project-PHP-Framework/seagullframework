@@ -397,7 +397,7 @@ class SGL
         exit();
     }
 
-    function displayMaintenancePage(&$output)
+    function displayMaintenancePage($output)
     {
         $c      = &SGL_Config::singleton();
         $conf   = $c->getAll();
@@ -427,7 +427,7 @@ class SGL
      *
      * @param SGL_Output $output
      */
-    function displayErrorPage(&$output)
+    function displayErrorPage($output)
     {
         $c = &SGL_Config::singleton();
 

@@ -92,7 +92,7 @@ class SGL_VoidMgr extends SGL_Manager
 
     function validate($req, &$input) {}
 
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  do nothing
@@ -101,7 +101,7 @@ class SGL_VoidMgr extends SGL_Manager
 
 class TestMainProcess
 {
-    function process(&$input)
+    function process($input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -41,7 +41,7 @@ class TestRunnerInit extends SGL_FrontController
 
 class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $conf = $GLOBALS['_STR']['CONF'];
         if ($conf['db']['type'] == 'pgsql'){
@@ -65,7 +65,7 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 
 class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $locator = &SGL_ServiceLocator::singleton();
         //  in case
@@ -79,7 +79,7 @@ class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 
 class SGL_Task_MinimalSession extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         session_start();
         $_SESSION['uid'] = 1;
