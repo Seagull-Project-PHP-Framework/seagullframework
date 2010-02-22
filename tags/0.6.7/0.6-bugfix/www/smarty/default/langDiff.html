@@ -1,0 +1,47 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<form name="translations" action="" method="post" flexy:ignore id="translations">
+    <input type="hidden" name="action" value="append" /> 
+    <input type="hidden" name="frmCurrentLang" value="{currentLang}" /> 
+    <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
+
+    <table class="wide">
+        <caption>
+            <h3>{translate(#You are updating: Module#)} "{currentModuleName}"</h3>
+        </caption>
+        <tr>
+            <td colspan="2">{translate(#The source translation has#)} {sourceElements} {translate(#elements#)}.<br />
+            {translate(#The target translation has#)} {targetElements} {translate(#elements#)}.<br />
+            {translate(#Please add#)} {currentLang} {translate(#values for the following keys which appear to be missing from the#)} {currentModule} {translate(#module#)}:</td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="save" value="{translate(#Save Translation#)}" />
+                <input class="wideButton" type="button" name="back" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href='{makeUrl(##,#maintenance#)}'" /> 
+            </td>
+        </tr>
+
+        <tr>
+            <th width="50%">{translate(#Master Value#)}</th>
+            <th width="50%">{translate(#Translated Value#)}</th>
+        </tr>
+
+        <tr flexy:foreach="aTargetLang,k,v">
+            <td class="fieldNameWrap">{v}</td>
+            <td class="fieldValue" align="center">
+                <input type="text" name="translation[{v}]" value="" size="50" />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" name="save" value="{translate(#Save Translation#)}" />
+                <input class="wideButton" type="button" name="back" value="{translate(#Cancel#)}" 
+                    onclick="document.location.href='{makeUrl(##,#maintenance#)}'" /> 
+            </td>
+        </tr>
+    </table>
+</form>

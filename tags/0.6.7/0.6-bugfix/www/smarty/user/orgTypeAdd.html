@@ -1,0 +1,42 @@
+<form action="" method="post" name="orgTypes" flexy:ignore>
+{if:isEdit}
+<input name="action" type="hidden" value="update" />
+{else:}
+<input name="action" type="hidden" value="insert" />
+{end:}
+<input type="hidden" name="orgTypes[organisation_type_id]" value="{orgTypes.organisation_type_id}" />
+
+<h1 class="pageTitle">{pageTitle}</h1>
+<span flexy:if="msgGet()">{msgGet()}</span>
+<table class="narrow">
+	<tr>
+		<th colspan="2">Details</th>
+	</tr>
+{if:isEdit}
+    <tr>
+        <td class="fieldName" width="50%"><span class="error"></span>ID</td>
+        <td align="left" width="50%">
+            {orgTypes.organisation_type_id}
+        </td>
+    </tr>
+{end:}
+	<tr>
+		<td class="fieldName" width="50%"><span class="error">*</span>Name</td>
+		<td align="left" width="50%">
+            <div class="error" flexy:if="error[name]">{translate(error[name])}</div>
+            <input name="orgTypes[name]" type="text" value="{orgTypes.name}" />
+        </td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2">
+            <input class="wideButton" name="submitted" value="Submit" type="submit" />
+            <input class="wideButton" type="button" value="{translate(#Cancel#)}" onClick="javascript:document.location.href='{makeUrl(##,#orgtype#,#user#)}'" /> 
+        </td>
+	</tr>
+	<tr>
+	    <td align="center" colspan="2">
+                <span class="small"><span class="error">*</span> {translate(#denotes required field#)}</span>
+            </td>
+	</tr>
+</table>
+</form>

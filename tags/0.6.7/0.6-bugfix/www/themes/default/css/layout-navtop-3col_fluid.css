@@ -1,0 +1,43 @@
+
+/**
+ * - navigation bar at the top
+ * - 3 columns
+ *
+ * @package    themes
+ * @subpackage todo
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+<?php include('nav-horizontal.css'); ?>
+<?php include('layout-navtop-fluid.css'); ?>
+
+div#content {
+    position: relative;
+    border: 1px solid #bbb;
+
+    /* padding needed for navigation */
+    padding-top: 4.6em;
+    background-position: left 4.4em;
+}
+div#main {
+    margin-left: 200px;
+    margin-right: 216px;
+}
+div#sub {
+    position: absolute;
+    right: 0;
+    top: 4.6em;
+    width: 212px;
+}
+div#local {
+    position: absolute;
+    left: 0;
+    top: 4.6em;
+    width: 200px;
+}
+div#nav-main {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
