@@ -249,7 +249,7 @@ class ConfigMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -284,12 +284,12 @@ class ConfigMgr extends SGL_Manager
         $output->addOnLoadEvent("toggleTransElements()");
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

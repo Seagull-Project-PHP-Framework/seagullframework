@@ -84,7 +84,7 @@ class OrgPreferenceMgr extends PreferenceMgr
         $input->aPrefs      = $req->get('prefs');
     }
 
-    function _cmd_editAll(&$input, &$output)
+    function _cmd_editAll($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aPrefs = $this->da->getUserPrefsByOrgId($input->orgId);
@@ -96,7 +96,7 @@ class OrgPreferenceMgr extends PreferenceMgr
         $output->prefs = $aPrefs;
     }
 
-    function _cmd_updateAll(&$input, &$output)
+    function _cmd_updateAll($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -135,7 +135,7 @@ class OrgPreferenceMgr extends PreferenceMgr
      * @param unknown_type $input
      * @param unknown_type $output
      */
-    function _cmd_redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault($input, $output)
     {
         //  must not logmessage here
 

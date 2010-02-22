@@ -101,13 +101,13 @@ class LoginMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->addOnLoadEvent("document.getElementById('frmLogin').frmUsername.focus()");
     }
 
-    function _cmd_login(&$input, &$output)
+    function _cmd_login($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -123,7 +123,7 @@ class LoginMgr extends SGL_Manager
         $doLogin->run();
     }
 
-    function _cmd_logout(&$input, &$output)
+    function _cmd_logout($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -148,7 +148,7 @@ class LoginMgr extends SGL_Manager
         SGL_HTTP::redirect($aParams);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -158,7 +158,7 @@ class LoginMgr extends SGL_Manager
         }
     }
 
-    function _cmd_removeCookies(&$input, &$output)
+    function _cmd_removeCookies($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -173,7 +173,7 @@ class LoginMgr extends SGL_Manager
         }
     }
 
-    function _cmd_redirectToMyAccount(&$input, &$output)
+    function _cmd_redirectToMyAccount($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -187,7 +187,7 @@ class LoginMgr extends SGL_Manager
 
 class User_DoLogin extends SGL_Observable
 {
-    function User_DoLogin(&$input, &$output)
+    function User_DoLogin($input, $output)
     {
         $this->input = $input;
         $this->output = $output;

@@ -53,7 +53,7 @@ class User_Block_Login2
     var $template     = 'blockLogin.html';
     var $templatePath = 'user';
 
-    function init(&$output, $block_id, &$aParams)
+    function init($output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -61,7 +61,7 @@ class User_Block_Login2
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, &$aParams)
+    function getBlockContent($output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -105,7 +105,7 @@ class User_Block_Login2
         return $this->process($blockOutput);
     }
 
-    function process(&$output)
+    function process($output)
     {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;

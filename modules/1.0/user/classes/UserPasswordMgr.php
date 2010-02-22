@@ -110,19 +110,19 @@ class UserPasswordMgr extends PasswordMgr
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = 'Change Password';
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -158,7 +158,7 @@ class UserPasswordMgr extends PasswordMgr
 
 class User_UpdateUserPassword extends SGL_Observable
 {
-    function User_UpdateUserPassword(&$input, &$output)
+    function User_UpdateUserPassword($input, $output)
     {
         $this->input = $input;
         $this->output = $output;

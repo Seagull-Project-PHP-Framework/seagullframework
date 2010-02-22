@@ -53,7 +53,7 @@
 class DemoAddon
 {
 
-    function init(&$output, &$section, &$aParams)
+    function init($output, &$section, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         

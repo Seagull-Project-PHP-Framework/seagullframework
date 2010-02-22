@@ -125,7 +125,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -135,7 +135,7 @@ class RoleMgr extends SGL_Manager
         $output->role = DB_DataObject::factory($this->conf['table']['role']);
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -154,7 +154,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -184,7 +184,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -212,7 +212,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -253,7 +253,7 @@ class RoleMgr extends SGL_Manager
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function _cmd_duplicate(&$input, &$output)
+    function _cmd_duplicate($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -301,7 +301,7 @@ class RoleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_editPerms(&$input, &$output)
+    function _cmd_editPerms($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -322,7 +322,7 @@ class RoleMgr extends SGL_Manager
         $output->aRemainingPerms = $aRemainingPerms;
     }
 
-    function _cmd_updatePerms(&$input, &$output)
+    function _cmd_updatePerms($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

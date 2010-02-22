@@ -141,7 +141,7 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         //  build map of available languages
         $output->aLangs = SGL_Util::getLangsDescriptionMap();
@@ -162,7 +162,7 @@ class PreferenceMgr extends SGL_Manager
         $output->aRoles = $aRoles;
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -172,7 +172,7 @@ class PreferenceMgr extends SGL_Manager
         $output->pref = DB_DataObject::factory($this->conf['table']['preference']);
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -197,7 +197,7 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -214,7 +214,7 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -240,7 +240,7 @@ class PreferenceMgr extends SGL_Manager
      * @param unknown_type $output
      * @todo should be renamed to _cmd_updatePreferencesForAllRoles
      */
-    function _cmd_updatePreferencesForAllMembers(&$input, &$output)
+    function _cmd_updatePreferencesForAllMembers($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -273,7 +273,7 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -303,7 +303,7 @@ class PreferenceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

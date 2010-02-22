@@ -108,18 +108,18 @@ class PasswordMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aSecurityQuestions = SGL_String::translate('aSecurityQuestions');
     }
 
-    function _cmd_forgot(&$input, &$output)
+    function _cmd_forgot($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _cmd_retrieve(&$input, &$output)
+    function _cmd_retrieve($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -145,7 +145,7 @@ class PasswordMgr extends SGL_Manager
         }
     }
 
-    function _cmd_redirectToEdit(&$input, &$output)
+    function _cmd_redirectToEdit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

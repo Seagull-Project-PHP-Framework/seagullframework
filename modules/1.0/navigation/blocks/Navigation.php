@@ -44,14 +44,14 @@
  */
 class Navigation_Block_Navigation
 {
-    function init(&$output, $block_id, &$aParams)
+    function init($output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, &$aParams)
+    function getBlockContent($output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

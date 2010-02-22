@@ -46,7 +46,7 @@
  */
 class Navigation_Block_CategoryNav
 {
-    function init(&$output, $block_id, &$aParams)
+    function init($output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -54,7 +54,7 @@ class Navigation_Block_CategoryNav
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, &$aParams)
+    function getBlockContent($output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

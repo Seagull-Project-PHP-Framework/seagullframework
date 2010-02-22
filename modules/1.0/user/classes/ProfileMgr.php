@@ -87,7 +87,7 @@ class ProfileMgr extends SGL_Manager
         $input->fromContacts   = $req->get('frmFromContacts');
     }
 
-    function _cmd_view(&$input, &$output)
+    function _cmd_view($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

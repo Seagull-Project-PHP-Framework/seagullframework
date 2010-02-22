@@ -136,7 +136,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -178,7 +178,7 @@ class UserMgr extends RegisterMgr
         ));
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -192,7 +192,7 @@ class UserMgr extends RegisterMgr
         $output->user->email_orig = '';
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -215,7 +215,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -227,7 +227,7 @@ class UserMgr extends RegisterMgr
         $output->user->email_orig = $oUser->email;
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -246,7 +246,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -289,7 +289,7 @@ class UserMgr extends RegisterMgr
         SGL::raiseMsg("$succeeded user(s) successfully deleted. $failed user(s) failed.", false, $errorType);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -342,7 +342,7 @@ class UserMgr extends RegisterMgr
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function _cmd_viewLogin(&$input, &$output)
+    function _cmd_viewLogin($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -388,7 +388,7 @@ class UserMgr extends RegisterMgr
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function _cmd_truncateLoginTbl(&$input, &$output)
+    function _cmd_truncateLoginTbl($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -406,7 +406,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_requestChangeUserStatus(&$input, &$output)
+    function _cmd_requestChangeUserStatus($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -416,7 +416,7 @@ class UserMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _cmd_changeUserStatus(&$input, &$output)
+    function _cmd_changeUserStatus($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -435,7 +435,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_requestPasswordReset(&$input, &$output)
+    function _cmd_requestPasswordReset($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -452,7 +452,7 @@ class UserMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _cmd_resetPassword(&$input, &$output)
+    function _cmd_resetPassword($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -476,7 +476,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_editPerms(&$input, &$output)
+    function _cmd_editPerms($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -499,7 +499,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_updatePerms(&$input, &$output)
+    function _cmd_updatePerms($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -551,7 +551,7 @@ class UserMgr extends RegisterMgr
         }
     }
 
-    function _cmd_syncToRole(&$input, &$output)
+    function _cmd_syncToRole($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -573,7 +573,7 @@ class UserMgr extends RegisterMgr
             false, $errorType);
     }
 
-    function _cmd_removeExpiredCookies(&$input, &$output)
+    function _cmd_removeExpiredCookies($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

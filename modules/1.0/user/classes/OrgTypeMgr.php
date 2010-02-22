@@ -106,14 +106,14 @@ class OrgTypeMgr extends SGL_Manager
         }
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'orgTypeEdit.html';
         $output->pageTitle .= ' :: Add';
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -130,7 +130,7 @@ class OrgTypeMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -141,7 +141,7 @@ class OrgTypeMgr extends SGL_Manager
         $output->orgTypes = $orgType;
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -157,14 +157,14 @@ class OrgTypeMgr extends SGL_Manager
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->orgTypes = $this->da->getOrgTypes();
         $output->addOnLoadEvent("document.getElementById('frmUserMgrChooser').orgs.disabled = true");
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_array($input->aDelete)) {

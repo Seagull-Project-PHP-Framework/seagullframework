@@ -105,7 +105,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -113,7 +113,7 @@ class MaintenanceMgr extends SGL_Manager
     }
 
     //  regenerate dataobject entity files
-    function _cmd_dbgen(&$input, &$output)
+    function _cmd_dbgen($input, $output)
     {
         require_once SGL_CORE_DIR . '/Task/Install.php';
         require_once SGL_CORE_DIR . '/Sql.php';
@@ -126,7 +126,7 @@ class MaintenanceMgr extends SGL_Manager
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_checkLatestVersion(&$input, &$output)
+    function _cmd_checkLatestVersion($input, $output)
     {
         require_once SGL_CORE_DIR . '/Install/Common.php';
         $localVersion = SGL_Install_Common::getFrameworkVersion();
@@ -153,7 +153,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_rebuildSequences(&$input, &$output)
+    function _cmd_rebuildSequences($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -166,7 +166,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_rebuildSeagull(&$input, &$output)
+    function _cmd_rebuildSeagull($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -287,7 +287,7 @@ class MaintenanceMgr extends SGL_Manager
         SGL::raiseMsg($msg, false, $type);
     }
 
-    function _cmd_clearCache(&$input, &$output)
+    function _cmd_clearCache($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -351,7 +351,7 @@ class MaintenanceMgr extends SGL_Manager
         }
     }
 
-    function _cmd_deleteConfigs(&$input, &$output)
+    function _cmd_deleteConfigs($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -365,12 +365,12 @@ class MaintenanceMgr extends SGL_Manager
             true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _cmd_redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

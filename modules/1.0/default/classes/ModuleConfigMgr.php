@@ -114,7 +114,7 @@ class ModuleConfigMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -136,7 +136,7 @@ class ModuleConfigMgr extends SGL_Manager
         $output->config = $aConfig;
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -235,7 +235,7 @@ class ModuleConfigMgr extends SGL_Manager
      * @param object $input
      * @param object $output
      */
-    function _cmd_redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault($input, $output)
     {
         //  if no errors have occured, redirect
         if (!SGL_Error::count()) {

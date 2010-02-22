@@ -127,7 +127,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -140,7 +140,7 @@ class PermissionMgr extends SGL_Manager
         $output->currentModule = $input->permId;
     }
 
-    function _cmd_scanNew(&$input, &$output)
+    function _cmd_scanNew($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -159,7 +159,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_scanOrphaned(&$input, &$output)
+    function _cmd_scanOrphaned($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -177,7 +177,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -206,7 +206,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_insertNew(&$input, &$output)
+    function _cmd_insertNew($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -245,7 +245,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_deleteOrphaned(&$input, &$output)
+    function _cmd_deleteOrphaned($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -269,7 +269,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -284,7 +284,7 @@ class PermissionMgr extends SGL_Manager
         $output->currentModule = $this->da->getModuleIdByPermId($input->permId);
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -305,7 +305,7 @@ class PermissionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         foreach ($input->aDelete as $index => $permId) {
@@ -322,7 +322,7 @@ class PermissionMgr extends SGL_Manager
         SGL::raiseMsg('perm successfully deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';

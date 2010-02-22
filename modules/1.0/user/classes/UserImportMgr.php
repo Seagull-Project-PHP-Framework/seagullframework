@@ -101,7 +101,7 @@ class UserImportMgr extends UserMgr
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -121,12 +121,12 @@ class UserImportMgr extends UserMgr
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
 
-    function _cmd_insertImportedUsers(&$input, &$output)
+    function _cmd_insertImportedUsers($input, $output)
     {
         //  read in selected CSV file
         $aUsers = $this->_readCsvFile($input->csvFile);
@@ -155,7 +155,7 @@ class UserImportMgr extends UserMgr
      *
      * @access  private
      */
-    function _cmd_redirectToUserMgr(&$input, &$output)
+    function _cmd_redirectToUserMgr($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

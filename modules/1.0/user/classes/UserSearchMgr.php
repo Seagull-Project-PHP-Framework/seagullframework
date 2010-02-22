@@ -142,7 +142,7 @@ class UserSearchMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -178,13 +178,13 @@ class UserSearchMgr extends SGL_Manager
             );
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->addOnLoadEvent('updateFormInterface()');
     }
 
-    function _cmd_search(&$input, &$output)
+    function _cmd_search($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->pageTitle = $this->pageTitle . ' :: Browse';

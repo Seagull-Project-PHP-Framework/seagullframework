@@ -181,7 +181,7 @@ class SectionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'sectionEdit.html';
@@ -190,7 +190,7 @@ class SectionMgr extends SGL_Manager
         $this->_editDisplay($output);
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -207,7 +207,7 @@ class SectionMgr extends SGL_Manager
         $this->_editDisplay($output);
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -227,7 +227,7 @@ class SectionMgr extends SGL_Manager
         SGL_Cache::clear('nav');
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -245,7 +245,7 @@ class SectionMgr extends SGL_Manager
         SGL_Cache::clear('nav');
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -264,7 +264,7 @@ class SectionMgr extends SGL_Manager
         }
     }
 
-    function _cmd_reorder(&$input, &$output)
+    function _cmd_reorder($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aMoveTo = array('BE' => 'up',
@@ -294,7 +294,7 @@ class SectionMgr extends SGL_Manager
      * @param   object $input    not used;might want to eliminate; here only for consistency with other process methods
      * @return  object $output
      */
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'sectionList.html';
@@ -311,7 +311,7 @@ class SectionMgr extends SGL_Manager
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -323,7 +323,7 @@ class SectionMgr extends SGL_Manager
         }
     }
 
-    function _editDisplay(&$output)
+    function _editDisplay($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

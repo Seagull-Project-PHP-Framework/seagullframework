@@ -75,7 +75,7 @@ class AccountMgr extends RegisterMgr
         $input->user->is_email_public = (isset($input->user->is_email_public)) ? 1 : 0;
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         parent::display($output);
@@ -92,7 +92,7 @@ class AccountMgr extends RegisterMgr
         $output->isAcctActive = (@$output->user->is_acct_active) ? ' checked' : '';
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -105,7 +105,7 @@ class AccountMgr extends RegisterMgr
         $output->user->email_orig = $oUser->email;
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -124,7 +124,7 @@ class AccountMgr extends RegisterMgr
         }
     }
 
-    function _cmd_viewProfile(&$input, &$output)
+    function _cmd_viewProfile($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -135,7 +135,7 @@ class AccountMgr extends RegisterMgr
         $output->user = $oUser;
     }
 
-    function _cmd_summary(&$input, &$output)
+    function _cmd_summary($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

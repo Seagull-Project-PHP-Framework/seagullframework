@@ -72,7 +72,7 @@ class ArrayDriver
      *
      * @return ArrayDriver
      */
-    function &singleton(&$output)
+    function &singleton($output)
     {
         static $instance;
         if (!isset($instance)) {
@@ -93,7 +93,7 @@ class ArrayDriver
      *
      * @return ArrayDriver
      */
-    function ArrayDriver(&$output)
+    function ArrayDriver($output)
     {
         // get nodes
         if (!($aNodes = $this->_loadCachedNodes())) {

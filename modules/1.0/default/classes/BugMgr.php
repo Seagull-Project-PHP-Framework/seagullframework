@@ -119,7 +119,7 @@ class BugMgr extends SGL_Manager
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         if (SGL_Session::getRoleId() != SGL_GUEST) {
             $user = $this->getCurrentUserInfo();
@@ -133,7 +133,7 @@ class BugMgr extends SGL_Manager
         }
     }
 
-    function _cmd_send(&$input, &$output)
+    function _cmd_send($input, $output)
     {
         $ok = $this->_sendEmail($input->bug, $input->moduleName);
         if (!PEAR::isError($ok)) {
@@ -143,7 +143,7 @@ class BugMgr extends SGL_Manager
         }
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

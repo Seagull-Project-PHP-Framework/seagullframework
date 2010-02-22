@@ -47,14 +47,14 @@ class Navigation_Block_Breadcrumbs
     var $template     = 'Breadcrumbs.html';
     var $templatePath = 'navigation';
 
-    function init(&$output, $block_id, &$aParams)
+    function init($output, $block_id, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, &$aParams)
+    function getBlockContent($output, &$aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -97,7 +97,7 @@ class Navigation_Block_Breadcrumbs
         return $this->process($blockOutput);
     }
 
-    function process(&$output)
+    function process($output)
     {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;

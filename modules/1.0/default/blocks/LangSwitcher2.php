@@ -48,7 +48,7 @@ class Default_Block_LangSwitcher2
 {
     var $templatePath = 'default';
 
-    function init(&$output, $blockId, $aParams)
+    function init($output, $blockId, $aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -60,7 +60,7 @@ class Default_Block_LangSwitcher2
         return $this->getBlockContent($output, $aParams);
     }
 
-    function getBlockContent(&$output, $aParams)
+    function getBlockContent($output, $aParams)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -161,7 +161,7 @@ class Default_Block_LangSwitcher2
         return SGL_Output::makeUrl($action, '', '', array(), $params);
     }
 
-    function process(&$output)
+    function process($output)
     {
         $output->moduleName = $this->templatePath;
 

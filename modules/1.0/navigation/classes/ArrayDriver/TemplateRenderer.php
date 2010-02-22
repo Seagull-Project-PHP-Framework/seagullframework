@@ -59,7 +59,7 @@ class ArrayDriver_TemplateRenderer
         $output->renderer       = &$this;
 
         SGL_Task_BuildOutputData::addOutputData($output);
-        $this->_output  = &$output;
+        $this->_output  = $output;
         $this->_view    = new SGL_HtmlSimpleView($this->_output);
         $this->_aParams = $aParams;
     }

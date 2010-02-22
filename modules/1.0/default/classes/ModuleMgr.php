@@ -157,7 +157,7 @@ class ModuleMgr extends SGL_Manager
             $input->displayDeRegisteredModules);
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->aAdminUris = SGL_Util::getAllModuleDirs($onlyRegistered = false);
@@ -191,7 +191,7 @@ class ModuleMgr extends SGL_Manager
 
     }
 
-//    function _cmd_overview(&$input, &$output)
+//    function _cmd_overview($input, $output)
 //    {
 //        SGL::logMessage(null, PEAR_LOG_DEBUG);
 //
@@ -225,7 +225,7 @@ class ModuleMgr extends SGL_Manager
 //        }
 //    }
 
-    function _cmd_install(&$input, &$output)
+    function _cmd_install($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -297,7 +297,7 @@ class ModuleMgr extends SGL_Manager
         SGL::raiseMsg($msg, false, $type);
     }
 
-    function _cmd_uninstall(&$input, &$output)
+    function _cmd_uninstall($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -361,7 +361,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_reinstall(&$input, &$output)
+    function _cmd_reinstall($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -434,7 +434,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_edit(&$input, &$output)
+    function _cmd_edit($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -447,7 +447,7 @@ class ModuleMgr extends SGL_Manager
         $output->isConfigurable = ($oModule->is_configurable) ? ' checked' : '';
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'moduleList.html';
@@ -464,7 +464,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_deregister(&$input, &$output)
+    function _cmd_deregister($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  de-register module
@@ -475,7 +475,7 @@ class ModuleMgr extends SGL_Manager
         SGL::raiseMsg('The module was successfully de-registered', false, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -494,7 +494,7 @@ class ModuleMgr extends SGL_Manager
         }
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

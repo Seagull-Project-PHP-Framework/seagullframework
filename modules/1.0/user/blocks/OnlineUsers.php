@@ -5,12 +5,12 @@ class User_Block_OnlineUsers
     var $template     = 'OnlineUsers.html';
     var $templatePath = 'user';
 
-    function init(&$output, $block_id)
+    function init($output, $block_id)
     {
         return $this->getBlockContent($output);
     }
 
-    function getBlockContent(&$output)
+    function getBlockContent($output)
     {
         $blockOutput = new SGL_Output();
 
@@ -25,7 +25,7 @@ class User_Block_OnlineUsers
         return $this->process($blockOutput);
     }
 
-    function process(&$output)
+    function process($output)
     {
         // use moduleName for template path setting
         $output->moduleName     = $this->templatePath;

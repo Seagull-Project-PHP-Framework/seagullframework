@@ -211,7 +211,7 @@ class RegisterMgr extends SGL_Manager
         return in_array($var, $disAllowedKeys);
     }
 
-    function display(&$output)
+    function display($output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -236,7 +236,7 @@ class RegisterMgr extends SGL_Manager
         ));
     }
 
-    function _cmd_add(&$input, &$output)
+    function _cmd_add($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -246,7 +246,7 @@ class RegisterMgr extends SGL_Manager
             $input->user->password_confirm : '';
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -266,7 +266,7 @@ class RegisterMgr extends SGL_Manager
 
 class User_AddUser extends SGL_Observable
 {
-    function User_AddUser(&$input, &$output)
+    function User_AddUser($input, $output)
     {
         $this->input = $input;
         $this->output = $output;

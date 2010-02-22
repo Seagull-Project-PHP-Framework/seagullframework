@@ -107,7 +107,7 @@ class CategoryMgr extends SGL_Manager
 
     }
 
-    function _cmd_insert(&$input, &$output)
+    function _cmd_insert($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -115,7 +115,7 @@ class CategoryMgr extends SGL_Manager
         $this->_redirectCatId = $this->_category->create($values);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -135,7 +135,7 @@ class CategoryMgr extends SGL_Manager
         $output->aCategories = $aCategories;
     }
 
-    function _cmd_update(&$input, &$output)
+    function _cmd_update($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -151,7 +151,7 @@ class CategoryMgr extends SGL_Manager
 
     }
 
-    function _cmd_delete(&$input, &$output)
+    function _cmd_delete($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -175,7 +175,7 @@ class CategoryMgr extends SGL_Manager
         SGL::raiseMsg('The category has successfully been deleted', true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_reorder(&$input, &$output)
+    function _cmd_reorder($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $output->template = 'categoryReorder.html';
@@ -184,7 +184,7 @@ class CategoryMgr extends SGL_Manager
         $output->addOnLoadEvent("switchRowColorOnHover()");
     }
 
-    function _cmd_reorderUpdate(&$input, &$output)
+    function _cmd_reorderUpdate($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $aMoveTo = array('BE' => 'up',
@@ -198,7 +198,7 @@ class CategoryMgr extends SGL_Manager
         }
     }
 
-    function _cmd_redirectToDefault(&$input, &$output)
+    function _cmd_redirectToDefault($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

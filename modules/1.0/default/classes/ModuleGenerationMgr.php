@@ -108,7 +108,7 @@ class ModuleGenerationMgr extends SGL_Manager
         }
     }
 
-    function _cmd_createModule(&$input, &$output)
+    function _cmd_createModule($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -581,7 +581,7 @@ EOF;
         return array($methods, $aActions, $aTemplates);
     }
 
-    function _cmd_list(&$input, &$output)
+    function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }
