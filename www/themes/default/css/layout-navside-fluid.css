@@ -1,0 +1,10 @@
+
+/**
+ * Common fluid styles.
+ *
+ * @package    themes
+ * @subpackage default2
+ * @author     Dmitri Lakachauskis <lakiboy83@gmail.com>
+ */
+
+<?php include('layout-navtop-fluid.css'); ?>

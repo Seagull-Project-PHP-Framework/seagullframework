@@ -1,0 +1,14 @@
+<attach event="onmouseover" handler="over" />
+<attach event="onmouseout" handler="out" />
+<script type="text/javascript">
+function over(){
+    for(x=0; element.childNodes[x]; x++){
+        if(element.childNodes[x].className=='tipText') element.childNodes[x].style.display='block';
+    }
+}
+function out(){
+    for(x=0; element.childNodes[x]; x++){
+        if(element.childNodes[x].className=='tipText') element.childNodes[x].style.display='none';
+    }
+}
+</script>
