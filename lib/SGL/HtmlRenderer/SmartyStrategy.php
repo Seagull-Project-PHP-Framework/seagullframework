@@ -118,7 +118,7 @@ class SGL_Smarty extends Smarty
      * @static
      * @return  mixed reference to SGL_Smarty object
      */
-    function &singleton()
+    function singleton()
     {
         static $instance;
         if (!isset($instance)) {

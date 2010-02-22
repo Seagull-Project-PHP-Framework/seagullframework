@@ -85,7 +85,7 @@ class SGL_NestedSet
 
     var $_aNodes = array();
 
-    function &singleton($params)
+    function singleton($params)
     {
         static $aInstances;
 
@@ -594,13 +594,7 @@ class SGL_NestedSet
             // to DB_NestedSet::factory(), because DB_NestedSet
             // changes DB_Common::setFetchMode()
             $db = SGL_DB::singleton();
-            if (SGL::isPhp5()) {
-                // use `clone($db)` instead of `clone $db`
-                // to aviod php4 parse error
-                $dbh = clone($db);
-            } else {
-                $dbh = $db;
-            }
+            $dbh = clone $db;
 
             //  create an instance of DB_NestedSet_DB
             $ns = & DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);

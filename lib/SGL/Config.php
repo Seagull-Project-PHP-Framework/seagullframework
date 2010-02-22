@@ -63,7 +63,7 @@ class SGL_Config
         }
     }
 
-    function &singleton($autoLoad = true)
+    function singleton($autoLoad = true)
     {
         static $instance;
         if (!isset($instance)) {

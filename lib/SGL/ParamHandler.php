@@ -54,7 +54,7 @@ class SGL_ParamHandler
         $this->source = $source;
     }
 
-    function &singleton($source)
+    function singleton($source)
     {
         static $instances;
         if (!isset($instances)) {

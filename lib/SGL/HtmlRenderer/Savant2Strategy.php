@@ -76,7 +76,7 @@ class SGL_Savant2 extends Savant2
      * @param string $moduleName The module name
      * @return  mixed reference to SGL_Savant2 object
      */
-    function &singleton($theme = 'default', $moduleName = 'default')
+    function singleton($theme = 'default', $moduleName = 'default')
     {
         static $instance;
         if (!isset($instance)) {

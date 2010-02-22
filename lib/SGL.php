@@ -230,12 +230,6 @@ class SGL
         }
     }
 
-    function isPhp5()
-    {
-        $phpVersion = PHP_VERSION;
-        return ($phpVersion{0} == 5);
-    }
-
     /**
      * Returns false if no properties are set.
      *
@@ -520,8 +514,4 @@ class SGL
     }
 }
 
-if (!SGL::isPhp5() && !function_exists('clone')) {
-    // emulate clone  - as per php_compact, slow but really the correct behaviour..
-    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
-}
 ?>

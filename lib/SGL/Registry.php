@@ -49,7 +49,7 @@ class SGL_Registry
 {
     var $aProps = array();
 
-    function &singleton()
+    function singleton()
     {
         static $instance;
         if (!isset($instance)) {
