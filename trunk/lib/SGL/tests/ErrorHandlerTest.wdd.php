@@ -15,7 +15,7 @@ class ErrorHandlerTest extends UnitTestCase
 
     function setUp()
     {
-        #$c = &SGL_Config::singleton();
+        #$c = SGL_Config::singleton();
         #$this->conf = $c->getAll();
         #$this->addHeader('User-agent: foo-bar');
     }
@@ -24,7 +24,7 @@ class ErrorHandlerTest extends UnitTestCase
     function testWarningError()
     {
 //        $process = new TestMainProcess();
-//        $input = &SGL_Registry::singleton();
+//        $input = SGL_Registry::singleton();
 //        $input->set('manager', new SGL_VoidMgr());
 //
 //        $process->process($input);
@@ -72,7 +72,7 @@ class ErrorHandlerTest extends UnitTestCase
 
     function testPearDbError()
     {
-        $dbh = & SGL_DB::singleton();
+        $dbh =  SGL_DB::singleton();
         $query = "SELECT  u.non_existent_field FROM users u";
         $result = $dbh->query($query);
         $this->assertIsA($result, 'db_error');

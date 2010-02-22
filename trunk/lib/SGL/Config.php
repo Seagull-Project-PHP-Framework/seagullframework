@@ -112,7 +112,7 @@ class SGL_Config
             }
         //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $aKeys = preg_split("/\./", trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
@@ -153,7 +153,7 @@ class SGL_Config
 
             //  it's a static call
             if (isset($aKeys[0]) && isset($aKeys[1])) {
-                $c = &SGL_Config::singleton();
+                $c = SGL_Config::singleton();
                 $ret = $c->set($aKeys[0], array($aKeys[1] => $value));
             //  else it's an object call with scalar second arg
             } else {
@@ -230,7 +230,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = &SGL_ParamHandler::singleton($file);
+        $ph = SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
             return $data;
@@ -305,7 +305,7 @@ class SGL_Config
         static $modDir;
         if (is_null($modDir)) {
         //  allow for custom modules dir
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $customModDir = $c->get(array('path' => 'moduleDirOverride'));
             $modDir = !empty($customModDir)
                 ? $customModDir
@@ -381,7 +381,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = &SGL_ParamHandler::singleton($file);
+        $ph = SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }
 

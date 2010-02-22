@@ -20,7 +20,7 @@ class SqlTest extends UnitTestCase {
         $this->sql = new SGL_Sql();
 
         // save config
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->startUpConf = $c->getAll();
     }
 
@@ -29,7 +29,7 @@ class SqlTest extends UnitTestCase {
         unset($this->sql);
 
         // restore config
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         foreach ($this->startUpConf as $container => $param) {
             foreach ($param as $key => $value) {
                 $c->set($container, array($key => $value));
@@ -62,7 +62,7 @@ class SqlTest extends UnitTestCase {
     function testextractTableNamesWithFuzz()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $partialSql = "INSERT INTO module VALUES ({SGL_NEXT_ID}, 1, 'asset', 'Asset Manager',";
@@ -159,7 +159,7 @@ class SqlTest extends UnitTestCase {
     function testExtractTablenameFromCreateStatement()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $sql = <<< EOF
@@ -209,7 +209,7 @@ EOF;
     function testExtractTableNameFromCreateStatement1()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'create table block';
@@ -220,7 +220,7 @@ EOF;
     function testExtractTableNameFromCreateStatement2()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'create table `block';
@@ -231,7 +231,7 @@ EOF;
     function testExtractTableNameFromCreateStatement3()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'create table if not exists block';
@@ -242,7 +242,7 @@ EOF;
     function testExtractTableNameFromCreateStatement4()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'create table if not exists `block`';
@@ -253,7 +253,7 @@ EOF;
     function testExtractTableNameFromCreateStatement5()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'create table `block`';
@@ -264,7 +264,7 @@ EOF;
     function testExtractTableNameFromCreateStatement6()
     {
         // reset prefix
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => ''));
 
         $str = 'CREATE TABLE `event-media` (';
@@ -285,7 +285,7 @@ EOF;
         $prefix = Text_Password::create();
         $table  = 'module';
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('db', array('prefix' => $prefix));
 
         $ret = SGL_Sql::addTablePrefix($table);
@@ -294,7 +294,7 @@ EOF;
 
     function testPrefixTableNameInCreateTableStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -326,7 +326,7 @@ EOF;
 
     function testPrefixTableNameInInsertStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -356,7 +356,7 @@ EOF;
 
     function testPrefixTableNameInSelectStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -384,7 +384,7 @@ EOF;
 
     function testPrefixTableNameInCreateIndexStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -412,7 +412,7 @@ EOF;
 
     function testPrefixTableNameInAlterTableStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -440,7 +440,7 @@ EOF;
 
     function testPrefixTableNameInReferencesStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';
@@ -464,7 +464,7 @@ EOF;
 
     function testPrefixTableNameInDeleteStatement()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // set prefix
         $prefix = 'prefix_';

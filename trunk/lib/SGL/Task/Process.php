@@ -219,7 +219,7 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
 
         } else {
             require_once dirname(__FILE__) . '/../Locale.php';
-            $setlocale = & SGL_Locale::singleton($locale);
+            $setlocale =  SGL_Locale::singleton($locale);
         }
 
         $this->processRequest->process($input, $output);
@@ -244,7 +244,7 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 
         //  don't send headers according to config
         $currentMgr = SGL_Inflector::caseFix(get_class($output->manager));
-        $c = &SGL_Config::singleton(); $conf = $c->getAll();
+        $c = SGL_Config::singleton(); $conf = $c->getAll();
         if (!isset($conf[$currentMgr]['setHeaders'])
                 || $conf[$currentMgr]['setHeaders'] == true) {
 
@@ -309,7 +309,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         }
         //  get UID by cookie value
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da  = &UserDAO::singleton();
+        $da  = UserDAO::singleton();
         $uid = $da->getUserIdByCookie($username, $cookieValue);
         if ($uid) {
             $ret = array('uid' => $uid, 'cookieVal' => $cookieValue);
@@ -339,7 +339,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         if (!SGL::moduleIsEnabled('user2')) {
             require_once SGL_MOD_DIR . '/user/classes/observers/RecordLogin.php';
             if (RecordLogin::loginRecordingAllowed()) {
-                $dbh = &SGL_DB::singleton();
+                $dbh = SGL_DB::singleton();
                 RecordLogin::insert($dbh);
             }
         }
@@ -436,13 +436,13 @@ class SGL_Task_SetupPerms extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $cache = & SGL_Cache::singleton();
+        $cache =  SGL_Cache::singleton();
         if ($serialized = $cache->get('all_users', 'perms')) {
             $aPerms = unserialize($serialized);
             SGL::logMessage('perms from cache', PEAR_LOG_DEBUG);
         } else {
             require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-            $da = & UserDAO::singleton();
+            $da =  UserDAO::singleton();
             $aPerms = $da->getPermsByModuleId();
             $serialized = serialize($aPerms);
             $cache->save($serialized, 'all_users', 'perms');
@@ -576,7 +576,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
      */
     function _resolveLanguage()
     {
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
 
         // resolve language from request
         $lang = $req->get('lang');
@@ -719,7 +719,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         $defaultMgr = SGL_Config::get('site.defaultManager');
 
         //  load default module's config if not present
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->ensureModuleConfigLoaded($defaultModule);
 
         if (PEAR::isError($conf)) {
@@ -950,7 +950,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
         }
 
         // Setup SGL data
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $output->conf             = $c->getAll();
         $output->webRoot          = SGL_BASE_URL;
         $output->imagesDir        = SGL_BASE_URL . '/themes/' . $output->theme . '/images';
@@ -971,7 +971,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
      */
     function getCurrentUrlFromRoutes()
     {
-        $input   = &SGL_Registry::singleton();
+        $input   = SGL_Registry::singleton();
         $url     = $input->getCurrentUrl();
         $currUrl = $url->toString();
         $baseUrl = $url->getBaseUrl($skipProto = false, $includeFc = false);
@@ -1096,11 +1096,11 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
                 $adminGuiAllowed = true;
             }
 
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $conf = $c->getAll();
             if (!$c->get($mgrName)) {
                 //  get current module
-                $req = &SGL_Request::singleton();
+                $req = SGL_Request::singleton();
                 $moduleName = $req->getModuleName();
 
                 //  load current module's config if not present

@@ -109,7 +109,7 @@ class SGL_Smarty extends Smarty
      * Returns a singleton Smarty instance.
      *
      * example usage:
-     * $smarty = & SGL_Smarty::singleton();
+     * $smarty =  SGL_Smarty::singleton();
      * warning: in order to work correctly, the cache
      * singleton must be instantiated statically and
      * by reference
@@ -146,7 +146,7 @@ class SGL_HtmlRenderer_SmartyStrategy extends SGL_OutputRendererStrategy
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
 
         //  prepare smarty object
-        $smarty = &SGL_Smarty::singleton();
+        $smarty = SGL_Smarty::singleton();
 
         //    Initially I thought we needed to register our data as an object
         //    it turns out we do not need to this.  Assigning it like a

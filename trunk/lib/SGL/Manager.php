@@ -110,13 +110,13 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->dbh = $this->_getDb();
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {
-            $this->trans = & SGL_Translation::singleton();
+            $this->trans =  SGL_Translation::singleton();
         }
 
         //  determine the value for the masterTemplate
@@ -127,10 +127,10 @@ class SGL_Manager
 
     function &_getDb()
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh =  SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;
@@ -138,7 +138,7 @@ class SGL_Manager
 
     function getConfig()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         return $c;
     }
 

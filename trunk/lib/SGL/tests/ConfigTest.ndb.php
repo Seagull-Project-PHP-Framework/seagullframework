@@ -17,7 +17,7 @@ class ConfigTest extends UnitTestCase {
 
     function setup()
     {
-        $this->c = &SGL_Config::singleton();
+        $this->c = SGL_Config::singleton();
     }
 
     function tearDown()

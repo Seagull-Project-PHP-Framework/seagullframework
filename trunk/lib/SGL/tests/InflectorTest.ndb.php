@@ -104,7 +104,7 @@ class InflectorTest extends UnitTestCase {
     {
         $url = 'foobar';
         //  set key so caseFix can work
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
         $this->assertEqual($ret, 'FoobarMgr');
 
@@ -147,7 +147,7 @@ class InflectorTest extends UnitTestCase {
 
     function testCaseFix()
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $c->set('DefaultMgr', array('requiresAuth' => false));
         $incorrect = 'defaultmgr';
         $ret = SGL_Inflector::caseFix($incorrect);

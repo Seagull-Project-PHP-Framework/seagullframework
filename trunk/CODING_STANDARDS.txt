@@ -79,8 +79,8 @@ readability::
 If assigning a reference to a variable, place the ampersand next to the
 referenced object, not the equal sign::
 
-  $reference = &$foo;
-  $reference = &foo();
+  $reference = $foo;
+  $reference = foo();
 
 
 Function Definitions

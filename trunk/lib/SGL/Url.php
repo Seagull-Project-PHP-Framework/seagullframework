@@ -551,7 +551,7 @@ class SGL_URL
         $params = '', $idx = 0, $output = '')
     {
         //  a workaround for 0.4.x style of building SEF URLs
-        $url = & SGL_Url::singleton();
+        $url =  SGL_Url::singleton();
         return $url->aStrategies[0]->makeLink(
             $action, $mgr, $mod, $aList, $params, $idx, $output);
     }

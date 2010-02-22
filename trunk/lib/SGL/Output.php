@@ -198,7 +198,7 @@ class SGL_Output
             if (isset($output) && is_a($output, 'SGL_Output')) {
                 $var = $output->{$aVar[0]};
             } else {
-                $var = &$this->{$aVar[0]};
+                $var = $this->{$aVar[0]};
             }
             if (isset($var) && is_object($var) && isset($var->{$aVar[1]})) {
                 $ret = $var->{$aVar[1]};
@@ -703,7 +703,7 @@ class SGL_Output
 
     function getOnLoadEvents()
     {
-        $c = & SGL_Config::singleton();
+        $c =  SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnload'])) {
@@ -716,7 +716,7 @@ class SGL_Output
 
     function getOnUnloadEvents()
     {
-        $c = & SGL_Config::singleton();
+        $c =  SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnUnload'])) {
@@ -729,7 +729,7 @@ class SGL_Output
 
     function getOnReadyDomEvents()
     {
-        $c = & SGL_Config::singleton();
+        $c =  SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnReadyDom'])) {
@@ -756,9 +756,9 @@ class SGL_Output
     function addJavascriptFile($file, $optimize = true)
     {
         if ($optimize) {
-            $aFiles = &$this->aJavascriptFiles;
+            $aFiles = $this->aJavascriptFiles;
         } else {
-            $aFiles = &$this->aRawJavascriptFiles;
+            $aFiles = $this->aRawJavascriptFiles;
         }
         $aIncludeFiles = !is_array($file) ? array($file) : $file;
         foreach ($aIncludeFiles as $jsFile) {
@@ -775,7 +775,7 @@ class SGL_Output
     {
         $aFiles = array();
 
-        $c = & SGL_Config::singleton();
+        $c =  SGL_Config::singleton();
         $conf = $c->getAll();
         // Check for global files to include
         if (!empty($conf['site']['globalJavascriptFiles'])) {
@@ -850,7 +850,7 @@ class SGL_Output
     function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0)
     {
-        $input = &SGL_Registry::singleton();
+        $input = SGL_Registry::singleton();
         $req = $input->getRequest();
         // Horde routes work only for browser request types
         if (($req->type == SGL_REQUEST_BROWSER || $req->type == SGL_REQUEST_AJAX)
@@ -1221,7 +1221,7 @@ class SGL_Output
             : (SGL_Config::get('site.masterLayout') ? SGL_Config::get('site.masterLayout') : 'layout-navtop-3col.css');
 
         // layout is specified in request for demo purpose on home page
-        $req = &SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $masterLayout = $req->get('masterLayout')
             ? $req->get('masterLayout')
             : $masterLayout;

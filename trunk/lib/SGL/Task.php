@@ -61,10 +61,10 @@ class SGL_Task
     */
     function &_getDal()
     {
-        $oServiceLocator = &ServiceLocator::instance();
+        $oServiceLocator = ServiceLocator::instance();
         $oDal = $oServiceLocator->get('dal');
         if (!$oDal) {
-            $oDal = &DA_FooBar::singleton();
+            $oDal = DA_FooBar::singleton();
             $oServiceLocator->register('dal', $oDal);
         }
         return $oDal;
@@ -102,7 +102,7 @@ class SGL_TaskRunner
     function addTask($oTask)
     {
         if (is_a($oTask, 'SGL_Task')) {
-            $this->aTasks[] = & $oTask;
+            $this->aTasks[] =  $oTask;
             return true;
         }
         return PEAR::raiseError('an SGL_Task object was expected');

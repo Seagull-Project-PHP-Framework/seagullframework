@@ -69,7 +69,7 @@ class SGL_Locale
         static $locale;
         if (!isset($locale)) {
             if ($newLocale) {
-                $locale = &I18Nv2::createLocale($newLocale);
+                $locale = I18Nv2::createLocale($newLocale);
             } else {
                 //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
@@ -77,8 +77,8 @@ class SGL_Locale
                 $uid = SGL_Session::getUid();
                 require_once 'I18Nv2/Negotiator.php';
                 if ($uid && isset($langCode)) {
-                    $dbh = &SGL_DB::singleton();
-                    $c = &SGL_Config::singleton();
+                    $dbh = SGL_DB::singleton();
+                    $c = SGL_Config::singleton();
                     $conf = $c->getAll();
 
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
@@ -94,7 +94,7 @@ class SGL_Locale
                     $neg = new I18Nv2_Negotiator();
                     $localeId = $neg->getLocaleMatch();
                 }
-                $locale = &I18Nv2::createLocale($localeId);
+                $locale = I18Nv2::createLocale($localeId);
             }
         }
         return $locale;

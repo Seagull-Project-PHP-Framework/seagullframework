@@ -31,30 +31,30 @@ class ImageTest extends UnitTestCase
         $strategy = new SGL_ImageTransform_FooStrategy($driver);
 
         $conf = array();
-        $conf['driver']      = &$driver;
+        $conf['driver']      = $driver;
         $conf['thumbDir']    = 'thumbs';
         $conf['saveQuality'] = 100;
-        $conf['foo']         = &$strategy;
+        $conf['foo']         = $strategy;
 
         // add thumbs
         $conf['thumbnails']['small'] = array();
         $conf['thumbnails']['large'] = array();
-        $small = &$conf['thumbnails']['small'];
-        $large = &$conf['thumbnails']['large'];
+        $small = $conf['thumbnails']['small'];
+        $large = $conf['thumbnails']['large'];
 
-        $small['driver']      = &$driver;
+        $small['driver']      = $driver;
         $small['thumbDir']    = 'thumbs';
         $small['saveQuality'] = 75;
-        $small['foo']         = &$strategy;
-        $small['foo2']        = &$strategy;
-        $large['driver']      = &$driver;
+        $small['foo']         = $strategy;
+        $small['foo2']        = $strategy;
+        $large['driver']      = $driver;
         $large['thumbDir']    = 'thumbs';
         $large['saveQuality'] = 90;
-        $large['foo3']        = &$strategy;
+        $large['foo3']        = $strategy;
 
         $this->conf   = $conf;
-        $this->driver = &$driver;
-        $this->strat  = &$strategy;
+        $this->driver = $driver;
+        $this->strat  = $strategy;
     }
 
     function tearDown()
@@ -166,9 +166,9 @@ class ImageTest extends UnitTestCase
 
     function testInit()
     {
-        $driver   = &$this->driver;
-        $conf     = &$this->conf;
-        $strategy = &$this->strat;
+        $driver   = $this->driver;
+        $conf     = $this->conf;
+        $strategy = $this->strat;
 
         // init image without thumbs
         $confcopy = $conf;
@@ -199,8 +199,8 @@ class ImageTest extends UnitTestCase
 
     function testTransform()
     {
-        $driver = &$this->driver;
-        $conf   = &$this->conf;
+        $driver = $this->driver;
+        $conf   = $this->conf;
 
         // init instance
         $fileName = 'chicago.jpg';
@@ -229,8 +229,8 @@ class ImageTest extends UnitTestCase
 
     function testCreate()
     {
-        $driver = &$this->driver;
-        $conf   = &$this->conf;
+        $driver = $this->driver;
+        $conf   = $this->conf;
 
         // initial data for image
         $fileName   = 'chicago.jpg';
@@ -274,7 +274,7 @@ class ImageTest extends UnitTestCase
         require_once SGL_CORE_DIR . '/Util.php';
 
         // image config
-        $conf = &$this->conf;
+        $conf = $this->conf;
 
         // files in upload dir
         $aFiles = SGL_Util::listDir(SGL_UPLOAD_DIR, FILE_LIST_FILES);

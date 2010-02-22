@@ -99,7 +99,7 @@ class SGL
      */
     function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         // Logging is not activated
@@ -131,7 +131,7 @@ class SGL
         include_once 'Log.php';
 
         // Instantiate a logger object based on logging options
-        $logger = & Log::singleton($conf['log']['type'],
+        $logger =  Log::singleton($conf['log']['type'],
                                    $logName,
                                    $conf['log']['ident'],
                                    array(  $conf['log']['paramsUsername'],
@@ -182,7 +182,7 @@ class SGL
      */
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  if fatal
@@ -392,7 +392,7 @@ class SGL
 
     function displayMaintenancePage($output)
     {
-        $c      = &SGL_Config::singleton();
+        $c      = SGL_Config::singleton();
         $conf   = $c->getAll();
         $output->moduleName         = 'default';
         $output->theme              = !empty($conf['site']['defaultTheme'])
@@ -422,7 +422,7 @@ class SGL
      */
     function displayErrorPage($output)
     {
-        $c = &SGL_Config::singleton();
+        $c = SGL_Config::singleton();
 
         // basics to be able to render
         $output->moduleName = SGL_Config::get('site.defaultModule');
@@ -487,17 +487,17 @@ class SGL
         }
         if (!isset($aInstances[$moduleName])) {
 
-            $locator = &SGL_ServiceLocator::singleton();
+            $locator = SGL_ServiceLocator::singleton();
             $dbh = $locator->get('DB');
             if (!$dbh) {
-                $dbh = & SGL_DB::singleton();
+                $dbh =  SGL_DB::singleton();
                 //  catch connection failure
                 if (PEAR::isError($dbh)) {
                     return $dbh;
                 }
                 $locator->register('DB', $dbh);
             }
-            $c = &SGL_Config::singleton();
+            $c = SGL_Config::singleton();
             $conf = $c->getAll();
             $query = "
                 SELECT  module_id

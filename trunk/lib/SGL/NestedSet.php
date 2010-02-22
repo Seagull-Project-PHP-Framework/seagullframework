@@ -110,10 +110,10 @@ class SGL_NestedSet
 
     function &_getDb()
     {
-        $locator = &SGL_ServiceLocator::singleton();
+        $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh = & SGL_DB::singleton();
+            $dbh =  SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;
@@ -597,7 +597,7 @@ class SGL_NestedSet
             $dbh = clone $db;
 
             //  create an instance of DB_NestedSet_DB
-            $ns = & DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);
+            $ns =  DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);
             if (is_a($ns, 'PEAR_Error')) {
                 echo $ns->getCode() . ': ' . $ns->getMessage();
             }
