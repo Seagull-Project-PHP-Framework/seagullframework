@@ -89,7 +89,7 @@ class BugMgr extends SGL_Manager
 
         $aErrors = array();
         if ($input->submitted) {
-            $v = & new Validate();
+            $v = new Validate();
             if (empty($input->bug->reporter_email)) {
                 $aErrors['reporter_email'] = 'You must enter your email';
             } else {

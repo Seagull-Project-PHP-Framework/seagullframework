@@ -55,8 +55,8 @@ class TemplateRenderer
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         $this->driver           = &$navDriver;
-        $this->output           = &new SGL_Output();
-        $this->view             = &new SGL_HtmlSimpleView($this->output);
+        $this->output           = new SGL_Output();
+        $this->view             = new SGL_HtmlSimpleView($this->output);
 
         $output                 = &$this->output;
         $output->theme          = (isset($navDriver->output->theme)) ? 

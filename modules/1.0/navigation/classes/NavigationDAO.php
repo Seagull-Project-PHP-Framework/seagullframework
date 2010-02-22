@@ -80,7 +80,7 @@ class NavigationDAO extends SGL_Manager
             'lockTableName'  => $this->conf['db']['prefix'] . 'table_lock',
             'sequenceName'   => $this->conf['table']['section']);
 
-        $this->nestedSet = &new SGL_NestedSet($this->_params);
+        $this->nestedSet = new SGL_NestedSet($this->_params);
 
         //  detect if trans2 support required
         if ($this->conf['translation']['container'] == 'db') {

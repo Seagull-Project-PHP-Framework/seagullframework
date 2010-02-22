@@ -22,7 +22,7 @@ class TestLoginMgr extends UnitTestCase {
 
         //  create unique username and passwd
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $username = $oPassword->create();
         $passwd = $oPassword->create();
 

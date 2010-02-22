@@ -91,7 +91,7 @@ class RegisterMgr extends SGL_Manager
         $aErrors = array();
         if (($input->submitted && $input->action != 'changeUserStatus')
                 || in_array($input->action, array('insert', 'update'))) {
-            $v = & new Validate();
+            $v = new Validate();
             if (empty($input->user->username)) {
                 $aErrors['username'] = 'You must enter a username';
             } else {

@@ -71,7 +71,7 @@ class Navigation_Block_Navigation
             SGL::raiseError('problem with navigation driver object',
                 SGL_ERROR_NOCLASS);
         }
-        $nav = & new $navDriver($output);
+        $nav = new $navDriver($output);
 
         //  set default params
         $aDefaultParams = array(

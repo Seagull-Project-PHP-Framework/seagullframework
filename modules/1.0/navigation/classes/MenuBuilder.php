@@ -78,7 +78,7 @@ class MenuBuilder
         if (!class_exists($guiClass)) {
             SGL::raiseError("$guiClass is not a valid classname", SGL_ERROR_NOCLASS);
         }
-        @$obj = & new $guiClass($options, $conf);
+        @$obj = new $guiClass($options, $conf);
         return $obj;
     }
 

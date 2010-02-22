@@ -151,7 +151,7 @@ class ConfigMgr extends SGL_Manager
 
         $aErrors = array();
         if ($input->submitted) {
-            $v = & new Validate();
+            $v = new Validate();
             if (empty($input->conf['site']['baseUrl']) ||
                 !preg_match('/^https?:\/\/[a-z0-9]+/i', $input->conf['site']['baseUrl'])) {
                 $aErrors['baseUrl'] = 'Please enter a valid URI';

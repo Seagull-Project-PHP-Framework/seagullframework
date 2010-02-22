@@ -60,7 +60,7 @@ class Navigation_Block_CategoryNav
 
         require_once SGL_MOD_DIR . '/navigation/classes/MenuBuilder.php';
         $options = array();
-        $menu = & new MenuBuilder('ExplorerBsd', $options);
+        $menu = new MenuBuilder('ExplorerBsd', $options);
         $menu->setStartId($aParams['startParentNode']);
         $html = $menu->toHtml();
         return $html;

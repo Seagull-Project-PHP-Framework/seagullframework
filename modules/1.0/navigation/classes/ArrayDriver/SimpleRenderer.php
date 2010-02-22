@@ -57,11 +57,11 @@ class ArrayDriver_SimpleRenderer
 
             // init renderer
             $rendererClassName = 'HTML_Menu_' . $renderer;
-            $renderer = & new $rendererClassName();
+            $renderer = new $rendererClassName();
             $this->_prepare($renderer);
 
             // init driver
-            $menu = & new HTML_Menu($aSections);
+            $menu = new HTML_Menu($aSections);
             $menu->forceCurrentIndex($this->_aParams['currentIndex']);
             $menu->setUrlPrefix('');
 

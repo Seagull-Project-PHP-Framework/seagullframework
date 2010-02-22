@@ -457,7 +457,7 @@ class UserMgr extends RegisterMgr
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $passwd = $oPassword->create();
         $oUser = $this->da->getUserById($input->userID);
         $oUser->passwd = md5($passwd);
@@ -603,7 +603,7 @@ class UserMgr extends RegisterMgr
                 . '/user/email_status_notification.php',
             'username'  => $oUser->username,
         );
-        $message = & new SGL_Emailer($options);
+        $message = new SGL_Emailer($options);
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
     }

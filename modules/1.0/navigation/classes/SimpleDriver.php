@@ -352,7 +352,7 @@ class SimpleDriver
                     if (!class_exists($navRendererClass)) {
                         SGL::raiseError('problem with navigation renderer object', SGL_ERROR_NOCLASS);
                     }
-                    $renderer = & new $navRendererClass($this);
+                    $renderer = new $navRendererClass($this);
                     $html     = $renderer->toHtml($aSectionNodes);
                 }
             }

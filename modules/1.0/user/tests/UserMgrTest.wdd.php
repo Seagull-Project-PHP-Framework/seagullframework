@@ -264,7 +264,7 @@ class TestUserMgr extends UnitTestCase {
 
         //  generate unique email
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $username = $oPassword->create();
 
         //  test for uniqueness
@@ -302,7 +302,7 @@ class TestUserMgr extends UnitTestCase {
 
         //  generate unique email
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $token = $oPassword->create();
         $email = $token . '@example.com';
 

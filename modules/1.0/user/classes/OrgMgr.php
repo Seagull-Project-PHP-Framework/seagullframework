@@ -129,7 +129,7 @@ class OrgMgr extends SGL_Manager
 
         $aErrors = array();
         if ($input->submitted || in_array($input->action, array('insert', 'update'))) {
-            $v = & new Validate();
+            $v = new Validate();
             if (empty($input->org->name)) {
                 $aErrors['name'] = 'You must enter an organisation name';
             }

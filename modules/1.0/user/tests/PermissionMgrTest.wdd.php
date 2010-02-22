@@ -13,7 +13,7 @@ class TestPermissionMgr extends UnitTestCase {
         // copy fake files to default module
         require_once 'Text/Password.php';
         require_once 'System.php';
-        $randomizer =& new Text_Password();
+        $randomizer = new Text_Password();
 
         // create classname prefix to prevent possible overwriting
         $classPrefix = $randomizer->create(5, 'unpronouncable', 'alphabetic');

@@ -39,7 +39,7 @@ class BlockDAO extends SGL_Manager
 
     function addBlock($oBlock)
     {
-        $block = & new Block();
+        $block = new Block();
         //  insert block record
         $block->setFrom($oBlock);
         $ok = $block->insert();

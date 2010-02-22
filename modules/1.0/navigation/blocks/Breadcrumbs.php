@@ -61,13 +61,13 @@ class Navigation_Block_Breadcrumbs
         $outputClassName      = SGL_Config::get('site.customOutputClassName')
             ? SGL_Config::get('site.customOutputClassName')
             : 'SGL_Output';
-        $blockOutput          = &new $outputClassName();
+        $blockOutput          = new $outputClassName();
         $blockOutput->theme   = $output->theme;
         $blockOutput->webRoot = $output->webRoot;
 
         //  prepare navigation driver
         $navDriver = $output->conf['navigation']['driver'];
-        $nav       = & new $navDriver($output);
+        $nav       = new $navDriver($output);
 
         //  set default params
         $aDefaultParams = array(

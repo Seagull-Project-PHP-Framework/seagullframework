@@ -76,7 +76,7 @@ class ArrayDriver
     {
         static $instance;
         if (!isset($instance)) {
-            $instance = & new ArrayDriver($output);
+            $instance = new ArrayDriver($output);
         }
         return $instance;
     }
@@ -501,14 +501,14 @@ class ArrayDriver
                     // render menu
                     if (!$renderBreadcrumbs) {
                         $aParams['menuType'] = $menuType;
-                        $renderer = & new $rendererClassName($aParams);
+                        $renderer = new $rendererClassName($aParams);
                         $menu = $renderer->toHtml($aSections);
                         $breadcrumbs = '';
 
                     // render breadcrumbs
                     } else {
                         $aParams['menuType'] = 'urhere';
-                        $renderer = & new ArrayDriver_SimpleRenderer($aParams);
+                        $renderer = new ArrayDriver_SimpleRenderer($aParams);
                         $breadcrumbs = $renderer->toHtml($aSections, 'DirectRenderer');
                         $menu = '';
                     }

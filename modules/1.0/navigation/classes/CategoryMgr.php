@@ -71,7 +71,7 @@ class CategoryMgr extends SGL_Manager
             'reorderUpdate'   => array('reorderUpdate', 'reorder'),
         );
 
-        $this->_category = & new SGL_Category();
+        $this->_category = new SGL_Category();
     }
 
     function validate($req, &$input)
@@ -130,7 +130,7 @@ class CategoryMgr extends SGL_Manager
 
         //  categories select box
         $options = array('exclude' => $output->category['category_id']);
-        $menu = & new MenuBuilder('SelectBox', $options);
+        $menu = new MenuBuilder('SelectBox', $options);
         $aCategories = $menu->toHtml();
         $output->aCategories = $aCategories;
     }

@@ -15,7 +15,7 @@ class GetUserGeoCode
                 . '&state=' . urlencode($state)
                 . '&output=php';
 
-        $req =& new HTTP_Request($url);
+        $req = new HTTP_Request($url);
         if (!PEAR::isError($req->sendRequest())) {
             $serializedResponse = $req->getResponseBody();
         }
@@ -26,7 +26,7 @@ class GetUserGeoCode
                     . '&state=' . urlencode($state)
                     . '&output=php';
 
-            $req =& new HTTP_Request($url);
+            $req = new HTTP_Request($url);
             if (!PEAR::isError($req->sendRequest())) {
                 $serializedResponse = $req->getResponseBody();
             }
@@ -36,7 +36,7 @@ class GetUserGeoCode
                         . '&state=' . urlencode($state)
                         . '&output=php';
 
-                $req =& new HTTP_Request($url);
+                $req = new HTTP_Request($url);
                 if (!PEAR::isError($req->sendRequest())) {
                     $serializedResponse = $req->getResponseBody();
                 }

@@ -31,7 +31,7 @@ class EmailConfirmation extends SGL_Observer
                 'password'      => $oUser->passwdClear,
         );
 
-        $message = & new SGL_Emailer($options);
+        $message = new SGL_Emailer($options);
         $message->prepare();
         $message->send();
 
@@ -48,7 +48,7 @@ class EmailConfirmation extends SGL_Observer
                     'username'      => $oUser->username,
                     'activationUrl' => SGL_Output::makeUrl('list', 'user', 'user'),
             );
-            $notification = & new SGL_Emailer($options);
+            $notification = new SGL_Emailer($options);
             $notification->prepare();
             $notification->send();
         }

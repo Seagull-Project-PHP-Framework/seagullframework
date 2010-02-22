@@ -183,7 +183,7 @@ class BlockMgr extends SGL_Manager
         $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
         $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
         $oBlock->params     = serialize($output->aParams);
-        $block              = & new Block();
+        $block              = new Block();
 
         //  insert block record
         $block->setFrom($oBlock);
@@ -204,7 +204,7 @@ class BlockMgr extends SGL_Manager
         $output->template  = 'blockEdit.html';
 
         //  get block data
-        $block         = & new Block();
+        $block         = new Block();
         $block->get($input->blockId);
         $data          = $block->toArray('%s');
         $output->block = (object)$data;
@@ -219,7 +219,7 @@ class BlockMgr extends SGL_Manager
         $oBlock->is_enabled = (isset($oBlock->is_enabled)) ? 1 : 0;
         $oBlock->is_cached  = (isset($oBlock->is_cached)) ? 1 : 0;
         $oBlock->params     = serialize($output->aParams);
-        $block              = & new Block();
+        $block              = new Block();
 
         // Update record in DB
         $block->get($oBlock->block_id);
@@ -237,7 +237,7 @@ class BlockMgr extends SGL_Manager
 
         if (is_array($input->aDelete)) {
             foreach ($input->aDelete as $index => $blockId) {
-                $block = & new Block();
+                $block = new Block();
                 $block->get($blockId);
 
                 // This takes into account block assignments as well
@@ -258,7 +258,7 @@ class BlockMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $blocks = & new Block();
+        $blocks = new Block();
         if ($input->submitted) {
 
             $orderArray = explode(',', $input->items);
@@ -362,7 +362,7 @@ class BlockMgr extends SGL_Manager
                     $output->checked = true;
 
                     //  load block params
-                    $block = & new Block();
+                    $block = new Block();
                     $block->loadBlockParams($output, $blockPath, $output->blockId);
                 }
             }

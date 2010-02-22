@@ -129,7 +129,7 @@ class Default_Block_LangSwitcher2
                 : false;
         }
 
-        $blockOutput                 = & new SGL_Output();
+        $blockOutput                 = new SGL_Output();
         $blockOutput->conf           = $conf;
         $blockOutput->theme          = $theme;
         $blockOutput->imagesDir      = $imageDir;
@@ -165,7 +165,7 @@ class Default_Block_LangSwitcher2
     {
         $output->moduleName = $this->templatePath;
 
-        $view = & new SGL_HtmlSimpleView($output);
+        $view = new SGL_HtmlSimpleView($output);
         return $view->render();
     }
 }

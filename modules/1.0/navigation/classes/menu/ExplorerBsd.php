@@ -90,7 +90,7 @@ class Menu_ExplorerBsd
 
         require_once SGL_MOD_DIR . '/navigation/classes/HTML_TreeMenu_DHTML_SGL.php';
         $theme = 'default';
-        $treeMenu = & new HTML_TreeMenu_DHTML_SGL($menu, array(
+        $treeMenu = new HTML_TreeMenu_DHTML_SGL($menu, array(
             'images' =>  SGL_BASE_URL . "/themes/$theme/images/treeNav",
             'defaultClass'  => 'treeMenuDefault'));
         return $treeMenu;
@@ -115,7 +115,7 @@ class Menu_ExplorerBsd
                     WHERE
                         $roleId NOT IN (COALESCE(perms, '-1'))
                     ORDER BY parent_id, order_id";
-        $tree     = &new Tree();
+        $tree     = new Tree();
         $nodeList = array();
 
         // Perform query
@@ -126,14 +126,14 @@ class Menu_ExplorerBsd
                 // Parent id is 0, thus root node.
                 if (!$row['parent_id']) {
                     unset($row['parent_id']);
-                    $nodeList[$row['id']] = &new Tree_Node($row);
+                    $nodeList[$row['id']] = new Tree_Node($row);
                     $tree->nodes->addNode($nodeList[$row['id']]);
 
                 // Parent node has already been added to tree
                 } elseif (!empty($nodeList[$row['parent_id']])) {
                     $parentNode = &$nodeList[$row['parent_id']];
                     unset($row['parent_id']);
-                    $nodeList[$row['id']] = &new Tree_Node($row);
+                    $nodeList[$row['id']] = new Tree_Node($row);
                     $parentNode->nodes->addNode($nodeList[$row['id']]);
 
                 } else {

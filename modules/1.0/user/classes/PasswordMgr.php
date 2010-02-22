@@ -84,7 +84,7 @@ class PasswordMgr extends SGL_Manager
 
         //  forgot password validation
         if ($input->submitted && ($input->action == 'forgot' || $input->action == 'retrieve')) {
-            $v = & new Validate();
+            $v = new Validate();
             if (empty($input->forgotEmail)) {
                 $aErrors['frmEmail'] = 'You must enter your email';
             } else {
@@ -163,7 +163,7 @@ class PasswordMgr extends SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $passwd = $oPassword->create();
         $oUser = DB_DataObject::factory($this->conf['table']['user']);
         $oUser->get($userId);
@@ -198,7 +198,7 @@ class PasswordMgr extends SGL_Manager
             'username'  => $oUser->username,
             'password'  => $passwd,
         );
-        $message = & new SGL_Emailer($options);
+        $message = new SGL_Emailer($options);
         $ok = $message->prepare();
         return ($ok) ? $message->send() : $ok;
     }

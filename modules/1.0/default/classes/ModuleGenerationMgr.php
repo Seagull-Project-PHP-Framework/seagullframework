@@ -509,7 +509,7 @@ EOD;
             'globalfunctions'   => true,
         );
 
-        $templ = & new HTML_Template_Flexy();
+        $templ = new HTML_Template_Flexy();
         $templ->compile('ManagerTemplate.html');
         $data = $templ->bufferedOutputObject($output, array());
         $data = preg_replace("/\&amp;/s", '&', $data);

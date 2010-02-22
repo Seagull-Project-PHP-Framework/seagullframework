@@ -34,7 +34,7 @@ class UserDAOTest extends UnitTestCase {
         $moduleId = 33;
 
         require_once 'Text/Password.php';
-        $oPassword = & new Text_Password();
+        $oPassword = new Text_Password();
         $aPerms = array(
             $oPassword->create() => 'first description',
             $oPassword->create() => 'second description');
