@@ -134,7 +134,7 @@ class SGL_Emailer
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $mime = & new Mail_mime($this->options['crlf']);
+        $mime = new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
         if (!empty($this->options['filepath'])) {
             if (!is_array($this->options['filepath'])) {
