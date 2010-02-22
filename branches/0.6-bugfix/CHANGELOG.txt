@@ -5,6 +5,20 @@ CHANGELOG
 +-----------------------+
 22-02-10    Most PEAR libs updated
 22-02-10    German translations updated
+22-02-10    Chinese translations updated
+22-02-10    Committed patch for SGL_Task_SetupLangSupport to respect translations from default manager
+22-02-10    Translation mgr shows original translated string if different from key
+22-02-10    Created a moduleConfig manager to edit manager config in adminGui
+22-02-10    New module for creating sitemaps added (sitemap)
+22-02-10    New module for exporting websites as flat HTML (siteexporter)
+22-02-10    New module for creating simple html pages (simplesite)
+22-02-10    Updated FCKeditor to 
+22-02-10    Fixed ability to rebuild modules as well as entire sgl install 
+22-02-10    Install log now created for easier debugging 
+22-02-10    Fixed problem where symlinked public web assets conflicted with mod_rewrite 
+				rules if frontControllerScript  suppressed 
+22-02-10    Fixed default permissions
+22-02-10    Fixed problem where logging was always enabled
 
 +-----------------------+
 | VERSION: 0.6.6        |
