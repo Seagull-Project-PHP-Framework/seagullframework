@@ -206,8 +206,8 @@ class WizardCreateDb extends HTML_QuickForm_Page
         $this->addRule('name', 'there was an error creating the database', 'canCreateDb');
 
         //  submit
-        $prevnext[] =& $this->createElement('submit', $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit', $this->getButtonName('next'), 'Next >>');
+        $prevnext[] = $this->createElement('submit', $this->getButtonName('back'), '<< Back');
+        $prevnext[] = $this->createElement('submit', $this->getButtonName('next'), 'Next >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }

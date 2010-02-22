@@ -54,7 +54,7 @@ class STR_DB
      * Returns a singleton DB handle.
      *
      * example usage:
-     * $dbh =& STR_DB::singleton();
+     * $dbh = STR_DB::singleton();
      * Warning: In order to work correctly, DB handle singleton must be
      * instantiated statically and by reference.
      *

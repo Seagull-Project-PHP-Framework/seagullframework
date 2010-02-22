@@ -18,7 +18,7 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
 
     function _renderForm(&$page)
     {
-        $renderer =& $page->defaultRenderer();
+        $renderer = $page->defaultRenderer();
         $baseUrl = SGL_BASE_URL;
         $renderer->setElementTemplate("\n\t<tr>\n\t\t<td align=\"right\" valign=\"top\" colspan=\"2\">{element}</td>\n\t</tr>", 'tabs');
         $renderer->setFormTemplate(<<<_HTML
