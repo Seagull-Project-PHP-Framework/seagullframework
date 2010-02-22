@@ -25,10 +25,10 @@ class ImageTransformStrategyTest extends UnitTestCase
 
     function testLoad()
     {
-        $driver = & new MockImage_Transform_Driver_GD_SGL();
+        $driver = new MockImage_Transform_Driver_GD_SGL();
         $driver->expectOnce('load', array($this->imageSampleFile));
 
-        $strategy = & new SGL_ImageTransform_FooStrategy1($driver);
+        $strategy = new SGL_ImageTransform_FooStrategy1($driver);
         $ret = $strategy->load('/path/to/file_not_found.jpg');
         $this->assertIsA($ret, 'PEAR_Error');
 
@@ -40,12 +40,12 @@ class ImageTransformStrategyTest extends UnitTestCase
         $argSaveFormat  = '';
         $argSaveQuality = '75';
 
-        $driver = & new MockImage_Transform_Driver_GD_SGL();
+        $driver = new MockImage_Transform_Driver_GD_SGL();
         $driver->expectOnce('free', array());
         $driver->expectOnce('save', array($this->imageSampleFile,
             $argSaveFormat, $argSaveQuality));
 
-        $strategy = & new SGL_ImageTransform_FooStrategy1($driver);
+        $strategy = new SGL_ImageTransform_FooStrategy1($driver);
         $strategy->load($this->imageSampleFile);
         $strategy->save($argSaveQuality, $argSaveFormat);
     }

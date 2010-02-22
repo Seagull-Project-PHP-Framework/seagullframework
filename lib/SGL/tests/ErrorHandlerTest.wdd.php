@@ -110,7 +110,7 @@ class TestMainProcess
         $mgr = $input->get('manager');
         $mgr->validate($req, $input);
 
-        $output = & new SGL_Output();
+        $output = new SGL_Output();
         $input->aggregate($output);
 
         //  process data if valid

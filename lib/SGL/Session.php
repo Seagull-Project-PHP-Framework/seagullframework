@@ -670,7 +670,7 @@ class SGL_Session
                 $conf['cookie']['domain'], $conf['cookie']['secure']);
         }
 
-        $sess = & new SGL_Session();
+        $sess = new SGL_Session();
     }
 
     /**

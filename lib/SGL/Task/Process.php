@@ -1056,7 +1056,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
                 return SGL::raiseError('problem with navigation driver object',
                     SGL_ERROR_NOCLASS);
             }
-            $nav = & new $navDriver($output);
+            $nav = new $navDriver($output);
 
             //  render navigation menu
             $navRenderer = SGL_Config::get('navigation.renderer');
@@ -1156,7 +1156,7 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
             $output->sectionId = empty($output->sectionId)
                 ? 0
                 : $output->sectionId;
-            $blockLoader = & new SGL_BlockLoader($output->sectionId);
+            $blockLoader = new SGL_BlockLoader($output->sectionId);
             $aBlocks = $blockLoader->render($output);
             foreach ($aBlocks as $key => $value) {
                 $blocksName = 'blocks'.$key;

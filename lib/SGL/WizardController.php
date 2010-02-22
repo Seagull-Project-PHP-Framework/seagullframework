@@ -206,7 +206,7 @@ class SGL_WizardControllerDisplay extends HTML_Quickform_Action_Display
     */
     function _renderForm(&$page)
     {
-        $renderer = & new HTML_QuickForm_Renderer_Default();
+        $renderer = new HTML_QuickForm_Renderer_Default();
         $page->accept($renderer);
         $page->wizardOutput = $renderer->toHtml();
     }
