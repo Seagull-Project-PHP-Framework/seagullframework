@@ -75,7 +75,7 @@ class UserDAO extends SGL_Manager
      * @static
      * @return  UserDAO reference to UserDAO object
      */
-    function &singleton()
+    function singleton()
     {
         static $instance;
 

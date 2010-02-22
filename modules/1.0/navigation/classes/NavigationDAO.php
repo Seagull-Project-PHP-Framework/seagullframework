@@ -95,7 +95,7 @@ class NavigationDAO extends SGL_Manager
      * @static
      * @return  NavigationDAO reference to NavigationDAO object
      */
-    function &singleton($forceNew = false)
+    function singleton($forceNew = false)
     {
         static $instance;
 

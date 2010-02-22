@@ -72,7 +72,7 @@ class ArrayDriver
      *
      * @return ArrayDriver
      */
-    function &singleton($output)
+    function singleton($output)
     {
         static $instance;
         if (!isset($instance)) {

@@ -70,7 +70,7 @@ class DefaultDAO extends SGL_Manager
      * @static
      * @return  DefaultDAO reference to DefaultDAO object
      */
-    function &singleton()
+    function singleton()
     {
         static $instance;
 

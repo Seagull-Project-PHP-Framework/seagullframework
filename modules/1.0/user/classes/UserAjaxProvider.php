@@ -57,7 +57,7 @@ class UserAjaxProvider extends SGL_AjaxProvider
         $this->da = &UserDAO::singleton();
     }
 
-    function &singleton()
+    function singleton()
     {
         static $instance;
 
