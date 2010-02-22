@@ -561,6 +561,10 @@ $defaultWords['Logout target'] = 'Logout target';
 $defaultWords['Roles that can access the admin GUI'] = 'Roles that can access the admin GUI';
 $defaultWords['logout target comment'] = 'redirect to this module^manager^action when a user hits "logout"';
 $defaultWords['login target comment'] = 'redirect to this module^manager^action when a users session expires';
+$defaultWords['Login target'] = 'Login target';
+$defaultWords['Default master css layout'] = 'Default master css layout';
+$defaultWords['DB charset'] = 'DB charset';
+$defaultWords['DB collation'] = 'DB collation';
 
 /* --- PEAR::Pager --- */
 $defaultWords['altPrev'] = 'Previous';
