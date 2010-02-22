@@ -413,7 +413,7 @@ checkArgs
 
 checkPreviousVersions
 
-#tagRelease
+tagRelease
 
 # move to tmp dir
 cd /tmp
@@ -430,11 +430,11 @@ createTarball
 
 #uploadToSfWholePackage
 
-#generateApiDocs
+generateApiDocs
 
-#packageApiDocs
+packageApiDocs
 
-#uploadToSfApiDocs
+uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
