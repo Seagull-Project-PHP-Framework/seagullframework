@@ -8,7 +8,7 @@
  */
 class SGL_Task_AuthenticateAmfRequest extends SGL_Task_AuthenticateRequest
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -45,7 +45,7 @@
  */
 class SGL_Task_Init extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         if (SGL_PROFILING_ENABLED && function_exists('apd_set_pprof_trace')) {
             apd_set_pprof_trace();
@@ -64,7 +64,7 @@ class SGL_Task_Init extends SGL_DecorateProcess
  */
 class SGL_Task_SetupORM extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $oTask = new SGL_Task_InitialiseDbDataObject();
         $ok = $oTask->run();
@@ -81,7 +81,7 @@ class SGL_Task_SetupORM extends SGL_DecorateProcess
  */
 class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -110,7 +110,7 @@ class SGL_Task_DetectBlackListing extends SGL_DecorateProcess
 
 class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         // check for maintenance mode "on"
         if (SGL_Config::get('site.maintenanceMode')) {
@@ -138,7 +138,7 @@ class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
  */
 class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -164,7 +164,7 @@ class SGL_Task_DetectAdminMode extends SGL_DecorateProcess
  */
 class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -190,7 +190,7 @@ class SGL_Task_DetectSessionDebug extends SGL_DecorateProcess
  */
 class SGL_Task_SetupLocale extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -236,7 +236,7 @@ class SGL_Task_SetupLocale extends SGL_DecorateProcess
  */
 class SGL_Task_BuildHeaders extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -345,7 +345,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         }
     }
 
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -432,7 +432,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
  */
 class SGL_Task_SetupPerms extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -479,7 +479,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -616,7 +616,7 @@ class SGL_Task_SetupLangSupport extends SGL_DecorateProcess
  */
 class SGL_Task_CreateSession extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -636,7 +636,7 @@ class SGL_Task_CreateSession extends SGL_DecorateProcess
  */
 class SGL_Task_ResolveManager extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -713,7 +713,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
      * @param SGL_Registry $input
      * @return boolean
      */
-    function getConfiguredDefaultManager(&$input)
+    function getConfiguredDefaultManager($input)
     {
         $defaultModule = SGL_Config::get('site.defaultModule');
         $defaultMgr = SGL_Config::get('site.defaultManager');
@@ -758,7 +758,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
         return true;
     }
 
-    function getDefaultManager(&$input)
+    function getDefaultManager($input)
     {
         $defaultModule = 'default';
         $defaultMgr = 'default';
@@ -825,7 +825,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
  */
 class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -845,7 +845,7 @@ class SGL_Task_StripMagicQuotes extends SGL_DecorateProcess
  */
 class SGL_Task_DiscoverClientOs extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -894,7 +894,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
      * @param SGL_Request $input
      * @param SGL_Output $output
      */
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -909,7 +909,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
      *
      * @param SGL_Output $output
      */
-    function addOutputData(&$output)
+    function addOutputData($output)
     {
         // setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {
@@ -987,7 +987,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
  */
 class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1034,7 +1034,7 @@ class SGL_Task_SetupWysiwyg extends SGL_DecorateProcess
  */
 class SGL_Task_SetupNavigation extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1078,7 +1078,7 @@ class SGL_Task_SetupNavigation extends SGL_DecorateProcess
  */
 class SGL_Task_SetupGui extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1144,7 +1144,7 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
  */
 class SGL_Task_SetupBlocks extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1174,7 +1174,7 @@ class SGL_Task_SetupBlocks extends SGL_DecorateProcess
  */
 class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1204,7 +1204,7 @@ class SGL_Task_BuildDebugBlock extends SGL_DecorateProcess
  */
 class SGL_Task_BuildView extends SGL_DecorateProcess
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         $this->processRequest->process($input, $output);
 
@@ -1236,7 +1236,7 @@ class SGL_Task_BuildView extends SGL_DecorateProcess
  */
 class SGL_Void extends SGL_ProcessRequest
 {
-    function process(&$input)
+    function process($input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
     }

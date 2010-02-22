@@ -150,7 +150,7 @@ class SGL_FrontController
         echo $output->data;
     }
 
-    function customFilterChain(&$input)
+    function customFilterChain($input)
     {
         $req = $input->getRequest();
 
@@ -367,7 +367,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process(&$input, &$output)
+    function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
