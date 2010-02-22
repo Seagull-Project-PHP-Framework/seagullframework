@@ -260,7 +260,7 @@ class SGL_DB
                     return $totalItems;
                 }
             } else {
-                $res =& $db->query($query, $dbparams);
+                $res = $db->query($query, $dbparams);
                 if (PEAR::isError($res)) {
                     return $res;
                 }
@@ -272,7 +272,7 @@ class SGL_DB
 
         require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
-        $req =& SGL_Request::singleton();
+        $req = SGL_Request::singleton();
         $pager_options['currentPage'] = (array_key_exists('currentPage', $pager_options))
             ? $pager_options['currentPage']
             : $req->get('pageID');

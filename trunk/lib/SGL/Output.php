@@ -901,7 +901,7 @@ class SGL_Output
 
     function getCurrentUrl()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $oCurrentUrl = $reg->getCurrentUrl();
         return $oCurrentUrl->toString();
     }
@@ -971,7 +971,7 @@ class SGL_Output
 
     function getCurrentModule()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerMod = $req->get('frmCallerMod');
         $modName = (is_null($frmCallerMod))
@@ -982,7 +982,7 @@ class SGL_Output
 
     function getCurrentManager()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerMgr = $req->get('frmCallerMgr');
         $mgrName = (is_null($frmCallerMgr))
@@ -993,7 +993,7 @@ class SGL_Output
 
     function getCurrentTemplate()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerTmpl = $req->get('frmCallerTmpl');
         $tmplName = (is_null($frmCallerTmpl))
@@ -1004,7 +1004,7 @@ class SGL_Output
 
     function getCurrentId()
     {
-        $reg =& SGL_Registry::singleton();
+        $reg = SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerId = $req->get('frmCallerId');
         $id = (is_null($frmCallerId))

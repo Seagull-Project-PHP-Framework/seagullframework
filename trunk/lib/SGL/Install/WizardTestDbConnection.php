@@ -183,8 +183,8 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
         $this->addRule('databaseUser', 'cannot connect to the db, please check all credentials', 'canConnectToDbServer');
 
         //  submit
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $prevnext[] = $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] = $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }

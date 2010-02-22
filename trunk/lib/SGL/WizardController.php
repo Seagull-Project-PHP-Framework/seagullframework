@@ -138,10 +138,10 @@ class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
             if (!$page->controller->isValid($pageName)) {
                 $pageName = $page->controller->findInvalid();
             }
-            $current =& $page->controller->getPage($pageName);
+            $current = $page->controller->getPage($pageName);
 
         } else {
-            $current =& $page;
+            $current = $page;
         }
         // generate the URL for the page 'display' event and redirect to it
         $action = $current->getAttribute('action');

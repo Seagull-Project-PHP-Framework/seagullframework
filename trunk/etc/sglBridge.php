@@ -70,7 +70,7 @@ class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
         $locator = SGL_ServiceLocator::singleton();
         //  in case
         $locator->remove('DB');
-        $dbh =& STR_DB::singleton();
+        $dbh = STR_DB::singleton();
         $locator->register('DB', $dbh);
 
         $this->processRequest->process($input, $output);

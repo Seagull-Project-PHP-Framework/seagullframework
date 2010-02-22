@@ -154,7 +154,7 @@ class SGL_NestedSet
                 WHERE {$this->_tableName}.{$this->_fieldsInternal['id']} = {$this->_tableName}.{$this->_fieldsInternal['rootid']}
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['norder']}";
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -194,7 +194,7 @@ class SGL_NestedSet
                         WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$root[$this->_fieldsInternal['rootid']]}
                         $where $groupBy
                         ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-                $result =& $this->dbh->query($sql);
+                $result = $this->dbh->query($sql);
                 if (PEAR::isError($result)) {
                     return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                 }
@@ -232,7 +232,7 @@ class SGL_NestedSet
                 WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$node[$this->_fieldsInternal['rootid']]}
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -270,7 +270,7 @@ class SGL_NestedSet
                 AND {$this->_tableName}.{$this->_fieldsInternal['id']} <> $node_id
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -314,7 +314,7 @@ class SGL_NestedSet
                 AND {$this->_tableName}.{$this->_fieldsInternal['level']} = {$node[$this->_fieldsInternal['level']]} + 1
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -368,7 +368,7 @@ class SGL_NestedSet
             $sql = "SELECT $this->_fieldListExternal
                     FROM $this->_tableName
                     WHERE {$this->_fieldsInternal['id']} = $node_id";
-            $result =& $this->dbh->query($sql);
+            $result = $this->dbh->query($sql);
             if (PEAR::isError($result)) {
                 return $result;
             }
@@ -420,7 +420,7 @@ class SGL_NestedSet
                     $where $groupBy
                     ORDER BY {$this->_fieldsInternal['l']}";
         }
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -525,7 +525,7 @@ class SGL_NestedSet
         $sql = "UPDATE $this->_tableName
                 SET $set
                 WHERE {$this->_fieldsInternal['id']} = $id";
-        $result =& $this->dbh->query($sql);
+        $result = $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }

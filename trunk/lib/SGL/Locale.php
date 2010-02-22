@@ -53,7 +53,7 @@ class SGL_Locale
      *
      *   usage:
      *
-     *   $locale =& SGL_Locale::singleton();
+     *   $locale = SGL_Locale::singleton();
      *   // setting locale here would override defaults.
      *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
