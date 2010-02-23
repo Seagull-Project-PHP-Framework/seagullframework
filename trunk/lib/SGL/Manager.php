@@ -115,13 +115,13 @@ class SGL_Manager
         $this->dbh = $this->_getDb();
 
         //  detect if trans2 support required
-        if ($this->conf['translation']['container'] == 'db') {
+        if (SGL_Config::get('translation.container') == 'db') {
             $this->trans =  SGL_Translation::singleton();
         }
 
         //  determine the value for the masterTemplate
-        if (!empty($this->conf['site']['masterTemplate'])) {
-            $this->masterTemplate = $this->conf['site']['masterTemplate'];
+        if (SGL_Config::get('site.masterTemplate')) {
+            $this->masterTemplate = SGL_Config::get('site.masterTemplate');
         }
     }
 
