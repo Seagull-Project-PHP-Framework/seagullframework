@@ -39,8 +39,8 @@ class ImageTest extends UnitTestCase
         // add thumbs
         $conf['thumbnails']['small'] = array();
         $conf['thumbnails']['large'] = array();
-        $small = $conf['thumbnails']['small'];
-        $large = $conf['thumbnails']['large'];
+        $small = &$conf['thumbnails']['small'];
+        $large = &$conf['thumbnails']['large'];
 
         $small['driver']      = $driver;
         $small['thumbDir']    = 'thumbs';
@@ -183,7 +183,7 @@ class ImageTest extends UnitTestCase
         // init image with thumbs
         $image = new SGL_Image();
         $ret = $image->init($conf);
-        $this->assertTrue($ret);
+        $this->assertFalse(is_a($ret, 'PEAR_Error'));
 
         $this->assertReference($image->_aParams['driver'], $driver);
         $this->assertReference($image->_aThumbnails['small']['driver'], $driver);

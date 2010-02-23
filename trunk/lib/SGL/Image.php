@@ -90,7 +90,7 @@ class SGL_Image
      * @param string $fileName
      * @param string $moduleName
      */
-    function SGL_Image($fileName = null, $moduleName = '')
+    function __construct($fileName = null, $moduleName = '')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
