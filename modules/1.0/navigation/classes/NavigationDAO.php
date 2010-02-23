@@ -76,14 +76,15 @@ class NavigationDAO extends SGL_Manager
                 'access_key'    => 'access_key',
                 'rel'           => 'rel'
             ),
-            'tableName'      => $this->conf['table']['section'],
-            'lockTableName'  => $this->conf['db']['prefix'] . 'table_lock',
-            'sequenceName'   => $this->conf['table']['section']);
+
+            'tableName'      => SGL_Config::get('table.section'),
+            'lockTableName'  => SGL_Config::get('db.prefix') . 'table_lock',
+            'sequenceName'   => SGL_Config::get('table.section'));
 
         $this->nestedSet = new SGL_NestedSet($this->_params);
 
         //  detect if trans2 support required
-        if ($this->conf['translation']['container'] == 'db') {
+        if (SGL_Config::get('translation.container') == 'db') {
             $this->trans = SGL_Translation::singleton('admin');
         }
     }
@@ -626,7 +627,7 @@ class NavigationDAO extends SGL_Manager
                 $section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$section['resource_uri'];
             }
         } else {
-            $this->deleteAliasBySectionId($section['section_id']);  
+            $this->deleteAliasBySectionId($section['section_id']);
         }
 
         //  update translations
