@@ -68,7 +68,7 @@ class SGL_String
         $conf = $c->getAll();
 
         $editedText = $text;
-        $censorMode = SGL_String::pseudoConstantToInt($conf['censor']['mode']);
+        $censorMode = self::pseudoConstantToInt($conf['censor']['mode']);
         if ($censorMode != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
             if (is_array($aBadWords)) {
@@ -122,7 +122,7 @@ class SGL_String
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::trimWhitespace($value);
+                $newArray[$key] = self::trimWhitespace($value);
             }
             return $newArray;
         } else {
@@ -169,11 +169,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL_String::trimWhitespace($var);
+        $var = self::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::clean($value);
+                $newArray[$key] = self::clean($value);
             }
             return $newArray;
         } else {
@@ -186,11 +186,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = SGL_String::trimWhitespace($var);
+        $var = self::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = SGL_String::removeJs($value);
+                $newArray[$key] = self::removeJs($value);
             }
             return $newArray;
         } else {
@@ -259,7 +259,7 @@ class SGL_String
     function translate($key, $filter = false, $aParams = array(), $langCode = null)
     {
         if (!is_null($langCode)) {
-            return SGL_String::translate2($key, $filter, $aParams, $langCode);
+            return self::translate2($key, $filter, $aParams, $langCode);
         }
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -595,7 +595,7 @@ class SGL_String
             array_push($aSegment, '</ul>');
         }
         $ret = implode("\n", $aSegment);
-        $ret = SGL_String::tidy($ret);
+        $ret = self::tidy($ret);
         return $ret;
     }
 
@@ -646,13 +646,13 @@ class SGL_String
 
     function toValidFileName($origName)
     {
-        return SGL_String::dirify($origName);
+        return self::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
     function dirify($s)
     {
-         $s = SGL_String::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
+         $s = self::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
          $s = strip_tags($s);                       ## remove HTML tags.
          // Note that &nbsp (for example) is legal in HTML 4, ie. semi-colon is optional if it is followed
@@ -748,7 +748,7 @@ class SGL_String
      * @todo make it work with cyrillic chars
      * @todo make it work with non utf-8 encoded strings
      *
-     * @see SGL_String::isCyrillic()
+     * @see self::isCyrillic()
      *
      * @param string $str
      *
@@ -756,8 +756,8 @@ class SGL_String
      */
     function replaceAccents($str)
     {
-        if (!SGL_String::isCyrillic($str)) {
-            $str = SGL_String::to7bit($str);
+        if (!self::isCyrillic($str)) {
+            $str = self::to7bit($str);
             $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
         }
         return $str;
@@ -866,21 +866,6 @@ class SGL_String
                 : $value;
         }
         return $ret;
-    }
-}
-
-if (!function_exists('array_combine')) {
-    function array_combine($a, $b)
-    {
-        $c = array();
-        if (is_array($a) && is_array($b))
-            while (list(, $va) = each($a))
-                if (list(, $vb) = each($b)) {
-                    $c[$va] = $vb;
-                } else {
-                    break 1;
-                }
-        return $c;
     }
 }
 ?>
