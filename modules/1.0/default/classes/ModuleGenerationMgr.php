@@ -497,7 +497,7 @@ EOD;
     {
         //  initialise template engine
         require_once 'HTML/Template/Flexy.php';
-        $options = PEAR::getStaticProperty('HTML_Template_Flexy','options');
+        $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
         $options = array(
             'templateDir'       => SGL_MOD_DIR . '/default/classes/',
             'compileDir'        => SGL_TMP_DIR,
