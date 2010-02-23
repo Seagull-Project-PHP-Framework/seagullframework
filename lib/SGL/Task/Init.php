@@ -412,7 +412,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
     function run()
     {
-        $options = PEAR::getStaticProperty('DB_DataObject', 'options');
+        $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
             'database'              => SGL_DB::getDsn(SGL_DSN_STRING),
             'schema_location'       => SGL_ENT_DIR,
