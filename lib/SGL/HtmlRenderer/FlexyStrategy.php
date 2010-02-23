@@ -19,7 +19,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      * @param SGL_View $view
      * @return string   rendered html output
      */
-    function render(/*SGL_View*/ &$view)
+    function render(SGL_View $view)
     {
         //  suppress error notices in templates
         SGL::setNoticeBehaviour(SGL_NOTICES_DISABLED);
@@ -54,7 +54,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      *
      * @todo move flexy constants to this class def
      */
-    function initEngine(&$data)
+    function initEngine($data)
     {
         //  initialise template engine
         $options = &PEAR::getStaticProperty('HTML_Template_Flexy','options');
@@ -104,7 +104,7 @@ class SGL_HtmlRenderer_FlexyStrategy extends SGL_OutputRendererStrategy
      * @param array $options
      * @return boolean
      */
-    function setupPlugins(&$data, &$options)
+    function setupPlugins($data, &$options)
     {
         //  Configure Flexy to use SGL ModuleOutput Plugin
         //   If an Output.php file exists in module's dir
