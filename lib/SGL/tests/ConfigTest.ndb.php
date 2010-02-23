@@ -141,7 +141,7 @@ class ConfigTest extends UnitTestCase {
 
     function testConfigGetNonExistentValue()
     {
-        $res = SGL_Config::get('foo.barxsdfsd');
+        $res = SGL_Config::get('foo.bar');
         $this->assertFalse($res);
     }
 
