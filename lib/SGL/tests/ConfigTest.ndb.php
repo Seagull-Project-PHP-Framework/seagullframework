@@ -116,12 +116,7 @@ class ConfigTest extends UnitTestCase {
         $var = $this->c->get('cache');
         $expected = array (
           'enabled' => 0,
-          'libCacheEnabled' => 0,
           'lifetime' => '86400',
-          'cleaningFactor' => '0',
-          'readControl' => '1',
-          'writeControl' => '1',
-          'javascript' => '',
         );
         $this->assertEqual($var, $expected);
     }
@@ -146,7 +141,7 @@ class ConfigTest extends UnitTestCase {
 
     function testConfigGetNonExistentValue()
     {
-        $res = SGL_Config::get('foo.bar');
+        $res = SGL_Config::get('foo.barxsdfsd');
         $this->assertFalse($res);
     }
 
@@ -190,10 +185,12 @@ class ConfigTest extends UnitTestCase {
 
     function testGetCachedFileName()
     {
+        //  test filename strings
         $fileName = SGL_MOD_DIR . '/default/conf.ini';
         $ret = SGL_Config::getCachedFileName($fileName);
         $this->assertEqual(SGL_VAR_DIR . '/config/default.ini', $ret);
 
+        //  doesn't exist
         $fileName = SGL_MOD_DIR . '/default/other.ini';
         $ret = SGL_Config::getCachedFileName($fileName);
         $this->assertEqual(SGL_VAR_DIR . '/default/other.ini', $ret);
@@ -203,7 +200,6 @@ class ConfigTest extends UnitTestCase {
     {
         $aTest = array(
             SGL_VAR_DIR . '/config/user.ini',
-            SGL_VAR_DIR . '/media2/image.ini'
         );
 
         foreach ($aTest as $cachedFile) {
