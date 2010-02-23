@@ -103,9 +103,16 @@ class SGL_Config
     {
         //  instance call with 2 keys: $c->get(array('foo' => 'bar'));
         if (is_array($key)) {
+            $this;
             $key1 = key($key);
             $key2 = $key[$key1];
-            if (isset( $this->aProps[$key1][$key2])) {
+            $test1 = array_key_exists($key1, $this->aProps);
+            if ($test1 && is_array($this->aProps[$key1])) {
+                $test2 = array_key_exists($key2, $this->aProps[$key1]);
+            } else {
+                $test2 = false;
+            }
+            if ($test1 && $test2) {
                 $ret = $this->aProps[$key1][$key2];
             } else {
                 $ret = false;
