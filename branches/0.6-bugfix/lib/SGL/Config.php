@@ -149,7 +149,7 @@ class SGL_Config
     {
         $ret = false;
         if (is_string($key) && is_scalar($value)) {
-            $aKeys = split('\.', trim($key));
+            $aKeys = preg_split('/\./', trim($key));
 
             //  it's a static call
             if (isset($aKeys[0]) && isset($aKeys[1])) {
@@ -455,7 +455,7 @@ class SGL_Config
         if (empty($str)) {
             return false;
         }
-        $aSplitResult = split('\^', $str);
+        $aSplitResult = preg_split('/\^/', $str);
         $aParams = array(
             'moduleName'    => null,
             'managerName'   => null,

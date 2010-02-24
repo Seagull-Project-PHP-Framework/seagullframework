@@ -92,7 +92,7 @@ class SGL_Smarty extends Smarty
     {
         if (!is_readable($resourceName)) {
             //  parse module_name
-            list($moduleName, $templateName) = split('/', $resourceName);
+            list($moduleName, $templateName) = preg_split('#/#', $resourceName);
             $arr = array($moduleName, $templateName);
             $newResourceName = $oSmarty->template_dir . '/' . join('/', $arr);
             if (file_exists($newResourceName)) {
