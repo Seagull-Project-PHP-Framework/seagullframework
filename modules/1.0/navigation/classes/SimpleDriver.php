@@ -654,7 +654,7 @@ class SimpleDriver
         //  extract anchor and place at end if exists
         if (stristr($url, '#')) {
             $anchorStart           = strpos($url, '#');
-            list(,$anchorFragment) = split('#', $url);
+            list(,$anchorFragment) = preg_split('/#/', $url);
             $anchorOffset          = (strpos($anchorFragment, '&amp;')) + 1;
             $anchorEnd             = $anchorStart + $anchorOffset;
             $namedAnchor           = substr($url, $anchorStart, $anchorOffset);

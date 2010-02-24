@@ -355,13 +355,13 @@ class RoleMgr extends SGL_Manager
     function _parsePermsString($sPerms)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $aTmpPerms = split(':', $sPerms);
+        $aTmpPerms = preg_split('/:/', $sPerms);
         if (count($aTmpPerms) > 0) {
             array_pop($aTmpPerms);
             $aPerms = array();
             foreach ($aTmpPerms as $perm) {
                 //  chop at caret
-                list($permName, $permId) = split('\^', $perm);
+                list($permName, $permId) = preg_split('/\^/', $perm);
                 $aPerms[$permId] = $permName;
             }
         } else {
