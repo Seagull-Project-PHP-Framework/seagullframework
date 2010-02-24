@@ -146,7 +146,7 @@ class RndMsgMgr extends SGL_Manager
         if ($input->msgUpload) {
             $aLines = $this->file2($input->msgFileTmpName);
         } else {
-            $aLines = split($this->crlf, $input->addMsgsText);
+            $aLines = preg_split("/".$this->crlf."/", $input->addMsgsText);
         }
         $success = true;
         foreach ($aLines as $rndmsg) {

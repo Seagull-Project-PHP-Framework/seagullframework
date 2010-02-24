@@ -38,7 +38,7 @@
 // +---------------------------------------------------------------------------+
 // $Id: Output.php,v 1.0 2006/07/01 00:26:16 demian Exp $
 
-class GuestbookOutput 
+class GuestbookOutput
 {
 
     /**
@@ -46,18 +46,18 @@ class GuestbookOutput
      * Ex: user@domain.com => <span>user</span>&#64;<!-- -->domain&#46;com
      *
      * @access  public
-     * @param   string  $email 
+     * @param   string  $email
      * @return  string  $email ofucated
      */
     function emailObfuscator($email)
     {
-        SGL::logMessage(null, PEAR_LOG_DEBUG);       
-        
+        SGL::logMessage(null, PEAR_LOG_DEBUG);
+
         $email = str_replace('.','&#46;',$email); // Replace . with &#46;
-        $aEmail = split('@',$email);
+        $aEmail = preg_split('/@/',$email);
         $data = '<span>'.$aEmail[0].'</span>&#64;<!-- -->'.$aEmail[1];
-       
-        return $data;     
+
+        return $data;
     }
 }
 ?>

@@ -78,7 +78,7 @@ class BlogMgr extends SGL_Manager
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         require_once 'HTTP/Request.php';
-        $phpSelfParts = split('\?', $_SERVER['PHP_SELF']);
+        $phpSelfParts = preg_split('(/\?/', $_SERVER['PHP_SELF']);
         $s9yUri = SGL_BASE_URL . '/serendipity/index.php?'.@$phpSelfParts[1];
         $req = &new HTTP_Request($s9yUri);
         if ($_POST) {

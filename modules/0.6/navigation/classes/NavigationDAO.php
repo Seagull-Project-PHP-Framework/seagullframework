@@ -217,7 +217,7 @@ class NavigationDAO extends SGL_Manager
                 }
                 //  split off anchor if exists
                 if (stristr($section['resource_uri'], '#')) {
-                    list(,$anchor) = split("#", $section['resource_uri']);
+                    list(,$anchor) = preg_split('/#/', $section['resource_uri']);
                     $section['anchor'] = $anchor;
                 }
             }
@@ -545,7 +545,7 @@ class NavigationDAO extends SGL_Manager
         //  intercept a list of constants occuring in quotes,
         //  ie 'perms' => "SGL_GUEST, SGL_MEMBER, SGL_ADMIN",
         if (is_string($section['perms'])) {
-            $aConstants = split(',', $section['perms']);
+            $aConstants = preg_split('/,/', $section['perms']);
             if (is_array($aConstants)) {
                 $aPerms = array();
                 foreach ($aConstants as $myconstant) {
@@ -626,7 +626,7 @@ class NavigationDAO extends SGL_Manager
                 $section['resource_uri'] = 'uriAlias:' . $aliasId.':'.$section['resource_uri'];
             }
         } else {
-            $this->deleteAliasBySectionId($section['section_id']);  
+            $this->deleteAliasBySectionId($section['section_id']);
         }
 
         //  update translations
