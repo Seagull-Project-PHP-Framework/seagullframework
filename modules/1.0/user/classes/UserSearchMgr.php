@@ -273,7 +273,7 @@ class UserSearchMgr extends SGL_Manager
             $orderBy_query = ' ORDER BY u.usr_id ASC ';
         }
 
-        if ($this->conf[SGL_Inflector::caseFix('OrgMgr')]['enabled']) {
+        if ($this->conf['OrgMgr']['enabled']) {
             $query = "
                 SELECT  u.*, o.name AS org_name, r.name AS role_name
                 FROM    {$this->conf['table']['user']} u, {$this->conf['table']['organisation']} o, {$this->conf['table']['role']} r
