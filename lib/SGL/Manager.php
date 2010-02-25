@@ -167,7 +167,7 @@ class SGL_Manager
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $mgrName = SGL_Inflector::caseFix(get_class($this));
+        $mgrName = get_class($this);
         $defaultMgrLoaded = false;
 
         if (SGL_Error::count()) {

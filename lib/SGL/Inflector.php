@@ -110,18 +110,14 @@ class SGL_Inflector
     {
         $fullMgrName = SGL_Inflector::getManagerNameFromSimplifiedName(
             $aParsedUri['managerName']);
-
-        //  compensate for case-sensitivity
-        $corrected = SGL_Inflector::caseFix($fullMgrName, true);
-        $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+        $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $fullMgrName . '.php';
 
         //  if the file exists, mgr name is valid and has not been omitted
         if (!is_file($path)) {
             //  so before we can be sure of simplification, let's check for presence of simplified Manager,
             //  ie, that has same name of module, so if module is foo, look for FooMgr
             $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($aParsedUri['moduleName']);
-            $corrected = SGL_Inflector::caseFix($mgrName, true);
-            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
+            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $mgrName . '.php';
             //  if a default mgr can be loaded, then we assume that mgr name was omitted in request
             $ret = is_file($pathToMgr);
         } else {
@@ -143,7 +139,7 @@ class SGL_Inflector
         if (strtolower(substr($name, -3)) != 'mgr') {
             $name .= 'Mgr';
         }
-        return SGL_Inflector::caseFix(ucfirst($name), $force = true);
+        return $name;
     }
 
     /**
