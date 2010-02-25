@@ -243,7 +243,7 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  don't send headers according to config
-        $currentMgr = SGL_Inflector::caseFix(get_class($output->manager));
+        $currentMgr = get_class($output->manager);
         $c = SGL_Config::singleton(); $conf = $c->getAll();
         if (!isset($conf[$currentMgr]['setHeaders'])
                 || $conf[$currentMgr]['setHeaders'] == true) {
@@ -364,7 +364,7 @@ class SGL_Task_AuthenticateRequest extends SGL_DecorateProcess
         SGL_Session::set('aRequestHistory', $aTruncated);
 
         $mgr = $input->get('manager');
-        $mgrName = SGL_Inflector::caseFix(get_class($mgr));
+        $mgrName = get_class($mgr);
 
         //  test for anonymous session and rememberMe cookie
         if (($session->isAnonymous() || $timeout)
@@ -728,8 +728,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
             return false;
         }
 
-        $mgrName = SGL_Inflector::caseFix(
-            SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
+        $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr);
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
         if (!is_file($path)) {
             SGL::raiseError('could not locate default manager, '.$path,
@@ -762,8 +761,7 @@ class SGL_Task_ResolveManager extends SGL_DecorateProcess
     {
         $defaultModule = 'default';
         $defaultMgr = 'default';
-        $mgrName = SGL_Inflector::caseFix(
-            SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr));
+        $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($defaultMgr);
         $path = SGL_MOD_DIR .'/'.$defaultModule.'/classes/'.$mgrName.'.php';
         require_once $path;
         $mgr = new $mgrName();
@@ -943,7 +941,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
             : 'default';
         // check if theme is affected by the current manager
         if (isset($output->manager)) {
-            $output->managerName = SGL_Inflector::caseFix(get_class($output->manager));
+            $output->managerName = get_class($output->manager);
             if (SGL_Config::get($output->managerName . '.theme')) {
                 $output->theme = SGL_Config::get($output->managerName . '.theme');
             }
@@ -1085,7 +1083,7 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (!SGL::runningFromCLI()) {
-            $mgrName = SGL_Inflector::caseFix(get_class($output->manager));
+            $mgrName = get_class($output->manager);
             $adminGuiAllowed = $adminGuiRequested = false;
 
             //  setup which GUI to load depending on user and manager
