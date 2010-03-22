@@ -189,7 +189,7 @@ class SGL_FrontController
                     'SGL_Task_AuthenticateAjaxRequest',
                     'SGL_Task_BuildAjaxHeaders',
                     'SGL_Task_CustomBuildOutputData',
-                    'SGL_Task_ExecuteAjaxAction',
+                    'SGL_Task_ExecuteAjaxAction2',
                 );
             }
             $input->setFilters($aFilters);
