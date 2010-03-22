@@ -756,9 +756,10 @@ class SGL_Output
     function addJavascriptFile($file, $optimize = true)
     {
         if ($optimize) {
-            $aFiles = $this->aJavascriptFiles;
+// WTFWTF ????????????  aim ... fire .. at whoever wrote this ...
+            $aFiles = &$this->aJavascriptFiles;
         } else {
-            $aFiles = $this->aRawJavascriptFiles;
+            $aFiles = &$this->aRawJavascriptFiles;
         }
         $aIncludeFiles = !is_array($file) ? array($file) : $file;
         foreach ($aIncludeFiles as $jsFile) {
@@ -1134,6 +1135,7 @@ class SGL_Output
      */
     function makeJsOptimizerLink()
     {
+        $this;
         // save currently loaded files
         $aCurrentFiles = $this->aJavascriptFiles;
         $this->aJavascriptFiles = array();
