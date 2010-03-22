@@ -13,7 +13,7 @@ class SGL_XML_RPC_Remote
 {
     var $conf = array();
 
-    function SGL_XML_RPC_Remote($config)
+    function __construct($config)
     {
         $this->conf = parse_ini_file($config);
     }

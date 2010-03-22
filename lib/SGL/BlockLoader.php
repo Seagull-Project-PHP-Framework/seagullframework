@@ -91,7 +91,7 @@ class SGL_BlockLoader
      * @access  public
      * @return  void
      */
-    function SGL_BlockLoader($sectionId)
+    function __construct($sectionId)
     {
         $this->_rid = (int)SGL_Session::get('rid');
         if (isset($sectionId)) {

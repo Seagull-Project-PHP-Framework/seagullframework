@@ -75,7 +75,7 @@ class SGL_Services_REST_Client
      * @param string $passwd
      * @return SGL_Services_REST_Client
      */
-    function SGL_Services_REST_Client($aOptions = array(), $user = null, $passwd = null)
+    function __construct($aOptions = array(), $user = null, $passwd = null)
     {
         $this->setOptions($aOptions);
         if (!is_null($user) && !is_null($passwd)) {

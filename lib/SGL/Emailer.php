@@ -78,7 +78,7 @@ class SGL_Emailer
         'groupID'       => '',
    );
 
-    function SGL_Emailer($options = array())
+    function __construct($options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

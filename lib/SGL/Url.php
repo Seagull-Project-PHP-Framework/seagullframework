@@ -137,7 +137,7 @@ class SGL_URL
     *
     * @see __construct()
     */
-    function SGL_URL(
+    function __construct(
         $url = null,
         $useBrackets = true,
         /*SGL_UrlParserStrategy*/ $parserStrategy = null,

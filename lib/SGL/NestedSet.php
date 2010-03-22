@@ -97,7 +97,7 @@ class SGL_NestedSet
         return $aInstances[$signature];
     }
 
-    function SGL_NestedSet($params)
+    function __construct($params)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
