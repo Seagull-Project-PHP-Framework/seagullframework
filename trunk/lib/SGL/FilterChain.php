@@ -10,7 +10,7 @@ class SGL_FilterChain
 {
     var $aFilters;
 
-    function SGL_FilterChain($aFilters)
+    function __construct($aFilters)
     {
         $this->aFilters = array_map('trim', $aFilters);
     }

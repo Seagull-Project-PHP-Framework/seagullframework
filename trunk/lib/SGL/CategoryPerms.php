@@ -53,7 +53,7 @@ class SGL_CategoryPerms extends SGL_Category
     var $aPerms = array();
     var $catID  = 0;
 
-    function SGL_CategoryPerms($catID = -1)
+    function __construct($catID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

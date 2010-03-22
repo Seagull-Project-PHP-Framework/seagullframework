@@ -106,7 +106,7 @@ class SGL_Manager
      * @access  public
      * @return  void
      */
-    function SGL_Manager()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

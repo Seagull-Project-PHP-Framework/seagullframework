@@ -102,7 +102,7 @@ class SGL_Session
      * @param   boolean $rememberMe  set remember me cookie
      * @return  void
      */
-    function SGL_Session($uid = -1, $rememberMe = null)
+    function __construct($uid = -1, $rememberMe = null)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $c = SGL_Config::singleton();

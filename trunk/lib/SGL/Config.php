@@ -51,7 +51,7 @@ class SGL_Config
     var $aProps = array();
     var $fileName;
 
-    function SGL_Config($autoLoad = false)
+    function __construct($autoLoad = false)
     {
         $this->aProps = array();
         if ($this->isEmpty() && $autoLoad) {

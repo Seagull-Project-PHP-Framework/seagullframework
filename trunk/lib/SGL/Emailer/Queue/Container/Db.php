@@ -20,7 +20,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
      *
      * @return SGL_Emailer_Queue_Container_Db
      */
-    public function SGL_Emailer_Queue_Container_Db()
+    public function __construct()
     {
         $this->_dbh = SGL_DB::singleton();
     }

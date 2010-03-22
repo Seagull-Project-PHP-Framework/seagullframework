@@ -49,7 +49,7 @@ class SGL_ParamHandler
 {
     var $source;
 
-    function SGL_ParamHandler($source)
+    function __construct($source)
     {
         $this->source = $source;
     }

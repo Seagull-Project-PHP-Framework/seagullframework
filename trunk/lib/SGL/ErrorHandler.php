@@ -61,7 +61,7 @@ class SGL_ErrorHandler
      * @access  public
      * @return  void
      */
-    function SGL_ErrorHandler()
+    function __construct()
     {
         //  first dimension elements are PHP error types
         //  2nd dimension elements are roughly PEAR Log's equivalents

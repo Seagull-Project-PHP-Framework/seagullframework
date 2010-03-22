@@ -73,7 +73,7 @@ class SGL_UrlParser_SimpleStrategy extends SGL_UrlParserStrategy
  */
 class SGL_UrlParser_AliasStrategy extends SGL_UrlParser_SimpleStrategy
 {
-    function SGL_UrlParser_AliasStrategy()
+    function __construct()
     {
         $this->da =  NavigationDAO::singleton();
     }
