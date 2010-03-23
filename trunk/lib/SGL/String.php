@@ -264,7 +264,10 @@ class SGL_String
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $trans = $GLOBALS['_SGL']['TRANSLATION'];
+        $trans = isset($GLOBALS['_SGL']['TRANSLATION'])
+			? $GLOBALS['_SGL']['TRANSLATION']
+			: false;
+		if (!$trans) return $key;
         if (isset($trans[$key])) {
             if (!is_array($trans[$key])
                     && strstr($trans[$key], '||')
