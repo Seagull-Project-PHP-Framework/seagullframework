@@ -12,7 +12,7 @@ class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         if (SGL_Error::count()) {
-            $output->data = SGL_AjaxProvider::handleError(SGL_Error::getLast());
+            $output->data = SGL_AjaxProvider2::handleError(SGL_Error::getLast());
             header('HTTP/1.0 500 text/json');
             header('Cache-Control: no-store, no-cache');
             return;
@@ -31,7 +31,7 @@ class SGL_Task_BuildAjaxHeaders extends SGL_DecorateProcess
             switch ($output->responseFormat) {
             case SGL_RESPONSEFORMAT_JSON:
                 $data = $output->data;
-                $output->data = SGL_AjaxProvider::jsonEncode($data);
+                $output->data = SGL_AjaxProvider2::jsonEncode($data);
                 header('Content-Type: text/plain');
                 break;
 
