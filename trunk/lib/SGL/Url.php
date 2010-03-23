@@ -133,20 +133,6 @@ class SGL_URL
     var $useBrackets;
 
     /**
-    * PHP4 Constructor
-    *
-    * @see __construct()
-    */
-    function __construct(
-        $url = null,
-        $useBrackets = true,
-        /*SGL_UrlParserStrategy*/ $parserStrategy = null,
-        $conf = null)
-    {
-        $this->__construct($url, $useBrackets, $parserStrategy, $conf);
-    }
-
-    /**
     * PHP5 Constructor
     *
     * Parses the given url and stores the various parts
