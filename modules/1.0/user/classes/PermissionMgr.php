@@ -54,10 +54,10 @@ require_once 'DB/DataObject.php';
  */
 class PermissionMgr extends SGL_Manager
 {
-    function PermissionMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->template     = 'permManager.html';
         $this->pageTitle    = 'Permission Manager';

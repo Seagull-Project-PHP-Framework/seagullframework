@@ -50,10 +50,10 @@ require_once 'DB/DataObject.php';
  */
 class PreferenceMgr extends SGL_Manager
 {
-    function PreferenceMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->template     = 'prefManager.html';
         $this->pageTitle    = 'Preference Manager';

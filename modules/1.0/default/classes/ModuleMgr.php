@@ -56,10 +56,10 @@ define('SGL_ICONS_PER_ROW', 3);
  */
 class ModuleMgr extends SGL_Manager
 {
-    function ModuleMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle = 'Module Manager';
         $this->template  = 'moduleOverview.html';

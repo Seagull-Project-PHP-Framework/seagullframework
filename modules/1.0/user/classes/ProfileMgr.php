@@ -52,10 +52,10 @@ require_once SGL_CORE_DIR . '/Delegator.php';
  */
 class ProfileMgr extends SGL_Manager
 {
-    function ProfileMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->module    = 'user';
         $this->pageTitle = 'User Profile';

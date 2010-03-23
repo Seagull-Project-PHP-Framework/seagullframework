@@ -51,10 +51,10 @@ require_once SGL_MOD_DIR . '/default/classes/DefaultDAO.php';
  */
 class ModuleConfigMgr extends SGL_Manager
 {
-    function ModuleConfigMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = 'Module Config Manager';
         $this->template     = 'moduleConfigEdit.html';

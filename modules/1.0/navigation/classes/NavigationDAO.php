@@ -55,9 +55,9 @@ class NavigationDAO extends SGL_Manager
      *
      * @return NavigationDAO
      */
-    function NavigationDAO()
+    function __construct()
     {
-        parent::SGL_Manager();
+        parent::__construct();
         $this->_params = array(
             'tableStructure' => array(
                 'section_id'    => 'id',
@@ -102,7 +102,7 @@ class NavigationDAO extends SGL_Manager
 
         // If the instance is not there, create one
         if (!isset($instance) || $forceNew) {
-            $instance = new NavigationDAO();
+            $instance = new self();
         }
         return $instance;
     }

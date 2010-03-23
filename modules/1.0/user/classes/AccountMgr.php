@@ -50,10 +50,10 @@ require_once 'DB/DataObject.php';
  */
 class AccountMgr extends RegisterMgr
 {
-    function AccountMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::RegisterMgr();
+        parent::__construct();
 
         $this->pageTitle = 'My Account';
         $this->da =  UserDAO::singleton();

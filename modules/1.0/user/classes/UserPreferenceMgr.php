@@ -54,10 +54,10 @@ class UserPreferenceMgr extends PreferenceMgr
     var $aTimeouts = array();
     var $aResPerPage = array();
 
-    function UserPreferenceMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::PreferenceMgr();
+        parent::__construct();
 
         $this->template     = 'prefUserEdit.html';
         $this->pageTitle    = 'User Preferences';

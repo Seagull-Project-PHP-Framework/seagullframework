@@ -50,10 +50,10 @@ require_once SGL_CORE_DIR . '/Observer.php';
  */
 class UserPasswordMgr extends PasswordMgr
 {
-    function UserPasswordMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::PasswordMgr();
+        parent::__construct();
 
         $this->template = 'userPasswordEdit.html';
 

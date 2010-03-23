@@ -52,9 +52,9 @@ class DefaultDAO extends SGL_Manager
      *
      * @return DefaultDAO
      */
-    function DefaultDAO()
+    function __construct()
     {
-        parent::SGL_Manager();
+        parent::__construct();
     }
 
     /**

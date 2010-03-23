@@ -60,10 +60,10 @@ define('SGL_ROLE_REMOVE',  2);
  */
 class RoleMgr extends SGL_Manager
 {
-    function RoleMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->template     = 'roleManager.html';
         $this->pageTitle    = 'Role Manager';

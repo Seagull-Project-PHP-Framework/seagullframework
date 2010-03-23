@@ -60,10 +60,10 @@ class ConfigMgr extends SGL_Manager
     var $aNavRenderers;
     var $aTranslationContainers;
 
-    function ConfigMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle = 'Config Manager';
         $this->template = 'configEdit.html';

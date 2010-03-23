@@ -50,10 +50,10 @@ require_once SGL_CORE_DIR . '/Observer.php';
  */
 class LoginMgr extends SGL_Manager
 {
-    function LoginMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->_aActionsMapping =  array(
             'login'         => array('login'),

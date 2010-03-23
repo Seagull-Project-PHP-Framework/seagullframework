@@ -59,7 +59,7 @@ class UserDAO extends SGL_Manager
      */
     function UserDAO()
     {
-        parent::SGL_Manager();
+        parent::__construct();
     }
 
     /**
@@ -81,7 +81,7 @@ class UserDAO extends SGL_Manager
 
         // If the instance is not there, create one
         if (!isset($instance)) {
-            $instance = new UserDAO();
+            $instance = new self();
         }
         return $instance;
     }

@@ -57,10 +57,10 @@ if (SGL::moduleIsEnabled('cms')) {
  */
 class BlockMgr extends SGL_Manager
 {
-    function BlockMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         //  if custom block layout specified (can be loaded in any module's init.php file)
         if (isset($GLOBALS['_SGL']['aBlocksNames'])) {

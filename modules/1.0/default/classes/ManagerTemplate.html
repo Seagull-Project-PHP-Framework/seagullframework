@@ -46,10 +46,10 @@ require_once 'DB/DataObject.php';
  */
 class {t.ManagerName}Mgr extends SGL_Manager
 {
-    function {t.ManagerName}Mgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = '{t.ManagerName} Manager';
         $this->template     = '{t.managerName}List.html';

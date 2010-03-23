@@ -15,9 +15,9 @@ class BlockDAO extends SGL_Manager
      *
      * @return BlockDAO
      */
-    function BlockDAO()
+    function __construct()
     {
-        parent::SGL_Manager();
+        parent::__construct();
     }
 
     /**

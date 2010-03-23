@@ -55,10 +55,10 @@ require_once 'Validate.php';
  */
 class UserMgr extends RegisterMgr
 {
-    function UserMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle = 'User Manager';
         $this->template = 'userManager.html';

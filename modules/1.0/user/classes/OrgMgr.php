@@ -60,10 +60,10 @@ class OrgMgr extends SGL_Manager
      * @access  public
      * @return  void
      */
-    function OrgMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = 'Organisation Manager';
         $this->template     = 'orgManager.html';

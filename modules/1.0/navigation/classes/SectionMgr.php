@@ -53,10 +53,10 @@ require_once SGL_CORE_DIR . '/Delegator.php';
  */
 class SectionMgr extends SGL_Manager
 {
-    function SectionMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle      = 'Section Manager';
         $this->masterTemplate = 'masterMinimal.html';

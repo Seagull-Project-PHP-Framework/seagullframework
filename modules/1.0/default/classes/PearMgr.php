@@ -48,10 +48,10 @@
  */
 class PearMgr extends SGL_Manager
 {
-    function PearMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = 'PEAR Manager';
         $this->template     = 'pearList.html';

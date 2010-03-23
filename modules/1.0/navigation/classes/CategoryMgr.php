@@ -53,10 +53,10 @@ class CategoryMgr extends SGL_Manager
     var $_redirectCatId = 1;
     var $_category = null;
 
-    function CategoryMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->aggregateOutput = true;
         $this->pageTitle        = 'Category Manager';

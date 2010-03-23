@@ -54,10 +54,10 @@ require_once 'DB/DataObject.php';
  */
 class RegisterMgr extends SGL_Manager
 {
-    function RegisterMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = 'Register';
         $this->template     = 'userAdd.html';

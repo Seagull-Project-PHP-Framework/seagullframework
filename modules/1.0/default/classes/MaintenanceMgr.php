@@ -50,10 +50,10 @@ require_once SGL_MOD_DIR  . '/default/classes/DefaultDAO.php';
  */
 class MaintenanceMgr extends SGL_Manager
 {
-    function MaintenanceMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle = 'Maintenance';
         $this->template  = 'maintenance.html';

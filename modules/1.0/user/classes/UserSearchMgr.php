@@ -50,10 +50,10 @@ require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
  */
 class UserSearchMgr extends SGL_Manager
 {
-    function UserSearchMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle = 'User Manager';
         $this->template = 'userManagerSearch.html';

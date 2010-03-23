@@ -47,10 +47,10 @@ class BugMgr extends SGL_Manager
     var $_serverInfo = array();
     var $aSeverityTypes = array();
 
-    function BugMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle   = 'Bug Report';
         $this->template    = 'bugReport.html';

@@ -50,10 +50,10 @@ require_once 'DB/DataObject.php';
  */
 class PasswordMgr extends SGL_Manager
 {
-    function PasswordMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->template = 'loginForgot.html';
 

@@ -50,10 +50,10 @@ require_once 'DB/DataObject.php';
  */
 class OrgTypeMgr extends SGL_Manager
 {
-    function OrgTypeMgr()
+    function __construct()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        parent::SGL_Manager();
+        parent::__construct();
 
         $this->pageTitle    = 'OrgType Manager';
         $this->template     = 'orgTypeList.html';
