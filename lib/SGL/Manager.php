@@ -184,7 +184,7 @@ class SGL_Manager
         }
         if (!count($this->conf)) {
             return SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
-                'constructor - please add "parent::SGL_Manager();" in your '.
+                'constructor - please add "parent::__construct();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
         //  only implement authorisation check on demand
