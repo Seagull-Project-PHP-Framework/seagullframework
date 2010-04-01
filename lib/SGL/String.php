@@ -872,7 +872,7 @@ class SGL_String
      *
      * @static
      */
-    public static function escapeSingleQuoteInArrayKeys($array)
+    function escapeSingleQuoteInArrayKeys($array)
     {
         $ret = array();
         foreach ($array as $key => $value) {
