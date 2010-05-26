@@ -121,7 +121,7 @@ class SGL_URL2
     {
         $aVars     = array();
         $aKeywords = array('moduleName', 'managerName', 'controller',
-            'anchor', 'host');
+            'anchor', 'host', 'protocol');
         if (SGL_Config::get('translation.langInUrl')) {
             array_push($aKeywords, 'lang');
         }
@@ -152,8 +152,6 @@ class SGL_URL2
 
     /**
      * Make link.
-     *
-     * @todo add https support.
      *
      * @param array mixed
      *
@@ -210,6 +208,8 @@ class SGL_URL2
                 $aParams['lang'] = reset(explode('-', $aParams['lang']));
             }
         }
+        // pass the protocol for Horde Routes
+        $aParams['protocol'] = strtolower(substr(SGL_BASE_URL,0,5)) == 'https' ? 'https' : 'http';
 
         // try to match URL in new style
         $url = $this->_routes->urlFor($aParams);
