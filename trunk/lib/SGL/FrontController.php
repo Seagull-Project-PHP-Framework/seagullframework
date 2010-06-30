@@ -78,7 +78,7 @@ class SGL_FrontController
      * Main invocation, init tasks plus main process.
      *
      */
-    function run()
+    public static function run()
     {
         if (!defined('SGL_INITIALISED')) {
             SGL_FrontController::init();
@@ -242,7 +242,7 @@ class SGL_FrontController
     }
 
 
-    function init()
+    public static function init()
     {
         SGL_FrontController::setupMinimumEnv();
         SGL_FrontController::loadRequiredFiles();
@@ -316,7 +316,7 @@ class SGL_FrontController
         require_once 'DB.php';
     }
 
-    function setupMinimumEnv()
+    public static function setupMinimumEnv()
     {
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_EnsureFC());

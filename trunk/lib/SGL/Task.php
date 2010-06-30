@@ -44,22 +44,21 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @abstract
  */
-class SGL_Task
+abstract class SGL_Task
 {
     /**
-     * @abstract
-     *
+     * 
      */
-    function run($data = null)
+    public function run($data = array())
     {
-        return;
+        return $data;
     }
 
    /**
     * Example ...
     * @access private
     */
-    function &_getDal()
+    protected function &_getDal()
     {
         $oServiceLocator = ServiceLocator::instance();
         $oDal = $oServiceLocator->get('dal');

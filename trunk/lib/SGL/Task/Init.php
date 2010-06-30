@@ -66,7 +66,7 @@ class SGL_Task_SetupPaths extends SGL_Task
      *
      * @param array $data
      */
-    function run($conf)
+    public function run($conf = array())
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());
         if (defined('SGL_PEAR_INSTALLED')) {
@@ -149,7 +149,7 @@ class SGL_Task_SetupPaths extends SGL_Task
  */
 class SGL_Task_SetupConstantsStart extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         // framework file structure
         if (defined('SGL_PEAR_INSTALLED')) {
@@ -336,7 +336,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
  */
 class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         //  include Log.php if logging enabled
         if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
@@ -410,7 +410,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
  */
 class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
-    function run()
+    function run($conf = array())
     {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
@@ -433,7 +433,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
  */
 class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         // for 0.6.x versions
         if (!empty($conf['db']['prefix'])
@@ -450,7 +450,7 @@ class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
  */
 class SGL_Task_SetGlobals extends SGL_Task
 {
-    function run($data)
+    function run($conf = array())
     {
         $GLOBALS['_SGL']['BANNED_IPS'] =        array();
         $GLOBALS['_SGL']['ERRORS'] =            array();
@@ -465,7 +465,7 @@ class SGL_Task_SetGlobals extends SGL_Task
  */
 class SGL_Task_SetupPearErrorCallback extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         //  set PEAR error handler
         #$old_error_handler = set_error_handler("myErrorHandler");
@@ -504,7 +504,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
  */
 class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         if (version_compare(phpversion(), "5.3.0", '>=')) {
             return;
@@ -541,7 +541,7 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
  */
 class SGL_Task_SetBaseUrl extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         if (!(isset($conf['site']['baseUrl']))) {
 
@@ -568,7 +568,7 @@ class SGL_Task_SetBaseUrl extends SGL_Task
  */
 class SGL_Task_ModifyIniSettings extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         // set php.ini directives
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
@@ -588,7 +588,7 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
  */
 class SGL_Task_RegisterTrustedIPs extends SGL_Task
 {
-    function run($data)
+    function run($conf = array())
     {
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
@@ -602,7 +602,7 @@ class SGL_Task_RegisterTrustedIPs extends SGL_Task
  */
 class SGL_Task_LoadCustomConfig extends SGL_Task
 {
-    function run($conf)
+    function run($conf = array())
     {
         if (!empty($conf['path']['pathToCustomConfigFile'])) {
             if (is_file($conf['path']['pathToCustomConfigFile'])) {
@@ -617,7 +617,7 @@ class SGL_Task_LoadCustomConfig extends SGL_Task
  */
 class SGL_Task_InitialiseModules extends SGL_Task
 {
-    function run()
+    function run($conf = array())
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -659,7 +659,7 @@ class SGL_Task_InitialiseModules extends SGL_Task
  */
 class SGL_Task_EnsureFC extends SGL_Task
 {
-    function run($data)
+    function run($conf = array())
     {
         //  load BC functions depending on PHP version detected
         if (version_compare(phpversion(), "5.3.0", '>=')) {
