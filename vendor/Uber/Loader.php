@@ -16,15 +16,15 @@ class Uber_Loader
 
     /**
      * Register a PEAR/Zend like namespace for class files.
-     * 
+     *
      * Uber_Loader::registerNamespace('Zend');
-     * 
+     *
      * will autoload all Zend_* classes from the includepath.
-     * 
+     *
      * Uber_Loader::registerNamespace('Zend','/var/src/');
-     * 
+     *
      * will autoload all Zend_* classes from the basedir /var/src/
-     * 
+     *
      *
      * @param string $namespace
      * @param string|boolean $baseDir
@@ -38,7 +38,7 @@ class Uber_Loader
     }
 
     /**
-     * Rgiste:
+     * Register:
      *
      * array('Class_Name'=>'Class/Name.php');
      *
@@ -195,7 +195,7 @@ class Uber_Loader
         if (! is_array($pattern['preg_replace'])) {
             $pattern['preg_replace'] = array($pattern['preg_replace']);
         }
-        if (! is_array($pattern['replacement'])) {
+        if (isset($pattern['replacement']) && ! is_array($pattern['replacement'])) {
             $pattern['replacement'] = array($pattern['replacement']);
         }
         $modifier = '';
@@ -203,15 +203,29 @@ class Uber_Loader
             $modifier = 'e';
         }
         for ($pi = 0; $pi < count($pattern['preg_replace']); $pi ++) {
-            $name = preg_replace('|' . $pattern['preg_replace'][$pi] . '|' . $modifier, isset($pattern['replacement'][$pi]) ? $pattern['replacement'][$pi] : $pattern['replacement'][0], $name);
+            if (isset($pattern['preg_replace'][0])) {
+                $name = preg_replace('|' . $pattern['preg_replace'][$pi] . '|' . $modifier,
+                    isset($pattern['replacement'][$pi])
+                        ? $pattern['replacement'][$pi]
+                        : $pattern['replacement'][0], $name);
+            }
         }
+        //  path might be multiple paths with separator
         $dir = isset($pattern['basedir']) ? $pattern['basedir'] : '';
-        $checkFileName = $dir . DS . $name;
-        $checkFileName = $checkFileName . (isset($pattern['suffix']) ? $pattern['suffix'] : '');
-        if (is_readable($checkFileName)) {
-            $fileName = $checkFileName;
-            include ($fileName);
-            $found = true;
+        if (isset($dir) && preg_split("/\\".PATH_SEPARATOR."/", $dir)) {
+            $paths = preg_split("/\\".PATH_SEPARATOR."/", $dir);
+        } else {
+            $paths = array($dir);
+        }
+        foreach ($paths as $dir) {
+            $checkFileName = $dir . DS . $name;
+            $checkFileName = $checkFileName . (isset($pattern['suffix']) ? $pattern['suffix'] : '');
+            if (is_readable($checkFileName)) {
+                $fileName = $checkFileName;
+                include ($fileName);
+                $found = true;
+                break;
+            }
         }
         return $found;
     }
@@ -234,7 +248,7 @@ class Uber_Loader
     /**
      * Will include the class from the filename which is determined based on the registered
      * namespaces and autoload patterns.
-     * 
+     *
      * If the class does not exist, it will create an empty class which throws an exception
      * upon construct or static access. Like this you can recover from the error instead of
      * raising a fatal error.
@@ -256,7 +270,7 @@ class Uber_Loader
             $baseDir = self::$_namespaces[$matches[1]];
             $throwException = self::$_namespaceExceptionHandling[$matches[1]];
             if ($baseDir !== true) {
-                if(!is_array($baseDir)) {
+                if (!is_array($baseDir)) {
                     $fileName = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
                     if (is_readable($fileName)) {
                         $tryToInclude = true;
@@ -281,7 +295,7 @@ class Uber_Loader
             if ($tryToInclude && ($res = include ($fileName)) == true) {
                 $found = true;
             }
-        } else 
+        } else
             if (isset(self::$_autoloadPatterns['classes'][$className])) {
                 $fileName = array_pop(self::$_autoloadPatterns['classes'][$className]);
                 $fileName = str_replace('$class', $className, $fileName);
