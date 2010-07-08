@@ -139,7 +139,7 @@ class SGL_Inflector
         if (strtolower(substr($name, -3)) != 'mgr') {
             $name .= 'Mgr';
         }
-        return $name;
+        return self::caseFix($name, true);
     }
 
     /**
