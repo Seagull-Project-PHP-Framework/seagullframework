@@ -258,6 +258,7 @@ class Uber_Loader
      */
     public static function autoload($className)
     {
+        $a = self::$_namespaces;
         if (! self::_isValidClassName($className)) {
             throw new Uber_Loader_Exception('Class Name "' . $className . '" is invalid', - 3);
         }
