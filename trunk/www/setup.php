@@ -72,6 +72,19 @@ module setup
     - register module in registry
 */
 
+/**
+ * Returns systime in ms.
+ *
+ * @return string   Execution time in milliseconds
+ */
+function getSystemTime()
+{
+    $time = @gettimeofday();
+    $resultTime = $time['sec'] * 1000;
+    $resultTime += floor($time['usec'] / 1000);
+    return $resultTime;
+}
+
 //  initialise
 
 //  set initial paths according to install type
