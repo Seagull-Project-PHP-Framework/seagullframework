@@ -36,7 +36,7 @@
 // +---------------------------------------------------------------------------+
 // | Author: Demian Turner <demian@phpkitchen.com>                             |
 // +---------------------------------------------------------------------------+
-// $Id: PasswordMgr.php,v 1.26 2005/05/26 22:38:29 demian Exp $
+// $Id: PasswordMgr.php 2 2010-06-11 13:22:38Z ptr $
 
 require_once 'Validate.php';
 require_once 'DB/DataObject.php';
@@ -46,7 +46,7 @@ require_once 'DB/DataObject.php';
  *
  * @package User
  * @author  Demian Turner <demian@phpkitchen.com>
- * @version $Revision: 1.26 $
+ * @version $Revision: 2 $
  */
 class PasswordMgr extends SGL_Manager
 {
@@ -127,7 +127,7 @@ class PasswordMgr extends SGL_Manager
             SELECT  *
             FROM    " . $this->conf['table']['user'] ."
             WHERE   email = " . $this->dbh->quoteSmart($input->forgotEmail) . "
-            AND     security_question = " . $input->question. "
+            AND     security_question = " .  $this->dbh->quoteSmart($input->question). "
             AND     security_answer = " . $this->dbh->quoteSmart($input->answer);
         $userId = $this->dbh->getOne($query);
         if ($userId) {
