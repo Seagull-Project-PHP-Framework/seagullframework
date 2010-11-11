@@ -75,11 +75,7 @@ class SGL_Request
             }
             $obj = new $class();
             error_log('##########   Req type: '.$class);
-            $ok = $obj->init();
-
-            return PEAR::isError($ok)
-                ? $ok
-                : $obj;
+            return $obj;
         }
     }
 
