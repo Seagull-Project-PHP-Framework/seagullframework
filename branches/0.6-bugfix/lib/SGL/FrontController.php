@@ -83,25 +83,27 @@ class SGL_FrontController
         if (!defined('SGL_INITIALISED')) {
             SGL_FrontController::init();
         }
-        //  assign request to registry
+        //  create app resources
         $input = &SGL_Registry::singleton();
         $req   = &SGL_Request::singleton();
 
-        if (PEAR::isError($req)) {
-            //  stop with error page
-            SGL::displayStaticPage($req->getMessage());
-        }
-        $input->setRequest($req);
-
         //  ensure local config loaded and merged
         $c = &SGL_Config::singleton();
-        $c->ensureModuleConfigLoaded($req->getModuleName());
 
         $outputClass = SGL_FrontController::getOutputClass();
         $output = new $outputClass();
 
         // test db connection
         SGL_FrontController::testDbConnection($output);
+
+        //  initialise request
+        $req->init();
+        if (PEAR::isError($req)) {
+            //  stop with error page
+            SGL::displayStaticPage($req->getMessage());
+        }
+        $input->setRequest($req);
+        $c->ensureModuleConfigLoaded($req->getModuleName());        
 
         // run module init tasks
         SGL_Task_InitialiseModules::run();
