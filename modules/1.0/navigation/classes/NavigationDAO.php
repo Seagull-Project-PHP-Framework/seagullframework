@@ -471,7 +471,7 @@ class NavigationDAO extends SGL_Manager
      * @param   array $section
      * @return  boolean false | int
      */
-    function addSection(&$section)
+    function addSection($section)
     {
         $this->prepareSection($section);
 
@@ -516,7 +516,7 @@ class NavigationDAO extends SGL_Manager
      *
      * @param array $section
      */
-    function addSimpleSection(&$section)
+    function addSimpleSection($section)
     {
         $separator = '/';
 
@@ -609,7 +609,7 @@ class NavigationDAO extends SGL_Manager
      * @param   array $section
      * @return  boolean false | int
      */
-    function updateSection(&$section)
+    function updateSection($section)
     {
         $this->prepareSection($section);
 
@@ -693,7 +693,7 @@ class NavigationDAO extends SGL_Manager
      *
      * @param   array $section
      */
-    function prepareSection(&$section)
+    function prepareSection($section)
     {
         $separator = '/'; // can be configurable later
 
