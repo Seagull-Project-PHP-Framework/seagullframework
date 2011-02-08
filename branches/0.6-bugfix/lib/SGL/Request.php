@@ -119,7 +119,7 @@ class SGL_Request
             $ret = SGL_REQUEST_CLI;
 
         } elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                        $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+                        $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && empty($_GET['force_sgl_browser_request'])) {
             $ret = SGL_REQUEST_AJAX;
 
         } elseif (isset($_SERVER['CONTENT_TYPE']) &&
