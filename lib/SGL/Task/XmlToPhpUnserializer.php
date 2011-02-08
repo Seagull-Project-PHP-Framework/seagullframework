@@ -15,7 +15,7 @@ class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $req = $input->getRequest();
             $entityName = SGL_Config::get('REST.entityName');
