@@ -59,7 +59,7 @@ CREATE TABLE if not exists organisation (
   last_updated datetime default NULL,
   updated_by int(11) default NULL,
   PRIMARY KEY  (organisation_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 /*==============================================================*/
 /* Table: organisation_type                                     */
@@ -68,7 +68,7 @@ CREATE TABLE if not exists organisation_type (
   organisation_type_id int(11) NOT NULL default '0',
   name varchar(64) default NULL,
   PRIMARY KEY  (organisation_type_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 /*==============================================================*/
 /* Table: permission                                            */
@@ -80,7 +80,7 @@ CREATE TABLE if not exists permission (
   module_id int(11) NOT NULL default '0',
   PRIMARY KEY  (permission_id),
   UNIQUE KEY name (name)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 /*==============================================================*/
 /* Table: role                                                  */
@@ -94,7 +94,7 @@ CREATE TABLE if not exists role (
   last_updated datetime default NULL,
   updated_by int(11) default NULL,
   PRIMARY KEY  (role_id)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 /*==============================================================*/
 /* Table: role_permission                                       */
@@ -106,7 +106,7 @@ CREATE TABLE if not exists role_permission (
   PRIMARY KEY  (role_permission_id),
   KEY permission_id (permission_id),
   KEY role_id (role_id)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 /*==============================================================*/
 /* Table: user_preference                                       */
@@ -145,7 +145,7 @@ CREATE TABLE if not exists org_preference (
   preference_id int(11) NOT NULL default '0',
   value varchar(128) default NULL,
   PRIMARY KEY  (org_preference_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 /*==============================================================*/
 /* Index: usr_user_preference_fk                               */
@@ -194,7 +194,7 @@ CREATE TABLE if not exists usr (
   last_updated datetime default NULL,
   updated_by int(11) default NULL,
   PRIMARY KEY  (usr_id)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 /* we'll see if dbdo fixes this problem */
 -- CREATE UNIQUE INDEX usr_email ON usr (
@@ -215,7 +215,7 @@ CREATE TABLE if not exists user_permission (
   PRIMARY KEY  (user_permission_id),
   KEY usr_id (usr_id),
   KEY permission_id (permission_id)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 /*==============================================================*/
 /* Table: user_cookie                                           */
