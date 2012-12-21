@@ -68,7 +68,7 @@ class SGL_DB
     {
         $msg = 'Cannot connect to DB, check your credentials';
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        if (empty($dsn['phptype'])) {
+        if (is_array($dsn) && empty($dsn['phptype'])) {
             return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
         }
         $c = SGL_Config::singleton();
