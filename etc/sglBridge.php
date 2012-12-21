@@ -16,7 +16,7 @@ class TestRunnerInit extends SGL_FrontController
             SGL_FrontController::init();
         }
         //  assign request to registry
-        $input = SGL_Registry::singleton();
+        $input = &SGL_Registry::singleton();
         $req = SGL_Request::singleton();
 
         if (PEAR::isError($req)) {
@@ -41,7 +41,7 @@ class TestRunnerInit extends SGL_FrontController
 
 class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         $conf = $GLOBALS['_STR']['CONF'];
         if ($conf['db']['type'] == 'pgsql'){
@@ -50,7 +50,7 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
             $excludeDbName = true;
         }
         $dsn = SGL_DB::_getDsnAsString($conf,$excludeDbName);
-        $dbh = SGL_DB::singleton($dsn);
+        $dbh = &SGL_DB::singleton($dsn);
         if (PEAR::isError($dbh)) {
             die($dbh->getMessage());
         }
@@ -65,12 +65,12 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
 
 class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         //  in case
         $locator->remove('DB');
-        $dbh = STR_DB::singleton();
+        $dbh =& STR_DB::singleton();
         $locator->register('DB', $dbh);
 
         $this->processRequest->process($input, $output);
@@ -79,7 +79,7 @@ class SGL_Task_SetupTestDbResource extends SGL_DecorateProcess
 
 class SGL_Task_MinimalSession extends SGL_DecorateProcess
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         session_start();
         $_SESSION['uid'] = 1;

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | NestedSet.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -85,7 +85,7 @@ class SGL_NestedSet
 
     var $_aNodes = array();
 
-    function singleton($params)
+    function &singleton($params)
     {
         static $aInstances;
 
@@ -97,7 +97,7 @@ class SGL_NestedSet
         return $aInstances[$signature];
     }
 
-    function __construct($params)
+    function SGL_NestedSet($params)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -110,10 +110,10 @@ class SGL_NestedSet
 
     function &_getDb()
     {
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh =  SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;
@@ -154,7 +154,7 @@ class SGL_NestedSet
                 WHERE {$this->_tableName}.{$this->_fieldsInternal['id']} = {$this->_tableName}.{$this->_fieldsInternal['rootid']}
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['norder']}";
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -194,7 +194,7 @@ class SGL_NestedSet
                         WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$root[$this->_fieldsInternal['rootid']]}
                         $where $groupBy
                         ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-                $result = $this->dbh->query($sql);
+                $result =& $this->dbh->query($sql);
                 if (PEAR::isError($result)) {
                     return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                 }
@@ -232,7 +232,7 @@ class SGL_NestedSet
                 WHERE {$this->_tableName}.{$this->_fieldsInternal['rootid']} = {$node[$this->_fieldsInternal['rootid']]}
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -270,7 +270,7 @@ class SGL_NestedSet
                 AND {$this->_tableName}.{$this->_fieldsInternal['id']} <> $node_id
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -314,7 +314,7 @@ class SGL_NestedSet
                 AND {$this->_tableName}.{$this->_fieldsInternal['level']} = {$node[$this->_fieldsInternal['level']]} + 1
                 $where $groupBy
                 ORDER BY {$this->_tableName}.{$this->_fieldsInternal['l']}";
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -368,7 +368,7 @@ class SGL_NestedSet
             $sql = "SELECT $this->_fieldListExternal
                     FROM $this->_tableName
                     WHERE {$this->_fieldsInternal['id']} = $node_id";
-            $result = $this->dbh->query($sql);
+            $result =& $this->dbh->query($sql);
             if (PEAR::isError($result)) {
                 return $result;
             }
@@ -420,7 +420,7 @@ class SGL_NestedSet
                     $where $groupBy
                     ORDER BY {$this->_fieldsInternal['l']}";
         }
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -525,7 +525,7 @@ class SGL_NestedSet
         $sql = "UPDATE $this->_tableName
                 SET $set
                 WHERE {$this->_fieldsInternal['id']} = $id";
-        $result = $this->dbh->query($sql);
+        $result =& $this->dbh->query($sql);
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
@@ -594,10 +594,16 @@ class SGL_NestedSet
             // to DB_NestedSet::factory(), because DB_NestedSet
             // changes DB_Common::setFetchMode()
             $db = SGL_DB::singleton();
-            $dbh = clone $db;
+            if (SGL::isPhp5()) {
+                // use `clone($db)` instead of `clone $db`
+                // to aviod php4 parse error
+                $dbh = clone($db);
+            } else {
+                $dbh = $db;
+            }
 
             //  create an instance of DB_NestedSet_DB
-            $ns =  DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);
+            $ns = & DB_NestedSet::factory('DB', $dbh, $this->_params['tableStructure']);
             if (is_a($ns, 'PEAR_Error')) {
                 echo $ns->getCode() . ': ' . $ns->getMessage();
             }

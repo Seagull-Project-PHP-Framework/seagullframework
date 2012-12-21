@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Array.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -95,7 +95,7 @@ class SGL_Array
      * Usage:
      *        $newArray = SGL_Array::mergeReplace($array, $newValues);
      *
-     * @access public
+     * @access puplic
      * @param array $array First Array with 'replaceable' Values
      * @param array $newValues Array which will be merged into first one
      * @return array Resulting Array from replacing Process

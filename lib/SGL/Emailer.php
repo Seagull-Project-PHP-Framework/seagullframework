@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Emailer.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -78,11 +78,11 @@ class SGL_Emailer
         'groupID'       => '',
    );
 
-    function __construct($options = array())
+    function SGL_Emailer($options = array())
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
 
         $siteName = $this->conf['site']['name'];
@@ -106,7 +106,7 @@ class SGL_Emailer
         if (!is_readable($includePath)) {
 
             // try fallback with default template dir
-            $req = SGL_Request::singleton();
+            $req = &SGL_Request::singleton();
             $moduleName = $req->get('moduleName');
             $includePath = SGL_MOD_DIR . '/' . $moduleName . '/templates/'. $template;
         }
@@ -134,7 +134,7 @@ class SGL_Emailer
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $mime = new Mail_mime($this->options['crlf']);
+        $mime = & new Mail_mime($this->options['crlf']);
         $mime->setHTMLBody($this->html);
         if (!empty($this->options['filepath'])) {
             if (!is_array($this->options['filepath'])) {
@@ -196,7 +196,7 @@ class SGL_Emailer
                       $this->options['groupID'] );
         // else send email straight away
         } else {
-            $mail = SGL_Emailer::factory();
+            $mail = &SGL_Emailer::factory();
             $ok = $mail->send($this->options['toEmail'], $headers, $body);
         }
         return $ok;

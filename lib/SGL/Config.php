@@ -31,7 +31,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Config.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -51,7 +51,7 @@ class SGL_Config
     var $aProps = array();
     var $fileName;
 
-    function __construct($autoLoad = false)
+    function SGL_Config($autoLoad = false)
     {
         $this->aProps = array();
         if ($this->isEmpty() && $autoLoad) {
@@ -63,7 +63,7 @@ class SGL_Config
         }
     }
 
-    function singleton($autoLoad = true)
+    function &singleton($autoLoad = true)
     {
         static $instance;
         if (!isset($instance)) {
@@ -103,23 +103,16 @@ class SGL_Config
     {
         //  instance call with 2 keys: $c->get(array('foo' => 'bar'));
         if (is_array($key)) {
-            $this;
             $key1 = key($key);
             $key2 = $key[$key1];
-            $test1 = array_key_exists($key1, $this->aProps);
-            if ($test1 && is_array($this->aProps[$key1])) {
-                $test2 = array_key_exists($key2, $this->aProps[$key1]);
-            } else {
-                $test2 = false;
-            }
-            if ($test1 && $test2) {
+            if (isset( $this->aProps[$key1][$key2])) {
                 $ret = $this->aProps[$key1][$key2];
             } else {
                 $ret = false;
             }
         //  static call with dot notation: SGL_Config::get('foo.bar');
         } elseif (is_string($key)) {
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $aKeys = preg_split("/\./", trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
                 $ret = $c->get(array($aKeys[0] => $aKeys[1]));
@@ -156,11 +149,11 @@ class SGL_Config
     {
         $ret = false;
         if (is_string($key) && is_scalar($value)) {
-            $aKeys = preg_split("/\./", trim($key));
+            $aKeys = preg_split('/\./', trim($key));
 
             //  it's a static call
             if (isset($aKeys[0]) && isset($aKeys[1])) {
-                $c = SGL_Config::singleton();
+                $c = &SGL_Config::singleton();
                 $ret = $c->set($aKeys[0], array($aKeys[1] => $value));
             //  else it's an object call with scalar second arg
             } else {
@@ -237,7 +230,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = SGL_ParamHandler::singleton($file);
+        $ph = &SGL_ParamHandler::singleton($file);
         $data = $ph->read();
         if ($data !== false) {
             return $data;
@@ -312,7 +305,7 @@ class SGL_Config
         static $modDir;
         if (is_null($modDir)) {
         //  allow for custom modules dir
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $customModDir = $c->get(array('path' => 'moduleDirOverride'));
             $modDir = !empty($customModDir)
                 ? $customModDir
@@ -388,7 +381,7 @@ class SGL_Config
                 }
             }
         }
-        $ph = SGL_ParamHandler::singleton($file);
+        $ph = &SGL_ParamHandler::singleton($file);
         return $ph->write($this->aProps);
     }
 

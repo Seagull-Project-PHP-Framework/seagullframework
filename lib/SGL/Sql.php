@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Sql.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -68,7 +68,7 @@ class SGL_Sql
         }
 
         $sql = '';
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         $isMysql323 = false;
@@ -187,10 +187,10 @@ class SGL_Sql
     function execute($sql)
     {
         // Get database handle based on working config.ini
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh =  SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         $res = $dbh->query($sql);
@@ -200,10 +200,10 @@ class SGL_Sql
     function getNextId($tableName)
     {
         // Get database handle based on working config.ini
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh =  SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh->nextId($tableName);
@@ -286,7 +286,7 @@ class SGL_Sql
      */
     function addTablePrefix($tableName)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $prefix = $c->get(array('db' => 'prefix'));
         return $prefix . $tableName;
     }

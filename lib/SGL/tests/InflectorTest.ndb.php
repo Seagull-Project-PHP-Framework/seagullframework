@@ -103,8 +103,10 @@ class InflectorTest extends UnitTestCase {
     function testGetManagerNameFromSimplifiedName()
     {
         $url = 'foobar';
-        $c = SGL_Config::singleton();
+        //  set key so caseFix can work
+        $c = &SGL_Config::singleton();
         $ret = SGL_Inflector::getManagerNameFromSimplifiedName($url);
+        $this->assertEqual($ret, 'FoobarMgr');
 
         //  test case sensitivity
         $this->assertNotEqual($ret, 'Foobarmgr');
@@ -141,6 +143,15 @@ class InflectorTest extends UnitTestCase {
         $url = 'FooBar.php';
         $ret = SGL_Inflector::getSimplifiedNameFromManagerName($url);
         $this->assertEqual($ret, 'foobar');
+    }
+
+    function testCaseFix()
+    {
+        $c = &SGL_Config::singleton();
+        $c->set('DefaultMgr', array('requiresAuth' => false));
+        $incorrect = 'defaultmgr';
+        $ret = SGL_Inflector::caseFix($incorrect);
+        $this->assertEqual($ret, 'DefaultMgr');
     }
 
     function testIsConstant()

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | BlockLoader.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -91,7 +91,7 @@ class SGL_BlockLoader
      * @access  public
      * @return  void
      */
-    function __construct($sectionId)
+    function SGL_BlockLoader($sectionId)
     {
         $this->_rid = (int)SGL_Session::get('rid');
         if (isset($sectionId)) {
@@ -107,11 +107,11 @@ class SGL_BlockLoader
      * @access  private
      * @return  array   array of block objects
      */
-    function render($output)
+    function render(&$output)
     {
         //  put data generated so far into class scope
-        $this->output = $output;
-        $cache =  SGL_Cache::singleton();
+        $this->output = &$output;
+        $cache = & SGL_Cache::singleton();
         $currLang = (isset($output->currLang))
             ? $output->currLang
             : '';
@@ -143,7 +143,7 @@ class SGL_BlockLoader
      */
     function _loadBlocks($getAll = true)
     {
-        $dbh =  SGL_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         $addWhere = $getAll ? '' : "AND b.is_cached = 0 ";
 
         $b  = SGL_Config::get('table.block');
@@ -212,7 +212,7 @@ class SGL_BlockLoader
                     if (is_scalar($aParams = @unserialize($oBlock->params))) {
                         $aParams = array();
                     }
-                    @$obj = new $blockClass();
+                    @$obj = & new $blockClass();
                     if ($data = $obj->init($this->output, $oBlock->block_id, $aParams)) {
                         $this->_aData[$index]->content = $data;
                     } else {

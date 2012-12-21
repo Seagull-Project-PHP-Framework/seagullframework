@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DB.php                                                                    |
 // +---------------------------------------------------------------------------+
@@ -54,7 +54,7 @@ class STR_DB
      * Returns a singleton DB handle.
      *
      * example usage:
-     * $dbh = STR_DB::singleton();
+     * $dbh =& STR_DB::singleton();
      * Warning: In order to work correctly, DB handle singleton must be
      * instantiated statically and by reference.
      *
@@ -62,7 +62,7 @@ class STR_DB
      * @param string $dsn The datasource details if supplied: see {@link DB::parseDSN()} for format
      * @return mixed Reference to DB resource or false on failure to connect
      */
-    function singleton($dsn = null)
+    function &singleton($dsn = null)
     {
         if (is_null($dsn)) {
             $dsn = STR_DB::getDsn();

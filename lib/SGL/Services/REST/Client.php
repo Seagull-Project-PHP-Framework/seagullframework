@@ -75,7 +75,7 @@ class SGL_Services_REST_Client
      * @param string $passwd
      * @return SGL_Services_REST_Client
      */
-    function __construct($aOptions = array(), $user = null, $passwd = null)
+    function SGL_Services_REST_Client($aOptions = array(), $user = null, $passwd = null)
     {
         $this->setOptions($aOptions);
         if (!is_null($user) && !is_null($passwd)) {
@@ -132,7 +132,7 @@ class SGL_Services_REST_Client
             $url = $url . '/' . $append;
         }
         $this->_getRequest = $url;
-        $request = new HTTP_Request($url);
+        $request = &new HTTP_Request($url);
         if (!empty($this->_user) && !empty($this->_passwd)) {
             $request->setBasicAuth($this->_user, $this->_passwd);
         }
@@ -164,13 +164,13 @@ class SGL_Services_REST_Client
             "addDecl" => true,
         );
 
-        $serializer = new XML_Serializer($options);
+        $serializer = &new XML_Serializer($options);
         $result = $serializer->serialize($oData);
         if ($result === true ) {
             $xml = $serializer->getSerializedData();
         }
 
-        $request = new HTTP_Request($url);
+        $request = &new HTTP_Request($url);
         if (!empty($this->_user) && !empty($this->_passwd)) {
             $request->setBasicAuth($this->_user, $this->_passwd);
         }
@@ -190,7 +190,7 @@ class SGL_Services_REST_Client
         $xml = $this->_responseXml = $request->getResponseBody();
 
         if (!is_object($this->_us)) {
-            $this->_us = new XML_Unserializer();
+            $this->_us = &new XML_Unserializer();
             $this->_us->setOption('tagAsClass', true);
             $this->_us->setOption('ignoreKeys', $this->getKeysToIgnore());
             $this->_us->setOption('complexType', $this->getComplexTypes());

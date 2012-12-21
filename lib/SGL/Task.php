@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Task.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -44,26 +44,27 @@
  * @author  Demian Turner <demian@phpkitchen.com>
  * @abstract
  */
-abstract class SGL_Task
+class SGL_Task
 {
     /**
-     * 
+     * @abstract
+     *
      */
-    public function run($data = array())
+    function run($data = null)
     {
-        return $data;
+        return;
     }
 
    /**
     * Example ...
     * @access private
     */
-    protected function &_getDal()
+    function &_getDal()
     {
-        $oServiceLocator = ServiceLocator::instance();
+        $oServiceLocator = &ServiceLocator::instance();
         $oDal = $oServiceLocator->get('dal');
         if (!$oDal) {
-            $oDal = DA_FooBar::singleton();
+            $oDal = &DA_FooBar::singleton();
             $oServiceLocator->register('dal', $oDal);
         }
         return $oDal;
@@ -101,7 +102,7 @@ class SGL_TaskRunner
     function addTask($oTask)
     {
         if (is_a($oTask, 'SGL_Task')) {
-            $this->aTasks[] =  $oTask;
+            $this->aTasks[] = & $oTask;
             return true;
         }
         return PEAR::raiseError('an SGL_Task object was expected');

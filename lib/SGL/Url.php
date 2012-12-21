@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Url.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -131,6 +131,20 @@ class SGL_URL
     * @var bool
     */
     var $useBrackets;
+
+    /**
+    * PHP4 Constructor
+    *
+    * @see __construct()
+    */
+    function SGL_URL(
+        $url = null,
+        $useBrackets = true,
+        /*SGL_UrlParserStrategy*/ $parserStrategy = null,
+        $conf = null)
+    {
+        $this->__construct($url, $useBrackets, $parserStrategy, $conf);
+    }
 
     /**
     * PHP5 Constructor
@@ -342,7 +356,7 @@ class SGL_URL
      *
      * @return SGL_Url
      */
-    function singleton()
+    function &singleton()
     {
         static $instance;
         if (!isset($instance)) {
@@ -537,7 +551,7 @@ class SGL_URL
         $params = '', $idx = 0, $output = '')
     {
         //  a workaround for 0.4.x style of building SEF URLs
-        $url =  SGL_Url::singleton();
+        $url = & SGL_Url::singleton();
         return $url->aStrategies[0]->makeLink(
             $action, $mgr, $mod, $aList, $params, $idx, $output);
     }

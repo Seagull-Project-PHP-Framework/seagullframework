@@ -24,7 +24,7 @@ class SGL_Cache2
      *
      * @return object
      */
-    public static function singleton($aOptions = array(), $lib = 'Zend_Cache')
+    public static function &singleton($aOptions = array(), $lib = 'Zend_Cache')
     {
         $frontend = !empty($aOptions['frontend'])
             ? $aOptions['frontend'] : 'Core';
@@ -101,6 +101,7 @@ class SGL_Cache2
                 if ($backend != 'File') {
                     unset($bOpts['cache_dir'], $bOpts['read_control']);
                 }
+
                 try {
                     $ret = Zend_Cache::factory($frontend, $backend, $fOpts, $bOpts);
                 } catch (Zend_Cache_Exception $e) {

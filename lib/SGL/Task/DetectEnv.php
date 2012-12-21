@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DetectEnv.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -216,8 +216,11 @@ class SGL_Task_GetLoadedModules extends SGL_EnvSummaryTask
 
     function run()
     {
-        $this->aRequirements['dom'] = array(SGL_RECOMMENDED => 1);
-
+        if (SGL::isPhp5()) {
+            $this->aRequirements['dom'] = array(SGL_RECOMMENDED => 1);
+        } else {
+            $this->aRequirements['domxml'] = array(SGL_RECOMMENDED => 1);
+        }
         foreach ($this->aRequirements as $m => $dep) {
             $this->aData[$m] = bool2int(extension_loaded($m));
         }

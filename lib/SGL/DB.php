@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | DB.php                                                                    |
 // +---------------------------------------------------------------------------+
@@ -54,7 +54,7 @@ class SGL_DB
      * Returns a singleton reference to the DB resource.
      *
      * example usage:
-     * $dbh =  SGL_DB::singleton();
+     * $dbh = & SGL_DB::singleton();
      * warning: in order to work correctly, DB handle
      * singleton must be instantiated statically and
      * by reference
@@ -64,14 +64,14 @@ class SGL_DB
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      * @return  mixed           reference to DB resource or PEAR error on failure to connect
      */
-    function singleton($dsn = null)
+    function &singleton($dsn = null)
     {
         $msg = 'Cannot connect to DB, check your credentials';
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
-        if (is_array($dsn) && empty($dsn['phptype'])) {
+        if (empty($dsn['phptype'])) {
             return PEAR::raiseError($msg, SGL_ERROR_DBFAILURE);
         }
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         static $aInstances;
@@ -114,13 +114,13 @@ class SGL_DB
      */
     function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         if (!count($conf)) {
             return false;
         }
 
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if ($dbh && count($dbh->dsn)) {
             $locatorDsn = $dbh->dsn;
@@ -209,17 +209,17 @@ class SGL_DB
      */
     function setConnection($dsn = null)
     {
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $singleton = $locator->get('DB');
         if (!$singleton) {
-            $singleton =  SGL_DB::singleton();
+            $singleton = & SGL_DB::singleton();
             $locator->register('DB', $singleton);
         }
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
 
         unset($GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5]);
-        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = $singleton;
+        $GLOBALS['_DB_DATAOBJECT']['CONNECTIONS'][$dsnMd5] = &$singleton;
     }
 
     /**
@@ -260,7 +260,7 @@ class SGL_DB
                     return $totalItems;
                 }
             } else {
-                $res = $db->query($query, $dbparams);
+                $res =& $db->query($query, $dbparams);
                 if (PEAR::isError($res)) {
                     return $res;
                 }
@@ -272,7 +272,7 @@ class SGL_DB
 
         require_once 'Pager/Pager.php';
         // To get Seagull URL Style working for Pager
-        $req = SGL_Request::singleton();
+        $req =& SGL_Request::singleton();
         $pager_options['currentPage'] = (array_key_exists('currentPage', $pager_options))
             ? $pager_options['currentPage']
             : $req->get('pageID');
@@ -345,7 +345,7 @@ class SGL_ServiceLocator
     /**
      * A method to return a singleton handle to the service locator class.
      */
-    function singleton()
+    function &singleton()
     {
         static $instance;
         if (!$instance) {
@@ -364,7 +364,7 @@ class SGL_ServiceLocator
      */
     function register($serviceName, &$oService)
     {
-        $this->aServices[$serviceName] = $oService;
+        $this->aServices[$serviceName] = &$oService;
         return true;
     }
 
@@ -405,7 +405,7 @@ class SGL_ServiceLocator
      */
     function &staticGet($serviceName)
     {
-        $oServiceLocator = SGL_ServiceLocator::singleton();
+        $oServiceLocator = &SGL_ServiceLocator::singleton();
         return $oServiceLocator->get($serviceName);
     }
 }

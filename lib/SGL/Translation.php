@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Translation.php                                                           |
 // +---------------------------------------------------------------------------+
@@ -67,7 +67,7 @@ class SGL_Translation
      *
      *
      */
-    function singleton($type = 'translation')
+    function &singleton($type = 'translation')
     {
         static $instance;
 
@@ -76,7 +76,7 @@ class SGL_Translation
             return $instance[$type];
         }
 
-        $c      = SGL_Config::singleton();
+        $c      = &SGL_Config::singleton();
         $conf   = $c->getAll();
         $dbh    = SGL_DB::singleton();
 
@@ -117,13 +117,13 @@ class SGL_Translation
 
         case 'admin':
             require_once 'Translation2/Admin.php';
-            $instance[$type] = Translation2_Admin::factory($driver, $dbh, $params);
+            $instance[$type] = &Translation2_Admin::factory($driver, $dbh, $params);
             break;
 
         case 'translation':
         default:
             require_once 'Translation2.php';
-            $instance[$type] = Translation2::factory($driver, $dbh, $params);
+            $instance[$type] = &Translation2::factory($driver, $dbh, $params);
         }
         return $instance[$type];
     }
@@ -138,7 +138,7 @@ class SGL_Translation
      */
     function clearCache()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         if ('db' == $conf['translation']['container']) {
@@ -163,12 +163,12 @@ class SGL_Translation
      */
     function clearGuiTranslationsCache()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
 
         $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
 
         if (count($aLangs) > 0) {
-            $cache =  SGL_Cache::singleton();
+            $cache = & SGL_Cache::singleton();
             $cache->setOption('cacheDir', SGL_TMP_DIR .'/');
 
             $success = true;
@@ -192,7 +192,7 @@ class SGL_Translation
     function getGuiTranslationsFromFile($module, $lang)
     {
         //  fetch translations from database and cache
-        $cache =  SGL_Cache::singleton();
+        $cache = & SGL_Cache::singleton();
         $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
 
         $ret = array();
@@ -221,7 +221,7 @@ class SGL_Translation
             if (is_readable($path . $globalLangFile)) {
                 include $path . $globalLangFile;
                 if ($module == 'default') {
-                    $words = $defaultWords;
+                    $words = &$defaultWords;
                 }
                 if (!empty($words)) {
                     $serialized = serialize($words);
@@ -253,7 +253,7 @@ class SGL_Translation
         switch (strtolower($this->conf['translation']['container'])) {
         case 'db':
             require_once SGL_CORE_DIR . '/Translation.php';
-            $trans = SGL_Translation::singleton('admin');
+            $trans = &SGL_Translation::singleton('admin');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_TRANS2);
 
@@ -274,7 +274,7 @@ class SGL_Translation
             $c = new Config();
 
             $aTransStrip = SGL_Translation::escapeSingleQuoteInArrayKeys($aTrans);
-            $root =  $c->parseConfig($aTransStrip, 'phparray');
+            $root = & $c->parseConfig($aTransStrip, 'phparray');
 
             $langID = SGL_Translation::transformLangID($langID, SGL_LANG_ID_SGL);
 
@@ -308,7 +308,7 @@ class SGL_Translation
      */
     function getTranslations($module, $lang, $fallbackLang = false)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($module) && !empty($lang)) {
@@ -317,7 +317,7 @@ class SGL_Translation
             $installedLangs = explode(',', $conf['translation']['installedLanguages']);
             if ($conf['translation']['container'] == 'db'
                     && in_array($lang, $installedLangs)) {
-                $translation = SGL_Translation::singleton();
+                $translation = &SGL_Translation::singleton();
 
                 //  set language
                 $langInstalled = $translation->setLang($lang);
@@ -330,12 +330,12 @@ class SGL_Translation
                     $fallbackLang = (is_string($fallbackLang))
                         ? $fallbackLang
                         : $conf['translation']['fallbackLang'];
-                    $translation =  $translation->getDecorator('Lang');
+                    $translation = & $translation->getDecorator('Lang');
                     $translation->setOption('fallbackLang', $fallbackLang);
                 }
                 //  instantiate cachelite decorator and set options
                 if ($conf['cache']['enabled']) {
-                    $translation = $translation->getDecorator('CacheLiteFunction');
+                    $translation = &$translation->getDecorator('CacheLiteFunction');
                     $translation->setOption('cacheDir', SGL_TMP_DIR .'/');
                     $translation->setOption('lifeTime', $conf['cache']['lifetime']);
                     $translation->setOption('defaultGroup', 'translation');
@@ -512,7 +512,7 @@ class SGL_Translation
      */
     function removeTranslations($moduleName)
     {
-        $trans  = SGL_Translation::singleton('admin');
+        $trans  = &SGL_Translation::singleton('admin');
         $aPages = $trans->getPageNames();
         if (PEAR::isError($aPages)) {
             return $aPages;

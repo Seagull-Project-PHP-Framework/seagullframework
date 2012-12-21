@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ClientWizard.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -138,10 +138,10 @@ class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
             if (!$page->controller->isValid($pageName)) {
                 $pageName = $page->controller->findInvalid();
             }
-            $current = $page->controller->getPage($pageName);
+            $current =& $page->controller->getPage($pageName);
 
         } else {
-            $current = $page;
+            $current =& $page;
         }
         // generate the URL for the page 'display' event and redirect to it
         $action = $current->getAttribute('action');
@@ -206,7 +206,7 @@ class SGL_WizardControllerDisplay extends HTML_Quickform_Action_Display
     */
     function _renderForm(&$page)
     {
-        $renderer = new HTML_QuickForm_Renderer_Default();
+        $renderer = & new HTML_QuickForm_Renderer_Default();
         $page->accept($renderer);
         $page->wizardOutput = $renderer->toHtml();
     }

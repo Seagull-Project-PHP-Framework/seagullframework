@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Registry.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -49,7 +49,7 @@ class SGL_Registry
 {
     var $aProps = array();
 
-    function singleton()
+    function &singleton()
     {
         static $instance;
         if (!isset($instance)) {
@@ -77,7 +77,7 @@ class SGL_Registry
      */
     function set($key, &$value)
     {
-        $this->aProps[$key] = $value;
+        $this->aProps[$key] = &$value;
     }
 
     function exists($key) {
@@ -116,7 +116,7 @@ class SGL_Registry
 
     function getConfig()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         return $c->getAll();
     }
 

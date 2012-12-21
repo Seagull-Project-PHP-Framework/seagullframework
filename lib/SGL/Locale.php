@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Locale.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -53,7 +53,7 @@ class SGL_Locale
      *
      *   usage:
      *
-     *   $locale = SGL_Locale::singleton();
+     *   $locale =& SGL_Locale::singleton();
      *   // setting locale here would override defaults.
      *
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
@@ -62,14 +62,14 @@ class SGL_Locale
      * @param string $locale Overrides getting the locale from session/usr
      * @return I18Nv2 Returns a single instance of I18Nv2
      */
-    function singleton($newLocale = false)
+    function &singleton($newLocale = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         static $locale;
         if (!isset($locale)) {
             if ($newLocale) {
-                $locale = I18Nv2::createLocale($newLocale);
+                $locale = &I18Nv2::createLocale($newLocale);
             } else {
                 //  Get the language shortcode from the session
                 $langCode = SGL::getCurrentLang();
@@ -77,24 +77,24 @@ class SGL_Locale
                 $uid = SGL_Session::getUid();
                 require_once 'I18Nv2/Negotiator.php';
                 if ($uid && isset($langCode)) {
-                    $dbh = SGL_DB::singleton();
-                    $c = SGL_Config::singleton();
+                    $dbh = &SGL_DB::singleton();
+                    $c = &SGL_Config::singleton();
                     $conf = $c->getAll();
 
                     $country = $dbh->getOne("SELECT country FROM {$conf['table']['user']} WHERE usr_id = ".$uid);
                     $country = strtoupper($country);
 
                     if (!$country) {
-                        $neg = new I18Nv2_Negotiator();
+                        $neg = &new I18Nv2_Negotiator();
                         $country = $neg->getCountryMatch($langCode);
                     }
                     $localeId = empty($country) ? $langCode : $langCode . "_" . $country;
 
                 } else {
-                    $neg = new I18Nv2_Negotiator();
+                    $neg = &new I18Nv2_Negotiator();
                     $localeId = $neg->getLocaleMatch();
                 }
-                $locale = I18Nv2::createLocale($localeId);
+                $locale = &I18Nv2::createLocale($localeId);
             }
         }
         return $locale;

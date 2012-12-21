@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Output.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -196,9 +196,9 @@ class SGL_Output
         if (strpos($varString, '.') !== false) {
             $aVar = explode('.', $varString);
             if (isset($output) && is_a($output, 'SGL_Output')) {
-                $var = $output->{$aVar[0]};
+                $var = &$output->{$aVar[0]};
             } else {
-                $var = $this->{$aVar[0]};
+                $var = &$this->{$aVar[0]};
             }
             if (isset($var) && is_object($var) && isset($var->{$aVar[1]})) {
                 $ret = $var->{$aVar[1]};
@@ -703,7 +703,7 @@ class SGL_Output
 
     function getOnLoadEvents()
     {
-        $c =  SGL_Config::singleton();
+        $c = & SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnload'])) {
@@ -716,7 +716,7 @@ class SGL_Output
 
     function getOnUnloadEvents()
     {
-        $c =  SGL_Config::singleton();
+        $c = & SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnUnload'])) {
@@ -729,7 +729,7 @@ class SGL_Output
 
     function getOnReadyDomEvents()
     {
-        $c =  SGL_Config::singleton();
+        $c = & SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (!empty($conf['site']['globalJavascriptOnReadyDom'])) {
@@ -756,7 +756,6 @@ class SGL_Output
     function addJavascriptFile($file, $optimize = true)
     {
         if ($optimize) {
-// WTFWTF ????????????  aim ... fire .. at whoever wrote this ...
             $aFiles = &$this->aJavascriptFiles;
         } else {
             $aFiles = &$this->aRawJavascriptFiles;
@@ -776,7 +775,7 @@ class SGL_Output
     {
         $aFiles = array();
 
-        $c =  SGL_Config::singleton();
+        $c = & SGL_Config::singleton();
         $conf = $c->getAll();
         // Check for global files to include
         if (!empty($conf['site']['globalJavascriptFiles'])) {
@@ -851,7 +850,7 @@ class SGL_Output
     function makeUrl($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0)
     {
-        $input = SGL_Registry::singleton();
+        $input = &SGL_Registry::singleton();
         $req = $input->getRequest();
         // Horde routes work only for browser request types
         if (($req->type == SGL_REQUEST_BROWSER || $req->type == SGL_REQUEST_AJAX)
@@ -902,7 +901,7 @@ class SGL_Output
 
     function getCurrentUrl()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $oCurrentUrl = $reg->getCurrentUrl();
         return $oCurrentUrl->toString();
     }
@@ -918,7 +917,7 @@ class SGL_Output
             $this->template = 'null.html';
         }
         $this->masterTemplate = $this->template;
-        $view = new SGL_HtmlSimpleView($this, $templateEngine);
+        $view = &new SGL_HtmlSimpleView($this, $templateEngine);
         echo $view->render();
 
         //  suppress error notices in templates
@@ -972,7 +971,7 @@ class SGL_Output
 
     function getCurrentModule()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerMod = $req->get('frmCallerMod');
         $modName = (is_null($frmCallerMod))
@@ -983,7 +982,7 @@ class SGL_Output
 
     function getCurrentManager()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerMgr = $req->get('frmCallerMgr');
         $mgrName = (is_null($frmCallerMgr))
@@ -994,7 +993,7 @@ class SGL_Output
 
     function getCurrentTemplate()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerTmpl = $req->get('frmCallerTmpl');
         $tmplName = (is_null($frmCallerTmpl))
@@ -1005,7 +1004,7 @@ class SGL_Output
 
     function getCurrentId()
     {
-        $reg = SGL_Registry::singleton();
+        $reg =& SGL_Registry::singleton();
         $req = $reg->getRequest();
         $frmCallerId = $req->get('frmCallerId');
         $id = (is_null($frmCallerId))
@@ -1135,7 +1134,6 @@ class SGL_Output
      */
     function makeJsOptimizerLink()
     {
-        $this;
         // save currently loaded files
         $aCurrentFiles = $this->aJavascriptFiles;
         $this->aJavascriptFiles = array();
@@ -1223,7 +1221,7 @@ class SGL_Output
             : (SGL_Config::get('site.masterLayout') ? SGL_Config::get('site.masterLayout') : 'layout-navtop-3col.css');
 
         // layout is specified in request for demo purpose on home page
-        $req = SGL_Request::singleton();
+        $req = &SGL_Request::singleton();
         $masterLayout = $req->get('masterLayout')
             ? $req->get('masterLayout')
             : $masterLayout;

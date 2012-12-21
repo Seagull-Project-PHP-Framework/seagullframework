@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Delegator.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -60,6 +60,10 @@ class SGL_Delegator
 
     function add($delegate)
     {
+        if (!SGL::isPhp5()) {
+            aggregate_methods($this, get_class($delegate));
+            SGL::objectCopy($delegate, $this); // aggregate_properties(); ignore private vars
+        }
         $this->aDelegates[] = $delegate;
     }
 }

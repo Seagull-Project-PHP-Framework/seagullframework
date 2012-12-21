@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Cache.php                                                                 |
 // +---------------------------------------------------------------------------+
@@ -54,20 +54,20 @@ class SGL_Cache
      *
      * Example usage:
      *   Default Cache_Lite instance.
-     *   1. $cache = SGL_Cache::singleton();
+     *   1. $cache = &SGL_Cache::singleton();
      *   Cache_Lite_Function instance with specified params on the fly.
-     *   2. $cache = SGL_Cache::singleton('function', array(
+     *   2. $cache = &SGL_Cache::singleton('function', array(
      *          'dontCacheWhenTheResultIsFalse' => true,
      *          'dontCacheWhenTheResultIsNull'  => true,
      *          'lifeTime'                      => 3,
      *          'debugCacheLiteFunction'        => true,
      *      ));
      *   Cache_Lite_Output instance.
-     *   3. $cache = SGL_Cache::singleton('output');
+     *   3. $cache = &SGL_Cache::singleton('output');
      *   Force Cache_Lite_Function instance.
-     *   4. $cache = SGL_Cache::singleton('function', array(), true);
+     *   4. $cache = &SGL_Cache::singleton('function', array(), true);
      *   BC way to force cache.
-     *   5. $cache = SGL_Cache::singleton(true);
+     *   5. $cache = &SGL_Cache::singleton(true);
      *
      * @access public
      *
@@ -80,7 +80,7 @@ class SGL_Cache
      *
      * @return Cache_Lite
      */
-    function singleton($type = 'default', $aOptions = array(), $forceNew = false)
+    function &singleton($type = 'default', $aOptions = array(), $forceNew = false)
     {
         static $aInstances;
 
@@ -125,7 +125,7 @@ class SGL_Cache
                 default:
                     $className = 'SGL_Cache_Lite';
             }
-            $aInstances[$key] = new $className($aOptions);
+            $aInstances[$key] = & new $className($aOptions);
         }
         return $aInstances[$key];
     }
@@ -144,7 +144,7 @@ class SGL_Cache
      */
      function clear($group = false, $mode = 'ingroup', $options = array())
      {
-        $cache = SGL_Cache::singleton();
+        $cache = &SGL_Cache::singleton();
         return $cache->clean($group, $mode, $options);
      }
 }

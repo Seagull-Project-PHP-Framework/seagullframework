@@ -347,7 +347,7 @@ IMPROVEMENTS
             compliant markup (Dmitri Lakachauskis)
 
 27-10-06    Cleaup of SGL_Config behaviour:
-                - to load global config: $c = SGL_Config::singleton();
+                - to load global config: $c = &SGL_Config::singleton();
                 - to save global config: $c->save();
                 - to load any secondary config: $c = new SGL_Config();
                                                 $config = $c->load('/path/to/file');
@@ -531,7 +531,7 @@ BUGFIXES
 IMPROVEMENTS
 22-04-06    Added ability to control DB_DataObject debug level from Config
 21-04-06    Added ability to force cache usage, overriding perferences, ie:
-                $cache =  SGL_Cache::singleton($force = true);
+                $cache = & SGL_Cache::singleton($force = true);
 18-04-06    Added ability to detect new modules
 17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
 13-04-06    Added ability to rebuild Seagull environment for privileged users
@@ -666,7 +666,7 @@ IMPROVEMENTS
             http://trac.seagullproject.org/wiki/Integration/Serendipity
 17-01-06    Added new 'getAllModules' xml-rpc service
 16-01-06    Instantiating a cache object has changed from
-            $cache =  SGL::cacheSingleton(); to $cache =  SGL_Cache::singleton();
+            $cache = & SGL::cacheSingleton(); to $cache = & SGL_Cache::singleton();
             Likewise, SGL::clearCache() has changed to SGL_Cache::clear()
 10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
 09-01-06    Url alias solution fully integrated and database-driven

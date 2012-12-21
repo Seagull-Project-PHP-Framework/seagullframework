@@ -17,7 +17,7 @@ class RegistryTest extends UnitTestCase {
     
     function testAccess()
     {
-        $registry = SGL_Registry::singleton();        
+        $registry = &SGL_Registry::singleton();        
         $this->assertFalse($registry->exists('a'));
         $this->assertNull($registry->get('a'));
         $thing = 'thing';

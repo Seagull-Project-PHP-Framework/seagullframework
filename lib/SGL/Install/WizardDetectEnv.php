@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardDetectEnv.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -95,8 +95,8 @@ class WizardDetectEnv extends HTML_QuickForm_Page
         $this->addElement('static',  'env', null, $html);
 
         //  submit
-        $prevnext[] = $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] = $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Next >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }

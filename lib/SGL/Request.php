@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Request.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -75,6 +75,7 @@ class SGL_Request
             }
             $obj = new $class();
             error_log('##########   Req type: '.$class);
+
             return $obj;
         }
     }
@@ -135,7 +136,7 @@ class SGL_Request
      * Returns a singleton Request instance.
      *
      * example usage:
-     * $req =  SGL_Request::singleton();
+     * $req = & SGL_Request::singleton();
      * warning: in order to work correctly, the request
      * singleton must be instantiated statically and
      * by reference
@@ -144,7 +145,7 @@ class SGL_Request
      * @static
      * @return  mixed           reference to Request object
      */
-    function singleton($forceNew = false, $type = null)
+    function &singleton($forceNew = false, $type = null)
     {
         static $instance;
 
@@ -295,7 +296,7 @@ class SGL_Request
 
     function debug()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $c->set('site', array('blocksEnabled' => 0));
         print '<pre>';
         print_r($this->aProps);

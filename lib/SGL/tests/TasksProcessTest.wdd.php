@@ -26,11 +26,11 @@ class TasksProcessTest extends UnitTestCase {
     function testProcessMissingModule()
     {
         //  setup input params
-        $input = SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
         $req->set('moduleName', 'doesnotexist');
         $input->setRequest($req);
-        $output = new SGL_Output();
+        $output = &new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
@@ -45,12 +45,12 @@ class TasksProcessTest extends UnitTestCase {
     function testProcessMissingManager()
     {
         //  setup input params
-        $input = SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
         $req->set('moduleName', 'default');
         $req->set('managerName', 'doesnotexist');
         $input->setRequest($req);
-        $output = new SGL_Output();
+        $output = &new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
@@ -65,11 +65,11 @@ class TasksProcessTest extends UnitTestCase {
     function testProcessMissingModulesConfigFile()
     {
         //  setup input params
-        $input = SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
 
         //  insert bogus module record so locating config file will fail
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         $conf = $input->getConfig();
         $id = $dbh->nextId($conf['table']['module']);
@@ -77,7 +77,7 @@ class TasksProcessTest extends UnitTestCase {
         $ret = $dbh->query($query);
         $req->set('moduleName', 'bar');
         $input->setRequest($req);
-        $output = new SGL_Output();
+        $output = &new SGL_Output();
 
         //  stop decorator chain
         $foo = new ProcFoo();
@@ -91,8 +91,8 @@ class TasksProcessTest extends UnitTestCase {
 
     function testProcessSetupLangSupport()
     {
-        $req   = SGL_Request::singleton();
-        $input = SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
 
         $input->setRequest($req);
         $output = new SGL_Output();

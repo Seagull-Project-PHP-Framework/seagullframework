@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | CategoryPerms.php                                                         |
 // +---------------------------------------------------------------------------+
@@ -53,7 +53,7 @@ class SGL_CategoryPerms extends SGL_Category
     var $aPerms = array();
     var $catID  = 0;
 
-    function __construct($catID = -1)
+    function SGL_CategoryPerms($catID = -1)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -84,7 +84,7 @@ class SGL_CategoryPerms extends SGL_Category
 
         //  notice null is a mysql null which is not the same as a PHP null
         $permsStr = count($aKeys) ? "perms = '$this->sPerms'" : 'perms = NULL';
-        $dbh = SGL_DB::singleton();
+        $dbh = &SGL_DB::singleton();
         $query = "
                     UPDATE  " . SGL_Config::get('table.category') . "
                     SET     $permsStr
@@ -109,7 +109,7 @@ class SGL_CategoryPerms extends SGL_Category
 
         //  notice null is a mysql null which is not comparable with a PHP null
         $permsStr = count($aKeys) ? "perms = '$this->sPerms'" : 'perms = NULL';
-        $dbh =  SGL_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         for ($x=0; $x < count($childNodeArray); $x++) {
             $query = "
                         UPDATE  " . SGL_Config::get('table.category') . "

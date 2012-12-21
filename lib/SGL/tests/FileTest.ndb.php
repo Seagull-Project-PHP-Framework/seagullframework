@@ -15,7 +15,7 @@ class FileTest extends UnitTestCase {
         $this->UnitTestCase('File Test');
     }
 
-    function xtestDirCopy()
+    function testDirCopy()
     {
         $src = SGL_CORE_DIR . '/Install';
 

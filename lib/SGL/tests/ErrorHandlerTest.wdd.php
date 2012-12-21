@@ -15,7 +15,7 @@ class ErrorHandlerTest extends UnitTestCase
 
     function setUp()
     {
-        #$c = SGL_Config::singleton();
+        #$c = &SGL_Config::singleton();
         #$this->conf = $c->getAll();
         #$this->addHeader('User-agent: foo-bar');
     }
@@ -24,7 +24,7 @@ class ErrorHandlerTest extends UnitTestCase
     function testWarningError()
     {
 //        $process = new TestMainProcess();
-//        $input = SGL_Registry::singleton();
+//        $input = &SGL_Registry::singleton();
 //        $input->set('manager', new SGL_VoidMgr());
 //
 //        $process->process($input);
@@ -72,7 +72,7 @@ class ErrorHandlerTest extends UnitTestCase
 
     function testPearDbError()
     {
-        $dbh =  SGL_DB::singleton();
+        $dbh = & SGL_DB::singleton();
         $query = "SELECT  u.non_existent_field FROM users u";
         $result = $dbh->query($query);
         $this->assertIsA($result, 'db_error');
@@ -92,7 +92,7 @@ class SGL_VoidMgr extends SGL_Manager
 
     function validate($req, &$input) {}
 
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         //  do nothing
@@ -101,7 +101,7 @@ class SGL_VoidMgr extends SGL_Manager
 
 class TestMainProcess
 {
-    function process($input)
+    function process(&$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -110,7 +110,7 @@ class TestMainProcess
         $mgr = $input->get('manager');
         $mgr->validate($req, $input);
 
-        $output = new SGL_Output();
+        $output = & new SGL_Output();
         $input->aggregate($output);
 
         //  process data if valid

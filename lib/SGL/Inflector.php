@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Inflector.php                                                             |
 // +---------------------------------------------------------------------------+
@@ -110,14 +110,18 @@ class SGL_Inflector
     {
         $fullMgrName = SGL_Inflector::getManagerNameFromSimplifiedName(
             $aParsedUri['managerName']);
-        $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $fullMgrName . '.php';
+
+        //  compensate for case-sensitivity
+        $corrected = SGL_Inflector::caseFix($fullMgrName, true);
+        $path = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
 
         //  if the file exists, mgr name is valid and has not been omitted
         if (!is_file($path)) {
             //  so before we can be sure of simplification, let's check for presence of simplified Manager,
             //  ie, that has same name of module, so if module is foo, look for FooMgr
             $mgrName = SGL_Inflector::getManagerNameFromSimplifiedName($aParsedUri['moduleName']);
-            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $mgrName . '.php';
+            $corrected = SGL_Inflector::caseFix($mgrName, true);
+            $pathToMgr = SGL_MOD_DIR . '/'. $aParsedUri['moduleName'] . '/classes/' . $corrected . '.php';
             //  if a default mgr can be loaded, then we assume that mgr name was omitted in request
             $ret = is_file($pathToMgr);
         } else {
@@ -139,7 +143,7 @@ class SGL_Inflector
         if (strtolower(substr($name, -3)) != 'mgr') {
             $name .= 'Mgr';
         }
-        return self::caseFix($name, true);
+        return SGL_Inflector::caseFix(ucfirst($name), $force = true);
     }
 
     /**
@@ -286,7 +290,7 @@ class SGL_Inflector
         if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;
         }
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
         $aConfValues = array_keys($conf);
         $aConfValuesLowerCase = array_map('strtolower', $aConfValues);

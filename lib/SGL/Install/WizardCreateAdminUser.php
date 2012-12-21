@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | WizardCreateAdminUser.php                                                 |
 // +---------------------------------------------------------------------------+
@@ -145,8 +145,8 @@ class WizardCreateAdminUser extends HTML_QuickForm_Page
         $this->addRule('installPassword', 'Please specify a password to be used to access the installer', 'required');
 
         //  submit
-        $prevnext[] = $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
-        $prevnext[] = $this->createElement('submit',   $this->getButtonName('next'), 'Finish >>');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('back'), '<< Back');
+        $prevnext[] =& $this->createElement('submit',   $this->getButtonName('next'), 'Finish >>');
         $this->addGroup($prevnext, null, '', '&nbsp;', false);
         $this->setDefaultAction('next');
     }

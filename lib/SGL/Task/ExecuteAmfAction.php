@@ -16,7 +16,7 @@ if (!defined('PRODUCTION_SERVER')) {
  */
 class SGL_Task_ExecuteAmfAction extends SGL_ProcessRequest
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $req = $input->getRequest();

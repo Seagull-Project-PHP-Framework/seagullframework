@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | SGL.php                                                                   |
 // +---------------------------------------------------------------------------+
@@ -99,7 +99,7 @@ class SGL
      */
     function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         // Logging is not activated
@@ -131,7 +131,7 @@ class SGL
         include_once 'Log.php';
 
         // Instantiate a logger object based on logging options
-        $logger =  Log::singleton($conf['log']['type'],
+        $logger = & Log::singleton($conf['log']['type'],
                                    $logName,
                                    $conf['log']['ident'],
                                    array(  $conf['log']['paramsUsername'],
@@ -149,19 +149,20 @@ class SGL
                 $message .= ' : ' . $userinfo;
             }
         }
-        // Obtain backtrace information
-        $bt = debug_backtrace();
-        if (isset($bt[1]['class']) && $bt[1]['type'] && isset($bt[1]['function'])) {
-            $callInfo = $bt[1]['class'] . $bt[1]['type'] . $bt[1]['function'] . ': ';
-            $message = $callInfo . $message;
-        }
-        if (SGL_DEBUG_SHOW_LINE_NUMBERS) {
-            if (isset($bt[0]['file']) && isset($bt[0]['line'])) {
-                $message .=  "\n" . str_repeat(' ', 20 + strlen($conf['log']['ident']) + strlen($logger->priorityToString($priority)));
-                $message .= 'on line ' . $bt[0]['line'] . ' of "' . $bt[0]['file'] . '"';
+        // Obtain backtrace information, if supported by PHP
+        if (version_compare(phpversion(), '4.3.0') >= 0) {
+            $bt = debug_backtrace();
+            if (isset($bt[1]['class']) && $bt[1]['type'] && isset($bt[1]['function'])) {
+                $callInfo = $bt[1]['class'] . $bt[1]['type'] . $bt[1]['function'] . ': ';
+                $message = $callInfo . $message;
+            }
+            if (SGL_DEBUG_SHOW_LINE_NUMBERS) {
+                if (isset($bt[0]['file']) && isset($bt[0]['line'])) {
+                    $message .=  "\n" . str_repeat(' ', 20 + strlen($conf['log']['ident']) + strlen($logger->priorityToString($priority)));
+                    $message .= 'on line ' . $bt[0]['line'] . ' of "' . $bt[0]['file'] . '"';
+                }
             }
         }
-
         if ($priority == PEAR_LOG_DEBUG) {
             $message .= ' time: ' . (string)(getSystemTime() - @SGL_START_TIME) . 'ms';
         }
@@ -182,7 +183,7 @@ class SGL
      */
     function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  if fatal
@@ -228,6 +229,12 @@ class SGL
         } else {
             SGL::raiseError('supplied message not recognised', SGL_ERROR_INVALIDARGS);
         }
+    }
+
+    function isPhp5()
+    {
+        $phpVersion = PHP_VERSION;
+        return ($phpVersion{0} == 5);
     }
 
     /**
@@ -390,9 +397,9 @@ class SGL
         exit();
     }
 
-    function displayMaintenancePage($output)
+    function displayMaintenancePage(&$output)
     {
-        $c      = SGL_Config::singleton();
+        $c      = &SGL_Config::singleton();
         $conf   = $c->getAll();
         $output->moduleName         = 'default';
         $output->theme              = !empty($conf['site']['defaultTheme'])
@@ -420,9 +427,9 @@ class SGL
      *
      * @param SGL_Output $output
      */
-    function displayErrorPage($output)
+    function displayErrorPage(&$output)
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
 
         // basics to be able to render
         $output->moduleName = SGL_Config::get('site.defaultModule');
@@ -487,17 +494,17 @@ class SGL
         }
         if (!isset($aInstances[$moduleName])) {
 
-            $locator = SGL_ServiceLocator::singleton();
+            $locator = &SGL_ServiceLocator::singleton();
             $dbh = $locator->get('DB');
             if (!$dbh) {
-                $dbh =  SGL_DB::singleton();
+                $dbh = & SGL_DB::singleton();
                 //  catch connection failure
                 if (PEAR::isError($dbh)) {
                     return $dbh;
                 }
                 $locator->register('DB', $dbh);
             }
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             $query = "
                 SELECT  module_id
@@ -514,4 +521,8 @@ class SGL
     }
 }
 
+if (!SGL::isPhp5() && !function_exists('clone')) {
+    // emulate clone  - as per php_compact, slow but really the correct behaviour..
+    eval('function clone($t) { $r = $t; if (method_exists($r,"__clone")) { $r->__clone(); } return $r; }');
+}
 ?>

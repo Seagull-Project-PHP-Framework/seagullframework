@@ -26,14 +26,14 @@ class DbTest extends UnitTestCase {
 
     function testSingleton()
     {
-        $dbh1 =  SGL_DB::singleton($this->dsn);
-        $dbh2 =  SGL_DB::singleton($this->dsn);
+        $dbh1 = & SGL_DB::singleton($this->dsn);
+        $dbh2 = & SGL_DB::singleton($this->dsn);
         $this->assertReference($dbh1, $dbh2);
     }
 
     function xtestDataObjectRef()
     {
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh1 = $locator->get('DB');
         SGL_DB::setConnection();
 
@@ -46,7 +46,7 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnArray()
     {
-        $dbh =  SGL_DB::singleton($this->dsn);
+        $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY);
         $expected = array (
           'phptype' => $this->testconf['db']['type'],
@@ -63,7 +63,7 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnArrayWithoutDb()
     {
-        $dbh =  SGL_DB::singleton($this->dsn);
+        $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_ARRAY, true);
         $expected = array (
           'phptype' => $this->testconf['db']['type'],
@@ -79,7 +79,7 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnString()
     {
-        $dbh =  SGL_DB::singleton($this->dsn);
+        $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING);
         $expected = $this->testconf['db']['type'].'://'.$this->testconf['db']['user'].':'.$this->testconf['db']['pass'].'@'.$this->testconf['db']['protocol'].'+'.$this->testconf['db']['host'].':'.$this->testconf['db']['port'].'/'.$this->testconf['db']['name'];
         $this->assertEqual($dsn, $expected);
@@ -87,7 +87,7 @@ class DbTest extends UnitTestCase {
 
     function testGetDsnStringWithoutDb()
     {
-        $dbh =  SGL_DB::singleton($this->dsn);
+        $dbh = & SGL_DB::singleton($this->dsn);
         $dsn = SGL_DB::getDsn(SGL_DSN_STRING, true);
         $expected = $this->testconf['db']['type'].'://'.$this->testconf['db']['user'].':'.$this->testconf['db']['pass'].'@'.$this->testconf['db']['protocol'].'+'.$this->testconf['db']['host'].':'.$this->testconf['db']['port'];
         $this->assertEqual($dsn, $expected);

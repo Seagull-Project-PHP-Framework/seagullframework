@@ -213,7 +213,7 @@ class SGL_Task_CreateDemoUsers extends SGL_Task
         );
 
         require_once SGL_MOD_DIR . '/user/classes/UserDAO.php';
-        $da = UserDAO::singleton();
+        $da = &UserDAO::singleton();
 
         foreach ($aUsers as $aUserData) {
             $oUser = DB_DataObject::factory('usr');

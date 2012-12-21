@@ -37,7 +37,7 @@ class SGL_Emailer_Queue
      *
      * @return SGL_Emailer_Queue
      */
-    public function __construct($aOptions = array())
+    public function SGL_Emailer_Queue($aOptions = array())
     {
         $this->_aOptions  = array_merge($this->_aOptions, $aOptions);
         $this->_container = SGL_Emailer_Queue_Container::factory(

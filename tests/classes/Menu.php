@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Menu.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -83,7 +83,7 @@ class STR_Menu
                             );
             $structure = STR_FileScanner::getAllTestFiles($type);
             foreach ($structure as $layerCode => $folders) {
-                $firstNode = ${$nodeName}->addItem(
+                $firstNode = &${$nodeName}->addItem(
                     new HTML_TreeNode(
                         array(
                             'text' => $GLOBALS['_STR'][$type . '_layers'][$layerCode][0],
@@ -95,7 +95,7 @@ class STR_Menu
                 );
                 foreach ($folders as $folder => $files) {
                     if (count($files)) {
-                        $secondNode = $firstNode->addItem(
+                        $secondNode = &$firstNode->addItem(
                             new HTML_TreeNode(
                                 array(
                                     'text' => $folder,

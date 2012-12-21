@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Date.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -105,7 +105,7 @@ class SGL_Date
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         if (is_scalar($sDate)) {
             require_once 'Date.php';
-            $date = new Date($sDate);
+            $date = & new Date($sDate);
             $aDate =      array('day'    => $date->getDay(),
                                 'month'  => $date->getMonth(),
                                 'year'   => $date->getYear(),
@@ -127,7 +127,7 @@ class SGL_Date
     {
         if (is_string($date)) {
             require_once 'Date.php';
-            $date = new Date($date);
+            $date = & new Date($date);
             if ($_SESSION['aPrefs']['dateFormat'] == 'FR') {
                 $output = $date->format('%d %B %Y, %H:%M');
 
@@ -161,7 +161,7 @@ class SGL_Date
     {
         if (is_string($date)) {
             include_once 'Date.php';
-            $date = new Date($date);
+            $date = & new Date($date);
             // Neither elegant nor efficient way of doing that
             // (what if we have 30 formats/locales?).
             // We should move that to a language/locale dependent file.

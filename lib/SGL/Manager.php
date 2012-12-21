@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Manager.php                                                               |
 // +---------------------------------------------------------------------------+
@@ -106,31 +106,31 @@ class SGL_Manager
      * @access  public
      * @return  void
      */
-    function __construct()
+    function SGL_Manager()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $this->conf = $c->getAll();
         $this->dbh = $this->_getDb();
 
         //  detect if trans2 support required
-        if (SGL_Config::get('translation.container') == 'db') {
-            $this->trans =  SGL_Translation::singleton();
+        if ($this->conf['translation']['container'] == 'db') {
+            $this->trans = & SGL_Translation::singleton();
         }
 
         //  determine the value for the masterTemplate
-        if (SGL_Config::get('site.masterTemplate')) {
-            $this->masterTemplate = SGL_Config::get('site.masterTemplate');
+        if (!empty($this->conf['site']['masterTemplate'])) {
+            $this->masterTemplate = $this->conf['site']['masterTemplate'];
         }
     }
 
     function &_getDb()
     {
-        $locator = SGL_ServiceLocator::singleton();
+        $locator = &SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
         if (!$dbh) {
-            $dbh =  SGL_DB::singleton();
+            $dbh = & SGL_DB::singleton();
             $locator->register('DB', $dbh);
         }
         return $dbh;
@@ -138,7 +138,7 @@ class SGL_Manager
 
     function getConfig()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         return $c;
     }
 
@@ -163,7 +163,7 @@ class SGL_Manager
      * @param   SGL_Output      $output Processed result
      * @return  mixed           true on success or PEAR_Error on failure
      */
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -184,7 +184,7 @@ class SGL_Manager
         }
         if (!count($this->conf)) {
             return SGL::raiseError('It appears you forgot to fire SGL_Manager\'s '.
-                'constructor - please add "parent::__construct();" in your '.
+                'constructor - please add "parent::SGL_Manager();" in your '.
                 'manager\'s constructor.', SGL_ERROR_NOCLASS);
         }
         //  only implement authorisation check on demand
@@ -303,7 +303,7 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display($output)
+    function display(&$output)
     {
         //  reinstate dynamically added css
         if (!$output->manager->isValid()) {
@@ -333,7 +333,7 @@ class SGL_Manager
      * @param SGL_Registry $input
      * @param SGL_Output $output
      */
-    function _cmd_redirectToDefault($input, $output)
+    function _cmd_redirectToDefault(&$input, &$output)
     {
         //  must not logmessage here
 
@@ -389,7 +389,7 @@ class SGL_Manager
         return $aMergedParams;
     }
 
-    function handleError($oError, $output)
+    function handleError($oError, &$output)
     {
         $output->template = 'error.html';
         $output->masterTemplate = 'masterNoCols.html';

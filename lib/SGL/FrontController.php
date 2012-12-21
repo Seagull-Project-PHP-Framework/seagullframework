@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | FrontController.php                                                       |
 // +---------------------------------------------------------------------------+
@@ -78,17 +78,17 @@ class SGL_FrontController
      * Main invocation, init tasks plus main process.
      *
      */
-    public static function run()
+    function run()
     {
         if (!defined('SGL_INITIALISED')) {
             SGL_FrontController::init();
         }
         //  create app resources
-        $input = SGL_Registry::singleton();
-        $req   = SGL_Request::singleton();
+        $input = &SGL_Registry::singleton();
+        $req   = &SGL_Request::singleton();
 
         //  ensure local config loaded and merged
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
 
         $outputClass = SGL_FrontController::getOutputClass();
         $output = new $outputClass();
@@ -103,11 +103,10 @@ class SGL_FrontController
             SGL::displayStaticPage($req->getMessage());
         }
         $input->setRequest($req);
-        $c->ensureModuleConfigLoaded($req->getModuleName());
+        $c->ensureModuleConfigLoaded($req->getModuleName());        
 
         // run module init tasks
         SGL_Task_InitialiseModules::run();
-
 
         // see http://trac.seagullproject.org/wiki/Howto/PragmaticPatterns/InterceptingFilter
         if (!SGL_FrontController::customFilterChain($input)) {
@@ -153,7 +152,7 @@ class SGL_FrontController
         echo $output->data;
     }
 
-    function customFilterChain($input)
+    function customFilterChain(&$input)
     {
         $req = $input->getRequest();
 
@@ -192,7 +191,7 @@ class SGL_FrontController
                     'SGL_Task_AuthenticateAjaxRequest',
                     'SGL_Task_BuildAjaxHeaders',
                     'SGL_Task_CustomBuildOutputData',
-                    'SGL_Task_ExecuteAjaxAction2',
+                    'SGL_Task_ExecuteAjaxAction',
                 );
             }
             $input->setFilters($aFilters);
@@ -235,7 +234,7 @@ class SGL_FrontController
         }
         // test db connection
         if (defined('SGL_INSTALLED')) {
-            $dbh = SGL_DB::singleton();
+            $dbh = &SGL_DB::singleton();
             if (PEAR::isError($dbh)) {
                 // stop with error page
                 SGL::displayErrorPage($output);
@@ -245,7 +244,7 @@ class SGL_FrontController
     }
 
 
-    public static function init()
+    function init()
     {
         SGL_FrontController::setupMinimumEnv();
         SGL_FrontController::loadRequiredFiles();
@@ -253,7 +252,7 @@ class SGL_FrontController
         $autoLoad = (is_file(SGL_VAR_DIR  . '/INSTALL_COMPLETE.php'))
             ? true
             : false;
-        $c = SGL_Config::singleton($autoLoad);
+        $c = &SGL_Config::singleton($autoLoad);
 
         $init = new SGL_TaskRunner();
         $init->addData($c->getAll());
@@ -308,7 +307,11 @@ class SGL_FrontController
                 require_once $file;
                 if ($cachedLibsEnabled) {
                     // 270kb vs 104kb
-                    $fileCache .= php_strip_whitespace($file);
+                    if ($ok = version_compare(phpversion(), '5.1.2', '>=')) {
+                        $fileCache .= php_strip_whitespace($file);
+                    } else {
+                        $fileCache .= file_get_contents($file);
+                    }
                 }
             }
             if ($cachedLibsEnabled) {
@@ -319,12 +322,13 @@ class SGL_FrontController
         require_once 'DB.php';
     }
 
-    public static function setupMinimumEnv()
+    function setupMinimumEnv()
     {
         $init = new SGL_TaskRunner();
         $init->addTask(new SGL_Task_EnsureFC());
         $init->addTask(new SGL_Task_SetupPaths());
         $init->addTask(new SGL_Task_SetupConstantsStart());
+        $init->addTask(new SGL_Task_EnsureBC());
         $init->main();
     }
 }
@@ -365,7 +369,7 @@ class SGL_DecorateProcess extends SGL_ProcessRequest
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

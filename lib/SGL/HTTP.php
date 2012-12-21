@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | HTTP.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -58,7 +58,7 @@ class SGL_HTTP
      */
     function redirect($url = '')
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  if arg is not an array of params, pass straight to header function
@@ -74,7 +74,7 @@ class SGL_HTTP
             }
         } else {
             //  get a reference to the request object
-            $req =  SGL_Request::singleton();
+            $req = & SGL_Request::singleton();
 
             if (is_scalar($url)) {
                 $url = array();

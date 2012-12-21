@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ParamHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -49,12 +49,12 @@ class SGL_ParamHandler
 {
     var $source;
 
-    function __construct($source)
+    function SGL_ParamHandler($source)
     {
         $this->source = $source;
     }
 
-    function singleton($source)
+    function &singleton($source)
     {
         static $instances;
         if (!isset($instances)) {

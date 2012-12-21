@@ -27,14 +27,14 @@ class ImageTest extends UnitTestCase
         $this->imageConfFile   = dirname(__FILE__) . '/image.ini';
         $this->imageSampleFile = dirname(__FILE__) . '/chicago.jpg';
 
-        $driver   = new MockImage_Transform_Driver_GD_SGL();
-        $strategy = new SGL_ImageTransform_FooStrategy($driver);
+        $driver   = & new MockImage_Transform_Driver_GD_SGL();
+        $strategy = & new SGL_ImageTransform_FooStrategy($driver);
 
         $conf = array();
-        $conf['driver']      = $driver;
+        $conf['driver']      = &$driver;
         $conf['thumbDir']    = 'thumbs';
         $conf['saveQuality'] = 100;
-        $conf['foo']         = $strategy;
+        $conf['foo']         = &$strategy;
 
         // add thumbs
         $conf['thumbnails']['small'] = array();
@@ -42,19 +42,19 @@ class ImageTest extends UnitTestCase
         $small = &$conf['thumbnails']['small'];
         $large = &$conf['thumbnails']['large'];
 
-        $small['driver']      = $driver;
+        $small['driver']      = &$driver;
         $small['thumbDir']    = 'thumbs';
         $small['saveQuality'] = 75;
-        $small['foo']         = $strategy;
-        $small['foo2']        = $strategy;
-        $large['driver']      = $driver;
+        $small['foo']         = &$strategy;
+        $small['foo2']        = &$strategy;
+        $large['driver']      = &$driver;
         $large['thumbDir']    = 'thumbs';
         $large['saveQuality'] = 90;
-        $large['foo3']        = $strategy;
+        $large['foo3']        = &$strategy;
 
         $this->conf   = $conf;
-        $this->driver = $driver;
-        $this->strat  = $strategy;
+        $this->driver = &$driver;
+        $this->strat  = &$strategy;
     }
 
     function tearDown()
@@ -66,7 +66,7 @@ class ImageTest extends UnitTestCase
 
     function testIsStaticMethod()
     {
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
         $this->assertTrue(SGL_Image::_isStaticMethod());
         $this->assertFalse($image->_isStaticMethod());
         $this->assertTrue($image->_isInstanceMethod());
@@ -125,7 +125,7 @@ class ImageTest extends UnitTestCase
         $this->assertEqual(SGL_BASE_URL . '/media/images', $url);
 
         // init SGL_Image instance with module name supplied
-        $image = new SGL_Image(null, $moduleName = 'media');
+        $image = & new SGL_Image(null, $moduleName = 'media');
 
         // with instance call we know a module name
         $url = $image->getUrl();
@@ -139,7 +139,7 @@ class ImageTest extends UnitTestCase
 
     function testSetParams()
     {
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
 
         $conf = SGL_ImageConfig::getParamsFromFile($this->imageConfFile);
         $ret = $image->_setParams($conf[SGL_IMAGE_DEFAULT_SECTION]);
@@ -157,7 +157,7 @@ class ImageTest extends UnitTestCase
     function testGetThumbnailNames()
     {
         $conf = SGL_ImageConfig::getParamsFromFile($this->imageConfFile);
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
         $image->_setParams($conf[SGL_IMAGE_DEFAULT_SECTION]);
 
         $ret = $image->getThumbnailNames();
@@ -166,24 +166,24 @@ class ImageTest extends UnitTestCase
 
     function testInit()
     {
-        $driver   = $this->driver;
-        $conf     = $this->conf;
-        $strategy = $this->strat;
+        $driver   = &$this->driver;
+        $conf     = &$this->conf;
+        $strategy = &$this->strat;
 
         // init image without thumbs
         $confcopy = $conf;
         unset($confcopy['thumbnails']);
 
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
         $ret = $image->init($confcopy);
         $this->assertTrue($ret);
 
         unset($image);
 
         // init image with thumbs
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
         $ret = $image->init($conf);
-        $this->assertFalse(is_a($ret, 'PEAR_Error'));
+        $this->assertTrue($ret);
 
         $this->assertReference($image->_aParams['driver'], $driver);
         $this->assertReference($image->_aThumbnails['small']['driver'], $driver);
@@ -199,12 +199,12 @@ class ImageTest extends UnitTestCase
 
     function testTransform()
     {
-        $driver = $this->driver;
-        $conf   = $this->conf;
+        $driver = &$this->driver;
+        $conf   = &$this->conf;
 
         // init instance
         $fileName = 'chicago.jpg';
-        $image = new SGL_Image($fileName);
+        $image = & new SGL_Image($fileName);
         $ret = $image->init($conf);
 
         // make sure target dir is writable
@@ -229,15 +229,15 @@ class ImageTest extends UnitTestCase
 
     function testCreate()
     {
-        $driver = $this->driver;
-        $conf   = $this->conf;
+        $driver = &$this->driver;
+        $conf   = &$this->conf;
 
         // initial data for image
         $fileName   = 'chicago.jpg';
         //$moduleName = 'testModule';
 
         // init image
-        $image = new SGL_Image($fileName);
+        $image = & new SGL_Image($fileName);
         $image->init($conf);
 
         $driver->expectCallCount('resize', 8);
@@ -274,7 +274,7 @@ class ImageTest extends UnitTestCase
         require_once SGL_CORE_DIR . '/Util.php';
 
         // image config
-        $conf = $this->conf;
+        $conf = &$this->conf;
 
         // files in upload dir
         $aFiles = SGL_Util::listDir(SGL_UPLOAD_DIR, FILE_LIST_FILES);
@@ -286,7 +286,7 @@ class ImageTest extends UnitTestCase
         $thumbCntBefore = count($aThumbFiles);
 
         // create images in dirs
-        $image = new SGL_Image();
+        $image = & new SGL_Image();
         $image->init($conf);
         $ret = $image->create($this->imageSampleFile, 'copy', $replace = true);
 

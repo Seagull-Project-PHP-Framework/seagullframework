@@ -92,7 +92,7 @@ IMPROVEMENTS
             http://trac.seagullproject.org/wiki/Integration/Serendipity
 17-01-06    Added new 'getAllModules' xml-rpc service
 16-01-06    Instantiating a cache object has changed from
-            \$cache =  SGL::cacheSingleton(); to \$cache =  SGL_Cache::singleton();
+            \$cache = & SGL::cacheSingleton(); to \$cache = & SGL_Cache::singleton();
             Likewise, SGL::clearCache() has changed to SGL_Cache::clear()
 10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
 09-01-06    Url alias solution fully integrated and database-driven
@@ -327,7 +327,7 @@ EOT;
     $test = $pkg->generateContents();
 
     //  get ver 1.0 compatible version
-    #$packagexml = $pkg->exportCompatiblePackageFile1();
+    #$packagexml = &$pkg->exportCompatiblePackageFile1();
     #$packagexml->addMaintainer('lead', 'demianturner', 'Demian Turner', 'demian@phpkitchen.com');
     #$test1 = $packagexml->generateContents();
 

@@ -7,7 +7,7 @@
  */
 class SGL_Task_CoreProcessor extends SGL_ProcessRequest
 {
-    function process($input, $output)
+    function process(&$input, &$output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | Init.php                                                                  |
 // +---------------------------------------------------------------------------+
@@ -66,7 +66,7 @@ class SGL_Task_SetupPaths extends SGL_Task
      *
      * @param array $data
      */
-    public function run($conf = array())
+    function run($conf)
     {
         define('SGL_SERVER_NAME', $this->hostnameToFilename());
         if (defined('SGL_PEAR_INSTALLED')) {
@@ -149,7 +149,7 @@ class SGL_Task_SetupPaths extends SGL_Task
  */
 class SGL_Task_SetupConstantsStart extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         // framework file structure
         if (defined('SGL_PEAR_INSTALLED')) {
@@ -336,7 +336,7 @@ class SGL_Task_SetupConstantsStart extends SGL_Task
  */
 class SGL_Task_SetupConstantsFinish extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         //  include Log.php if logging enabled
         if (isset($conf['log']['enabled']) && $conf['log']['enabled']) {
@@ -355,7 +355,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
         }
         // On install, $conf is empty let's load it
         if (empty($conf) && file_exists(SGL_ETC_DIR . '/customInstallDefaults.ini')) {
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $conf1 = $c->load(SGL_ETC_DIR . '/customInstallDefaults.ini');
             if (isset($conf1['path']['moduleDirOverride'])) {
                 $conf['path']['moduleDirOverride'] = $conf1['path']['moduleDirOverride'];
@@ -410,7 +410,7 @@ class SGL_Task_SetupConstantsFinish extends SGL_Task
  */
 class SGL_Task_InitialiseDbDataObject extends SGL_Task
 {
-    function run($conf = array())
+    function run()
     {
         $options = &PEAR::getStaticProperty('DB_DataObject', 'options');
         $options = array(
@@ -433,12 +433,12 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
  */
 class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         // for 0.6.x versions
         if (!empty($conf['db']['prefix'])
                 && $conf['db']['prefix'] == 'not implemented yet') {
-            $config = SGL_Config::singleton();
+            $config = &SGL_Config::singleton();
             $config->set('db', array('prefix' => ''));
             $config->save();
         }
@@ -450,7 +450,7 @@ class SGL_Task_EnsurePlaceholderDbPrefixIsNull extends SGL_Task
  */
 class SGL_Task_SetGlobals extends SGL_Task
 {
-    function run($conf = array())
+    function run($data)
     {
         $GLOBALS['_SGL']['BANNED_IPS'] =        array();
         $GLOBALS['_SGL']['ERRORS'] =            array();
@@ -465,7 +465,7 @@ class SGL_Task_SetGlobals extends SGL_Task
  */
 class SGL_Task_SetupPearErrorCallback extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         //  set PEAR error handler
         #$old_error_handler = set_error_handler("myErrorHandler");
@@ -504,7 +504,7 @@ class SGL_Task_SetupPearErrorCallback extends SGL_Task
  */
 class SGL_Task_SetupCustomErrorHandler extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         if (version_compare(phpversion(), "5.3.0", '>=')) {
             return;
@@ -541,7 +541,7 @@ class SGL_Task_SetupCustomErrorHandler extends SGL_Task
  */
 class SGL_Task_SetBaseUrl extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         if (!(isset($conf['site']['baseUrl']))) {
 
@@ -568,7 +568,7 @@ class SGL_Task_SetBaseUrl extends SGL_Task
  */
 class SGL_Task_ModifyIniSettings extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         // set php.ini directives
         @ini_set('session.auto_start',          0); //  sessions will fail fail if enabled
@@ -588,7 +588,7 @@ class SGL_Task_ModifyIniSettings extends SGL_Task
  */
 class SGL_Task_RegisterTrustedIPs extends SGL_Task
 {
-    function run($conf = array())
+    function run($data)
     {
         //  only IPs defined here can access debug sessions and delete config files
         $GLOBALS['_SGL']['TRUSTED_IPS'] = array(
@@ -602,7 +602,7 @@ class SGL_Task_RegisterTrustedIPs extends SGL_Task
  */
 class SGL_Task_LoadCustomConfig extends SGL_Task
 {
-    function run($conf = array())
+    function run($conf)
     {
         if (!empty($conf['path']['pathToCustomConfigFile'])) {
             if (is_file($conf['path']['pathToCustomConfigFile'])) {
@@ -617,17 +617,17 @@ class SGL_Task_LoadCustomConfig extends SGL_Task
  */
 class SGL_Task_InitialiseModules extends SGL_Task
 {
-    function run($conf = array())
+    function run()
     {
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         //  skip if we're in installer
         if (defined('SGL_INSTALLED')) {
-            $locator = SGL_ServiceLocator::singleton();
+            $locator = &SGL_ServiceLocator::singleton();
             $dbh = $locator->get('DB');
             if (!$dbh) {
-                $dbh =  SGL_DB::singleton();
+                $dbh = & SGL_DB::singleton();
                 $locator->register('DB', $dbh);
             }
             //  this task can be called when installing a new module
@@ -657,14 +657,51 @@ class SGL_Task_InitialiseModules extends SGL_Task
 /**
  * @package Task
  */
+class SGL_Task_EnsureBC extends SGL_Task
+{
+    function run($data)
+    {
+        //  load BC functions depending on PHP version detected
+        if (!function_exists('version_compare') || version_compare(phpversion(), "4.3.0", 'lt')) {
+            require_once SGL_ETC_DIR . '/bc.php';
+        }
+
+        if (!(function_exists('file_put_contents'))) {
+            function file_put_contents($location, $data)
+            {
+                if (is_file($location)) {
+                    unlink($location);
+                }
+                $fileHandler = fopen($location, "w");
+                fwrite ($fileHandler, $data);
+                fclose ($fileHandler);
+                return true;
+            }
+        }
+
+        if (!function_exists('getSystemTime')) {
+            function getSystemTime()
+            {
+                $time = gettimeofday();
+                $resultTime = $time['sec'] * 1000;
+                $resultTime += floor($time['usec'] / 1000);
+                return $resultTime;
+            }
+        }
+    }
+}
+
+/**
+ * @package Task
+ */
 class SGL_Task_EnsureFC extends SGL_Task
 {
-    function run($conf = array())
+    function run($data)
     {
         //  load BC functions depending on PHP version detected
         if (version_compare(phpversion(), "5.3.0", '>=')) {
             date_default_timezone_set('UTC');
-            error_reporting(E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR);
+            error_reporting(E_COMPILE_ERROR|E_RECOVERABLE_ERROR|E_ERROR|E_CORE_ERROR|E_NOTICE|E_WARNING);
         }
     }
 }
@@ -726,7 +763,7 @@ class SGL_View
      */
     function SGL_View(&$data, $rendererStrategy)
     {
-        $this->data = $data;
+        $this->data = &$data;
         $this->rendererStrategy = $rendererStrategy;
     }
 

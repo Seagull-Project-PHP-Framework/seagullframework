@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | String.php                                                                |
 // +---------------------------------------------------------------------------+
@@ -64,11 +64,11 @@ class SGL_String
     function censor($text)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         $editedText = $text;
-        $censorMode = self::pseudoConstantToInt($conf['censor']['mode']);
+        $censorMode = SGL_String::pseudoConstantToInt($conf['censor']['mode']);
         if ($censorMode != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
             if (is_array($aBadWords)) {
@@ -122,7 +122,7 @@ class SGL_String
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = self::trimWhitespace($value);
+                $newArray[$key] = SGL_String::trimWhitespace($value);
             }
             return $newArray;
         } else {
@@ -169,11 +169,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = self::trimWhitespace($var);
+        $var = SGL_String::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = self::clean($value);
+                $newArray[$key] = SGL_String::clean($value);
             }
             return $newArray;
         } else {
@@ -186,11 +186,11 @@ class SGL_String
         if (!isset($var)) {
             return false;
         }
-        $var = self::trimWhitespace($var);
+        $var = SGL_String::trimWhitespace($var);
         if (is_array($var)) {
             $newArray = array();
             foreach ($var as $key => $value) {
-                $newArray[$key] = self::removeJs($value);
+                $newArray[$key] = SGL_String::removeJs($value);
             }
             return $newArray;
         } else {
@@ -220,26 +220,42 @@ class SGL_String
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
         if (       !$conf['site']['tidyhtml']
                 || !extension_loaded('tidy')) {
             return $html;
         }
-        $options = array(
-            'wrap' => 0,
-            'indent' => true,
-            'indent-spaces' => 4,
-            'output-xhtml' => true,
-            'drop-font-tags' => false,
-            'clean' => false,
-        );
-        if (strlen($html)) {
-            $tidy = new Tidy();
-            $tidy->parseString($html, $options, 'utf8');
-            $tidy->cleanRepair();
-            $ret = $tidy->body();
+        //  PHP5 version
+        if (SGL::isPhp5()) {
+            $options = array(
+                'wrap' => 0,
+                'indent' => true,
+                'indent-spaces' => 4,
+                'output-xhtml' => true,
+                'drop-font-tags' => false,
+                'clean' => false,
+            );
+            if (strlen($html)) {
+                $tidy = new Tidy();
+                $tidy->parseString($html, $options, 'utf8');
+                $tidy->cleanRepair();
+                $ret = $tidy->body();
+            }
+        //  PHP4 version
+        } else {
+            //  so we don't get doctype, html, head, body etc. tags added; default is false
+            tidy_setopt('show-body-only', true);
+            //  no wrapping of lines
+            tidy_setopt('wrap', 0);
+            tidy_setopt('indent', 1);
+            tidy_setopt('indent-spaces', 1);
+            tidy_parse_string($html);
+            if ((tidy_warning_count() || tidy_error_count()) && $logErrors) {
+                SGL::logMessage('PHP Tidy error or warning: ' . tidy_get_error_buffer(), PEAR_LOG_NOTICE);
+            }
+            $ret = tidy_get_output();
         }
         return $ret;
     }
@@ -259,15 +275,12 @@ class SGL_String
     function translate($key, $filter = false, $aParams = array(), $langCode = null)
     {
         if (!is_null($langCode)) {
-            return self::translate2($key, $filter, $aParams, $langCode);
+            return SGL_String::translate2($key, $filter, $aParams, $langCode);
         }
-        $c = SGL_Config::singleton();
+        $c = &SGL_Config::singleton();
         $conf = $c->getAll();
 
-        $trans = isset($GLOBALS['_SGL']['TRANSLATION'])
-			? $GLOBALS['_SGL']['TRANSLATION']
-			: false;
-		if (!$trans) return $key;
+        $trans = &$GLOBALS['_SGL']['TRANSLATION'];
         if (isset($trans[$key])) {
             if (!is_array($trans[$key])
                     && strstr($trans[$key], '||')
@@ -309,7 +322,7 @@ class SGL_String
                     && $conf['translation']['container'] == 'db') {
 
                 //  get a reference to the request object
-                $req =  SGL_Request::singleton();
+                $req = & SGL_Request::singleton();
                 $moduleName = $req->get('moduleName');
 
                 //  fetch fallback lang
@@ -598,7 +611,7 @@ class SGL_String
             array_push($aSegment, '</ul>');
         }
         $ret = implode("\n", $aSegment);
-        $ret = self::tidy($ret);
+        $ret = SGL_String::tidy($ret);
         return $ret;
     }
 
@@ -649,13 +662,13 @@ class SGL_String
 
     function toValidFileName($origName)
     {
-        return self::dirify($origName);
+        return SGL_String::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
     function dirify($s)
     {
-         $s = self::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
+         $s = SGL_String::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
          $s = strip_tags($s);                       ## remove HTML tags.
          // Note that &nbsp (for example) is legal in HTML 4, ie. semi-colon is optional if it is followed
@@ -751,7 +764,7 @@ class SGL_String
      * @todo make it work with cyrillic chars
      * @todo make it work with non utf-8 encoded strings
      *
-     * @see self::isCyrillic()
+     * @see SGL_String::isCyrillic()
      *
      * @param string $str
      *
@@ -759,8 +772,8 @@ class SGL_String
      */
     function replaceAccents($str)
     {
-        if (!self::isCyrillic($str)) {
-            $str = self::to7bit($str);
+        if (!SGL_String::isCyrillic($str)) {
+            $str = SGL_String::to7bit($str);
             $str = preg_replace('/[^A-Z^a-z^0-9()]+/',' ',$str);
         }
         return $str;
@@ -859,7 +872,7 @@ class SGL_String
      *
      * @static
      */
-    public static function escapeSingleQuoteInArrayKeys($array)
+    function escapeSingleQuoteInArrayKeys($array)
     {
         $ret = array();
         foreach ($array as $key => $value) {
@@ -869,6 +882,21 @@ class SGL_String
                 : $value;
         }
         return $ret;
+    }
+}
+
+if (!function_exists('array_combine')) {
+    function array_combine($a, $b)
+    {
+        $c = array();
+        if (is_array($a) && is_array($b))
+            while (list(, $va) = each($a))
+                if (list(, $vb) = each($b)) {
+                    $c[$va] = $vb;
+                } else {
+                    break 1;
+                }
+        return $c;
     }
 }
 ?>

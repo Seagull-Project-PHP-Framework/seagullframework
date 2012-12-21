@@ -30,7 +30,7 @@
 // | OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.      |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-// | Seagull 1.0                                                               |
+// | Seagull 0.6                                                               |
 // +---------------------------------------------------------------------------+
 // | ErrorHandler.php                                                          |
 // +---------------------------------------------------------------------------+
@@ -61,7 +61,7 @@ class SGL_ErrorHandler
      * @access  public
      * @return  void
      */
-    function __construct()
+    function SGL_ErrorHandler()
     {
         //  first dimension elements are PHP error types
         //  2nd dimension elements are roughly PEAR Log's equivalents
@@ -139,7 +139,7 @@ class SGL_ErrorHandler
             }
         }
         if (in_array($errNo, array_keys($this->errorType))) {
-            $c = SGL_Config::singleton();
+            $c = &SGL_Config::singleton();
             $conf = $c->getAll();
             //  final param is 2nd dimension element from errorType array,
             //  representing PEAR error codes mapped to PHP's
@@ -189,7 +189,7 @@ EOL;
             if ($this->errorType[$errNo][1] <= SGL_EMAIL_ADMIN_THRESHOLD) {
 
                 //  get extra info
-                $dbh =  SGL_DB::singleton();
+                $dbh = & SGL_DB::singleton();
 
                 $aExtraInfo['callingURL'] = $_SERVER['SCRIPT_NAME'];
                 $aExtraInfo['lastSQL'] = isset($dbh->last_query) ?
