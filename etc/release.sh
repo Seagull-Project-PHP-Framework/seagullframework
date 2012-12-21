@@ -14,11 +14,11 @@
 ##############################
 
 # binaries
-SVN=/opt/local/bin/svn
+SVN=/usr/bin/svn
 SCP=/usr/bin/scp
 FTP=/usr/bin/ftp
-PHP=/opt/local/bin/php
-PEAR=/opt/local/bin/pear
+PHP=/usr/bin/php
+PEAR=/usr/bin/pear
 
 # SF FTP details
 FTP_HOSTNAME=upload.sourceforge.net
@@ -31,7 +31,8 @@ REVISION_NUM=$1
 RELEASE_NAME=$2
 MINIMAL_INSTALL=$3
 PROJECT_NAME=seagull
-SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
+#SVN_REPO_LEAF_FOLDER_NAME=branches/0.6-bugfix
+SVN_REPO_LEAF_FOLDER_NAME=trunk
 SVN_REPO_URL=http://svn.seagullproject.org/svn/seagull/$SVN_REPO_LEAF_FOLDER_NAME
 
 SVN_REPO_TAGS_URL=http://svn.seagullproject.org/svn/seagull/tags
@@ -430,11 +431,11 @@ createTarball
 
 #uploadToSfWholePackage
 
-generateApiDocs
+#generateApiDocs
 
-packageApiDocs
+#packageApiDocs
 
-uploadToSfApiDocs
+#uploadToSfApiDocs
 
 #scpApiDocsToSglSite
 
