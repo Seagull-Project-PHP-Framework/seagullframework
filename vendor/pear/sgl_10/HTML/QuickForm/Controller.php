@@ -137,7 +137,8 @@ class HTML_QuickForm_Controller
     function run()
     {
         // the names of the action and page should be saved
-        list($page, $action) = $this->_actionName = $this->getActionName();
+        $this->_actionName = $this->getActionName();
+        list($page, $action) = $this->_actionName;
         return $this->_pages[$page]->handle($action);
     }
 
