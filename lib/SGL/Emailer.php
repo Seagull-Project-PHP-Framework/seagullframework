@@ -216,6 +216,7 @@ class SGL_Emailer
         case '':
         case 'mail':
             $backend = 'mail';
+            $aParams['-r'] = "-r ".$this->options['fromEmail'];
             break;
 
         case 'sendmail':
