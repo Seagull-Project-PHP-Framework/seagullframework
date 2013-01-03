@@ -395,7 +395,7 @@ abstract class SGL_Translation3_Driver
             );
             foreach ($aLangs as $langCode) {
                 // don't take care of locale for now, only main language
-				$langCode = ($langCode == 'zh-tw') ? 'zhtw' : substr($langCode, 0, 2);
+				$langCode = (in_array($langCode, array('zh-tw','zh-TW'))) ? 'zhtw' : substr($langCode, 0, 2);
                 $langCodeCharset = $langCode . '-' . self::getDefaultCharset();
                 if (self::isAllowedLangCodeCharset($langCodeCharset)) {
                     $ret = $langCodeCharset;
