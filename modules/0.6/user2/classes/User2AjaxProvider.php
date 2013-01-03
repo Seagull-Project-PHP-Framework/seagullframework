@@ -101,10 +101,7 @@ class User2AjaxProvider extends SGL_AjaxProvider2
                 $output->isLogged = true;
                 $output->redir    = !empty($input->redir)
                     ? base64_decode($input->redir)
-                    : $input->getCurrentUrl()->makeLink(array(
-                          'moduleName'  => $moduleName,
-                          'managerName' => $managerName
-                      ));
+                    : $input->getCurrentUrl()->makeLink('', $managerName, $moduleName);
             } else {
                 $msg = array(
                     'message' => 'username/password not recognised',
