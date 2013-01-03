@@ -122,6 +122,7 @@ class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
                 // show mtnce page for browser requests
                 if ($req->getType() == SGL_REQUEST_BROWSER) {
                     SGL::displayMaintenancePage($output);
+                    header('HTTP/1.1 503 Service Temporarily Unavailable');
                 }
             }
         }
@@ -268,7 +269,7 @@ class SGL_Task_BuildHeaders extends SGL_DecorateProcess
             if (!headers_sent()) {
                 header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
                 header('Content-Type: text/html; charset=' . $GLOBALS['_SGL']['CHARSET']);
-                header('X-Powered-By: Seagull http://seagullproject.org');
+                header('X-Powered-By: Seagull Framework seagullproject.org');
                 foreach ($output->getHeaders() as $header) {
                     header($header);
                 }

@@ -1115,7 +1115,8 @@ class SGL_Output
 
     function getHeaders()
     {
-        return $this->aHeaders;
+        $headers = $this->aHeaders;
+        return $headers;
     }
 
     /**
