@@ -293,7 +293,8 @@ class SGL_DB
 
         $page = array();
         $page['totalItems'] = $pager_options['totalItems'];
-        $page['links'] = str_replace("/pageID/".$pager->getCurrentPageID()."/", "/", $pager->links);
+        $page['links'] = str_replace("/pageID/".$pager->getCurrentPageID()."/", "", $pager->links);
+        $page['links'] = str_replace("//pageID", "/pageID", $page['links']);
         $page['page_numbers'] = array(
             'current' => $pager->getCurrentPageID(),
             'total'   => $pager->numPages()
