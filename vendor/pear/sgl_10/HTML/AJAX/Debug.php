@@ -1,21 +1,25 @@
 <?php
-define ("NEWLINE", "\n");
-// {{{ class HTML_AJAX_Debug
 /**
  * AJAX Debugging implementation
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
+ * SVN Rev: $Id$
+ */
+
+/**
+ * Newline to use
+ */
+define ("HTML_AJAX_NEWLINE", "\n");
+
+// {{{ class HTML_AJAX_Debug
+/**
+ * AJAX Debugging implementation
  *
  * @category   HTML
  * @package    AJAX
  * @author     David Coallier <davidc@php.net>
  * @copyright  2005 David Coallier 
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.5.1
+ * @version    Release: 0.5.6
  */
 class HTML_AJAX_Debug {
     // {{{ properties
@@ -101,11 +105,11 @@ class HTML_AJAX_Debug {
      */
     function xmlError()
     {
-        $error  = " <when>{$this->_timeOccured}</when>" . NEWLINE;
-        $error .= " <msg>{$this->errorMsg}</msg>"       . NEWLINE;
-        $error .= " <code>{$this->errorCode}</code>"    . NEWLINE;
-        $error .= " <line>{$this->errorLine}</line>"    . NEWLINE;
-        $error .= " <file>{$this->errorFile}</file>"    . NEWLINE . NEWLINE;
+        $error  = " <when>{$this->_timeOccured}</when>" . HTML_AJAX_NEWLINE;
+        $error .= " <msg>{$this->errorMsg}</msg>"       . HTML_AJAX_NEWLINE;
+        $error .= " <code>{$this->errorCode}</code>"    . HTML_AJAX_NEWLINE;
+        $error .= " <line>{$this->errorLine}</line>"    . HTML_AJAX_NEWLINE;
+        $error .= " <file>{$this->errorFile}</file>"    . HTML_AJAX_NEWLINE . HTML_AJAX_NEWLINE;
         return $this->error = $error; 
     }
     // }}}

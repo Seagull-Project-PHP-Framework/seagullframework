@@ -12,7 +12,7 @@
  * @author     Tomas V.V.Cox <cox@idecnet.com>
  * @copyright  1997-2009 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @version    CVS: $Id: pearcmd.php 286487 2009-07-29 05:57:28Z dufuz $
+ * @version    CVS: $Id: pearcmd.php 313023 2011-07-06 19:17:11Z dufuz $
  * @link       http://pear.php.net/package/PEAR
  */
 
@@ -25,8 +25,8 @@ define('PEAR_IGNORE_BACKTRACE', 1);
 /**
  * @nodep Gtk
  */
-if ('lib/pear' != '@'.'include_path'.'@') {
-    ini_set('include_path', 'lib/pear');
+if ('/Users/demian/Sites/seagull/trunk/lib/pear' != '@'.'include_path'.'@') {
+    ini_set('include_path', '/Users/demian/Sites/seagull/trunk/lib/pear');
     $raw = false;
 } else {
     // this is a raw, uninstalled pear, either a cvs checkout, or php distro
@@ -43,7 +43,7 @@ ob_implicit_flush(true);
 $_PEAR_PHPDIR = '#$%^&*';
 set_error_handler('error_handler');
 
-$pear_package_version = "1.9.0";
+$pear_package_version = "1.9.4";
 
 require_once 'PEAR.php';
 require_once 'PEAR/Frontend.php';
@@ -318,18 +318,17 @@ if ($fetype == 'Gtk' || $fetype == 'Gtk2') {
 function usage($error = null, $helpsubject = null)
 {
     global $progname, $all_commands;
-    $stderr = fopen('php://stderr', 'w');
+    $stdout = fopen('php://stdout', 'w');
     if (PEAR::isError($error)) {
-        fputs($stderr, $error->getMessage() . "\n");
+        fputs($stdout, $error->getMessage() . "\n");
     } elseif ($error !== null) {
-        fputs($stderr, "$error\n");
+        fputs($stdout, "$error\n");
     }
 
     if ($helpsubject != null) {
         $put = cmdHelp($helpsubject);
     } else {
-        $put =
-            "Commands:\n";
+        $put = "Commands:\n";
         $maxlen = max(array_map("strlen", $all_commands));
         $formatstr = "%-{$maxlen}s  %s\n";
         ksort($all_commands);
@@ -342,8 +341,12 @@ function usage($error = null, $helpsubject = null)
             "Type \"$progname help shortcuts\" to list all command shortcuts.\n".
             "Type \"$progname help <command>\" to get the help for the specified command.";
     }
-    fputs($stderr, "$put\n");
-    fclose($stderr);
+    fputs($stdout, "$put\n");
+    fclose($stdout);
+
+    if ($error === null) {
+        exit(0);
+    }
     exit(1);
 }
 

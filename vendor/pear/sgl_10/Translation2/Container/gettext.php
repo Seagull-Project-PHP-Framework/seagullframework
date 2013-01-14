@@ -33,7 +33,7 @@
  * @author    Michael Wallner <mike@php.net>
  * @copyright 2004-2008 Lorenzo Alberton, Michael Wallner
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: gettext.php,v 1.32 2008/02/02 18:05:06 quipo Exp $
+ * @version   CVS: $Id: gettext.php 305985 2010-12-05 22:55:33Z clockwerx $
  * @link      http://pear.php.net/package/Translation2
  */
 
@@ -59,7 +59,7 @@ require_once 'I18Nv2.php';
  * @author    Michael Wallner <mike@php.net>
  * @copyright 2004-2008 Lorenzo Alberton, Michael Wallner
  * @license   http://www.debian.org/misc/bsd.license  BSD License (3 Clause)
- * @version   CVS: $Id: gettext.php,v 1.32 2008/02/02 18:05:06 quipo Exp $
+ * @version   CVS: $Id: gettext.php 305985 2010-12-05 22:55:33Z clockwerx $
  * @link      http://pear.php.net/package/Translation2
  * @see       /docs/gettext_readme.txt for an usage example
  */

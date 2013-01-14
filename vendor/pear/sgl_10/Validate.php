@@ -32,7 +32,7 @@
  * @author     Amir Mohammad Saied <amir@php.net>
  * @copyright  1997-2006 Pierre-Alain Joye,Tomas V.V.Cox,Amir Mohammad Saied
  * @license    http://www.opensource.org/licenses/bsd-license.php  New BSD License
- * @version    CVS: $Id: Validate.php 291251 2009-11-24 02:42:17Z amir $
+ * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Validate
  */
 
@@ -45,12 +45,12 @@ define('VALIDATE_SPACE',        '\s');
 define('VALIDATE_ALPHA_LOWER',  'a-z');
 define('VALIDATE_ALPHA_UPPER',  'A-Z');
 define('VALIDATE_ALPHA',        VALIDATE_ALPHA_LOWER . VALIDATE_ALPHA_UPPER);
-define('VALIDATE_EALPHA_LOWER', VALIDATE_ALPHA_LOWER . '·ÈÌÛ˙˝‡ËÏÚ˘‰ÎÔˆ¸ˇ‚ÍÓÙ˚„Òı®ÂÊÁΩ¯˛ﬂ');
-define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . '¡…Õ”⁄›¿»Ã“ŸƒÀœ÷‹æ¬ Œ‘€√—’¶≈∆«º–ÿﬁ');
+define('VALIDATE_EALPHA_LOWER', VALIDATE_ALPHA_LOWER . '√°√©√≠√≥√∫√Ω√†√®√¨√≤√π√§√´√Ø√∂√º√ø√¢√™√Æ√¥√ª√£√±√µ¬®√•√¶√ß¬Ω√∞√∏√æ√ü');
+define('VALIDATE_EALPHA_UPPER', VALIDATE_ALPHA_UPPER . '√Å√â√ç√ì√ö√ù√Ä√à√å√í√ô√Ñ√ã√è√ñ√ú¬æ√Ç√ä√é√î√õ√É√ë√ï¬¶√Ö√Ü√á¬º√ê√ò√û');
 define('VALIDATE_EALPHA',       VALIDATE_EALPHA_LOWER . VALIDATE_EALPHA_UPPER);
 define('VALIDATE_PUNCTUATION',  VALIDATE_SPACE . '\.,;\:&"\'\?\!\(\)');
 define('VALIDATE_NAME',         VALIDATE_EALPHA . VALIDATE_SPACE . "'" . '\-');
-define('VALIDATE_STREET',       VALIDATE_NUM . VALIDATE_NAME . "/\\∫™\.");
+define('VALIDATE_STREET',       VALIDATE_NUM . VALIDATE_NAME . "/\\¬∫¬™\.");
 
 define('VALIDATE_ITLD_EMAILS',  1);
 define('VALIDATE_GTLD_EMAILS',  2);
@@ -448,6 +448,10 @@ class Validate
         if(!empty($options["VALIDATE_ITLD_EMAILS"])) array_push($validate, 'itld');
         if(!empty($options["VALIDATE_GTLD_EMAILS"])) array_push($validate, 'gtld');
         if(!empty($options["VALIDATE_CCTLD_EMAILS"])) array_push($validate, 'cctld');
+
+        if (count($validate) === 0) {
+            array_push($validate, 'itld', 'gtld', 'cctld');
+        }
 
         $self = new Validate;
 
@@ -1093,7 +1097,9 @@ class Validate
                 $class        = implode('_', $validateType);
                 $classPath    = str_replace('_', DIRECTORY_SEPARATOR, $class);
                 $class        = 'Validate_' . $class;
-                if (!Validate::_includePathFileExists("Validate/$classPath.php")) {
+                if (Validate::_includePathFileExists("Validate/$classPath.php")) {
+                    include_once "Validate/$classPath.php";
+                } else {
                     trigger_error("$class isn't installed or you may have some permission issues", E_USER_ERROR);
                 }
 

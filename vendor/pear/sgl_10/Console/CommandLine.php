@@ -20,7 +20,7 @@
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   CVS: $Id: CommandLine.php 287636 2009-08-24 13:14:06Z izi $
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     Class available since release 0.1.0
  * @filesource
@@ -55,7 +55,7 @@ require_once 'Console/CommandLine/MessageProvider/Default.php';
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   Release: 1.1.1
+ * @version   Release: 1.2.0
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     File available since release 0.1.0
  * @example   docs/examples/ex1.php
@@ -74,6 +74,7 @@ class Console_CommandLine
     public static $errors = array(
         'option_bad_name'                    => 'option name must be a valid php variable name (got: {$name})',
         'argument_bad_name'                  => 'argument name must be a valid php variable name (got: {$name})',
+        'argument_no_default'                => 'only optional arguments can have a default value',
         'option_long_and_short_name_missing' => 'you must provide at least an option short name or long name for option "{$name}"',
         'option_bad_short_name'              => 'option "{$name}" short name must be a dash followed by a letter (got: "{$short_name}")',
         'option_bad_long_name'               => 'option "{$name}" long name must be 2 dashes followed by a word (got: "{$long_name}")',
@@ -128,6 +129,13 @@ class Console_CommandLine
      * @var bool $add_version_option Whether to add a version option or not
      */
     public $add_version_option = true;
+
+    /**
+     * Boolean that determine if providing a subcommand is mandatory.
+     *
+     * @var bool $subcommand_required Whether a subcommand is required or not
+     */
+    public $subcommand_required = false;
 
     /**
      * The command line parser renderer instance.
@@ -309,6 +317,9 @@ class Console_CommandLine
         }
         if (isset($params['add_help_option'])) {
             $this->add_help_option = $params['add_help_option'];
+        }
+        if (isset($params['subcommand_required'])) {
+            $this->subcommand_required = $params['subcommand_required'];
         }
         if (isset($params['force_posix'])) {
             $this->force_posix = $params['force_posix'];
@@ -643,47 +654,62 @@ class Console_CommandLine
     // displayError() {{{
 
     /**
-     * Displays an error to the user and exit with $exitCode.
+     * Displays an error to the user via stderr and exit with $exitCode if its
+     * value is not equals to false.
      *
      * @param string $error    The error message
-     * @param int    $exitCode The exit code number
+     * @param int    $exitCode The exit code number (default: 1). If set to
+     *                         false, the exit() function will not be called
      *
      * @return void
      */
     public function displayError($error, $exitCode = 1)
     {
         $this->outputter->stderr($this->renderer->error($error));
-        exit($exitCode);
+        if ($exitCode !== false) {
+            exit($exitCode);
+        }
     }
 
     // }}}
     // displayUsage() {{{
 
     /**
-     * Displays the usage help message to the user and exit with $exitCode
+     * Displays the usage help message to the user via stdout and exit with
+     * $exitCode if its value is not equals to false.
      *
-     * @param int $exitCode The exit code number
+     * @param int $exitCode The exit code number (default: 0). If set to
+     *                      false, the exit() function will not be called
      *
      * @return void
      */
-    public function displayUsage($exitCode = 1)
+    public function displayUsage($exitCode = 0)
     {
-        $this->outputter->stderr($this->renderer->usage());
-        exit($exitCode);
+        $this->outputter->stdout($this->renderer->usage());
+        if ($exitCode !== false) {
+            exit($exitCode);
+        }
     }
 
     // }}}
     // displayVersion() {{{
 
     /**
-     * Displays the program version to the user
+     * Displays the program version to the user via stdout and exit with
+     * $exitCode if its value is not equals to false.
+     *
+     *
+     * @param int $exitCode The exit code number (default: 0). If set to
+     *                      false, the exit() function will not be called
      *
      * @return void
      */
-    public function displayVersion()
+    public function displayVersion($exitCode = 0)
     {
         $this->outputter->stdout($this->renderer->version());
-        exit(0);
+        if ($exitCode !== false) {
+            exit($exitCode);
+        }
     }
 
     // }}}
@@ -850,7 +876,7 @@ class Console_CommandLine
             array_shift($argv);
             $argc--;
         }
-        // will contain aruments
+        // will contain arguments
         $args = array();
         foreach ($this->options as $name=>$option) {
             $result->options[$name] = $option->default;
@@ -870,6 +896,8 @@ class Console_CommandLine
                 throw $exc;
             }
         }
+        // Parse a null token to allow any undespatched actions to be despatched.
+        $this->parseToken(null, $result, $args, 0);
         // Check if an invalid subcommand was specified. If there are
         // subcommands and no arguments, but an argument was provided, it is
         // an invalid subcommand.
@@ -880,6 +908,19 @@ class Console_CommandLine
             throw Console_CommandLine_Exception::factory(
                 'INVALID_SUBCOMMAND',
                 array('command' => $args[0]),
+                $this,
+                $this->messages
+            );
+        }
+        // if subcommand_required is set to true we must check that we have a
+        // subcommand.
+        if (   count($this->commands)
+            && $this->subcommand_required
+            && !$result->command_name
+        ) {
+            throw Console_CommandLine_Exception::factory(
+                'SUBCOMMAND_REQUIRED',
+                array('commands' => implode(array_keys($this->commands), ', ')),
                 $this,
                 $this->messages
             );
@@ -907,6 +948,26 @@ class Console_CommandLine
                 $result->args[$name] = $c ? array_splice($args, 0, -$c) : $args;
             } else {
                 $result->args[$name] = array_shift($args);
+            }
+            if (!$result->args[$name] && $arg->optional && $arg->default) {
+                $result->args[$name] = $arg->default;
+            }
+            // check value is in argument choices
+            if (!empty($this->args[$name]->choices)) {
+                foreach ($result->args[$name] as $value) {
+                    if (!in_array($value, $arg->choices)) {
+                        throw Console_CommandLine_Exception::factory(
+                            'ARGUMENT_VALUE_NOT_VALID',
+                            array(
+                                'name'    => $name,
+                                'choices' => implode('", "', $arg->choices),
+                                'value'   => implode(' ', $result->args[$name]),
+                            ),
+                            $this,
+                            $arg->messages
+                        );
+                    }
+                }
             }
         }
         // dispatch deferred options
@@ -937,7 +998,6 @@ class Console_CommandLine
         static $lastopt  = false;
         static $stopflag = false;
         $last  = $argc === 0;
-        $token = trim($token);
         if (!$stopflag && $lastopt) {
             if (substr($token, 0, 1) == '-') {
                 if ($lastopt->argument_optional) {
@@ -961,13 +1021,18 @@ class Console_CommandLine
                 // is to consider that if there's already an element in the
                 // array, and the commandline expects one or more args, we
                 // leave last tokens to arguments
-                if ($lastopt->action == 'StoreArray' && 
-                    !empty($result->options[$lastopt->name]) &&
-                    count($this->args) > ($argc + count($args))) {
-                    $args[] = $token;
+                if ($lastopt->action == 'StoreArray'
+                    && !empty($result->options[$lastopt->name])
+                    && count($this->args) > ($argc + count($args))
+                ) {
+                    if (!is_null($token)) {
+                        $args[] = $token;
+                    }
                     return;
                 }
-                $this->_dispatchAction($lastopt, $token, $result);
+                if (!is_null($token) || $lastopt->action == 'Password') {
+                    $this->_dispatchAction($lastopt, $token, $result);
+                }
                 if ($lastopt->action != 'StoreArray') {
                     $lastopt = false;
                 }
@@ -1085,7 +1150,9 @@ class Console_CommandLine
             if (!$stopflag && $this->force_posix) {
                 $stopflag = true;
             }
-            $args[] = $token;
+            if (!is_null($token)) {
+                $args[] = $token;
+            }
         }
     }
 
@@ -1152,7 +1219,7 @@ class Console_CommandLine
                             $opt->short_name : $opt->long_name;
                         foreach ($value as $v) {
                             if ($opt->expectsArgument()) {
-                                $argv[] = isset($_GET[$key]) ? urldecode($v) : $v;
+                                $argv[] = isset($_REQUEST[$key]) ? urldecode($v) : $v;
                             } else if ($v == '0' || $v == 'false') {
                                 array_pop($argv);
                             }
@@ -1160,7 +1227,7 @@ class Console_CommandLine
                     } else if (isset($this->args[$key])) {
                         // match a configured argument
                         foreach ($value as $v) {
-                            $argv[] = isset($_GET[$key]) ? urldecode($v) : $v;
+                            $argv[] = isset($_REQUEST[$key]) ? urldecode($v) : $v;
                         }
                     }
                 }

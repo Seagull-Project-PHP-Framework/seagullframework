@@ -13,7 +13,7 @@
  * @author      Michael Wallner <mike@php.net>
  * @copyright   2003-2005 The Authors
  * @license     BSD, revised
- * @version     CVS: $Id: Header.php,v 1.32 2005/11/08 19:06:10 mike Exp $
+ * @version     CVS: $Id: Header.php 304418 2010-10-15 13:18:02Z clockwerx $
  * @link        http://pear.php.net/package/HTTP_Header
  */
 
@@ -105,7 +105,7 @@ define('HTTP_HEADER_STATUS_SERVER_ERROR',5);
  * @package     HTTP_Header
  * @category    HTTP
  * @access      public
- * @version     $Revision: 1.32 $
+ * @version     $Revision: 304418 $
  */
 class HTTP_Header extends HTTP
 {
@@ -131,6 +131,12 @@ class HTTP_Header extends HTTP
      */
     var $_httpVersion = '1.0';
 
+    /**
+     * @var     bool
+     * @access  public
+     */
+    var $prettify = false;
+    
     /**
      * Constructor
      *
@@ -260,12 +266,12 @@ class HTTP_Header extends HTTP
             array_change_key_case($keys, CASE_LOWER);
             foreach ($this->_headers as $key => $value) {
                 if ($include ? in_array($key, $keys) : !in_array($key, $keys)) {
-                    header($key .': '. $value);
+                    header(($this->prettify ? uctitle($key) : $key) .': '. $value);
                 }
             }
         } else {
             foreach ($this->_headers as $header => $value) {
-                header($header .': '. $value);
+                header(($this->prettify ? uctitle($header) : $header) .': '. $value);
             }
         }
         return true;

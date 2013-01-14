@@ -2,12 +2,14 @@
 /**
  * OO AJAX Implementation for PHP
  *
+ * SVN Rev: $Id$
+ *
  * @category   HTML
  * @package    AJAX
  * @author     Joshua Eichorn <josh@bluga.net>
  * @copyright  2005 Joshua Eichorn
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.5.1
+ * @version    Release: 0.5.6
  */
 
 /**
@@ -32,7 +34,7 @@ require_once 'HTML/AJAX.php';
  * @author     Joshua Eichorn <josh@bluga.net>
  * @copyright  2005 Joshua Eichorn
  * @license    http://www.opensource.org/licenses/lgpl-license.php  LGPL
- * @version    Release: 0.5.1
+ * @version    Release: 0.5.6
  * @link       http://pear.php.net/package/PackageName
  */
 class HTML_AJAX_Server 
@@ -93,6 +95,24 @@ class HTML_AJAX_Server
         );
 
     /**
+     * Compression Options
+     *
+     * <code>
+     * array(
+     *  'enabled'   => false,   // enable compression
+     *  'type'      => 'gzip'   // the type of compression to do, options: gzip
+     * )
+     * </code>
+     *
+     * @var array
+     * @access public
+     */
+    var $compression = array(
+        'enabled'       => false,
+        'type'          => 'gzip'
+    );
+
+    /**
      * Javascript library names and there path 
      *
      * the return of $this->clientJsLocation(), is prepended before running readfile on them
@@ -121,10 +141,10 @@ class HTML_AJAX_Server
         'behavior'      =>  array('behavior/behavior.js','behavior/cssQuery-p.js'),
 
         // rules to help you use a minimal library set
-        'standard'      =>  array('Compat.js','clientPool.js','util.js','main.js','HttpClient.js','Request.js','serializer/JSON.js',
-                                    'loading.js','serializer/UrlSerializer.js','Alias.js','behavior/behavior.js','behavior/cssQuery-p.js'),
-        'jsonrpc'       =>  array('Compat.js','util.js','main.js','clientPool.js','HttpClient.js','Request.js','serializer/JSON.js'),
-        'proxyobjects'  =>  array('Compat.js','util.js','main.js','clientPool.js','Request.js','serializer/JSON.js','Dispatcher.js'),
+        'standard'      =>  array('Compat.js','clientPool.js','util.js','Main.js','HttpClient.js','Request.js','serializer/JSON.js',
+                                    'Loading.js','serializer/UrlSerializer.js','Alias.js','behavior/behavior.js','behavior/cssQuery-p.js'),
+        'jsonrpc'       =>  array('Compat.js','util.js','Main.js','clientPool.js','HttpClient.js','Request.js','serializer/JSON.js'),
+        'proxyobjects'  =>  array('Compat.js','util.js','Main.js','clientPool.js','Request.js','serializer/JSON.js','Dispatcher.js'),
 
         // BC rules
         'priorityqueue' =>  'Queue.js',
@@ -155,7 +175,7 @@ class HTML_AJAX_Server
      */
     function HTML_AJAX_Server($serverUrl = false) 
     {
-        $this->ajax =& new HTML_AJAX();
+        $this->ajax = new HTML_AJAX();
 
         // parameters for HTML::AJAX
         $parameters = array('stub', 'client');
@@ -176,7 +196,7 @@ class HTML_AJAX_Server
         if (substr($serverUrl,-1) != '?') {
             $serverUrl .= '?';
         }
-        $this->ajax->serverUrl =  $serverUrl . htmlentities($querystring);
+        $this->ajax->serverUrl =  $serverUrl . $querystring;
         
         $methods = get_class_methods($this);
         foreach($methods as $method) {
@@ -434,8 +454,15 @@ class HTML_AJAX_Server
             $output = $this->ajax->packJavaScript($output);
             $length = strlen($output);
         }
+
+        if ($this->compression['enabled'] && $this->compression['type'] == 'gzip' && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
+            $output = gzencode($output,9);
+            $length = strlen($output);
+            $headers['Content-Encoding'] = 'gzip';
+        }
+
         if ($length > 0 && $this->ajax->_sendContentLength()) { 
-            //$headers['Content-Length'] = $length;
+            $headers['Content-Length'] = $length;
         }
         $headers['Content-Type'] = 'text/javascript; charset=utf-8';
         $this->ajax->_sendHeaders($headers);
@@ -468,7 +495,7 @@ class HTML_AJAX_Server
     function clientJsLocation() 
     {
         if (!$this->clientJsLocation) {
-            $path = '/usr/local/lib/php/data'.DIRECTORY_SEPARATOR.'HTML_AJAX'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR;
+            $path = '/usr/lib/php/pear/data'.DIRECTORY_SEPARATOR.'HTML_AJAX'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR;
             if(strpos($path, '@'.'data-dir@') === 0)
             {
                 $path = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'js').DIRECTORY_SEPARATOR;
@@ -476,6 +503,45 @@ class HTML_AJAX_Server
             return $path;
         } else {
             return $this->clientJsLocation;
+        }
+    }
+
+    /**
+     * Set the location of the client js
+     *
+     * @access  public
+     * @param   string  $location   Location
+     * @return  void
+     */
+    function setClientJsLocation($location) 
+    {
+        $this->clientJsLocation = $location;
+    }
+
+    /**
+     * Set the path to a Javascript libraries
+     *
+     * @access  public
+     * @param   string  $library    Library name
+     * @param   string  $path       Path
+     * @return  void
+     */
+    function setJavascriptLibraryPath($library, $path) 
+    {
+        $this->javascriptLibraryPaths[$library] = $path;
+    }
+
+    /**
+     * Set the path to more than one Javascript libraries at once
+     *
+     * @access  public
+     * @param   array   $paths  Paths
+     * @return  void
+     */
+    function setJavascriptLibraryPaths($paths) 
+    {
+        if (is_array($paths)) {
+            $this->javascriptLibraryPaths = array_merge($this->javascriptLibraryPaths, $paths);
         }
     }
 

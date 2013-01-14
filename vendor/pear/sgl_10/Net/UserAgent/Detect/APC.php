@@ -18,7 +18,7 @@
  * @package  Net_UserAgent
  * @author   Lucas Nealan <lucas@facebook.com> 
  * @license  http://www.php.net/license/2_02.txt PHP 2.0 Licence
- * @version  CVS: $Id: APC.php,v 1.3 2009/06/08 04:49:23 clockwerx Exp $
+ * @version  CVS: $Id: APC.php 281797 2009-06-08 04:49:23Z clockwerx $
  * @link     http://pear.php.net/package/Net_UserAgent_Detect
  */
 

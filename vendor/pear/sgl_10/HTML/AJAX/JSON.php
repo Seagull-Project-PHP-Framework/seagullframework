@@ -1,10 +1,17 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * This is an embedded version of HTML_AJAX_JSON since it has yet to have a PEAR release
- * it has been renamed to HTML_AJAX_JSON so no problems will be caused by an eventual release
+ * This is an embedded version of HTML_AJAX_JSON since it has yet to have 
+ * a PEAR release it has been renamed to HTML_AJAX_JSON so no problems 
+ * will be caused by an eventual release
  * Feel free to report bugs against it to HTML_AJAX
+ *
+ * SVN Rev: $Id$
  */
+
+/**
+ * Needed for compat functions
+ */
+require_once 'HTML/AJAX.php';
 
 /** 
  * Converts to and from JSON format.
@@ -755,7 +762,7 @@ class HTML_AJAX_JSON
      */
     function isError($data, $code = null)
     {
-        if (class_exists('pear')) {
+        if (HTML_AJAX_class_exists('pear', false)) {
             return PEAR::isError($data, $code);
         } elseif (is_object($data) && (get_class($data) == 'services_json_error' ||
                                  is_subclass_of($data, 'services_json_error'))) {
@@ -766,7 +773,7 @@ class HTML_AJAX_JSON
     }
 }
 
-if (class_exists('pear_error')) {
+if (HTML_AJAX_class_exists('pear_error', false)) {
 
     class HTML_AJAX_JSON_Error extends PEAR_Error
     {
@@ -793,4 +800,5 @@ if (class_exists('pear_error')) {
 
 }
     
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 ?>

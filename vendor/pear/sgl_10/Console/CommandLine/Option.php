@@ -16,7 +16,7 @@
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   CVS: $Id: Option.php 290510 2009-11-11 16:55:29Z izi $
+ * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     File available since release 0.1.0
  * @filesource
@@ -36,7 +36,7 @@ require_once 'Console/CommandLine/Element.php';
  * @author    David JEAN LOUIS <izimobil@gmail.com>
  * @copyright 2007 David JEAN LOUIS
  * @license   http://opensource.org/licenses/mit-license.php MIT License 
- * @version   Release: 1.1.1
+ * @version   Release: 1.2.0
  * @link      http://pear.php.net/package/Console_CommandLine
  * @since     Class available since release 0.1.0
  */
@@ -66,14 +66,7 @@ class Console_CommandLine_Option extends Console_CommandLine_Element
     public $action = 'StoreString';
 
     /**
-     * The default value of the option if not provided on the command line.
-     *
-     * @var mixed $default Default value of the option.
-     */
-    public $default;
-
-    /**
-     * An array of possible values for the option if this array is not empty 
+     * An array of possible values for the option. If this array is not empty 
      * and the value passed is not in the array an exception is raised.
      * This only make sense for actions that accept values of course.
      *

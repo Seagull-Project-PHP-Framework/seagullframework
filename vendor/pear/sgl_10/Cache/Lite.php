@@ -19,8 +19,8 @@
 *
 * @package Cache_Lite
 * @category Caching
-* @version $Id: Lite.php,v 1.54 2009/07/07 05:34:37 tacker Exp $
 * @author Fabien MARTY <fab@php.net>
+* @author Markus Tacker <tacker@php.net>
 */
 
 define('CACHE_LITE_ERROR_RETURN', 1);
@@ -273,6 +273,14 @@ class Cache_Lite
     *     'hashedDirectoryUmask' => umask for hashed directory structure (int),
     *     'errorHandlingAPIBreak' => API break for better error handling ? (boolean)
     * );
+    * 
+    * If sys_get_temp_dir() is available and the 
+    * 'cacheDir' option is not provided in the 
+    * constructor options array its output is used 
+    * to determine the suitable temporary directory.
+    * 
+    * @see http://de.php.net/sys_get_temp_dir
+    * @see http://pear.php.net/bugs/bug.php?id=18328
     *
     * @param array $options options
     * @access public
@@ -281,6 +289,9 @@ class Cache_Lite
     {
         foreach($options as $key => $value) {
             $this->setOption($key, $value);
+        }
+        if (!isset($options['cacheDir']) && function_exists('sys_get_temp_dir')) {
+        	$this->setOption('cacheDir', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
         }
     }
     
@@ -613,7 +624,7 @@ class Cache_Lite
             return $this->raiseError('Cache_Lite : Unable to open cache directory !', -4);
         }
         $result = true;
-        while ($file = readdir($dh)) {
+        while (($file = readdir($dh)) !== false) {
             if (($file != '.') && ($file != '..')) {
                 if (substr($file, 0, 6)=='cache_') {
                     $file2 = $dir . $file;
@@ -707,8 +718,8 @@ class Cache_Lite
     function _read()
     {
         $fp = @fopen($this->_file, "rb");
-        if ($this->_fileLocking) @flock($fp, LOCK_SH);
         if ($fp) {
+	    if ($this->_fileLocking) @flock($fp, LOCK_SH);
             clearstatcache();
             $length = @filesize($this->_file);
             $mqr = get_magic_quotes_runtime();
@@ -718,9 +729,13 @@ class Cache_Lite
             if ($this->_readControl) {
                 $hashControl = @fread($fp, 32);
                 $length = $length - 32;
-            } 
+            }
+
             if ($length) {
-                $data = @fread($fp, $length);
+                $data = '';
+                // See https://bugs.php.net/bug.php?id=30936
+                // The 8192 magic number is the chunk size used internally by PHP.
+                while(!feof($fp)) $data .= fread($fp, 8192);
             } else {
                 $data = '';
             }
@@ -831,5 +846,3 @@ class Cache_Lite
     }
     
 } 
-
-?>
