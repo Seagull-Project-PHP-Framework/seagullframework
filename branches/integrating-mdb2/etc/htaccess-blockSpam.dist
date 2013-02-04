@@ -1,0 +1,17 @@
+AddType image/x-icon .ico
+#(for favicon support)
+
+Options +FollowSymlinks
+RewriteEngine on
+
+#stop email collectors
+RewriteCond %{HTTP_USER_AGENT} Wget [OR]
+RewriteCond %{HTTP_USER_AGENT} CherryPickerSE [OR]
+RewriteCond %{HTTP_USER_AGENT} CherryPickerElite [OR]
+RewriteCond %{HTTP_USER_AGENT} EmailCollector [OR]
+RewriteCond %{HTTP_USER_AGENT} EmailSiphon [OR]
+RewriteCond %{HTTP_USER_AGENT} EmailWolf [OR]
+RewriteCond %{HTTP_USER_AGENT} ExtractorPro
+RewriteRule ^.*$ X.html [L]
+#(for stopping spammers)
+

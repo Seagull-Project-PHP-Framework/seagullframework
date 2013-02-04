@@ -1,0 +1,877 @@
+CHANGELOG
+=========
++-----------------------+
+| VERSION: 1.0.4        |
++-----------------------+
+14-01-13    All PEAR libs updated except DB and DB_DataObject
+
++-----------------------+
+| VERSION: 1.0.3        |
++-----------------------+
+03-01-13    Following tickets closed: 1764, 1753, 1762, 1760, 1757, 1756
+
++-----------------------+
+| VERSION: 0.6.7        |
++-----------------------+
+22-02-10    Most PEAR libs updated
+22-02-10    German translations updated
+22-02-10    Chinese translations updated
+22-02-10    Committed patch for SGL_Task_SetupLangSupport to respect translations from default manager
+22-02-10    Translation mgr shows original translated string if different from key
+22-02-10    Created a moduleConfig manager to edit manager config in adminGui
+22-02-10    New module for creating sitemaps added (sitemap)
+22-02-10    New module for exporting websites as flat HTML (siteexporter)
+22-02-10    New module for creating simple html pages (simplesite)
+22-02-10    Updated FCKeditor to 
+22-02-10    Fixed ability to rebuild modules as well as entire sgl install 
+22-02-10    Install log now created for easier debugging 
+22-02-10    Fixed problem where symlinked public web assets conflicted with mod_rewrite 
+				rules if frontControllerScript  suppressed 
+22-02-10    Fixed default permissions
+22-02-10    Fixed problem where logging was always enabled
+
++-----------------------+
+| VERSION: 0.6.6        |
++-----------------------+
+
+BUGFIXES
+18-01-09	Fixed infinite loop on DB failure
+21-10-08    Fixed .htaccess example for clean URLs
+06-08-08    Fixed SGL_Category which was not using a singleton database resource
+            (lakiboy)
+
+IMPROVEMENTS
+17-01-09	Preference sync now works across all roles
+23-12-08	Updated Horde_Routes_Util type hint to Horde_Routes_Utils for compat with
+			Horde/Routes 0.3.1
+21-10-08    Better handling when DB connection is down
+21-10-08    Updated FCKeditor to 2.6.3
+21-10-08    Added German utf-8 support (michas)
+06-08-08    Consolidated translation features (SGL_Translation, SGL_Translation2)
+            into new SGL_Translation3 PHP5 only package
+06-08-08    Added media2 module which makes ajax uploads easier and will provide
+            media features to CMS (lakiboy)
+
++-----------------------+
+| VERSION: 0.6.5        |
++-----------------------+
+
+BUGFIXES
+15-07-08    Fixed logout target being used in wrong place (Yevgeniy)
+15-07-08    Fixed problem with redirects in timed out sessions, base64_encode used
+            instead of urlencode
+21-05-08    Fixed problem where SGL_Cache was not returning singletons correctly
+            [3801] (Dmitri, rungss)
+15-05-08    Fixed emailqueue filter chain
+29-04-08    Module config is now correctly loaded for all request types
+28-04-08    RssMgr was not accounting for articles that had expiry_date set to NULL
+28-04-08    Re-added masterFeed.html to default module, needed for export module
+21-04-08    Fixed problem with ordering blocks [3753] (alexanders)
+26-02-08    UserAjaxProvider filter chain fixed with addresses ajax unique username
+            search prob (rzur2004)
+26-02-08    section.trans_id was not being added when creating new navigation (rzur2004)
+25-02-08    User search breaks with Horde_Routes are used, now fixed [3689].  When using
+            Horde_Routes single arg url construction invalid, eg: SGL_Output::makeUrl('search'),
+            instead you must use SGL_Output::makeUrl('search', 'usersearch', 'usersearch')
+18-02-08    New translation.defaultLangBC  is set to true by default, which means
+            even if you make eg publisher your default module, the lang strings in
+            the default module will be loaded on every request.  New behaviour is
+            to load *only* strings in default module.
+11-02-08    Fixed dependency where using ArrayDriver for navigation required
+            Horde_Routes input URL handler
+
+IMPROVEMENTS
+22-07-08    Removed unused navigation stylesheet feature (ajmixto)
+22-07-08    Enhancements to the newsletter block (wik01)
+15-07-08    Seagull's lib dir now in include path, so you can now include sgl libs
+            like "include 'SGL/Foo/Bar.php';"  See [3930] for details
+11-07-08    Made FCKeditor the default wysiwyg following security alert
+                http://www.milw0rm.com/exploits/5945
+            Use sgl/www/js/SGL/SglFckconfig.js to customise
+18-06-08    Added ability to rebuild single modules
+17-06-08    Removed PEAR error message that shows DB password when connect fails
+17-06-08    The makeCssOptimizerLink() method no longer loads the Seagull CSS
+            framework by default (Dmitri)
+17-06-08    Added new comment2 module, ajax with jquery, see
+                http://trac.seagullproject.org/wiki/Modules/Comment2
+02-06-08    Added ability to synchonise prefs for all members (wik01)
+22-05-08    Symlinks in the webroot (like those created by installing modules with
+            web resources) are now supported if you remove the index.php file, see
+                http://trac.seagullproject.org/wiki/TroubleShooting/RemovingIndex.php
+20-05-08    Emailqueue module added see
+                http://trac.seagullproject.org/wiki/Modules/EmailQueue
+19-05-08    Added improved functionality in SGL_Emailer2 (PHP5 only), see
+                http://trac.seagullproject.org/wiki/Howto/SendingEmails#UsingimprovedfunctionalityavailableinSGL_Emailer2
+05-03-08    Adding new preferences to your application is much easier now, if you have
+            a large userbase, you can easily add n new preferences and existing
+            users will get default values [3704]
+
++-----------------------+
+| VERSION: 0.6.4        |
++-----------------------+
+
+BUGFIXES
+11-02-08    Fixed file disclosure flaw in optimizer.php
+
++-----------------------+
+| VERSION: 0.6.3        |
++-----------------------+
+
+BUGFIXES
+22-12-07    Fixed bug where blocks got disabled after PEAR errors (Demian)
+21-12-07    Logins now recorded correctly if 'remember me' is used (Dmitri)
+20-12-07    Fixed system messages, using Config screen to set them
+12-02-07    Fixed Smarty integration problem
+09-11-07    Fixed prob where global and module configs were saving in global file
+27-10-07    Fixed bug user's password was being hashed twice in UserImportMgr
+            (spaycegirl)
+23-10-07    Fixed bug where it was not possible for admin to receive emails for errors [3471]
+16-10-07    Fixed bug where TinyFCK connector was broken [3447]
+15-10-07    Fixed rebuild sequences when database session storage is used (mrhov)
+19-09-07    Fixed bug where enabling caching killed Ajax requests #1530
+19-09-07    Transaction integrity in the User DAO was fixed, ie better error recovery
+            (Dmitri Lakachauskis)
+03-07-07    Fixed SMTP authentication driver choice in Config (mburkardt)
+11-06-07    Correctly initialised charset global
+04-06-07    Fixed parsing of multiple roles for navigation [3117]
+26-05-07    Fixed Classic URI parsing [3105]
+27-04-07    Tests now correctly identify custom module paths
+
+IMPROVEMENTS
+20-12-07    CSS and JavaScript reorganization and optimization, see
+            http://trac.seagullproject.org/wiki/Howto/JavaScriptAndCssImprovements
+            (Dmitri)
+19-12-07    Added SGL_Emailer_Queue lib, use it to store emails in DB (Dmitri)
+18-12-07    Maintenance screen now manages additional caches: javascript, library
+            and function (Dmitri)
+17-12-07    Implemented new ArrayDriver for navigation, huge performance improvement
+            (Dmitri)
+16-12-07    Implemented CSS and javascript caching and compression (Dmitri)
+15-12-07    Implemented Horde_Routes as optional input URL handler, much more flexible
+            than default handler (Dmitri + Demian)
+15-12-07    Implemented SGL_Cache2 which wraps Zend_Cache which has memcached backend
+            (Dmitri)
+13-12-07    Added logging for installation, see SGL_Util::getTmpDir() (Demian)
+23-10-07    Fatal db errors handled gracefully (Demian)
+23-10-07    Added ability to use objects callbacks for function caching
+19-09-07    Implemented ability to run unit tests by CLI [3425] (Dmitri Lakachauskis)
+19-09-07    Config cache can be cleared at the module level (Dmitri Lakachauskis)
+17-09-07    Added example deployment scripts [3406]
+17-09-07    Added abilityto show only pre-selected modules in translation manager
+            (Dmitri Lakachauskis)
+17-09-07    Validation for variables in translation values (Dmitri Lakachauskis)
+17-09-07    Improved translation summary screen to show all language at once
+            (Dmitri Lakachauskis)
+11-09-07    Visual warning added to admin screen when site is in production mode
+29-08-07    Default language comes from Config [3366]
+28-08-07    Added ability to specify custom logout screen [3356]
+23-08-07    Session files can now be saved whereever you like, /tmp recommended
+            for auto-cleanup, esp. on busy sites but not for shared hosts
+23-08-07    Added language detection from user agent (Dmitri Lakachauskis)
+23-08-07    Added config option to set storage engine for MySQL (Dmitri Lakachauskis)
+16-08-07    Added support for RTL languages
+                http://trac.seagullproject.org/wiki/Howto/Internationalisation/HebrewAndRtlLanguages#newinSeagull0.6.3
+15-08-07    Static SGL_Config::set() call implemented, eg:
+                SGL_Config::set('cache.lifetime', 123)
+14-08-07    Request types can now be preset
+07-08-07    Implemented Config option so roles other than SGL_ADMIN can use the admin GUI
+07-08-07    Symbolic links support for Windows Vista (Dmitri Lakachauskis)
+25-07-07    Added create{Left|Right}Node to SGL_NestedSet (biggs)
+24-07-07    Better error handling for stored proc multiple resultsets (mysqli_SGL.php)
+18-07-07    Improved customising of block layouts, for details see
+            http://trac.seagullproject.org/wiki/Howto/Blocks#Creatingcustomblockpositions
+16-07-07    Shorthand config calling implemented, you can now do:
+                SGL_Config::get('cache.lifetime')
+            NOTE: empty() and isset() cannot check the return value of a function
+            or method, they can only check variables, so don't use those tests with
+            the new shorthand
+16-07-07    Correctly suppressed backtrace info if disabled in config option
+            (Dmitri Lakachauskis)
+09-07-07    Added support for charset and collation in MySQL (Dmitri Lakachauskis)
+09-07-07    Test runner now takes global config into account and works for Postgres
+            (ajmixto)
+29-06-07    Implemented ability to set Seagull into maintenance mode (Julien Casanova)
+27-06-07    Implemented ability to rebuild Seagull for Postgresql (ajmixto)
+13-06-07    Added ability to suppress errors in logs, useful for Ajax debugging
+12-06-07    Implemented persistent logins
+07-06-07    Added ability to set theme on a per-module basis (Thomas Goetz)
+04-06-07    Improved dynamic navigation, see http://trac.seagullproject.org/ticket/1470
+            (Dmitri Lakachauskis)
+29-05-07    Added ability to add multiple attachments in SGL_Emailer
+            see http://trac.seagullproject.org/wiki/Howto/SendingEmails (Peter Termaten)
+24-05-07    Implementing PHP handling of stored proc resultsets using mysqli_SGL driver
+24-05-07    Integrated PEAR::DB's mysqli driver
+16-05-07    Added ability to add custom tasks to be executed during a Seagull rebuild
+            see [3098] and http://trac.seagullproject.org/wiki/Howto/WorkingWithModules#Rebuilding
+11-05-07    Media templates for admin now call member templates to avoid duplication
+            (James Floyd)
+10-05-07    Made cookie lifetime managable (Dmitri Lakachauskis)
+09-05-07    Updating AMFPHP support to version 1.9
+27-04-07    Rebuild functionality disabled in production mode (Dmitri Lakachauskis)
+
+
++-----------------------+
+| VERSION: 0.6.2        |
++-----------------------+
+BUGFIXES
+11-04-07    Fixed #1264, Media module probs
+09-04-07    Fixed RSS caching problem (AJ Tarachanowicz)
+22-03-07    Fixed listing of PEAR and pearified channel server listings
+14-03-07    Fixed 'switching db type using config mgr breaks site' (Steven Stremciuc)
+07-03-07    Customised admin passwd preserved on rebuild
+07-03-07    Browser change passwd prompts in installer fixed (Dmitri Lakachauskis)
+17-01-07    Fixed bug where category builder icons were not found if default theme
+            not used
+05-01-07    Fixed bug where disabling registration disabled all managers
+            that inherited from RegisterMgr (Dmitri Lakachauskis)
+
+IMPROVEMENTS
+24-04-07    Enhanced RSS export, now takes and CMS or DAO method as datasrc, see
+            http://trac.seagullproject.org/wiki/Modules/Export
+19-04-07    All Russian translations updated (Dmitri Lakachauskis)
+19-04-07    All German translations updated (Werner Krauss)
+11-04-07    Enabled SGL_String::tidy() to work with PHP5
+03-04-07    Added abililty to set a new theme for all members (see Users and Security ->
+            Manage preferences)
+27-03-07    Translation steps in installer are now hidden by default (Dmitri Lakachauskis)
+27-03-07    Renamed 'blog' module to 's9ywrapper'
+27-03-07    Added support for MySQL cluster (Steven Stremciuc)
+21-03-07    Added abililty to extend SGL_Output so your custom template, see
+            http://trac.seagullproject.org/changeset/3001
+            methods are available to all modules
+21-03-07    Added abililty to customise filterChain with Ajax requests
+21-03-07    Authentication no longer needed for CLI requests (openhaus)
+21-03-07    Implemented Ajax username uniqueness check (Dmitri Lakachauskis)
+21-03-07    Added SGL_AjaxProvider to handle response encoding and error handling
+            (Julien Casanova)
+19-03-07    Added 'delete config caches' to mtce screen (Dmitri Lakachauskis)
+            ****************************************************************************
+            VERY IMPORTANT: if you make a change to modules/yourmodule/conf.ini, you
+            MUST use the 'Delete cached configuration files' option from the Maintenance
+            screen for it to be picked up.
+            ****************************************************************************
+14-03-07    Updated scriptaculous to 1.7.0 (Julien Casanova)
+13-03-07    Added isAuthenticated() to SGL_Output
+07-03-07    File operations on module config files now happen exclusively in
+            SGL_VAR_DIR, ie seagull/var.  So the config file for the default module
+            is now automatically copied to seagull/var/config/default.ini.  And the
+            original file located at seagull/modules/default/conf.ini currently serves
+            only as a master copy.
+02-03-07    Configurable install root path implemented
+27-02-07    Added isChecked utility method to Output class, usage:
+                <input type="checkbox" flexy:raw="{isChecked(obj.associated)}" />
+            It outputs 'checked="checked"' depending on user-supplied value
+15-02-07    Added new cache options (Dmitri Lakachauskis)
+12-02-07    Added ability to reinstate dynamically loaded CSS files during post when
+            validation fails [2930] (see also
+            http://trac.seagullproject.org/wiki/Howto/CSS/Handling#ModulespecificCSS)
+05-02-07    Added ability to add custom data to your modules, makes it easier to diverge
+            from svn code, create file called data.custom.my.sql for this purpose
+30-01-07    Added SGL_Task_InitialiseModules() task, this gets executed before
+            the filter chain and looks for any file called init.php in the root
+            of any active module
+22-01-07    Input URL parsing strategies now configurable
+18-01-07    Category block now parameterized and is configurable
+16-01-07    Added ability to add any config value to customInstallDefaults.ini
+            to override default values
+10-01-07    New SGL_Image library fully integrated, see
+            http://trac.seagullproject.org/wiki/Howto/WorkingWithImages
+            (Dmitri Lakachauskis)
+10-01-07    Added amf-php integration, SGL_Request_Amf is now a request type
+            (Thomas Goetz)
+10-01-07    Added SGL_String::toValidVariableName() in addition to existing
+            toValidFileName()
+05-01-07    Added ability to customise modules during install
+            (Dmitri Lakachauskis)
+04-01-07	Refactored SGL_Request to template pattern, now it loads driver
+            implementation based on request type (Browser, Ajax, Cli)
+02-01-07	Added ability to set a custom master template in config
+			(Peter Termaten)
+30-12-06	Added ability to include remote js files (Steven Stremciuc)
+28-12-06    Added onunload handling (Steven Stremciuc)
+28-12-06    Added SGL_Util::getTmpDir(), tmpdir tests now work on Mactel
+27-12-06    Added an overlay debug block, displays system info
+24-12-06    Updated scriptaculous libs to 1.6.5
+23-12-06    Added addCssFile() helper method to SGL_Output, Sometimes you may
+            want to include a stylesheet from a vendor lib. In the same way
+            Output.php provides a addJavascriptFile(), you can now pass a
+            stylesheet with :
+                $output->addCssFile(/*string/array*/ $cssFile)
+
++-----------------------+
+| VERSION: 0.6.1        |
++-----------------------+
+BUGFIXES
+11-12-06    Fixed many Translation2 bugs (Dmitri Lakachauskis)
+10-12-06    Improved functionality for CGI users (Dmitri Lakachauskis)
+18-11-06    Fixed problems where reinstall installed all modules (Dmitri
+            Lakachauskis)
+27-10-06    Fixed safe delete problem (Dmitri Lakachauskis)
+24-10-06    Cleaned up ModuleGenerationMgr, added more error checking
+14-09-06    Fixed potential security hole with tinyFCK (Andreas Singer)
+10-09-06    Added missing dbdo include that caused error with caching enabled
+            (romain)
+10-09-06    Improvements to error handling for production environments (Dmitri
+            Lakachauskis)
+10-09-06    Fixed problem where CategoryNav block didn't work correctly for php4
+            users (Steven Stremciuc)
+10-09-06    Fixed horizontal scrolling in msie (Dmitri Lakachauskis)
+10-09-06    Fixed redirect problem with articles (Julien Casanova)
+10-09-06    Escaped problematic input for SGL_Emailer (Steven Stremciuc)
+03-09-06    Fixed documentation to correctly reflect minimum PHP version required
+            (falko)
+03-09-06    Corrected tz values that didn't work on all linux systems (Steven
+            Stremciuc)
+02-09-06    Minimal install cannot select multiple languages (Steven Stremciuc)
+02-09-06    Fixed infinite loop in s9y wrapper BlogMgr (romain)
+02-09-06    Fixed javascript error in TinyFCK (Riccardo Magliocchetti)
+31-08-06	Added detection of GD extension for media manager
+30-08-06    Fixed whitespace in navigation file that caused header error on rebuild
+30-08-06    Only check for multi sessions if option enabled
+29-08-06    Fixed bugs in MediaMgr
+19-08-06    Improved SQL parser regex to be able to catch tables like event-media
+
+IMPROVEMENTS
+10-12-06    Errors handled more gracefully, errors now sent to a generic error
+            template if [debug][production] key is set except in fatal situations
+            (failed install, no global config file, failed request init)
+10-12-06    Added addHeader($header) and getHeaders() to SGL_Output
+02-12-06    Added SGL_Output::addJavascriptFile() which accepts either a single path
+            or an array of paths of js files.  The preferred way of adding javascript
+            files to page has changed
+                FROM (in validate() method)
+            $this->javascriptSrc = array('/path/to/file1.js', 'path/to/file2.js');
+                TO (in display() method)
+            $output->addJavascriptFile('/path/to/file1.js', 'path/to/file2.js');
+            The old method is still supported
+02-12-06    Added instructions for event module http://trac.seagullproject.org/wiki/Modules/Event
+30-11-06    Added possibility of passing arbitrary args to CLI requests (Mike Wattier)
+29-11-06    $this->da->moduleIsRegistered() is deprecated in favour of SGL::moduleIsEnabled()
+29-11-06    Renamed DA_Default to DefaultDAO for consistency (Julien Casanova)
+29-11-06    Implemented DB table prefix support - disabled by default (Dmitri Lakachauskis)
+22-11-06    Added ability to remove translations (Dmitri Lakachauskis)
+15-11-06    Tests for disabled modules suppressed
+01-11-06    Added SGL_Inflector::humanize()
+31-10-06    Added ability to load custom config file as specified in global config
+29-10-06    Tables removed from all templates in user module, replaced with xhtml
+            compliant markup (Dmitri Lakachauskis)
+
+27-10-06    Cleaup of SGL_Config behaviour:
+                - to load global config: $c = SGL_Config::singleton();
+                - to save global config: $c->save();
+                - to load any secondary config: $c = new SGL_Config();
+                                                $config = $c->load('/path/to/file');
+                                                $c->replace($config);
+                - to save any secondary config: $c->save('/path/to/file');
+            Replace method takes into accout you may want to load many config files
+            but manipulate the data before passing it back to Config object for saving
+26-10-06    Some very nice functionality added to the comment module including
+            Akismet integration (Steven Stremciuc)
+20-10-06    Added example REST client and server implementations (
+              http://trac.seagullproject.org/browser/branches/0.6-bugfix/lib/SGL/Services/REST/Client.php
+            and
+              http://trac.seagullproject.org/browser/branches/0.6-bugfix/docs/developer/examples/modules/REST_server
+            respectively, including custom filter chain for server (see conf.ini).
+19-10-06    Polish, Italian and Russian translation updates
+26-09-06    Enhanced module installer adding symlink support for windows users
+22-09-06    Added ability to support s9y comments in BlogMgr (ajmixto)
+20-09-06    Better testing of dbdo return values (Steven Stremciuc)
+14-09-06    Integrated captcha with comments
+14-09-06    Added config GUI switch for enabling the library cache
+11-09-06    Added ability to disable blocks on a per-page basis, simply have the
+            block's init() method return false conditionally
+11-09-06    Added abilility to set a global Javascript onload expression
+            see Admin -> General -> Configuration
+10-09-06    Moved tableAlias.ini files into data folder (Steven Stremciuc)
+09-09-06    Add ability to include a debug block in development rebuilds
+06-09-06    Added Comment module, can be used with all existing modules
+05-09-06    Added getCurrentUrl() to Output object so <a href="{getCurrentUrl()}">foo</a>
+            in a template will create a link to the currently requested page
+04-09-06    Deprecated DA_Default::moduleIsRegistered() in favour of
+            SGL::moduleIsEnabled()
+03-09-06    Upgraded PEAR libs including HTML_Ajax, note: you now have to call
+            DAOs with their correct case, eg in html href:
+            {webRoot}/ajaxServer.php?client=all&amp;stub=MediaDAO
+            and in js: var remoteHW = new MediaDAO(hwCallback);
+
+
++-----------------------+
+| VERSION: 0.6.0        |
++-----------------------+
+BUGFIXES
+13-08-06    Fixed portuguese translation encoding
+05-08-06    Fixed error returned when requesting a non-existent article
+            (AJ Tarachanowicz)
+30-07-06    Fixed bug where admins details could not be saved (jwang1973)
+14-07-06    Email sending returns PEAR errors on fails, this was not checked
+            properly
+14-07-06    Updates fixed on generated modules
+12-06-06    Fixed bug where detect missing perms didn't work on windows installs
+            (Marian Seitner)
+30-05-06    Fixed bug where dbdo links creation task was missing from install, only
+            available on rebuild
+IMPROVEMENTS
+14-08-06    Adding a javascript file to a manager must now be done with the path
+            from the webroot.
+                old way: $input->javascriptSrc = array('jscalendar/calendar.js')
+                new way: $input->javascriptSrc = array('js/jscalendar/calendar.js')
+13-08-06    Classic theme replaces 'default', 'default' deleted
+10-08-06    Module config files can now be edited via admin GUI
+            (Julien Casanova)
+10-08-06    Improved header injection testing as per
+            http://asg.web.cmu.edu/rfc/rfc822.html#sec-3.1.1
+            (rofranco)
+09-08-06    Default RSS block now configurable (Werner Krauss)
+09-08-06    Implemented open_basedir detection (Steven Stremciuc)
+06-08-06    Added perms on category file views (Werner Krauss)
+06-08-06    Implemented improved wizard functionality based on PEAR's
+            HTML_QuickForm_Controller (Malaney J. Hill)
+05-08-06    Implemented full module install/uninstall for admin users
+05-08-06    Renamed DA_Default::retrieveAllModules to DA_Default::getModuleHash()
+            to improve clarity
+02-08-06    Added regex tests for SGL_Sql::parse() (Randy Casburn)
+01-08-06    Added a security step in installer (Steven Stremciuc)
+01-08-06    Implemented admin GUI for ContentTypeMgr (AJ Tarachanowicz)
+30-07-06    A big update to the Polish translation (Thomas Osmialowski)
+30-07-06    XML_Parser error avoided by inspecting allow_url_fopen setting
+            (Steven Stremciuc)
+29-07-06    Extracted execution from SGL_Sql::parseAndExecute(), added ability to
+            extract all table names from a schema file
+27-07-06    Added possibility to customise defaults in installer (Eric Persson)
+27-07-06    Minimal modules and no sample data are now defaults
+27-07-06    Removed dependencies between blocks and sections, you can now install
+            blocks only when the relevant module is installed
+27-07-06    Rebuilding Seagull can now be done with or without sample data
+26-07-06    Moved all navigation from default SQL data to PHP arrays (see
+            $module/data/navigation.php)
+15-07-06    Enhancements to newsletter module (Rares Benea)
+15-07-06    Enhancements to guestbook module (Rares Benea)
+14-07-06    Installer description and keywords correctly added to meta tags (getconfused)
+14-07-06    Admin screen done for FAQs (Matt Flaherty)
+27-06-06    Made post form token optional
+27-06-06    SGL_Util::getAllThemes() no longer returns admin themes
+23-06-06    Email and username uniqueness enforced on updates (malber)
+23-06-06    Upgraded TinyFck to 0.12 (Elijah Insua)
+18-06-06    Improved setup wizard: any port can be specified, irrelevant fields
+            are disabled
+30-05-06    Requiring greater than 8MB memory_limit is enforced
+30-05-06    Added Captcha lib and example implementation in contactus module
+            (Steven Stremciuc)
+
++-----------------------+
+| VERSION: 0.6.0RC3     |
++-----------------------+
+BUGFIXES
+28-05-06    Fixed a bug where if caching was enabled, a URI parser was not executed
+            which caused an error (AJ Tarachanowicz)
+28-05-06    Fixed paths for RPC server
+27-05-06    Fixed prob where environment data was not being saved correctly in PHP4
+27-05-06    Logging debug level set correctly by default
+26-05-06    Some error messages were being lost with incorrect redirects, now fixed.
+26-05-06    Export rss filter chain descriptor modified in php.ini to be compatible
+            with php4
+09-05-06    Authentication and authorisation improved
+07-05-06    Improved regex for detecting PHP CGI installs, php_sapi_name also
+            returns apache2filter for CGI installs which is now detected (Mehdi Radgohar)
+05-05-06    Added missing en.js file that caused TinyFCK to fail on some platforms
+            (Ed Lea)
+05-05-06    CLI invocation fixed, see
+            http://trac.seagullproject.org/wiki/Howto/WorkingWithCliOrHttpRequests
+04-05-06    Fixed bug where array internal pointer was not set for module list,
+            caused SectionMgr to fail to list modules
+03-05-06    Fixed cmdline installer, envRebuild.php
+01-05-06    Installer password was wiped doing a rebuild, now fixed (Julien Casanova)
+
+IMPROVEMENTS
+28-05-06    Module generator improved (Gerald Fischer, AJ Tarachanowicz)
+28-05-06    Improved integration of orgs and org types
+28-05-06    Naming in Navigation section is friendlier
+27-05-06    Factored out recording of login to Login observer
+26-05-06    Update of OCI related schema/data (Marco Patania)
+26-05-06    Implemented ability to do single sign on:
+            http://trac.seagullproject.org/wiki/Integration/SingleSignOn
+26-05-06    RegistrationMgr::_cmd_insert() now gets id for new user, can be used
+            for more interesting thank you screen
+22-05-06    Params can now be passed after URI aliases (Andrey Podshivalov) for
+            patch, (Davert) for unit test
+22-05-06    Added lang switcher to new theme (Julien Casanova)
+22-05-06    OCI schema and data now up to date (Ben)
+22-05-06    Added ability to call makeUrl() from JavaScript (Miha Vrhovnik), see
+            http://trac.seagullproject.org/wiki/Howto/UriManagement#GeneratingURIsinJavaScript
+17-05-06    Refactored LoginMgr to support observers, implemented FUD forum login
+            hook
+10-05-06    Some updates for gallery module, to ensure compatibility with Gallery 2.1
+            (Neil Mather)
+10-05-06    A member user is now added as part of rebuild
+09-05-06    Added request history to session, ability to return to a previously
+            requested page on authorisation failure
+06-05-06    Implemented a library cache for all files used on every request,
+            loaded file count back near 20.  To enabled place a file named 'ENABLE_LIBCACHE.txt'
+            in your seagull/var directory.  To update the cache, delete the file.
+01-05-06    Install and rebuild process will now build the correct fk links file
+            for DB_DataObject
+01-05-06    You can now customise the location of the upload directory
+30-04-06    HTML date widget cleanup
+30-04-06    Module generator can now add additional managers per module
+27-04-06    Wizard functionality reinstated (Steven Stremciuc)
+26-04-06    Added ability to customise location of the modules directory
+24-04-06    Modified RSS export to use custom filter chain
+22-04-06    Japanese translation added (Dozo Yousan)
+
++-----------------------+
+| VERSION: 0.6.0RC2     |
++-----------------------+
+BUGFIXES
+22-04-06    Fixed problem where selecting 'store langs in DB' during install, but
+            then selecting none from list resulted in a fatal error (Heinrich Stoellinger)
+21-04-06    DB_DataObject fails to overwrite an existing keys file with 'rebuild
+            dataobjects', now file removal forces update
+21-04-06    Postgres now works well, thanks to AJ and Sbaturzio for their help
+21-04-06    Bug where DB_DataObjects wouldn't work correctly with MySQL5 or
+            Postgres fixed, unique indexes removed from usr table
+15-04-06    At long last, thanks to matt from IRC, Seagull will install properly
+            on MySQL 3.23
+12-04-06    List of stylesheets now correctly drawn from configured default theme,
+            not session.
+12-04-06    Made instructions clearer for adding default module and manager
+07-04-06    Link to news items corrected (alphasock@disona.net)
+14-03-06    Fixed Config::merge behaviour (Miha Vrhovnik)
+14-03-06    Fixed query for listing users with a left join (mstahv)
+
+IMPROVEMENTS
+22-04-06    Added ability to control DB_DataObject debug level from Config
+21-04-06    Added ability to force cache usage, overriding perferences, ie:
+                $cache =  SGL_Cache::singleton($force = true);
+18-04-06    Added ability to detect new modules
+17-04-06    All tasks consolidated in  lib/SGL/Tasks directory
+13-04-06    Added ability to rebuild Seagull environment for privileged users
+13-04-06    Module generator improved
+11-04-06    Implemented observer support, example in RegisterMgr::_cmd_insert()
+07-04-06    Code for Delegate class simplified to work with installations where PHP
+            is compiled with --disable-reflection (jbpros)
+06-04-06    Improved pre and post-process workflow
+06-04-06    Added the ability to create a broadcast message that will appear on
+            every screen, eg, "Maintenance planned at 22.00 GMT"
+06-04-06    Added MySQL version detection, added more info to bug reporter
+26-03-06    Modified SGL_Inflector::caseFix() to return the original string if a
+            config key cannot be found to compare with, instead of false
+26-03-06    Added ability to load navigation data during the install, so devs can
+            create navigation that corresponds with their custom modules
+20-03-06    Added Dutch translation (Peter Termaten)
+20-03-06    Russian translations updated and enhanced (Dmitri Lakachauskis)
+17-03-06    Improvements to module generator, CRUD added (Gerald Fischer)
+17-03-06    Guestbook, FAQ, Documentor and Export modules improved, updated Russian
+            translations (lakiboy)
+17-03-06    Removed CSS hacks (Riccardo Magliocchetti and mstahv)
+17-03-06    Additional include paths can now be added via Config
+16-03-06    Added ability to implement custom filter chains
+14-03-06    Default theme now config driven
+
++-----------------------+
+| VERSION: 0.6.0RC1     |
++-----------------------+
+BUGFIXES
+21-02-06    Fixed bug: PageMgr does not handle manager names with multiple uppercase
+            letters
+17-02-06    Fixed bug where cookie path was being incorrectly set due to SEF
+            URIs (Miha Vrhovnik)
+14-02-06    Fixed bug where session expiry would not be tested on screens where
+            requiresAuth was false (during authenticated session)
+14-02-06    SQL errors, if existent, correctly returned in articles
+09-02-06    Fixed inability to change an article's category (Jayesh Sheth)
+03-02-06    Checks for session timeout improved (Andrey Podshivalov)
+31-01-06    Fixed error that occurs when empty array passed to implodeWithKeys()
+            (sirphp)
+
+IMPROVEMENTS
+08-03-06    Admin GUI complete (Julien Casanova)
+04-03-06    Renamed AppController to FrontController
+26-02-06    Added printf() method for templates, see
+            http://trac.seagullproject.org/wiki/Howto/Templates/WorkingWithTemplates#UsingVariablesinLanguageStrings
+            (Andrey Podshivalov)
+25-02-06    <link> instead of @import is more reliable for passing GET params
+25-02-06    Added 'hits' field to item table to track item hits
+25-02-06    Renamed PageMgr to SectionMgr, and all references to 'page' changed
+            to section
+21-02-06    Improvements to html controls (Olivier Burgard)
+21-02-06    Module generator refactored and now auto-registers new modules
+            (Gerald Fischer)
+20-02-06    Moved all blocks within their respective modules, those without strong
+            ties allocated to 'default' module
+20-02-06    Moved all default templates within modules
+17-02-06    Factored out module builder code into its own manager, ModuleGenerationMgr
+17-02-06    CLI installer added, see seagull/var/envRebuild.php
+17-02-06    Added ability to edit modules' config files through GUI
+            (Eric Persson)
+16-02-06    Moved session options to their own config group
+16-02-06    All config keys now follow consistent bumpyCap naming standard
+15-02-06    Recover password and change password functionality broken down into
+            separate managers
+14-02-06    Timezone support from installer correctly implemented
+14-02-06    All action methods are now prefixed with '_cmd' to differentiate
+            them from private methods
+14-02-06    SGL_UrlParser_SefStrategy::resolveArrayElems renamed to
+            SGL_Url::querystringArrayToHash, moved up inheritance hierarchy so it
+            can be shared
+14-02-06    Updated to latest jscalendar
+13-02-06    Swedish translation updated (Peter Palotas)
+13-02-06    Moved test.conf.ini to more secure location
+09-02-06    Ban IP, Allow and Deny list can now be processed (Tomasz Osmialowski)
+08-02-06    Blocks are now cacheable on an individual basis - schema change
+            (Andrey Podshivalov)
+08-02-06    Implemented a SGL::objectHasState() method to prevent inserting
+            invalid objects.
+08-02-06    Improved authorisation in SGL_Manager
+07-02-06    Clarified distinction between authentication and authorisation
+07-02-06    Removed 2 fatal errors for missing parent::Manager and unknown
+            action, now you get an error page
+07-02-06    Removed 2 non-essential process filters, SGL_Process_DetectDebug
+            and SGL_Process_DetectBlackListing
+07-02-06    Cleaned up URI parsing, toString() method moved from parsers to SGL_Url.
+07-02-06    Error handling moved from filter chain up to Init tasks
+06-02-06    Renamed all instances of IMessage to 'instant message'
+06-02-06    Moved all install-related files to lib/SGL/Install
+03-02-06    Html renderers moved to their own folder in lib/SGL
+03-02-06    Url parsers moved to their own folder in lib/SGL
+03-02-06    Messages can be passed type info (Andrey Podshivalov)
+01-02-06    Improved logic in installer for improved flexibility
+30-01-06    Added path search for email templates when default theme is not being
+            used (Werner Krauss)
+30-01-06    Region lists added for Poland (Tomasz Osmialowski)
+30-01-06    Added perm checking method for use in templates, SGL_Output::hasPerms()
+            (Tomasz Osmialowski)
+30-01-06    Implemented abilty for blocks to receive stored params, removed
+            Quickform from block code (Andrey Podshivalov)
+30-01-06    SGL_HTTP_Session renamed to SGL_Session
+30-01-06    SGL_HTTP::redirect(array()); cleaned up to SGL_HTTP::redirect();
+26-01-06    Path to seagull/var explicitly named when not writable in installer
+
++-----------------------+
+| VERSION: 0.5.5        |
++-----------------------+
+BUGFIXES
+23-01-06    Fixed small bug where registry of PEAR modules listed in installer
+            was referring to the system instead of local PEAR install
+20-01-06    Problems with adding subscribers fixed in NewsletterMgr
+            (AJ Tarachanowicz)
+20-01-06    Problems with ContentTypeMgr fixed (AJ Tarachanowicz)
+17-01-06    Fixed problems with naming conventions in module generator
+30-12-05    Fixed bug where contact us template could not be found (Andrey Podshivalov)
+21-12-05    Ancestors correctly highlighted in navigation trees (Gerald Fishcer)
+20-12-05    Added missing path vars in config template (Tomasz Osmialowski)
+20-12-05    Fixed corruption of german language file in default module
+19-12-05    Fixed incorrect constant which prevented instant messages from working
+            correctly
+16-12-05    Changed erroneous ECT tz to CET (Sylvain PAPET)
+
+IMPROVEMENTS
+23-01-06    Implemented web-based PEAR package and channel management.  Basic ideas
+            used from PEAR webinstaller and extended.
+23-01-06    Seagull is now PHP 5.1.x compliant
+23-01-06    Added new conf key: [RegisterMgr][enabled] set to true by default
+23-01-06    Added auto-correct frontScriptName for CGI users in SGL_Task_CreateConfig()
+18-01-06    Test runner now uses pearified SimpleTest and notices are suppressed
+            for now, see http://trac.seagullproject.org/wiki/Standards/UnitTesting
+17-01-06    Integrated Serendipity blog, see
+            http://trac.seagullproject.org/wiki/Integration/Serendipity
+17-01-06    Added new 'getAllModules' xml-rpc service
+16-01-06    Instantiating a cache object has changed from
+            $cache =  SGL::cacheSingleton(); to $cache =  SGL_Cache::singleton();
+            Likewise, SGL::clearCache() has changed to SGL_Cache::clear()
+10-01-06    Implemented a Savant2 template renderer (Andrey Podshivalov)
+09-01-06    Url alias solution fully integrated and database-driven
+06-01-06    Added generateRadioList method to SGL_Output (mawan)
+06-01-06    Added a wrapper to create html views easily:
+                $view = new SGL_HtmlSimpleView($output);
+                $html = $view->render();
+            (Andrey Podshivalov)
+06-01-06    Implemented post-connect query which is used to set the default
+            character set for the current connection (MySQL 4.1 or higher). For
+            example: SET NAMES utf8
+06-01-06    All data object calls are now config driven (freeslacker)
+05-01-06    Added a new admin GUI, admin tasks will be clearly defined and
+            identified by this addition (Julien Casanova)
+04-01-06    Blocks can now be enabled/disabled for sub-sections (mstahv)
+04-01-06    Cleanup of Translation2 implementation, navigation section and items
+            get their own translation id, no more sharing with titles.  section
+            and item_addition both get a new trans_id field (AJ Tarachanowicz)
+23-12-05    Added new navigation block (AJ Tarachanowicz)
+22-12-05    PEAR's Translation2 lib integrated which means application interface,
+            navigation and content can now be translated into multiple languages,
+            many thanks to AJ's gargantuan effort here and the patronage of
+            Multithink.com (AJ Tarachanowicz)
+22-12-05    Improvement to the who's online block (Andrey Podshivalov)
+
+
++-----------------------+
+| VERSION: 0.5.4        |
++-----------------------+
+BUGFIXES
+24-11-05    Fixed long-standing image preview header probs
+24-11-05    Fixed config prob with FCK, images now upload correctly
+
+IMPROVEMENTS
+14-12-05    Module skeleton generator improved, it now: creates template files,
+            lang files and aActionsMapping array (Werner Krauss)
+14-12-05    Added SGL::loadRegionList for loading localised country/state arrays
+            (Philippe Lhoste)
+14-12-05    'localeCategory' configurable, set to LC_ALL by default although European
+            users will want to change this where supplying a , for the decimal separator
+            causes calculation probs (use LC_TIME)
+14-12-05    Integrated advanced locale features available via SGL_Locale, disabled
+            by default
+14-12-05    SGL_USR_OS renamed more correctly to SGL_CLIENT_OS
+12-12-05    Block management enhanced - you can now create any number of arbitrarily
+            positioned blocks and assign content to them (Andrey Podshivalov)
+12-12-05    Uri aliases integrated into navigation module, external Uris handled
+            (Andrey Podshivalov)
+06-12-05	Basic CLI request implemented (Eric Persson)
+01-12-05    Three url parsers loaded by default: classic querystring, standard
+            Seagull SEF, and now UrlAlias, see the 0.5.4 updates notes for details:
+            http://trac.seagullproject.org/wiki/Howto/Misc/Upgrading/05
+01-12-05    Improved performance for DB-based sessions (Eric Persson)
+30-11-05    Polish translation updated (Tomasz Osmialowski)
+29-11-05	RSS query more configurable (bluetoad)
+29-11-05	Web root path now configurable from installer
+24-11-05    DB2 support added (Tobias Kuckuck)
+23-11-05    Implemented ability to load default data in installer
+23-11-05	Implemented Smarty renderer (Malaney J. Hill)
+22-11-05    Added ServiceLocator class and fixed db independence for testing
+21-11-05    Factored out setup of table name aliases, these are not set on a per-module
+            basis in the file 'tableAliases.ini' parsed at setup time.
+16-11-05    Chinese translation updated (Finjon Kiang)
+14-11-05    Added version-checker routine to Maintenance manager
+14-11-05    Implemented xml-rpc gateway for easy creation of Seagull web services
+14-11-05    Improved integration of page offset id in seagull SEF urls
+            (Andreas Singer)
+
++-----------------------+
+| VERSION: 0.5.3        |
++-----------------------+
+BUGFIXES
+11-11-05    Fix for &-related prob in thunderbird parsing of RSS
+09-11-05    Fixed small bug where backdating date comboboxes wasn't working
+            (Werner Krauss)
+31-10-05	Fixed broken config calls in templates
+26-10-05    Registration emails are no longer CCed to admin, separate notification
+            is sent.
+
+IMPROVEMENTS
+11-11-05    Rewrote installer to handle tasks, easy to extend
+11-11-05    Added $conf[site][sessionInUrl] key and set to false to overcome
+            t-bird RSS bug listed above
+11-11-05    Reduced dependency on sections by modifying block listing query to use
+            LEFT JOIN instead of WHERE clauses (Julien Casanova)
+10-11-05    Moved MaintenanceMgr to 'default' module
+10-11-05    Moved all SQL data to respective modules (modules, perms, role_perm
+            assignments) by creating an auto-increment token in data and using
+            dynamic inserts
+09-11-05    Added ability for sql parser to auto-increment records when PK is marked
+            with {SGL_NEXT_ID} token
+09-11-05    Added ability to add all or minimum modules
+09-11-05    Added ability to remove frontScriptName and have even clearner urls than
+            previously, eg, now available: http://example.com/user/login/
+            Option currently only available to apache users with mod_rewrite enabled,
+            to activate set [site][frontScriptName] = false and copy
+            seagull/etc/htaccess-cleanUrl.dist to seagull/www/.htaccess and make sure
+            the file is readable by the webserver (Julien Casanova)
+09-11-05    Added ability to backdate articles (Werner Krauss)
+09-11-05    Removed unnecessary framebuster from login page
+06-11-05    Split web tests into modules
+06-11-05    Moved all core classes that doubled up with other classes to reduce
+            file loading to seagull/lib/SGL/Other.php.  Currently this contains
+            SGL_Array, SGL_Date and SGL_Inflector.  Should make libs easier to find:
+            if you don't see a file named the same as the lib you want, it will most
+            likely be in Other.php
+04-11-05    New wizard can only be accessed if admin knows password stored in
+            seagull/var/INSTALL_COMPLETE.php.  Installer is invoked automatically
+            on first seagull install, and can be called manually by calling setup.php
+03-11-05    Resolved dependencies between ProfileMgr, News articles, PageMgr,
+            CategoryMgr so core modules could work
+03-11-05    Added SGL_Process_ResolveManager::moduleIsRegistered() to gracefully supply
+            default module if requested module is not registered.
+03-11-05    all SQL-related files that used to live in seagull/etc have been moved to
+            'default' module as that's what they are, default
+03-11-05    item* tables and data moved to publisher
+03-11-05    category table and data moved to publisher
+03-11-05    Improved timezone list
+02-11-05    Global config file renamed to <host_name>.conf.php
+28-10-05    Blocks can now be displayed according to the role of the current user
+            (Daniel Korsak)
+23-10-05	Added support for observers with SGL_Oberserver and SGL_Observable
+21-10-05    Grouped pre + post processing tasks together by name, renamed Tasks.php
+            to Process.php to respect namespace
+20-10-05    Added php4/5 compatible delegator class
+
++-----------------------+
+| VERSION: 0.5.2        |
++-----------------------+
+BUGFIXES
+20-10-05    Fixed installer errors
+18-10-05    Fixed nav caching error (Andy Crain)
+18-10-05    Fixed error where enabling logging failed to include Log class.
+
+IMPROVEMENTS
+18-10-05    Added support for MaxDB (Andreas Singer)
+
++-----------------------+
+| VERSION: 0.5.1        |
++-----------------------+
+BUGFIXES
+12-10-05    Fixed error where pages without a section id assumed html title "none"
+
+IMPROVEMENTS
+14-10-05
+14-10-05    Added SGL_Array class to accomodate the removeBlanks method
+14-10-05    All managers now fire their parents' constructors, ie: parent::SGL_Manager();
+14-10-05    Request type now context sensitive, HTTP and CLI types supported
+14-10-05    Implemented Intercepting Filter pattern so program workflow can now be
+            controlled and customised with pre and post-process tasks.  See
+            http://www.phpkitchen.com/index.php?/archives/725-Modularising-Workflow-with-an-Intercepting-Filter.html
+14-10-05    Added SGL_View class so template engine is now configurable, Flexy
+            implemented as the default driver.  See
+            http://www.phpkitchen.com/index.php?/archives/724-Implementing-an-Output-Renderer-Strategy.html
+14-10-05    SGL_Url::getSignificantSegments renamed to toPartialArray
+14-10-05    SGL_Url now uses a parser strategy and can handle Seagull urls as well as
+            traditional querystring format, url object stored in SGL_Registry
+14-10-05    Moved resolution of $_SERVER['PHP_SELF'] to SGL_URL::resolveServerVars($conf) in
+            constants.php
+14-10-05    New SGL_Config class which autodetects and handles filetype: xml, ini and php
+            arrays implemented
+14-10-05    Almost all global vars removed, including $GLOBALS['_SGL']['REQUEST'] and
+            $GLOBALS['_SGL']['CONF']
+14-10-05    Request object now stored in request registry ($input), renamed
+            from SGL_HTTP_REQUEST to SGL_Request
+14-10-05    Moved SGL::getTime to SGL_Date::getTime
+12-10-05    Added 84 web tests to ensure error-free screen rendering
+06-10-05    Articles can now be set to never expire (Eric Persson)
+28-09-05    Implemented default manager invocation when url params get garbled
+27-09-05    Added SGL::setNoticeBehaviour() method
+
++-----------------------+
+| VERSION: 0.5.0        |
++-----------------------+
+BUGFIXES
+19-09-05    Fixed dynamic block implementation to work with FCK
+
+IMPROVEMENTS
+20-09-05    Removed extended session tests, functionality implemented by default
+07-09-05    Refactored Category functionality into SGL_Category (Aymerick Jehanne)
+30-08-05    Modified category.perms field to take 32 chars (Tobias Kuckuck)
+28-08-05    Blocks can now be stored in the DB and updated with GUI (uprooter)
+10-07-05    Implemented accessibility enhancements for navigation (Michael Heuberger)
+10-07-05    Big naming cleanup in CSS as per RFC (Riccardo Magliocchetti)
+
++-----------------------+
+| VERSION: 0.4.7        |
++-----------------------+
+BUGFIXES
+16-09-05    Fixed a nasty bug where requesting an article ID that didn't exist caused
+            an infinite Flexy loop
+15-09-05    Html title element value is now correctly drawn from the current article
+            title, or the section name if none exists
+
+IMPROVEMENTS
+14-09-05    Unit test runner added, currently works with pear-installable version of
+            SimpleTest, many thanks to m3 Media Services Limited for granting us the
+            right to distribute this under BSD (http://www.m3.net/)
