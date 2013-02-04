@@ -253,6 +253,8 @@ class SGL_Output
             //  ensure $selected is not the default null arg, allowing
             //  zeros to be selected array elements
             $r = '';
+            if (!is_array($aValues))
+                return $r;
             foreach ($aValues as $k => $v) {
 
                 if ($translate) {
