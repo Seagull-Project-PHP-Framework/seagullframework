@@ -19,7 +19,7 @@
  * @author     Sterling Hughes <sterling@php.net>
  * @author     Antônio Carlos Venâncio Júnior <floripa@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB
@@ -44,9 +44,9 @@ require_once 'DB/common.php';
  * @author     Sterling Hughes <sterling@php.net>
  * @author     Antônio Carlos Venâncio Júnior <floripa@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.9
+ * @version    Release: 1.7.14
  * @link       http://pear.php.net/package/DB
  */
 class DB_sybase extends DB_common
@@ -479,7 +479,7 @@ class DB_sybase extends DB_common
                     return $this->raiseError($result);
                 }
             } elseif (!DB::isError($result)) {
-                $result =& $this->query("SELECT @@IDENTITY FROM $seqname");
+                $result = $this->query("SELECT @@IDENTITY FROM $seqname");
                 $repeat = 0;
             } else {
                 $repeat = false;

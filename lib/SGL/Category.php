@@ -397,7 +397,7 @@ class SGL_Category
         $result = $this->dbh->query($query);
         $count = 0;
         $aChildren = array();
-        while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+        while ($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
             $aChildren[$count]['category_id'] = $row['category_id'];
             $aChildren[$count]['label'] = $row['label'];
             $count++;

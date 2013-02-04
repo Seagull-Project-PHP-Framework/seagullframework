@@ -18,7 +18,7 @@
  * @package    DB
  * @author     Frank M. Kromann <frank@frontbase.com>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB
@@ -39,9 +39,9 @@ require_once 'DB/common.php';
  * @package    DB
  * @author     Frank M. Kromann <frank@frontbase.com>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.9
+ * @version    Release: 1.7.14
  * @link       http://pear.php.net/package/DB
  * @since      Class functional since Release 1.7.0
  */
@@ -353,7 +353,7 @@ class DB_fbsql extends DB_common
      */
     function commit()
     {
-        @fbsql_commit();
+        @fbsql_commit($this->connection);
     }
 
     // }}}
@@ -366,7 +366,7 @@ class DB_fbsql extends DB_common
      */
     function rollback()
     {
-        @fbsql_rollback();
+        @fbsql_rollback($this->connection);
     }
 
     // }}}

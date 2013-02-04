@@ -504,7 +504,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                 foreach ($aSeqTableName as $seqTableName) {
                     $query = 'DROP TABLE '. $dbh->quoteIdentifier($seqTableName);
                     $seqResult = $dbh->query($query);
-                    if (PEAR::isError($seqResult, DB_ERROR_NOSUCHTABLE)) {
+                    if (PEAR::isError($seqResult, MDB2_ERROR_NOSUCHTABLE)) {
                         SGL_Error::pop();
                     }
                 }
@@ -522,7 +522,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                         $query = 'DROP TABLE ' . $dbh->quoteIdentifier($tableName);
                         $result = $dbh->query($query);
                         if (PEAR::isError($result)) {
-                            if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
+                            if (PEAR::isError($result, MDB2_ERROR_NOSUCHTABLE)) {
                                 SGL_Error::pop();
                                 $tableExists = false;
                             } else {
@@ -576,18 +576,18 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
                         foreach ($aLangs as $langId) {
                             // force to drop translation table
                             $ok = $trans->removeLang($langId, $force = true);
-                            if (PEAR::isError($ok, DB_ERROR_NOSUCHTABLE)) {
+                            if (PEAR::isError($ok, MDB2_ERROR_NOSUCHTABLE)) {
                                 SGL_Error::pop();
                             }
                         }
-                    } elseif (PEAR::isError($aLangs, DB_ERROR_NOSUCHTABLE)) {
+                    } elseif (PEAR::isError($aLangs, MDB2_ERROR_NOSUCHTABLE)) {
                         SGL_Error::pop();
                     }
                     // drop language table
                     $langTable = $trans->storage->options['langs_avail_table'];
                     $query = 'DROP TABLE ' . $dbh->quoteIdentifier($langTable);
                     $ok = $dbh->query($query);
-                    if (PEAR::isError($ok, DB_ERROR_NOSUCHTABLE)) {
+                    if (PEAR::isError($ok, MDB2_ERROR_NOSUCHTABLE)) {
                         SGL_Error::pop();
                     }
 
@@ -646,7 +646,7 @@ class SGL_Task_CreateTables extends SGL_UpdateHtmlTask
             }
 
             //  catch 'table already exists' error
-            if (isset($result) && PEAR::isError($result, DB_ERROR_ALREADY_EXISTS)) {
+            if (isset($result) && PEAR::isError($result, MDB2_ERROR_ALREADY_EXISTS)) {
                 if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
                     die('Tables already exist, DB error');
                 } else {
@@ -1130,7 +1130,7 @@ class SGL_Task_VerifyDbSetup extends SGL_UpdateHtmlTask
         $dbh =  SGL_DB::singleton();
         $query = "SELECT COUNT(*) FROM {$this->conf['table']['permission']}";
         $res = $dbh->getAll($query);
-        if (PEAR::isError($res, DB_ERROR_NOSUCHTABLE)) {
+        if (PEAR::isError($res, MDB2_ERROR_NOSUCHTABLE)) {
             SGL_Install_Common::errorPush(
                 PEAR::raiseError('No tables exist in DB - was schema created?'));
         } elseif (!(count($res))) {
@@ -1564,11 +1564,14 @@ class SGL_Task_SyncSequences extends SGL_Task
      */
     function run($data = null)
     {
+        // MDB2 does not have the equivalent $dbh->getInfo($table) or any means to see what the primary key
+        // of a table is.  Without this feature it is impossible to update sequences
+        return;
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -1593,7 +1596,8 @@ class SGL_Task_SyncSequences extends SGL_Task
         case 'mysql':
         case 'mysqli':
             $data = array();
-            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->getListOf('tables');
+            $dbh->loadModule('Manager');
+            $aTables = (count( (array) $tables) > 0) ? (array) $tables :  $dbh->listTables();
 
             //  "%_seq" is the default, but in case they screwed around with PEAR::DB...
             $suffix = $dbh->getOption('seqname_format');
@@ -1619,6 +1623,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     continue;
                 }
 
+//                $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                 $info = $dbh->tableInfo($dbh->quoteIdentifier($table));
                 foreach ($info as $field) {
                     if (eregi('primary_key', $field['flags'])) {
@@ -1627,7 +1632,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                     }
                 }
                 if ($primary_field != '') {
-                    $maxId = $dbh->getOne('SELECT MAX(' . $primary_field . ') FROM ' . $dbh->quoteIdentifier($table) . ' WHERE 1');
+                    $maxId = $dbh->queryOne('SELECT MAX(' . $primary_field . ') FROM ' . $dbh->quoteIdentifier($table) . ' WHERE 1');
                     if (is_numeric($maxId)) {
                         $data[] = array($table, $maxId);
                     } else {
@@ -1724,7 +1729,7 @@ class SGL_Task_SyncSequences extends SGL_Task
                 $maxVal   = $k[1] + 1;
                 $sql = 'CREATE SEQUENCE ' . $seqName . ' START ' . $maxVal;
                 $result = $dbh->query($sql);
-                if (PEAR::isError($result) && $result->code == DB_ERROR_ALREADY_EXISTS) {
+                if (PEAR::isError($result) && $result->code == MDB2_ERROR_ALREADY_EXISTS) {
                     $sql = 'ALTER SEQUENCE ' . $seqName . ' RESTART WITH ' . $maxVal;
                     $result = $dbh->query($sql);
                 }
@@ -1796,14 +1801,14 @@ class SGL_Task_SyncSequences extends SGL_Task
     function _getViews()
     {
         $locator = SGL_ServiceLocator::singleton();
-        $dbh     = $locator->get('DB');
+        $dbh     = $locator->get('MDB2');
         $dbName  = SGL_Config::get('db.name');
         $query   = "
             SELECT table_name
             FROM   information_schema.views
-            WHERE  table_schema = '" . $dbh->escapeSimple($dbName) . "'
+            WHERE  table_schema = '" . $dbh->escape($dbName) . "'
         ";
-        return $dbh->getCol($query);
+        return $dbh->queryCol($query);
     }
 }
 

@@ -18,7 +18,7 @@
  * @package    DB
  * @author     Tomas V.V. Cox <cox@idecnet.com>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB
@@ -39,9 +39,9 @@ require_once 'DB/common.php';
  * @package    DB
  * @author     Tomas V.V. Cox <cox@idecnet.com>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.9
+ * @version    Release: 1.7.14
  * @link       http://pear.php.net/package/DB
  */
 class DB_dbase extends DB_common
@@ -188,7 +188,7 @@ class DB_dbase extends DB_common
      *     'portability' => DB_PORTABILITY_ALL,
      * );
      *
-     * $db =& DB::connect($dsn, $options);
+     * $db = DB::connect($dsn, $options);
      * if (PEAR::isError($db)) {
      *     die($db->getMessage());
      * }
@@ -273,7 +273,7 @@ class DB_dbase extends DB_common
     {
         // emulate result resources
         $this->res_row[(int)$this->result] = 0;
-        $tmp =& new DB_result($this, $this->result++);
+        $tmp = new DB_result($this, $this->result++);
         return $tmp;
     }
 

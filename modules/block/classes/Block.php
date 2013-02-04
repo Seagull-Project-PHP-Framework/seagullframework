@@ -64,10 +64,10 @@ class Block
     function &_getDb()
     {
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         return $dbh;
     }

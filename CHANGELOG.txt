@@ -1,5 +1,15 @@
 CHANGELOG
 =========
+
++-----------------------+
+| VERSION: 1.1.0        |
++-----------------------+
+14-01-13    Updating to MDB2, be sure to read http://www.phpied.com/db-2-mdb2/
+            MDB2 is not very compatible with DB, there are many subtle differences
+            Here's a discontinued effort to bridge the gap, gives a good idea of
+            incompatibilities
+            http://trac.roundcube.net/browser/subversion/trunk/roundcubemail/program/lib/MDB2/Wrapper/peardb.php?rev=59
+
 +-----------------------+
 | VERSION: 1.0.4        |
 +-----------------------+

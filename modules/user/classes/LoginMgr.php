@@ -196,10 +196,10 @@ class User_DoLogin extends SGL_Observable
     function &_getDb()
     {
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         return $dbh;
     }
@@ -261,7 +261,7 @@ class User_DoLogin extends SGL_Observable
             AND     passwd = '" . md5($password) . "'
             AND     is_acct_active = 1";
 
-        $aResult = $this->dbh->getRow($query, DB_FETCHMODE_ASSOC);
+        $aResult = $this->dbh->getRow($query, MDB2_FETCHMODE_ASSOC);
         if (is_array($aResult)) {
             $uid = $aResult['usr_id'];
 

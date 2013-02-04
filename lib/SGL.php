@@ -488,14 +488,14 @@ class SGL
         if (!isset($aInstances[$moduleName])) {
 
             $locator = SGL_ServiceLocator::singleton();
-            $dbh = $locator->get('DB');
+            $dbh = $locator->get('MDB2');
             if (!$dbh) {
                 $dbh =  SGL_DB::singleton();
                 //  catch connection failure
                 if (PEAR::isError($dbh)) {
                     return $dbh;
                 }
-                $locator->register('DB', $dbh);
+                $locator->register('MDB2', $dbh);
             }
             $c = SGL_Config::singleton();
             $conf = $c->getAll();

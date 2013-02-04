@@ -327,7 +327,7 @@ class BlockMgr extends SGL_Manager
                 {$table} s
             WHERE s.$id = ba.section_id";
 
-        $aBlockSections = $this->dbh->getAssoc($query, false, array(), DB_FETCHMODE_ASSOC, true);
+        $aBlockSections = $this->dbh->getAssoc($query, false, array(), MDB2_FETCHMODE_ASSOC, true);
 
         if (PEAR::isError($aBlockSections)) {
             SGL::raiseError($aBlockSections->getMessage());

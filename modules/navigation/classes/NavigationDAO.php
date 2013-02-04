@@ -123,7 +123,7 @@ class NavigationDAO extends SGL_Manager
             ORDER BY order_id';
 
         $result = $this->dbh->getAll($query);
-        if (PEAR::isError($result, DB_ERROR_NOSUCHTABLE)) {
+        if (PEAR::isError($result, MDB2_ERROR_NOSUCHTABLE)) {
             SGL::raiseError('The database exists, but does not appear to have any tables,
                 please delete the config file from the var directory and try the install again',
                 SGL_ERROR_DBFAILURE, PEAR_ERROR_DIE);

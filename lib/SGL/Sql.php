@@ -60,8 +60,8 @@ class SGL_Sql
     function parse($filename, $errorReporting = E_ALL, $executerCallback = null)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
-        $originalErrorLevel = error_reporting();
-        error_reporting($errorReporting);
+//        $originalErrorLevel = error_reporting();
+//        error_reporting($errorReporting);
 
         if (! ($fp = fopen($filename, 'r')) ) {
             return false;
@@ -180,7 +180,7 @@ class SGL_Sql
         }
         fclose($fp);
         //  reset orig error level
-        error_reporting($originalErrorLevel);
+//        error_reporting($originalErrorLevel);
         return implode("\n", $aLines);
     }
 
@@ -188,10 +188,10 @@ class SGL_Sql
     {
         // Get database handle based on working config.ini
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         $res = $dbh->query($sql);
         return $res;
@@ -201,10 +201,10 @@ class SGL_Sql
     {
         // Get database handle based on working config.ini
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         return $dbh->nextId($tableName);
     }

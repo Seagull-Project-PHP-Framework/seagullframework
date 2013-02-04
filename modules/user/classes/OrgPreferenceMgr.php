@@ -120,7 +120,7 @@ class OrgPreferenceMgr extends PreferenceMgr
                     '$prefValue'
             )";
             $res = $this->dbh->query($query2);
-            if (DB::isError($res)) {
+            if (PEAR::isError($res)) {
                 SGL::raiseError('Error inserting prefs, exiting ...',
                     SGL_ERROR_NODATA, PEAR_ERROR_DIE);
             }

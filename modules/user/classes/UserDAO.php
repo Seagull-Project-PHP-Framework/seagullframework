@@ -379,7 +379,7 @@ class UserDAO extends SGL_Manager
                 WHERE p.module_id = m.module_id
                 $filter
                 ORDER BY name";
-            $aAllPerms = $this->dbh->getAll($query, DB_FETCHMODE_ASSOC);
+            $aAllPerms = $this->dbh->getAll($query, MDB2_FETCHMODE_ASSOC);
             break;
 
         case SGL_RET_ID_VALUE:
@@ -581,7 +581,7 @@ class UserDAO extends SGL_Manager
             AND     op.organisation_id = " . $orgId;
 
         $aRes = $this->dbh->getAssoc($query);
-        if (!DB::isError($aRes) && count($aRes)) {
+        if (!PEAR::isError($aRes) && count($aRes)) {
             //  return default prefs if none exist for given org id
             return $aRes;
         } elseif ($orgId != 0) {
@@ -633,7 +633,7 @@ class UserDAO extends SGL_Manager
         $aUserPrefs = $this->dbh->getAssoc($query);
 
         // stop script execution on error
-        if (PEAR::isError($aUserPrefs, DB_ERROR_NOSUCHTABLE)) {
+        if (PEAR::isError($aUserPrefs, MDB2_ERROR_NOSUCHTABLE)) {
             $msg = 'You have a Seagull database with no tables ...';
             SGL::raiseError($msg, SGL_ERROR_NODATA, PEAR_ERROR_DIE);
         } elseif (PEAR::isError($aUserPrefs)) {

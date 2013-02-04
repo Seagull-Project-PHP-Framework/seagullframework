@@ -515,7 +515,7 @@ class UserMgr extends RegisterMgr
             //  then add new perms
             $res2 = $this->da->addPermsByUserId($input->aPerms, $input->user->usr_id);
 
-            if (DB::isError($res1) || DB::isError($res2)) {
+            if (PEAR::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
                 $this->dbh->autocommit(true);
                 SGL::raiseError('There was a problem inserting the record',
@@ -538,7 +538,7 @@ class UserMgr extends RegisterMgr
             //  add new module-specific perms
             $res2 = $this->da->addPermsByUserId($input->aPerms, $input->user->usr_id);
 
-            if (DB::isError($res1) || DB::isError($res2)) {
+            if (PEAR::isError($res1) || DB::isError($res2)) {
                 $this->dbh->rollback();
                 $this->dbh->autocommit(true);
                 SGL::raiseError('There was a problem inserting the record',

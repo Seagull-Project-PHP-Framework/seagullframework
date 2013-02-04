@@ -328,7 +328,7 @@ class ConfigMgr extends SGL_Manager
                 //  use it and think the db type is the old one and run the
                 //  wrong sync code.
                 $locator =  SGL_ServiceLocator::singleton();
-                $locator->remove('DB');
+                $locator->remove('MDB2');
                 //  rebuild sequences
                 require_once SGL_CORE_DIR . '/Task/Install.php';
                 $res = SGL_Task_SyncSequences::run();

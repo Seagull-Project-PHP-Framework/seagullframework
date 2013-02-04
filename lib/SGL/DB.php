@@ -80,10 +80,16 @@ class SGL_DB
         }
         $signature = md5($dsn);
         if (!isset($aInstances[$signature])) {
-            $conn = DB::connect($dsn);
+
+            $options = array(
+                'debug' => 5,
+                'result_buffering' => false,
+            );
+//            $conn = DB::connect($dsn);
+            $conn = & MDB2::factory($dsn, $options);
             if (PEAR::isError($conn)) {
                 //  remove sensitive details, ie, db password
-                if ($conn->getCode() == DB_ERROR_CONNECT_FAILED) {
+                if ($conn->getCode() == MDB2_ERROR_CONNECT_FAILED) {
                     $oLastStackError = SGL_Error::pop();
                     $oLastStackError->userinfo = ''; //crude but give me an API!
                     SGL_Error::push($oLastStackError);
@@ -98,7 +104,7 @@ class SGL_DB
             if (!empty($conf['db']['postConnect'])) {
                 $conn->query($conf['db']['postConnect']);
             }
-            $conn->setFetchMode(DB_FETCHMODE_OBJECT);
+            $conn->setFetchMode(MDB2_FETCHMODE_OBJECT);
             $aInstances[$signature] = $conn;
         }
         return $aInstances[$signature];
@@ -121,7 +127,7 @@ class SGL_DB
         }
 
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if ($dbh && count($dbh->dsn)) {
             $locatorDsn = $dbh->dsn;
             $conf['db']['user'] = $locatorDsn['username'];
@@ -210,10 +216,10 @@ class SGL_DB
     function setConnection($dsn = null)
     {
         $locator = SGL_ServiceLocator::singleton();
-        $singleton = $locator->get('DB');
+        $singleton = $locator->get('MDB2');
         if (!$singleton) {
             $singleton =  SGL_DB::singleton();
-            $locator->register('DB', $singleton);
+            $locator->register('MDB2', $singleton);
         }
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
         $dsnMd5 = md5($dsn);
@@ -250,7 +256,7 @@ class SGL_DB
      * @return array with links and paged data
      */
     function getPagedData(&$db, $query, $pager_options = array(), $disabled = false,
-        $fetchMode = DB_FETCHMODE_ASSOC, $dbparams = array())
+        $fetchMode = MDB2_FETCHMODE_ASSOC, $dbparams = array())
     {
         if (!array_key_exists('totalItems', $pager_options) || is_null($pager_options['totalItems'])) {
             //  be smart and try to guess the total number of records

@@ -19,7 +19,7 @@
  * @author     Rui Hirokawa <hirokawa@php.net>
  * @author     Stig Bakken <ssb@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/DB
@@ -41,9 +41,9 @@ require_once 'DB/common.php';
  * @author     Rui Hirokawa <hirokawa@php.net>
  * @author     Stig Bakken <ssb@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.9
+ * @version    Release: 1.7.14
  * @link       http://pear.php.net/package/DB
  */
 class DB_pgsql extends DB_common
@@ -187,13 +187,13 @@ class DB_pgsql extends DB_common
      * Example of connecting to a new link via a socket:
      * <code>
      * require_once 'DB.php';
-     *
+     * 
      * $dsn = 'pgsql://user:pass@unix(/tmp)/dbname?new_link=true';
      * $options = array(
      *     'portability' => DB_PORTABILITY_ALL,
      * );
-     *
-     * $db =& DB::connect($dsn, $options);
+     * 
+     * $db = DB::connect($dsn, $options);
      * if (PEAR::isError($db)) {
      *     die($db->getMessage());
      * }
@@ -348,12 +348,12 @@ class DB_pgsql extends DB_common
          * CREATE, DECLARE, DELETE, DROP TABLE, EXPLAIN, FETCH,
          * GRANT, INSERT, LISTEN, LOAD, LOCK, MOVE, NOTIFY, RESET,
          * REVOKE, ROLLBACK, SELECT, SELECT INTO, SET, SHOW,
-         * UNLISTEN, UPDATE, VACUUM
+         * UNLISTEN, UPDATE, VACUUM, WITH
          */
         if ($ismanip) {
             $this->affected = @pg_affected_rows($result);
             return DB_OK;
-        } elseif (preg_match('/^\s*\(*\s*(SELECT|EXPLAIN|FETCH|SHOW)\s/si',
+        } elseif (preg_match('/^\s*\(*\s*(SELECT|EXPLAIN|FETCH|SHOW|WITH)\s/si',
                              $query))
         {
             $this->row[(int)$result] = 0; // reset the row counter.
@@ -492,7 +492,7 @@ class DB_pgsql extends DB_common
     function quoteBoolean($boolean) {
         return $boolean ? 'TRUE' : 'FALSE';
     }
-
+     
     // }}}
     // {{{ escapeSimple()
 
@@ -512,7 +512,17 @@ class DB_pgsql extends DB_common
     function escapeSimple($str)
     {
         if (function_exists('pg_escape_string')) {
-            return pg_escape_string($str);
+            /* This fixes an undocumented BC break in PHP 5.2.0 which changed
+             * the prototype of pg_escape_string. I'm not thrilled about having
+             * to sniff the PHP version, quite frankly, but it's the only way
+             * to deal with the problem. Revision 1.331.2.13.2.10 on
+             * php-src/ext/pgsql/pgsql.c (PHP_5_2 branch) is to blame, for the
+             * record. */
+            if (version_compare(PHP_VERSION, '5.2.0', '>=')) {
+                return pg_escape_string($this->connection, $str);
+            } else {
+                return pg_escape_string($str);
+            }
         } else {
             return str_replace("'", "''", str_replace('\\', '\\\\', $str));
         }
@@ -666,7 +676,7 @@ class DB_pgsql extends DB_common
         $repeat = false;
         do {
             $this->pushErrorHandling(PEAR_ERROR_RETURN);
-            $result =& $this->query("SELECT NEXTVAL('${seqname}')");
+            $result = $this->query("SELECT NEXTVAL('${seqname}')");
             $this->popErrorHandling();
             if ($ondemand && DB::isError($result) &&
                 $result->getCode() == DB_ERROR_NOSUCHTABLE) {
@@ -786,7 +796,7 @@ class DB_pgsql extends DB_common
     /**
      * Gets the DBMS' native error message produced by the last query
      *
-     * {@internal Error messages are used instead of error codes
+     * {@internal Error messages are used instead of error codes 
      * in order to support older versions of PostgreSQL.}}
      *
      * @return string  the DBMS' error message
@@ -971,9 +981,6 @@ class DB_pgsql extends DB_common
     {
         $field_name = @pg_fieldname($resource, $num_field);
 
-        // Check if $table_name is quoted using quoteIdentifier
-        $table_name = (strpos($table_name,'"') === 0)?substr($table_name,1,strlen($table_name)-2):$table_name;
-
         // Check if there's a schema in $table_name and update things
         // accordingly.
         $from = 'pg_attribute f, pg_class tab, pg_type typ';
@@ -1075,6 +1082,9 @@ class DB_pgsql extends DB_common
                         . ' FROM pg_catalog.pg_tables'
                         . ' WHERE schemaname NOT IN'
                         . " ('pg_catalog', 'information_schema', 'pg_toast')";
+            case 'schema.views':
+                return "SELECT schemaname || '.' || viewname from pg_views WHERE schemaname"
+                        . " NOT IN ('information_schema', 'pg_catalog')";
             case 'views':
                 // Table cols: viewname | viewowner | definition
                 return 'SELECT viewname from pg_views WHERE schemaname'
@@ -1093,6 +1103,25 @@ class DB_pgsql extends DB_common
     }
 
     // }}}
+    // {{{ _checkManip()
+
+    /**
+     * Checks if the given query is a manipulation query. This also takes into
+     * account the _next_query_manip flag and sets the _last_query_manip flag
+     * (and resets _next_query_manip) according to the result.
+     *
+     * @param string The query to check.
+     *
+     * @return boolean true if the query is a manipulation query, false
+     * otherwise
+     *
+     * @access protected
+     */
+    function _checkManip($query)
+    {
+        return (preg_match('/^\s*(SAVEPOINT|RELEASE)\s+/i', $query)
+                || parent::_checkManip($query));
+    }
 
 }
 
