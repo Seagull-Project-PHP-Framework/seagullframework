@@ -1,0 +1,627 @@
+a:22:{s:7:"attribs";a:6:{s:15:"packagerversion";s:5:"1.9.4";s:7:"version";s:3:"2.0";s:5:"xmlns";s:35:"http://pear.php.net/dtd/package-2.0";s:11:"xmlns:tasks";s:33:"http://pear.php.net/dtd/tasks-1.0";s:9:"xmlns:xsi";s:41:"http://www.w3.org/2001/XMLSchema-instance";s:18:"xsi:schemaLocation";s:147:"http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd";}s:4:"name";s:19:"HTML_Template_Flexy";s:7:"channel";s:12:"pear.php.net";s:7:"summary";s:54:"An extremely powerful Tokenizer driven Template engine";s:11:"description";s:2254:"HTML_Template_Flexy started it's life as a simplification of HTML_Template_Xipe, 
+however in Version 0.2, It became one of the first template engine to use a real Lexer,
+rather than regex'es, making it possible to do things like ASP.net or Cold Fusion tags. 
+However, it still has a very simple set of goals.
+- Very Simple API, 
+   o easy to learn...
+   o prevents to much logic going in templates
+- Easy to write document'able code
+   o By using object vars for a template rather than 'assign', you 
+     can use phpdoc comments to list what variable you use.
+- Editable in WYSIWYG editors
+   o you can create full featured templates, that doesnt get broken every time you edit with 
+     Dreamweaver(tm) or Mozilla editor
+   o Uses namespaced attributes to add looping/conditionals  
+- Extremely Fast, 
+   o runtime is at least 4 time smaller than most other template engines (eg. Smarty)
+   o uses compiled templates, as a result it is many times faster on blocks and loops than 
+     than Regex templates (eg. IT/phplib)
+- Safer (for cross site scripting attacks)
+   o All variables default to be output as HTML escaped (overridden with the :h modifier)
+- Multilanguage support
+   o Parses strings out of template, so you can build translation tools
+   o Compiles language specific templates (so translation is only done once, not on every request)
+- Full dynamic element support (like ASP.NET), so you can pick elements to replace at runtime
+
+Features:
+- {variable} to echo $object->variable
+- {method()} to echo $object->method();
+- {foreach:var,key,value} to PHP foreach loops
+- tag attributes FLEXY:FOREACH, FLEXY:IF for looping and conditional HTML inclusion
+- {if:variable} to PHP If statement
+- {if:method()} to PHP If statement
+- {else:} and {end:} to close or alternate If statements
+- FORM to HTML_Template_Flexy_Element's
+- replacement of INPUT, TEXTAREA and SELECT tags with HTML_Template_Flexy_Element code
+  use FLEXY:IGNORE (inherited) and FLEXY:IGNOREONLY (single) to prevent replacements
+- FLEXY:START/FLEXY:STARTCHILDREN tags to define where template starts/finishes
+- support for urlencoded braces {} in HTML attributes.  
+- documentation in the pear manual
+
+- examples at http://cvs.php.net/cvs.php/pear/HTML_Template_Flexy/tests/";s:4:"lead";a:4:{s:4:"name";s:12:"Alan Knowles";s:4:"user";s:6:"alan_k";s:5:"email";s:17:"alan@akbkhome.com";s:6:"active";s:3:"yes";}s:4:"date";s:10:"2011-08-29";s:4:"time";s:8:"04:11:27";s:7:"version";a:2:{s:7:"release";s:6:"1.3.12";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:223:"Minor fixes and feature release
+
+Bug Fixes	
+    
+   #18763 - Fix is_a() for 5.3.7+ due to php-core stupidity
+   #----- - Support for new PEAR5 class.
+   
+Features
+   #----- - support for CommonPageID when using Translation2";s:8:"contents";a:1:{s:3:"dir";a:2:{s:7:"attribs";a:2:{s:14:"baseinstalldir";s:1:"/";s:4:"name";s:1:"/";}s:4:"file";a:130:{i:0;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8a8ff096b84107b3646a9bfc9b2b24e7";s:4:"name";s:38:"examples/EMPTY_FOLDERS_NOTHING_IN_HERE";s:4:"role";s:3:"doc";}}i:1;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"236d576d3baca6ba09e8cdcf3cde26e9";s:4:"name";s:23:"HTML/Template/Flexy.php";s:4:"role";s:3:"php";}}i:2;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"932c71cacaa23e818c9ff35c555270d0";s:4:"name";s:30:"HTML/Template/Flexy/Assign.php";s:4:"role";s:3:"php";}}i:3;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"688d7f20bc057097ceaf258165f36f92";s:4:"name";s:34:"HTML/Template/Flexy/compileAll.php";s:4:"role";s:3:"php";}}i:4;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4bd68ff3609dfd823fd40faa44f29940";s:4:"name";s:32:"HTML/Template/Flexy/Compiler.php";s:4:"role";s:3:"php";}}i:5;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"24efc79077ce51c53708143dcfd61399";s:4:"name";s:31:"HTML/Template/Flexy/Element.php";s:4:"role";s:3:"php";}}i:6;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4145fc313dae9ebd14e291459fbd06cf";s:4:"name";s:31:"HTML/Template/Flexy/example.ini";s:4:"role";s:4:"data";}}i:7;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4f2490d8f967fee7c32440b3db00489";s:4:"name";s:31:"HTML/Template/Flexy/Factory.php";s:4:"role";s:3:"php";}}i:8;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"db19f3da08a0456e96f9615cdb311b4d";s:4:"name";s:30:"HTML/Template/Flexy/Plugin.php";s:4:"role";s:3:"php";}}i:9;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"fc4658baafaa77ae2a6e8b022cc5d422";s:4:"name";s:33:"HTML/Template/Flexy/SmartyAPI.php";s:4:"role";s:3:"php";}}i:10;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ee34ec9e54d3309436ddd171ff07fcb1";s:4:"name";s:28:"HTML/Template/Flexy/Test.php";s:4:"role";s:3:"php";}}i:11;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c2229891ea8f4ebcffa151717b6dad42";s:4:"name";s:29:"HTML/Template/Flexy/Token.php";s:4:"role";s:3:"php";}}i:12;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c1d354936d0a6deebb877866dd842d5";s:4:"name";s:33:"HTML/Template/Flexy/Tokenizer.lex";s:4:"role";s:4:"data";}}i:13;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b070ba42cbf188c0528c4a5140f2ea58";s:4:"name";s:33:"HTML/Template/Flexy/Tokenizer.php";s:4:"role";s:3:"php";}}i:14;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e5998aff8abd679d57c89bbb83b473fe";s:4:"name";s:34:"HTML/Template/Flexy/Translator.php";s:4:"role";s:3:"php";}}i:15;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f5a21a9ec9303262ef219e356730343b";s:4:"name";s:28:"HTML/Template/Flexy/Tree.php";s:4:"role";s:3:"php";}}i:16;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"401e79e48c4cb11d3894a6b4a860ef19";s:4:"name";s:38:"HTML/Template/Flexy/Compiler/Flexy.php";s:4:"role";s:3:"php";}}i:17;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"6592604cb34e04f28816cda5cd5045e5";s:4:"name";s:38:"HTML/Template/Flexy/Compiler/Regex.php";s:4:"role";s:3:"php";}}i:18;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c9945950d33eda39e541380dd014b9a";s:4:"name";s:48:"HTML/Template/Flexy/Compiler/SmartyConvertor.php";s:4:"role";s:3:"php";}}i:19;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"50820eecd9738c6ad579b7e3972db3c5";s:4:"name";s:41:"HTML/Template/Flexy/Compiler/Standard.php";s:4:"role";s:3:"php";}}i:20;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"023a75b2347a91eb2a1c32a40fc525cf";s:4:"name";s:60:"HTML/Template/Flexy/Compiler/Flexy/CustomFlexyAttributes.php";s:4:"role";s:3:"php";}}i:21;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d991b10dd607ccda0de7365e96f27210";s:4:"name";s:44:"HTML/Template/Flexy/Compiler/Flexy/Flexy.php";s:4:"role";s:3:"php";}}i:22;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"58435cc56556f7bf3318e6db807f9286";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Flexy/Tag.php";s:4:"role";s:3:"php";}}i:23;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"5600f9b49e119cf8ee44999220e5f7c8";s:4:"name";s:47:"HTML/Template/Flexy/Compiler/Regex/BodyOnly.php";s:4:"role";s:3:"php";}}i:24;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"70ece2c2644c51395e81234c486f3416";s:4:"name";s:43:"HTML/Template/Flexy/Compiler/Regex/Mail.php";s:4:"role";s:3:"php";}}i:25;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b9f9c81da386f12400fe0630af5d0154";s:4:"name";s:43:"HTML/Template/Flexy/Compiler/Regex/Math.php";s:4:"role";s:3:"php";}}i:26;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"3e2f98d5c5d22ba6a13b879a57c8744e";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Regex/Php.php";s:4:"role";s:3:"php";}}i:27;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"7eadfd696244f811af8cdfb84efd229f";s:4:"name";s:52:"HTML/Template/Flexy/Compiler/Regex/RtfSimpleTags.php";s:4:"role";s:3:"php";}}i:28;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"568b9d0ffb27a05abf4cce8e085fcfdd";s:4:"name";s:49:"HTML/Template/Flexy/Compiler/Regex/SimpleTags.php";s:4:"role";s:3:"php";}}i:29;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ede68cf8ce6fcd2444bc8cc46dbb7c4f";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Regex/Xml.php";s:4:"role";s:3:"php";}}i:30;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"2894e8e071c29ad3b161e4ede084107b";s:4:"name";s:47:"HTML/Template/Flexy/Compiler/Standard/Flexy.php";s:4:"role";s:3:"php";}}i:31;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1ae36b91f076f32b3a38b03f0fe9bb2d";s:4:"name";s:45:"HTML/Template/Flexy/Compiler/Standard/Tag.php";s:4:"role";s:3:"php";}}i:32;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b0526311729d5e6a689e63fac7b225d8";s:4:"name";s:35:"HTML/Template/Flexy/Element/Xul.php";s:4:"role";s:3:"php";}}i:33;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"851121e801a08c234d60cc38741e805a";s:4:"name";s:37:"HTML/Template/Flexy/Plugin/Savant.php";s:4:"role";s:3:"php";}}i:34;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"de220a60d41b99938c85b8ddf1fb7aa6";s:4:"name";s:45:"HTML/Template/Flexy/templates/translator.html";s:4:"role";s:3:"doc";}}i:35;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c809d4ece552759f3e6d3d6454da7d6e";s:4:"name";s:35:"HTML/Template/Flexy/Token/Cdata.php";s:4:"role";s:3:"php";}}i:36;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"cc2c45751e1a1b1a0be2364efaa90bf8";s:4:"name";s:34:"HTML/Template/Flexy/Token/Else.php";s:4:"role";s:3:"php";}}i:37;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c633fb71e243e23382f95dc2d49ccae0";s:4:"name";s:33:"HTML/Template/Flexy/Token/End.php";s:4:"role";s:3:"php";}}i:38;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c3f6c71c7183462b25838339400e70b1";s:4:"name";s:36:"HTML/Template/Flexy/Token/EndTag.php";s:4:"role";s:3:"php";}}i:39;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"88b2e62245d2ec2ff6ec7fbaeea8a330";s:4:"name";s:37:"HTML/Template/Flexy/Token/Foreach.php";s:4:"role";s:3:"php";}}i:40;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8eb512e43d24973a7804a4fca3729efa";s:4:"name";s:32:"HTML/Template/Flexy/Token/If.php";s:4:"role";s:3:"php";}}i:41;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"5f29fa6aa7e05f88a2342754be172fe3";s:4:"name";s:36:"HTML/Template/Flexy/Token/Method.php";s:4:"role";s:3:"php";}}i:42;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ccbc4af70ae909431c0eedc38293456f";s:4:"name";s:40:"HTML/Template/Flexy/Token/Processing.php";s:4:"role";s:3:"php";}}i:43;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"76afca7d2a66c2438f26a65e25d1d8b2";s:4:"name";s:33:"HTML/Template/Flexy/Token/Tag.php";s:4:"role";s:3:"php";}}i:44;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"721697b8cdb41fbbba0d34a83f4b74ba";s:4:"name";s:34:"HTML/Template/Flexy/Token/Text.php";s:4:"role";s:3:"php";}}i:45;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"cac8f3e0c2d66a3574bd2e407e21c7a5";s:4:"name";s:33:"HTML/Template/Flexy/Token/Var.php";s:4:"role";s:3:"php";}}i:46;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ded76467f24864875821f99d4228234d";s:4:"name";s:20:"tests/make_tests.php";s:4:"role";s:4:"test";}}i:47;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"2f28c628e7fb0ad75e007cc257ba3b4f";s:4:"name";s:14:"tests/test.php";s:4:"role";s:4:"test";}}i:48;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"3625999541b17a1ad60755d80295f950";s:4:"name";s:19:"tests/testsuite.php";s:4:"role";s:4:"test";}}i:49;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"c5e87c139c5ae80064f042f3877ecf12";s:4:"name";s:27:"tests/test_blocks.html.phpt";s:4:"role";s:4:"test";}}i:50;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"13a67a45a034741e2806ea436a6dc5ca";s:4:"name";s:29:"tests/test_bug_2959.html.phpt";s:4:"role";s:4:"test";}}i:51;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"6c503743b6a04b17568530cc9e2615b1";s:4:"name";s:31:"tests/test_conditions.html.phpt";s:4:"role";s:4:"test";}}i:52;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"492b0b13e8ad4364bbbfe952d331d4ec";s:4:"name";s:34:"tests/test_error_foreach.html.phpt";s:4:"role";s:4:"test";}}i:53;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"19445a02f1e7924346fdf87d10218c0b";s:4:"name";s:39:"tests/test_flexy_tojavascript.html.phpt";s:4:"role";s:4:"test";}}i:54;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"cbbece514c050be6343a4827c733aabf";s:4:"name";s:26:"tests/test_forms.html.phpt";s:4:"role";s:4:"test";}}i:55;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"89c780d12736ca98318fe3409cea7dc4";s:4:"name";s:29:"tests/test_function.html.phpt";s:4:"role";s:4:"test";}}i:56;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f3a3a39555edcfaf0d0765ab61cec40b";s:4:"name";s:28:"tests/test_globals.html.phpt";s:4:"role";s:4:"test";}}i:57;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"c39eee821bb7aa89110f846a04623d82";s:4:"name";s:31:"tests/test_image_view.html.phpt";s:4:"role";s:4:"test";}}i:58;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"8300ab3345afa189afea9a0221cd685f";s:4:"name";s:28:"tests/test_include.html.phpt";s:4:"role";s:4:"test";}}i:59;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"dc00c7e50511608a3f402cc03c7daa21";s:4:"name";s:31:"tests/test_javascript.html.phpt";s:4:"role";s:4:"test";}}i:60;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"a00cbf6d0409ffeff97a894988943c94";s:4:"name";s:28:"tests/test_looping.html.phpt";s:4:"role";s:4:"test";}}i:61;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"5278f64f1cfa3df3842c226283cd944a";s:4:"name";s:28:"tests/test_methods.html.phpt";s:4:"role";s:4:"test";}}i:62;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"409091e3ed2cde1cb6495e778f6ced61";s:4:"name";s:31:"tests/test_namespaces.html.phpt";s:4:"role";s:4:"test";}}i:63;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9ee43d2ed621fe2dac980c0796b8540b";s:4:"name";s:37:"tests/test_plugin_modifiers.html.phpt";s:4:"role";s:4:"test";}}i:64;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"123f511810275ef16d5306fd47504f86";s:4:"name";s:28:"tests/test_raw_php.html.phpt";s:4:"role";s:4:"test";}}i:65;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f9ed3aaa5f75a38caf121f3dd6eb12c2";s:4:"name";s:29:"tests/test_raw_text.html.phpt";s:4:"role";s:4:"test";}}i:66;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"4473b55ff2741406ca64bf0658b9d423";s:4:"name";s:26:"tests/test_style.html.phpt";s:4:"role";s:4:"test";}}i:67;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"a86a60a7519d498e60225bcf25ab790c";s:4:"name";s:29:"tests/test_usesname.html.phpt";s:4:"role";s:4:"test";}}i:68;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"875e8857ec36342934b53fa4743bc047";s:4:"name";s:30:"tests/test_variables.html.phpt";s:4:"role";s:4:"test";}}i:69;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"32846cdfe2b7475e7671af2baae4736f";s:4:"name";s:18:"tests/treeTest.php";s:4:"role";s:4:"test";}}i:70;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:33:"tests/results2/blocks.html.en.php";s:4:"role";s:4:"test";}}i:71;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:40:"tests/results2/blocks.html.en.php#block1";s:4:"role";s:4:"test";}}i:72;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:40:"tests/results2/blocks.html.en.php#block2";s:4:"role";s:4:"test";}}i:73;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c2548393d6d96cbcd763d6d1944f3614";s:4:"name";s:41:"tests/results2/blocks.html.gettext.serial";s:4:"role";s:4:"test";}}i:74;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e4b0f536193c13c8ba3d2d7d27b6c7df";s:4:"name";s:41:"tests/results2/forms.html.elements.serial";s:4:"role";s:4:"test";}}i:75;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"3755a69d9d24db0e1693473982cc7d85";s:4:"name";s:32:"tests/results2/forms.html.en.php";s:4:"role";s:4:"test";}}i:76;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"423fa9978f4b7bc27235682db399c0df";s:4:"name";s:40:"tests/results2/forms.html.gettext.serial";s:4:"role";s:4:"test";}}i:77;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c5ecb2551e3321086bb5b2e0c4fc11bf";s:4:"name";s:32:"tests/results2/forms.result.html";s:4:"role";s:4:"test";}}i:78;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"37499c536346c5f65416be72f37d9cd9";s:4:"name";s:35:"tests/results2/function.html.en.php";s:4:"role";s:4:"test";}}i:79;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"09f20b7aac9757418d6ccd84d088db96";s:4:"name";s:43:"tests/results2/function.html.gettext.serial";s:4:"role";s:4:"test";}}i:80;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"53c32ef96941908697f839670b466836";s:4:"name";s:35:"tests/results2/function.result.html";s:4:"role";s:4:"test";}}i:81;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1bd88a1891ee582279df978265906ab4";s:4:"name";s:34:"tests/results2/globals.html.en.php";s:4:"role";s:4:"test";}}i:82;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ae5ed1a39ee851e0cf028e0ca78fe1ae";s:4:"name";s:42:"tests/results2/globals.html.gettext.serial";s:4:"role";s:4:"test";}}i:83;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"99565e3b1b6cb11aac03f3358639c4f2";s:4:"name";s:37:"tests/results2/namespaces.html.en.php";s:4:"role";s:4:"test";}}i:84;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"286930545142448be66d9f6e0f2d596e";s:4:"name";s:34:"tests/results2/raw_php.html.en.php";s:4:"role";s:4:"test";}}i:85;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"fb3a8ccc4563ec6937b5fd89fd706c5c";s:4:"name";s:22:"tests/smarty/index.tpl";s:4:"role";s:4:"test";}}i:86;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c807c30a4358d1d7a54c77c96a2c4595";s:4:"name";s:27:"tests/smarty/index.tpl.html";s:4:"role";s:4:"test";}}i:87;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"3b3e007b020eec530319c965ed843bd3";s:4:"name";s:27:"tests/smarty/smartytest.php";s:4:"role";s:4:"test";}}i:88;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:27:"tests/templates/blocks.html";s:4:"role";s:4:"test";}}i:89;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"fbf7a7a90c23b2a905582406c4ad8613";s:4:"name";s:29:"tests/templates/bug_2959.html";s:4:"role";s:4:"test";}}i:90;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"d6fe8fdffa3c44b1d99342cb1c149348";s:4:"name";s:31:"tests/templates/conditions.html";s:4:"role";s:4:"test";}}i:91;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"fc2b96c50e63a7bc363df5e2ac2ae0a8";s:4:"name";s:34:"tests/templates/error_foreach.html";s:4:"role";s:4:"test";}}i:92;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"80b9e7696aecfdf1f9d35bd6ce5aae33";s:4:"name";s:43:"tests/templates/flexy_raw_with_element.html";s:4:"role";s:4:"test";}}i:93;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9324b07b02f21e7dbae6b2c0a19e73ac";s:4:"name";s:39:"tests/templates/flexy_tojavascript.html";s:4:"role";s:4:"test";}}i:94;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"e5e5e94e4dd2da8f178aad24298f50a1";s:4:"name";s:26:"tests/templates/forms.html";s:4:"role";s:4:"test";}}i:95;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"71ab5a8cbb8e51e7e7f7436f0e8df24d";s:4:"name";s:29:"tests/templates/function.html";s:4:"role";s:4:"test";}}i:96;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"28ac18df2f5ab965bb25baec11c09ef5";s:4:"name";s:28:"tests/templates/globals.html";s:4:"role";s:4:"test";}}i:97;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"2c9b6aaf510fa6e512b6b00852e09798";s:4:"name";s:31:"tests/templates/image_view.html";s:4:"role";s:4:"test";}}i:98;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f3e61317f6443b809bd986336c1dcf20";s:4:"name";s:28:"tests/templates/include.html";s:4:"role";s:4:"test";}}i:99;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d41d8cd98f00b204e9800998ecf8427e";s:4:"name";s:29:"tests/templates/includes.html";s:4:"role";s:4:"test";}}i:100;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c400b538197b3e9130813d88ec92642";s:4:"name";s:34:"tests/templates/include_block.html";s:4:"role";s:4:"test";}}i:101;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"2767e4c309d7659e13d85c23a4827dd2";s:4:"name";s:31:"tests/templates/javascript.html";s:4:"role";s:4:"test";}}i:102;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"03eeab3f9a872dfbc6d69c3a707f4545";s:4:"name";s:28:"tests/templates/looping.html";s:4:"role";s:4:"test";}}i:103;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"7b8e6f45f4c21ada4afa8cfc760420b8";s:4:"name";s:28:"tests/templates/methods.html";s:4:"role";s:4:"test";}}i:104;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9c96bc467c89afa389a17a679e178ed1";s:4:"name";s:31:"tests/templates/namespaces.html";s:4:"role";s:4:"test";}}i:105;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9b366667c6cb9526e3f4fd061bd2406b";s:4:"name";s:37:"tests/templates/plugin_modifiers.html";s:4:"role";s:4:"test";}}i:106;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"0e4982d2f4c462c96489d6330626634f";s:4:"name";s:28:"tests/templates/raw_php.html";s:4:"role";s:4:"test";}}i:107;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"a7d8c5005c607ad254eb5f35fabee9a1";s:4:"name";s:29:"tests/templates/raw_text.html";s:4:"role";s:4:"test";}}i:108;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"372d27c6c2405534a78e5dcca4b31a53";s:4:"name";s:26:"tests/templates/style.html";s:4:"role";s:4:"test";}}i:109;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"9be3036b0bb05a41b3084d1a69012f64";s:4:"name";s:29:"tests/templates/usesname.html";s:4:"role";s:4:"test";}}i:110;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"93468f558bf2e9e181cf07cfd81d31e3";s:4:"name";s:30:"tests/templates/variables.html";s:4:"role";s:4:"test";}}i:111;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"9f5f2e908c7131a8fef93027099017b4";s:4:"name";s:28:"tests/trees/blocks.html.tree";s:4:"role";s:4:"test";}}i:112;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"19a1cc5c1cb122c05b4fba81098478ea";s:4:"name";s:32:"tests/trees/conditions.html.tree";s:4:"role";s:4:"test";}}i:113;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"a24dcae72c885c46684f7e0500e8bbc7";s:4:"name";s:35:"tests/trees/error_foreach.html.tree";s:4:"role";s:4:"test";}}i:114;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"72689abdf3107438b267ea1635b291a6";s:4:"name";s:40:"tests/trees/flexy_tojavascript.html.tree";s:4:"role";s:4:"test";}}i:115;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"49040d18e8e36ceb688787c521abe215";s:4:"name";s:27:"tests/trees/forms.html.tree";s:4:"role";s:4:"test";}}i:116;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4138e8347e7150ace16dce2b792c536";s:4:"name";s:30:"tests/trees/function.html.tree";s:4:"role";s:4:"test";}}i:117;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d459ed56c6af86e624f2136f92d43868";s:4:"name";s:29:"tests/trees/globals.html.tree";s:4:"role";s:4:"test";}}i:118;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"06cbfc7e94c26e295b1fe382884418d6";s:4:"name";s:32:"tests/trees/image_view.html.tree";s:4:"role";s:4:"test";}}i:119;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f5b327bf31b3ea57509b56c4aa0c1613";s:4:"name";s:30:"tests/trees/includes.html.tree";s:4:"role";s:4:"test";}}i:120;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1549bc9eb38e61210abead2dbe6405f6";s:4:"name";s:32:"tests/trees/javascript.html.tree";s:4:"role";s:4:"test";}}i:121;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ab9007488ae47e398db0250dc884289f";s:4:"name";s:29:"tests/trees/looping.html.tree";s:4:"role";s:4:"test";}}i:122;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"61b43b38e1a09893692e48fba59f5b7b";s:4:"name";s:29:"tests/trees/methods.html.tree";s:4:"role";s:4:"test";}}i:123;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"206dfb504c19e252ad6708310aef5d30";s:4:"name";s:32:"tests/trees/namespaces.html.tree";s:4:"role";s:4:"test";}}i:124;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b185c03322f7ab9d09ebc47e2fc3e4dd";s:4:"name";s:38:"tests/trees/plugin_modifiers.html.tree";s:4:"role";s:4:"test";}}i:125;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e693f6f92e06e0b4e8a15d399aa28f19";s:4:"name";s:29:"tests/trees/raw_php.html.tree";s:4:"role";s:4:"test";}}i:126;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e95960a770ee57f7982119180df5badf";s:4:"name";s:30:"tests/trees/raw_text.html.tree";s:4:"role";s:4:"test";}}i:127;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8dba9452a5ca27ec3b12323a0c6cad4d";s:4:"name";s:31:"tests/trees/variables.html.tree";s:4:"role";s:4:"test";}}i:128;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"bc32a98e207b4016f5d5edbde34484b5";s:4:"name";s:9:"ChangeLog";s:4:"role";s:4:"data";}}i:129;a:1:{s:7:"attribs";a:4:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f3b361e49bbb1bb73fd368fab38e2a8b";s:4:"name";s:4:"TODO";s:4:"role";s:4:"data";}}}}}s:12:"dependencies";a:2:{s:8:"required";a:2:{s:3:"php";a:1:{s:3:"min";s:3:"4.3";}s:13:"pearinstaller";a:1:{s:3:"min";s:7:"1.4.0b1";}}s:8:"optional";a:1:{s:7:"package";a:3:{i:0;a:3:{s:4:"name";s:15:"HTML_Javascript";s:7:"channel";s:12:"pear.php.net";s:3:"min";s:5:"1.1.0";}i:1;a:3:{s:4:"name";s:12:"File_Gettext";s:7:"channel";s:12:"pear.php.net";s:3:"min";s:5:"0.2.0";}i:2;a:3:{s:4:"name";s:12:"Translation2";s:7:"channel";s:12:"pear.php.net";s:3:"min";s:5:"0.0.1";}}}}s:10:"phprelease";s:0:"";s:9:"changelog";a:1:{s:7:"release";a:40:{i:0;a:5:{s:4:"date";s:10:"2011-01-11";s:7:"version";a:2:{s:7:"release";s:6:"1.3.11";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:87:"Minor fixes and feature release
+
+Bug Fixes	
+
+   #----- - PHP5 E_STRICT warnings removed";}i:1;a:5:{s:4:"date";s:10:"2010-06-07";s:7:"version";a:2:{s:7:"release";s:6:"1.3.10";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:728:"Minor fixes and feature release
+
+Bug Fixes	
+
+   #17390 - id nameuses replacement got broken on previous commit (Christophe Husson)
+   #17210 - remove error suppression
+   #16978 - support non-ascii vars
+   #14895 - local environment settings in test  (clockwerx)
+ 
+
+
+New Features/Changes		
+  #16554 - support dontCompile option
+  #----- - provisional support for label property of elements outputing as associated
+           label content (Stephane Matamontero)
+  #----- - new option disableTranslate - blocks all translation features, 
+           like writing .serial files. (Stephane Matamontero)
+  #----- - Element merge code moved element class - reducing size of base class (Alan)
+  #----- - SVN layout changed. (clockwerx)";}i:2;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.1";s:3:"api";s:3:"0.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2002-09-07";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:644:"First PEAR release,
+      - Renamed to HTML_Flexy_Template to conform to PEAR standards
+      - Added more phpdoc comments to filters
+      - Removed getTemplateDir method (legacy/unused)
+      - Added multilanguage support options['locale'] - in theory a i18n filter could be added.
+        Othewise it just checks to see if a template/compiled template with ????.{locale}.???
+        exists
+      - added staticQuickTemplate($template,$object) for quickly including subtemplates.
+      - added {q_include:#aaaaa.html#} to simpletags to support quicktemplate.
+      - changed to DIRECTORY_SEPERATOR and removed base directory check in windows.";}i:3;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.2";s:3:"api";s:3:"0.2";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-02-03";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:550:"Major overhall of engine
+ 
+- Introduction of Lex based Parser. - A real syntax checking 
+  Template generator
+- Ability to do Coldfusion style HTML attributes like foreach="abc,b,c" in TR or any tag.
+- Automatically converts form elements (INPUT, TEXTAREA, SELECT) contents to suitable PHP code
+  and adds error messages.
+
+- docs temporarily at http://devel.akbkhome.com/peardoc2/package.html.html-template-flexy.html
+
+Note: Filter features of original HTML_Template_Flexy are now depreciated.
+Note: This is not backwards compatible with version 0.1!";}i:4;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.3";s:3:"api";s:3:"0.3";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-02-06";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:530:"Bug fixes
+  - allow usage with only constructor options
+  - fixed form elements - should be htmlspecialchars, rather than urlencoding
+  - new Tokenizer is enabled by default - set 'useLegacy' in config/options to
+    use the old regex replacer.
+  - no variables are added (eg. o.*, a.* etc. to the page unless useLegacy is set)
+  - parsers are now private methods. (internal change)
+  
+New Features
+  - FLEXYSTART and FLEXYSTARTCHILDREN tags added so when use you include sub
+    templates, you can avoid including HEAD etc. tags.";}i:5;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.4";s:3:"api";s:3:"0.4";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-04-17";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1745:"Warning BC breaking release: 
+  - It is likely that form code may break with this due to the quickform integration
+  - likely issues: you will probably have to load the template and assign data to it
+    using $template->setQuickForm($this);
+    which will then expose $template->quickform as the template Object.
+  
+  
+
+Bug fixes
+  - fixed #literal# chopping bug (Yuri Dyakonov)
+  - fixed XML/XHTML support (no more munging of cases)
+  - fixed Fatal Error messages - with more details
+  - fixed whitespace in doctype tags. (wierd lexer stuff)
+  
+  
+  
+Features
+  - quickforms (3) integration added.
+  - quickforms with multiple forms $flexyobj->quickforms[0.....]
+  - Initial gettext/multilanguage support
+  - support variable[12] as a valid variable name.
+  - does syntax checking on form element names 
+  - fixed {outputBody()} (no prefix var methods)
+  - added url_rewrite for HREF and SRC tags - see example.ini for more details
+  - added compileAll.php script for bulk compilation on servers that do not have
+    write access to the directories they are serving off.
+  - Added extra Option - nonHTML to not make tokens of HTML tags, and enable postprocessing 
+    of compiled template to replace ?>\n with ?>\n\n (aimed at email templates)
+  - Added extra Option - allowPHP to enable PHP code in template to be left alone. - defaults
+    to off (eg. no PHP allowed) - 
+  - added support for <TAG IF="somevar.xxxx" and 
+    <TAG  IF="somevar.method()" maps to if (the test) <TAG .....
+  - handles elements with same name, like radio buttons  - although performing modifications on 
+    them can be tricky..
+    
+  
+While may thanks are owed to the many beta testers, special mention to Xavier 
+for spotting some really annoying little bugs.";}i:6;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.4.1";s:3:"api";s:5:"0.4.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-06-11";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:238:"Bug fixes
+ - fixed #literal# support for method calls - hopefully finally (Yuri Dyakonov)
+ - BC support for  getOptions call on objects (Marcin Galczynski)
+ 
+Features
+ - method calls with literals at end can now use modifiers (:h/:u etc.)";}i:7;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.5";s:3:"api";s:3:"0.5";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-09-03";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1952:"Warning: BC Breaking release
+Warning: Still in Beta Testing.. (although most of the API should now be settled)
+
+Due to the conclusion that the quickforms integration was not only messy, but 
+a heavy weight to be carried. The whole form/dynamic element layer was re-engineered.
+And the dependancy on QuickForms removed
+
+New Features
+  HTML_Template_Flexy_Element, is a small simple representation of  generic HTML,
+  it is used to store the representation of form elements, and any HTML element 
+  which contains the FLEXY:DYNAMIC attribute.
+  
+  you can override elements, by using the new second argument to outputObject($object,$elements)
+  where $elements is an associate array of (form name)=>Element
+  and the data in the elements array is merged with the visable template at runtime.
+  (so you only need to define what is different to the HTML, not the whole tag.)
+  
+  You can make any tag 'dynamic', by just tagging it. - if you replace the element
+  in the elements array with an object that implements a toHtml method, This will be 
+  called rather than the drawn element.
+ 
+  A Utility class, HTML_Template_Flexy_Factory offers common static methods, like
+  - creating element values from a key=>value array (eg. Dataobjects->toArray())
+  - setting error messages (as suffixes to elements)
+  - flag something as required. (prefixing strings to elements)
+  
+  
+Compiler Abstraction
+  The Compiler code in Flexy is now abstracted out, to make it possible to write
+  Other compilers and use the same caching/loading mechanism. (the old regex compiler
+  is included as an example of this.)
+  
+Other BC Issues:
+  all Flexy attributes must now be prefixed with "flexy:" namespace (eg. if, foreach, startchildren etc.)
+
+Other New Features
+  - support for array strings on variables and methods = eg. {somevar[xxx][yyy].toHtml():h}
+  - added new Modifiers :r (print_r), and :n (number_format), and in future may make available user defined modifiers";}i:8;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.5.1";s:3:"api";s:5:"0.5.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-09-04";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:157:"Fixes
+  - bufferedOutputObject correctly deals with elements array (Stephan Wentz)
+
+Note: See Version 0.5  release notes concerning BC issues with 0.4 series";}i:9;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.6";s:3:"api";s:3:"0.6";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-12-20";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1510:"This is a major fix release, along with quite a few new usefull features,
+many thanks to the various bug reporters, and especially from the Damein Turner and 
+The Seagull framework Team
+
+Hopefully, it is now the last beta before a stable release.....
+
+  New features 
+  - &lt;flexy:include src="xxx.html"/> to include other templates
+  - &lt;flexy:toJavascript flexy:prefix="js_name_prefix_" jsvar="php_flexy_var" ....>
+    uses HTML_Javascript_Convert to import PHP variables into Javascript.
+  - new modifier :b (for NL2BR + HTMLSPECIALCHARS)
+  - support for mulitple paths in templateDir
+  - attribute flexy:raw="{checked}" allows you to to put raw data into a tag.
+  - -- double minus, is valid inside comments (not really valid XHTML though)
+  - global flexyIgnore option, to prevent global conversion to Elements.
+  - better support for elements where name="someval[]"
+  
+  Fixes
+  - array syntax supported in attributes (eg. urlencoded)
+  - setting values of elements with type works (bug #460)
+  - methods with multiple arguments fixed.
+  - HTML_Template_Flexy_Element::removeAttribute() works
+    (removing attributes is done by setting them to false)
+  - include error on EndTag
+  - closed element (eg. with /> at end, can be used with flexy:if=
+  - radio buttons should auto create id's if none are set.
+  - xdebug recursion level increased (as the compiler recursion is high)
+  - buffered output with $elements fixed.
+  
+   
+Note: See Version 0.5  release notes concerning BC issues with 0.4 series";}i:10;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.6.1";s:3:"api";s:5:"0.6.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2003-12-21";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:55:"Bugfix release
+  - got javascript script wrapper wrong.";}i:11;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.6.2";s:3:"api";s:5:"0.6.2";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-01-20";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:207:"Minor Bugfix / mini feature release
+  - support flexy:if with method arguments eg.
+     flexy:if="somemethod(#with#,some,#args#)"
+  - foreach works on objects and arrays. : eg.
+    flexy:foreach="someobject"";}i:12;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.6.3";s:3:"api";s:5:"0.6.3";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-01-21";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:61:"Minor Bugfix 
+  - fixed class="{some_method(with_some_args)}"";}i:13;a:5:{s:7:"version";a:2:{s:7:"release";s:3:"0.7";s:3:"api";s:3:"0.7";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-04-03";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:2074:"Last Beta release - (eg. it's a RC Release - next one will be stable!!! hopefully)
+
+
+
+Minor Bugfix 
+  - fixed bug #643 (compile incorrectly tests for string on windows.)
+  - fixed bug #615 constructor can not return errors 
+   * check for compileDir isDir is in the compile() anyway..
+  - fix bug 1120: remove necessity to use flexy:ignoreonly, 
+    * if a input tag has {variable} the engine assumes you dont want use a flexy_element.
+  - fix bug #809 - extra minuses in comments
+    (too may ---> caused problems )  
+  - fix bug #874 (literals with commas in flexy:if)
+    flexy:if=(#aaa,bbb#) correctly seen as a single attribute
+  - fix bug 739 - syntax checking on foreach
+    flexy:foreach="singlevalue" now flagged as error.
+  - /flexy:include and toJavascript closers now correctly ignored.
+  - fix #856 - fix get_class usage.
+  - Fix bug when too many closing tags could zero the stack and delete parts of the template.
+ 
+ 
+ 
+New Features
+  - config option templateDirOrder=reverse, allows you to prefer the first found template,
+    rather than the last found template (when using theme type configurations)
+  - Engine uses File_Gettext if gettext is not found. (or textdomain is set.)
+  - Provisional SmartyConverter compiler, 
+    * provides a basic Coversion of Smarty to Flexy templates
+  - Provisional SmartyAPI emulator added.
+    * allows drop in replacement of flexy with simple code that uses Smarty.
+  - strict option 
+    so variable can emit errors if they are not defined.
+  - multiSource option 
+    for enabling themes type systems, where you can override the default template folder
+    with your own custom designs.
+  
+   
+Behaviour changed
+  - templateDir can be an array, or string seperated by the system path seperatory
+  (; on windows,: on unix)
+  - If a file exists in multiple paths, then The LAST FOUND template will be used.
+  (previously this emited an error)
+  - If you use multiple paths in the template_dir, then the path will be modified to
+  write to {compileDir}/{basename(actualTemplateDir)}_{md5(actualTemplateDir)}/...template..";}i:14;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.7.1";s:3:"api";s:5:"0.7.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-04-07";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:595:"Last Beta releases - (eg. it's a RC Release -  stable will be within a month!!! hopefully)
+
+Security: *** THIS AFFECTS __ALL__ PREVIOUS RELEASES ****
+  HTML_Template_Flexy_Element::setOptions and HTML_Template_Flexy_Element::setValue 
+  with textareas did not htmlspecialchars escape text automatically -
+  opening up potential for cross site scripting posibliities..
+  
+Bugs:
+  radio buttons and hidden fields with same name could be created - blanking out the radio buttons
+  url_rewrite option is now syntax tested.
+
+Features:
+  An attempt to create base Compile directory if it doesnt exist.";}i:15;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.8.0";s:3:"api";s:5:"0.8.0";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-04-22";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1775:"Feature addition release:
+
+  Moving to stable is posponed another month, so these new features get a thorough testing.
+  
+Bugs / Fixes:
+  * fixed overzealous closing on some tags 
+  * fixed double html escaping of some dynamic attributes
+  * ignore empty url_rewrite options (eg. images/:/templates/images,,)
+  * fixed recursion death, on &lt;s&gt; tags
+  * fixed flexy {variables} inside attributes='that are single quoted'
+  * unknown namespaces are assumed to be HTML (so XUL with html works ok)
+  
+Features:
+  * Translation2 transparent translation backend support
+    $options['Translation2'] = array(
+            'driver' => 'dataobjectsimple',
+            'options' => array()
+      )
+    will instantate Translation2 once , and call it to translate 
+    all strings found when compiling.
+    
+  * Strings to be translated can be explicitly marked by encapsulating them
+    in {_( ....... )_} 
+    Parsing is done prior to tokenizing, so you can include {variables} inside
+    the translation strings.
+    
+  * Access to private variables and methods now possible eg. 
+    {_myprivate_var}
+    ** requires option['privates'] = true
+    
+  * Access to super global variables now possible eg. 
+    {_SESSION[lang]} {_GET[posted]} {_POST[posted]}
+    {_REQUEST[lang]} {GLOBALS[posted]} {_COOKIES[posted]}
+    ** requires option['globals'] = true
+    (as per all variable, these are html escaped by default, for security reasons,
+     over-ride with the :h modifier)
+  
+  * Access to php functions now possible
+    {GLOBALS.date(mydate,#d/m/y#)}
+    ** requires option['globalfunctions'] = true
+    ** this is a big security hole if you dont trust your template authors,
+       it exposes exec() etc.
+    
+  * New Test infrastructure in CVS - enabling better unit testing.";}i:16;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.8.1";s:3:"api";s:5:"0.8.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-04-24";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:260:"Bugfix release:
+
+  Moving to stable Planned Sometime after Late May 2004
+  
+Bugs / Fixes:
+  * Stoped Javascript being striped when language= tag not used.
+  * PHP5 tested
+  * javscript and php code not added to gettext string list.
+ 
+Add test suite to package.";}i:17;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.8.2";s:3:"api";s:5:"0.8.2";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-05-05";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:556:"Bugfix release:
+
+Moving to stable Planned Sometime after Late May 2004
+  
+Bugs / Fixes:
+  * Bug #1274
+  * Test added for Bug #1310
+  * fix Flexy_Element::setOptions / Flexy_Element::setValue, using a value of 0 
+    highlighting everything.
+  * Closing Tags for XHTML closers correctly placed at end of tag.
+    (Flexy_Element only)
+  * url_rewriting now works in &lt;?xml-stylesheet tags. (they are treaded similar to
+    normal html tags now. (and only the opening &lt; is written using php.
+  * closers for namepaced tags are now output (big oops bug..)";}i:18;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.9.0";s:3:"api";s:5:"0.9.0";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-05-06";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:722:"minor BC break release:
+
+Moving to stable Planned Sometime after Late May 2004
+
+BC Break on Gettext string storage.
+  * during parsing of the template  flexy builds an array of strings that
+    can be used to automate translation.
+    The strings in this array used to be escaped (similar to addslashes).
+    
+    This proved to be a bad decision (As the unescaping and escaping got too messy)
+     - the strings are now stored as they are found. (albiet still trimmed)
+    
+New Features:
+  * strings from option tags, and value of input tags are added to gettext array.
+  * ability to generate namespaced options (eg. for XUL)
+    $x = new HTML_Template_Flexy_Element('html:select');
+    $x->setOptions(array(1=>'test'));";}i:19;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.9.1";s:3:"api";s:5:"0.9.1";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-06-17";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:533:"Feature addition release
+
+support for function blocks
+<flexy:function name="myfunction"> define a  block here  </flexy:function>
+<flexy:function call="myfunction"> calls the function </flexy:functio>
+<flexy:function call="{somevar}"> variable function calls </flexy:function>
+
+support for static template compiles
+options[compiler] = raw
+
+plugin support and user defined modifiers using plugins
+{this.plugin(#name#,var,var):h}
+{var:formatdate}  (calls plugin 
+{var:formatnumber}
+
+Assign API support using setData() and setDataByRef()";}i:20;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"0.9.2";s:3:"api";s:5:"0.9.2";}s:9:"stability";a:2:{s:7:"release";s:4:"beta";s:3:"api";s:4:"beta";}s:4:"date";s:10:"2004-06-24";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:303:"Feature addition release
+
+support for id blocks
+  $flexy->compile('sometemplate.html#mytag');
+  will compile a file {compileDir}/sometemplate.html#mytag
+  which contains the tag and contents of <span id="mytag"> ... </span>
+  
+flexy:function call="xxx" checks that the user defined function block exists";}i:21;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.0.0";s:3:"api";s:5:"1.0.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-08-07";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:995:"The Long Awaited Gold Release.
+                                                                                                                  
+Bug Fixes:
+  #1675 - CRLF fixes on windows
+  #------ Elements with matching key = value where incorrectly rendered.
+                                                                                                                  
+Tweaks:
+  * minor changes to simple Smarty Template Converter/Processor
+  * Default Compiler is now called Flexy
+  * Added Translator tool to package (see Translator.php source for usage)
+  * Translator Tool includes clearTemplateCache - removes all files.
+  * Some error message improvements
+  * Added Tree.php - A HTML to Tree par ser, which can be used to process HTML,
+      or will eventually replace the Tree parsing code in the compiler.
+      tests/treeTest.php shows example usage
+  * HTML_Template_Flexy_Element used with <FORM> tags, now honours override property
+  * Minor reduction in size of parser Nodes";}i:22;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.0.1";s:3:"api";s:5:"1.0.1";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-08-09";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:144:"Minor Bug Fix Release
+                                                                          
+Bugs
+  #------ Fix Missing include of Token.php";}i:23;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.1.0";s:3:"api";s:5:"1.1.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-12-18";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1366:"Minor Feature Release
+ 
+ Changes
+  Note: This release may include some changes which may break BC, (in which case they 
+  _are_ bugs and will be fixed.).
+  
+ 
+
+                                                                                                                        
+ Features
+  #------ Forms without names, now are not generated as HTML_Elements, rather than given a default name.
+  #------ support for -ve numbers in {arrays[-1]}
+  #------ support for variable replacements in commented out blocks of styles
+  #2074 - allow literal numbers in methods, eg. {somemethod(3,#astring#,avar)}  
+          Features
+  #------ Limited support for Xul in Elements
+  #2097   Support for mixing flexy vars within dynamic elements. 
+          (If this causes problems, please file a bug report.)
+  #------ Forms without names render as plain HTML, rather than generating dynamic
+          elements.
+  #------ createToken code is simplified and supports writing the position of a token
+          (generally for usage in the Tree.php file for parsing html only.)
+  #------ Fixed tree builder so it is more tolerant of malformed HTML (eg. form tags
+          with closures in the wrong part of the html tree)
+  #------ Style element now works with flexy tags (rather than ignoring them within 
+          comments)
+  #------ Support for translation of alt tags of IMG";}i:24;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.1.1";s:3:"api";s:5:"1.1.1";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-12-22";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:847:"Minor Feature Release
+ 
+ Changes
+  Note: This release does break BC in templates using the Translation tools,
+  (which since they are undocumented should really be regarded as beta I guess.).
+  
+  Support for Conversion of 
+  <b>this is {atag} in a sentence</b>
+  
+  to a translatable string:
+  "this is %s in a sentence"
+  
+  Is now NOT supported, it will result in 2 strings
+  "this is"
+  "in a sentence"
+          
+  To effect a similar result, the translation markers should 
+  now be used:
+  
+  <b>{_(this is {atag} in a sentence)_}</b>
+  
+  will convert into a translatable string
+  "this is {atag} in a sentence"
+ 
+ 
+ Features / Fixes
+  #------ support for translatable markers in html attributes added:
+          eg. <a href="{_(http://www.example.com)_}">.....
+  #3003   {var} replaced with %s - fixed by removing all string merging code.";}i:25;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.1.2";s:3:"api";s:5:"1.1.2";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-12-28";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:94:"Minor BugFix Release
+  
+ Features / Fixes
+  #3041 - Removed Warning raised during compilation.";}i:26;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.2.0";s:3:"api";s:5:"1.2.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2004-12-28";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:889:"Minor Feature Release
+  phpt testsuite has replaced previous CVS diff tests. (and in turn picked up
+  a few bugs)
+  
+  
+ Features / Fixes
+  #---- - Nested included templates <flexy:include src="...."/> inherit parent variables.
+  #---- - Fixed PHP code detection 
+  #---- - option['allowPHP'] = 'delete', will just remove php code, rather than 
+          barf with error, or just add it.
+  #---- - CDATA sections supported, with limited flexy tags (eg. foreach and variables only)
+  #---- - Plugins now show correct warning when loading fails.
+  #---- - Plugins as modifiers work correctly 
+          (fixed previous bug if they started with h/r/t etc. they got ignored.)
+          
+  #3129 - add note that setRequired/setError/freeze are depreciated 
+          (they should really be examples, that end user can modify, rather than a method)
+  #3145 - fixed missing ; in an error message.";}i:27;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.2.1";s:3:"api";s:5:"1.2.1";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2005-01-27";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:261:"Minor Bugfix Release
+    
+  
+ Features / Fixes
+  #---- - Pass by reference warning fixed.
+  #---- - Left debuging code in plugins
+  
+  A very nice introduction to plugin's exists here:
+      http://seagull.phpkitchen.com/docs/wakka.php?wakka=Howto/Flexy/Plugins";}i:28;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.2.2";s:3:"api";s:5:"1.2.2";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2005-07-23";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1251:"Minor Bugfix Release
+    
+  - Support Variables in Attributes of Flexy Elements (I would not recomend doing this, but
+    it appears to work!)
+  - Removed support for merging text and variables automatically for creating translation strings
+   (It never worked very well) the recommend way to mix variables and text for translation is to 
+   use the  translation markers {_( translation block with {flexy} {methods()} )_}
+    * Note these do not work correcty inside attributes values yet! - but will be fixed in the next release.
+  - Support for translator storing title= attribute values from <a> tags.
+  - Unix privaliges are 0664 for translation strings and element data.
+  
+  
+ Features / Fixes
+  bug #4103 - & replaced with &amp; in attribute values of flexy elements 
+      (&nbsp; is still broken however.)
+  bug #3885 - Flexy_Factory::setRequired() did not reset return values correctly (note this feature is depreciated)
+  --- ----- - Fixed Number format modifier (found by new test suite)
+  --- ----- - Fixed Attribute method calls modifiers being chopped.
+  bug #3946 - Using flexy:raw (to put stuff like "checked" in) now produces a warning when used
+             with dynamic elements (use flexy:ignore="yes") to stop them being dynamic.";}i:29;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.2.3";s:3:"api";s:5:"1.2.3";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2005-10-29";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:472:"Minor Bugfix Release
+    
+    
+  Feature Requests:
+      bug #5752 - add support for :e modifier == htmlentities() call.
+      * flexy:nameuses also replaces in id (obviously if %s in included)
+  
+  Fixes
+      * dont bork with error if value is not set when setValue() on a
+        radio button is called.
+      * fix up flexy:nameuses with radio buttons.
+      * php4.4 compatibility issues (return by ref stuff)
+      * summarize security issues with SimpleTags backend";}i:30;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.2.4";s:3:"api";s:5:"1.2.4";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2006-01-20";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1314:"Minor Bugfix / New Feature Release
+    
+    
+  Bugs  
+  ----
+  #6152 - default to using key in optgroup when novalue not set
+  #5267 - checkboxes using [], with ids
+  #5752 - add support for :e modifier == htmlentities() call.
+  
+  
+  Features/Changes and Fixes
+  --------------------------
+  * add ability to remove unused translations (in HTML_Template_Flexy_Translator,
+    tidy up javascript a little (ivan)
+    
+  * add support for gettext Translation2 backend - Requires uptodate version of 
+    Gettext/Translation2 packages ... (ivan)
+    
+  * remove warning from compiled template, when trying to merge possibly 
+    non-existant elements
+  
+  * remove short tags output from Simpletags compiler backend. + lots of 
+    whitespace changes, for some reason... (Demian Turner)
+  
+  * basic charset support in HTML_Template_Flexy_Element ... this is
+    a todo for the rendering layer though... (eg. utf8 / big5 sent to htmlspecialchars)
+    
+  * de-escaping of &amp;nbsp; only used in select option text - removed this feature from
+    other elements
+    
+  * add XUL checkbox support.
+  
+  * correctly replace linefeeds on XUL textbox's
+  
+  * better handling of XUL textbox and menulist elements converted to
+    Flexy XUL Elements
+    
+  * flexy:nameuses also replaces in id (obviously if %s is included)";}i:31;a:5:{s:4:"date";s:10:"2006-11-10";s:7:"version";a:2:{s:7:"release";s:5:"1.2.5";s:3:"api";s:5:"1.2.5";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:318:"Minor Bugfix / Minor Feature Release 
+      Bugs
+      #9157 - fix regex that tests translation strings - support multilanguage text
+      Feature Request 
+      #7483 - implement subtemplating with variable passing support Thanks to anil at m3
+      Fixes
+      gettext based translationns using Translation2 now work";}i:32;a:5:{s:4:"date";s:10:"2008-01-30";s:7:"version";a:2:{s:7:"release";s:5:"1.3.0";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:1133:"Bug Fix and Minor Feature release
+
+   Bug Fixes	
+       #7609  - user defined compilers causing warnings
+       #11751 - E_NOTICE in CustomFlexyAttributes, fix WS/TAB issue.
+       #9336  - nasty kludge fix to workaround stupidest decision in PHP history ;)
+              -fix PHP5/4 warning issues with is_a
+       #10830 - support title= on most tags, and alt= on input tags.
+       #12036 - prevent generation of closing tags for link, meta, hr, br
+       #9591 / #11740 - radio buttons can auto generate ID if none given        
+       #10002 - setData with array/object
+       #9157 - native language regex support
+       
+   New Features
+       #7609  - support user defined compilers as compiler object
+       #11741 - getOptions / clearOptions - thx to justdev
+       #----  - add experimental toJSON feature. flexy:toJSON
+       #12265 - support label in Element
+       #----- - change setlocale to use LC_MESSAGES to prevent bugs with strtoupper
+       #10248 - attributes: flexy:content, flexy:replace, flexy:omittag
+       #8008 - flexy:include src= allow variables { }
+       #9436 - support background for url rewriting";}i:33;a:5:{s:4:"date";s:10:"2008-01-31";s:7:"version";a:2:{s:7:"release";s:5:"1.3.1";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:93:"Minor Bug Fix release 
+
+   Bug Fixes	
+       #13010  - Missing CustomFlexyAttributes.php file";}i:34;a:5:{s:4:"date";s:10:"2008-01-31";s:7:"version";a:2:{s:7:"release";s:5:"1.3.2";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:215:"Major Bug Fix release 
+
+   Bug Fixes	
+       #13016  - Version 1.3.1 (and probably 1.3.0) where completely broken by CustomFlexyAttributes change
+                 Patch has been reverted - pending re-implementation.";}i:35;a:5:{s:4:"date";s:10:"2008-02-27";s:7:"version";a:2:{s:7:"release";s:5:"1.3.3";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:134:"Minor Bug Fix release 
+
+   Bug Fixes	
+       #9336, #13016, #13022, #13076, #13179  - is_a depreciation fix (hang internals for this!)";}i:36;a:5:{s:4:"date";s:10:"2008-05-05";s:7:"version";a:2:{s:7:"release";s:5:"1.3.4";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:284:"Minor Bug Fix release 
+
+   Bug Fixes	
+       #13419 - Windows compile throwed error with LC_MESSAGES - we now use LC_ALL and check for it.
+       #----- - PHP4 parse error in Flexy compiler      
+       #----- - flexy:toJSON incorrectly created variables using json_encode (PHP5 only)";}i:37;a:5:{s:4:"date";s:10:"2009-03-12";s:7:"version";a:2:{s:7:"release";s:5:"1.3.6";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:997:"Minor Bug Fix release 
+
+   Bug Fixes	
+   
+	#----- - fix include to only pass variables created by template, rather than 
+               flood the subtemplate - fixes various segfaults.
+	#----- - Add scopeVars fetch for better include
+	#----- - add some extra checks for writing merging elements
+	#14105 - Empty element tag ending with /> and flexy:replace
+	#15961 - customflexyattributes  ignores multiple flexy attributes.
+	#14984 - PHP5 class_exists compat
+	#15272 - inherrited namesues checkboxes get wrong names - patch by Heikki Uusitalo
+	#15279 - early return from checkbox code with [] in name. - may have knock on effects
+	#15874 - single API for error reporting in Compiler/Flexy/Tag.php - to show
+            filename/line/tag etc.
+	#15263 - php5 merge elements needs to clone objects
+	#14899 - flexy:xhtml honored by element - fix by Geoff Beaumon
+   
+	
+	#14897 - xhtml not honored by element input etc.
+	#13887 - use is_callable on plugins
+   Request #14893 - improve PHPCS (clockwerx)";}i:38;a:5:{s:4:"date";s:10:"2009-03-13";s:7:"version";a:2:{s:7:"release";s:5:"1.3.7";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:171:"Friday the 13th Release - Minor Bug Fixes
+
+   Bug Fixes	
+   
+	#16026 - Fix is_callable in plugins - (refix to #13887)
+   #----- - Fix new include feature adding blank vars";}i:39;a:5:{s:7:"version";a:2:{s:7:"release";s:5:"1.3.9";s:3:"api";s:5:"1.3.0";}s:9:"stability";a:2:{s:7:"release";s:6:"stable";s:3:"api";s:6:"stable";}s:4:"date";s:10:"2009-03-24";s:7:"license";a:2:{s:7:"attribs";a:1:{s:3:"uri";s:26:"http://www.php.net/license";}s:8:"_content";s:11:"PHP License";}s:5:"notes";s:121:"Fix The Unlucky Release - Minor Bug Fixes
+
+   Bug Fixes	
+   
+	
+   #----- - Plugin was broken by last fix in last release.";}}}s:8:"filelist";a:130:{s:38:"examples/EMPTY_FOLDERS_NOTHING_IN_HERE";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8a8ff096b84107b3646a9bfc9b2b24e7";s:4:"name";s:38:"examples/EMPTY_FOLDERS_NOTHING_IN_HERE";s:4:"role";s:3:"doc";s:12:"installed_as";s:81:"/usr/lib/php/pear/docs/HTML_Template_Flexy/examples/EMPTY_FOLDERS_NOTHING_IN_HERE";}s:23:"HTML/Template/Flexy.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"236d576d3baca6ba09e8cdcf3cde26e9";s:4:"name";s:23:"HTML/Template/Flexy.php";s:4:"role";s:3:"php";s:12:"installed_as";s:66:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy.php";}s:30:"HTML/Template/Flexy/Assign.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"932c71cacaa23e818c9ff35c555270d0";s:4:"name";s:30:"HTML/Template/Flexy/Assign.php";s:4:"role";s:3:"php";s:12:"installed_as";s:73:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Assign.php";}s:34:"HTML/Template/Flexy/compileAll.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"688d7f20bc057097ceaf258165f36f92";s:4:"name";s:34:"HTML/Template/Flexy/compileAll.php";s:4:"role";s:3:"php";s:12:"installed_as";s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/compileAll.php";}s:32:"HTML/Template/Flexy/Compiler.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4bd68ff3609dfd823fd40faa44f29940";s:4:"name";s:32:"HTML/Template/Flexy/Compiler.php";s:4:"role";s:3:"php";s:12:"installed_as";s:75:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler.php";}s:31:"HTML/Template/Flexy/Element.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"24efc79077ce51c53708143dcfd61399";s:4:"name";s:31:"HTML/Template/Flexy/Element.php";s:4:"role";s:3:"php";s:12:"installed_as";s:74:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Element.php";}s:31:"HTML/Template/Flexy/example.ini";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4145fc313dae9ebd14e291459fbd06cf";s:4:"name";s:31:"HTML/Template/Flexy/example.ini";s:4:"role";s:4:"data";s:12:"installed_as";s:74:"/usr/lib/php/pear/data/HTML_Template_Flexy/HTML/Template/Flexy/example.ini";}s:31:"HTML/Template/Flexy/Factory.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4f2490d8f967fee7c32440b3db00489";s:4:"name";s:31:"HTML/Template/Flexy/Factory.php";s:4:"role";s:3:"php";s:12:"installed_as";s:74:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Factory.php";}s:30:"HTML/Template/Flexy/Plugin.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"db19f3da08a0456e96f9615cdb311b4d";s:4:"name";s:30:"HTML/Template/Flexy/Plugin.php";s:4:"role";s:3:"php";s:12:"installed_as";s:73:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Plugin.php";}s:33:"HTML/Template/Flexy/SmartyAPI.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"fc4658baafaa77ae2a6e8b022cc5d422";s:4:"name";s:33:"HTML/Template/Flexy/SmartyAPI.php";s:4:"role";s:3:"php";s:12:"installed_as";s:76:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/SmartyAPI.php";}s:28:"HTML/Template/Flexy/Test.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ee34ec9e54d3309436ddd171ff07fcb1";s:4:"name";s:28:"HTML/Template/Flexy/Test.php";s:4:"role";s:3:"php";s:12:"installed_as";s:71:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Test.php";}s:29:"HTML/Template/Flexy/Token.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c2229891ea8f4ebcffa151717b6dad42";s:4:"name";s:29:"HTML/Template/Flexy/Token.php";s:4:"role";s:3:"php";s:12:"installed_as";s:72:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token.php";}s:33:"HTML/Template/Flexy/Tokenizer.lex";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c1d354936d0a6deebb877866dd842d5";s:4:"name";s:33:"HTML/Template/Flexy/Tokenizer.lex";s:4:"role";s:4:"data";s:12:"installed_as";s:76:"/usr/lib/php/pear/data/HTML_Template_Flexy/HTML/Template/Flexy/Tokenizer.lex";}s:33:"HTML/Template/Flexy/Tokenizer.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b070ba42cbf188c0528c4a5140f2ea58";s:4:"name";s:33:"HTML/Template/Flexy/Tokenizer.php";s:4:"role";s:3:"php";s:12:"installed_as";s:76:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Tokenizer.php";}s:34:"HTML/Template/Flexy/Translator.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e5998aff8abd679d57c89bbb83b473fe";s:4:"name";s:34:"HTML/Template/Flexy/Translator.php";s:4:"role";s:3:"php";s:12:"installed_as";s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Translator.php";}s:28:"HTML/Template/Flexy/Tree.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f5a21a9ec9303262ef219e356730343b";s:4:"name";s:28:"HTML/Template/Flexy/Tree.php";s:4:"role";s:3:"php";s:12:"installed_as";s:71:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Tree.php";}s:38:"HTML/Template/Flexy/Compiler/Flexy.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"401e79e48c4cb11d3894a6b4a860ef19";s:4:"name";s:38:"HTML/Template/Flexy/Compiler/Flexy.php";s:4:"role";s:3:"php";s:12:"installed_as";s:81:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Flexy.php";}s:38:"HTML/Template/Flexy/Compiler/Regex.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"6592604cb34e04f28816cda5cd5045e5";s:4:"name";s:38:"HTML/Template/Flexy/Compiler/Regex.php";s:4:"role";s:3:"php";s:12:"installed_as";s:81:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex.php";}s:48:"HTML/Template/Flexy/Compiler/SmartyConvertor.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c9945950d33eda39e541380dd014b9a";s:4:"name";s:48:"HTML/Template/Flexy/Compiler/SmartyConvertor.php";s:4:"role";s:3:"php";s:12:"installed_as";s:91:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/SmartyConvertor.php";}s:41:"HTML/Template/Flexy/Compiler/Standard.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"50820eecd9738c6ad579b7e3972db3c5";s:4:"name";s:41:"HTML/Template/Flexy/Compiler/Standard.php";s:4:"role";s:3:"php";s:12:"installed_as";s:84:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Standard.php";}s:60:"HTML/Template/Flexy/Compiler/Flexy/CustomFlexyAttributes.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"023a75b2347a91eb2a1c32a40fc525cf";s:4:"name";s:60:"HTML/Template/Flexy/Compiler/Flexy/CustomFlexyAttributes.php";s:4:"role";s:3:"php";s:12:"installed_as";s:103:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Flexy/CustomFlexyAttributes.php";}s:44:"HTML/Template/Flexy/Compiler/Flexy/Flexy.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d991b10dd607ccda0de7365e96f27210";s:4:"name";s:44:"HTML/Template/Flexy/Compiler/Flexy/Flexy.php";s:4:"role";s:3:"php";s:12:"installed_as";s:87:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Flexy/Flexy.php";}s:42:"HTML/Template/Flexy/Compiler/Flexy/Tag.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"58435cc56556f7bf3318e6db807f9286";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Flexy/Tag.php";s:4:"role";s:3:"php";s:12:"installed_as";s:85:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Flexy/Tag.php";}s:47:"HTML/Template/Flexy/Compiler/Regex/BodyOnly.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"5600f9b49e119cf8ee44999220e5f7c8";s:4:"name";s:47:"HTML/Template/Flexy/Compiler/Regex/BodyOnly.php";s:4:"role";s:3:"php";s:12:"installed_as";s:90:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/BodyOnly.php";}s:43:"HTML/Template/Flexy/Compiler/Regex/Mail.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"70ece2c2644c51395e81234c486f3416";s:4:"name";s:43:"HTML/Template/Flexy/Compiler/Regex/Mail.php";s:4:"role";s:3:"php";s:12:"installed_as";s:86:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/Mail.php";}s:43:"HTML/Template/Flexy/Compiler/Regex/Math.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b9f9c81da386f12400fe0630af5d0154";s:4:"name";s:43:"HTML/Template/Flexy/Compiler/Regex/Math.php";s:4:"role";s:3:"php";s:12:"installed_as";s:86:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/Math.php";}s:42:"HTML/Template/Flexy/Compiler/Regex/Php.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"3e2f98d5c5d22ba6a13b879a57c8744e";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Regex/Php.php";s:4:"role";s:3:"php";s:12:"installed_as";s:85:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/Php.php";}s:52:"HTML/Template/Flexy/Compiler/Regex/RtfSimpleTags.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"7eadfd696244f811af8cdfb84efd229f";s:4:"name";s:52:"HTML/Template/Flexy/Compiler/Regex/RtfSimpleTags.php";s:4:"role";s:3:"php";s:12:"installed_as";s:95:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/RtfSimpleTags.php";}s:49:"HTML/Template/Flexy/Compiler/Regex/SimpleTags.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"568b9d0ffb27a05abf4cce8e085fcfdd";s:4:"name";s:49:"HTML/Template/Flexy/Compiler/Regex/SimpleTags.php";s:4:"role";s:3:"php";s:12:"installed_as";s:92:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/SimpleTags.php";}s:42:"HTML/Template/Flexy/Compiler/Regex/Xml.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ede68cf8ce6fcd2444bc8cc46dbb7c4f";s:4:"name";s:42:"HTML/Template/Flexy/Compiler/Regex/Xml.php";s:4:"role";s:3:"php";s:12:"installed_as";s:85:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex/Xml.php";}s:47:"HTML/Template/Flexy/Compiler/Standard/Flexy.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"2894e8e071c29ad3b161e4ede084107b";s:4:"name";s:47:"HTML/Template/Flexy/Compiler/Standard/Flexy.php";s:4:"role";s:3:"php";s:12:"installed_as";s:90:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Standard/Flexy.php";}s:45:"HTML/Template/Flexy/Compiler/Standard/Tag.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1ae36b91f076f32b3a38b03f0fe9bb2d";s:4:"name";s:45:"HTML/Template/Flexy/Compiler/Standard/Tag.php";s:4:"role";s:3:"php";s:12:"installed_as";s:88:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Standard/Tag.php";}s:35:"HTML/Template/Flexy/Element/Xul.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b0526311729d5e6a689e63fac7b225d8";s:4:"name";s:35:"HTML/Template/Flexy/Element/Xul.php";s:4:"role";s:3:"php";s:12:"installed_as";s:78:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Element/Xul.php";}s:37:"HTML/Template/Flexy/Plugin/Savant.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"851121e801a08c234d60cc38741e805a";s:4:"name";s:37:"HTML/Template/Flexy/Plugin/Savant.php";s:4:"role";s:3:"php";s:12:"installed_as";s:80:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Plugin/Savant.php";}s:45:"HTML/Template/Flexy/templates/translator.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"de220a60d41b99938c85b8ddf1fb7aa6";s:4:"name";s:45:"HTML/Template/Flexy/templates/translator.html";s:4:"role";s:3:"doc";s:12:"installed_as";s:88:"/usr/lib/php/pear/docs/HTML_Template_Flexy/HTML/Template/Flexy/templates/translator.html";}s:35:"HTML/Template/Flexy/Token/Cdata.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c809d4ece552759f3e6d3d6454da7d6e";s:4:"name";s:35:"HTML/Template/Flexy/Token/Cdata.php";s:4:"role";s:3:"php";s:12:"installed_as";s:78:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Cdata.php";}s:34:"HTML/Template/Flexy/Token/Else.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"cc2c45751e1a1b1a0be2364efaa90bf8";s:4:"name";s:34:"HTML/Template/Flexy/Token/Else.php";s:4:"role";s:3:"php";s:12:"installed_as";s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Else.php";}s:33:"HTML/Template/Flexy/Token/End.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c633fb71e243e23382f95dc2d49ccae0";s:4:"name";s:33:"HTML/Template/Flexy/Token/End.php";s:4:"role";s:3:"php";s:12:"installed_as";s:76:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/End.php";}s:36:"HTML/Template/Flexy/Token/EndTag.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c3f6c71c7183462b25838339400e70b1";s:4:"name";s:36:"HTML/Template/Flexy/Token/EndTag.php";s:4:"role";s:3:"php";s:12:"installed_as";s:79:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/EndTag.php";}s:37:"HTML/Template/Flexy/Token/Foreach.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"88b2e62245d2ec2ff6ec7fbaeea8a330";s:4:"name";s:37:"HTML/Template/Flexy/Token/Foreach.php";s:4:"role";s:3:"php";s:12:"installed_as";s:80:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Foreach.php";}s:32:"HTML/Template/Flexy/Token/If.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8eb512e43d24973a7804a4fca3729efa";s:4:"name";s:32:"HTML/Template/Flexy/Token/If.php";s:4:"role";s:3:"php";s:12:"installed_as";s:75:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/If.php";}s:36:"HTML/Template/Flexy/Token/Method.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"5f29fa6aa7e05f88a2342754be172fe3";s:4:"name";s:36:"HTML/Template/Flexy/Token/Method.php";s:4:"role";s:3:"php";s:12:"installed_as";s:79:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Method.php";}s:40:"HTML/Template/Flexy/Token/Processing.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ccbc4af70ae909431c0eedc38293456f";s:4:"name";s:40:"HTML/Template/Flexy/Token/Processing.php";s:4:"role";s:3:"php";s:12:"installed_as";s:83:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Processing.php";}s:33:"HTML/Template/Flexy/Token/Tag.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"76afca7d2a66c2438f26a65e25d1d8b2";s:4:"name";s:33:"HTML/Template/Flexy/Token/Tag.php";s:4:"role";s:3:"php";s:12:"installed_as";s:76:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Tag.php";}s:34:"HTML/Template/Flexy/Token/Text.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"721697b8cdb41fbbba0d34a83f4b74ba";s:4:"name";s:34:"HTML/Template/Flexy/Token/Text.php";s:4:"role";s:3:"php";s:12:"installed_as";s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Text.php";}s:33:"HTML/Template/Flexy/Token/Var.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"cac8f3e0c2d66a3574bd2e407e21c7a5";s:4:"name";s:33:"HTML/Template/Flexy/Token/Var.php";s:4:"role";s:3:"php";s:12:"installed_as";s:76:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token/Var.php";}s:20:"tests/make_tests.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ded76467f24864875821f99d4228234d";s:4:"name";s:20:"tests/make_tests.php";s:4:"role";s:4:"test";s:12:"installed_as";s:64:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/make_tests.php";}s:14:"tests/test.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"2f28c628e7fb0ad75e007cc257ba3b4f";s:4:"name";s:14:"tests/test.php";s:4:"role";s:4:"test";s:12:"installed_as";s:58:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test.php";}s:19:"tests/testsuite.php";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"3625999541b17a1ad60755d80295f950";s:4:"name";s:19:"tests/testsuite.php";s:4:"role";s:4:"test";s:12:"installed_as";s:63:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/testsuite.php";}s:27:"tests/test_blocks.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"c5e87c139c5ae80064f042f3877ecf12";s:4:"name";s:27:"tests/test_blocks.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:71:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_blocks.html.phpt";}s:29:"tests/test_bug_2959.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"13a67a45a034741e2806ea436a6dc5ca";s:4:"name";s:29:"tests/test_bug_2959.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_bug_2959.html.phpt";}s:31:"tests/test_conditions.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"6c503743b6a04b17568530cc9e2615b1";s:4:"name";s:31:"tests/test_conditions.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_conditions.html.phpt";}s:34:"tests/test_error_foreach.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"492b0b13e8ad4364bbbfe952d331d4ec";s:4:"name";s:34:"tests/test_error_foreach.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:78:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_error_foreach.html.phpt";}s:39:"tests/test_flexy_tojavascript.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"19445a02f1e7924346fdf87d10218c0b";s:4:"name";s:39:"tests/test_flexy_tojavascript.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:83:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_flexy_tojavascript.html.phpt";}s:26:"tests/test_forms.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"cbbece514c050be6343a4827c733aabf";s:4:"name";s:26:"tests/test_forms.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:70:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_forms.html.phpt";}s:29:"tests/test_function.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"89c780d12736ca98318fe3409cea7dc4";s:4:"name";s:29:"tests/test_function.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_function.html.phpt";}s:28:"tests/test_globals.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f3a3a39555edcfaf0d0765ab61cec40b";s:4:"name";s:28:"tests/test_globals.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_globals.html.phpt";}s:31:"tests/test_image_view.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"c39eee821bb7aa89110f846a04623d82";s:4:"name";s:31:"tests/test_image_view.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_image_view.html.phpt";}s:28:"tests/test_include.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"8300ab3345afa189afea9a0221cd685f";s:4:"name";s:28:"tests/test_include.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_include.html.phpt";}s:31:"tests/test_javascript.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"dc00c7e50511608a3f402cc03c7daa21";s:4:"name";s:31:"tests/test_javascript.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_javascript.html.phpt";}s:28:"tests/test_looping.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"a00cbf6d0409ffeff97a894988943c94";s:4:"name";s:28:"tests/test_looping.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_looping.html.phpt";}s:28:"tests/test_methods.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"5278f64f1cfa3df3842c226283cd944a";s:4:"name";s:28:"tests/test_methods.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_methods.html.phpt";}s:31:"tests/test_namespaces.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"409091e3ed2cde1cb6495e778f6ced61";s:4:"name";s:31:"tests/test_namespaces.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_namespaces.html.phpt";}s:37:"tests/test_plugin_modifiers.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9ee43d2ed621fe2dac980c0796b8540b";s:4:"name";s:37:"tests/test_plugin_modifiers.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:81:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_plugin_modifiers.html.phpt";}s:28:"tests/test_raw_php.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"123f511810275ef16d5306fd47504f86";s:4:"name";s:28:"tests/test_raw_php.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_raw_php.html.phpt";}s:29:"tests/test_raw_text.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f9ed3aaa5f75a38caf121f3dd6eb12c2";s:4:"name";s:29:"tests/test_raw_text.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_raw_text.html.phpt";}s:26:"tests/test_style.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"4473b55ff2741406ca64bf0658b9d423";s:4:"name";s:26:"tests/test_style.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:70:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_style.html.phpt";}s:29:"tests/test_usesname.html.phpt";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"a86a60a7519d498e60225bcf25ab790c";s:4:"name";s:29:"tests/test_usesname.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_usesname.html.phpt";}s:30:"tests/test_variables.html.phpt";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"875e8857ec36342934b53fa4743bc047";s:4:"name";s:30:"tests/test_variables.html.phpt";s:4:"role";s:4:"test";s:12:"installed_as";s:74:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/test_variables.html.phpt";}s:18:"tests/treeTest.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"32846cdfe2b7475e7671af2baae4736f";s:4:"name";s:18:"tests/treeTest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:62:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/treeTest.php";}s:33:"tests/results2/blocks.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:33:"tests/results2/blocks.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:77:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/blocks.html.en.php";}s:40:"tests/results2/blocks.html.en.php#block1";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:40:"tests/results2/blocks.html.en.php#block1";s:4:"role";s:4:"test";s:12:"installed_as";s:84:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/blocks.html.en.php#block1";}s:40:"tests/results2/blocks.html.en.php#block2";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:40:"tests/results2/blocks.html.en.php#block2";s:4:"role";s:4:"test";s:12:"installed_as";s:84:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/blocks.html.en.php#block2";}s:41:"tests/results2/blocks.html.gettext.serial";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c2548393d6d96cbcd763d6d1944f3614";s:4:"name";s:41:"tests/results2/blocks.html.gettext.serial";s:4:"role";s:4:"test";s:12:"installed_as";s:85:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/blocks.html.gettext.serial";}s:41:"tests/results2/forms.html.elements.serial";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e4b0f536193c13c8ba3d2d7d27b6c7df";s:4:"name";s:41:"tests/results2/forms.html.elements.serial";s:4:"role";s:4:"test";s:12:"installed_as";s:85:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/forms.html.elements.serial";}s:32:"tests/results2/forms.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"3755a69d9d24db0e1693473982cc7d85";s:4:"name";s:32:"tests/results2/forms.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/forms.html.en.php";}s:40:"tests/results2/forms.html.gettext.serial";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"423fa9978f4b7bc27235682db399c0df";s:4:"name";s:40:"tests/results2/forms.html.gettext.serial";s:4:"role";s:4:"test";s:12:"installed_as";s:84:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/forms.html.gettext.serial";}s:32:"tests/results2/forms.result.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c5ecb2551e3321086bb5b2e0c4fc11bf";s:4:"name";s:32:"tests/results2/forms.result.html";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/forms.result.html";}s:35:"tests/results2/function.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"37499c536346c5f65416be72f37d9cd9";s:4:"name";s:35:"tests/results2/function.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:79:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/function.html.en.php";}s:43:"tests/results2/function.html.gettext.serial";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"09f20b7aac9757418d6ccd84d088db96";s:4:"name";s:43:"tests/results2/function.html.gettext.serial";s:4:"role";s:4:"test";s:12:"installed_as";s:87:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/function.html.gettext.serial";}s:35:"tests/results2/function.result.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"53c32ef96941908697f839670b466836";s:4:"name";s:35:"tests/results2/function.result.html";s:4:"role";s:4:"test";s:12:"installed_as";s:79:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/function.result.html";}s:34:"tests/results2/globals.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1bd88a1891ee582279df978265906ab4";s:4:"name";s:34:"tests/results2/globals.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:78:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/globals.html.en.php";}s:42:"tests/results2/globals.html.gettext.serial";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ae5ed1a39ee851e0cf028e0ca78fe1ae";s:4:"name";s:42:"tests/results2/globals.html.gettext.serial";s:4:"role";s:4:"test";s:12:"installed_as";s:86:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/globals.html.gettext.serial";}s:37:"tests/results2/namespaces.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"99565e3b1b6cb11aac03f3358639c4f2";s:4:"name";s:37:"tests/results2/namespaces.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:81:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/namespaces.html.en.php";}s:34:"tests/results2/raw_php.html.en.php";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"286930545142448be66d9f6e0f2d596e";s:4:"name";s:34:"tests/results2/raw_php.html.en.php";s:4:"role";s:4:"test";s:12:"installed_as";s:78:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2/raw_php.html.en.php";}s:22:"tests/smarty/index.tpl";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"fb3a8ccc4563ec6937b5fd89fd706c5c";s:4:"name";s:22:"tests/smarty/index.tpl";s:4:"role";s:4:"test";s:12:"installed_as";s:66:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/smarty/index.tpl";}s:27:"tests/smarty/index.tpl.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"c807c30a4358d1d7a54c77c96a2c4595";s:4:"name";s:27:"tests/smarty/index.tpl.html";s:4:"role";s:4:"test";s:12:"installed_as";s:71:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/smarty/index.tpl.html";}s:27:"tests/smarty/smartytest.php";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"3b3e007b020eec530319c965ed843bd3";s:4:"name";s:27:"tests/smarty/smartytest.php";s:4:"role";s:4:"test";s:12:"installed_as";s:71:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/smarty/smartytest.php";}s:27:"tests/templates/blocks.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"d4d718a2280911c0dc80700738cdea14";s:4:"name";s:27:"tests/templates/blocks.html";s:4:"role";s:4:"test";s:12:"installed_as";s:71:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/blocks.html";}s:29:"tests/templates/bug_2959.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"fbf7a7a90c23b2a905582406c4ad8613";s:4:"name";s:29:"tests/templates/bug_2959.html";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/bug_2959.html";}s:31:"tests/templates/conditions.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"d6fe8fdffa3c44b1d99342cb1c149348";s:4:"name";s:31:"tests/templates/conditions.html";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/conditions.html";}s:34:"tests/templates/error_foreach.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"fc2b96c50e63a7bc363df5e2ac2ae0a8";s:4:"name";s:34:"tests/templates/error_foreach.html";s:4:"role";s:4:"test";s:12:"installed_as";s:78:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/error_foreach.html";}s:43:"tests/templates/flexy_raw_with_element.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"80b9e7696aecfdf1f9d35bd6ce5aae33";s:4:"name";s:43:"tests/templates/flexy_raw_with_element.html";s:4:"role";s:4:"test";s:12:"installed_as";s:87:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/flexy_raw_with_element.html";}s:39:"tests/templates/flexy_tojavascript.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9324b07b02f21e7dbae6b2c0a19e73ac";s:4:"name";s:39:"tests/templates/flexy_tojavascript.html";s:4:"role";s:4:"test";s:12:"installed_as";s:83:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/flexy_tojavascript.html";}s:26:"tests/templates/forms.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"e5e5e94e4dd2da8f178aad24298f50a1";s:4:"name";s:26:"tests/templates/forms.html";s:4:"role";s:4:"test";s:12:"installed_as";s:70:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/forms.html";}s:29:"tests/templates/function.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"71ab5a8cbb8e51e7e7f7436f0e8df24d";s:4:"name";s:29:"tests/templates/function.html";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/function.html";}s:28:"tests/templates/globals.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"28ac18df2f5ab965bb25baec11c09ef5";s:4:"name";s:28:"tests/templates/globals.html";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/globals.html";}s:31:"tests/templates/image_view.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"2c9b6aaf510fa6e512b6b00852e09798";s:4:"name";s:31:"tests/templates/image_view.html";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/image_view.html";}s:28:"tests/templates/include.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"f3e61317f6443b809bd986336c1dcf20";s:4:"name";s:28:"tests/templates/include.html";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/include.html";}s:29:"tests/templates/includes.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d41d8cd98f00b204e9800998ecf8427e";s:4:"name";s:29:"tests/templates/includes.html";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/includes.html";}s:34:"tests/templates/include_block.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"4c400b538197b3e9130813d88ec92642";s:4:"name";s:34:"tests/templates/include_block.html";s:4:"role";s:4:"test";s:12:"installed_as";s:78:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/include_block.html";}s:31:"tests/templates/javascript.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"2767e4c309d7659e13d85c23a4827dd2";s:4:"name";s:31:"tests/templates/javascript.html";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/javascript.html";}s:28:"tests/templates/looping.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"03eeab3f9a872dfbc6d69c3a707f4545";s:4:"name";s:28:"tests/templates/looping.html";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/looping.html";}s:28:"tests/templates/methods.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"7b8e6f45f4c21ada4afa8cfc760420b8";s:4:"name";s:28:"tests/templates/methods.html";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/methods.html";}s:31:"tests/templates/namespaces.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9c96bc467c89afa389a17a679e178ed1";s:4:"name";s:31:"tests/templates/namespaces.html";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/namespaces.html";}s:37:"tests/templates/plugin_modifiers.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"9b366667c6cb9526e3f4fd061bd2406b";s:4:"name";s:37:"tests/templates/plugin_modifiers.html";s:4:"role";s:4:"test";s:12:"installed_as";s:81:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/plugin_modifiers.html";}s:28:"tests/templates/raw_php.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"0e4982d2f4c462c96489d6330626634f";s:4:"name";s:28:"tests/templates/raw_php.html";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/raw_php.html";}s:29:"tests/templates/raw_text.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"a7d8c5005c607ad254eb5f35fabee9a1";s:4:"name";s:29:"tests/templates/raw_text.html";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/raw_text.html";}s:26:"tests/templates/style.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"372d27c6c2405534a78e5dcca4b31a53";s:4:"name";s:26:"tests/templates/style.html";s:4:"role";s:4:"test";s:12:"installed_as";s:70:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/style.html";}s:29:"tests/templates/usesname.html";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"9be3036b0bb05a41b3084d1a69012f64";s:4:"name";s:29:"tests/templates/usesname.html";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/usesname.html";}s:30:"tests/templates/variables.html";a:5:{s:14:"baseinstalldir";s:13:"HTML/Template";s:6:"md5sum";s:32:"93468f558bf2e9e181cf07cfd81d31e3";s:4:"name";s:30:"tests/templates/variables.html";s:4:"role";s:4:"test";s:12:"installed_as";s:74:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates/variables.html";}s:28:"tests/trees/blocks.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"9f5f2e908c7131a8fef93027099017b4";s:4:"name";s:28:"tests/trees/blocks.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:72:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/blocks.html.tree";}s:32:"tests/trees/conditions.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"19a1cc5c1cb122c05b4fba81098478ea";s:4:"name";s:32:"tests/trees/conditions.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/conditions.html.tree";}s:35:"tests/trees/error_foreach.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"a24dcae72c885c46684f7e0500e8bbc7";s:4:"name";s:35:"tests/trees/error_foreach.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:79:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/error_foreach.html.tree";}s:40:"tests/trees/flexy_tojavascript.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"72689abdf3107438b267ea1635b291a6";s:4:"name";s:40:"tests/trees/flexy_tojavascript.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:84:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/flexy_tojavascript.html.tree";}s:27:"tests/trees/forms.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"49040d18e8e36ceb688787c521abe215";s:4:"name";s:27:"tests/trees/forms.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:71:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/forms.html.tree";}s:30:"tests/trees/function.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d4138e8347e7150ace16dce2b792c536";s:4:"name";s:30:"tests/trees/function.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:74:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/function.html.tree";}s:29:"tests/trees/globals.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"d459ed56c6af86e624f2136f92d43868";s:4:"name";s:29:"tests/trees/globals.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/globals.html.tree";}s:32:"tests/trees/image_view.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"06cbfc7e94c26e295b1fe382884418d6";s:4:"name";s:32:"tests/trees/image_view.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/image_view.html.tree";}s:30:"tests/trees/includes.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f5b327bf31b3ea57509b56c4aa0c1613";s:4:"name";s:30:"tests/trees/includes.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:74:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/includes.html.tree";}s:32:"tests/trees/javascript.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"1549bc9eb38e61210abead2dbe6405f6";s:4:"name";s:32:"tests/trees/javascript.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/javascript.html.tree";}s:29:"tests/trees/looping.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"ab9007488ae47e398db0250dc884289f";s:4:"name";s:29:"tests/trees/looping.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/looping.html.tree";}s:29:"tests/trees/methods.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"61b43b38e1a09893692e48fba59f5b7b";s:4:"name";s:29:"tests/trees/methods.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/methods.html.tree";}s:32:"tests/trees/namespaces.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"206dfb504c19e252ad6708310aef5d30";s:4:"name";s:32:"tests/trees/namespaces.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:76:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/namespaces.html.tree";}s:38:"tests/trees/plugin_modifiers.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"b185c03322f7ab9d09ebc47e2fc3e4dd";s:4:"name";s:38:"tests/trees/plugin_modifiers.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:82:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/plugin_modifiers.html.tree";}s:29:"tests/trees/raw_php.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e693f6f92e06e0b4e8a15d399aa28f19";s:4:"name";s:29:"tests/trees/raw_php.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:73:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/raw_php.html.tree";}s:30:"tests/trees/raw_text.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"e95960a770ee57f7982119180df5badf";s:4:"name";s:30:"tests/trees/raw_text.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:74:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/raw_text.html.tree";}s:31:"tests/trees/variables.html.tree";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"8dba9452a5ca27ec3b12323a0c6cad4d";s:4:"name";s:31:"tests/trees/variables.html.tree";s:4:"role";s:4:"test";s:12:"installed_as";s:75:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees/variables.html.tree";}s:9:"ChangeLog";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"bc32a98e207b4016f5d5edbde34484b5";s:4:"name";s:9:"ChangeLog";s:4:"role";s:4:"data";s:12:"installed_as";s:52:"/usr/lib/php/pear/data/HTML_Template_Flexy/ChangeLog";}s:4:"TODO";a:5:{s:14:"baseinstalldir";s:1:"/";s:6:"md5sum";s:32:"f3b361e49bbb1bb73fd368fab38e2a8b";s:4:"name";s:4:"TODO";s:4:"role";s:4:"data";s:12:"installed_as";s:47:"/usr/lib/php/pear/data/HTML_Template_Flexy/TODO";}}s:12:"_lastversion";s:5:"1.3.9";s:7:"dirtree";a:26:{s:51:"/usr/lib/php/pear/docs/HTML_Template_Flexy/examples";b:1;s:42:"/usr/lib/php/pear/docs/HTML_Template_Flexy";b:1;s:56:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template";b:1;s:47:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML";b:1;s:62:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy";b:1;s:62:"/usr/lib/php/pear/data/HTML_Template_Flexy/HTML/Template/Flexy";b:1;s:56:"/usr/lib/php/pear/data/HTML_Template_Flexy/HTML/Template";b:1;s:47:"/usr/lib/php/pear/data/HTML_Template_Flexy/HTML";b:1;s:42:"/usr/lib/php/pear/data/HTML_Template_Flexy";b:1;s:71:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler";b:1;s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Flexy";b:1;s:77:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Regex";b:1;s:80:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Compiler/Standard";b:1;s:70:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Element";b:1;s:69:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Plugin";b:1;s:72:"/usr/lib/php/pear/docs/HTML_Template_Flexy/HTML/Template/Flexy/templates";b:1;s:62:"/usr/lib/php/pear/docs/HTML_Template_Flexy/HTML/Template/Flexy";b:1;s:56:"/usr/lib/php/pear/docs/HTML_Template_Flexy/HTML/Template";b:1;s:47:"/usr/lib/php/pear/docs/HTML_Template_Flexy/HTML";b:1;s:68:"/Users/demian/Sites/seagull/trunk/lib/pear/HTML/Template/Flexy/Token";b:1;s:49:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests";b:1;s:43:"/usr/lib/php/pear/tests/HTML_Template_Flexy";b:1;s:58:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/results2";b:1;s:56:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/smarty";b:1;s:59:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/templates";b:1;s:55:"/usr/lib/php/pear/tests/HTML_Template_Flexy/tests/trees";b:1;}s:3:"old";a:7:{s:7:"version";s:6:"1.3.12";s:12:"release_date";s:10:"2011-08-29";s:13:"release_state";s:6:"stable";s:15:"release_license";s:11:"PHP License";s:13:"release_notes";s:223:"Minor fixes and feature release
+
+Bug Fixes	
+    
+   #18763 - Fix is_a() for 5.3.7+ due to php-core stupidity
+   #----- - Support for new PEAR5 class.
+   
+Features
+   #----- - support for CommonPageID when using Translation2";s:12:"release_deps";a:5:{i:0;a:4:{s:4:"type";s:3:"php";s:3:"rel";s:2:"ge";s:7:"version";s:3:"4.3";s:8:"optional";s:2:"no";}i:1;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:4:"PEAR";s:3:"rel";s:2:"ge";s:7:"version";s:7:"1.4.0b1";s:8:"optional";s:2:"no";}i:2;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:15:"HTML_Javascript";s:3:"rel";s:2:"ge";s:7:"version";s:5:"1.1.0";s:8:"optional";s:3:"yes";}i:3;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:12:"File_Gettext";s:3:"rel";s:2:"ge";s:7:"version";s:5:"0.2.0";s:8:"optional";s:3:"yes";}i:4;a:6:{s:4:"type";s:3:"pkg";s:7:"channel";s:12:"pear.php.net";s:4:"name";s:12:"Translation2";s:3:"rel";s:2:"ge";s:7:"version";s:5:"0.0.1";s:8:"optional";s:3:"yes";}}s:11:"maintainers";a:1:{i:0;a:5:{s:4:"name";s:12:"Alan Knowles";s:5:"email";s:17:"alan@akbkhome.com";s:6:"active";s:3:"yes";s:6:"handle";s:6:"alan_k";s:4:"role";s:4:"lead";}}}s:10:"xsdversion";s:3:"2.0";s:13:"_lastmodified";i:1358177732;}
