@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
 //
-// $Id: TigraMenu.php,v 1.8 2003/10/07 00:11:27 datenpunk Exp $
+// $Id: TigraMenu.php 244556 2007-10-21 20:17:27Z datenpunk $
 //
 
 // {{{ DB_NestedSet_TigraMenu:: class
@@ -31,7 +31,7 @@
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.8 $
+* @version      $Revision: 244556 $
 * @access       public
 */
 // }}}
@@ -73,7 +73,7 @@ class DB_NestedSet_TigraMenu extends DB_NestedSet_Output {
     * @see _createFromStructure()
     * @return bool
     **/
-    function &DB_NestedSet_TigraMenu($params) {
+    function DB_NestedSet_TigraMenu($params) {
         $this->_menu_id = $params['menu_id'];
         $this->_structTigraMenu = $this->_createFromStructure($params);
         return true;

@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
 //
-// $Id: Event.php,v 1.4 2004/07/23 22:20:31 datenpunk Exp $
+// $Id: Event.php 164143 2004-07-23 22:20:31Z datenpunk $
 //
 //
 */
@@ -29,7 +29,7 @@
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.4 $
+* @version      $Revision: 164143 $
 * @access       public
 */
 Class DB_NestedSetEvent {

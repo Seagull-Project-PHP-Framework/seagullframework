@@ -14,7 +14,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // +----------------------------------------------------------------------+
-// $Id: Menu.php,v 1.5 2004/07/25 11:55:22 datenpunk Exp $
+// $Id: Menu.php 244556 2007-10-21 20:17:27Z datenpunk $
 // {{{ DB_NestedSet_Menu:: class
 /**
  * Simple helper class which takes a node array create by DB_NestedSet and transforms it
@@ -23,7 +23,7 @@
  * @see docs/Menu_example.php
  * @author Daniel Khan <dk@webcluster.at>
  * @package DB_NestedSet
- * @version $Revision: 1.5 $
+ * @version $Revision: 244556 $
  * @access public
  */
 // }}}
@@ -33,7 +33,7 @@
  * @package
  * @author daniel
  * @copyright Copyright (c) 2004
- * @version $Id: Menu.php,v 1.5 2004/07/25 11:55:22 datenpunk Exp $
+ * @version $Id: Menu.php 244556 2007-10-21 20:17:27Z datenpunk $
  * @access public
  */
 class DB_NestedSet_Menu extends DB_NestedSet_Output {
@@ -59,7 +59,7 @@ class DB_NestedSet_Menu extends DB_NestedSet_Output {
      * @access public
      * @return void
      */
-    function & DB_NestedSet_Menu($params) {
+    function DB_NestedSet_Menu($params) {
         $this->_structMenu = & $this->_createFromStructure($params);
     }
     // }}}
@@ -78,8 +78,15 @@ class DB_NestedSet_Menu extends DB_NestedSet_Output {
      * @param $params
      * @return array The menu array
      **/
-    function _createFromStructure($params) {
-        static $menuStructure, $menuParts;
+    function _createFromStructure($params, $iterate = false) {
+        static $menuStructure, $menuParts, $offset;
+
+        if(!$iterate) {
+            $menuStructure = array();
+            $menuParts = array();
+            $offset = false;
+        }
+
         // always start at level 1
         if (!isset($params['currentLevel'])) {
             $params['currentLevel'] = 1;
@@ -115,8 +122,8 @@ class DB_NestedSet_Menu extends DB_NestedSet_Output {
             $params['structure'][$nodeID]['hit'] = $node['hit'] = true;
 
             // We are at a rootnode - let's add it to the structure
-            if ($nodeID == $node['rootid']) {
-
+            if (empty($offset) || $offset==$node['level']) {
+                $offset = $node['level'];
                 $menuStructure[$node['id']] = array(
                                 'title' => isset($node[$params['titleField']]) ? $node[$params['titleField']] : false,
                     'url' => isset($node[$params['urlField']]) ? $node[$params['urlField']] : false
@@ -126,7 +133,7 @@ class DB_NestedSet_Menu extends DB_NestedSet_Output {
                 $menuParts[$node['id']] = & $menuStructure[$node['id']];
             }
 
-                        // Perform action for non-root nodes
+            // Perform action for non-root nodes
             $currentParent = & $params['currentParent']['id'];
             if ($currentParent && isset($menuParts[$currentParent])) {
                 $currentPart = & $menuParts[$currentParent]['sub'];
@@ -153,7 +160,7 @@ class DB_NestedSet_Menu extends DB_NestedSet_Output {
                 $recurseParams['structure'] = $children;
                 $recurseParams['currentLevel']++;
                 $recurseParams['currentParent'] = & $node;
-                $this->_createFromStructure($recurseParams);
+                $this->_createFromStructure($recurseParams, true);
             }
         }
         return $menuStructure;

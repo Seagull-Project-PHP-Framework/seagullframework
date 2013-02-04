@@ -17,7 +17,7 @@
 // |          Arnaud Limbourg <arnaud@php.net>                            |
 // +----------------------------------------------------------------------+
 //
-// $Id: GraphViz.php,v 1.3 2004/04/02 00:15:06 datenpunk Exp $
+// $Id: GraphViz.php 155194 2004-04-02 00:15:06Z datenpunk $
 //
 
 require_once 'Image/GraphViz.php';
@@ -31,7 +31,7 @@ require_once 'Image/GraphViz.php';
  * @author       Jason Rust <jrust@rustyparts.com>
  * @author       Arnaud Limbourg <arnaud@php.net>
  * @package      DB_NestedSet
- * @version      $Revision: 1.3 $
+ * @version      $Revision: 155194 $
  */
 class DB_NestedSet_GraphViz extends DB_NestedSet_Output
 {

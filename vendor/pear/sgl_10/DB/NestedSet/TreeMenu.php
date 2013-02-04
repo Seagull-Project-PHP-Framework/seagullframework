@@ -14,7 +14,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: Jason Rust <jrust@rustyparts.com>                           |
 // +----------------------------------------------------------------------+
-// $Id: TreeMenu.php,v 1.19 2004/04/02 00:15:06 datenpunk Exp $
+// $Id: TreeMenu.php 204899 2006-01-10 08:41:13Z bate $
 require_once 'HTML/TreeMenu.php';
 // {{{ DB_NestedSet_TreeMenu:: class
 /**
@@ -24,7 +24,7 @@ require_once 'HTML/TreeMenu.php';
  * @see docs/TreeMenu_example.php
  * @author Jason Rust <jrust@rustyparts.com>
  * @package DB_NestedSet
- * @version $Revision: 1.19 $
+ * @version $Revision: 204899 $
  * @access public
  */
 // }}}
@@ -34,7 +34,7 @@ require_once 'HTML/TreeMenu.php';
  * @package
  * @author daniel
  * @copyright Copyright (c) 2004
- * @version $Id: TreeMenu.php,v 1.19 2004/04/02 00:15:06 datenpunk Exp $
+ * @version $Id: TreeMenu.php 204899 2006-01-10 08:41:13Z bate $
  * @access public
  **/
 class DB_NestedSet_TreeMenu extends DB_NestedSet_Output {
@@ -72,7 +72,7 @@ class DB_NestedSet_TreeMenu extends DB_NestedSet_Output {
      * @access public
      * @return void
      */
-    function & DB_NestedSet_TreeMenu($params) {
+    function DB_NestedSet_TreeMenu($params) {
         $this->_structTreeMenu = & $this->_createFromStructure($params);
     }
     // }}}
@@ -152,6 +152,13 @@ class DB_NestedSet_TreeMenu extends DB_NestedSet_Output {
                 'ensureVisible' => isset($node[$params['ensureVisibleField']]) ? $node[$params['ensureVisibleField']] : false);
 
             $options = isset($params['options']) ? array_merge($params['options'], $tag) : $tag;
+            
+            foreach ($params['options'] as $key => $value) {
+            	if ($options[$key] === false) {
+            		$options[$key] = $value;
+            	}
+            }
+
             $events = isset($node['events']) ? $node['events'] : array();
             $parentNode = & $treeMenu->addItem(new HTML_TreeNode($options, $events));
             // see if it has children

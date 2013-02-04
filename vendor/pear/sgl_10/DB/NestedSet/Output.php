@@ -16,7 +16,7 @@
 // | Authors: Daniel Khan <dk@webcluster.at>                              |
 // |          Jason Rust  <jason@rustyparts.com>                          |
 // +----------------------------------------------------------------------+
-// $Id: Output.php,v 1.14 2004/07/25 11:55:22 datenpunk Exp $
+// $Id: Output.php 199223 2005-10-25 23:34:10Z datenpunk $
 //
 
 require_once 'PEAR.php';
@@ -64,7 +64,7 @@ define('NESEO_ERROR_NO_OPTIONS',   'E2100');
 *
 * @author       Daniel Khan <dk@webcluster.at>
 * @package      DB_NestedSet
-* @version      $Revision: 1.14 $
+* @version      $Revision: 199223 $
 * @access       public
 *
 */
@@ -106,7 +106,8 @@ class DB_NestedSet_Output {
 
         require_once($path);
         $driverClass = 'DB_NestedSet_'.$driver;
-        return new $driverClass($params);
+        $cls = new $driverClass($params);
+        return $cls;
     }
 
     // }}}

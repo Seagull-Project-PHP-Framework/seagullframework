@@ -16,7 +16,7 @@
 // | Authors: Lorenzo Alberton <l dot alberton at quipo dot it>           |
 // +----------------------------------------------------------------------+
 //
-// $Id: MDB2.php,v 1.4 2004/07/25 11:55:22 datenpunk Exp $
+// $Id: MDB2.php 204845 2006-01-08 21:52:24Z datenpunk $
 //
 
 require_once 'MDB2.php';
@@ -26,7 +26,7 @@ require_once 'MDB2.php';
  *
  * @author       Lorenzo Alberton <l dot alberton at quipo dot it>
  * @package      DB_NestedSet
- * @version      $Revision: 1.4 $
+ * @version      $Revision: 204845 $
  * @access       public
  */
 class DB_NestedSet_MDB2 extends DB_NestedSet
@@ -47,7 +47,7 @@ class DB_NestedSet_MDB2 extends DB_NestedSet
      * @param mixed $dsn DSN as PEAR dsn URI or dsn Array
      * @param array $params Database column fields which should be returned
      */
-    function & DB_NestedSet_MDB2(&$dsn, $params = array())
+    function DB_NestedSet_MDB2(&$dsn, $params = array())
     {
         $this->_debugMessage('DB_NestedSet_MDB2($dsn, $params = array())');
         $this->DB_NestedSet($params);
@@ -95,12 +95,14 @@ class DB_NestedSet_MDB2 extends DB_NestedSet
     }
 
     // }}}
-
     // {{{ _query()
-    function _query($sql) {
+    
+    function _query($sql)
+    {
       return $this->db->query($sql);
     }
 
+    // }}}
     // {{{ _isDBError()
 
     /**
@@ -138,7 +140,7 @@ class DB_NestedSet_MDB2 extends DB_NestedSet
      */
     function _dropSequence($sequence)
     {
-        $this->db->loadModule('manager');
+        $this->db->loadModule('Manager');
         return $this->db->manager->dropSequence($sequence);
     }
 
@@ -207,12 +209,12 @@ class DB_NestedSet_MDB2 extends DB_NestedSet
     function _quoteIdentifier($str)
     {
         if (method_exists($this->db, 'quoteIdentifier')) {
-            return $this->db->quoteIdentifier($str);
+            return $this->db->quoteIdentifier($str, false);
         }
         return $str;
     }
 
-  // }}}
+    // }}}
     // {{{ _db_Disconnect()
 
     /**

@@ -1,29 +1,33 @@
 <?php
-// +----------------------------------------------------------------------+
-// | PEAR :: DB_NestedSet                                                 |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2003 The PHP Group                                |
-// +----------------------------------------------------------------------+
-// | This source file is subject to version 2.0 of the PHP license,       |
-// | that is bundled with this package in the file LICENSE, and is        |
-// | available at through the world-wide-web at                           |
-// | http://www.php.net/license/2_02.txt.                                 |
-// | If you did not receive a copy of the PHP license and are unable to   |
-// | obtain it through the world-wide-web, please send a note to          |
-// | license@php.net so we can mail you a copy immediately.               |
-// +----------------------------------------------------------------------+
-// | Authors: Daniel Khan <dk@webcluster.at>                              |
-// |          Jason Rust  <jason@rustyparts.com>                          |
-// +----------------------------------------------------------------------+
-// $Id: NestedSet.php,v 1.86 2004/08/10 21:41:28 datenpunk Exp $
-// CREDITS:
-// --------
-// - Thanks to Kristian Koehntopp for publishing an explanation of the Nested Set
-// technique and for the great work he did and does for the php community
-// - Thanks to Daniel T. Gorski for his great tutorial on www.develnet.org
-// - Thanks to my parents for ... just kidding :]
+/**
+ +----------------------------------------------------------------------+
+ | PEAR :: DB_NestedSet                                                 |
+ +----------------------------------------------------------------------+
+ | Copyright (c) 1997-2003 The PHP Group                                |
+ +----------------------------------------------------------------------+
+ | This source file is subject to version 2.0 of the PHP license,       |
+ | that is bundled with this package in the file LICENSE, and is        |
+ | available at through the world-wide-web at                           |
+ | http://www.php.net/license/2_02.txt.                                 |
+ | If you did not receive a copy of the PHP license and are unable to   |
+ | obtain it through the world-wide-web, please send a note to          |
+ | license@php.net so we can mail you a copy immediately.               |
+ +----------------------------------------------------------------------+
+ | Authors: Daniel Khan <dk@webcluster.at>                              |
+ |          Jason Rust  <jason@rustyparts.com>                          |
+ +----------------------------------------------------------------------+
+ $Id: NestedSet.php 244559 2007-10-21 23:30:54Z datenpunk $
+ CREDITS:
+ --------
+ - Thanks to Kristian Koehntopp for publishing an explanation of the Nested Set
+ technique and for the great work he did and does for the php community
+ - Thanks to Daniel T. Gorski for his great tutorial on www.develnet.org
+ - Thanks to my parents for ... just kidding :]
+*/
 require_once 'PEAR.php';
+
 // {{{ constants
+
 // Error and message codes
 define('NESE_ERROR_RECURSION', 'E100');
 define('NESE_ERROR_NODRIVER', 'E200');
@@ -50,7 +54,7 @@ define('NESE_SORT_PREORDER', 'SPO');
 *
 * @author Daniel Khan <dk@webcluster.at>
 * @package DB_NestedSet
-* @version $Revision: 1.86 $
+* @version $Revision: 244559 $
 * @access public
 */
 // }}}
@@ -257,6 +261,9 @@ class DB_NestedSet {
     */
     var $_dumbmode = false;
 
+
+
+
     /**
     *
     * @var array Map of error messages to their descriptions
@@ -335,14 +342,23 @@ class DB_NestedSet {
     * @return object The DB_NestedSet object
     */
     function & factory($driver, $dsn, $params = array()) {
+
+        $_dbdrivers = array('MDB', 'MDB2', 'DB');
+        if(!in_array($driver, $_dbdrivers)) {
+            return PEAR::raiseError("factory(): The database driver '$driver' is not supported!", NESE_ERROR_NODRIVER, PEAR_ERROR_TRIGGER, E_USER_ERROR);
+        }
+
         $classname = 'DB_NestedSet_' . $driver;
         if (!class_exists($classname)) {
+
             $driverpath = dirname(__FILE__) . '/NestedSet/' . $driver . '.php';
             if (!file_exists($driverpath) || !$driver) {
                 return PEAR::raiseError("factory(): The database driver '$driver' wasn't found", NESE_ERROR_NODRIVER, PEAR_ERROR_TRIGGER, E_USER_ERROR);
             }
             include_once($driverpath);
         }
+        // Todo: Only load the node class when needed
+        include_once('NestedSet/Node.php');
         $c = & new $classname($dsn, $params);
         return $c;
     }
@@ -384,7 +400,7 @@ class DB_NestedSet {
 
         } elseif ($this->_sortMode == NESE_SORT_PREORDER) {
             $nodeSet = array();
-            $rootnodes = $this->getRootNodes(true);
+            $rootnodes = $this->getRootNodes(true, true, $addSQL);
             foreach($rootnodes AS $rid => $rootnode) {
                 $nodeSet = $nodeSet + $this->getBranch($rootnode, $keepAsArray, $aliasFields, $addSQL);
             }
@@ -659,6 +675,10 @@ class DB_NestedSet {
             return $this->_raiseError(NESE_ERROR_NOT_FOUND, PEAR_ERROR_TRIGGER, E_USER_NOTICE, $epr);
         }
 
+        if($sibling['id'] == $sibling['rootid']) {
+            return $this->getRootNodes($keepAsArray, $aliasFields, $addSQL);
+        }
+
         $parent = $this->getParent($sibling, true);
         return $this->getChildren($parent, $keepAsArray, $aliasFields, false, $addSQL);
     }
@@ -882,7 +902,27 @@ class DB_NestedSet {
             $this->_debugMessage('isParent($parent, $child)');
         }
 
-        if (!isset($parent) || !isset($child)) {
+        /**
+		 * if the given values are integer's fetch the specific nodes
+		 * return false if there any error
+		 */
+        if ((INT)$parent>0 && (INT)$child>0) {
+            if (!$parent = $this->pickNode($parent, true, true)) {
+                return false;
+            }
+
+            if (!$child = $this->pickNode($child, true, true)) {
+                return false;
+            }
+        }
+
+        /**
+		 * if parent or child not an array or a object return false
+		 */
+        if (!isset($parent) || !isset($child)
+        || (!is_array($parent) && !is_object($parent))
+        || (!is_array($child) && !is_object($child))
+        ) {
             return false;
         }
 
@@ -1610,14 +1650,14 @@ class DB_NestedSet {
 
         switch ($pos) {
             case NESE_MOVE_BEFORE:
-            $clone_id = $this->createLeftNode($target['id'], $values);
-            break;
+                $clone_id = $this->createLeftNode($target['id'], $values);
+                break;
             case NESE_MOVE_AFTER:
-            $clone_id = $this->createRightNode($target['id'], $values);
-            break;
+                $clone_id = $this->createRightNode($target['id'], $values);
+                break;
             case NESE_MOVE_BELOW:
-            $clone_id = $this->createSubNode($target['id'], $values);
-            break;
+                $clone_id = $this->createSubNode($target['id'], $values);
+                break;
         }
 
         if ($first && isset($this->flparams['parent'])) {
@@ -1844,17 +1884,22 @@ class DB_NestedSet {
     * @access private
     */
     function _secSort($nodeSet) {
-        
+
         // Nothing to do - empty tree
         if(empty($nodeSet)) {
             return $nodeSet;
         }
-        
+
         $retArray = array();
         foreach($nodeSet AS $nodeID=>$node) {
-            $deepArray[$node['parent']][$nodeID] = $node;
+            if(is_object($node)) {
+                $parent = $node->parent;
+            } else {
+                $parent = $node['parent'];
+            }
+            $deepArray[$parent][$nodeID] = $node;
         }
-        
+
         $reset = true;
         foreach($deepArray AS $parentID=>$children) {
             $retArray = $this->_secSortCollect($children, $deepArray, $reset);
@@ -1905,11 +1950,11 @@ class DB_NestedSet {
 
         switch ($type) {
             case 'cols':
-            return ', ' . $addSQL[$type];
+                return ', ' . $addSQL[$type];
             case 'where':
-            return $prefix . ' (' . $addSQL[$type] . ')';
+                return $prefix . ' (' . $addSQL[$type] . ')';
             default:
-            return $addSQL[$type];
+                return $addSQL[$type];
         }
     }
     // }}}
@@ -2086,7 +2131,7 @@ class DB_NestedSet {
         'majorversion' => $this->_majorversion,
         'minorversion' => $this->_minorversion,
         'version' => sprintf('%s.%s', $this->_majorversion, $this->_minorversion),
-        'revision' => str_replace('$', '', '$Revision: 1.86 $')
+        'revision' => str_replace('$', '', '$Revision: 244559 $')
         );
     }
     // }}}
@@ -2465,41 +2510,5 @@ class DB_NestedSet {
     }
     // }}}
 }
-// {{{ DB_NestedSet_Node:: class
-/**
-* Generic class for node objects
-*
-* @autor Daniel Khan <dk@webcluster.at>;
-* @version $Revision: 1.86 $
-* @package DB_NestedSet
-* @access private
-*/
 
-class DB_NestedSet_Node {
-    // {{{ constructor
-    /**
-    * Constructor
-    */
-    function DB_NestedSet_Node($data) {
-        if (!is_array($data) || count($data) == 0) {
-            return new PEAR_ERROR($data, NESE_ERROR_PARAM_MISSING);
-        }
-
-        $this->setAttr($data);
-        return true;
-    }
-    // }}}
-    // {{{ setAttr()
-    function setAttr($data) {
-        if (!is_array($data) || count($data) == 0) {
-            return false;
-        }
-
-        foreach ($data as $key => $val) {
-            $this->$key = $val;
-        }
-    }
-    // }}}
-}
-// }}}
 ?>

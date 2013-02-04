@@ -18,9 +18,9 @@
  * @package    DB
  * @author     Sterling Hughes <sterling@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id: mssql.php,v 1.90 2007/01/12 05:16:22 aharvey Exp $
+ * @version    CVS: $Id: mssql.php 306603 2010-12-24 06:05:07Z aharvey $
  * @link       http://pear.php.net/package/DB
  */
 
@@ -47,9 +47,9 @@ require_once 'DB/common.php';
  * @package    DB
  * @author     Sterling Hughes <sterling@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1997-2005 The PHP Group
+ * @copyright  1997-2007 The PHP Group
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.7.9
+ * @version    Release: 1.7.14
  * @link       http://pear.php.net/package/DB
  */
 class DB_mssql extends DB_common
@@ -566,14 +566,14 @@ class DB_mssql extends DB_common
                     return $this->raiseError($result);
                 }
             } elseif (!DB::isError($result)) {
-                $result =& $this->query("SELECT IDENT_CURRENT('$seqname')");
+                $result = $this->query("SELECT IDENT_CURRENT('$seqname')");
                 if (DB::isError($result)) {
                     /* Fallback code for MS SQL Server 7.0, which doesn't have
                      * IDENT_CURRENT. This is *not* safe for concurrent
                      * requests, and really, if you're using it, you're in a
                      * world of hurt. Nevertheless, it's here to ensure BC. See
                      * bug #181 for the gory details.*/
-                    $result =& $this->query("SELECT @@IDENTITY FROM $seqname");
+                    $result = $this->query("SELECT @@IDENTITY FROM $seqname");
                 }
                 $repeat = 0;
             } else {
@@ -621,6 +621,27 @@ class DB_mssql extends DB_common
     function dropSequence($seq_name)
     {
         return $this->query('DROP TABLE ' . $this->getSequenceName($seq_name));
+    }
+
+    // }}}
+    // {{{ escapeSimple()
+
+    /**
+     * Escapes a string in a manner suitable for SQL Server.
+     *
+     * @param string $str  the string to be escaped
+     * @return string  the escaped string
+     *
+     * @see DB_common::quoteSmart()
+     * @since Method available since Release 1.6.0
+     */
+    function escapeSimple($str)
+    {
+        return str_replace(
+            array("'", "\\\r\n", "\\\n"),
+            array("''", "\\\\\r\n\r\n", "\\\\\n\n"),
+            $str
+        );
     }
 
     // }}}
