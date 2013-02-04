@@ -1,0 +1,91 @@
+<script type="text/javascript">
+Debug = {
+    toggle: function(id) {
+        var e = document.getElementById(id);
+        if (e.style.display == 'none') {
+            e.style.display = 'block';
+        } else {
+            e.style.display = 'none';
+        }
+    }
+}
+</script>
+
+<div id="debugPanel">
+    <h3>Debug Toolbar</h3>
+    <dl>
+        <!-- REQUEST -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_request'); return false">SGL_Request</a>
+        </dt>
+        <dd>
+            <div id="debug_request" style="display: none;">{debug_request:r}</div>
+        </dd>
+
+        <!-- SESSION -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_session'); return false">$_SESSION</a>
+        </dt>
+        <dd>
+            <div id="debug_session" style="display: none;">{debug_session:r}</div>
+        </dd>
+
+        <!-- MODULE -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_module'); return false">Module</a>
+        </dt>
+        <dd>
+            <div id="debug_module" style="display: none;">{debug_module}</div>
+        </dd>
+
+        <!-- MANAGER -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_manager'); return false">Manager</a>
+        </dt>
+        <dd>
+            <div id="debug_manager" style="display: none;">{debug_manager}</div>
+        </dd>
+
+        <!-- ACTION -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_action'); return false">Action</a>
+        </dt>
+        <dd>
+            <div id="debug_action" style="display: none;">{debug_action}</div>
+        </dd>
+
+        <!-- SECTION -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_section'); return false">Section</a>
+        </dt>
+        <dd>
+            <div id="debug_section" style="display: none;">{debug_section}</div>
+        </dd>
+
+        <!-- MASTER TEMPLATE -->
+        <dt>
+            <a href="#"
+               onclick="Debug.toggle('debug_master_template'); return false">Master template</a>
+        </dt>
+        <dd>
+            <div id="debug_master_template"
+                 style="display: none;">{debug_master_template}</div>
+        </dd>
+
+        <!-- TEMPLATE -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_template'); return false">Template</a>
+        </dt>
+        <dd>
+            <div id="debug_template" style="display: none;">{debug_template}</div>
+        </dd>
+
+        <!-- THEME -->
+        <dt>
+            <a href="#" onclick="Debug.toggle('debug_theme'); return false">Theme</a>
+        </dt>
+        <dd>
+            <div id="debug_theme" style="display: none;">{debug_theme}</div>
+        </dd>
+    </dl>
+</div>

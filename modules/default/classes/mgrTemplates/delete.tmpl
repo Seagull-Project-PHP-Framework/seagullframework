@@ -1,0 +1,12 @@
+        if (is_array($input->aDelete)) {
+            foreach ($input->aDelete as $index => $%mgrName%Id) {
+                $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+                $%mgrName%->get($%mgrName%Id);
+                $%mgrName%->delete();
+                unset($%mgrName%);
+            }
+            SGL::raiseMsg('%mgrName% delete successfull', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('%mgrName% delete NOT successfull ' .
+                __CLASS__ . '::' . __FUNCTION__, SGL_ERROR_INVALIDARGS);
+        }

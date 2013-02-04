@@ -1,0 +1,30 @@
+<flexy:include src="header.html" />
+<flexy:include src="banner.html" />
+
+        <div id="wrapper-inner">
+            <div id="content" class="clearfix">
+
+                <div id="main">
+                    {outputBody()}
+
+                    <hr />
+                </div><!-- end main -->
+
+                <div id="sub">
+                    <div class="inner">
+                        <flexy:include src="blocksRight.html" />
+                    </div>
+                </div><!-- end sub -->
+
+                <div id="local">
+                    <flexy:include src="blocksLeft.html" />
+
+                    <hr />
+                </div><!-- end local -->
+
+                <flexy:include src="blocksTop.html" />
+
+            </div><!-- end content -->
+        </div><!-- end wrapper-inner -->
+
+<flexy:include src="footer.html" />

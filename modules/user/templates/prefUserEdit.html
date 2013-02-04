@@ -1,0 +1,106 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<form id="frmUser" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
+        <input name="action" type="hidden" value="updateAll" />
+    </fieldset>
+    <fieldset class="lastChild noLegend">
+        <ol class="clearfix">
+            <li>
+                <label class="tipOwner" for="prefs_theme">
+                    {translate(#Theme#)}
+                    <span class="tipText">
+                        {translate(#Change what this site looks like#)}
+                    </span>
+                </label>
+                <div>
+                    <select id="prefs_theme" name="prefs[theme]">
+                        {generateSelect(aThemes,prefs[theme]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label class="tipOwner" for="prefs_date-format">
+                    {translate(#Date format#)}
+                    <span class="tipText">
+                        {translate(#UK format is dd/mm/yyyy and US is mm/dd/yyyy#)}
+                    </span>
+                </label>
+                <div>
+                    <select id="prefs_date-format" name="prefs[dateFormat]">
+                        {generateSelect(aDateFormats,prefs[dateFormat]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="prefs_language">
+                    {translate(#Interface language#)}
+                </label>
+                <div>
+                    <select id="prefs_language" name="prefs[language]">
+                        {generateSelect(aLangs,prefs[language]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label class="tipOwner" for="prefs_session-timeout">
+                    {translate(#Session timeout#)}
+                    <span class="tipText">
+                        {translate(#Session timeout tooltip#)}
+                    </span>
+                </label>
+                <div>
+                    <select id="prefs_session-timeout"
+                            name="prefs[sessionTimeout]">
+                        {generateSelect(aTimeouts,prefs[sessionTimeout]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="prefs_locale">{translate(#Locale#)}</label>
+                <div>
+                {if:isWin()}
+                    <input id="prefs_locale" class="text" type="text"
+                           name="prefs[locale]" value="{prefs[locale]}" />
+                {else:}
+                    <select id="prefs_locale" name="prefs[locale]">
+                        {generateSelect(aLocales,prefs[locale]):h}
+                    </select>
+                {end:}
+                </div>
+            </li>
+            <li>
+                <label for="prefs_timezone">{translate(#Timezone#)}</label>
+                <div>
+                    <select id="prefs_timezone" name="prefs[timezone]">
+                        {generateSelect(aTimezones,prefs[timezone]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="prefs_res-per-page">
+                    {translate(#Results per page#)}
+                </label>
+                <div>
+                    <select id="prefs_res-per-page" name="prefs[resPerPage]">
+                        {generateSelect(aResPerPage,prefs[resPerPage]):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label>{translate(#Show execution times?#)}</label>
+                <div>
+                    {generateRadioPair(#prefs[showExecutionTimes]#,prefs[showExecutionTimes]):h}
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    <div class="fieldIndent">
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#Save#)}" />
+        <input class="button" type="button" value="{translate(#Cancel#)}"
+               onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
+    </div>
+    <p><em>*</em> {translate(#denotes required field#)}</p>
+</form>

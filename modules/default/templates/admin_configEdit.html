@@ -1,0 +1,807 @@
+<script type="text/javascript">
+function toggleTransElements() {
+    document.getElementById('transContainer').disabled = true;
+}
+</script>
+
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('configuration','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('configuration')">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#config#,#default#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form name="configuration" id="configuration" method="post" flexy:ignore>
+        <p>
+            <input type="hidden" name="action" value="update" />
+        </p>
+
+        <div id="optionsLinks"></div>
+
+        <fieldset class="main options" id="generalSiteOptions">
+            <h3>{translate(#General#)}</h3>
+            <p>
+                <label for="conf[site][baseUrl]">{translate(#Base URL#)}</label>
+                <span class="error" flexy:if="error[baseUrl]">{error[baseUrl]}</span>
+                <input type="text" class="longText" name="conf[site][baseUrl]" id="conf[site][baseUrl]" value="{conf[site][baseUrl]}" />
+            </p>
+            <p>
+                <label for="conf[site][name]">{translate(#Site name#)}</label>
+                <input type="text" class="longText" name="conf[site][name]" id="conf[site][name]" value="{conf[site][name]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][showLogo]">{translate(#Show logo#)}
+                <span class="tipText">{translate(#If path to image is specified, image will be shown; if left blank, Site name from above will appear as text#)}</span>
+                </label>
+                <span class="error" flexy:if="error[showLogo]">{error[showLogo]}</span>
+                <input type="text" class="longText" name="conf[site][showLogo]" id="conf[site][showLogo]" value="{conf[site][showLogo]}" />
+            </p>
+            <p>
+                <label for="conf[site][description]">{translate(#Description#)}</label>
+                <input type="text" class="longText" name="conf[site][description]" id="conf[site][description]" value="{conf[site][description]}" />
+            </p>
+            <p>
+                <label for="conf[site][keywords]">{translate(#Keywords#)}</label>
+                <input type="text" class="longText" name="conf[site][keywords]" id="conf[site][keywords]" value="{conf[site][keywords]}" />
+            </p>
+            <p>
+                <label for="conf[site][compression]">{translate(#Gzip compression#)}</label>
+                {generateRadioPair(#conf[site][compression]#,conf[site][compression]):h}
+            </p>
+            <p>
+                <label for="conf[site][outputBuffering]">{translate(#Output buffering#)}</label>
+                {generateRadioPair(#conf[site][outputBuffering]#,conf[site][outputBuffering]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][banIpEnabled]">{translate(#Enable IP banning#)}
+                <span class="tipText">{translate(#Handy if you dont have access to Apache configuration#)}</span>
+                </label>
+                {generateRadioPair(#conf[site][banIpEnabled]#,conf[site][banIpEnabled]):h}
+            </p>
+            <p>
+                <label for="conf[site][denyList]">{translate(#Deny list#)}</label>
+                <input type="text" class="longText" name="conf[site][denyList]" id="conf[site][denyList]" value="{conf[site][denyList]}" />
+            </p>
+            <p>
+                <label for="conf[site][allowList]">{translate(#Allow list#)}</label>
+                <input type="text" class="longText" name="conf[site][allowList]" id="conf[site][allowList]" value="{conf[site][allowList]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][safeDelete]">{translate(#Enable Safe deleting#)}
+                <span class="tipText">{translate(#This way no content items are really deleting from DB, just marked as deleted#)}</span>
+                </label>
+                {generateRadioPair(#conf[site][safeDelete]#,conf[site][safeDelete]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][tidyhtml]">{translate(#Enable Tidy html cleaning#)}
+                <span class="tipText">{translate(#Requires the tidy extension to be installed#)}</span>
+                </label>
+                {generateRadioPair(#conf[site][tidyhtml]#,conf[site][tidyhtml]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][templateEngine]">{translate(#Template Engine#)}
+                <span class="tipText">{translate(#Seagull allows you to use the template engine of your choice#)}</span>
+                </label>
+                <span class="error" flexy:if="error[templateEngine]">{error[templateEngine]}</span>
+                <select name="conf[site][templateEngine]">
+                    {generateSelect(aTemplateEngines,conf[site][templateEngine]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][outputUrlHandler]">{translate(#Output URL handler#)}
+                <span class="tipText">{translate(#What format would you like your output URLs, Seagull Search Engine Friendly is the default#)}</span>
+                </label>
+                <span class="error" flexy:if="error[outputUrlHandler]">{error[outputUrlHandler]}</span>
+                <select name="conf[site][outputUrlHandler]">
+                    {generateSelect(aUrlHandlers,conf[site][outputUrlHandler]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][inputUrlHandlers]">{translate(#Input URL handlers#)}
+                <span class="tipText">{translate(#Define the URL handlers that will be run on incoming requests#)}</span>
+                </label>
+                <input type="text" name="conf[site][inputUrlHandlers]" id="conf[site][inputUrlHandlers]" value="{conf[site][inputUrlHandlers]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][blocksEnabled]">{translate(#Enable Blocks#)}
+                <span class="tipText">{translate(#You can turn the blocks off globally#)}</span>
+                </label>
+                {generateRadioPair(#conf[site][blocksEnabled]#,conf[site][blocksEnabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][rolesHaveAdminGui]">{translate(#Roles that can access the admin GUI#)}
+                <span class="tipText">{translate(#List role constants separated by commas, ie, SGL_ADMIN,SGL_FOO#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][rolesHaveAdminGui]" id="conf[site][rolesHaveAdminGui]" value="{conf[site][rolesHaveAdminGui]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][defaultArticleViewType]">{translate(#Default article view type#)}
+                <span class="tipText">{translate(#This options allows you to change the default type of article displayed. Default Article View Type: Html Articles (2)#)}</span>
+                </label>
+                <input type="text" name="conf[site][defaultArticleViewType]" id="conf[site][defaultArticleViewType]" value="{conf[site][defaultArticleViewType]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][frontScriptName]">{translate(#Front controller script name#)}
+                <span class="tipText">{translate(#The name of your Seagull index file#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][frontScriptName]" id="conf[site][frontScriptName]" value="{conf[site][frontScriptName]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][defaultModule]">{translate(#Default module#)}
+                <span class="tipText">{translate(#This is the module that will be loaded if none are specified, ie, when you call index.php#)}</span>
+                </label>
+                <input type="text" name="conf[site][defaultModule]" id="conf[site][defaultModule]" value="{conf[site][defaultModule]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][defaultManager]">{translate(#Default manager#)}
+                <span class="tipText">{translate(#This is the manager class that will be loaded if none are specified#)}</span>
+                </label>
+                <input type="text" name="conf[site][defaultManager]" id="conf[site][defaultManager]" value="{conf[site][defaultManager]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][defaultParams]">{translate(#Default params#)}
+                <span class="tipText">{translate(#Use these params to specify, eg, a static article for your homepage#)}</span>
+                </label>
+                <input type="text" name="conf[site][defaultParams]" id="conf[site][defaultParams]" value="{conf[site][defaultParams]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][loginTarget]">{translate(#Login target#)}
+                <span class="tipText">{translate(#login target comment#)}</span>
+                </label>
+                <input type="text" name="conf[site][loginTarget]" id="conf[site][loginTarget]" value="{conf[site][loginTarget]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][logoutTarget]">{translate(#Logout target#)}
+                <span class="tipText">{translate(#logout target comment#)}</span>
+                </label>
+                <input type="text" name="conf[site][logoutTarget]" id="conf[site][logoutTarget]" value="{conf[site][logoutTarget]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][masterTemplate]">{translate(#Default master template#)}
+                <span class="tipText">{translate(#This is the master template that will be loaded#)}</span>
+                </label>
+                <span class="error" flexy:if="error[masterTemplate]">{error[masterTemplate]}</span>
+                <input type="text" name="conf[site][masterTemplate]" id="conf[site][masterTemplate]" value="{conf[site][masterTemplate]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][masterLayout]">{translate(#Default master css layout#)}
+                <span class="tipText">{translate(#This is the master css layout that will be loaded#)}</span>
+                </label>
+                <span class="error" flexy:if="error[masterLayout]">{error[masterLayout]}</span>
+                <input type="text" name="conf[site][masterLayout]" id="conf[site][masterLayout]" value="{conf[site][masterLayout]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][wysiwygEditor]">{translate(#Editor type#)}
+                <span class="tipText">{translate(#Currently supported editors are xinha, fck and htmlarea, and you must have the relevant libs in your www dir#)}</span>
+                </label>
+                <select name="conf[site][wysiwygEditor]">
+                    {generateSelect(aWysiwygEditor,conf[site][wysiwygEditor]):h}
+                </select>
+            </p>
+            {if:!isMinimalInstall}
+            <p>
+                <label class="tipOwner" for="conf[site][extendedLocale]">{translate(#Extended locale support#)}
+                <span class="tipText">{translate(#locale support info#)}</span>
+                </label>
+                {generateRadioPair(#conf[site][extendedLocale]#,conf[site][extendedLocale]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][localeCategory]">{translate(#Locale category#)}
+                <span class="tipText">{translate(#locale support info#)}</span>
+                </label>
+                <input type="text" name="conf[site][localeCategory]" id="conf[site][localeCategory]" value="{conf[site][localeCategory]}" />
+            </p>
+            {end:}
+            <p>
+                <label for="conf[site][adminGuiTheme]">{translate(#Admin GUI theme#)}</label>
+                <input type="text" name="conf[site][adminGuiTheme]" id="conf[site][adminGuiTheme]" value="{conf[site][adminGuiTheme]}" />
+            </p>
+            <p>
+                <label for="conf[site][defaultTheme]">{translate(#Default theme#)}</label>
+                <input type="text" name="conf[site][defaultTheme]" id="conf[site][defaultTheme]" value="{conf[site][defaultTheme]}" />
+            </p>
+            <p>
+                <label for="conf[site][filterChain]">{translate(#Custom filter chain#)}</label>
+                <textarea class="longText" name="conf[site][filterChain]" id="conf[site][filterChain]">{conf[site][filterChain]}</textarea>
+            </p>
+            <p>
+                <label for="conf[site][customOutputClassName]">{translate(#Custom output class#)}</label>
+                <input type="text" name="conf[site][customOutputClassName]" id="conf[site][customOutputClassName]" value="{conf[site][customOutputClassName]}" />
+            </p>
+            <p>
+                <label for="conf[site][broadcastMessage]">{translate(#Broadcast message#)}</label>
+                <input type="text" class="longText" name="conf[site][broadcastMessage]" id="conf[site][broadcastMessage]" value="{conf[site][broadcastMessage]}" />
+            </p>
+	        <p>
+                <label for="conf[site][maintenanceMode]">{translate(#Maintenance mode#)}</label>
+                {generateRadioPair(#conf[site][maintenanceMode]#,conf[site][maintenanceMode]):h}
+            </p>
+			<p>
+                <label class="tipOwner" for="conf[site][adminKey]">{translate(#Admin key#)}
+                	<span  class="tipText">{translate(#tipAdminKey#)}</span>
+				</label>
+				<input type="text" name="conf[site][adminKey]" id="conf[site][adminKey]" value="{conf[site][adminKey]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][globalJavascriptFiles]">{translate(#Global Javascript Files#)}
+                <span  class="tipText">{translate(#globalJavascriptFiles#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][globalJavascriptFiles]" id="conf[site][globalJavascriptFiles]" value="{conf[site][globalJavascriptFiles]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][globalJavascriptOnReadyDom]">{translate(#Global Javascript OnReadyDOM#)}
+                <span  class="tipText">{translate(#globalJavascriptOnReadyDom#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][globalJavascriptOnReadyDom]" id="conf[site][globalJavascriptOnReadyDom]" value="{conf[site][globalJavascriptOnReadyDom]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][globalJavascriptOnload]">{translate(#Global Javascript Onload#)}
+                <span  class="tipText">{translate(#globalJavascriptOnload#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][globalJavascriptOnload]" id="conf[site][globalJavascriptOnload]" value="{conf[site][globalJavascriptOnload]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][globalJavascriptOnUnload]">{translate(#Global Javascript OnUnload#)}
+                <span  class="tipText">{translate(#globalJavascriptOnUnload#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][globalJavascriptOnUnload]" id="conf[site][globalJavascriptOnUnload]" value="{conf[site][globalJavascriptOnUnload]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[site][customRebuildTasks]">Custom rebuild tasks
+                <span  class="tipText">Add a comma separated list of additional tasks here to be executed during a Seagull rebuild, SGL_Task_LoadMyData, SGL_Task_DoFoo</span>
+                </label>
+                <input type="text" class="longText" name="conf[site][customRebuildTasks]" id="conf[site][customRebuildTasks]" value="{conf[site][customRebuildTasks]}" />
+            </p>
+
+            <h3 class="show">{translate(#Paths#)}</h3>
+            <p>
+                <label for="conf[path][installRoot]">{translate(#Install Root#)}</label>
+                <span class="error" flexy:if="error[installRoot]">{error[installRoot]}</span>
+                <input type="text" class="longText" name="conf[path][installRoot]" id="conf[path][installRoot]" value="{conf[path][installRoot]}" />
+            </p>
+            <p>
+                <label for="conf[path][webRoot]">{translate(#Web Root#)}</label>
+                <span class="error" flexy:if="error[webRoot]">{error[webRoot]}</span>
+                <input type="text" class="longText" name="conf[path][webRoot]" id="conf[path][webRoot]" value="{conf[path][webRoot]}" />
+            </p>
+            <p>
+                <label for="conf[path][additionalIncludePath]">{translate(#Additional Include Paths#)}</label>
+                <input type="text" class="longText" name="conf[path][additionalIncludePath]" id="conf[path][additionalIncludePath]" value="{conf[path][additionalIncludePath]}" />
+            </p>
+            <p>
+                <label for="conf[path][moduleDirOverride]">{translate(#Module Directory Override#)}</label>
+                <input type="text" class="longText" name="conf[path][moduleDirOverride]" id="conf[path][moduleDirOverride]" value="{conf[path][moduleDirOverride]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[path][uploadDirOverride]">{translate(#Upload Directory Override#)}
+                <span class="tipText">provide path from sgl root, including initial slash and omitting final slash, eg: "/path/to/dir"</span></label>
+                <input type="text" class="longText" name="conf[path][uploadDirOverride]" id="conf[path][uploadDirOverride]" value="{conf[path][uploadDirOverride]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[path][pathToCustomConfigFile]">{translate(#Custom Config File#)}
+                <span class="tipText">If you want to include a custom config file for constants, etc, do it here</span></label>
+                <input type="text" class="longText" name="conf[path][pathToCustomConfigFile]" id="conf[path][pathToCustomConfigFile]" value="{conf[path][pathToCustomConfigFile]}" />
+            </p>
+            <p>
+                <label for="conf[path][tmpDirOverride]">{translate(#Temp directory override#)}</label>
+                <input type="text" name="conf[path][tmpDirOverride]" id="conf[path][tmpDirOverride]" value="{conf[path][tmpDirOverride]}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="sessionOptions">
+            <h3>{translate(#Session#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[session][handler]">{translate(#Session handler#)}
+                <span class="tipText">{translate(#Use the database session handler if youre running a load-balanced environment#)}</span>
+                </label>
+                <select name="conf[session][handler]]">
+                    {generateSelect(aSessHandlers,conf[session][handler]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][maxLifetime]">{translate(#Session max lifetime (secs)#)}
+                <span class="tipText">{translate(#Zero means until the browser is closed#)}</span>
+                </label>
+                <input type="text" name="conf[session][maxLifetime]" id="conf[session][maxLifetime]" value="{conf[session][maxLifetime]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][extended]">{translate(#Extended Session#)}
+                <span class="tipText">{translate(#Enables extended session API when using database sessions. This allows the site to enforce one session per user.#)}</span>
+                </label>
+                <span class="error" flexy:if="error[extendedSession]">{error[extendedSession]}</span>
+                {generateRadioPair(#conf[session][extended]#,conf[session][extended]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][singleUser]">{translate(#Enforce Single User#)}
+                <span class="tipText">{translate(#Enforces one session per user on this site (requires database session handling, and extended session to be on).#)}</span>
+                </label>
+                <span class="error" flexy:if="error[singleUser]">{error[singleUser]}</span>
+                {generateRadioPair(#conf[session][singleUser]#,conf[session][singleUser]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[session][allowedInUri]">{translate(#Allow Session in URL#)}
+                <span class="tipText">{translate(#If users have cookies disabled, this will allow them to use sessions with Seagull#)}</span>
+                </label>
+                <span class="error" flexy:if="error[sessionInUri]">{error[sessionInUri]}</span>
+                {generateRadioPair(#conf[session][allowedInUri]#,conf[session][allowedInUri]):h}
+            </p>
+            <p>
+                <label for="conf[session][permsRetrievalMethod]">
+                    {translate(#Permissions retrieval method#)}
+                </label>
+                <input id="conf[session][permsRetrievalMethod]" type="text" name="conf[session][permsRetrievalMethod]" value="{conf[session][permsRetrievalMethod]}" />
+            </p>
+        </fieldset>
+        <fieldset class="main options" id="navigationOptions">
+            <h3>{translate(#Navigation#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[navigation][enabled]">{translate(#Enable Navigation#)}
+                <span class="tipText">{translate(#Disable navigation altogether with this switch#)}</span>
+                </label>
+                {generateRadioPair(#conf[navigation][enabled]#,conf[navigation][enabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[navigation][driver]">{translate(#Navigation driver#)}
+                <span class="tipText">{translate(#Use this option to choose from various menu types - currently only 1 provided#)}</span>
+                </label>
+                <select name="conf[navigation][driver]" id="conf[navigation][driver]">
+                    {generateSelect(aNavDrivers,conf[navigation][driver]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[navigation][renderer]">{translate(#Navigation Html renderer#)}
+                <span class="tipText">{translate(#Use this option to choose from various menu types - currently only 1 provided#)}</span>
+                </label>
+                <select name="conf[navigation][renderer]" id="conf[navigation][renderer]">
+                    {generateSelect(aNavRenderers,conf[navigation][renderer]):h}
+                </select>
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="debuggingOptions">
+            <h3>{translate(#Debug#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[debug][authorisationEnabled]">{translate(#Enable authorisation#)}
+                <span class="tipText">{translate(#Debugging easier when this is disabled#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][authorisationEnabled]#,conf[debug][authorisationEnabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][customErrorHandler]">{translate(#Enable custom error handler#)}
+                <span class="tipText">{translate(#Customise the way errors are handled#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][customErrorHandler]#,conf[debug][customErrorHandler]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][sessionDebugAllowed]">{translate(#Enable debug session#)}
+                <span class="tipText">{translate(#If your IP appears in the TRUSTED_IPS array, you will be able to view system errors on screen even in production mode (see below)#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][sessionDebugAllowed]#,conf[debug][sessionDebugAllowed]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][enableDebugBlock]">{translate(#Enable debug block#)}
+                <span class="tipText">{translate(#Your database can be dropped if this block is enabled#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][enableDebugBlock]#,conf[debug][enableDebugBlock]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][infoBlock]">Enable overlay debug block
+                <span class="tipText">these two blocks will soon be merged</span>
+                </label>
+                {generateRadioPair(#conf[debug][infoBlock]#,conf[debug][infoBlock]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][production]">{translate(#Production website#)}
+                <span class="tipText">{translate(#Setting this to true will disable all screen-based error messages#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][production]#,conf[debug][production]):h}
+            </p>
+            <p>
+                <label for="conf[debug][showBacktrace]">{translate(#Show backtrace#)}</label>
+                {generateRadioPair(#conf[debug][showBacktrace]#,conf[debug][showBacktrace]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][profiling]">{translate(#Enable Profiling#)}
+                <span class="tipText">{translate(#Requires to Xdebug extension to be installed#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][profiling]#,conf[debug][profiling]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][emailAdminThreshold]">{translate(#Email admin threshold#)}
+                <span class="tipText">{translate(#Errors must be >= this level before they are emailed to the site admin#)}</span>
+                </label>
+                <select name="conf[debug][emailAdminThreshold]" id="conf[debug][emailAdminThreshold]">
+                    {generateSelect(aEmailThresholds,conf[debug][emailAdminThreshold]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][showBugReporterLink]">{translate(#Show debug reporting link#)}
+                <span class="tipText">{translate(#Send feedback to project for bugs#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][showBugReporterLink]#,conf[debug][showBugReporterLink]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][showUntranslated]">{translate(#Mark words which were not translated#)}
+                <span class="tipText">{translate(#Words which system was unable to translate will be enclosed in "> <" marks#)}</span>
+                </label>
+                {generateRadioPair(#conf[debug][showUntranslated]#,conf[debug][showUntranslated]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[debug][dataObject]">{translate(#DataObject debug level#)}</label>
+                <select name="conf[debug][dataObject]" id="conf[debug][dataObject]">
+                    {generateSelect(aDbDoDebugLevels,conf[debug][dataObject]):h}
+                </select>
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="cachingOptions">
+            <h3>{translate(#Caching#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[cache][enabled]">{translate(#Enable global caching#)}
+                <span class="tipText">{translate(#It is recommended to disable this while developing#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][enabled]#,conf[cache][enabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][lifetime]">{translate(#Cache lifetime (secs)#)}
+                <span class="tipText">{translate(#Default is 24 hours#)}</span>
+                </label>
+                <input type="text" name="conf[cache][lifetime]" id="conf[cache][lifetime]" value="{conf[cache][lifetime]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][libCacheEnabled]">{translate(#Enable library caching#)}
+                <span class="tipText">{translate(#It is recommended to disable this while developing#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][libCacheEnabled]#,conf[cache][libCacheEnabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][cleaningFactor]">{translate(#Cleaning factor#)}
+                    <span class="tipText">{translate(#Cleaning factor tip#)}</span>
+                </label>
+                <input type="text" name="conf[cache][cleaningFactor]" id="conf[cache][cleaningFactor]" value="{conf[cache][cleaningFactor]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][readControl]">{translate(#Read control#)}
+                    <span class="tipText">{translate(#Read control tip#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][readControl]#,conf[cache][readControl]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[cache][writeControl]">{translate(#Write control#)}
+                    <span class="tipText">{translate(#Write control tip#)}</span>
+                </label>
+                {generateRadioPair(#conf[cache][writeControl]#,conf[cache][writeControl]):h}
+            </p>
+            <p>
+                <label for="conf[cache][javascript]">{translate(#Cache JavaScript#)}</label>
+                {generateRadioPair(#conf[cache][javascript]#,conf[cache][javascript]):h}
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="databaseOptions">
+            <h3>{translate(#DB#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf">{translate(#Type#)}
+                <span class="tipText">{translate(#Make sure you load the relevant schema#)}</span>
+                </label>
+                <select name="conf[db][type]" id="conf[db][type]">
+                    {generateSelect(aDbTypes,conf[db][type]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[db][mysqlDefaultStorageEngine]">
+                    {translate(#MySQL Default Storage Engine#)}
+                    <span class="tipText">{translate(#Default MySQL storage engine for all tables in database#)}</span>
+                </label>
+                <select name="conf[db][mysqlDefaultStorageEngine]" id="conf[db][mysqlDefaultStorageEngine]">
+                    {generateSelect(aMysqlEngines,conf[db][mysqlDefaultStorageEngine]):h}
+                </select>
+            </p>
+            <p>
+                <label for="conf[db][sepTableForEachSequence]">
+                    {translate(#Separate table for each sequence#)}
+                </label>
+                {generateRadioPair(#conf[db][sepTableForEachSequence]#,conf[db][sepTableForEachSequence]):h}
+            </p>
+            <p>
+                <label for="conf">{translate(#Host#)}</label>
+                <input type="text" name="conf[db][host]" value="{conf[db][host]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#Port#)}</label>
+                <input type="text" name="conf[db][port]" value="{conf[db][port]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#Protocol#)}</label>
+                <input type="text" name="conf[db][protocol]" value="{conf[db][protocol]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#Socket#)}</label>
+                <input type="text" name="conf[db][socket]" value="{conf[db][socket]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB username#)}</label>
+                <input type="text" name="conf[db][user]" value="{conf[db][user]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB password#)}</label>
+                <input type="password" name="conf[db][pass]" value="{conf[db][pass]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB name#)}</label>
+                <input type="text" name="conf[db][name]" value="{conf[db][name]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB charset#)}</label>
+                <input type="text" name="conf[db][charset]" value="{conf[db][charset]}" />
+            </p>
+            <p>
+                <label for="conf">{translate(#DB collation#)}</label>
+                <input type="text" name="conf[db][collation]" value="{conf[db][collation]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf_db_prefix">{translate(#Table prefix#)}
+                    <span class="tipText">{translate(#This is used to prefix all tables in database, change with caution#)}</span>
+                </label>
+                <span class="error" flexy:if="error[db][prefix]">{translate(error[db][prefix])}</span>
+                <input id="conf_db_prefix" type="text" name="conf[db][prefix]" value="{conf[db][prefix]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[db][postConnect]">{translate(#Post-connection query#)}
+                <span class="tipText">{translate(#This query is used to set the default character set for the current connection (MySQL 4.1 or higher). For example: SET NAMES utf8#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[db][postConnect]" id="conf[db][postConnect]" value="{conf[db][postConnect]}" />
+            </p>
+            <h3>{translate(#Database Table Mappings#)}</h3>
+            <p flexy:foreach="conf[table],key,var">
+                <label for="conf[table][{key}]">{key}</label>
+                <input type="text" name="conf[table][{key}]" id="conf[table][{key}]" value="{var}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="loggingOptions">
+            <h3>{translate(#Logs#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[log][enabled]">{translate(#Enable logs#)}
+                <span class="tipText">{translate(#It is recommended to disable logging if you are running < PHP 4.3.x#)}</span>
+                </label>
+                {generateRadioPair(#conf[log][enabled]#,conf[log][enabled]):h}
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[log][type]">{translate(#Type#)}
+                <span class="tipText">{translate(#If sql is used, use log_table as the log table name below#)}</span>
+                </label>
+                <select name="conf[log][type]" id="conf[log][type]">
+                    {generateSelect(aLogTypes,conf[log][type]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[log][name]">{translate(#Log name#)}
+                <span class="tipText">{translate(#Use an absolute path or one relative to the Seagull root dir#)}</span>
+                </label>
+                <input type="text" name="conf[log][name]" value="{conf[log][name]}" />
+            </p>
+            <p>
+                <label for="conf[log][priority]">{translate(#Priority#)}</label>
+                <select name="conf[log][priority]" id="conf[log][priority]">
+                    {generateSelect(aLogPriorities,conf[log][priority]):h}
+                </select>
+            </p>
+            <p>
+                <label for="conf[log][ident]">{translate(#Identifier#)}</label>
+                <input type="text" name="conf[log][ident]" id="conf[log][ident]" value="{conf[log][ident]}" />
+            </p>
+            <p>
+                <label for="conf[log][paramsUsername]">{translate(#Target username#)}</label>
+                <input type="text" name="conf[log][paramsUsername]" id="conf[log][paramsUsername]" value="{conf[log][paramsUsername]}" />
+            </p>
+            <p>
+                <label for="conf[log][paramsPassword]">{translate(#Target password#)}</label>
+                <input type="text" name="conf[log][paramsPassword]" id="conf[log][paramsPassword]" value="{conf[log][paramsPassword]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[log][showErrors]">{translate(#Show errors#)}
+                <span class="tipText">{translate(#Select No if you do not want errors displayed in the logs#)}</span>
+                </label>
+                {generateRadioPair(#conf[log][showErrors]#,conf[log][showErrors]):h}
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="mtaOptions">
+            <h3>{translate(#MTA#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[mta][backend]">{translate(#Backend#)}
+                <span class="tipText">{translate(#PEAR::Mail backend#)}</span>
+                </label>
+                <span class="error" flexy:if="error[mtaBackend]">{error[mtaBackend]}</span>
+                <select name="conf[mta][backend]" id="conf[mta][backend]">
+                    {generateSelect(aMtaBackends,conf[mta][backend]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][sendmailPath]">{translate(#Sendmail path#)}
+                <span class="tipText">{translate(#Mandatory if you use Sendmail as Backend#)}</span>
+                </label>
+                <span class="error" flexy:if="error[sendmailPath]">{error[sendmailPath]}</span>
+                <input type="text" name="conf[mta][sendmailPath]" id="conf[mta][sendmailPath]" value="{conf[mta][sendmailPath]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][sendmailArgs]">{translate(#Sendmail arguments#)}
+                <span class="tipText">{translate(#Optional if you use Sendmail as Backend#)}</span>
+                </label>
+                <span class="error" flexy:if="error[sendmailArgs]">{error[sendmailArgs]}</span>
+                <input type="text" name="conf[mta][sendmailArgs]" id="conf[mta][sendmailArgs]" value="{conf[mta][sendmailArgs]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][smtpHost]">{translate(#SMTP host#)}
+                <span class="tipText">{translate(#Optional if you use SMTP as Backend. Default: localhost#)}</span>
+                </label>
+                <input type="text" name="conf[mta][smtpHost]" id="conf[mta][smtpHost]" value="{conf[mta][smtpHost]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][smtpPort]">{translate(#SMTP port#)}
+                <span class="tipText">{translate(#Optional if you use SMTP as Backend. Default: 25#)}</span>
+                </label>
+                <input type="text" name="conf[mta][smtpPort]" id="conf[mta][smtpPort]" value="{conf[mta][smtpPort]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][smtpAuth]">{translate(#Use SMTP authentication#)}
+                <span class="tipText">{translate(#PEAR::Mail supported SMTP authentication methods#)}</span>
+                </label>
+                <select name="conf[mta][smtpAuth]" id="conf[mta][smtpAuth]">
+                    {generateSelect(aMtaAuthentication,conf[mta][smtpAuth]):h}
+                </select>
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[mta][smtpUsername]">{translate(#SMTP username#)}
+                <span class="tipText">{translate(#Mandatory if you use SMTP as Backend and SMTP authentication is enabled#)}</span>
+                </label>
+                <span class="error" flexy:if="error[smtpUsername]">{error[smtpUsername]}</span>
+                <input type="text" name="conf[mta][smtpUsername]" id="conf[mta][smtpUsername]" value="{conf[mta][smtpUsername]}" />
+            </p>
+             <p>
+                <label class="tipOwner" for="conf[mta][smtpPassword]">{translate(#SMTP password#)}
+                <span class="tipText">{translate(#Mandatory if you use SMTP as Backend and SMTP authentication is enabled#)}</span>
+                </label>
+                <span class="error" flexy:if="error[smtpPassword]">{error[smtpPassword]}</span>
+                <input type="password" name="conf[mta][smtpPassword]" id="conf[mta][smtpPassword]" value="{conf[mta][smtpPassword]}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="emailOptions">
+            <h3>{translate(#Email#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[email][admin]">{translate(#Admin contact#)}
+                <span class="tipText">{translate(#Error messages get sent here#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[email][admin]" id="conf[email][admin]" value="{conf[email][admin]}" />
+            </p>
+            <p>
+                <label for="conf[email][support]">{translate(#Support contact#)}</label>
+                <input type="text" class="longText" name="conf[email][support]" id="conf[email][support]" value="{conf[email][support]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[email][info]">{translate(#Info contact#)}
+                <span class="tipText">{translate(#Contact us enquiries get sent here#)}</span>
+                </label>
+                <input type="text" class="longText" name="conf[email][info]" id="conf[email][info]" value="{conf[email][info]}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="popupWindowOptions">
+            <h3>{translate(#Popup#)}</h3>
+            <p>
+                <label for="conf[popup][winHeight]">{translate(#Default popup window height#)}</label>
+                <input type="text" name="conf[popup][winHeight]" id="conf[popup][winHeight]" value="{conf[popup][winHeight]}" />
+            </p>
+            <p>
+                <label for="conf[popup][winWidth]">{translate(#Default popup window width#)}</label>
+                <input type="text" name="conf[popup][winWidth]" id="conf[popup][winWidth]" value="{conf[popup][winWidth]}" />
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="translationOptions">
+            <h3>{translate(#Translation#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[translation][container]">{translate(#Container#)}
+                    <span class="tipText">{translate(#Coming Soon - The ability to switch between translation storage containers.#)}</span>
+                </label>
+                <select name="conf[translation][container]" id="transContainer">
+                    {generateSelect(aTranslationContainers,conf[translation][container]):h}
+                </select>
+                <input type="hidden" name="conf[translation][container]" value="{conf[translation][container]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[translation][fallbackLang]">{translate(#Fallback Language#)}
+                    <span class="tipText">{translate(#Language to use when the current language does not have a translation.#)}</span>
+                </label>
+                <select name="conf[translation][fallbackLang]" id="transFallbackLang">
+                    {generateSelect(aInstalledLangs,conf[translation][fallbackLang]):h}</select>
+                <input type="hidden" name="conf[translation][installedLanguages]" value="{conf[translation][installedLanguages]}" />
+            </p>
+            <p>
+                <label class="tipOwner" for="conf[translation][addMissingTrans]">{translate(#Add Missing Translations#)}
+                    <span class="tipText">{translate(#Add missing translations to the database.#)}</span>
+                </label>
+                {generateRadioPair(#conf[translation][addMissingTrans]#,conf[translation][addMissingTrans]):h}
+            </p>
+            <p>
+                <label for="conf[translation][languageAutoDiscover]">{translate(#Language auto discover#)}</label>
+                {generateRadioPair(#conf[translation][languageAutoDiscover]#,conf[translation][languageAutoDiscover]):h}
+            </p>
+            <p>
+            	<label for="conf[translation][defaultLangBC]">{translate(#Translation from default module (BC)#)}</label>
+                {generateRadioPair(#conf[translation][defaultLangBC]#,conf[translation][defaultLangBC]):h}
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="cookieOptions">
+            <h3>{translate(#Cookie#)}</h3>
+            <p>
+                <label class="tipOwner" for="conf[cookie][name]">{translate(#Name#)}
+                <span class="tipText">{translate(#This will be your session identifier#)}</span>
+                </label>
+                <input type="text" name="conf[cookie][name]" id="conf[cookie][name]" value="{conf[cookie][name]}" />
+            </p>
+            <p>
+                <label for="conf[cookie][path]">{translate(#Path#)}</label>
+                <input type="text" name="conf[cookie][path]" id="conf[cookie][path]" value="{conf[cookie][path]}" />
+            </p>
+            <p>
+                <label for="conf[cookie][domain]">{translate(#Domain#)}</label>
+                <input type="text" name="conf[cookie][domain]" id="conf[cookie][domain]" value="{conf[cookie][domain]}" />
+            </p>
+            <p>
+                <label for="conf[cookie][secure]">{translate(#Secure#)}</label>
+                {generateRadioPair(#conf[cookie][secure]#,conf[cookie][secure]):h}
+            </p>
+            <p>
+                <label for="conf[cookie][rememberMeEnabled]">{translate(#Enable persistent logins#)}</label>
+                {generateRadioPair(#conf[cookie][rememberMeEnabled]#,conf[cookie][rememberMeEnabled]):h}
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="censorship">
+            <h3>{translate(#Censorship#)}</h3>
+            <p>
+                <label for="conf[censor][mode]">{translate(#Mode#)}</label>
+                <select name="conf[censor][mode]" id="conf[censor][mode]">
+                    {generateSelect(aCensorModes,conf[censor][mode]):h}
+                </select>
+            </p>
+            <p>
+                <label for="conf[censor][replaceString]">{translate(#Replace word with#)}</label>
+                <input type="text" name="conf[censor][replaceString]" id="conf[censor][replaceString]" value="{conf[censor][replaceString]}" />
+            </p>
+            <p>
+                <label for="conf[censor][badWords]">{translate(#Disallowed words#)}</label>
+                <textarea class="longText" name="conf[censor][badWords]" id="conf[censor][badWords]">{conf[censor][badWords]}</textarea>
+            </p>
+        </fieldset>
+
+        <fieldset class="main options" id="p3pPrivacyPolicy">
+            <h3>{translate(#P3P#)}</h3>
+            <p>
+                <label for="conf[p3p][policies]">{translate(#Policies#)}</label>
+                {generateRadioPair(#conf[p3p][policies]#,conf[p3p][policies]):h}
+            </p>
+            <p>
+                <label for="conf[p3p][policyLocation]">{translate(#Policy location#)}</label>
+                <input type="text" class="longText" name="conf[p3p][policyLocation]" id="conf[p3p][policyLocation]" value="{conf[p3p][policyLocation]}" />
+            </p>
+            <p>
+                <label for="conf[p3p][compactPolicy]">{translate(#Compact policy#)}</label>
+                <input type="text" class="longText" name="conf[p3p][compactPolicy]" id="conf[p3p][compactPolicy]" value="{conf[p3p][compactPolicy]}" />
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+<script type="text/javascript">
+    createAvailOptionsLinks('configuration','h3');
+</script>

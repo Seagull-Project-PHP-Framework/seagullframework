@@ -1,0 +1,60 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<p flexy:if="backButton">
+    <a href="{makeUrl(##,#contact#,#messaging#)}">{translate(#back to contacts#)}</a>
+</p>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Personal Details#)}</h3>
+    <dl>
+        <dt>{translate(#Username#)}</dt>
+        <dd>{profile.username}</dd>
+        <dt>{translate(#Real Name#)}</dt>
+        <dd>{profile.first_name} {profile.last_name}&nbsp;</dd>
+        <dt>{translate(#Lives in#)}</dt>
+        <dd>{profile.country}&nbsp;</dd>
+        <dt>{translate(#Member Since#)}</dt>
+        <dd>{formatDatePretty(profile.date_created)}</dd>
+        {if:conf[LoginMgr][recordLogin]}
+        <dt>{translate(#Last Login#)}</dt>
+        <dd>
+            {if:login.last_login}
+            {formatDatePretty(login.last_login)}
+            {else:}
+            {translate(#first login in progress#)}
+            {end:}
+        </dd>
+        {end:}
+    </dl>
+</div>
+
+{if:allowContact}
+<form id="account" method="post"
+      action="{makeUrl(##,#instantmessage#,#messaging#)}" flexy:ignore>
+    <fieldset class="hide">
+        <input type="hidden" name="action" value="compose" />
+        <input type="hidden" name="frmRecipients[]" value="{profile.usr_id}" />
+    </fieldset>
+    <fieldset class="lastChild hr">
+        <legend>{translate(#Contact#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label>{translate(#Message#)}</label>
+                <div>
+                    <input class="submit" type="submit" name="sendMessage"
+                           value="{translate(#send message#)}" />
+                </div>
+            </li>
+            <li>
+                <label>{translate(#Contacts#)}</label>
+                <div>
+                    <input class="button" type="button" name="contacts"
+                           value="{translate(#add to contacts#)}"
+                           onclick="document.location.href='{makeUrl(#insert#,#contact#,#messaging#)}frmUserID/{profile.usr_id}/'" />
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+</form>
+{end:}

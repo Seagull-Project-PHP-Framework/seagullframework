@@ -1,0 +1,43 @@
+<div id="dhtmltooltip"></div>
+<script type="text/javascript" src="{webRoot}/js/tooltip.js"></script>
+
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('moduleConf','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action undo" href="javascript:formReset('moduleConf')">{translate(#Reset#)}</a>
+    <a class="action cancel" href="{makeUrl(##,#module#,#default#)}">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)} "{moduleNameId}"</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <!-- Show editconfig form-->
+    {if:config}
+    <form method="post" action="" id="moduleConf" flexy:ignore>
+        <fieldset class="inside" id="conf_{module}">
+            <input type="hidden" name="action" value="update" />
+            <flexy:include src="moduleEditForm.html" />
+        </fieldset>
+        <fieldset class="inside">
+            <legend>Module configuration</legend>
+            {foreach:config,section,parameters}
+                <h3>{section}</h3>
+                <dl class="onSide">
+                {foreach:parameters,parameter,value}
+                    <dt>{parameter}</dt>
+                    <dd>
+                        {this.plugin(#createConfigField#,section,parameter,value):h}
+                    </dd>
+                    {end:}
+                </dl>
+            {end:}
+        </fieldset>
+    </form>
+    {else:}
+    {foreach:error,idx,msg}
+        <p class="error center">{msg}</p>
+    {end:}
+    {end:}
+    <div class="spacer"></div>
+</div>

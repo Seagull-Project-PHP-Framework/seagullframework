@@ -1,0 +1,8 @@
+<ul>
+{foreach:aSections,section}
+    <li flexy:raw="{renderer.getAttributes(section):h}">
+        <a href="{section[url]}">{section[title]}</a>
+        {if:section[sub]}{renderer.toHtml(section[sub]):h}{end:}
+    </li>
+{end:}
+</ul>
