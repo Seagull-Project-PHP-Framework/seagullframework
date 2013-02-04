@@ -106,8 +106,17 @@ function canCreateDb()
     $ok = $dbh->query('CREATE DATABASE '. $dbQuote . $aFormValues['name'] . $dbQuote);
 
     if (PEAR::isError($ok)) {
-        SGL_Install_Common::errorPush($ok);
-        return false;
+
+        // we've already created database, only MDB2 noticed this, PEAR::DB didn't care
+        if ($ok->getCode() == MDB2_ERROR_ALREADY_EXISTS) {
+            // so manually add flag required for creating default data later on
+            $_SESSION['_installationWizard_container']['values']['page5']['createTables'] = 1;
+            return true;
+        }   else {
+            SGL_Install_Common::errorPush($ok);
+            return false;
+        }
+
 
     } else {
         //  if new db, set flag to create tables

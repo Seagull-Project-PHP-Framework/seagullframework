@@ -286,7 +286,7 @@ class RoleMgr extends SGL_Manager
                         VALUES (" . $this->dbh->nextId($this->conf['table']['role_permission']) .
                             ", $newRoleId, $permId)");
                 }
-                $isError = DB::isError($res2);
+                $isError = PEAR::isError($res2);
             }
             if (PEAR::isError($res1) || $isError) {
                 $this->dbh->rollback();

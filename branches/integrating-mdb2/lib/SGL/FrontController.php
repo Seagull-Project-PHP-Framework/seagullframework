@@ -228,7 +228,7 @@ class SGL_FrontController
         if (SGL_Error::count()) {
             $oTmpErrors = SGL_Error::getAll();
             while ($oError = array_pop($oTmpErrors)) {
-                if (PEAR::isError($oError, DB_ERROR_CONNECT_FAILED)) {
+                if (PEAR::isError($oError, MDB2_ERROR_CONNECT_FAILED)) {
                     SGL_Error::reset(); break;
                 }
             }
@@ -316,7 +316,8 @@ class SGL_FrontController
             }
         }
         require_once 'PEAR.php';
-        require_once 'DB.php';
+        require_once 'MDB2.php';
+        require_once 'MDB2/Driver/mysql.php';
     }
 
     public static function setupMinimumEnv()

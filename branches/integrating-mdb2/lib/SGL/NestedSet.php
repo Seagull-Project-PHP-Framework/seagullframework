@@ -111,10 +111,10 @@ class SGL_NestedSet
     function &_getDb()
     {
         $locator = SGL_ServiceLocator::singleton();
-        $dbh = $locator->get('DB');
+        $dbh = $locator->get('MDB2');
         if (!$dbh) {
             $dbh =  SGL_DB::singleton();
-            $locator->register('DB', $dbh);
+            $locator->register('MDB2', $dbh);
         }
         return $dbh;
     }
@@ -159,7 +159,7 @@ class SGL_NestedSet
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = '';
-        while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
+        while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;
@@ -198,7 +198,7 @@ class SGL_NestedSet
                 if (PEAR::isError($result)) {
                     return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
                 }
-                while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
+                while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)){
                     $r[$row[$this->_fieldsInternal['id']]] = $row;
                 }
             }
@@ -236,7 +236,7 @@ class SGL_NestedSet
         if (PEAR::isError($result)) {
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
-        while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
+        while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;
@@ -275,7 +275,7 @@ class SGL_NestedSet
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = '';
-        while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
+        while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;
@@ -319,7 +319,7 @@ class SGL_NestedSet
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = array();
-        while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)) {
+        while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)) {
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;
@@ -372,7 +372,7 @@ class SGL_NestedSet
             if (PEAR::isError($result)) {
                 return $result;
             }
-            $result->fetchInto($this->_aNodes[$node_id], DB_FETCHMODE_ASSOC);
+            $result->fetchInto($this->_aNodes[$node_id], MDB2_FETCHMODE_ASSOC);
             if (is_null($this->_aNodes[$node_id])) {
                 $this->_aNodes[$node_id] = false;
             }
@@ -425,7 +425,7 @@ class SGL_NestedSet
             return SGL::raiseError('SQL problem', SGL_ERROR_DBFAILURE);
         }
         $r = array();
-        while ($result->fetchInto($row, DB_FETCHMODE_ASSOC)){
+        while ($result->fetchInto($row, MDB2_FETCHMODE_ASSOC)){
             $r[$row[$this->_fieldsInternal['id']]] = $row;
         }
         return $r;

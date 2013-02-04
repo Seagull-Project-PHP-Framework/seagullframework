@@ -79,7 +79,7 @@ class STR_DB
             if (DB::isError($GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5])) {
                 die('Cannot connect to DB, check your credentials');
             }
-            $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5]->setFetchMode(DB_FETCHMODE_OBJECT);
+            $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5]->setFetchMode(MDB2_FETCHMODE_ASSOC);
         }
         return $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5];
     }

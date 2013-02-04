@@ -121,7 +121,7 @@ class Menu_ExplorerBsd
         // Perform query
         $result = $dbh->query($query);
         if (!PEAR::isError($result)) {
-            while ($row = $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+            while ($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC)) {
 
                 // Parent id is 0, thus root node.
                 if (!$row['parent_id']) {

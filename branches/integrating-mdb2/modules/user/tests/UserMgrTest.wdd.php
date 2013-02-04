@@ -19,10 +19,10 @@ class TestUserMgr extends UnitTestCase {
     function setup()
     {
         $locator = SGL_ServiceLocator::singleton();
-        $this->dbh = $locator->get('DB');
+        $this->dbh = $locator->get('MDB2');
         if (!$this->dbh) {
             $this->dbh =  SGL_DB::singleton();
-            $locator->register('DB', $this->dbh);
+            $locator->register('MDB2', $this->dbh);
         }
         SGL_DB::setConnection();
     }

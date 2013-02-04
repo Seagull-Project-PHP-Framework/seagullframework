@@ -424,6 +424,7 @@ class SGL_Task_InitialiseDbDataObject extends SGL_Task
             'ignore_sequence_keys'  => 'ALL',
             'generator_strip_schema'=> 1,
             'quote_identifiers'     => 1,
+            'db_driver'             => 'MDB2',
         );
     }
 }
@@ -625,10 +626,10 @@ class SGL_Task_InitialiseModules extends SGL_Task
         //  skip if we're in installer
         if (defined('SGL_INSTALLED')) {
             $locator = SGL_ServiceLocator::singleton();
-            $dbh = $locator->get('DB');
+            $dbh = $locator->get('MDB2');
             if (!$dbh) {
                 $dbh =  SGL_DB::singleton();
-                $locator->register('DB', $dbh);
+                $locator->register('MDB2', $dbh);
             }
             //  this task can be called when installing a new module
             if (!empty($conf['aModuleList'])) {
