@@ -1,0 +1,26 @@
+{if:isEqual(aError[level],#-404#)}
+
+<!-- Deal with "page not found" error types -->
+<h1>Page not found</h1>
+
+<!-- Production message -->
+<p flexy:if="conf[debug][production]">
+    We are sorry, the page you requested could not be found.
+</p>
+
+{else:}
+
+<h1>Oops!</h1>
+
+<!-- Production message -->
+<p flexy:if="conf[debug][production]">
+    It seems an error has occured, the page you are trying to reach is not
+    accessible. We'll do our best to fix this soon.
+</p>
+
+{end:}
+
+<!-- Debug message -->
+{if:!conf[debug][production]}
+{msgGet()}
+{end:}

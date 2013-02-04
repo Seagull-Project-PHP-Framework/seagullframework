@@ -1,0 +1,26 @@
+        <div class="spacer"></div>
+        </div> <!-- end of #container -->
+    </div> <!-- end of #inner-wrapper -->
+    <div class="spacer"></div>
+    <div id="footer">
+        <p>
+        {translate(#Powered by#)} <a href="http://seagullproject.org/" title="{translate(#Seagull PHP Framework#)}">
+        {translate(#Seagull PHP Framework#)}</a>
+        {if:isAdmin()}
+            v{versionAPI}
+        {end:}
+         - &copy;
+        <a href="http://seagullsystems.com/" title="Seagull Systems">Seagull Systems</a> 2003-2008
+        </p>
+        <p flexy:if="showExecutionTimes">
+        {translate(#Execution Time#)} = {getExecutionTime()} {translate(#ms#)}
+        {getQueryCount()} {translate(#queries#)}
+        </p>
+        <p flexy:if="conf[debug][profiling]">{getMemoryUsage()} kb {translate(#allocated#)}</p>
+    </div> <!-- end of #footer -->
+</div> <!-- end of #outer-wrapper -->
+{if:conf[debug][infoBlock]}
+<flexy:include src="debug.html" />
+{end:}
+</body>
+</html>
