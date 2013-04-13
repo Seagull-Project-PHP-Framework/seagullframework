@@ -201,7 +201,7 @@ class SGL_Session
                 'username'          => $oUser->username,
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
-                'key'               => md5($oUser->username . $startTime . $acceptLang . $userAgent),
+                'key'               => md5(strtolower($oUser->username . $startTime . $acceptLang . $userAgent)),
                 'aPrefs'            => $da->getPrefsByUserId($oUser->usr_id, $oUser->role_id)
             );
 
@@ -242,7 +242,7 @@ class SGL_Session
                 'username'          => 'guest',
                 'startTime'         => $startTime,
                 'lastRefreshed'     => $startTime,
-                'key'               => md5($startTime . $acceptLang . $userAgent),
+                'key'               => md5(strtolower($startTime . $acceptLang . $userAgent)),
                 'currentResRange'   => 'all',
                 'sortOrder'         => 'ASC',
                 'aPrefs'            => $da->getPrefsByUserId(),
@@ -312,8 +312,8 @@ class SGL_Session
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $userAgent = @$_SERVER['HTTP_USER_AGENT'];
-        $currentKey = md5($_SESSION['username'] . $_SESSION['startTime'] .
-            $acceptLang . $userAgent);
+        $currentKey = md5(strtolower($_SESSION['username'] . $_SESSION['startTime'] .
+            $acceptLang . $userAgent));
 
         //  compare actual key with session key
         return  ($currentKey == $_SESSION['key']);
