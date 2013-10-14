@@ -11,7 +11,7 @@ class SGL_Translation3
     /**
      * FIXME: setDriver possible exception must be caught
      *
-     * @param unknown_type $driver
+     * @param null $driver
      * @param array $aOptions
      */
     private function __construct($driver = null, array $aOptions = array())
@@ -20,10 +20,9 @@ class SGL_Translation3
     }
 
     /**
-     *
-     * @param string $driver
+     * @param null $driver
      * @param array $aOptions
-     * @return unknown
+     * @return mixed
      */
     public static function singleton($driver = null, array $aOptions = array())
     {

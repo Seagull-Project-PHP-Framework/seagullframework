@@ -120,13 +120,15 @@ class SGL_WizardController extends HTML_QuickForm_Controller
  */
 class SGL_WizardControllerJump extends HTML_QuickForm_Action_Jump
 {
-   /**
-    * Extracts the names of the current page and the current action from
-    * HTTP request data, strips off all query string vars.
-    *
-    * @access public
-    * @return array     first element is page name, second is action name
-    */
+    /**
+     * Extracts the names of the current page and the current action from
+     * HTTP request data, strips off all query string vars.
+     *
+     * @access public
+     * @param $page
+     * @param $actionName
+     * @return array     first element is page name, second is action name
+     */
     function perform(&$page, $actionName)
     {
         // check whether the page is valid before trying to go to it

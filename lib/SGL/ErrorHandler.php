@@ -59,7 +59,7 @@ class SGL_ErrorHandler
      * Constructor.
      *
      * @access  public
-     * @return  void
+     * @return \SGL_ErrorHandler
      */
     function __construct()
     {
@@ -119,8 +119,8 @@ class SGL_ErrorHandler
      *  o error data emailed to admin if threshold passed
      *
      * @access  public
-     * @param   int     $errNo      PHP's error number
-     * @param   string  $errStr     PHP's error message
+     * @param   int     $errNo      PHPs error number
+     * @param   string  $errStr     PHPs error message
      * @param   string  $file       filename where error occurred
      * @param   int     $line       line number where error occurred
      * @param   string  $context    contextual info
@@ -142,13 +142,13 @@ class SGL_ErrorHandler
             $c = SGL_Config::singleton();
             $conf = $c->getAll();
             //  final param is 2nd dimension element from errorType array,
-            //  representing PEAR error codes mapped to PHP's
+            //  representing PEAR error codes mapped to PHPs
 
             //  also, error obj is stored in $GLOBALS['_SGL']['ERRORS']
             //  in the logMessage method
             SGL::logMessage($errStr, $file, $line, $this->errorType[$errNo][1]);
 
-            //  if a debug sesssion has been started, or the site in in
+            //  if a debug session has been started, or the site in in
             //  development mode, send error info to screen
             if (!$conf['debug']['production'] || SGL_Session::get('adminMode')) {
                 $source = $this->_getSourceContext($file, $line);
@@ -227,13 +227,13 @@ EOL;
     /**
      * Provides enhanced error info for developer.
      *
-     * Gives 10 lines before and after error occurred, hightlight erroroneous
+     * Gives 10 lines before and after error occurred, highlight erroneous
      * line in red.
      *
      * @access  private
-     * @param   string  $file       filename where error occurred
-     * @param   int     $line       line number where error occurred
-     * @param   string  $context    contextual info
+     * @param   string $file       filename where error occurred
+     * @param   int $line       line number where error occurred
+     * @internal param string $context contextual info
      * @return  string  contextual error info
      */
     function _getSourceContext($file, $line)
@@ -266,6 +266,7 @@ EOL;
                 $start = count($lines) -1;
             }
 
+            $context_lines = '';
             for ($i = $start; $i < $finish; $i++) {
                 //  highlight line in question
                 if ($i == ($line - 1)) {

@@ -3,10 +3,13 @@ require_once 'Config.php';
 require_once 'SGL/Translation3/Driver.php';
 
 /**
-*
-*/
+ * Class SGL_Translation3_Driver_Array
+ */
 class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
 {
+    /**
+     * @param array $aOptions
+     */
     function __construct(array $aOptions = array())
     {
         // Driver specific options
@@ -27,6 +30,11 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $this->_aLanguages = $GLOBALS['_SGL']['LANGUAGE'];
     }
 
+    /**
+     * @param null $dictionary
+     * @param null $langCode
+     * @return string
+     */
     public function getFileName($dictionary = null, $langCode = null)
     {
         if (is_null($dictionary)) {
@@ -53,6 +61,7 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
      * @param   string  $dictionary     Dictionary you want to load
      * @param   string  $langCode       Language you want the dictionary in, let null value to use
      *                                   automaticaly discovered language
+     * @return array
      */
     public function getDictionary($dictionary, $langCode = null)
     {
@@ -105,6 +114,12 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         }
     }
 
+    /**
+     * @param $originalKey
+     * @param $key
+     * @param $value
+     * @param $dictionary
+     */
     protected function _updateMaster($originalKey, $key, $value, $dictionary)
     {
         $aDictionary = $this->getDictionary($dictionary, $this->defaultLangCode);
@@ -117,6 +132,12 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         $this->save();
     }
 
+    /**
+     * @param $originalKey
+     * @param $key
+     * @param $value
+     * @param $dictionary
+     */
     protected function _syncSlaveLanguages($originalKey, $key, $value, $dictionary)
     {
         foreach ($this->_aLanguages as $langCodeCharset => $aLang) {
@@ -138,6 +159,12 @@ class SGL_Translation3_Driver_Array extends SGL_Translation3_Driver
         }
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @param $dictionary
+     * @param $langCode
+     */
     protected function _updateSlaveValue($key, $value, $dictionary, $langCode)
     {
         $aDictionary = $this->getDictionary($dictionary, $langCode);

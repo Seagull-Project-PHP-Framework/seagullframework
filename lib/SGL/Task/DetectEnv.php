@@ -73,6 +73,9 @@ class SGL_EnvSummaryTask extends SGL_Task
     var $title = '';
     var $mandatory = false;
 
+    /**
+     * @return string
+     */
     function render()
     {
         $html = '<table width="70%" border=1>'.EOL;
@@ -116,6 +119,13 @@ class SGL_EnvSummaryTask extends SGL_Task
         return $html;
     }
 
+    /**
+     * @param $aRequirement
+     * @param $error
+     * @param $key
+     * @param $actual
+     * @return string
+     */
     function processDependency($aRequirement, $error, $key, $actual)
     {
         $depType = key($aRequirement);
@@ -162,6 +172,10 @@ class SGL_EnvSummaryTask extends SGL_Task
         return $html;
     }
 
+    /**
+     * @param $aRequirement
+     * @return string
+     */
     function processRecommended($aRequirement)
     {
         $depType = key($aRequirement);
@@ -174,6 +188,10 @@ class SGL_EnvSummaryTask extends SGL_Task
         return $ret;
     }
 
+    /**
+     * @param $aData
+     * @return string
+     */
     function createComboBox($aData)
     {
         $html = '<select name="pearPackages" multiple="multiple">';

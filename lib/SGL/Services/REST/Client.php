@@ -71,6 +71,7 @@ class SGL_Services_REST_Client
     /**
      * Constructor.
      *
+     * @param array $aOptions
      * @param string $user
      * @param string $passwd
      * @return SGL_Services_REST_Client

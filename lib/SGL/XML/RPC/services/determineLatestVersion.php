@@ -4,6 +4,10 @@ $determineLatestVersion_sig = array(array("string"));
 $determineLatestVersion_doc = "Requires no parameters, returns a string indicating the latest framework version number.";
 $determineLatestVersion_alias = 'framework.determineLatestVersion';
 
+/**
+ * @param $msg
+ * @return XML_RPC_Response
+ */
 function SGL_XML_RPC_Server_determineLatestVersion($msg)
 {
     //  get framework version

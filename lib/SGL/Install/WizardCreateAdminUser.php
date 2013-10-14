@@ -37,12 +37,18 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
+/**
+ * @return bool
+ */
 function appRootExists()
 {
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];
     return file_exists($aFormValues['installRoot']);
 }
 
+/**
+ * @return bool
+ */
 function webRootExists()
 {
     $aFormValues = $_SESSION['_installationWizard_container']['values']['page6'];

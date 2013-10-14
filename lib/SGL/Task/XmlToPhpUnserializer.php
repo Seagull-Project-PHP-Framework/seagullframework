@@ -11,6 +11,10 @@ require_once 'XML/Unserializer.php';
  */
 class SGL_Task_XmlToPhpUnserializer extends SGL_DecorateProcess
 {
+    /**
+     * @param $input
+     * @param $output
+     */
     function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

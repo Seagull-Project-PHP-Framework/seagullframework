@@ -146,7 +146,7 @@ abstract class SGL_AjaxProvider2
      * @param SGL_Registry $input
      * @param SGL_Output $output
      *
-     * @return void
+     * @return PEAR_Error $ret
      */
     public function process(SGL_Registry $input, SGL_Output $output)
     {

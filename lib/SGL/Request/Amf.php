@@ -2,8 +2,14 @@
 
 require_once SGL_CORE_DIR . '/Request/Ajax.php';
 
+/**
+ * Class SGL_Request_Amf
+ */
 class SGL_Request_Amf extends SGL_Request_Ajax
 {
+    /**
+     * @return array|bool|object|true
+     */
     function init()
     {
         parent::init();
@@ -11,6 +17,9 @@ class SGL_Request_Amf extends SGL_Request_Ajax
         return true;
     }
 
+    /**
+     * @return string
+     */
     function getActionName()
     {
         $container = ucfirst($this->getModuleName()) . 'AmfProvider';

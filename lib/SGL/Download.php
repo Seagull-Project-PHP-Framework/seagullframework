@@ -52,13 +52,13 @@ class SGL_Download extends HTTP_Download
 {
 
     /**
-    * set the Accept-Range HTTP header
-    * typical values are 'none' or 'bytes'
-    *
-    * @access  public
-    * @param   string   $par  the value for the HTTP header Accept-Ranges
-    * @return  void
-    */
+     * set the Accept-Range HTTP header
+     * typical values are 'none' or 'bytes'
+     *
+     * @access  public
+     * @param $param
+     * @return  void
+     */
     function setAcceptRanges($param)
     {
         if ($param == 'bytes') {
@@ -69,12 +69,12 @@ class SGL_Download extends HTTP_Download
     }
 
     /**
-    * set the Content-Transfer-Encoding HTTP header
-    *
-    * @access  public
-    * @param   string   $par  the value for the HTTP header Content-Transfer-Encoding
-    * @return  void
-    */
+     * set the Content-Transfer-Encoding HTTP header
+     *
+     * @access  public
+     * @param $param
+     * @return  bool
+     */
     function setContentTransferEncoding($param)
     {
         $this->headers['Content-Transfer-Encoding'] = $param;

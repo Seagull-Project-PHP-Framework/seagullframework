@@ -21,7 +21,7 @@ class SGL_URL2
     /**
      * Constructor.
      *
-     * @param Horde_Routes_Util $oRoutes
+     * @param \Horde_Routes_Utils $oRoutes
      */
     public function __construct(Horde_Routes_Utils $oRoutes)
     {
@@ -48,7 +48,7 @@ class SGL_URL2
      *
      * @param array $aOpts
      *
-     * @return viod
+     * @return void
      */
     public function setMapperOptions($aOpts)
     {

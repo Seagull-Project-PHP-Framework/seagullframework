@@ -80,7 +80,7 @@ class SGL_Cache
      *
      * @return Cache_Lite
      */
-    function singleton($type = 'default', $aOptions = array(), $forceNew = false)
+    public static function singleton($type = 'default', $aOptions = array(), $forceNew = false)
     {
         static $aInstances;
 
@@ -136,13 +136,14 @@ class SGL_Cache
      *
      * @access public
      *
-     * @param  string $group  name of the cache group (e.g. nav, blocks, etc.)
-     *
+     * @param bool|string $group name of the cache group (e.g. nav, blocks, etc.)
+     * @param string $mode
+     * @param array $options
      * @return boolean true on success
      *
      * @author Andy Crain <apcrain@fuse.net>
      */
-     function clear($group = false, $mode = 'ingroup', $options = array())
+    public static function clear($group = false, $mode = 'ingroup', $options = array())
      {
         $cache = SGL_Cache::singleton();
         return $cache->clean($group, $mode, $options);

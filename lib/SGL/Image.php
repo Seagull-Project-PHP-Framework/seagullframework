@@ -114,7 +114,7 @@ class SGL_Image
 
     /**
      * Initialize SGL_Image instance. Can parse the specified ini file passed
-     * as $params or use the prepeared array directly.
+     * as $params or use the prepared array directly.
      * Load strategies taking into account extracted params.
      *
      * @access public
@@ -174,8 +174,7 @@ class SGL_Image
      *
      * @access public
      *
-     * @param string $moduleName
-     *
+     * @internal param string $moduleName
      * @return string
      *
      * @see _getImagePath()
@@ -198,7 +197,7 @@ class SGL_Image
      *
      * @access public
      *
-     * @param string $moduleName
+     * @internal param string $moduleName
      *
      * @return string
      *
@@ -406,6 +405,7 @@ class SGL_Image
     /**
      * @access public
      *
+     * @param string $path
      * @return array
      */
     function setImagePath($path = "")
@@ -464,8 +464,8 @@ class SGL_Image
     /**
      * @access private
      *
-     * @param string $callType
-     * @param string $moduleName
+     * @internal param string $callType
+     * @internal param string $moduleName
      *
      * @return string
      */
@@ -716,7 +716,7 @@ class SGL_ImageConfig
      *
      * @param array $aParams
      */
-    function cleanup(&$aParams)
+    public static function cleanup(&$aParams)
     {
         if (empty($aParams)) {
             return;
@@ -749,7 +749,7 @@ class SGL_ImageConfig
      *
      * @return boolean
      */
-    function paramsCheck($aParams, $sectionName = '')
+    public static function paramsCheck($aParams, $sectionName = '')
     {
         $aMainParams = SGL_ImageConfig::getProperty('_aMainParams');
         //hack, remove uploadDir to keep BC.
@@ -778,7 +778,7 @@ class SGL_ImageConfig
      *
      * @return array
      */
-    function getAvailableParams()
+    public static function getAvailableParams()
     {
         $aAddParams  = SGL_ImageConfig::getProperty('_aAdditionalParams');
         $aMainParams = SGL_ImageConfig::getProperty('_aMainParams');
@@ -796,7 +796,7 @@ class SGL_ImageConfig
      *
      * @return array
      */
-    function getParamsFromFile($fileName)
+    public static function getParamsFromFile($fileName)
     {
         if (!is_readable($fileName)) {
             return SGL::raiseError("SGL_ImageConfig: '$fileName' is not readable");
@@ -836,7 +836,7 @@ class SGL_ImageConfig
      *
      * @return array
      */
-    function getParamsFromString($configString)
+    public static function getParamsFromString($configString)
     {
         $aRet = array();
         if (empty($configString)) {
@@ -994,7 +994,7 @@ class SGL_ImageConfig
 class SGL_ImageTransformStrategy
 {
     /**
-     * PEAR Image_Transfrom.
+     * PEAR Image_Transform.
      *
      * @var object
      */
@@ -1012,7 +1012,7 @@ class SGL_ImageTransformStrategy
      *
      * @access public
      *
-     * @param PEAR Image_Transfrom $driver
+     * @param PEAR Image_Transform $driver
      */
     function SGL_ImageTransformStrategy(&$driver)
     {
@@ -1076,7 +1076,7 @@ class SGL_ImageTransformStrategy
      * @access public
      *
      * @param $saveQuality
-     * @param $saveFormat   jpg, gif or png (not support by SGL_Image yet)
+     * @param \jpg|string $saveFormat jpg, gif or png (not support by SGL_Image yet)
      *
      * @return boolean
      */

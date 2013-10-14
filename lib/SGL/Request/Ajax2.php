@@ -2,8 +2,14 @@
 
 require_once dirname(__FILE__) . '/Browser2.php';
 
+/**
+ * Class SGL_Request_Ajax2
+ */
 class SGL_Request_Ajax2 extends SGL_Request_Browser2
 {
+    /**
+     *
+     */
     public function init()
     {
         parent::init();

@@ -49,12 +49,13 @@
 class SGL_UrlParser_ClassicStrategy extends SGL_UrlParserStrategy
 {
     /**
-    * Parses raw querystring and returns an array of it
-    *
-    * @param  string  $querystring The querystring to parse
-    * @return array                An array of the querystring data
-    * @access private
-    */
+     * Parses raw querystring and returns an array of it
+     *
+     * @param $url
+     * @internal param string $querystring The querystring to parse
+     * @return array                An array of the querystring data
+     * @access private
+     */
     function parseQuerystring(/*SGL_Url*/$url)
     {
         $parts  = preg_split('/[' . preg_quote(ini_get('arg_separator.input'),

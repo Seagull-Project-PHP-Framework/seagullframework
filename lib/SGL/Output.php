@@ -141,8 +141,11 @@ class SGL_Output
      *
      * @access  public
      * @static
-     * @param   string  $key    translation term
-     * @param   string  $filter optional filter fn, ie, strtoupper()
+     * @param   string $key    translation term
+     * @param bool|string $filter optional filter fn, ie, strtoupper()
+     * @param array $aParams
+     * @param null $output
+     * @param null $lang
      * @return  string          translated text
      * @see     setLanguage()
      */
@@ -207,7 +210,7 @@ class SGL_Output
         return $ret;
     }
 
-    function tr($key, $filter = false, $aParams = array(), $output = null, $lang = null)
+    public static function tr($key, $filter = false, $aParams = array(), $output = null, $lang = null)
     {
         return SGL_Output::translate($key, $filter, $aParams, $output, $lang);
     }
@@ -216,10 +219,12 @@ class SGL_Output
      * Generates options for an HTML select object.
      *
      * @access  public
-     * @param   array   $array      hash of select values
-     * @param   mixed   $selected   default selected element, array for multiple elements
+     * @param $aValues
+     * @param   mixed $selected   default selected element, array for multiple elements
      * @param   boolean $multiple   true if multiple
-     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param bool $translate
+     * @internal param array $array hash of select values
      * @return  string  select options
      */
     function generateSelect($aValues, $selected = null, $multiple = false,
@@ -281,7 +286,7 @@ class SGL_Output
      * @param   array   $hElements  hash of checkbox values
      * @param   array   $aChecked   array of checked elements
      * @param   string  $groupName  name of element group
-     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array   $options    attributes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html        list of checkboxes
      */
     function generateCheckboxList($hElements, $aChecked, $groupName, $options = null)
@@ -314,7 +319,7 @@ class SGL_Output
      * @param   string   $name       element name
      * @param   string   $value      element value
      * @param   boolean  $checked    is checked
-     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array   $options     attributes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string  html         checkbox tag w/label
      */
     function generateCheckbox($name, $value, $checked, $options = null)
@@ -343,7 +348,7 @@ class SGL_Output
      * @access  public
      * @param   string   $radioName  name of radio element
      * @param   boolean  $checked    is checked
-     * @param   array   $options     attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array   $options     attributes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @return  string   html        yes/no radio pair
      */
     function generateRadioPair($radioName, $checked, $options = null)
@@ -377,12 +382,13 @@ class SGL_Output
      * Generates sequence of radio button from array.
      *
      * @access  public
-     * @param   array   $elements   array of  values or radio button
-     * @param   string  $selected   selected key (there can be only one selected element in a radio list)
-     * @param   string  $groupname  usually an array name that will contain all elements
-     * @param   integer $newline    how many columns to display for this radio group (one if not informed)
-     * @param   array   $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array $elements   array of  values or radio button
+     * @param   string $selected   selected key (there can be only one selected element in a radio list)
+     * @param   string $groupname  usually an array name that will contain all elements
+     * @param bool|int $newline how many columns to display for this radio group (one if not informed)
      * @param   boolean $inTable    true for adding table formatting
+     * @param   array $options    attributes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     *
      * @return  string  $html       a list of radio buttons
      */
     function generateRadioList($elements, $selected, $groupname, $newline = false, $inTable = true, $options = null)
@@ -448,7 +454,8 @@ class SGL_Output
      * Converts bytes to Kb or MB as appropriate.
      *
      * @access  public
-     * @param   int $bytes
+     * @param $size
+     * @internal param int $bytes
      * @return  int kb/MB
      */
     function formatBytes($size)
@@ -464,7 +471,8 @@ class SGL_Output
      * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into dd.mm.yyyy.
      *
      * @access  public
-     * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
+     * @param string $date
+     * @internal param string $input date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $output user-friendly format (european)
      */
     function formatDate($date = '')
@@ -540,8 +548,9 @@ class SGL_Output
      *
      * @access  public
      * @param   boolean $isBold
-     * @param   string  $pColor optional primary color, override default
-     * @param   string  $sColor optional secondary color, override default
+     * @param   string $pColor optional primary color, override default
+     * @param   string $sColor optional secondary color, override default
+     * @param string $id
      * @return  string  $curRowClass string representing class found in stylesheet
      */
 
@@ -599,9 +608,10 @@ class SGL_Output
      * Returns a shortened version of text string.
      *
      * @access  public
-     * @param   string  $str    Text to be shortened
+     * @param   string $str    Text to be shortened
      * @param   integer $limit  Number of characters to cut to
-     * @param   string  $appendString  Trailing string to be appended
+     * @param int $element
+     * @param   string $appendString  Trailing string to be appended
      * @return  string  $processedString    Correctly shortened text
      */
     function summarise($str, $limit=50, $element=SGL_WORD, $appendString=' ...')
@@ -616,7 +626,7 @@ class SGL_Output
      *
      * @return mixed
      */
-    function msgGetAdmin()
+    public static function msgGetAdmin()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -663,6 +673,7 @@ class SGL_Output
     /**
      * Returns true if current user or passed role ID is that of an admin.
      *
+     * @param null $rid
      * @return boolean
      */
     function isAdmin($rid = null)
@@ -676,6 +687,7 @@ class SGL_Output
     /**
      * Returns true if $rid is 1 or -1.
      *
+     * @param $rid
      * @return boolean
      */
     function isAdminOrUnassigned($rid)
@@ -1083,7 +1095,7 @@ class SGL_Output
     /**
      * @return query count
      */
-    function getQueryCount()
+    public static function getQueryCount()
     {
         return $GLOBALS['_SGL']['QUERY_COUNT'];
     }
@@ -1359,7 +1371,7 @@ class SGL_Output
      *
      * @access public
      *
-     * @return void
+     * @return string $html
      */
     function msgGet()
     {

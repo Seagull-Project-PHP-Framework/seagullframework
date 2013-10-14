@@ -16,6 +16,9 @@ class ActionDisplay extends HTML_QuickForm_Action_Display
         return parent::perform($page, $actionName);
     }
 
+    /**
+     * @param $page
+     */
     function _renderForm(&$page)
     {
         $renderer = $page->defaultRenderer();

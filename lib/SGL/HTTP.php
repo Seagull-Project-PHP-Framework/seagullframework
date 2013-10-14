@@ -56,7 +56,7 @@ class SGL_HTTP
      * @return  void
      * @author  Wolfram Kriesing <wk@visionp.de>
      */
-    function redirect($url = '')
+    public static function redirect($url = '')
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();

@@ -91,7 +91,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
     }
 
     /**
-     * Increses attempt count.
+     * Increases attempt count.
      *
      * @param unknown_type $emailId
      *
@@ -157,7 +157,7 @@ class SGL_Emailer_Queue_Container_Db extends SGL_Emailer_Queue_Container
     }
 
     /**
-     * Retuns email ID.
+     * Returns email ID.
      *
      * @param object $email
      *

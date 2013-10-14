@@ -1444,6 +1444,7 @@ class SGL_Task_AddTestDataToConfig extends SGL_UpdateHtmlTask
      * 6. Removes saved ini file
      *
      * @param unknown_type $data
+     * @return array|void
      */
     function run($data = null)
     {
@@ -1558,7 +1559,8 @@ class SGL_Task_SyncSequences extends SGL_Task
      *
      * @access  public
      * @static
-     * @param   mixed  $tables  string table name or array of string table names
+     * @param null $data
+     * @internal param mixed $tables string table name or array of string table names
      * @return  true | PEAR Error
      * @todo we need to reinstate this method's ability to receive an array of tables as an argument
      */

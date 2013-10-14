@@ -53,7 +53,7 @@ abstract class SGL_Translation3_Driver
     }
 
     /**
-     * Initializea the Translate Driver, setting available languages, the default
+     * Initializes the Translate Driver, setting available languages, the default
      * language and the current language.
      */
     private function init()
@@ -83,6 +83,9 @@ abstract class SGL_Translation3_Driver
         return $this->_aLanguages[$langCodeCharset][2];
     }
 
+    /**
+     * @param array $aOptions
+     */
     public function setOptions(array $aOptions = array())
     {
         foreach ($aOptions as $key => $value) {
@@ -97,6 +100,10 @@ abstract class SGL_Translation3_Driver
         $this->defaultLangCodeCharset = SGL_Translation3::getDefaultLangCodeCharset();
     }
 
+    /**
+     * @param null $langCode
+     * @return bool|int|string
+     */
     public function getLangCodeCharset($langCode = null)
     {
         if (!is_null($langCode)) {
@@ -142,16 +149,15 @@ abstract class SGL_Translation3_Driver
     /**
      * Fetches a dictionary and loads it into _aDictionaries array + $GLOBALS['_SGL']['TRANSLATION'] for BC.
      *
-     * @param   string  $dictionary     Dictionary you want to load
-     * @param   string  $langCodeCharset Language you want the dictionary in  leave as null for
-     *                                   automaticaly discovered language
-     * @param   array   $aOptions       Run ime options to overwrite default options
+     * @param   string $dictionary     Dictionary you want to load
+     * @param null $langCode
+     * @param   array $aOptions       Run ime options to overwrite default options
      *                                   When passing aOption 'clear'  => true, the translation array
      *                                   will be cleared before adding new translation strings
-     *
+     * @internal param string $langCodeCharset Language you want the dictionary in  leave as null for
+     *                                   automaticaly discovered language
      */
-    public function loadDictionary($dictionary, $langCode = null,
-        array $aOptions = array())
+    public function loadDictionary($dictionary, $langCode = null, array $aOptions = array())
     {
         $aOptions = array_merge($this->_aOptions, $aOptions);
 
@@ -194,7 +200,7 @@ abstract class SGL_Translation3_Driver
     /**
      * Loading default dictionaries following SGL process.
      *
-     * Additionaly you can add default dictionaries to be loaded in
+     * Additionally you can add default dictionaries to be loaded in
      * the Translation module's conf.ini file
      *
      */
@@ -434,10 +440,11 @@ abstract class SGL_Translation3_Driver
     /**
      * Fetches a dictionary
      *
-     * @param   string  $dictionary     Dictionary you want to load
-     * @param   string  $langCodeCharset Language you want the dictionary in, let null value to use
-     *                                   automaticaly discovered language
-     *
+     * @param   string $dictionary     Dictionary you want to load
+     * @param null $langCode
+     * @return
+     * @internal param string $langCodeCharset Language you want the dictionary in, let null value to use
+     *                                   automatically discovered language
      */
     abstract public function getDictionary($dictionary, $langCode = null);
 

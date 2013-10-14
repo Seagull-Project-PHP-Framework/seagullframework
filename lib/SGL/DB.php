@@ -64,7 +64,7 @@ class SGL_DB
      * @param   string  $dsn    the datasource details if supplied: see {@link DB::parseDSN()} for format
      * @return  mixed           reference to DB resource or PEAR error on failure to connect
      */
-    function singleton($dsn = null)
+    public static function singleton($dsn = null)
     {
         $msg = 'Cannot connect to DB, check your credentials';
         $dsn = (is_null($dsn)) ? SGL_DB::getDsn(SGL_DSN_STRING) : $dsn;
@@ -109,10 +109,11 @@ class SGL_DB
      *
      * @access  public
      * @static
-     * @param int $type  a constant that specifies the return type, ie, array or string
+     * @param int $type a constant that specifies the return type, ie, array or string
+     * @param bool $excludeDbName
      * @return mixed     a string or array contained the data source name
      */
-    function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
+    public static function getDsn($type = SGL_DSN_ARRAY, $excludeDbName = false)
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -346,7 +347,7 @@ class SGL_ServiceLocator
     /**
      * A method to return a singleton handle to the service locator class.
      */
-    function singleton()
+    public static function singleton()
     {
         static $instance;
         if (!$instance) {

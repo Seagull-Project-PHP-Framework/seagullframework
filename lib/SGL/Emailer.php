@@ -262,7 +262,7 @@ class SGL_Emailer
     * @param mixed $headers
     * @return string or array
     */
-    function cleanMailInjection($headers)
+    public static function cleanMailInjection($headers)
     {
          $regex = "#((<CR>|<LF>|0x0A/%0A|0x0D/%0D|\\n|\\r)\S).*#i";
         // strip all possible "additional" headers from the values

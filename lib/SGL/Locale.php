@@ -59,10 +59,11 @@ class SGL_Locale
      *   echo $locale->formatCurrency(2000,I18Nv2_CURRENCY_LOCAL);
      *   echo $locale->formatDate(time());
      *
-     * @param string $locale Overrides getting the locale from session/usr
+     * @param bool $newLocale
+     * @internal param string $locale Overrides getting the locale from session/usr
      * @return I18Nv2 Returns a single instance of I18Nv2
      */
-    function singleton($newLocale = false)
+    public static function singleton($newLocale = false)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
