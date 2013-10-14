@@ -198,7 +198,7 @@ class Image_Transform
      * @see PEAR::isError()
      * @see Image_Transform::setOption()
      */
-    function &factory($driver = '')
+    public static function &factory($driver = '')
     {
         if ($driver == '') {
             $extensions = array(
