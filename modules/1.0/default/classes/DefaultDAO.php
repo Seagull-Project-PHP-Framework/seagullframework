@@ -70,7 +70,7 @@ class DefaultDAO extends SGL_Manager
      * @static
      * @return  DefaultDAO reference to DefaultDAO object
      */
-    function singleton()
+    public static function singleton()
     {
         static $instance;
 
@@ -85,6 +85,7 @@ class DefaultDAO extends SGL_Manager
     /**
      * Returns true if module record exists in db.
      *
+     * @param $moduleName
      * @return boolean
      * @deprecated use SGL::moduleIsEnabled($moduleName) instead
      */
@@ -103,7 +104,7 @@ class DefaultDAO extends SGL_Manager
     /**
      * Returns an array of all modules.
      *
-     * @param integer $type
+     * @param int|string $type
      * @return array
      */
     function getModuleHash($type = '')

@@ -81,6 +81,10 @@ class ModuleMgr extends SGL_Manager
         );
     }
 
+    /**
+     * @param SGL_Request $req
+     * @param SGL_Registry $input
+     */
     function validate($req, &$input)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -165,6 +169,9 @@ class ModuleMgr extends SGL_Manager
             ? ' checked="checked"' : '';
     }
 
+    /**
+     * @param $aModules
+     */
     function _cmd_syncModules($aModules)
     {
         foreach ($aModules as $module) {
@@ -225,6 +232,10 @@ class ModuleMgr extends SGL_Manager
 //        }
 //    }
 
+    /**
+     * @param $input
+     * @param $output
+     */
     function _cmd_install($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

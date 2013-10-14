@@ -108,6 +108,11 @@ class ModuleGenerationMgr extends SGL_Manager
         }
     }
 
+    /**
+     * @param $input
+     * @param $output
+     * @return bool|object
+     */
     function _cmd_createModule($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
@@ -296,6 +301,11 @@ class ModuleGenerationMgr extends SGL_Manager
         }
     }
 
+    /**
+     * @param $output
+     * @param $dataFile
+     * @return bool|int
+     */
     function _createDefaultDataFile($output, $dataFile)
     {
         $moduleFriendlyName = ucfirst($output->moduleName);
@@ -307,6 +317,10 @@ EOD;
         return $success;
     }
 
+    /**
+     * @param $modName
+     * @param $mgrLongName
+     */
     function _addModule($modName, $mgrLongName)
     {
         $module = $this->da->getModuleById();
@@ -326,6 +340,12 @@ EOD;
         }
     }
 
+    /**
+     * @param $aDirectories
+     * @param $aTemplates
+     * @param $output
+     * @return bool
+     */
     function _createTemplates($aDirectories, $aTemplates, $output)
     {
         $replace = array(
@@ -413,6 +433,10 @@ EOD;
         return true;
     }
 
+    /**
+     * @param $aDirectories
+     * @param $output
+     */
     function _createLangFiles($aDirectories, $output)
     {
         $fileTemplate = "<?php\n\$words=array(\n".
@@ -437,6 +461,11 @@ EOD;
         }
     }
 
+    /**
+     * @param $aDirectories
+     * @param $mgrLongName
+     * @return bool|int
+     */
     function _createModuleConfig($aDirectories, $mgrLongName)
     {
         //  create conf.ini
@@ -449,6 +478,11 @@ EOD;
         return $success;
     }
 
+    /**
+     * @param $aDirectories
+     * @param $mgrLongName
+     * @return object
+     */
     function _updateModuleConfig($aDirectories, $mgrLongName)
     {
         //  update conf.ini
@@ -465,6 +499,10 @@ EOD;
         return $success;
     }
 
+    /**
+     * @param $tableAliasIniPath
+     * @param $managerName
+     */
     function _createTableAliasFile($tableAliasIniPath, $managerName)
     {
         $h = fopen($tableAliasIniPath, 'w+');
@@ -473,6 +511,10 @@ EOD;
         @chmod($tableAliasIniPath, 0666);
     }
 
+    /**
+     * @param $aDirectories
+     * @return bool
+     */
     function _createDirectories($aDirectories)
     {
         if (is_writable(SGL_MOD_DIR)) {
@@ -493,6 +535,10 @@ EOD;
         }
     }
 
+    /**
+     * @param $output
+     * @return string
+     */
     function _buildManager($output)
     {
         //  initialise template engine
@@ -517,6 +563,11 @@ EOD;
         return $mgrTemplate;
     }
 
+    /**
+     * @param $input
+     * @param $output
+     * @return array
+     */
     function _buildMethods($input, $output)
     {
         //  array: methodName => array (aActionsmapping string, templateName)
@@ -581,6 +632,10 @@ EOF;
         return array($methods, $aActions, $aTemplates);
     }
 
+    /**
+     * @param $input
+     * @param $output
+     */
     function _cmd_list($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);

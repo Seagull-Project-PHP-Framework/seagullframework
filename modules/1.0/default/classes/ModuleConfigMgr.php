@@ -237,7 +237,7 @@ class ModuleConfigMgr extends SGL_Manager
      */
     function _cmd_redirectToDefault($input, $output)
     {
-        //  if no errors have occured, redirect
+        //  if no errors have occurred, redirect
         if (!SGL_Error::count()) {
             $aParams = array(
                 'managerName' => 'module'

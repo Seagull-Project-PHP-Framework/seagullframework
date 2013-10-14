@@ -36,7 +36,7 @@ class RecordLogin extends SGL_Observer
      *
      * @return boolean
      */
-    function loginRecordingAllowed()
+    public static function loginRecordingAllowed()
     {
         $c = SGL_Config::singleton();
         $conf = $c->load(SGL_MOD_DIR . '/user/conf.ini');
@@ -55,7 +55,7 @@ class RecordLogin extends SGL_Observer
      *
      * @return boolean
      */
-    function insert(&$dbh, $userId = null)
+    public static function insert(&$dbh, $userId = null)
     {
         require_once 'DB/DataObject.php';
         $tableName        = SGL_Config::get('table.login');

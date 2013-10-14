@@ -25,7 +25,7 @@ class BlockDAO extends SGL_Manager
      * @static
      * @return  BlockDAO reference to BlockDAO object
      */
-    function singleton()
+    public static function singleton()
     {
         static $instance;
 

@@ -163,7 +163,7 @@ class ArrayDriver
      *
      * @return array
      */
-    function getNavigationStructure()
+    public static function getNavigationStructure()
     {
         $aTree    = array();
         $aModules = SGL_Util::getAllModuleDirs(true);
@@ -306,7 +306,7 @@ class ArrayDriver
      *
      * @return boolean
      */
-    function saveNodes($aNodes)
+    public static function saveNodes($aNodes)
     {
         $ok = false;
         if (is_writable(SGL_VAR_DIR)) {
