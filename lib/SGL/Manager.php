@@ -303,7 +303,7 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    public static function display($output)
+    function display($output)
     {
         //  reinstate dynamically added css
         if (!$output->manager->isValid()) {
