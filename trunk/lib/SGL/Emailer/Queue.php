@@ -106,7 +106,7 @@ class SGL_Emailer_Queue
      * @param string $deliveryDate
      * @param integer $interval
      * @param array $aParams
-     * @param integer $skipSend
+     * @param bool|int $skipSend
      *
      * @return boolean
      */

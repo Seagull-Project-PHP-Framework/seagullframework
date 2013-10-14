@@ -61,13 +61,12 @@ class SGL_Translation
      *
      * @static
      * @access  public
-     * @param   string  $lang           language to return translations
-     * @param   string  $type           type of object: translation or admin
+     * @param   string $type           type of object: translation or admin
+     * @internal param string $lang language to return translations
      * @return  object  $translation    Translation2 object
      *
-     *
      */
-    function singleton($type = 'translation')
+    public static function singleton($type = 'translation')
     {
         static $instance;
 
@@ -136,7 +135,7 @@ class SGL_Translation
      *
      * @return  boolean     true on success/false on failure
      */
-    function clearCache()
+    public static function clearCache()
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -289,6 +288,12 @@ class SGL_Translation
         }
     }
 
+    /**
+     * @param $module
+     * @param $langId
+     * @param string $path
+     * @return string
+     */
     function getFileName($module, $langId, $path = SGL_MOD_DIR)
     {
 
@@ -303,10 +308,10 @@ class SGL_Translation
      * @static
      * @param string $module
      * @param string $lang
-     * @param string $fallbackLang
+     * @param bool|string $fallbackLang
      * @return array
      */
-    function getTranslations($module, $lang, $fallbackLang = false)
+    public static function getTranslations($module, $lang, $fallbackLang = false)
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -365,14 +370,12 @@ class SGL_Translation
      * Return current language ID format.
      *
      * @static
-     *
      * @access public
-     *
-     * @param string $format
+     * @param int|string $format
      *
      * @return string
      */
-    function getLangID($format = SGL_LANG_ID_TRANS2)
+    public static function getLangID($format = SGL_LANG_ID_TRANS2)
     {
         if (isset($_SESSION['aPrefs']['language'])) {
             $ret = $_SESSION['aPrefs']['language'];
@@ -386,14 +389,12 @@ class SGL_Translation
      * Get current charset.
      *
      * @static
-     *
      * @access public
-     *
-     * @param string $format
+     * @param int|string $format
      *
      * @return string
      */
-    function getCharset($format = SGL_LANG_ID_SGL)
+    public static function getCharset($format = SGL_LANG_ID_SGL)
     {
         $lang = SGL_Translation::getLangID($format);
         return SGL_Translation::extractCharset($lang, $format);
@@ -405,12 +406,11 @@ class SGL_Translation
      * @static
      *
      * @access public
-     *
      * @param string $lang
      *
      * @return boolean
      */
-    function isAllowedLanguage($lang)
+    public static function isAllowedLanguage($lang)
     {
         $lang = SGL_Translation::transformLangID($lang, SGL_LANG_ID_SGL);
         return isset($GLOBALS['_SGL']['LANGUAGE'][$lang]);
@@ -424,22 +424,22 @@ class SGL_Translation
      * @access public
      *
      * @param string $lang
-     * @param string $format
+     * @param int|string $format
      *
      * @return string
      */
     function extractCharset($lang, $format = SGL_LANG_ID_SGL)
     {
         switch ($format) {
-            case SGL_LANG_ID_TRANS2:       $devider = '_'; break;
-            case SGL_LANG_ID_SGL: default: $devider = '-'; break;
+            case SGL_LANG_ID_TRANS2:       $divider = '_'; break;
+            case SGL_LANG_ID_SGL: default: $divider = '-'; break;
         }
-        $aLang = explode($devider, $lang);
+        $aLang = explode($divider, $lang);
         array_shift($aLang);
     if ($aLang[0] == 'tw') {
         array_shift($aLang);
     }
-        return implode($devider, $aLang);
+        return implode($divider, $aLang);
     }
 
     /**
@@ -449,11 +449,11 @@ class SGL_Translation
      *
      * @access public
      *
-     * @param string $format
+     * @param int|string $format
      *
      * @return string
      */
-    function getFallbackLangID($format = SGL_LANG_ID_TRANS2)
+    public static function getFallbackLangID($format = SGL_LANG_ID_TRANS2)
     {
         $lang = SGL_Config::get('translation.fallbackLang');
         return SGL_Translation::transformLangID($lang, $format);
@@ -466,11 +466,11 @@ class SGL_Translation
      *
      * @access public
      *
-     * @param string $format
+     * @param int|string $format
      *
      * @return string
      */
-    function getFallbackCharset($format = SGL_LANG_ID_SGL)
+    public static function getFallbackCharset($format = SGL_LANG_ID_SGL)
     {
         $lang = SGL_Translation::getFallbackLangID($format);
         return SGL_Translation::extractCharset($lang, $format);
@@ -487,7 +487,7 @@ class SGL_Translation
      * @param int format language id format
      * @return langID string
      */
-     function transformLangID($langID, $format = null)
+    public static function transformLangID($langID, $format = null)
      {
         if (isset($format)) {
             $langID = ($format == SGL_LANG_ID_SGL)
@@ -510,7 +510,7 @@ class SGL_Translation
      * @param  string  $moduleName  module/page name
      * @return boolean
      */
-    function removeTranslations($moduleName)
+    public static function removeTranslations($moduleName)
     {
         $trans  = SGL_Translation::singleton('admin');
         $aPages = $trans->getPageNames();
@@ -584,14 +584,9 @@ class SGL_Translation
     }
 
     /**
-     * Lock translation file.
-     *
-     * @param string $moduleName
-     * @param string $lang
-     *
-     * @return void
-     *
-     * @static
+     * @param $moduleName
+     * @param $lang
+     * @return bool|object
      */
     function lockTranslationFile($moduleName, $lang)
     {
@@ -640,14 +635,9 @@ class SGL_Translation
     }
 
     /**
-     * Remove translation lock.
-     *
-     * @param string $moduleName
-     * @param string $lang
-     *
-     * @return void
-     *
-     * @static
+     * @param $moduleName
+     * @param $lang
+     * @return object
      */
     function removeTranslationLock($moduleName, $lang)
     {
@@ -662,13 +652,8 @@ class SGL_Translation
     }
 
     /**
-     * Remove locks set by $username.
-     *
-     * @param string $userName
-     *
-     * @return void
-     *
-     * @static
+     * @param $username
+     * @return object
      */
     function removeTranslationLocksByUser($username)
     {
@@ -729,7 +714,7 @@ class SGL_Translation
     }
 
     /**
-     * Esacape single quote.
+     * Escape single quote.
      *
      * @param string $string
      *

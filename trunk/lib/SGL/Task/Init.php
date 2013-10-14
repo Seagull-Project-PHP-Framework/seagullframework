@@ -64,7 +64,9 @@ class SGL_Task_SetupPaths extends SGL_Task
      * - pear include path is setup
      * - PEAR.php included for errors, etc
      *
-     * @param array $data
+     * @param array $conf
+     * @internal param array $data
+     * @return array|void
      */
     public function run($conf = array())
     {
@@ -114,7 +116,7 @@ class SGL_Task_SetupPaths extends SGL_Task
      *
      * @return  string  the name of the host
      */
-    function hostnameToFilename()
+    public static  function hostnameToFilename()
     {
         //  start with a default
         $hostName = 'localhost';
@@ -761,6 +763,7 @@ class SGL_HtmlSimpleView extends SGL_View
      * HTML renderer decorator
      *
      * @param SGL_Output $data
+     * @param null $templateEngine
      * @return string   Rendered output data
      */
     function SGL_HtmlSimpleView(&$data, $templateEngine = null)

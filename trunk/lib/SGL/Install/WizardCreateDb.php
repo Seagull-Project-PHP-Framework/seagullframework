@@ -37,6 +37,9 @@
 // | Author:   Demian Turner <demian@phpkitchen.com>                           |
 // +---------------------------------------------------------------------------+
 
+/**
+ * @return bool
+ */
 function canCreateDb()
 {
     $aFormValues = array_merge($_SESSION['_installationWizard_container']['values']['page4'],

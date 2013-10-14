@@ -50,14 +50,16 @@ class SGL_Sql
     /**
      * Simple function that opens a file with sql statements and executes them
      * using DB
-      *
+     *
      * @author  Gerry Lachac <glachac@tethermedia.com>
      * @access  public
      * @static
-     * @param   string  $filename   File with SQL statements to execute
-     * @return  void
+     * @param   string $filename   File with SQL statements to execute
+     * @param int $errorReporting
+     * @param null $executerCallback
+     * @return  string | bool
      */
-    function parse($filename, $errorReporting = E_ALL, $executerCallback = null)
+    public static function parse($filename, $errorReporting = E_ALL, $executerCallback = null)
     {
         //  Optionally shut off error reporting if logging isn't set up correctly yet
         $originalErrorLevel = error_reporting();
@@ -184,6 +186,10 @@ class SGL_Sql
         return implode("\n", $aLines);
     }
 
+    /**
+     * @param $sql
+     * @return mixed
+     */
     function execute($sql)
     {
         // Get database handle based on working config.ini
@@ -197,6 +203,10 @@ class SGL_Sql
         return $res;
     }
 
+    /**
+     * @param $tableName
+     * @return mixed
+     */
     function getNextId($tableName)
     {
         // Get database handle based on working config.ini
@@ -209,6 +219,10 @@ class SGL_Sql
         return $dbh->nextId($tableName);
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
     function extractTableNameFromInsertStatement($str)
     {
         $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
@@ -239,7 +253,11 @@ class SGL_Sql
         return $res;
     }
 
-    function extractTableNamesFromSchema($data)
+    /**
+     * @param $data
+     * @return array|object
+     */
+    public static function extractTableNamesFromSchema($data)
     {
         if (is_file($data)) {
             $aLines = file($data);
@@ -257,7 +275,11 @@ class SGL_Sql
         return $aTablesNames;
     }
 
-    function getDbShortnameFromType($dbType)
+    /**
+     * @param $dbType
+     * @return string
+     */
+    public static function getDbShortnameFromType($dbType)
     {
         switch ($dbType) {
         case 'pgsql':
@@ -284,7 +306,7 @@ class SGL_Sql
      * @param  string $tableName  table name
      * @return string
      */
-    function addTablePrefix($tableName)
+    public static function addTablePrefix($tableName)
     {
         $c = SGL_Config::singleton();
         $prefix = $c->get(array('db' => 'prefix'));
@@ -368,7 +390,7 @@ class SGL_Sql
         return $str;
     }
 
-    function buildDbCreateStatement($driver, $dbname)
+    public static function buildDbCreateStatement($driver, $dbname)
     {
         if ($driver != 'pgsql') {
             $result = 'CREATE DATABASE ' . $dbname;
@@ -384,7 +406,12 @@ class SGL_Sql
         return $result;
     }
 
-    function buildDbDropStatement($driver, $dbname)
+    /**
+     * @param $driver
+     * @param $dbname
+     * @return string
+     */
+    public static function buildDbDropStatement($driver, $dbname)
     {
         if ($driver != 'pgsql') {
             $result = 'DROP DATABASE IF EXISTS ' . $dbname;

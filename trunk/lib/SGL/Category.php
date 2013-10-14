@@ -61,7 +61,7 @@ class SGL_Category
     /**
      * Constructor.
      *
-     * @return void
+     * @return \SGL_Category
      */
     function __construct()
     {
@@ -322,6 +322,7 @@ class SGL_Category
             ? explode(',', $this->_nestedSetNode['perms'])
             : array();
 
+        $perms = array();
         foreach ($aRoles as $roleId => $roleName) {
             $tmp['role_id'] = $roleId;
             $tmp['name'] = $roleName;
@@ -430,9 +431,9 @@ class SGL_Category
      *
      * @access  public
      * @param   integer $category_id
-     * @param   boolean $links          build links
-     * @param   string  $style          CSS Class
      * @param   boolean $links          add link to the current CatID
+     * @param   string $style          CSS Class
+     * @param bool $lastLink
      * @return  string  $finalHtmlString
      */
     function getBreadCrumbs($category_id, $links = true, $style = '', $lastLink = false)

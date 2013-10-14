@@ -99,14 +99,14 @@ class SGL_Inflector
      * Determine if a simplified notation is being used.
      *
      * If the url was of the form example.com/index.php/contactus/contactus/
-     * and it got simplifeid too example.com/index.php/contactus/ it is important
+     * and it got simplified too example.com/index.php/contactus/ it is important
      * to determine if that simplification happened, so subsequent parameters
      * don't get interpreted as 'managerName'
      *
      * @param array $aParsedUri
      * @return boolean
      */
-    function isMgrNameOmitted($aParsedUri)
+    public static function isMgrNameOmitted($aParsedUri)
     {
         $fullMgrName = SGL_Inflector::getManagerNameFromSimplifiedName(
             $aParsedUri['managerName']);
@@ -133,7 +133,7 @@ class SGL_Inflector
      * @param string $name
      * @return string
      */
-    function getManagerNameFromSimplifiedName($name)
+    public static function getManagerNameFromSimplifiedName($name)
     {
         //  if Mgr suffix has been left out, append it
         if (strtolower(substr($name, -3)) != 'mgr') {
@@ -172,7 +172,7 @@ class SGL_Inflector
     *
     * @author Julien Casanova <julien_casanova AT yahoo DOT fr>
     */
-    function camelise($s)
+    public static function camelise($s)
     {
         $ret = '';
         $i = 0;
@@ -244,7 +244,7 @@ class SGL_Inflector
         }
     }
 
-    function isConstant($str)
+    public static function isConstant($str)
     {
         if (empty($str)) {
             return false;
@@ -263,10 +263,10 @@ class SGL_Inflector
      * Returns a human-readable string from $lower_case_and_underscored_word,
      * by replacing underscores with a space, and by upper-casing the initial characters.
      *
-     * @param string $lower_case_and_underscored_word String to be made more readable
+     * @param string $lowerCaseAndUnderscoredWord String to be made more readable
      * @return string Human-readable string
      */
-    function humanise($lowerCaseAndUnderscoredWord)
+    public static function humanise($lowerCaseAndUnderscoredWord)
     {
         $replace = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
         return $replace;
@@ -281,7 +281,7 @@ class SGL_Inflector
      * @param    boolean    $force  Force the operation regardless of php version
      * @return   mixed              Either correct case classname or original classname if no key found
      */
-    function caseFix($str, $force = false)
+    public static function caseFix($str, $force = false)
     {
         if (!$force && (($phpVersion{0} = PHP_VERSION) == 5)) {
             return $str;

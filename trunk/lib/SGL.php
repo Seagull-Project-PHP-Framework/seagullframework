@@ -55,7 +55,7 @@ class SGL
      *
      * @return string  langCode, ie zh-TW
      */
-    function getCurrentLang()
+    public static function getCurrentLang()
     {
         $aLangs   = $GLOBALS['_SGL']['LANGUAGE'];
         $lang     = SGL_Translation::getLangID(SGL_LANG_ID_SGL);
@@ -72,7 +72,7 @@ class SGL
      *
      * @return string  charset codepage
      */
-    function getCurrentCharset()
+    public static function getCurrentCharset()
     {
         return SGL_Translation::getCharset();
     }
@@ -97,7 +97,7 @@ class SGL
      * @author Gilles Laborderie <gillesl@users.sourceforge.net>
      * @author Horde Group <http://www.horde.org>
      */
-    function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
+    public static function logMessage($message, $file = null, $line = null, $priority = PEAR_LOG_INFO)
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -178,9 +178,10 @@ class SGL
      * @param   string  $msg        the error message
      * @param   int     $type       custom message code
      * @param   int     $behaviour  behaviour (die or continue!);
+     * @param   bool    $getTranslation should error be translated
      * @return  object  $error      PEAR error
      */
-    function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
+    public static function raiseError($msg, $type = null, $behaviour = null, $getTranslation = false)
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -209,7 +210,7 @@ class SGL
         return $error;
     }
 
-    function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
+    public static function raiseMsg($messageKey, $getTranslation = true, $messageType = SGL_MESSAGE_ERROR)
     {
         //  must not log message here
         if (is_string($messageKey) && !empty($messageKey)) {
@@ -270,7 +271,7 @@ class SGL
      *
      * @return boolean
      */
-    function runningFromCLI()
+    public static function runningFromCLI()
     {
         // STDIN isn't a CLI constant before 4.3.0
         $sapi = php_sapi_name();
@@ -285,7 +286,7 @@ class SGL
         }
     }
 
-    function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
+    public static function setNoticeBehaviour($mode = SGL_NOTICES_ENABLED)
     {
         $GLOBALS['_SGL']['ERROR_OVERRIDE'] = ($mode) ? false : true;
     }
@@ -374,7 +375,7 @@ class SGL
             : $v;
     }
 
-    function displayStaticPage($msg)
+    public static function displayStaticPage($msg)
     {
         include_once SGL_CORE_DIR . '/Install/Common.php';
         SGL_Install_Common::printHeader('An error has occurred');
@@ -390,7 +391,7 @@ class SGL
         exit();
     }
 
-    function displayMaintenancePage($output)
+    public static function displayMaintenancePage($output)
     {
         $c      = SGL_Config::singleton();
         $conf   = $c->getAll();
@@ -420,7 +421,7 @@ class SGL
      *
      * @param SGL_Output $output
      */
-    function displayErrorPage($output)
+    public static function displayErrorPage($output)
     {
         $c = SGL_Config::singleton();
 
@@ -467,7 +468,7 @@ class SGL
       * @static
       * @return boolean
       */
-    function isMinimalInstall()
+    public static function isMinimalInstall()
     {
         return is_file(SGL_PATH . '/MINIMAL_INSTALL.txt') ? true : false;
     }
@@ -479,7 +480,7 @@ class SGL
       * @param string $moduleName
       * @return boolean
       */
-    function moduleIsEnabled($moduleName)
+    public static function moduleIsEnabled($moduleName)
     {
         static $aInstances;
         if (!isset($aInstances)) {

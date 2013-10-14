@@ -62,7 +62,7 @@ class SGL_CategoryPerms extends SGL_Category
         } else {
             SGL::raiseError('No category ID passed', SGL_ERROR_INVALIDARGS);
         }
-        parent::SGL_Category();
+        parent::__construct();
     }
 
     function init($catID)

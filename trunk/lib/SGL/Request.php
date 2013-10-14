@@ -142,9 +142,11 @@ class SGL_Request
      *
      * @access  public
      * @static
+     * @param bool $forceNew
+     * @param null $type
      * @return  mixed           reference to Request object
      */
-    function singleton($forceNew = false, $type = null)
+    public static function singleton($forceNew = false, $type = null)
     {
         static $instance;
 
@@ -182,8 +184,9 @@ class SGL_Request
      * Retrieves values from Request object.
      *
      * @access  public
-     * @param   mixed   $paramName  Request param name
+     * @param $key
      * @param   boolean $allowTags  If html/php tags are allowed or not
+     * @internal param mixed $paramName Request param name
      * @return  mixed               Request param value or null if not exists
      */
     function get($key, $allowTags = false)
@@ -213,8 +216,9 @@ class SGL_Request
      * Set a value for Request object.
      *
      * @access  public
-     * @param   mixed   $name   Request param name
-     * @param   mixed   $value  Request param value
+     * @param $key
+     * @param   mixed $value  Request param value
+     * @internal param mixed $name Request param name
      * @return  void
      */
     function set($key, $value)

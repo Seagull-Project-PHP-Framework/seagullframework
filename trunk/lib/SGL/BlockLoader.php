@@ -89,7 +89,8 @@ class SGL_BlockLoader
      * Constructor - sets the sectionId.
      *
      * @access  public
-     * @return  void
+     * @param $sectionId
+     * @return \SGL_BlockLoader
      */
     function __construct($sectionId)
     {
@@ -105,6 +106,7 @@ class SGL_BlockLoader
      *
      * @author  Andy Crain <apcrain@fuse.net>>
      * @access  private
+     * @param $output
      * @return  array   array of block objects
      */
     function render($output)
@@ -139,6 +141,7 @@ class SGL_BlockLoader
      * Loads blocks from DB.
      *
      * @access  private
+     * @param bool $getAll
      * @return  void
      */
     function _loadBlocks($getAll = true)

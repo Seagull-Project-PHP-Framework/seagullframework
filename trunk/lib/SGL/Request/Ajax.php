@@ -1,7 +1,13 @@
 <?php
 
+/**
+ * Class SGL_Request_Ajax
+ */
 class SGL_Request_Ajax extends SGL_Request
 {
+    /**
+     * @return array|bool|object|true
+     */
     function init()
     {
         //  get config singleton

@@ -104,7 +104,7 @@ class SGL_Manager
      * Constructor.
      *
      * @access  public
-     * @return  void
+     * @return \SGL_Manager
      */
     function __construct()
     {
@@ -156,7 +156,7 @@ class SGL_Manager
 
     /**
      * Super class for implementing authorisation checks, delegates specific processing
-     * to child classses.
+     * to child classes.
      *
      * @access  public
      * @param   SGL_Registry    $input  Input object received from validate()
@@ -303,7 +303,7 @@ class SGL_Manager
      * @param   SGL_Output  $output Input object that has passed through validation
      * @return  void
      */
-    function display($output)
+    public static function display($output)
     {
         //  reinstate dynamically added css
         if (!$output->manager->isValid()) {
@@ -337,7 +337,7 @@ class SGL_Manager
     {
         //  must not logmessage here
 
-        //  if no errors have occured, redirect
+        //  if no errors have occurred, redirect
         if (!SGL_Error::count()) {
             SGL_HTTP::redirect();
 

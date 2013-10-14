@@ -152,7 +152,7 @@ class SGL_Util
      * @param   bool $onlyRegistered
      */
 
-    function getAllModuleDirs($onlyRegistered = true)
+    public static function getAllModuleDirs($onlyRegistered = true)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -174,7 +174,11 @@ class SGL_Util
         return $ret;
     }
 
-    function getAllManagersPerModule($moduleDir)
+    /**
+     * @param $moduleDir
+     * @return array
+     */
+    public static function getAllManagersPerModule($moduleDir)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -191,6 +195,10 @@ class SGL_Util
         return $ret;
     }
 
+    /**
+     * @param $mgr
+     * @return array|bool
+     */
     function getAllActionMethodsPerMgr($mgr)
     {
         $managerFileName = basename($mgr);
@@ -232,7 +240,12 @@ class SGL_Util
         }
     }
 
-    function getAllClassesFromFolder($folder = '', $filter = '.*')
+    /**
+     * @param string $folder
+     * @param string $filter
+     * @return array
+     */
+    public static function getAllClassesFromFolder($folder = '', $filter = '.*')
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -302,7 +315,7 @@ class SGL_Util
      *
      * @param string $file  Path to ini file
      */
-    function makeIniUnreadable($file)
+    public static function makeIniUnreadable($file)
     {
         $iniFle = file($file);
         $string = ';<?php die("Eat dust"); ?>' . "\n";
@@ -311,12 +324,15 @@ class SGL_Util
         //  remove original ini file
         unlink($file);
     }
+
     /**
      * Returns a hash of the form array('en-iso-8859-15' => 'English (en-iso-8859-15),) etc.
      *
+     * @param array $aSelected
+     * @param null $langKeyType
      * @return array
      */
-    function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
+    public static function getLangsDescriptionMap($aSelected = array(), $langKeyType = null)
     {
         $availableLanguages = $GLOBALS['_SGL']['LANGUAGE'];
         uasort($availableLanguages, 'SGL_cmp');
@@ -344,6 +360,9 @@ class SGL_Util
     /**
      * Returns params from ini file.
      *
+     * @param string $ini_file
+     * @param array $aSavedParams
+     * @param array $aCurrentParams
      * @return array
      */
     function loadParams($ini_file = '', $aSavedParams = array(), $aCurrentParams = array())

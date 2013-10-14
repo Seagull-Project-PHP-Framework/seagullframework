@@ -4,6 +4,10 @@ $getAllModules_sig = array(array("array"));
 $getAllModules_doc = "Requires no parameters, returns an array of all seagull modules.";
 $getAllModules_alias = 'framework.getAllModules';
 
+/**
+ * @param $msg
+ * @return XML_RPC_Response
+ */
 function SGL_XML_RPC_Server_getAllModules($msg)
 {
     require_once SGL_LIB_DIR . '/SGL/Util.php';

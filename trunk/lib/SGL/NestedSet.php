@@ -85,7 +85,7 @@ class SGL_NestedSet
 
     var $_aNodes = array();
 
-    function singleton($params)
+    public static function singleton($params)
     {
         static $aInstances;
 
@@ -134,7 +134,8 @@ class SGL_NestedSet
      * Fetches all root nodes (rootid = id) from the entire table/tree.
      *
      * @access public
-     * @param void
+     * @param array $addSQL
+     * @internal param $void
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -170,7 +171,8 @@ class SGL_NestedSet
      * Fetches all nodes from all roots, i.e., the entire table/tree.
      *
      * @access public
-     * @param void
+     * @param array $addSQL
+     * @internal param $void
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -212,6 +214,7 @@ class SGL_NestedSet
      *
      * @access public
      * @param int $node_id
+     * @param array $addSQL
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -248,6 +251,7 @@ class SGL_NestedSet
      *
      * @access public
      * @param int $node_id
+     * @param array $addSQL
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -293,6 +297,7 @@ class SGL_NestedSet
      *
      * @access public
      * @param int $node_id
+     * @param array $addSQL
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -329,9 +334,11 @@ class SGL_NestedSet
      * Borrowed from PEAR DB_NestedSet. Formats various sql clauses.
      *
      * @access private
-     * @param
-     * @return
-     *
+     * @param $addSQL
+     * @param $type
+     * @param bool $prefix
+     * @internal param $
+     * @return string
      * @author  Andy Crain <andy@newslogic.com>
      * @version 1.0
      * @since   PHP 4.0
@@ -387,6 +394,8 @@ class SGL_NestedSet
      *
      * @access public
      * @param int $node_id
+     * @param array $addSQL
+     * @param bool $includeCurrentNode
      * @return array of node arrays
      *
      * @author  Andy Crain <andy@newslogic.com>
@@ -540,6 +549,7 @@ class SGL_NestedSet
      *
      * @access private
      * @param
+     * @param bool $quoteValues
      * @return object DB_NestedSet_DB
      *
      * @author  Andy Crain <andy@newslogic.com>

@@ -17,7 +17,7 @@ class SGL_File
      * @return boolean
      * @todo chmod is needed
      */
-    function copyDir($source, $dest, $overwrite = false)
+    public static function copyDir($source, $dest, $overwrite = false)
     {
         if (!is_dir($dest)) {
             if (!is_writable(dirname($dest))) {
@@ -59,8 +59,9 @@ class SGL_File
      * Removes a directory and its contents recursively.
      *
      * @param string $dir  path to directory
+     * @param string $args
      */
-    function rmDir($dir, $args = '')
+    public static function rmDir($dir, $args = '')
     {
         require_once 'System.php';
         if ($args && $args[0] == '-') {

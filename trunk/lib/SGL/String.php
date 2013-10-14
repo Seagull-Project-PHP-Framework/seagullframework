@@ -69,6 +69,8 @@ class SGL_String
 
         $editedText = $text;
         $censorMode = self::pseudoConstantToInt($conf['censor']['mode']);
+        $regExPrefix = '';
+        $regExSuffix = '';
         if ($censorMode != SGL_CENSOR_DISABLE) {
             $aBadWords = explode(',', $conf['censor']['badWords']);
             if (is_array($aBadWords)) {
@@ -104,7 +106,7 @@ class SGL_String
      * @return  string   the <CR><LF> value to use
      * @access  public
      */
-    function getCrlf()
+    public static function getCrlf()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
         // TODO: deal with Mac OS Classic i.e. < OS X when line ending is CR
@@ -114,6 +116,10 @@ class SGL_String
         return $crlf;
     }
 
+    /**
+     * @param $var
+     * @return array|bool|string
+     */
     function trimWhitespace($var)
     {
         if (!isset($var)) {
@@ -138,7 +144,7 @@ class SGL_String
      * @return  string       $var, minus any magic quotes.
      * @author  Chuck Hagenbuch <chuck@horde.org>
      */
-    function dispelMagicQuotes(&$var)
+    public static function dispelMagicQuotes(&$var)
     {
         static $magicQuotes;
         if (!isset($magicQuotes)) {
@@ -164,7 +170,7 @@ class SGL_String
      * @param   string $var  The string to clean.
      * @return  string       $cleaned result.
      */
-    function clean($var)
+    public static function clean($var)
     {
         if (!isset($var)) {
             return false;
@@ -181,7 +187,11 @@ class SGL_String
         }
     }
 
-    function removeJs($var)
+    /**
+     * @param $var
+     * @return array|bool|mixed
+     */
+    public static function removeJs($var)
     {
         if (!isset($var)) {
             return false;
@@ -249,14 +259,14 @@ class SGL_String
      * and returns target value.
      *
      * @param string $key       Translation term
-     * @param string $filter    Optional filter fn
-     * @param array  $aParams
+     * @param bool|string $filter Optional filter fn
+     * @param array $aParams
      * @param string $langCode  Pass the lang code for the language you wish to translate
      * @return string
      *
      * @todo better integrate $lang handling
      */
-    function translate($key, $filter = false, $aParams = array(), $langCode = null)
+    public static function translate($key, $filter = false, $aParams = array(), $langCode = null)
     {
         if (!is_null($langCode)) {
             return self::translate2($key, $filter, $aParams, $langCode);
@@ -332,11 +342,10 @@ class SGL_String
      * and returns target value.
      *
      * @param string $key       Translation term
-     * @param string $filter    Optional filter fn
-     * @param array  $aParams   Optional params
+     * @param bool|string $filter Optional filter fn
+     * @param array $aParams   Optional params
      * @param string $langCode  Optional langCode to force translation in this language
      * @return string
-     *
      */
     function translate2($key, $filter = false, $aParams = array(), $langCode)
     {
@@ -532,7 +541,7 @@ class SGL_String
      *
      * @return string Correctly shortened text.
      */
-    function summarise($str, $limit = 50, $element = SGL_WORD,
+    public static function summarise($str, $limit = 50, $element = SGL_WORD,
         $appendString = ' ...')
     {
         switch ($element) {
@@ -572,7 +581,7 @@ class SGL_String
      *
      * @param string $str
      * @param integer $lines
-     * @param string $appendString
+     * @internal param string $appendString
      * @return string
      * @todo    needs to handle orphan <b> and <strong> tags
      */
@@ -606,10 +615,14 @@ class SGL_String
      * Converts bytes to KB/MB/GB as appropriate.
      *
      * @access  public
-     * @param   int $bytes
-     * @return  int B/KB/MB/GB
+     * @param $size
+     * @param   int $decimals
+     * @param   string $lang
+     *
+     * @internal param int $bytes
+     * @return  string $formatted B/KB/MB/GB
      */
-     function formatBytes($size, $decimals = 1, $lang = '--')
+     public static function formatBytes($size, $decimals = 1, $lang = '--')
     {
         $aSizeList = array(1073741824, 1048576, 1024, 0);
         // Should check if string is in an array, other languages may use octets
@@ -620,6 +633,7 @@ class SGL_String
             $aSizeNameList = array('GB', 'MB', 'KB', 'B');
         }
         $i = 0;
+        $formatted = '';
         foreach ($aSizeList as $bytes) {
             if ($size >= $bytes) {
                 if ($bytes == 0) {
@@ -627,14 +641,18 @@ class SGL_String
                     $bytes = 1;
                     $decimals = 0;
                 }
-                $formated = sprintf("%.{$decimals}f{$aSizeNameList[$i]}", $size / $bytes);
+                $formatted = sprintf("%.{$decimals}f{$aSizeNameList[$i]}", $size / $bytes);
                 break;
             }
             $i++;
         }
-        return $formated;
+        return $formatted;
     }
 
+    /**
+     * @param $str
+     * @return mixed
+     */
     function toValidVariableName($str)
     {
         //  remove illegal chars
@@ -647,12 +665,20 @@ class SGL_String
         return $final;
     }
 
+    /**
+     * @param $origName
+     * @return mixed
+     */
     function toValidFileName($origName)
     {
         return self::dirify($origName);
     }
 
     //  from http://kalsey.com/2004/07/dirify_in_php/
+    /**
+     * @param $s
+     * @return mixed
+     */
     function dirify($s)
     {
          $s = self::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
@@ -667,6 +693,10 @@ class SGL_String
          return $s;
     }
 
+    /**
+     * @param $s
+     * @return mixed
+     */
     function convertHighAscii($s)
     {
         // Seems to be for Latin-1 (ISO-8859-1) and quite limited (no ae/oe, no y:/Y:, etc.)
@@ -729,6 +759,10 @@ class SGL_String
          return $s;
     }
 
+    /**
+     * @param $text
+     * @return mixed
+     */
     function to7bit($text)
     {
         if (!function_exists('mb_convert_encoding')) {
@@ -752,12 +786,11 @@ class SGL_String
      * @todo make it work with non utf-8 encoded strings
      *
      * @see self::isCyrillic()
-     *
      * @param string $str
      *
      * @return string
      */
-    function replaceAccents($str)
+    public static function replaceAccents($str)
     {
         if (!self::isCyrillic($str)) {
             $str = self::to7bit($str);
@@ -770,12 +803,11 @@ class SGL_String
      * Checks if strings has cyrillic chars.
      *
      * @static
-     *
      * @param string $str
      *
      * @return boolean
      */
-    function isCyrillic($str)
+    public static function isCyrillic($str)
     {
         $ret = false;
         if (function_exists('mb_convert_encoding') && !empty($str)) {
@@ -816,7 +848,7 @@ class SGL_String
      * @param string $string
      * @return integer
      */
-    function pseudoConstantToInt($string)
+    public static function pseudoConstantToInt($string)
     {
         $ret = 0;
         if (is_int($string)) {
@@ -835,7 +867,7 @@ class SGL_String
     }
 
     /**
-     * Esacape single quote.
+     * Escape single quote.
      *
      * @param   string $string
      *
@@ -854,7 +886,6 @@ class SGL_String
      * Escape single quotes in every key of given array.
      *
      * @param   array $array
-     *
      * @return  array
      *
      * @static

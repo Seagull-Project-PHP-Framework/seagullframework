@@ -57,7 +57,7 @@ class SGL_Date
      * @param boolean $gmt       is time GMT or locale offset
      * @return string $time formatted current time
      */
-    function getTime($gmt = false)
+    public static function getTime($gmt = false)
     {
         //  no logMessage allowed here
         $time = ($gmt)  ? gmstrftime("%Y-%m-%d %H:%M:%S", time())
@@ -123,7 +123,7 @@ class SGL_Date
      * @param   string  $date  Date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $formatted  user-friendly format (european)
      */
-    function formatPretty($date)
+    public static function formatPretty($date)
     {
         if (is_string($date)) {
             require_once 'Date.php';
@@ -154,10 +154,11 @@ class SGL_Date
      * Converts date (may be in the ISO, TIMESTAMP or UNIXTIME format) into locale dependent form.
      *
      * @access  public
-     * @param   string  $input  date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
+     * @param $date
+     * @internal param string $input date (may be in the ISO, TIMESTAMP or UNIXTIME format) value
      * @return  string  $output user-friendly format (locale dependent)
      */
-    function format($date)
+    public static function format($date)
     {
         if (is_string($date)) {
             include_once 'Date.php';
@@ -192,7 +193,7 @@ class SGL_Date
      * @access  public
      * @return  string  $date template (e.g. "%d %B %Y, %H:%M" for FR date format)
      */
-    function getDateFormat()
+    public static function getDateFormat()
     {
         if ($_SESSION['aPrefs']['dateFormat'] == 'UK') {
             $dateFormat = '%d %B %Y, %H:%M';
@@ -268,9 +269,9 @@ class SGL_Date
      * Generates a select of year values.
      *
      * @access  public
-     * @param   string  $selected
+     * @param   string $selected
      * @param   boolean $asc
-     * @param   int     $number         number of years to show
+     * @param int $totalYears
      * @return  string  $year_options   select year options
      * @see     showDateSelector()
      */
@@ -353,7 +354,7 @@ class SGL_Date
      * Generates date/time selector widget.
      *
      * usage:
-     * $timestamp=mktime();
+     * $timestamp = mktime();
      * $day = date('d', $timestamp);
      * $month = date('m', $timestamp);
      * $year = date('Y', $timestamp);
@@ -377,7 +378,7 @@ class SGL_Date
      * @param   int     $years      number of years to show
      * @return  string  $html       html for widget
 */
-    function showDateSelector($aDate, $elementName, $bShowTime = true, $asc = true, $years = 5)
+    public static function showDateSelector($aDate, $elementName, $bShowTime = true, $asc = true, $years = 5)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 

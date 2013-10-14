@@ -51,10 +51,11 @@ class SGL_Array
      * 'Empty' can be a null, empty string, false or empty array.
      *
      * @param array $elem
-     * @return array
+     * @return array $clean
      */
-    function removeBlanks($elem)
+    public static function removeBlanks($elem)
     {
+        $clean = array();
         if (is_array($elem)) {
             $clean = array_filter($elem);
         } else {
@@ -72,7 +73,7 @@ class SGL_Array
      * @param string $valwrap
      * @return string
      */
-    function implodeWithKeys($glue, $hash, $valwrap='')
+    public static function implodeWithKeys($glue, $hash, $valwrap='')
     {
         if (is_array($hash) && count($hash)) {
             foreach ($hash as $key => $value) {
@@ -100,7 +101,7 @@ class SGL_Array
      * @param array $newValues Array which will be merged into first one
      * @return array Resulting Array from replacing Process
      */
-    function mergeReplace($array, $newValues)
+    public static function mergeReplace($array, $newValues)
     {
         foreach ($newValues as $key => $value) {
             if (is_array($value)) {

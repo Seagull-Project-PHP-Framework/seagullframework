@@ -50,7 +50,7 @@ class SGL_Error
      *
      * @return boolean
      */
-    function count()
+    public static function count()
     {
         return count($GLOBALS['_SGL']['ERRORS']);
     }
@@ -61,7 +61,7 @@ class SGL_Error
      * @param PEAR_Error $oError
      * @return integer   Returns the new number of elements in the array.
      */
-    function push($oError)
+    public static function push($oError)
     {
         return array_push($GLOBALS['_SGL']['ERRORS'], $oError);
     }
@@ -71,7 +71,7 @@ class SGL_Error
      *
      * @return PEAR_Error
      */
-    function pop()
+    public static function pop()
     {
         return array_pop($GLOBALS['_SGL']['ERRORS']);
     }
@@ -81,7 +81,7 @@ class SGL_Error
      *
      * @return PEAR_Error
      */
-    function getAll()
+    public static function getAll()
     {
         $aErrors = $GLOBALS['_SGL']['ERRORS'];
         return $aErrors;
@@ -97,7 +97,7 @@ class SGL_Error
         return array_shift($GLOBALS['_SGL']['ERRORS']);
     }
 
-    function getLast()
+    public static function getLast()
     {
         return end($GLOBALS['_SGL']['ERRORS']);
     }
@@ -107,14 +107,14 @@ class SGL_Error
      *
      * @return boolean
      */
-    function reset()
+    public static function reset()
     {
         unset($GLOBALS['_SGL']['ERRORS']);
         $GLOBALS['_SGL']['ERRORS'] = array();
         return true;
     }
 
-    function toString($oError)
+    public static function toString($oError)
     {
         $message = $oError->getMessage();
         $debugInfo = $oError->getDebugInfo();
@@ -136,7 +136,7 @@ EOF;
      * @param   int     $errorCode  error code
      * @return  string              text representing error type
      */
-    function constantToString($errorCode)
+    public static function constantToString($errorCode)
     {
         $aErrorCodes = array(
             SGL_ERROR_INVALIDARGS       => 'invalid arguments',

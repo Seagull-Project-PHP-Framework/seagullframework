@@ -83,8 +83,14 @@ class SGL_TaskRunner
     * @var array
     */
     var $aTasks = array();
+    /**
+     * @var null
+     */
     var $data = null;
 
+    /**
+     * @param $data
+     */
     function addData($data)
     {
         $this->data = $data;
@@ -107,6 +113,9 @@ class SGL_TaskRunner
         return PEAR::raiseError('an SGL_Task object was expected');
     }
 
+    /**
+     * @return string
+     */
     function main()
     {
         $ret = array();

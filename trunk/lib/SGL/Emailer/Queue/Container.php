@@ -22,7 +22,7 @@ abstract class SGL_Emailer_Queue_Container
      *
      * @return SGL_Emailer_Queue_Container
      */
-    public function factory($containerName)
+    public static function factory($containerName)
     {
         $containerName = ucfirst(strtolower($containerName));
         $fileName = dirname(__FILE__) . "/Container/{$containerName}.php";
@@ -40,18 +40,17 @@ abstract class SGL_Emailer_Queue_Container
     }
 
     /**
-     * Puts email to queue.
+     * Puts email to queue
      *
-     * @param string $headers
-     * @param string $recipient
-     * @param string $body
-     * @param string $subject
-     * @param string $dateToSend
-     * @param integer $groupId
-     * @param integer $batchId
-     * @param integer $userId
-     *
-     * @return void
+     * @param $headers
+     * @param $recipient
+     * @param $body
+     * @param $subject
+     * @param $dateToSend
+     * @param $groupId
+     * @param $batchId
+     * @param $userId
+     * @return object
      */
     public function push($headers, $recipient, $body, $subject, $dateToSend,
         $groupId, $batchId, $userId)
@@ -64,7 +63,7 @@ abstract class SGL_Emailer_Queue_Container
      *
      * @param integer $emailId
      *
-     * @return void
+     * @return object
      */
     public function remove($emailId)
     {
@@ -79,7 +78,7 @@ abstract class SGL_Emailer_Queue_Container
      * @param string $deliveryDate
      * @param array $aParams
      *
-     * @return void
+     * @return object
      */
     public function preload($limit = null, $attempts = null,
         $deliveryDate = null, $aParams = null)
@@ -92,7 +91,7 @@ abstract class SGL_Emailer_Queue_Container
      *
      * @param integer $id
      *
-     * @return void
+     * @return object
      */
     public function markAsSent($id)
     {
@@ -100,11 +99,11 @@ abstract class SGL_Emailer_Queue_Container
     }
 
     /**
-     * Increses attempt count.
+     * Increases attempt count.
      *
      * @param integer $id
      *
-     * @return void
+     * @return object
      */
     public function increaseAttemptCount($id)
     {
@@ -112,11 +111,11 @@ abstract class SGL_Emailer_Queue_Container
     }
 
     /**
-     * Retuns email identification string.
+     * Returns email identification string.
      *
      * @param object $email
      *
-     * @return void
+     * @return object
      */
     public function identifyEmail($email)
     {

@@ -19,6 +19,10 @@ class SGL_XML_RPC_Remote
     }
 
 
+    /**
+     * @param $method
+     * @return mixed|object
+     */
     function call($method)
     {
         $args = func_get_args();
@@ -70,6 +74,10 @@ class SGL_XML_RPC_Remote
     }
 
     // a slightly extended version of XML_RPC_encode
+    /**
+     * @param $php_val
+     * @return null|XML_RPC_Value
+     */
     function _encode($php_val)
     {
         global $XML_RPC_Boolean, $XML_RPC_Int, $XML_RPC_Double;

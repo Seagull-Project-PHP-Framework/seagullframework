@@ -440,7 +440,7 @@ class SGL_Session
      * @param   int $permId the permission id
      * @return  boolean if perm exists or not
      */
-    function hasPerms($permId)
+    public static function hasPerms($permId)
     {
         if (!isset($_SESSION) || !count($_SESSION)) {
             return false;
@@ -466,7 +466,7 @@ class SGL_Session
         return $_SESSION['uid'] == $ownerId;
     }
 
-    function hasAdminGui()
+    public static function hasAdminGui()
     {
         $aRoles = explode(',', SGL_Config::get('site.rolesHaveAdminGui'));
         foreach ($aRoles as $k => $role) {
@@ -490,7 +490,7 @@ class SGL_Session
      * @access  public
      * @return  int the id
      */
-    function getUid()
+    public static function getUid()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -507,7 +507,7 @@ class SGL_Session
      * @access  public
      * @return  int the role id
      */
-    function getUsername()
+    public static function getUsername()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -524,7 +524,7 @@ class SGL_Session
      * @access  public
      * @return  int the role id
      */
-    function getRoleId()
+    public static function getRoleId()
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -560,7 +560,7 @@ class SGL_Session
      * @param   string  $sessVarName   name of session var
      * @return  boolean
      */
-    function remove($sessVarName)
+    public static function remove($sessVarName)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -580,7 +580,7 @@ class SGL_Session
      * @param   string  $sessVarName    name of session var
      * @return  string                  value of session variable
      */
-    function get($sessVarName)
+    public static function get($sessVarName)
     {
         if (isset($sessVarName) && isset($_SESSION)) {
             return is_array($_SESSION)
@@ -600,7 +600,7 @@ class SGL_Session
      * @param   mixed   $sessVarValue  value of session var
      * @return  void
      */
-    function set($sessVarName, $sessVarValue)
+    public static function set($sessVarName, $sessVarValue)
     {
         $_SESSION[$sessVarName] = $sessVarValue;
     }
@@ -610,7 +610,7 @@ class SGL_Session
      *
      * @access  public
      * @static
-     * @return  void
+     * @return  string $ret
      */
     function debug()
     {
@@ -628,7 +628,7 @@ class SGL_Session
      *
      * @return string
      */
-    function getId()
+    public static function getId()
     {
         $c = SGL_Config::singleton();
         $conf = $c->getAll();
@@ -676,6 +676,8 @@ class SGL_Session
     /**
      * Returns active session count for a particular user.
      *
+     * @param $uid
+     * @param $sessId
      * @return integer
      */
     function getUserSessionCount($uid, $sessId = -1)
@@ -703,6 +705,8 @@ class SGL_Session
      *
      * If a session Id is passed, spare it from deletion. Sigh!
      *
+     * @param $uid
+     * @param $sessId
      * @return integer
      */
     function destroyUserSessions($uid, $sessId = -1)
@@ -797,6 +801,7 @@ class SGL_Session
     /**
      * Callback method for DB session get.
      *
+     * @param $sessId
      * @return  string  return session value
      */
     function dbRead($sessId)
@@ -841,6 +846,8 @@ class SGL_Session
     /**
      * Callback method for DB session set.
      *
+     * @param $sessId
+     * @param $value
      * @return  boolean
      */
     function dbWrite($sessId, $value)
@@ -885,6 +892,7 @@ class SGL_Session
     /**
      * Callback method for DB session destroy.
      *
+     * @param $sessId
      * @return  boolean
      */
     function dbDestroy($sessId)
@@ -901,6 +909,7 @@ class SGL_Session
     /**
      * Callback method for DB session garbage collection.
      *
+     * @param $max_expiry
      * @return  boolean
      */
     function dbGc($max_expiry)
@@ -939,7 +948,7 @@ class SGL_Session
      *
      * @return boolean
      */
-    function isFirstAnonRequest($clean = null)
+    public static function isFirstAnonRequest($clean = null)
     {
         static $ret;
         if (!empty($clean)) {

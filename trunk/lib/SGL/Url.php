@@ -415,7 +415,7 @@ class SGL_URL
     /**
      * Build array of strategies and executes parsers.
      *
-     * @param array $conf
+     * @internal param array $conf
      * @return array
      */
     function parseQueryString()
@@ -449,7 +449,7 @@ class SGL_URL
      * @param array $aParsedUri The list of existing valid value, to avoid overwriting
      * @return array            A hash of k/v pairs
      */
-    function querystringArrayToHash($aUriParts, $aParsedUri = array())
+    public static function querystringArrayToHash($aUriParts, $aParsedUri = array())
     {
         $numParts = count($aUriParts);
 
@@ -533,7 +533,7 @@ class SGL_URL
         return $retUrl;
     }
 
-    function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
+    public static function makeLink($action = '', $mgr = '', $mod = '', $aList = array(),
         $params = '', $idx = 0, $output = '')
     {
         //  a workaround for 0.4.x style of building SEF URLs
@@ -582,7 +582,7 @@ class SGL_URL
      *
      * @abstract
      */
-    function resolveServerVars()
+    public static function resolveServerVars()
     {
         //  cgi SERVER vars hack causes probs w/quickform
         if (!is_file(SGL_VAR_DIR . '/INSTALL_COMPLETE.php')) {
@@ -648,7 +648,7 @@ class SGL_URL
      * @param   string  $url    The relative URL string
      * @return  void
      */
-    function toAbsolute(&$url)
+    public static function toAbsolute(&$url)
     {
         $aUrl = parse_url($url);
         if (!(isset($aUrl['scheme']))) {
@@ -666,7 +666,7 @@ class SGL_URL
     {
         $aParts = explode('/', $this->path);
 
-        //  accomodate setup exception
+        //  accommodate setup exception
         if (in_array('setup.php', $aParts)) {
             array_pop($aParts);
             $this->path = implode('/', $aParts);
@@ -757,7 +757,7 @@ class SGL_URL
      * @param string $url
      * @return void
      */
-    function addSessionInfo(&$url)
+    public static function addSessionInfo(&$url)
     {
         if (SGL_Config::get('session.allowedInUri')) {
 
@@ -797,11 +797,12 @@ class SGL_URL
      * @access  public
      * @static
      *
-     * @param   string  $url        Url to be parsed
+     * @param   string $url        Url to be parsed
+     * @param $frontScriptName
      * @return  array   $aUriParts  An array of all significant parts of the URL, ie
      *                              from the front controller script name onwards
      */
-    function toPartialArray($url, $frontScriptName)
+    public static function toPartialArray($url, $frontScriptName)
     {
         //  split elements (remove eventual leading/trailing slashes)
         $aUriParts = explode('/', trim($url, '/'));

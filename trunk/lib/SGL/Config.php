@@ -63,7 +63,7 @@ class SGL_Config
         }
     }
 
-    function singleton($autoLoad = true)
+    public static function singleton($autoLoad = true)
     {
         static $instance;
         if (!isset($instance)) {
@@ -409,7 +409,7 @@ class SGL_Config
 
     /**
      * Ensures the module's config file was loaded and returns an array
-     * containing the global and modulde config.
+     * containing the global and module config.
      *
      * This is required when the homepage is set to custom mod/mgr/params,
      * and the module config file loaded while initialising the request is

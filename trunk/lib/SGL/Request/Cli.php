@@ -1,7 +1,13 @@
 <?php
 
+/**
+ * Class SGL_Request_Cli
+ */
 class SGL_Request_Cli extends SGL_Request
 {
+    /**
+     * @return bool|object
+     */
     function init()
     {
         require_once 'Console/Getopt.php';

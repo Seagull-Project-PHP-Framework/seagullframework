@@ -132,7 +132,7 @@ class SGL_Task_MaintenanceModeIntercept extends SGL_DecorateProcess
 }
 
 /**
- * Set an admin mode to give priviledged session.
+ * Set an admin mode to give privileged session.
  *
  * @package Task
  * @author  Demian Turner <demian@phpkitchen.com>
@@ -908,7 +908,7 @@ class SGL_Task_BuildOutputData extends SGL_DecorateProcess
      *
      * @param SGL_Output $output
      */
-    function addOutputData($output)
+    public static function addOutputData($output)
     {
         // setup login stats
         if (SGL_Session::getRoleId() > SGL_GUEST) {

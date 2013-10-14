@@ -1,7 +1,13 @@
 <?php
 
+/**
+ * Class SGL_Request_Browser
+ */
 class SGL_Request_Browser extends SGL_Request
 {
+    /**
+     * @return array|bool|object|true
+     */
     function init()
     {
         //  get config singleton

@@ -43,7 +43,7 @@
  */
 class SGL_Install_Common
 {
-    function errorPush($error)
+    public static function errorPush($error)
     {
         if (!isset($GLOBALS['_SGL'])) {
             $GLOBALS['_SGL'] = array();
@@ -66,7 +66,7 @@ class SGL_Install_Common
         }
     }
 
-    function errorsExist()
+    public static function errorsExist()
     {
         return @count($_SESSION['ERRORS']);
     }
@@ -91,7 +91,7 @@ class SGL_Install_Common
      *
      * @return string
      */
-    function getFrameworkVersion()
+    public static function getFrameworkVersion()
     {
         $version = file_get_contents(SGL_PATH . '/VERSION.txt');
         return $version;
@@ -114,9 +114,10 @@ class SGL_Install_Common
      *
      * @param string $title
      *
+     * @return bool
      * @see QuickFormOverride.php for header html used in QuickForm install wizard
      */
-    function printHeader($title = '')
+    public static function printHeader($title = '')
     {
         if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
@@ -150,7 +151,7 @@ HTML;
         print $html;
     }
 
-    function printFooter()
+    public static function printFooter()
     {
         if (SGL::runningFromCli() || defined('SGL_ADMIN_REBUILD')) {
             return false;
@@ -223,7 +224,7 @@ HTML;
        return $fileList;
     }
 
-    function getMinimumModuleList()
+    public static function getMinimumModuleList()
     {
         return array('block', 'default', 'navigation', 'user');
     }
@@ -231,9 +232,10 @@ HTML;
     /**
      * This adds default values for the installer form, based on a ini file.
      *
+     * @param array $aData
      * @return array
      */
-    function overrideDefaultInstallSettings($aData = array())
+    public static function overrideDefaultInstallSettings($aData = array())
     {
         //  flatten module array if exists
         if (array_key_exists('aModuleList', $aData)) {
