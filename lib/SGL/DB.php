@@ -208,7 +208,7 @@ class SGL_DB
      * @param   string $dsn Supplied database resource name
      * @static
      */
-    function setConnection($dsn = null)
+    public static function setConnection($dsn = null)
     {
         $locator = SGL_ServiceLocator::singleton();
         $singleton = $locator->get('DB');

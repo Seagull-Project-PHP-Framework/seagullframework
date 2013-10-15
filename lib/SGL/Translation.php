@@ -164,7 +164,7 @@ class SGL_Translation
     {
         $c = SGL_Config::singleton();
 
-        $aLangs = $aLangs = explode(',', $this->conf['translation']['installedLanguages']);
+        $aLangs = $aLangs = explode(',', SGL_Config::get('translation.installedLanguages'));
 
         if (count($aLangs) > 0) {
             $cache =  SGL_Cache::singleton();
@@ -645,7 +645,7 @@ class SGL_Translation
         if (file_exists($fileName)) {
             $ok = unlink($fileName);
             if ($ok === false) {
-                return SGL::raiseError(__CLASS__ . ': error removing transation '
+                return SGL::raiseError(__CLASS__ . ': error removing translation '
                     . 'locking file', SGL_ERROR_INVALIDFILEPERMS);
             }
         }
