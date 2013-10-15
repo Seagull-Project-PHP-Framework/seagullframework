@@ -483,9 +483,9 @@ class SGL_Translation
      * SGL_LANG_ID_TRANS2 - en_iso_8859_15
      *
      * @static
-     * @param string langID language id
-     * @param int format language id format
-     * @return langID string
+     * @param string $langID language id
+     * @param int $format language id format
+     * @return mixed $langID string
      */
     public static function transformLangID($langID, $format = null)
      {
