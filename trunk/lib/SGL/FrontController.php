@@ -62,7 +62,7 @@ class SGL_FrontController
      *  class FOO_Output extends SGL_Output {}
      *
      */
-    function getOutputClass()
+    public function getOutputClass()
     {
         if (SGL_Config::get('site.customOutputClassName')) {
             $className = SGL_Config::get('site.customOutputClassName');
@@ -153,7 +153,7 @@ class SGL_FrontController
         echo $output->data;
     }
 
-    function customFilterChain($input)
+    public function customFilterChain($input)
     {
         $req = $input->getRequest();
 
@@ -220,7 +220,7 @@ class SGL_FrontController
         return $ret;
     }
 
-    function testDbConnection($output)
+    public function testDbConnection($output)
     {
         $originalErrorLevel = error_reporting(0);
 
@@ -270,7 +270,7 @@ class SGL_FrontController
         define('SGL_INITIALISED', true);
     }
 
-    function loadRequiredFiles()
+    public function loadRequiredFiles()
     {
         $cachedLibs = SGL_VAR_DIR . '/cachedLibs.php';
         $cachedLibsEnabled = (defined('SGL_CACHE_LIBS') && SGL_CACHE_LIBS === true)
@@ -336,9 +336,9 @@ class SGL_FrontController
  * @package SGL
  *
  */
-class SGL_ProcessRequest
+abstract class SGL_ProcessRequest
 {
-    function process(/*SGL_Registry*/ $input, /*SGL_Output*/ $output) {}
+    function process(SGL_Registry $input, SGL_Output $output) {}
 }
 
 /**
@@ -347,11 +347,11 @@ class SGL_ProcessRequest
  * @abstract
  * @package SGL
  */
-class SGL_DecorateProcess extends SGL_ProcessRequest
+abstract class SGL_DecorateProcess extends SGL_ProcessRequest
 {
     var $processRequest;
 
-    function SGL_DecorateProcess(/* SGL_ProcessRequest */ $pr)
+    function SGL_DecorateProcess(SGL_ProcessRequest $pr)
     {
         $this->processRequest = $pr;
     }

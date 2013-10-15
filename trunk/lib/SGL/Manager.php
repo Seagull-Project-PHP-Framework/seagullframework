@@ -46,7 +46,7 @@
  * @version $Revision: 1.19 $
  * @abstract
  */
-class SGL_Manager
+abstract class SGL_Manager
 {
     /**
      * Page master-template name.
@@ -63,7 +63,6 @@ class SGL_Manager
      * @var     string
      */
     var $template = '';
-
     /**
      * Page title, displayed in template and HTML title tags.
      *
@@ -71,7 +70,6 @@ class SGL_Manager
      * @var     string
      */
     var $pageTitle = 'default';
-
     /**
      * Flag indicated is Page validation passed.
      *
@@ -79,7 +77,6 @@ class SGL_Manager
      * @var     boolean
      */
     var $validated = false;
-
     /**
      * Sortby flag, used in child classes.
      *
@@ -87,7 +84,6 @@ class SGL_Manager
      * @var     string
      */
     var $sortBy = '';
-
     /**
      * Array of action permitted by mgr subclass.
      *
@@ -95,10 +91,8 @@ class SGL_Manager
      * @var     array
      */
     var $_aActionsMapping = array();
-
     var $conf = array();
     var $dbh = null;
-
 
     /**
      * Constructor.
@@ -125,7 +119,10 @@ class SGL_Manager
         }
     }
 
-    function &_getDb()
+    /**
+     * @return mixed
+     */
+    protected function &_getDb()
     {
         $locator = SGL_ServiceLocator::singleton();
         $dbh = $locator->get('DB');
@@ -136,7 +133,10 @@ class SGL_Manager
         return $dbh;
     }
 
-    function getConfig()
+    /**
+     * @return mixed
+     */
+    public function getConfig()
     {
         $c = SGL_Config::singleton();
         return $c;
@@ -152,7 +152,7 @@ class SGL_Manager
      * @param   SGL_Registry    $input  SGL_Registry for storing data
      * @return  void
      */
-    function validate($req, &$input) {}
+    public function validate($req, &$input) {}
 
     /**
      * Super class for implementing authorisation checks, delegates specific processing
@@ -163,7 +163,7 @@ class SGL_Manager
      * @param   SGL_Output      $output Processed result
      * @return  mixed           true on success or PEAR_Error on failure
      */
-    function process($input, $output)
+    public function process($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
@@ -262,7 +262,7 @@ class SGL_Manager
      * @param SGL_Registry $input
      * @return mixed true on success, array of class/method names on failure
      */
-    function _authorise($mgrPerm, $mgrName, $input)
+    protected function _authorise($mgrPerm, $mgrName, $input)
     {
         // if user has no global manager perms check for each action
         if (!SGL_Session::hasPerms($mgrPerm) && !SGL::runningFromCLI()) {
@@ -293,67 +293,12 @@ class SGL_Manager
     }
 
     /**
-     * Parent page display method.
-     *
-     * Sets CSS file if supplied in request
-     *
-     * @abstract
-     *
-     * @access  public
-     * @param   SGL_Output  $output Input object that has passed through validation
-     * @return  void
-     */
-    function display($output)
-    {
-        //  reinstate dynamically added css
-        if (!$output->manager->isValid()) {
-            if (!count($output->aCssFiles)) {
-                //  get action
-                $cssFile = $output->request->get('cssFile');
-                if (!is_null($cssFile)) {
-                    $output->addCssFile($cssFile);
-                }
-            }
-        }
-    }
-
-    /**
-     * Return true if child class has validated.
-     *
-     * @return boolean
-     */
-    function isValid()
-    {
-        return $this->validated;
-    }
-
-    /**
-     * Default redirect for all Managers.
-     *
-     * @param SGL_Registry $input
-     * @param SGL_Output $output
-     */
-    function _cmd_redirectToDefault($input, $output)
-    {
-        //  must not logmessage here
-
-        //  if no errors have occurred, redirect
-        if (!SGL_Error::count()) {
-            SGL_HTTP::redirect();
-
-        //  else display error with blank template
-        } else {
-            $output->template = 'error.html';
-        }
-    }
-
-    /**
      * Returns details of the module/manager/params defaults
      * set in configuration, used for logouts and redirects.
      *
      * @return array
      */
-    function getDefaultPageParams()
+    public function getDefaultPageParams()
     {
         $moduleName     = $this->conf['site']['defaultModule'];
         $managerName    = $this->conf['site']['defaultManager'];
@@ -389,7 +334,44 @@ class SGL_Manager
         return $aMergedParams;
     }
 
-    function handleError($oError, $output)
+    /**
+     * Parent page display method.
+     *
+     * Sets CSS file if supplied in request
+     *
+     * @access  public
+     * @param   SGL_Output  $output Input object that has passed through validation
+     * @return  void
+     */
+    public function display($output)
+    {
+        //  reinstate dynamically added css
+        if (!$output->manager->isValid()) {
+            if (!count($output->aCssFiles)) {
+                //  get action
+                $cssFile = $output->request->get('cssFile');
+                if (!is_null($cssFile)) {
+                    $output->addCssFile($cssFile);
+                }
+            }
+        }
+    }
+
+    /**
+     * Return true if child class has validated.
+     *
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return $this->validated;
+    }
+
+    /**
+     * @param $oError
+     * @param $output
+     */
+    public function handleError($oError, $output)
     {
         $output->template = 'error.html';
         $output->masterTemplate = 'masterNoCols.html';
@@ -399,6 +381,26 @@ class SGL_Manager
             'level'     => $oError->getCode(),
             'errorType' => SGL_Error::constantToString($oError->getCode())
         );
+    }
+
+    /**
+     * Default redirect for all Managers.
+     *
+     * @param SGL_Registry $input
+     * @param SGL_Output $output
+     */
+    protected function _cmd_redirectToDefault($input, $output)
+    {
+        //  must not logmessage here
+
+        //  if no errors have occurred, redirect
+        if (!SGL_Error::count()) {
+            SGL_HTTP::redirect();
+
+        //  else display error with blank template
+        } else {
+            $output->template = 'error.html';
+        }
     }
 }
 ?>
