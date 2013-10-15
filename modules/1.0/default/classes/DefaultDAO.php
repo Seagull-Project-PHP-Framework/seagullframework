@@ -126,9 +126,6 @@ class DefaultDAO extends SGL_Manager
                         ORDER BY name";
             $aModules = $this->dbh->getAll($query);
             foreach ($aModules as $k => $oVal) {
-                if ($oVal->name == 'documentor') {
-                    continue;
-                }
                 $aMods[$oVal->name] = $oVal->title;
             }
             break;
