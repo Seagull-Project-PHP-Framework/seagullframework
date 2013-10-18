@@ -58,7 +58,7 @@ class SGL_Inflector
     * @param string $sectionName    From the database
     * @return boolean
     */
-    function isUrlSimplified($querystring, $sectionName)
+    public static function isUrlSimplified($querystring, $sectionName)
     {
         if (!(empty($querystring))) {
             if (SGL_Inflector::urlContainsDuplicates($querystring)) {
@@ -82,7 +82,7 @@ class SGL_Inflector
      * @param string $url
      * @return boolean
      */
-    function urlContainsDuplicates($url)
+    public static function urlContainsDuplicates($url)
     {
         if (!empty($url)) {
             $aPieces = explode('/', $url);
@@ -149,7 +149,7 @@ class SGL_Inflector
      * @param string $name
      * @return string
      */
-    function getSimplifiedNameFromManagerName($name)
+    public static function getSimplifiedNameFromManagerName($name)
     {
         //  strip file extension if exists
         if (substr($name, -4) == '.php') {
@@ -202,7 +202,7 @@ class SGL_Inflector
 		return str_replace(" ", "", ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord)));
 	}
 
-    function getTitleFromCamelCase($camelCaseWord)
+    public static function getTitleFromCamelCase($camelCaseWord)
     {
         if (!SGL_Inflector::isCamelCase($camelCaseWord)) {
             return $camelCaseWord;
@@ -230,7 +230,7 @@ class SGL_Inflector
 		return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
 	}
 
-    function isCamelCase($str)
+    public static function isCamelCase($str)
     {
         //  ensure no non-alpha chars
         if (preg_match("/[^a-z].*/i", $str)) {

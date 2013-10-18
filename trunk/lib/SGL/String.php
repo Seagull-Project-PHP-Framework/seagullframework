@@ -653,7 +653,7 @@ class SGL_String
      * @param $str
      * @return mixed
      */
-    function toValidVariableName($str)
+    public static function toValidVariableName($str)
     {
         //  remove illegal chars
         $search = '/[^a-zA-Z1-9_]/';
@@ -679,7 +679,7 @@ class SGL_String
      * @param $s
      * @return mixed
      */
-    function dirify($s)
+    public static function dirify($s)
     {
          $s = self::convertHighAscii($s);     ## convert high-ASCII chars to 7bit.
          $s = strtolower($s);                       ## lower-case.
@@ -834,7 +834,7 @@ class SGL_String
      * @param string $string
      * @return string
      */
-    function stripIniFileIllegalChars($string)
+    public static function stripIniFileIllegalChars($string)
     {
         return preg_replace("/[\|\&\~\!\"\(\)]/i", "", $string);
     }

@@ -39,7 +39,7 @@
 // |            James Floyd <james@m3.net>                                     |
 // +---------------------------------------------------------------------------+
 
-$projectMnemonic = $GLOBALS['_STR']['CONF']['project']['projectMnemonic'];
+$projectMnemonic = @$GLOBALS['_STR']['CONF']['project']['projectMnemonic'];
 $GLOBALS[$projectMnemonic]['CONNECTIONS'] = array();
 #require_once 'DB.php';
 
@@ -84,10 +84,11 @@ class STR_DB
         return $GLOBALS[$projectMnemonic]['CONNECTIONS'][$dsnMd5];
     }
 
-   /**
+    /**
      * Returns the default DSN specified in the global config.
      *
      * @static
+     * @param bool $excludeDbName
      * @return mixed A string or array containing the data source name.
      */
     function getDsn($excludeDbName = false)

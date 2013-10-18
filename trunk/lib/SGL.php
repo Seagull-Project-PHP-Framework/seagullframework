@@ -240,7 +240,7 @@ class SGL
      * @param object $obj
      * @return boolean
      */
-    function objectHasState($obj)
+    public static function objectHasState($obj)
     {
         $aProps = get_object_vars($obj);
         if (count($aProps)) {

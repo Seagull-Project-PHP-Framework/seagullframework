@@ -547,7 +547,7 @@ class SGL_Translation
      *
      * @static
      */
-    function updateMetaData($aConfigs)
+    public static function updateMetaData($aConfigs)
     {
         $aMetaData = array(
             '__SGL_UPDATED_BY'   => SGL_Session::getUsername(),
@@ -573,7 +573,7 @@ class SGL_Translation
      *
      * @static
      */
-    function removeMetaData($aConfigs)
+    public static function removeMetaData($aConfigs)
     {
         foreach ($aConfigs as $k => $v) {
             if (strpos($k, '__SGL_') === 0) {
@@ -588,7 +588,7 @@ class SGL_Translation
      * @param $lang
      * @return bool|object
      */
-    function lockTranslationFile($moduleName, $lang)
+    public static function lockTranslationFile($moduleName, $lang)
     {
         $fileName  = $moduleName . '_' . $lang . '.lock.txt';
         $targetDir = SGL_VAR_DIR . '/translation';
@@ -616,7 +616,7 @@ class SGL_Translation
      *
      * @static
      */
-    function translationFileIsLocked($moduleName, $lang)
+    public static function translationFileIsLocked($moduleName, $lang)
     {
         $ret = false;
         $fileName = SGL_VAR_DIR . "/translation/{$moduleName}_{$lang}.lock.txt";
@@ -639,7 +639,7 @@ class SGL_Translation
      * @param $lang
      * @return object
      */
-    function removeTranslationLock($moduleName, $lang)
+    public static function removeTranslationLock($moduleName, $lang)
     {
         $fileName = SGL_VAR_DIR . "/translation/{$moduleName}_{$lang}.lock.txt";
         if (file_exists($fileName)) {
@@ -655,7 +655,7 @@ class SGL_Translation
      * @param $username
      * @return object
      */
-    function removeTranslationLocksByUser($username)
+    public static function removeTranslationLocksByUser($username)
     {
         $targetDir = SGL_VAR_DIR . '/translation';
         if (file_exists($targetDir) && is_readable($targetDir)) {
@@ -724,7 +724,7 @@ class SGL_Translation
      *
      * @todo move to SGL_String
      */
-    function escapeSingleQuote($string)
+    public static function escapeSingleQuote($string)
     {
         $ret = str_replace('\\', '\\\\', $string);
         $ret = str_replace("'", '\\\'', $ret);
@@ -740,7 +740,7 @@ class SGL_Translation
      *
      * @static
      */
-    function escapeSingleQuoteInArrayKeys($array)
+    public static function escapeSingleQuoteInArrayKeys($array)
     {
         $ret = array();
         foreach ($array as $key => $value) {

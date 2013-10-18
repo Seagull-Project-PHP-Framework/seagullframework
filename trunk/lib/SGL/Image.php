@@ -866,7 +866,7 @@ class SGL_ImageConfig
      *
      * @see getParamsFromFile()
      */
-    function getUniqueSectionNames($aSections)
+    public static function getUniqueSectionNames($aSections)
     {
         $aResult   = array();
         $aSections = array_keys($aSections);

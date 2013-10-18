@@ -411,7 +411,7 @@ class SGL_Util
      *
      * @return string  Path to tmp dir
      */
-    function getTmpDir()
+    public static function getTmpDir()
     {
        // Try to get from environment variable
        if (!empty($_ENV['TMP'])) {
