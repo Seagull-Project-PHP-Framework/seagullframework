@@ -10,7 +10,7 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>http://localhost:8080/seagull/trunk/www/index.php/user/login/action/logout/</td>
+	<td>http://localhost/seagull/trunk/www/index.php/user/login/action/logout/</td>
 	<td></td>
 </tr>
 <tr>
@@ -205,172 +205,174 @@
 	<td>my broadcast message</td>
 	<td></td>
 </tr>
-<tr>
-	<td>click</td>
-	<td>link=Session</td>
-	<td></td>
-</tr>
-<tr>
-	<td>select</td>
-	<td>conf[session][handler]]</td>
-	<td>label=database</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Save</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>You need to login to use this feature. Fill your username and password below.</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>frm_username</td>
-	<td>admin</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>frm_password</td>
-	<td>admin</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>document.forms[1].submitted</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>link=Session</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>file database</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>document.configuration.elements['conf[session][extended]'][1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>document.configuration.elements['conf[session][singleUser]'][1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Save</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Config info successfully updated</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>link=Session</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>conf[session][extended]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>conf[session][singleUser]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>select</td>
-	<td>conf[session][handler]]</td>
-	<td>label=file</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Save</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>You need to login to use this feature. Fill your username and password below.</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>frm_username</td>
-	<td>admin</td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>frm_password</td>
-	<td>admin</td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>document.forms[1].submitted</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Config Manager</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<!--<td>//a[contains(@href, 'javascript:showSelectedOptions("configuration","navigationOptions")')]</td>-->
-    <td>link=Navigation</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>conf[navigation][enabled]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Save</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Config info successfully updated</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextNotPresent</td>
-	<td>Admin menu</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>link=Navigation</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>document.configuration.elements['conf[navigation][enabled]'][1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Save</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Admin menu</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyTextPresent</td>
-	<td>Config info successfully updated</td>
-	<td></td>
-</tr>
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>link=Session</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>select</td>-->
+	<!--<td>conf[session][handler]]</td>-->
+	<!--<td>label=database</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>link=Save</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>You need to login to use this feature. Fill your username and password below.</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>type</td>-->
+	<!--<td>frm_username</td>-->
+	<!--<td>admin</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>type</td>-->
+	<!--<td>frm_password</td>-->
+	<!--<td>admin</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>document.forms[1].submitted</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--&lt;!&ndash; we made it here &ndash;&gt;-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>link=Session</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>file database</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>document.configuration.elements['conf[session][extended]'][1]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>document.configuration.elements['conf[session][singleUser]'][1]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>link=Save</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>Config info successfully updated</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>link=Session</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>conf[session][extended]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>conf[session][singleUser]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>select</td>-->
+	<!--<td>conf[session][handler]]</td>-->
+	<!--<td>label=file</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>link=Save</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>You need to login to use this feature. Fill your username and password below.</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>type</td>-->
+	<!--<td>frm_username</td>-->
+	<!--<td>admin</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>type</td>-->
+	<!--<td>frm_password</td>-->
+	<!--<td>admin</td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>document.forms[1].submitted</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>Config Manager</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--&lt;!&ndash;<td>//a[contains(@href, 'javascript:showSelectedOptions("configuration","navigationOptions")')]</td>&ndash;&gt;-->
+    <!--<td>link=Navigation</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>conf[navigation][enabled]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>link=Save</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>Config info successfully updated</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextNotPresent</td>-->
+	<!--<td>Admin menu</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>link=Navigation</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>click</td>-->
+	<!--<td>document.configuration.elements['conf[navigation][enabled]'][1]</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>clickAndWait</td>-->
+	<!--<td>link=Save</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>Admin menu</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
+<!--<tr>-->
+	<!--<td>verifyTextPresent</td>-->
+	<!--<td>Config info successfully updated</td>-->
+	<!--<td></td>-->
+<!--</tr>-->
 <tr>
 	<td>click</td>
 	<td>link=Debug</td>
