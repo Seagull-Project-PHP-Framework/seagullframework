@@ -8,7 +8,7 @@ define('SGL_INSTALLED', true);
 
 class TestRunnerInit extends SGL_FrontController
 {
-    function run()
+    public static function run()
     {
         define('SGL_TEST_MODE', true);
 
@@ -49,7 +49,7 @@ class SGL_Task_SetupTestDb extends SGL_DecorateProcess
         } else {
             $excludeDbName = true;
         }
-        $dsn = SGL_DB::_getDsnAsString($conf,$excludeDbName);
+        $dsn = SGL_DB::_getDsnAsString($conf, $excludeDbName);
         $dbh = SGL_DB::singleton($dsn);
         if (PEAR::isError($dbh)) {
             die($dbh->getMessage());
