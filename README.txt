@@ -30,8 +30,8 @@ Requirements
 Running Seagull requires no extra extensions or configuration options, just
 the following or greater:
 
-PHP     4.3.11
-MySQL   3.23.x
+PHP     5.x
+MySQL   4.x
 Apache  1.3.x
 
 
@@ -62,10 +62,6 @@ COPYING.txt in this distribution.
 
 Credits
 -------
-Check out our Frappr site to find Seagull devs in your area:
-
-    http://www.frappr.com/seagull/
-
 Meet the community of developers, translators and maintainers, find out
 more about mailing list etiquette and see a list of sites powered by Seagull
 
