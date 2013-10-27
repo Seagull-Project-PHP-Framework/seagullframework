@@ -71,7 +71,7 @@ class SGL_Install_Common
         return @count($_SESSION['ERRORS']);
     }
 
-    function errorPrint()
+    public static function errorPrint()
     {
         foreach ($_SESSION['ERRORS'] as $oError) {
             $msg = SGL_Error::toString($oError);
@@ -202,7 +202,7 @@ HTML;
      *
      * @return array
      */
-    function getModuleList()
+    public static function getModuleList()
     {
         $dir =  SGL_MOD_DIR;
         $fileList = array();

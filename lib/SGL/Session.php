@@ -91,16 +91,14 @@ class SGL_Session
     /**
      * Setup session.
      *
-     *  o custimise session name
+     *  o customise session name
      *  o configure custom cookie params
      *  o setup session backed, ie, file or DB
      *  o start session
      *  o persist user object in session
      *
-     * @access  public
-     * @param   int $uid             user id if present
-     * @param   boolean $rememberMe  set remember me cookie
-     * @return  void
+     * @param $uid
+     * @param null $rememberMe
      */
     function __construct($uid = -1, $rememberMe = null)
     {
@@ -175,9 +173,9 @@ class SGL_Session
     /**
      * Initialises session, sets some default values.
      *
-     * @access  private
-     * @param   object  $oUser  user object if present
-     * @return  boolean true on successful initialisation
+     * @param null $oUser
+     * @param null $rememberMe
+     * @return bool
      */
     function _init($oUser = null, $rememberMe = null)
     {
@@ -188,7 +186,7 @@ class SGL_Session
         $da =  UserDAO::singleton();
 
         //  set secure session key
-        $startTime = mktime();
+        $startTime = time();
         $acceptLang = @$_SERVER['HTTP_ACCEPT_LANGUAGE'];
         $userAgent = @$_SERVER['HTTP_USER_AGENT'];
 
@@ -395,7 +393,7 @@ class SGL_Session
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
         //  check for session timeout
-        $currentTime = mktime();
+        $currentTime = time();
         $lastPageRefreshTime = $_SESSION['lastRefreshed'];
         $timeout = isset($_SESSION['aPrefs']['sessionTimeout'])
             ? $_SESSION['aPrefs']['sessionTimeout']
@@ -424,8 +422,8 @@ class SGL_Session
         $ret = false;
         //  check for session timeout
         if (!$this->isTimedOut()) {
-            if (mktime() - $_SESSION['lastRefreshed'] > SGL_SESSION_UPDATE_WINDOW ) {
-                $_SESSION['lastRefreshed'] = mktime();
+            if (time() - $_SESSION['lastRefreshed'] > SGL_SESSION_UPDATE_WINDOW ) {
+                $_SESSION['lastRefreshed'] = time();
             }
             $ret = true;
         }

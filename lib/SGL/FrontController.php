@@ -62,7 +62,7 @@ class SGL_FrontController
      *  class FOO_Output extends SGL_Output {}
      *
      */
-    public function getOutputClass()
+    public static function getOutputClass()
     {
         if (SGL_Config::get('site.customOutputClassName')) {
             $className = SGL_Config::get('site.customOutputClassName');
@@ -153,7 +153,7 @@ class SGL_FrontController
         echo $output->data;
     }
 
-    public function customFilterChain($input)
+    public static function customFilterChain($input)
     {
         $req = $input->getRequest();
 
@@ -220,7 +220,7 @@ class SGL_FrontController
         return $ret;
     }
 
-    public function testDbConnection($output)
+    public static function testDbConnection($output)
     {
         $originalErrorLevel = error_reporting(0);
 

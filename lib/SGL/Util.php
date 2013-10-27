@@ -295,7 +295,7 @@ class SGL_Util
      * @param   int     $sort
      * @param   mixed   $cb
      */
-    function listDir($path, $list = FILE_LIST_ALL, $sort = FILE_SORT_NONE, $cb = null)
+    public static function listDir($path, $list = FILE_LIST_ALL, $sort = FILE_SORT_NONE, $cb = null)
     {
         $aRet = array();
         if (is_array($aFiles = File_Util::listDir($path, $list, $sort, $cb))) {

@@ -223,7 +223,7 @@ class SGL_Sql
      * @param $str
      * @return string
      */
-    function extractTableNameFromInsertStatement($str)
+    public static function extractTableNameFromInsertStatement($str)
     {
         $pattern = '/^(INSERT INTO)(\W+)(\w+)(\W+)(.*)/i';
         preg_match($pattern, $str, $matches);
@@ -238,7 +238,7 @@ class SGL_Sql
      * @return string
      * @todo consider using SQL_Parser, 19kb lib
      */
-    function extractTableNameFromCreateStatement($str)
+    public static function extractTableNameFromCreateStatement($str)
     {
         //  main pattern, 5th group, matches any alphanum char plus _ and -
         $pattern = '/(CREATE TABLE)(\W+)(IF NOT EXISTS)?(\W+)?([A-Za-z0-9_-]+)(\W+)?/i';
@@ -309,7 +309,7 @@ class SGL_Sql
     public static function addTablePrefix($tableName)
     {
         $c = SGL_Config::singleton();
-        $prefix = $c->get(array('db' => 'prefix'));
+        $prefix = SGL_Config::get('db.prefix');
         return $prefix . $tableName;
     }
 

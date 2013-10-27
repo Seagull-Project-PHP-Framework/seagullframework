@@ -188,7 +188,7 @@ class SGL_Translation
      * @param string $lang
      * @return array
      */
-    function getGuiTranslationsFromFile($module, $lang)
+    public static function getGuiTranslationsFromFile($module, $lang)
     {
         //  fetch translations from database and cache
         $cache =  SGL_Cache::singleton();
@@ -428,7 +428,7 @@ class SGL_Translation
      *
      * @return string
      */
-    function extractCharset($lang, $format = SGL_LANG_ID_SGL)
+    public static function extractCharset($lang, $format = SGL_LANG_ID_SGL)
     {
         switch ($format) {
             case SGL_LANG_ID_TRANS2:       $divider = '_'; break;
