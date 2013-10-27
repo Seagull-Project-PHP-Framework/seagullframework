@@ -342,7 +342,7 @@ class SGL_URL
      *
      * @return SGL_Url
      */
-    function singleton()
+    public static function singleton()
     {
         static $instance;
         if (!isset($instance)) {
@@ -840,7 +840,7 @@ class SGL_URL
  */
 class SGL_UrlParserStrategy
 {
-    function parseQueryString() {}
+    function parseQueryString(SGL_Url $url) {}
 
     function makeLink($action, $mgr, $mod, $aList, $params, $idx, $output) {}
 }

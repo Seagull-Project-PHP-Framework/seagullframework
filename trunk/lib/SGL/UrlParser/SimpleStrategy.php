@@ -19,8 +19,7 @@ class SGL_UrlParser_SimpleStrategy extends SGL_UrlParserStrategy
      * @param SGL_Url $url
      * @return array        An array to be assigned to SGL_Url::aQueryData
      */
-    function parseQueryString( /*SGL_Url*/
-        $url)
+    function parseQueryString(SGL_Url $url)
     {
         $ret = array();
 

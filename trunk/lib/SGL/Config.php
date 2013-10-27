@@ -91,19 +91,15 @@ class SGL_Config
     }
 
     /**
-     * Returns a config key
+     * instance call with 2 keys: $c->get(array('foo' => 'bar'));
      *
-     * @since Seagull 0.6.3 easier access with static calls, ie
-     * $lifetime = SGL_Config::get('cache.lifetime');
-     *
-     * @param mixed $key array or string
-     * @return string the value of the config key
+     * @param $key
+     * @return bool
      */
-    function get($key)
+    public function dynamicGet($key)
     {
-        //  instance call with 2 keys: $c->get(array('foo' => 'bar'));
+        $ret = false;
         if (is_array($key)) {
-            $this;
             $key1 = key($key);
             $key2 = $key[$key1];
             $test1 = array_key_exists($key1, $this->aProps);
@@ -117,16 +113,42 @@ class SGL_Config
             } else {
                 $ret = false;
             }
-        //  static call with dot notation: SGL_Config::get('foo.bar');
-        } elseif (is_string($key)) {
+        }  elseif (is_string($key)) {
+            // instance call with 1 key: $c->get('foo');
+            if (isset($this->aProps[$key])){
+                $ret = $this->aProps[$key];
+
+                //  else set defaults
+            } else {
+                $key1 = isset($aKeys[0]) ? $aKeys[0] : 'no value' ;
+                $key2 = isset($aKeys[1]) ? $aKeys[1] : 'no value' ;
+                $ret = false;
+            }
+        }
+        if (!isset($ret)) {
+            SGL::logMessage("Config key '[$key1][$key2]' does not exist",
+                PEAR_LOG_DEBUG);
+        }
+        return $ret;
+    }
+
+    /**
+     * Returns a config key.
+     *
+     * @since Seagull 0.6.3 easier access with static calls, ie
+     * $lifetime = SGL_Config::get('cache.lifetime');
+     *
+     * @param mixed $key array or string
+     * @return string the value of the config key
+     */
+    public static function get($key)
+    {
+        $ret = false;
+        if (is_string($key)) {
             $c = SGL_Config::singleton();
             $aKeys = preg_split("/\./", trim($key));
             if (isset($aKeys[0]) && isset($aKeys[1])) {
-                $ret = $c->get(array($aKeys[0] => $aKeys[1]));
-
-            // instance call with 1 key: $c->get('foo');
-            } elseif (isset($this->aProps[$key])){
-                $ret = $this->aProps[$key];
+                $ret = $c->dynamicGet(array($aKeys[0] => $aKeys[1]));
 
             //  else set defaults
             } else {
@@ -311,9 +333,8 @@ class SGL_Config
     {
         static $modDir;
         if (is_null($modDir)) {
-        //  allow for custom modules dir
-            $c = SGL_Config::singleton();
-            $customModDir = $c->get(array('path' => 'moduleDirOverride'));
+            //  allow for custom modules dir
+            $customModDir = SGL_Config::get('path.moduleDirOverride');
             $modDir = !empty($customModDir)
                 ? $customModDir
                 : 'modules';

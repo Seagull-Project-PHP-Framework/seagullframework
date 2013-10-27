@@ -1097,7 +1097,7 @@ class SGL_Task_SetupGui extends SGL_DecorateProcess
 
             $c = SGL_Config::singleton();
             $conf = $c->getAll();
-            if (!$c->get($mgrName)) {
+            if (!$c->dynamicGet($mgrName)) {
                 //  get current module
                 $req = SGL_Request::singleton();
                 $moduleName = $req->getModuleName();

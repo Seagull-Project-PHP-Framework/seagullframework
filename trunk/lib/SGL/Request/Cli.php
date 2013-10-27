@@ -6,9 +6,10 @@
 class SGL_Request_Cli extends SGL_Request
 {
     /**
+     * @param null $type
      * @return bool|object
      */
-    function init()
+    function init($type = null)
     {
         require_once 'Console/Getopt.php';
         $shortOptions = '';

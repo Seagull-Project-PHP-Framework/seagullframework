@@ -68,19 +68,24 @@ class SGL_ErrorHandler
 
         //  nb: comment out Notice for equivalent of
         //  error_reporting(E_ALL ^ E_NOTICE);
+        //  or Strict for the equivalent of
+        //  error_reporting(E_ALL ^ E_STRICT);
+        //  Needed for php 5.4
         $this->errorType = array (
-           1   =>  array('Error', 3),
-           2   =>  array('Warning', 4),
-           4   =>  array('Parsing Error', 3),
-           8   =>  array('Notice', 5),
-           16  =>  array('Core Error', 3),
-           32  =>  array('Core Warning', 4),
-           64  =>  array('Compile Error', 3),
-           128 =>  array('Compile Warning', 4),
-           256 =>  array('User Error', 3),
-           512 =>  array('User Warning', 4),
-           1024=>  array('User Notice', 5),
-           2047=>  array('All', 7)
+           E_ERROR   =>  array('Error', 3),
+           E_WARNING   =>  array('Warning', 4),
+           E_PARSE   =>  array('Parsing Error', 3),
+           E_NOTICE   =>  array('Notice', 5),
+           E_CORE_ERROR  =>  array('Core Error', 3),
+           E_CORE_WARNING  =>  array('Core Warning', 4),
+           E_COMPILE_ERROR  =>  array('Compile Error', 3),
+           E_COMPILE_WARNING =>  array('Compile Warning', 4),
+           E_USER_ERROR =>  array('User Error', 3),
+           E_USER_WARNING =>  array('User Warning', 4),
+           E_USER_NOTICE =>  array('User Notice', 5),
+           E_USER_DEPRECATED =>  array('User Deprecated', 5),
+//           E_STRICT =>  array('Strict', 5),
+           E_ALL=>  array('All', 7)
             );
         $this->sourceContextOptions = array('lines' => 5);
     }
@@ -93,7 +98,7 @@ class SGL_ErrorHandler
      */
     function startHandler()
     {
-        $GLOBALS['_SGL']['ERROR_HANDLER_OBJECT'] =  & $this;
+        $GLOBALS['_SGL']['ERROR_HANDLER_OBJECT'] =  &$this;
         $GLOBALS['_SGL']['ERROR_HANDLER_METHOD'] =  'errHandler';
 
         //  inner function to handle redirection to a class method

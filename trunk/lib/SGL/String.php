@@ -120,7 +120,7 @@ class SGL_String
      * @param $var
      * @return array|bool|string
      */
-    function trimWhitespace($var)
+    public static function trimWhitespace($var)
     {
         if (!isset($var)) {
             return false;

@@ -12,7 +12,6 @@ $includePath = $oldIncludePath . $includeSeparator . $sglLibDir . $includeSepara
 
 ini_set('include_path', $includePath);
 
-
 function autoload($className)
 {
     $fileName = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';

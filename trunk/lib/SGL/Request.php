@@ -54,6 +54,7 @@ define('SGL_REQUEST_AMF',       5);
 class SGL_Request
 {
     var $aProps;
+    var $type;
 
     function init($type = null)
     {

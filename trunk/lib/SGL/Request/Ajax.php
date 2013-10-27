@@ -6,9 +6,10 @@
 class SGL_Request_Ajax extends SGL_Request
 {
     /**
+     * @param null $type
      * @return array|bool|object|true
      */
-    function init()
+    function init($type = null)
     {
         //  get config singleton
         $c = SGL_Config::singleton();

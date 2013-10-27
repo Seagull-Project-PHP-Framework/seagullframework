@@ -222,7 +222,7 @@ class SGL_Output
      * @param $aValues
      * @param   mixed $selected   default selected element, array for multiple elements
      * @param   boolean $multiple   true if multiple
-     * @param   array $options    attibutes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
+     * @param   array $options    attributes to add to the input tag : array() {"class" => "myClass", "onclick" => "myClickEventHandler()"}
      * @param bool $translate
      * @internal param array $array hash of select values
      * @return  string  select options

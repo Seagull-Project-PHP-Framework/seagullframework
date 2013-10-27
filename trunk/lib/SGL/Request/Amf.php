@@ -8,9 +8,10 @@ require_once SGL_CORE_DIR . '/Request/Ajax.php';
 class SGL_Request_Amf extends SGL_Request_Ajax
 {
     /**
+     * @param null $type
      * @return array|bool|object|true
      */
-    function init()
+    function init($type = null)
     {
         parent::init();
         $this->type = SGL_REQUEST_AMF;

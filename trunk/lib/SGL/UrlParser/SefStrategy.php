@@ -59,7 +59,7 @@ class SGL_UrlParser_SefStrategy extends SGL_UrlParserStrategy
      * @return array        An array to be assigned to SGL_Url::aQueryData
      * @todo frontScriptName is already dealt with in SGL_Url constructor, remove from here
      */
-    function parseQueryString(/*SGL_Url*/$url)
+    function parseQueryString(SGL_Url $url)
     {
         $aUriParts = SGL_Url::toPartialArray($url->url, SGL_Config::get('site.frontScriptName'));
 

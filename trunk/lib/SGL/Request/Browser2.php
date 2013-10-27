@@ -8,7 +8,7 @@ require_once 'Horde/Routes/Utils.php';
 require_once SGL_CORE_DIR . '/Url2.php';
 
 /**
- * Browser2 request type, which uses Horder_Routes package
+ * Browser2 request type, which uses Horde_Routes package
  * to resolve query data, instead SGL_Url heavy parsing used by Browser1.
  *
  * @package SGL
@@ -20,9 +20,10 @@ class SGL_Request_Browser2 extends SGL_Request
     /**
      * Resolve query data by connecting to routes.
      *
-     * @return void
+     * @param null $type
+     * @return bool|object
      */
-    public function init()
+    public function init($type = null)
     {
         if (SGL_Config::get('site.frontScriptName')) {
             $qs = isset($_SERVER['PATH_INFO'])

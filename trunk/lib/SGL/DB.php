@@ -144,7 +144,8 @@ class SGL_DB
         return $dsn;
     }
 
-    function _getDsnAsArray($conf, $excludeDbName = false)
+    // FIXME: remove the underscore
+    public static function _getDsnAsArray($conf, $excludeDbName = false)
     {
         $dsn = array(
             'phptype'  => $conf['db']['type'],
@@ -161,7 +162,7 @@ class SGL_DB
         return $dsn;
     }
 
-    function _getDsnAsString($conf, $excludeDbName = false)
+    public static function _getDsnAsString($conf, $excludeDbName = false)
     {
         $socket = (isset($conf['db']['protocol'])
                 && $conf['db']['protocol'] == 'unix'

@@ -294,7 +294,7 @@ class SGL_Task_DefineTableAliases extends SGL_Task
         $c = SGL_Config::singleton();
 
         // get table prefix
-        $prefix = $c->get(array('db' => 'prefix'));
+        $prefix = SGL_Config::get('db.prefix');
         foreach ($data['aModuleList'] as $module) {
             $tableAliasIniPath = SGL_MOD_DIR . '/' . $module  . '/data/tableAliases.ini';
             if (file_exists($tableAliasIniPath)) {
@@ -494,7 +494,7 @@ class SGL_Task_DropTables extends SGL_UpdateHtmlTask
 
             // set old db prefix if any
             if (isset($_SESSION['install_dbPrefix'])) {
-                $currentPrefix = $c->get(array('db' => 'prefix'));
+                $currentPrefix = SGL_Config::get('db.prefix');
                 $c->set('db', array('prefix' => $_SESSION['install_dbPrefix']));
             }
 
