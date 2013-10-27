@@ -86,17 +86,9 @@ function getSystemTime()
 }
 
 //  initialise
+$rootDir = realpath(dirname(__FILE__) . '/..');
+$varDir = realpath(dirname(__FILE__) . '/../var');
 
-//  set initial paths according to install type
-$pearTest = '@PHP-DIR@';
-if ($pearTest != '@' . 'PHP-DIR'. '@') {
-    define('SGL_PEAR_INSTALLED', true);
-    $rootDir = '@PHP-DIR@/Seagull';
-    $varDir = '@DATA-DIR@/Seagull/var';
-} else {
-    $rootDir = realpath(dirname(__FILE__) . '/..');
-    $varDir = realpath(dirname(__FILE__) . '/../var');
-}
 
 //  check for lib cache
 define('SGL_CACHE_LIBS', (is_file($varDir . '/ENABLE_LIBCACHE.txt'))
