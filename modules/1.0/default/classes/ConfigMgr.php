@@ -315,7 +315,8 @@ class ConfigMgr extends SGL_Manager
         }
         //  add version info which is not available in form
         $c = SGL_Config::singleton();
-        $dbType = $c->get(array('db' => 'type')); // get db type before merge
+        // get db type before merge
+        $dbType = SGL_Config::get('db.type');
         $c->merge($input->conf);
         $c->set('tuples', array('version' => SGL_SEAGULL_VERSION));
         //  write configuration to file

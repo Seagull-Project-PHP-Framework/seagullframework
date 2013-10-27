@@ -683,7 +683,7 @@ class UserDAO extends SGL_Manager
         //  set default theme from config
         $key = ($type == SGL_RET_NAME_VALUE) ? 'theme' : 3;
         $c = SGL_Config::singleton();
-        $defaultTheme = $c->get(array('site' => 'defaultTheme'));
+        $defaultTheme = SGL_Config::get('site.defaultTheme');
         $aRes[$key] = $defaultTheme;
 
         return $aRes;
