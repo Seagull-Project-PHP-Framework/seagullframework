@@ -633,7 +633,7 @@ class Date_Calc
      * @access public
      * @static
      */
-    function getMonthFullname($month)
+    public static function getMonthFullname($month)
     {
         $month = (int)$month;
         if (empty($month)) {
@@ -712,7 +712,7 @@ class Date_Calc
      * @access public
      * @static
      */
-    function getMonthNames()
+    public static function getMonthNames()
     {
         $months = array();
         for ($i = 1; $i < 13; $i++) {
