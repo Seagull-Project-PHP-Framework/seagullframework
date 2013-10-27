@@ -513,6 +513,17 @@ class SGL
         }
         return ! is_null($aInstances[$moduleName]);
     }
+
+    /**
+     * Returns a string indicating the framework version.
+     *
+     * @return string
+     */
+    public static function getFrameworkVersion()
+    {
+        $version = file_get_contents(SGL_PATH . '/VERSION.txt');
+        return $version;
+    }
 }
 
 ?>

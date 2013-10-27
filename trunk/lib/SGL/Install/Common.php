@@ -86,17 +86,6 @@ class SGL_Install_Common
         }
     }
 
-    /**
-     * Returns a string indicating the framework version.
-     *
-     * @return string
-     */
-    public static function getFrameworkVersion()
-    {
-        $version = file_get_contents(SGL_PATH . '/VERSION.txt');
-        return $version;
-    }
-
     function ensureWebrootSet()
     {
         if (!defined('SGL_BASE_URL')) {
@@ -131,7 +120,7 @@ class SGL_Install_Common
     <title>Seagull Framework :: Installation</title>        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
     <meta http-equiv="Content-Language" content="en" />
     <meta name="ROBOTS" content="ALL" />
-    <meta name="Copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="Copyright" content="Copyright (c) 2013 Seagull Framework, Demian Turner, and the respective authors" />
     <meta name="Rating" content="General" />
     <meta name="Generator" content="Seagull Framework" />
     <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
@@ -259,16 +248,4 @@ HTML;
     }
 }
 
-if (!(function_exists('file_put_contents'))) {
-    function file_put_contents($location, $data)
-    {
-        if (is_file($location)) {
-            unlink($location);
-        }
-        $fileHandler = fopen ($location, "w");
-        fwrite ($fileHandler, $data);
-        fclose ($fileHandler);
-        return true;
-    }
-}
 ?>
