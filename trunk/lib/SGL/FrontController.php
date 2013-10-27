@@ -365,7 +365,7 @@ abstract class SGL_DecorateProcess extends SGL_ProcessRequest
  */
 class SGL_MainProcess extends SGL_ProcessRequest
 {
-    function process($input, $output)
+    function process(SGL_Registry $input, SGL_Output $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
 
