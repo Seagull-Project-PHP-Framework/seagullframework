@@ -126,33 +126,6 @@ class MaintenanceMgr extends SGL_Manager
         SGL::raiseMsg('Data Objects rebuilt successfully', true, SGL_MESSAGE_INFO);
     }
 
-    function _cmd_checkLatestVersion($input, $output)
-    {
-        require_once SGL_CORE_DIR . '/Install/Common.php';
-        $localVersion = SGL_Install_Common::getFrameworkVersion();
-
-        require_once SGL_CORE_DIR . '/XML/RPC/Remote.php';
-        $config = SGL_MOD_DIR . '/default/xmlrpc_conf.ini';
-        $remote = new SGL_XML_RPC_Remote($config);
-        $remoteVersion = $remote->call('framework.determineLatestVersion');
-
-        if (PEAR::isError($remoteVersion)) {
-            SGL::raiseError('remote interface problem');
-        } else {
-            $res = version_compare($localVersion, $remoteVersion);
-            $msgType = SGL_MESSAGE_ERROR;
-            if ($res < 0) {
-                $msg = 'There is a newer version available: ' . $remoteVersion . ', please upgrade '.
-                '<a href="http://seagull.phpkitchen.com/index.php/publisher/articleview/frmArticleID/12/staticId/20/">here</a>';
-                $msgType = SGL_MESSAGE_WARNING;
-            } else {
-                $msg = "Your current version, $localVersion, is up to date";
-                $msgType = SGL_MESSAGE_INFO;
-            }
-            SGL::raiseMsg($msg, false, $msgType);
-        }
-    }
-
     function _cmd_rebuildSequences($input, $output)
     {
         SGL::logMessage(null, PEAR_LOG_DEBUG);
