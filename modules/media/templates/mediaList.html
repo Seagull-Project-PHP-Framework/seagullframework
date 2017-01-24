@@ -1,0 +1,21 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="moduleContainer" id="mediaContainer" flexy:ignore>
+
+    <flexy:include src="mediaList_toolbar.html" />
+    <flexy:include src="mediaList_extraBar.html" />
+
+    <div class="moduleContent">
+        <div class="message" id="ajaxMessage">{msgGet()}</div>
+
+        <div id="mediaItems">
+        {if:isEqual(viewType,#list#)}
+            <!-- Load list view -->
+            <flexy:include src="mediaList_viewList.html" />
+        {end:}
+        {if:isEqual(viewType,#thumb#)}
+            <!-- Load thumbnail view -->
+            <flexy:include src="mediaList_viewThumb.html" />
+        {end:}
+        </div>
+    </div>
+</div>

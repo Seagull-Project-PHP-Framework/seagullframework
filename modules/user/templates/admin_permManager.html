@@ -1,0 +1,65 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" href="{makeUrl(#add#,#permission#,#user#)}">{translate(#New permission#)}</a>
+    <a class="action scannew" href="{makeUrl(#scanNew#,#permission#,#user#)}">{translate(#detect & add permissions#,#ucfirst#)}</a>
+    <a class="action delorphaned" href="{makeUrl(#scanOrphaned#,#permission#,#user#)}">{translate(#remove orphaned#,#ucfirst#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form name="perms" method="post" action="" flexy:ignore id="perms">
+        <fieldset class="inside"id="frmFilterSwitcher">
+            <p>
+                <label>{translate(#filter by module#)}</label>
+                <select name="frmModuleId"
+                    onChange="javascript:if(this.value == 0) {document.location.href='{makeUrl(#list#,#permission#,#user#)}'} else {document.location.href='{makeUrl(#list#,#permission#,#user#)}frmModuleId/' + this.value + '/'};" />
+                    <option value="0" />{translate(#all#)}
+                    {generateSelect(aModules,currentModule):h}
+                </select>
+            </p>
+        </fieldset>
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="delete" />
+
+            <table class="full">
+                <thead>
+                    <tr class="infos" flexy:if="pager">
+                        <td class="right" colspan="4">
+                            <flexy:include src="admin_pager_table.html" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="3%">
+                            <span class="tipOwner">
+                                <span class="tipText" id="becareful">{translate(#Be Careful!#)}</span>
+                                <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('perms', 'frmDelete[]', this.checked)" />
+                            </span>
+                        </th>
+                        <th width="5%"><a href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|permission_id||frmSortOrder|sortOrder#)}">{translate(#ID#)}</a>{if:sort_permission_id}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                        <th width="37%" class="left"><a href="{makeUrl(#list#,#permission#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a>{if:sort_name}<img src="{webRoot}/themes/{theme}/images/sort_{sortOrder}.gif" alt="" />{end:}</th>
+                        <th width="55%" class="left">{translate(#Description#)}</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="infos" flexy:if="pager">
+                        <td class="right" colspan="5">
+                            <flexy:include src="admin_pager_table.html" />
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                        <td><input type="checkbox" name="frmDelete[]" value="{aValue[permission_id]}" /></td>
+                        <td>{aValue[permission_id]}</td>
+                        <td class="left"><a href="{makeUrl(#edit#,#permission#,#user#,aPagedData[data],#frmPermId|permission_id#,key)}">{aValue[name]}</a></td>
+                        <td class="left">{aValue[description]}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#permission#)}', 'perms')" />
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

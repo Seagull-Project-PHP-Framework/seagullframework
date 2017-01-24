@@ -1,0 +1,61 @@
+<script type="text/javascript">
+<!--
+function selectAll(mode, i) {
+    if (i == 1) {
+        obj = document.forms['users'].elements;
+    } else {
+        obj = document.forms['users'].elements;
+    };
+    
+    for (i = 0; i < obj.length; i++)
+        if (obj[i].name == 'frmDelete[]') obj[i].checked = mode;
+    
+}
+
+function selchkAll(chk, i) {
+    if (chk.checked) {
+        selectAll(true, i);
+    }
+    else {
+        selectAll(false, i);
+    }
+}
+-->
+</script>
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div> 
+{if:pager}<flexy:include src="pager.html" />{end:}
+
+<form name="users" method="post" flexy:ignore id="users">
+  <input type="hidden" name="action" value="deleteLists" />   
+  <table class="wide">
+    <tr> 
+      <td colspan="7">
+      <input type="button" name="addList" value="{translate(#Add List#)}" onClick="javascript:document.location.href='{makeUrl(#addList#,#list#,#newsletter#)}'" />
+      <strong>{translate(#Total lists#)}:</strong> {totalItems}</td>
+    </tr>
+    <tr> 
+      <th width="5"><div align="center"><input type="checkbox" name="selAll" value="checkbox" onclick="selchkAll(this, 1);"></div></th>
+      <th width="10"><a class="header" href="{makeUrl(#listLists#,#list#,#newsletter#)}frmSortBy/newsletter_id/frmSortOrder/{sortOrder}">{translate(#ID#)}</a></th>
+      <th width="100"><a class="header" href="{makeUrl(#listLists#,#list#,#newsletter#)}frmSortBy/list/frmSortOrder/{sortOrder}">{translate(#List#)}</a></th>
+      <th><a class="header" href="{makeUrl(#listLists#,#list#,#newsletter#)}frmSortBy/name/frmSortOrder/{sortOrder}">{translate(#Description#)}</a></th>
+      <th width="120"><a class="header" href="{makeUrl(#listLists#,#list#,#newsletter#)}frmSortBy/last_updated/frmSortOrder/{sortOrder}">{translate(#Updated#)}</a></th>
+      <th width="120"><a class="header" href="{makeUrl(#listLists#,#list#,#newsletter#)}frmSortBy/date_created/frmSortOrder/{sortOrder}">{translate(#Created#)}</a></th>
+      <th width="10">{translate(#Edit#)}</th>
+    </tr>
+    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue"> 
+      <td align="center"><input class="noBorder" type="checkbox" name="frmDelete[]" value="{aValue[newsletter_id]}" /></td>
+      <td>{aValue[newsletter_id]}</td>
+      <td>{aValue[list]}</td>
+      <td>{aValue[name]}</td>  
+      <td>{aValue[last_updated]}</td>
+      <td>{aValue[date_created]}</td>
+      <td width="10" align="center"><a href="{makeUrl(#editList#,#list#,#newsletter#,aPagedData[data],#frmID|newsletter_id#,key)}"><img src="{webRoot}/themes/{theme}/images/edit.gif" border="0" /></a></td>
+    </tr>
+    <tr> 
+      <td colspan="7">{translate(#With selected list(s)#)}: 
+        <input type="submit" name="delete" value="{translate(#delete#)}" onclick="return confirmSubmit('{translate(#user#)}', 'users')" /></td>
+    </tr>
+  </table>
+</form>

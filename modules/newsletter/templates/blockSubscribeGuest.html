@@ -1,0 +1,34 @@
+<p><strong>Please login if you are a registered user.</strong></p>
+<form method="post" name="NewsletterMgr" action="{makeUrl(##,#newsletter#,#newsletter#)}" flexy:ignore id="NewsletterMgr">
+	<fieldset class="lastChild noLegend">
+		<ol class="onTop">
+			<li>
+				<label for="frm_name_block">
+					{translate(#Name#)}
+				</label>
+				<input id="frm_name_block" class="text" type="text" name="frmName" value="" />
+			</li>
+			<li>
+				<label for="frm_email_block">
+					{translate(#Email#)}
+				</label>
+				<input id="frm_email_block" class="text" type="text" name="frmEmail" value="" />
+			</li>
+		</ol>
+	</fieldset>
+	<p>
+		{translate(#Lists#)}:<br/>
+        {foreach:aLists,key,aList}
+        	<input name="frmListName[]" type="checkbox" value="{key}" >
+            <strong>{aList[description]}</strong><br/>
+        {end:}
+	</p>
+	<p>
+    	<strong>{translate(#Action#)}:</strong><br/>
+		<input type="radio" name="action" value="subscribe" checked="checked" />{translate(#Subscribe#)}<br/>
+		<input id="frm_action_unsubscribe_block" type="radio" name="action" value="unsubscribe" />{translate(#Unsubscribe#)}<br/>
+	</p>
+	<p>
+		<input class="wideButton" type="submit" name="submitted" value="{translate(#Send#)}" />
+	</p>
+</form>

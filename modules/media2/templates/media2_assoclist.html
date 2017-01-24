@@ -1,0 +1,48 @@
+    {if:aMedias}
+    <form id="mediaAssoc" method="post"
+          action="{makeUrl(#associateMedia#,#media2#,#media2#)}"
+          flexy:ignore>
+        <fieldset class="hide">
+            <input type="hidden" name="entity" value="{entity}" />
+            <input type="hidden" name="entityId" value="{entityId}" />
+            <input type="hidden" name="redir" value="{redir}" />
+        </fieldset>
+        <fieldset id="mediaListContainer" class="clearfix">
+        {foreach:aMedias,k,oMedia}
+            <div class="item">
+                {if:this.plugin(#isImageMimeType#,oMedia.mime_type)}
+                <a class="preview" href="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia)}"
+                   title="Click to enlarge">
+                    <img class="image"
+                         src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}" alt="" /></a>
+                {else:}
+                <a href="{makeUrl(#download#,#media2#,#media2#,aMedias,#mediaId|media_id#,k)}"
+                   title="Click to download">
+                    <img class="image"
+                         src="{this.plugin(#getIconByMimeType#,oMedia.mime_type)}" alt="" /></a>
+                {end:}
+                <em>{oMedia.name}</em>
+                <input type="radio" name="mediaId" value="{oMedia.media_id}" checked="checked"
+                       flexy:if="isEqual(oMedia.media_id,mediaId)" />
+                <input type="radio" name="mediaId" value="{oMedia.media_id}"
+                       flexy:if="!isEqual(oMedia.media_id,mediaId)" />
+            </div>
+        {end:}
+        </fieldset>
+        <p>
+            <span class="triggers">
+                <input class="button" type="submit" name="submit" value="Associate" />
+                or
+                <a href="{GLOBALS.base64_decode(redir)}">Cancel</a>
+            </span>
+            <img class="ajaxLoader" src="{imagesDir}/ajax-loader.gif" alt=""
+                 style="display: none;" />
+        </p>
+    </form>
+    {end:}
+
+    {if:!aMedias}
+    <p>
+        No media found.
+    </p>
+    {end:}

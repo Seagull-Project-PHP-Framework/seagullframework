@@ -1,0 +1,43 @@
+<div id="module_header">
+	<h1>Manage Your Locations</h1>
+    <div class="message">{msgGet()}</div>
+</div>
+
+<flexy:include src="locationNav.html" />
+
+{if:results}
+<div class="default_table">
+
+    <table cellspacing="0">
+		<caption>Locations you have created</caption>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Website</th>
+            <th scope="col"><span class="edit">{translate(#Edit#)}</span></th>
+			<th scope="col"><span class="delete">{translate(#Delete#)}</span></th>
+        </tr>
+        <tr class="{switchRowClass()}" flexy:foreach="results,key,oValue">
+            <td>{oValue.name}</td>
+            <td><a href="mailto:{oValue.email}" title="Click here to send an email">{oValue.email}</a></td>
+            <td><a href="{oValue.website}" title="Click here to visit the web site" target="_blank">{oValue.website}</a></td>
+            <td>
+            <a href="{makeUrl(#edit#,#location#,#event#,results,#frmLocationID|location_id#,key)}" title="Edit This Location" />
+				<img src="{webRoot}/themes/{theme}/images/icons/edit.gif" alt="edit" border="0" />
+            </a>
+            </td>
+			<td class="icon_in_table">
+				<a href="{makeUrl(#delete#,#location#,#event#,results,#frmLocationID|location_id#,key)}"
+				   onclick="return confirmDelete('location', 'locations')">
+					<img src="{webRoot}/themes/{theme}/images/icons/delete.gif"
+						title="Delete this event. This can NOT be undone." alt="Delete" border="0" />
+				</a>
+			</td>
+        </tr>
+
+    </table>
+
+</div>
+{else:}
+<p>no locations found</p>
+{end:}

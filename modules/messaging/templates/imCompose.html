@@ -1,0 +1,36 @@
+<form name="compose" method="post" flexy:ignore id="compose">
+    <input type="hidden" name="action" value="insert" /> 
+    <input type="hidden" name="frmUserIdFrom" value="{messageFrom}" />
+    {messageToIds:h}
+
+    <h1 class="pageTitle">{translate(sectionTitle)}</h1>
+    <div class="message">{msgGet()}</div> 
+
+    <table class="wide">
+        <tr>
+            <td colspan="2">
+                <input type="submit" name="submitted" value="{translate(#Send#)}" /> 
+                <input type="button" value="{translate(#Cancel#)}" onclick="javascript:document.location.href='{cancelRedirect}'" />
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">{foreach:error,error,string} <strong>{string}</strong><br />{end:}</td>
+        </tr>
+
+        <tr>
+            <td class="fieldName" width="150">{translate(#To#)}</td>
+            <td><input type="input" value="{messageToUsernames}" size="81" readonly="readonly" /></td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Subject#)}</td>
+            <td><input type="input" name="frmSubject" size="81" value="{messageSubject}" /></td>
+        </tr>
+
+        <tr>
+            <td class="fieldName">{translate(#Message#)}</td>
+            <td><textarea id='frmBodyName' cols="78" rows="20" name="frmBodyName">{messageBody:h}</textarea></td>
+        </tr>
+    </table>
+</form>

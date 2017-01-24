@@ -1,0 +1,189 @@
+<div id="accountContainer" flexy:ignore>
+    <h2>{pageTitle}</h2>
+
+    <p>
+        {tr(#date registered %date_created%#,#vprintf#,oUser)}
+    </p>
+
+    <!-- Change Password -->
+    <div id="changePassword-container" style="display: none;">
+        <flexy:include src="account2_changePassword.html" />
+    </div>
+
+    <!-- Change Address -->
+    <div id="changeAddress-container" style="display: none;">
+        <flexy:include src="account2_changeAddress.html" />
+    </div>
+
+    <p>
+        <a id="changePassword-trigger" href="#">{tr(#change password#)}</a><br />
+        <a id="changeAddress-trigger" href="#">{tr(#change address#)}</a>
+    </p>
+
+    <!-- Image upload -->
+    <div id="mediaUpload" class="image">
+
+        <!-- View area -->
+        <span class="image">
+            {if:oMedia}
+            <img src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}"
+                 alt="" />
+            {else:}
+            <img src="{imagesDir}/no_image.gif" alt="" />
+            {end:}
+        </span>
+        <a class="edit" href="#">{tr(#edit#)}</a>
+
+        <!-- EDit area -->
+        <span class="editMode" style="display: none;">
+            <input id="media_upload" type="file" name="filedata" />
+            <span class="actions">
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+            <img class="mediaLoader" src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </span>
+    </div><!-- END: image upload -->
+
+    <!-- First name -->
+    <div class="field">
+
+        <!-- View block -->
+        <div class="viewMode">
+            <strong>{tr(#first name#)}</strong>:
+            <span>{oUser.first_name}</span>
+            <a class="edit" href="#">{tr(#edit#)}</a>
+        </div>
+
+        <!-- Edit block -->
+        <form class="editMode" method="post" style="display: none;"
+              action="{makeUrl(#updateUserData#,#user2#,#user2#)}" flexy:ignore>
+            <input type="hidden" name="fieldName" value="first_name" />
+            <input class="text" type="text" name="value" value="{oUser.first_name}" />
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#save#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </form>
+
+    </div><!-- END: First name -->
+
+    <!-- Last name -->
+    <div class="field">
+
+        <!-- View block -->
+        <div class="viewMode">
+            <strong>{tr(#last name#)}</strong>:
+            <span>{oUser.last_name}</span>
+            <a class="edit" href="#">{tr(#edit#)}</a>
+        </div>
+
+        <!-- Edit block -->
+        <form class="editMode" method="post" style="display: none;"
+              action="{makeUrl(#updateUserData#,#user2#,#user2#)}" flexy:ignore>
+            <input type="hidden" name="fieldName" value="last_name" />
+            <input class="text" type="text" name="value" value="{oUser.last_name}" />
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#save#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </form>
+
+    </div><!-- END: Last name -->
+
+    <!-- Gender -->
+    <div class="field">
+
+        <!-- View block -->
+        <div class="viewMode">
+            <strong>{tr(#gender#)}</strong>:
+            <span>
+            {if:oUser.gender}
+                {if:isEqual(oUser.gender,#m#)}
+                    {tr(#male#)}
+                {end:}
+                {if:isEqual(oUser.gender,#f#)}
+                    {tr(#Female#)}
+                {end:}
+            {else:}
+                {tr(#no information specified#)}
+            {end:}
+            </span>
+            <a class="edit" href="#">{tr(#edit#)}</a>
+        </div>
+
+        <form class="editMode" method="post" style="display: none;"
+              action="{makeUrl(#updateUserData#,#user2#,#user2#)}" flexy:ignore>
+            <input type="hidden" name="fieldName" value="gender" />
+
+            <label for="gender_male">Male</label>
+            <input id="gender_male" type="radio" name="value" value="m" checked="checked"
+                   flexy:if="isEqual(oUser.gender,#m#)" />
+            <input id="gender_male" type="radio" name="value" value="m"
+                   flexy:if="!isEqual(oUser.gender,#m#)"  />
+            &nbsp;
+            <label for="gender_female">Female</label>
+            <input id="gender_female" type="radio" name="value" value="f" checked="checked"
+                   flexy:if="isEqual(oUser.gender,#f#)" />
+            <input id="gender_female" type="radio" name="value" value="f"
+                   flexy:if="!isEqual(oUser.gender,#f#)" />
+            &nbsp;&nbsp;&nbsp;
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#save#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </form>
+
+    </div><!-- END: gender -->
+
+    <!-- About -->
+    <div class="field">
+
+        <!-- View block -->
+        <div class="viewMode">
+            <strong>{tr(#about me#)}</strong>:<br />
+            <span>{if:oUser.about}{nl2br(oUser.about)}{else:}{tr(#no information specified#)}{end:}</span>
+            <br /><a class="edit" href="#">{tr(#edit#)}</a>
+        </div>
+
+        <!-- Edit block -->
+        <form class="editMode" method="post" style="display: none;"
+              action="{makeUrl(#updateUserData#,#user2#,#user2#)}" flexy:ignore>
+            <input type="hidden" name="fieldName" value="about" />
+            <textarea rows="5" cols="25" name="value">{oUser.about}</textarea>
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#save#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </form>
+
+    </div><!-- END: About -->
+
+    <div class="field">
+        <strong>{tr(#username#)}</strong>:
+        <span>{oUser.username}</span>
+    </div>
+    <div class="field">
+        <strong>{tr(#email#)}</strong>:
+        <span>{oUser.email}</span>
+    </div>
+
+</div>

@@ -1,0 +1,32 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action" value="authorize" />
+
+    <table>
+	    <tr><td colspan="2">Please enter your e-mail address and select the newsletters that you want to subscribe.<br /></td></tr>
+        <tr>
+            <td><strong>{translate(#E-mail#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                 <input type="text" name="frmEmail" size="80" value="{email}" />
+             </td>
+         </tr>
+        <tr>
+            <td><strong>{translate(#Authorization code#)}:</strong></td>
+            <td width="400">
+                <div class="error" flexy:if="error[actionKey]">
+                    {translate(error[actionKey])}
+                </div>
+                 <input type="text" name="frmKey" size="80" value="{frmKey}" />
+             </td>
+        </tr> 
+        <tr>
+            <td align="center" colspan="2">             
+            <input class="wideButton" type="submit" name="submitted" value="{translate(#Authorize#)}" /></td>
+        </tr>
+    </table>
+</form>

@@ -1,0 +1,30 @@
+<div id="mediaContainer">
+    <h2>Upload media</h2>
+
+    <!-- Upload form -->
+    <form id="mediaUpload" method="post" enctype="multipart/form-data" flexy:ignore
+          action="">
+        <fieldset>
+            <ol class="clearfix">
+                <li>
+                    <label for="media_upload"><em>*</em> Select file to upload</label>
+                    <div>
+                        <input id="media_upload" type="file" name="filedata" />
+                    </div>
+                </li>
+            </ol>
+        </fieldset>
+        <p class="fieldIndent">
+            <span class="triggers">
+                <input class="button" type="button" name="submitted"
+                       value="{translate(#Upload#)}" />
+                or
+                <a href="{makeUrl(##,#media2#,#media2#)}">Cancel</a>
+            </span>
+            <img class="ajaxLoader" src="{imagesDir}/ajax-loader.gif" alt=""
+                 style="display: none;" />
+        </p>
+        <p><em>*</em> {translate(#denotes required field#)}</p>
+    </form>
+
+</div>

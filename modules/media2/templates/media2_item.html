@@ -1,0 +1,28 @@
+        <div class="item">
+            {if:this.plugin(#isImageMimeType#,oMedia.mime_type)}
+            <a class="preview" href="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia)}"
+               title="Click to enlarge">
+                <img class="image"
+                     src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}" alt="" /></a>
+            {else:}
+            <a href="{makeUrl(#download#,#media2#,#media2#,aMedias,#mediaId|media_id#,k)}"
+               title="Click to download">
+                <img class="image"
+                     src="{this.plugin(#getIconByMimeType#,oMedia.mime_type)}" alt="" /></a>
+            {end:}
+            <em>{oMedia.name}</em>
+            <span class="triggers">
+                <!--
+                {if:this.plugin(#isImageMimeType#,oMedia.mime_type)}
+                <a class="preview" href="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia)}">View</a>
+                {else:}
+                <a href="{makeUrl(#download#,#media2#,#media2#,aMedias,#mediaId|media_id#,k)}">DL</a>
+                {end:}
+                -->
+                <a href="{makeUrl(#edit#,#media2#,#media2#,aMedias,#mediaId|media_id#,k)}">Edit</a>
+                &nbsp;<a class="delete"
+                         href="{makeUrl(#deleteMediaById#,#media2#,#media2#,aMedias,#mediaId|media_id#,k)}">[X]</a>
+            </span>
+            <img style="display: none;" class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif" alt="" />
+        </div>

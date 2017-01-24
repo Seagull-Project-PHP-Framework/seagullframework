@@ -1,0 +1,13 @@
+<div id="block-logout">
+    <p>
+        <strong>{translate(#user#)}:</strong>
+        <em>{loggedOnUser}</em>
+    </p>
+    <p>
+        <strong>{translate(#session started at#)}:</strong>
+        <em>{loggedOnSince}</em>
+    </p>
+    <p>
+        <a href="{makeUrl(#logout#,#login#,#user#)}">{translate(#logout#,#ucfirst#)}</a>
+    </p>
+</div>

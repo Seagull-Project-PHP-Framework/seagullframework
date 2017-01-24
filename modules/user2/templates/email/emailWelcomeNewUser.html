@@ -1,0 +1,72 @@
+<?php
+
+// Defaults vars
+//  - siteUrl
+//  - siteName
+//  - crlf
+
+// Vars from observer
+//  - lang
+//  - membername
+//  - user
+//  - signature
+
+// trans
+$line1 = SGL_Output::tr('welcome %membername%', 'vprintf', $aParams);
+$line2 = SGL_Output::tr('thanks for signing up with %siteName%', 'vprintf', $aParams);
+$line3 = SGL_Output::tr('log in at:');
+$line4 = SGL_Output::tr('username is %username%', 'vprintf', $aParams['user']);
+$line5 = SGL_Output::tr('password is %password%', 'vprintf', $aParams['user']);
+$line6 = SGL_Output::tr('%siteName% is cool', 'vprintf', $aParams);
+$line7 = SGL_Output::tr('text about erroneous registration', 'vprintf', $aParams);
+$line8 = SGL_Output::tr('cheers (cya)');
+$line9 = SGL_Output::tr('%siteName% team', 'vprintf', $aParams);
+
+// text
+$bodyTxt = <<< TXT
+$line1
+
+$line2
+
+$line3
+
+{$aParams['siteUrl']}
+
+$line4
+
+$line6
+
+$line7
+
+$line8
+$line9
+
+--
+{$aParams['signature']}
+TXT;
+
+/*
+Hi %membername%,
+
+Thanks for signing up for a %siteName% account -- it's great to have you on board!
+
+You can log in at:
+
+%siteUrl%
+
+Username: %membername%
+Temporary password: %password%
+
+We hope you find %siteName% useful!
+
+If you didn't make this registration, or you're not interested in %siteName%
+after all, you can just ignore this email and we'll delete your sign-up data
+in the next few days.
+
+Cheers,
+The %siteName% team.
+
+---
+%signature%
+*/
+?>

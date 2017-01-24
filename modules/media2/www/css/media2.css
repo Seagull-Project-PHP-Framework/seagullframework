@@ -1,0 +1,18 @@
+
+#mediaList .item {
+  float: left;
+  width: 24%;
+  height: 100px;
+  margin-bottom: 1em;
+}
+  #mediaList .item .image {
+    display: block;
+    margin-bottom: 0.25em;
+  }
+  #mediaList .item em {
+    display: block;
+    margin-bottom: 0.25em;
+    font-style: normal;
+    color: #666;
+  }
+ 

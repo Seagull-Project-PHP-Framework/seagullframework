@@ -1,0 +1,85 @@
+<form method="post" action="{makeUrl(#updateAddress#,#user2#,#user2#)}"
+      id="changeAddress" flexy:ignore>
+    <h4>{tr(#change address#)}</h4>
+    <fieldset>
+        <ol class="clearfix">
+            <li>
+                <label for="address_address1">
+                    <em>*</em> {tr(#address 1#)}
+                </label>
+                <div>
+                    <input id="address_address1" class="text"
+                           type="text" name="address[address1]" value="{oAddress.address1}" />
+                    <p class="comment">{tr(#address 1 comment#)}</p>
+                </div>
+            </li>
+            <li>
+                <label for="address_address2">
+                    {tr(#address 2#)}
+                </label>
+                <div>
+                    <input id="address_address2" class="text"
+                           type="text" name="address[address2]" value="{oAddress.address2}" />
+                    <p class="comment">{tr(#address 2 comment#)}</p>
+                </div>
+            </li>
+            <li>
+                <label for="address_city">
+                    <em>*</em> {tr(#city#)}
+                </label>
+                <div>
+                    <input id="address_city" class="text"
+                           type="text" name="address[city]" value="{oAddress.city}" />
+                </div>
+            </li>
+            <!--li>
+                <label for="address_state">
+                    {tr(#state / province / region#)}
+                </label>
+                <div>
+                    <select id="address_state" name="address[state]">
+                        {generateSelect(aStates,oAddress.state):h}
+                    </select>
+                </div>
+            </li-->
+            <li>
+                <label for="address_state">
+                    {tr(#state / province / region#)}
+                </label>
+                <div>
+                    <input id="address_state" class="text"
+                           type="text" name="address[state]" value="{oAddress.state}" />
+                </div>
+            </li>
+            <li>
+                <label for="address_post-code">
+                    <em>*</em> {tr(#post code#)}
+                </label>
+                <div>
+                    <input id="address_post-code" class="text"
+                           type="text" name="address[post_code]" value="{oAddress.post_code}" />
+                </div>
+            </li>
+            <li>
+                <label for="address_country">
+                    <em>*</em> {tr(#country#)}
+                </label>
+                <div>
+                    <select id="address_country" name="address[country]">
+                        {generateSelect(aCountries,oAddress.country):h}
+                    </select>
+                </div>
+            </li>
+        </ol>
+        <p class="fieldIndent">
+            <span class="actions">
+                <input class="button" type="submit" value="{tr(#update#)}" />
+                &nbsp;{tr(#or#)}&nbsp;
+                <a class="cancel" href="#">{tr(#cancel#)}</a>
+            </span>
+            <img class="ajaxLoader"
+                 src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </p>
+    </fieldset>
+</form>

@@ -1,0 +1,30 @@
+<span flexy:if="msgGet()">{msgGet()}</span>
+
+<h2 class="sectionHeader">{translate(#Current Category#)}: {currentCat:h}</h2>
+<h3 class="colHeader">{translate(#You are here#)}: {path:h}</h3>
+
+{if:pager}<flexy:include src="pager.html" />{end:}
+{if:aPagedData}
+<table>
+	<tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+
+		<td>{this.plugin(#id2AssetIcon#,aValue[document_type_id]):h}</td>
+		<td><a href="#" onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)">{aValue[name]}</a></td>
+        <td flexy:if=isAdmin()>
+            <a href="{makeUrl(#edit#,#document#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}" />
+                [{translate(#Edit#)}]
+            </a> <img src="{webRoot}/themes/{theme}/images/edit.gif" alt="{translate(#Edit#)}" />
+		</td>
+		<td><a href="#" onClick="javascript:openWindow('{makeUrl(#view#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)">{translate(#view#)}</a></td>
+		<td><a href="#" onClick="javascript:openWindow('{makeUrl(#download#,#file#,#publisher#,aPagedData[data],#frmAssetID|document_id#,key)}',500,350)">{translate(#download#)}</a></td>
+		<td nowrap="nowrap">{aValue[document_type_name]}</td>
+		<td align="right">{formatBytes(aValue[file_size])}</td>
+		<td>{aValue[description]}</td>
+	</tr>
+</table>
+{else:}
+    {translate(#No documents found#)}
+{end:}
+
+{if:pager}<flexy:include src="pager.html" />{end:}
+ 

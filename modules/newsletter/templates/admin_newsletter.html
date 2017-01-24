@@ -1,0 +1,49 @@
+<script type="text/javascript" src="{webRoot}/themes/{theme}/js/openWin.js"></script>
+<div id="manager-actions">
+    <a class="action upload" href="javascript:formSubmit('NewsletterMgr','submitted',1,1)">{translate(#Send#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action"  value="send">
+        <fieldset class="inside">
+            <h3>{translate(#Guestbook Information#)}</h3>
+		     <p>
+	             <label for="frmForm">{translate(#From#)}</label>
+	             <span class="error" flexy:if="error[from]">{translate(error[from])}</span>
+	             <input id="frmForm" type="text" name="frmFrom" size="40" value="{from}" />
+	         </p>
+	         <p>
+	             <label for="frmMail"><span class="required">*</span>{translate(#To#)}</label>
+	             <span class="error" flexy:if="error[email]">{translate(error[email])}</span>
+	             <input id="frmMail" type="text" name="frmEmail" size="40" value="{email}" />
+	         </p>
+
+	         <p>
+				<label for="frmGroups[]"><span class="required"></span>{translate(#To groups#)}</label>
+				<span class="error" flexy:if="error[group]">{translate(error[group])}</span>
+				<div id="newsletterLists">{generateCheckboxList(roleList,groups,#frmGroups[]#):h}</div>
+	         </p>
+
+	         <p>
+			   	<label for="frmNewsList[]"><span class="required"></span>{translate(#To newslists#)}</label>
+			   	<span class="error" flexy:if="error[newslist]">{translate(error[newslist])}</span>
+				<div id="newsletterLists">{this.plugin(#generateCheckboxNewsList#,validNewsList,listName,#frmListName[]#):h}</div>
+	         </p>
+	         <p>
+              	<label for="frmSubject"><span class="required"></span>{translate(#Subject#)}</label>
+              	<span class="error" flexy:if="error[subject]">{translate(error[subject])}</span>
+			 	<input type="text" name="frmSubject" size="40" value="{subject}" />
+	         </p>
+	         <p>
+	         	<label for="frmBodyName"><span class="required"></span>{translate(#Message#)}</label>
+	            <span class="error" flexy:if="error[body]">{translate(error[body])}</span>
+				<textarea id="frmBodyName" cols="55" rows="20" name="frmBodyName">{body}</textarea>
+	         </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

@@ -1,0 +1,18 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}:&nbsp;</span>
+    <a flexy:if="!translationIsLocked" class="action save"
+       href="javascript:formSubmit('translations','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action cancel"
+       href="{makeUrl(##,#translation#,#translation#)}">{translate(#Cancel#)}</a>
+</div>
+
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <flexy:include src="admin_translation_editForm.html" />
+
+    <div class="spacer"></div>
+</div>
