@@ -1,0 +1,29 @@
+        $output->template  = '%mgrName%Edit.html';
+        $output->pageTitle = '%MgrCaption% :: Edit';
+        $output->action    = 'update';
+        $output->wysiwyg   = true;
+        $output->isAdd     = false;
+
+        $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+        $%mgrName%->get($input->%mgrName%Id);
+        $output->%mgrName% = $%mgrName%;
+        
+        $userhistory = DB_DataObject::factory($this->conf['table']['user']);
+        if ($%mgrName%->created_by!='') {
+                $userhistory->get($%mgrName%->created_by);
+                $output->%mgrName%->createdby = $userhistory->username;  
+                $output->%mgrName%->datecreated = $%mgrName%->date_created;  
+        } else {
+                $output->%mgrName%->createdby = "n/a";
+                $output->%mgrName%->datecreated = "n/a";
+        }
+
+        $userhistory = DB_DataObject::factory($this->conf['table']['user']);
+        if ($%mgrName%->updated_by!='') {
+                $userhistory->get($%mgrName%->updated_by);
+                $output->%mgrName%->updatedby = $userhistory->username;  
+                $output->%mgrName%->lastupdated = $%mgrName%->last_updated;  
+        } else {
+                $output->%mgrName%->updatedby = "n/a";
+                $output->%mgrName%->lastupdated = "n/a";
+        }

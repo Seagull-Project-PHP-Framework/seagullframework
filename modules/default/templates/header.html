@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{currLang}" xml:lang="{currLang}">
+<head>
+    <title flexy:if="!leadArticle[title]">{conf[site][name]} :: {currentSectionName}</title>
+    <title flexy:if="leadArticle[title]">{conf[site][name]} :: {leadArticle[title]}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset={charset}" />
+    <meta http-equiv="Content-Language" content="{currLang}" />
+    <meta name="keywords" content="{conf[site][keywords]}" />
+    <meta name="description" content="{conf[site][description]}" />
+    <meta name="robots" content="all" />
+    <meta name="copyright" content="Copyright (c) 2006 Seagull Framework, Demian Turner, and the respective authors" />
+    <meta name="rating" content="General" />
+    <meta name="generator" content="Seagull Framework" />
+    <link rel="shortcut icon" type="images/x-icon" href="{webRoot}/favicon.ico" />
+    <link rel="help" href="http://trac.seagullproject.org" title="Seagull Documentation." />
+    <link rel="stylesheet" type="text/css" media="screen" href="{makeCssLink(theme,conf[navigation][stylesheet],moduleName)}" />
+
+    {foreach:aCssFiles,file}
+    <link rel="stylesheet" type="text/css" media="screen" href="{webRoot}/{file}" />
+    {end:}
+
+    {scriptOpen:h}
+        var SGL_JS_WEBROOT="{webRoot}";
+        var SGL_JS_WINHEIGHT={conf[popup][winHeight]};
+        var SGL_JS_WINWIDTH={conf[popup][winWidth]};
+        var SGL_JS_SESSID="{sessID}";
+        var SGL_JS_CURRURL="{currUrl}";
+        var SGL_JS_THEME="{theme}";
+        var SGL_JS_ADMINGUI="0";
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+        var SGL_JS_URL_STRATEGY = "{conf[site][outputUrlHandler]}";
+        var SGL_JS_FRONT_CONTROLLER = "{conf[site][frontScriptName]}";
+    {scriptClose:h}
+
+    {if:isAdmin()}
+    {scriptOpen:h}
+        var SGL_JS_DATETEMPLATE="{getDateFormat()}";
+    {scriptClose:h}
+    <script type="text/javascript" src="{webRoot}/js/mainAdmin.js"></script>
+    {end:}
+    <script type="text/javascript" src="{webRoot}/js/mainPublic.js"></script>
+    <script type="text/javascript" src="{webRoot}/js/global.js"></script>
+
+    {foreach:javascriptSrc,file}
+    <script type="text/javascript" src="{file}"></script>
+    {end:}
+
+    {scriptOpen:h}
+    {foreach:onReadyDom,eventHandler}
+        sgl.ready("{eventHandler}");
+    {end:}
+    {if:onLoad}
+    window.onload = function() {
+        {foreach:onLoad,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {if:onUnload}
+    window.onunload = function() {
+        {foreach:onUnload,eventHandler}
+        {eventHandler};
+        {end:}
+    }
+    {end:}
+    {scriptClose:h}
+
+    {if:wysiwyg}
+    {if:wysiwyg_htmlarea}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/htmlarea/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{webRoot}/htmlarea/htmlarea.js"></script>
+    <script type="text/javascript">
+        HTMLArea.loadPlugin("CharacterMap");
+        function initDocument()
+        {
+            var config = new HTMLArea.Config();
+            config.toolbar = [
+                [ "fontname", "space",
+                  "fontsize", "space",
+                  "formatblock", "space",
+                  "bold", "italic", "underline", "strikethrough", "separator",
+                  "subscript", "superscript", "separator",
+                  "copy", "cut", "paste", "space"],
+                [ "justifyleft", "justifycenter", "justifyright", "justifyfull", "separator",
+                  "lefttoright", "righttoleft", "separator",
+                  "orderedlist", "unorderedlist", "outdent", "indent", "separator",
+                  "forecolor", "hilitecolor", "separator",
+                  "inserthorizontalrule", "createlink", "insertimage", "inserttable", "htmlmode", "separator",
+                  "popupeditor", "separator", "showhelp"]
+            ];
+            var editor = new HTMLArea("frmBodyName", config);
+            editor.registerPlugin(CharacterMap);
+            editor.generate();
+        }
+        HTMLArea.onload = initDocument;
+    </script>
+    {end:}
+    {if:wysiwyg_xinha}
+    <script type="text/javascript">
+        _editor_url = SGL_JS_WEBROOT + "/xinha/";
+        _editor_lang = "en";
+    </script>
+    <script type="text/javascript" src="{webRoot}/xinha/htmlarea.js"></script>
+    <script type="text/javascript" src="{webRoot}/xinha/sgl_config.js"></script>
+    {end:}
+    {if:wysiwyg_fck}
+    <script type="text/javascript" src="{webRoot}/fck/fckeditor.js"></script>
+    <script type="text/javascript">
+        var oFCKEditors = new Array;
+
+        /* initalises an instance of FCK and returns the object. */
+        function fck_add(id)
+        {
+            i = oFCKEditors.length;
+            oFCKEditors[i] = new FCKeditor(id, '100%', 500);
+            oFCKEditors[i].BasePath = SGL_JS_WEBROOT + "/fck/";
+            oFCKEditors[i].Config["CustomConfigurationsPath"] = SGL_JS_WEBROOT + "/js/SglFckconfig.js"  ;
+            oFCKEditors[i].ReplaceTextarea();
+        }
+        function fck_init()
+        {
+            if( document.getElementsByTagName ) {
+                areas = document.getElementsByTagName('textarea');
+
+                for( var i=0; i<areas.length; i++ ){
+                    if( areas[i].className.match("wysiwyg") ) {
+                        fck_add(areas[i].id);
+                    }
+                    else if( areas[i].id.match('frmBodyName') ) {
+                        /* fallback for old templates */
+                        fck_add('frmBodyName');
+                    }
+               }
+            }
+        }
+    </script>
+    {end:}
+    {if:wysiwyg_tinyfck}
+        <script language="javascript" type="text/javascript" src="{webRoot}/tinyfck/tiny_mce_gzip.php"></script>
+        <script language="javascript" type="text/javascript" src="{webRoot}/js/SglTinyFckConfig.js"></script>
+    {end:}
+
+    {end:}
+
+    {foreach:headerExtras,extra}
+    <!-- For Gallery Embedded -->
+        {extra:h}
+    {end:}
+
+</head>
+<body class="sgl">
+    <div id="outer-wrapper">

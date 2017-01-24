@@ -1,0 +1,101 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" href="javascript:formSubmit('article')" accesskey="s">{translate(#Save#)}</a>
+    <a class="action cancel" href="{makeUrl(#list#,#article#,#publisher#)}" accesskey="c">{translate(#Cancel#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <div> <!-- hack for TinyFCK to avoid flickering -->
+    <form method="post" name="article" flexy:ignore id="article">
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="insert" />
+            <input type="hidden" name="frmCatID" value="{catID}" />
+            <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
+            <input type="hidden" name="frmArticleLang" value="{articleLang}" />
+        </fieldset>
+        <div id="optionsLinks"></div>
+        <fieldset class="options" id="articleAddContent">
+            <h3>{translate(#Content#)}</h3>
+            {foreach:dynaFields,fieldName,fieldContent}
+            <p>
+                {if:isEqual(fieldName,#BodyHtml#)}
+                <label>{translate(fieldName)}</label><br />
+                {fieldContent:h}
+                {else:}
+                <label>{translate(fieldName)}</label>
+                {fieldContent:h}
+                {end:}
+            </p>
+            {end:}
+        </fieldset>
+        <fieldset class="options" id="articleAddOptions">
+            <h3>{translate(#Editing options#)}</h3>
+            {if:aCategories}
+            <p>
+                <label>{translate(#Category#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label>{translate(#Change Category#)}</label>
+                <select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select>
+            </p>
+            {end:}
+            <p>
+                <label>{translate(#Article type#)}</label>
+                <select name="frmArticleTypeID" disabled="true">
+                    {generateSelect(aArticleTypes,dataTypeID):h}
+                </select>
+            </p>
+            <p>
+                <label>{translate(#Author#)}</label>
+                <span>{loggedOnUser}</span>
+            </p>
+            <p>
+                <label>{translate(#Start Date#)}</label>
+                <input type="hidden" name="frmStartDate" id="frmStartDate" value="{todaysDate}" />
+                <img class="calendar" id="startDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(todaysDate)}</span>
+            </p>
+            <p>
+                <label>{translate(#Expiry Date#)}</label>
+                <input type="hidden" name="frmExpiryDate" id="frmExpiryDate" value="{expiryDate}" />
+                <img class="calendar" id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(expiryDate)}</span>
+            </p>
+            <p>
+                <label>&nbsp;</label>
+                <span>{noExpiry:h}</span>
+            </p>
+        </fieldset>
+    </form>
+    </div> <!-- end of tinyFCK hack div -->
+    <div class="spacer"></div>
+</div>
+<style type="text/css">
+@import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+</style>
+<script type="text/javascript">
+createAvailOptionsLinks('article','h3');
+showSelectedOptions('article','articleAddContent');
+Calendar.setup(
+    {
+        inputField  : "frmStartDate",         // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmStartDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "startDateTrigger"      // ID of the button
+    }
+);
+Calendar.setup(
+    {
+        inputField  : "frmExpiryDate",        // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmExpiryDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "expiryDateTrigger"     // ID of the button
+    }
+);
+</script>

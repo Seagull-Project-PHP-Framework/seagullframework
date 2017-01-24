@@ -1,0 +1,115 @@
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<div> <!-- hack for TinyFCK to avoid flickering -->
+<form method="post" name="article" flexy:ignore id="article">
+    <input type="hidden" name="redir" value="{redir}" />
+    <input type="hidden" name="action" value="update" />
+    <input type="hidden" name="frmArticleCatID" value="{article.catID}" />
+    <input type="hidden" name="frmCreatedByID" value="{loggedOnUserID}" />
+    {foreach:availableLangs,langID,langName}
+    <input type="hidden" name="frmAvailableLangs[{langID}]" value="{langID}" />
+    {end:}
+    <table class="wide">
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Article type#)}</th>
+            <td width="70%">{article.type}</td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Author#)}</th>
+            <td width="70%">{article.creatorName}</td>
+        </tr>
+
+        {if:aCategories}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Category#)}</th>
+            <td width="70%">{breadCrumbs:h}</td>
+        </tr>
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Change Category#)}</th>
+            <td width="70%"><select name="frmCategoryChangeToID">{generateSelect(aCategories,currentCat):h}</select></td>
+        </tr>
+        {end:}
+        {if:flesch}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Flesch score#)}</th>
+            <td width="70%">{flesch} &nbsp; (<a href="#" onclick="javascript:window.open('{fleschLink}','Flesch','WIDTH=500,HEIGHT=300,TOP=200,LEFT=300,SCROLLBARS=YES')">{translate(#whats this?#)}</a>)</td>
+        </tr>
+        {end:}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Date created#)}</th>
+            <td width="70%">{formatDate(article.dateCreated)}</td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Start Date#)}</th>
+            <td width="70%">
+                <input type="hidden" name="frmStartDate" id="frmStartDate" value="{itemStartDate}" />
+                <a class="dateSelector" id="startDateTrigger">{translate(#Select#)}</a>
+                <span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(itemStartDate)}</span>
+            </td>
+        </tr>
+
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Expiry Date#)}</th>
+            <td width="70%">
+                <input type="hidden" name="frmExpiryDate" id="frmExpiryDate" value="{itemExpiryDate}" />
+                <a class="dateSelector" id="expiryDateTrigger">{translate(#Select#)}</a>
+                <span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(itemExpiryDate)}</span>
+                <br /><span>{noExpiry:h}</span>
+            </td>
+        </tr>
+
+        {if:isEqual(conf[translation][container],#db#)}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(#Language#)}</th>
+            <td width="70%"><select name="frmArticleLang"
+                                    onChange="javascript:document.location.href='{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}frmArticleLang/' + getSelectedValue(document.getElementById('article').frmArticleLang) + '/';">
+                {generateSelect(availableLangs,articleLang):h}</select> ({translate(#switching language will cause changes to be lost#)})</td>
+        </tr>
+        {end:}
+        {foreach:dynaContent,fieldName,fieldContent}
+        <tr>
+            <th width="30%" nowrap="nowrap">{translate(fieldName)}</th>
+            <td width="70%">{fieldContent:h}</td>
+        </tr>
+        {end:}
+        <tr>
+            <td width="100%" colspan="2" align="center" nowrap="nowrap">
+                <input class="wideButton" type="submit" value="{translate(#Save#)}" />
+                {if:redir}
+                    <input class="wideButton" type="button" value="{translate(#Cancel#)}"
+                        onclick="javascript:document.location.href='{redir}'" />
+                {else:}
+                    <input class="wideButton" type="button" value="{translate(#Cancel#)}"
+                        onclick="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}'" />
+                {end:}
+            </td>
+        </tr>
+    </table>
+</form>
+</div> <!-- end of tinyFCK hack div -->
+<style type="text/css">
+@import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+</style>
+<script type="text/javascript">
+Calendar.setup(
+    {
+        inputField  : "frmStartDate",         // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmStartDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "startDateTrigger"      // ID of the button
+    }
+);
+Calendar.setup(
+    {
+        inputField  : "frmExpiryDate",        // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmExpiryDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "expiryDateTrigger"     // ID of the button
+    }
+);
+</script>

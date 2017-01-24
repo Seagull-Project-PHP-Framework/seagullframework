@@ -1,0 +1,53 @@
+        $output->template  = '%mgrName%List.html';
+        $output->pageTitle = '%MgrCaption%';
+
+        $allowedSortFields = array(%orderbyfields%);
+        if (  !empty($input->sortBy)
+           && !empty($input->sortOrder)
+           && in_array($input->sortBy, $allowedSortFields)) {
+                $SortBy = $input->sortBy;
+                $orderBy_query = ' ORDER BY ' . $SortBy . ' ' . $input->sortOrder ;
+                $output->sort[$SortBy] = true;
+        } else {
+            $orderBy_query = " ORDER BY {$this->conf['table']['%mgrName%']}.%mgrName%_id DESC ";
+            $output->sort['%mgrName%_id'] = true;
+        }
+
+        //  only execute if CRUD option selected
+        if (%crud%) {
+            $query = "  SELECT
+                            %field_list%
+                        FROM 
+                            %table_list% 
+                        WHERE {$this->conf['table']['%mgrName%']}.%mgrName%_id <> 0";
+
+            if ($input->criteria=='') {
+                $limit = $_SESSION['aPrefs']['resPerPage'];
+                $query .= $orderBy_query;
+            } else {
+                $limit = 999;
+                $query .=  $input->criteria . $orderBy_query;
+            }
+
+            $pagerOptions = array(
+                'mode'     => 'Sliding',
+                'delta'    => 3,
+                'perPage'  => $limit,
+                'spacesBeforeSeparator' => 0,
+                'spacesAfterSeparator'  => 0,
+                'curPageSpanPre'        => '<span class="currentPage">',
+                'curPageSpanPost'       => '</span>',
+            );
+            $aPagedData = SGL_DB::getPagedData($this->dbh, $query, $pagerOptions);
+            if (PEAR::isError($aPagedData)) {
+                return false;
+            }
+            $output->aPagedData = $aPagedData;
+            $output->totalItems = $aPagedData['totalItems'];
+
+            if (is_array($aPagedData['data']) && count($aPagedData['data'])) {
+                $output->pager = ($aPagedData['totalItems'] <= $limit) ? false : true;
+            }
+        }
+
+        $output->addOnLoadEvent("switchRowColorOnHover()");

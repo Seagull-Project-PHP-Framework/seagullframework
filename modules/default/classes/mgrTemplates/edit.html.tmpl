@@ -1,0 +1,112 @@
+<div id="manager-actions"  dojoType="ContentPane" executeScripts="true">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action save" title="Save %MgrCaptionSimple%" href="javascript:formSubmit('frm%MgrName%Edit','submitted',1,1)">{translate(#Save#)}</a>
+    <a class="action undo" title="Reset %MgrCaptionSimple% record" href="javascript:formReset('frm%MgrName%Edit');">{translate(#Reset#)}</a>
+    <a class="action cancel" title="Discard changes and show %MgrCaptionSimple%s list" href="{makeUrl(#list#,#%mgrName%#,#%moduleName%#)}">{translate(#Cancel#)}</a>
+    <a flexy:if="!isAdd" class="action edit" title="Show %MgrCaptionSimple%'s record modification history" href="javascript:historyswap('content','contentmodify','manager-actions','manager-actionsmodify')">Modification history</a>
+</div>
+<div flexy:if="!isAdd" id="manager-actionsmodify"  dojoType="ContentPane" executeScripts="true" style="display:none">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action cancel" title="Close modification history" href="javascript:historyswap('content','contentmodify','manager-actions','manager-actionsmodify')">Close</a>
+</div>
+<div id="content"  dojoType="ContentPane" executeScripts="true">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form class="formalign" action="" method="post" name="frm%MgrName%Edit" id="frm%MgrName%Edit" flexy:ignore>
+
+        <h3 flexy:if="isAdd">{translate(#New %MgrCaptionSimple%#)}</h3>
+        <h3 flexy:if="!isAdd">{translate(#Editing %MgrCaptionSimple%#)} "{%mgrName%.%idField%}"</h3>
+        <fieldset class="inside">
+            <h3>%MgrCaptionSimple%</h3>
+            <input type="hidden" name="action" value="{action}" />
+            <input type="hidden" name="%mgrName%_id" value="{%mgrName%.%mgrName%_id}" />
+
+%field_html%
+
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+<div flexy:if="!isAdd" id="contentmodify" style="display:none">
+    <div id="content-header">
+        <h2>Modification History</h2>
+        <div class="message"></div>
+    </div>
+    <form class="formalign" name="frmHistory" action="" method="post" id="frmHistory">
+        <h3>{%mgrName%.%idField%}</h3>
+        <fieldset class="inside">
+            <p>
+                <label>Created by:</label>
+                <span>{%mgrName%.createdby}</span>
+            </p>
+            <p>
+                <label>Created on:</label>
+                <span>{%mgrName%.datecreated}</span>
+
+            </p>
+            <p>
+                <label>Updated by:</label>
+                <span>{%mgrName%.updatedby}</span>
+            </p>
+            <p>
+                <label>Last updated on:</label>
+                <span>{%mgrName%.lastupdated}</span>
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>
+<script type="text/javascript">
+function historyswap(hideit, showit, hideit1, showit1) {
+   
+   itemHideit = byId(hideit);
+   itemHideit1 = byId(hideit1);
+   itemShowit = byId(showit);
+   itemShowit1 = byId(showit1);
+
+   tempdata = itemHideit.id;
+   itemHideit.setAttribute('id', itemShowit.id);
+   itemHideit.setAttribute('name', itemShowit.id);
+   itemShowit.setAttribute('id', tempdata);
+   itemShowit.setAttribute('name', tempdata);
+   itemShowit.style.display='';
+   itemHideit.style.display='none';
+
+   tempdata = itemHideit1.id;
+   itemHideit1.setAttribute('id', itemShowit1.id);
+   itemHideit1.setAttribute('name', itemShowit1.id);
+   itemShowit1.setAttribute('id', tempdata);
+   itemShowit1.setAttribute('name', tempdata);
+   itemShowit1.style.display='';
+   itemHideit1.style.display='none';
+};
+
+function byId(id, doc) {
+    if((id) && ((typeof id=="string") || (id instanceof String))) {
+        if(!doc){
+            doc=document;
+        }
+        var ele=doc.getElementById(id);
+        if(ele&&(ele.id!=id)&&doc.all){
+            ele=null;
+            eles=doc.all[id];
+            if(eles){
+                if(eles.length){
+                    for(var i=0;i<eles.length;i++){
+                        if(eles[i].id==id){
+                            ele=eles[i];
+                            break;
+                        }
+                    }
+                }else{
+                    ele=eles;
+                }
+            }
+        }
+        return ele;
+    }
+    return id;
+};
+</script>

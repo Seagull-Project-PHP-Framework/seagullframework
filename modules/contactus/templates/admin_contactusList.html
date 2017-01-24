@@ -1,0 +1,113 @@
+<div id="content">
+
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    
+    <form id="frmItems" method="post" name="frmItems" action="" flexy:ignore>
+        <h3>{translate(#Comments list#)}</h3>
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="pageID" value="{pageID}" />
+            <table class="full">
+            <thead>
+                <tr class="infos">
+                    <td class="right" colspan="7">
+                        {if:pager}
+                            <flexy:include src="admin_pager_table.html" />
+                        {end:}
+                    </td>
+                </tr>
+                <tr>
+                    <th width="3%">
+                        <span class="tipOwner">
+                            <span class="tipText" id="becareful">{translate(#Be careful!#)}</span>
+                            <input id="checkAll" type="checkbox" name="checkAll" onClick="javascript:applyToAllCheckboxes('frmItems', 'frmDelete[]', this.checked)" />
+                        </span>
+                    </th>
+                    <th width="5%">
+                        {if:sort_contact_us_id}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|contact_us_id||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#ID#)}">{translate(#ID#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|contact_us_id||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#ID#)}">{translate(#ID#)}</a>
+                        {end:}
+                    </th>
+                    <th width="17%" class="left">
+                        {if:sort_logtime}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|logtime||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#Log time#)}">{translate(#Log time#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|logtime||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#Log time#)}">{translate(#Log time#)}</a>
+                        {end:}
+                    </th>
+                    <th width="12%" class="left">
+                        {if:sort_first_name}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|first_name||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#First Name#)}">{translate(#First Name#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|first_name||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#First Name#)}">{translate(#First Name#)}</a>
+                        {end:}
+                    </th>
+                    <th width="13%" class="left">
+                        {if:sort_last_name}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|last_name||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#Last Name#)}">{translate(#Last Name#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|last_name||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#Last Name#)}">{translate(#Last Name#)}</a>
+                        {end:}
+                    </th>
+                    <th width="15%" class="left">
+                        {if:sort_enquiry_type}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|enquiry_type||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#Type#)}">{translate(#Type#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|enquiry_type||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#Type#)}">{translate(#Type#)}</a>
+                        {end:}
+                    </th>
+                    <th width="35%" class="left">
+                        {if:sort_user_comment}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|user_comment||sortOrder|sortOrderDisplay#)}" title="{translate(#Sort by#)} {translate(#Comment#)}">{translate(#Comment#)}</a>
+                            <img src="{webRoot}/themes/{theme}/images/sort_{sortOrderDisplay}.gif" alt="" />
+                        {else:}
+                            <a href="{makeUrl(##,#contactusadmin#,#contactus#,##,#sortBy|user_comment||sortOrder|asc#)}" title="{translate(#Sort by#)} {translate(#Comment#)}">{translate(#Comment#)}</a>
+                        {end:}
+                    </th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr class="infos">
+                    <td class="right" colspan="7">
+                        {if:pager}
+                            <flexy:include src="admin_pager_table.html" />
+                        {end:}
+                    </td>
+                </tr>
+            </tfoot>
+            <tbody>
+                {if:aPagedData[data]}
+                <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                    <td><input type="checkbox" name="frmDelete[]" id="frmDelete[]" value="{aValue[contact_us_id]}" /></td>
+                    <td>{aValue[contact_us_id]}</td>
+                    <td class="left">
+                        <a href="{makeUrl(#view#,#contactusadmin#,#contactus#,aPagedData[data],#id|contact_us_id||pageID|pageID#,key)}">{formatDatePretty(aValue[logtime])}</a>
+                    </td>
+                    <td class="left"><a href="mailto:{aValue[email]}">{aValue[first_name]}</a></td>
+                    <td class="left"><a href="mailto:{aValue[email]}">{aValue[last_name]}</a></td>
+                    <td class="left">{aValue[enquiry_type]}</td>
+                    <td class="left">{summarise(aValue[user_comment],5)}</td>
+                </tr>
+                {else:}
+                    <tr>
+                        <td colspan="7">{translate(#no results found#)}</td>
+                    </tr>
+                {end:}
+            </tbody>
+            </table>
+            <input class="sgl-button" type="submit" name="Delete" value="{translate(#delete selected#)}" onclick="return confirmSubmit('comment', 'frmItems')" />
+        </fieldset>
+    </form>
+
+    <div class="spacer"></div>
+</div>

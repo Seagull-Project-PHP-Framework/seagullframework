@@ -1,0 +1,9 @@
+form.formalign p label{
+    float: left;
+    width: 200px;
+}
+form.formalign div {
+    margin-left: 270px; /* INFO
+    ---------------------- The above p label width
+    ---------------------- + the standard p label padding-right (20px) */
+}

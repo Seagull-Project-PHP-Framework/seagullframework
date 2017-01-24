@@ -1,0 +1,22 @@
+            <p>
+                <label %tooltipclass% for="%mgrName%[%field%]">%required%{translate(#%caption%#,#ucfirst#)} %tooltipspan%</label>
+                <span class="error" flexy:if="error[%field%]">{translate(error[%field%])}</span>
+                <input type="hidden" name="%mgrName%[%field%]" id="%mgrName%[%field%]" value="{%mgrName%.%field%}" />
+                <img class="calendar" id="%mgrName%[%field%]Trigger" src="{webRoot}/themes/{theme}/images/16/clock.gif" />
+                <span name="%mgrName%[%field%]ToShow" id="%mgrName%[%field%]ToShow">{formatDatePretty(%mgrName%.%field%)}</span>
+            </p>
+            <style type="text/css">
+                @import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+            </style>
+            <script type="text/javascript">
+                Calendar.setup(
+                    {
+                        inputField  : "%mgrName%[%field%]",         // ID of the input field
+                        ifFormat    : "%Y-%m-%d",                   // the date format
+                        displayArea : "%mgrName%[%field%]ToShow",
+                        daFormat    : SGL_JS_DATETEMPLATE,
+                        button      : "%mgrName%[%field%]Trigger"   // ID of the button
+                    }
+                );
+            </script>
+            

@@ -1,0 +1,5 @@
+            <p>
+                <label %tooltipclass% for="%mgrName%[%field%]">%required%{translate(#%caption%#,#ucfirst#)} %tooltipspan%</label>
+                <span class="error" flexy:if="error[%field%]">{translate(error[%field%])}</span>
+                <textarea class="longText" name="%mgrName%[%field%]" id="%mgrName%[%field%]">{%mgrName%.%field%}</textarea>
+            </p>

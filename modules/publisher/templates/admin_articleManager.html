@@ -1,0 +1,212 @@
+<script type='text/javascript'>
+<!--
+/**
+ * helper script to get accurate cross platform  canvas pos
+ * Origin: http://www.quirksmode.org
+ */
+function findPosX(obj)
+{
+    var curleft = 0;
+    if (obj.offsetParent)
+    {
+        while (obj.offsetParent)
+        {
+            curleft += obj.offsetLeft
+            obj = obj.offsetParent;
+        }
+    }
+    else if (obj.x)
+        curleft += obj.x;
+    return curleft;
+}
+/**
+ * helper script to get accurate cross platform  canvas pos
+ * Origin: http://www.quirksmode.org
+ */
+function findPosY(obj)
+{
+    var curtop = 0;
+    if (obj.offsetParent)
+    {
+        while (obj.offsetParent)
+        {
+            curtop += obj.offsetTop
+            obj = obj.offsetParent;
+        }
+    }
+    else if (obj.y)
+        curtop += obj.y;
+    return curtop;
+}
+
+function exp(strTag, strAttribute)
+{
+    var elem = document.getElementsByTagName(strTag);
+    var elem1 = window.event.srcElement;
+    for (var i=0;i<elem1.children.length;i++){
+      elem1.children[i].innerText=="4"?elem1.children[i].innerText="5":elem1.children[i].innerText="4";
+    }
+    for (var i =0;i<elem.length;i++) {
+        if (elem[i].getAttribute(strAttribute)=="yes") {
+            elem[i].style.display=='none'? elem[i].style.display='block':elem[i].style.display='none';
+        }
+    }
+}
+function showCategoryBlock(ev)
+{
+    if (!ev) var ev = window.event;
+    var tg = (ev.target) ? ev.target : ev.srcElement
+    posx = findPosX(tg);
+    posy = findPosY(tg);
+
+    var catBlock = document.getElementById("categoryNav");
+    if (catBlock.style.display == 'block') {
+        catBlock.style.display = 'none';
+    } else {
+        catBlock.style.display = 'block';
+        catBlock.style.left = (posx + tg.offsetWidth + 2) +'px';
+        catBlock.style.top = (posy + tg.offsetHeight) +'px';
+        catBlock.style.marginTop = '-1em';
+    }
+}
+function hideCategoryBlock()
+{
+    var catBlock = document.getElementById("categoryNav");
+    catBlock.style.display = 'none';
+}
+function showCombox(comboxId, ev)
+{
+    var combox = document.getElementById(comboxId);
+    if (combox.style.display == 'block') {
+        combox.style.display = 'none';
+    } else {
+        combox.style.display = 'block';
+        /*if (document.all) {
+            combox.style.left = event.screenX +30 +'px';
+            combox.style.top = '100%';
+        } else {
+            combox.style.left = ev.screenX +20 +'px';
+            combox.style.top = '100%';
+        }*/
+    }
+}
+function hideCombox(comboxId)
+{
+    var combox = document.getElementById(comboxId);
+    combox.style.display = 'none';
+}
+//-->
+</script>
+<div class="hide" id="errorNoType">{translate(#Please select an article type#)}</div>
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <div class="combox" id="articleTypeSelector">
+        {foreach:aArticleSelect,key,value}
+        <a href="{makeUrl(#add#,#article#,#publisher#)}frmArticleTypeID/{key}">{value}</a>
+        {end:}
+    </div>
+    <a class="action add" id="newArticle" href="javascript:void(0)" accesskey="n" onclick="javascript:showCombox('articleTypeSelector', event)">{translate(#New Article#)}</a>
+</div>
+<div id="content" onclick="hideCombox('articleTypeSelector')">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+
+    <form name="frmAddArticle" id="frmAddArticle" action="{makeUrl(#add#,#article#,#publisher#)}" method="post" flexy:ignore>
+        <h3>{translate(#Article filter#)}</h3>
+        <fieldset class="inside">
+            <p>
+                <label>{translate(#You are here#)}</label>
+                <span>{breadCrumbs:h}</span>
+            </p>
+            <p>
+                <label>{translate(#showing results for#,#ucfirst#)}</label>
+                <span>{queryRange:h}<a class="catSelect" href="javascript: void(0)" title="{translate(#select a category#)}" onclick="javascript:showCategoryBlock(event)">{translate(#choose#)}</a></span>
+                <div id="categoryNav">
+                    <div class="close">
+                        <span onclick="hideCategoryBlock()">{translate(#close#)}</span>
+                    </div>
+                {foreach:blocksAdminCategory,key,valueObj}
+                    {valueObj.content:h}
+                {end:}
+                </div>
+            </p>
+            <p>
+                <label>{translate(#Article type#)}</label>
+                <select name="frmArticleTypeFilter"
+                        onchange="javascript:document.location.href='{makeUrl(##,#article#,#publisher#)}frmArticleTypeFilter/' + getSelectedValue(document.getElementById('frmAddArticle').frmArticleTypeFilter) + '/';" />
+                    {generateSelect(aArticleTypes,articleTypeFilter):h}
+                </select>
+            </p>
+        </fieldset>
+    </form>
+
+    <form name="frmDeleteArticle" id="frmDeleteArticle" class="clear" action="{makeUrl(##,#article#,#publisher#)}" flexy:ignore>
+        <h3>{translate(#Article list#)}</h3>
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="delete" />
+            <table class="full">
+                <thead>
+                    <tr class="infos">
+                        <td class="right" colspan="9">
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width="3%">
+                            <span class="tipOwner">
+                                <span class="tipText" id="becareful">Be Careful !</span>
+                                <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('frmDeleteArticle', 'frmDelete[]', this.checked)" />
+                            </span>
+                         </th>
+                        <th width="3%">{translate(#ID#)}</th>
+                        <th width="40%" class="left"><a href="#">{translate(#Article Name#)}</a></th>
+                        <th width="12%"><a href="#">{translate(#Start Date#)}</a></th>
+                        <th width="12%"><a href="#">{translate(#Expiry Date#)}</a></th>
+                        <th width="10%"><a href="#">{translate(#Modif. By#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#View#)}</a></th>
+                        <th width="5%"><a href="#">{translate(#Status#)}</a></th>
+                        <th width="10%">{translate(#Action#)}</th>
+                    </tr>
+                </thead>
+                {if:aPagedData[data]}
+                <tfoot>
+                    <tr class="infos">
+                        <td class="right" colspan="9">
+                        {if:pager}<flexy:include src="admin_pager_table.html" />{end:}
+                        </td>
+                    </tr>
+                </tfoot>
+                {end:}
+                <tbody>
+                {if:aPagedData[data]}
+                    <tr class="{switchRowClass()}" flexy:foreach="aPagedData[data],key,aValue">
+                        <td><input type="checkbox" name="frmDelete[]" value="{aValue[item_id]}" /></td>
+                        <td>{aValue[item_id]}</td>
+                        <td class="left">
+                            <a href="{makeUrl(#edit#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}">{aValue[addition]}</a>
+                        </td>
+                        <td>{formatDate(aValue[start_date])}</td>
+                        <td>{if:aValue[expiry_date]} {formatDate(aValue[expiry_date])} {else:} {translate(#never#)} {end:}</td>
+                        <td>{aValue[username]}</td>
+                        <td>
+                            <a  onClick="javascript:openWindow('{makeUrl(#view#,#article#,#publisher#,aPagedData[data],#frmArticleID|item_id#,key)}',500,350)"
+                                href="#" />
+                            <img src="{webRoot}/themes/{theme}/images/16/action_view.gif" alt="view" /></a>
+                        </td>
+                        <td>{this.plugin(#applyStatusColour#,aValue[status],t.webRoot,t.theme):h}</td>
+                        {aValue[actionLinks]:h}
+                    </tr>
+                {else:}
+                    <tr>
+                        <td colspan="9">{translate(#no results found#)}</td>
+                    </tr>
+                {end:}
+                </tbody>
+            </table>
+            <input type="submit" class="sgl-button" name="deleteButton" value="{translate(#delete selected#)}" onClick="javascript:return confirmSubmit('{translate(#article#)}', 'frmDeleteArticle')" />
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

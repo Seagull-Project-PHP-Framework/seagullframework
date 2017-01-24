@@ -1,0 +1,13 @@
+        $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+        $%mgrName%->setFrom($input->%mgrName%);
+        $%mgrName%->%mgrName%_id = $this->dbh->nextId($this->conf['table']['%mgrName%']);
+        $%mgrName%->date_created = SGL_Date::getTime();
+        $%mgrName%->created_by = SGL_Session::getUid();
+        $success = $%mgrName%->insert();
+
+        if ($success !== false) {
+            SGL::raiseMsg('%MgrCaptionSimple% insert successfull', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('%MgrCaptionSimple% insert NOT successfull',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }
