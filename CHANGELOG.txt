@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 +-----------------------+
+| VERSION: 1.0.5        |
++-----------------------+
+24-01-17    Migrated svn repos to Github
+			- 4,483 revs at import
+			- last svn commit 28 Oct 2013
+			- GitHub doesn’t handle svn:externals so library dependencies have been added in place to make checkout/run easier
+			- svn repo full checkout is 1.01 GB (56,002 items)  on disk ...
+
++-----------------------+
 | VERSION: 1.0.4        |
 +-----------------------+
 14-01-13    All PEAR libs updated except DB and DB_DataObject
