@@ -1,0 +1,66 @@
+<form id="loginUser" action="{makeUrl(#login#,#user2#,#user2#)}"
+      method="post" flexy:ignore>
+
+    <!-- Intro text -->
+    <p><strong>{tr(#auth required#)}</strong></p>
+
+    <fieldset>
+        <h2>{tr(#login (header)#)}</h2>
+        <ol class="clearfix">
+            <li>
+                <label for="user_username">
+                    <em>*</em> {tr(#username#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[username]">
+                        {tr(error[username])}
+                    </p>
+                    <input id="user_username" class="text" type="text"
+                           name="user[username]" value="{username}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_password">
+                    <em>*</em> {tr(#password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password]">
+                        {tr(error[password])}
+                    </p>
+                    <input id="user_password" class="text" type="password"
+                           name="user[password]" value="{password}" />
+                </div>
+            </li>
+            {if:conf[cookie][rememberMeEnabled]}
+            <li>
+                <input type="hidden" name="user[rememberme]" value="0" />
+                <label for="user_rememberme">{tr(#remember me#)}</label>
+                <div>
+                    <input id="user_rememberme"
+                           type="checkbox" name="user[rememberme]" value="1"
+                           checked="checked" />
+                </div>
+            </li>
+            {end:}
+        </ol>
+    </fieldset>
+    <fieldset class="hide">
+        <input type="hidden" name="redir" value="{redir}" />
+    </fieldset>    
+
+    <div class="fieldIndent">
+        <p>
+            <input class="button" type="submit" name="submitted"
+                   value="{tr(#login (button)#)}" />
+            <img class="ajaxLoader" src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </p>
+        <p>
+            <a href="{makeUrl(#register#,#login2#,#user2#)}">{tr(#not registered#)}</a>
+            <br />
+            <a href="{makeUrl(##,#passwordrecovery#,#user2#)}">{tr(#forgot password#)}</a>
+        </p>
+    </div>
+    <p class="required"><em>*</em> {tr(#denotes required field#)}</p>
+
+</form><!-- END loginUser -->

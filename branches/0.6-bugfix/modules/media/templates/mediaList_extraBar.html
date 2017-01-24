@@ -1,0 +1,65 @@
+    <div class="extrabar" id="mediaExtrabar">
+        <div class="extrabarInner" id="mediaExtrabarInner" style="display:none;">
+            <h2>{translate(#Narrow results#)}</h2>
+            <fieldset>
+                <label>{translate(#Type#)}</label>
+                <select name="filterByType" id="filerByType"
+                        onchange="MediaList.narrowResults({byTypeId:this.options[selectedIndex].value});">
+                    <option value="0">All</option>
+                    <option value="1">MS WORD</option>
+                    <option value="2">MS EXCEL</option>
+                    <option value="3">MS POWERPOINT</option>
+                    <option value="5">IMAGE</option>
+                </select>
+                <label>{translate(#Date#)}</label>
+                <select name="filterByDate" id="filerByDate"
+                        onchange="MediaList.narrowResults({byDateRange:this.options[selectedIndex].value});">
+                    <option value="0">Any</option>
+                    <option value="past7Days">Past 7 days</option>
+                    <option value="thisMonth">This month</option>
+                    <option value="beforeThisMonth">Before this month</option>
+                </select>
+                <!--<label>{translate(#Keywords#)}</label>
+                <input type="text" name="filterByKeywords" id="filterByKeywords" value="Coming shortly..." readonly="readonly" />-->
+                <a href="#" onclick="MediaList.narrowResults();">{translate(#Show all#)}</a>
+            </fieldset>
+
+        <!--
+            <dl>
+                <dt>By type:</dt>
+                <dd>
+                    <input type="radio" name="mediaByType" id="mediaTypeAll" onclick="Media.narrowResults({byTypeId:0})">
+                    <label for="mediaTypeAll">All</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeWord" onclick="Media.narrowResults({byTypeId:1})">
+                    <label for="mediaTypeWord">MS Word</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeExcel" onclick="Media.narrowResults({byTypeId:2})">
+                    <label for="mediaTypeExcel">MS Excel</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypePowerpoint" onclick="Media.narrowResults({byTypeId:3})">
+                    <label for="mediaTypePowerpoint">MS Powerpoint</label>
+
+                    <input type="radio" name="mediaByType" id="mediaTypeImages" onclick="Media.narrowResults({byTypeId:5})">
+                    <label for="mediaTypeImages">Images</label>
+                </dd>
+            </dl>
+            <dl>
+                <dt>By date:</dt>
+                <dd>
+                    <input type="radio" name="mediaByDate" id="mediaDateAny" onclick="Media.narrowResults({byDateRange:0})">
+                    <label for="mediaDateAny">Any</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDate7Days" onclick="Media.narrowResults({byDateRange:'past7Days'})">
+                    <label for="mediaDate7Days">Past 7 days</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDateThisMonth" onclick="Media.narrowResults({byDateRange:'thisMonth'})">
+                    <label for="mediaDateThisMonth">This month</label>
+
+                    <input type="radio" name="mediaByDate" id="mediaDateBeforeThisMonth" onclick="Media.narrowResults({byDateRange:'beforeThisMonth'})">
+                    <label for="mediaDateBeforeThisMonth">Before this month</label>
+                </dd>
+            </dl>
+            -->
+        </div>
+    </div>

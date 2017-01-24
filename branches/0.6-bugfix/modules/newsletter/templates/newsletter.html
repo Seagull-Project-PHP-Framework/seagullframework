@@ -1,0 +1,73 @@
+<script type="text/javascript" src="{webRoot}/js/openWin.js"></script>
+<flexy:include src="resourceChooser.html" />
+<h1 class="pageTitle">{translate(pageTitle)}</h1>
+<div class="message">{msgGet()}</div>
+
+<form method="post" name="NewsletterMgr" flexy:ignore id="NewsletterMgr">
+    <input type="hidden" name="action" value="send" />
+
+    <table>
+        <tr>
+            <th>{translate(#From#)}</th>
+            <td width="400">
+                <div class="error" flexy:if="error[from]">
+                    {translate(error[from])}
+                </div>
+                 <input type="text" name="frmFrom" size="40" value="{from}" />
+             </td>
+         </tr>
+        <tr>
+            <th>{translate(#To#)}</th>
+            <td width="400">
+                <div class="error" flexy:if="error[email]">
+                    {translate(error[email])}
+                </div>
+                 <input type="text" name="frmEmail" size="40" value="{email}" />
+             </td>
+         </tr>
+         <tr>
+             <th>{translate(#To groups#)}</th>
+             <td width="200">
+                 <div class="error" flexy:if="error[group]">
+                     {translate(error[group])}
+                 </div>
+             {generateCheckboxList(roleList,groups,#frmGroups[]#):h}
+            </td>
+        </tr>
+        <tr>
+             <th>{translate(#To newslists#)}</th>
+             <td width="200">
+                 <div class="error" flexy:if="error[newslist]">
+                     {translate(error[newslist])}
+                 </div>
+             {this.plugin(#generateCheckboxNewsList#,validNewsList,newsList,#frmNewsList[]#):h}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{translate(#Subject#)}</th>
+            <td>
+                <div class="error" flexy:if="error[subject]">
+                    {translate(error[subject])}
+                </div>
+                <input type="text" name="frmSubject" size="40" value="{subject}" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>{translate(#Message#)}</th>
+            <td>
+                <div class="error" flexy:if="error[body]">
+                    {translate(error[body])}
+                </div>
+                <textarea id="frmBodyName" cols="55" rows="20" name="frmBodyName">{body}</textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center" colspan="2">
+            <input class="wideButton" type="button" name="address" value="{translate(#Address Book#)}" onclick="javascript:openWin('{makeUrl(#addressBook#,#list#,#newsletter#)}','AddresBook',400,260,'yes')" />
+            <input class="wideButton" type="submit" name="submitted" value="{translate(#Send#)}" /></td>
+        </tr>
+    </table>
+</form>

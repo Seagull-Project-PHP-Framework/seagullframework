@@ -1,0 +1,8 @@
+
+#accountContainer .field, #accountContainer .image {
+  margin-bottom: 1em;
+}
+  #accountContainer .image span.image {
+    display: block;
+    margin-bottom: 0.5em;
+  }

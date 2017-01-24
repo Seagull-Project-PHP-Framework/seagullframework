@@ -1,0 +1,499 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>TestNewsletterModule</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">TestNewsletterModule</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/seagull/branches/0.6-bugfix/www/index.php</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_username_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>displayDeRegisteredModules</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//tr[19]/td[7]/a[1]/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=logout</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/seagull/branches/0.6-bugfix/www/index.php/newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frmName</td>
+	<td>Bob Smith</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frmEmail</td>
+	<td>bob@example.com</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>document.NewsletterMgr.submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>frmListName[]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>document.NewsletterMgr.submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Thank you for subscribing to our newsletter! An email was sent to your e-mail address to confirm your action. Please check your e-mail.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_username_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frm_password_block</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submitted</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Manage Subscribers</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Manage Subscribers</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Manage Lists</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Compose Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Add Subscriber</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Export Subscriber</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>general</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>bob@example.com</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Bob Smith</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Waiting</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>subscribe</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=bob@example.com</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=bob@example.com</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertValue</td>
+	<td>oUser[name]</td>
+	<td>Bob Smith</td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>bob@example.com</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>general</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Cancel</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>keygen</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>oUser[status]</td>
+	<td>label=Active</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Subscriber updated successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Active</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>frmDelete[]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Subscriber deleted successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>link=bob@example.com</td>
+	<td>bob@example.com</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Add Subscriber</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>oUser[name]</td>
+	<td>John Bird</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>oUser[email]</td>
+	<td>johnbird@example.com</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>frmListName[]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>oUser[status]</td>
+	<td>label=Waiting</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>oUser[action_request]</td>
+	<td>label=Active</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Subscriber updated successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Manage Lists</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>general</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>To stay informed you may join our general discussion list.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Add List</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=general</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Add List</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>oUser[list]</td>
+	<td>developer</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>oUser[name]</td>
+	<td>this list is to keep developers informed</td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Cancel</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Save</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>List updated successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=developer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>this list is to keep developers informed</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>document.frmNewsletterList.elements['frmDelete[]'][1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>delete</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>List deleted successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>link=developer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Compose Newsletter</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>link=Send</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>frmListName[]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frmMail</td>
+	<td>example@example.com</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frmSubject</td>
+	<td>Welcome to Seagull!</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>frmBodyName</td>
+	<td>The Seagull framework is an OO PHP framework, with core components BSD licensed, that has the following design goals:<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;* independence of data, logic & presentation layers<br />&nbsp;&nbsp;&nbsp;&nbsp;* extensible component architecture<br />&nbsp;&nbsp;&nbsp;&nbsp;* reduction of repetitive programming tasks<br />&nbsp;&nbsp;&nbsp;&nbsp;* simplifying data access<br />&nbsp;&nbsp;&nbsp;&nbsp;* comprehensive error handling<br />&nbsp;&nbsp;&nbsp;&nbsp;* module workflow routines<br />&nbsp;&nbsp;&nbsp;&nbsp;* form handling without the donkey work<br />&nbsp;&nbsp;&nbsp;&nbsp;* component reuse<br />&nbsp;&nbsp;&nbsp;&nbsp;* authentication management<br />&nbsp;&nbsp;&nbsp;&nbsp;* integration with PEAR libraries<br />&nbsp;&nbsp;&nbsp;&nbsp;* PHP coding standards<br />&nbsp;&nbsp;&nbsp;&nbsp;* platform/PHP version/browser independence<br />&nbsp;&nbsp;&nbsp;&nbsp;* self-generating documentation<br />&nbsp;&nbsp;&nbsp;&nbsp;* quality end user docs<br /><br />Seagull works 'out of the box' and is simple to install and configure, please follow the instructions in INSTALL.txt. Developer info is availabe in the project docs.<br /><br />There are some default modules that come with the framework, these handle tasks related to:<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;* user/group management<br />&nbsp;&nbsp;&nbsp;&nbsp;* content management<br />&nbsp;&nbsp;&nbsp;&nbsp;* document management<br />&nbsp;&nbsp;&nbsp;&nbsp;* category management<br />&nbsp;&nbsp;&nbsp;&nbsp;* messaging<br />&nbsp;&nbsp;&nbsp;&nbsp;* navigation</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Send</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Newsletter sent successfully</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>document.getElementById('errorWrapper')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=logout</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

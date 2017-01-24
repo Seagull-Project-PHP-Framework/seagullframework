@@ -1,0 +1,30 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action validate" href="javascript:formSubmit('frmGeoCode','submitted',1,1)">{translate(#Do Geo Code#)}</a>
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    <form action="" method="post" name="frmGeoCode" flexy:ignore id="frmGeoCode">
+        <div id="optionsLinks"></div>
+        <fieldset class="inside">
+            <h3>{translate(#Geo Code#)}</h3>
+            <input type="hidden" name="action" value="doGeoCode" />
+            <p>
+                <label for="geocode[start_id]">{translate(#Start ID#)}</label>
+                <input type="text" name="geocode[start_id]" id="geocode[start_id]" maxlength="40" value="{geocode.start_id}" />
+            </p>
+            <p>
+                <label for="geocode[end_id]">{translate(#End ID#)}</label>
+                <input type="text" name="geocode[end_id]" id="geocode[end_id]" maxlength="40" value="{geocode.end_id}" /> {translate(#empty or 0 = no end limit#)}
+            </p>
+            <p>
+                <label for="geocode[overwrite]">{translate(#Overwrite#)}</label>
+                <input type="checkbox" name="geocode[overwrite]" id="geocode[overwrite]" flexy:raw="{overwrite}" />{translate(#check to overwrite existing geo codes#)}
+            </p>
+        </fieldset>
+    </form>
+    <div class="spacer"></div>
+</div>

@@ -1,0 +1,128 @@
+    <form id="translations" name="translations" method="post" action=""
+          flexy:ignore>
+        <fieldset class="hide">
+            <input type="hidden" name="action" value="{action}" />
+            <input type="hidden" name="frmCurrentLang" value="{currentLang}" />
+            <input type="hidden" name="frmCurrentModule" value="{currentModule}" />
+            <input type="hidden" name="submitted" value="1" />
+        </fieldset>
+
+        <h3>{translate(#You are editing: Module#)} "{currentModuleName}"</h3>
+        <p>{this.plugin(#lastModifiedStatus#,currentModule,currentLang):h}</p>
+        <p flexy:if="!untranslated">
+            <a href="{makeUrl(request.aProps[action],#translation#,#translation#,##,#untranslated|1#)}">{tr(#Show only untranslated strings#)}</a>
+        </p>
+        <p flexy:if="untranslated">
+            <a href="{makeUrl(request.aProps[action],#translation#,#translation#)}">{tr(#Show all strings#)}</a>
+        </p>
+
+        <fieldset class="noBorder">
+            <table class="full">
+
+                <!-- Header -->
+                <thead>
+                    <tr>
+                        <th width="50%" class="left">{translate(#Master Value#)}</th>
+                        <th width="50%" class="left">{translate(#Translated Value#)}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {foreach:aSourceLang,k,v}
+                {if:GLOBALS.is_array(v)}
+
+                    {if:this.plugin(#showTranslationGroup#,untranslated,aTargetLang,k)}
+                    <tr>
+                        <td colspan="2">
+                            <table class="full noBorder">
+                            {foreach:v,kk,vv}
+                                {if:this.plugin(#showTranslationRow#,untranslated,aTargetLang,k,kk)}
+                                <tr>
+                                    <td class="left" width="50%">
+                                        {vv}
+                                        {if:!vv}{kk}{end:}
+                                    </td>
+                                    <td class="left" width="50%">
+                                        <input type="text"
+                                               name="translation[{this.plugin(#getTransKey#,k):h}][{this.plugin(#getTransKey#,kk):h}]"
+                                               value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k,kk):h}" size="50" />
+                                    </td>
+                                </tr>
+                                {else:}
+
+                                <!-- Hidden row -->
+                                <tr class="hide">
+                                    <td colspan="2">
+                                        <input type="hidden" name="translation[{this.plugin(#getTransKey#,k):h}][{this.plugin(#getTransKey#,kk):h}]"
+                                               value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k,kk):h}" size="50" />
+                                    </td>
+                                </tr>
+
+                                {end:}
+                            {end:}
+                            </table>
+                        </td>
+                    </tr>
+                    {else:}
+
+                    <!-- Strings in hidden block -->
+                    <tr class="hide">
+                        {foreach:v,kk,vv}
+                        <td colspan="2">
+                            <input type="hidden" name="translation[{this.plugin(#getTransKey#,k):h}][{this.plugin(#getTransKey#,kk):h}]"
+                                   value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k,kk):h}" size="50" />
+                        </td>
+                        {end:}
+                    </tr>
+
+                    {end:}
+
+                {else:}
+                    {if:this.plugin(#showTranslationRow#,untranslated,aTargetLang,k)}
+                    <tr>
+                        {if:this.plugin(#isSglCategory#,k)}
+                        <td class="left" colspan="2">
+                            <h2>{v}</h2>
+                            <input type="hidden" name="translation[{this.plugin(#getTransKey#,k):h}]"
+                                   value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k):h}" size="50" />
+                        </td>
+                        {else:}
+                            {if:this.plugin(#isSglComment#,k)}
+                        <td class="left" colspan="2">
+                            <h3>{v}</h3>
+                            <input type="hidden" name="translation[{this.plugin(#getTransKey#,k):h}]"
+                                   value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k):h}" size="50" />
+                        </td>
+                            {else:}
+                        <td class="left">
+                            <span class="tipOwner">
+                            {v}{if:!v}{k}{end:}
+                            <span class="tipText">{k}</span></span>
+                        </td>
+                        <td class="left">
+                            {this.plugin(#renderEditField#,k,aTargetLang):h}
+                        </td>
+                            {end:}
+                        {end:}
+                    </tr>
+                    {else:}
+                    <tr class="hide">
+                        <td colspan="2">
+                            <input type="hidden" name="translation[{this.plugin(#getTransKey#,k):h}]"
+                                   value="{this.plugin(#getArrayValueQuoted#,aTargetLang,k):h}" size="50" />
+                        </td>
+                    </tr>
+                    {end:}
+                {end:}
+                {end:}
+                </tbody>
+            </table>
+
+            <input class="sgl-button" type="submit" name="save"
+                   value="{translate(#Save Translation#)}"
+                   flexy:if="!translationIsLocked" />
+            <input class="sgl-button" type="button" name="back"
+                   value="{translate(#Cancel#)}"
+                   onclick="document.location.href='{makeUrl(##,#translation#,#translation#)}'" />
+        </fieldset>
+    </form>

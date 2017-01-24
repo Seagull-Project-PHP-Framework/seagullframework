@@ -1,0 +1,125 @@
+<div id="module_header">
+	<h1>Manage Your Events > Add New Event</h1>
+	<div class="message">{msgGet()}</div>
+</div>
+
+<flexy:include src="eventModuleNav.html" />
+
+<div id="add_edit_form">
+    <form method="post" name="frmEditAdd" id="frmEditAdd" flexy:ignore>
+
+            <input type="hidden" name="action" value="{action}" />
+            <input type="hidden" name="event[updated_by]" value="{loggedOnUserID}" />
+            {if:event.event_id}
+                <input type="hidden" name="event[event_id]" value="{event.event_id}" />
+            {end:}
+
+<!-- EVENT TITLE -->
+<div class="form_section">
+
+	<div class="label_div"><label for="event[name]">{translate(#Event Title#)}</label></div>
+	<input type="text" name="event[name]" value="{event.name}" size="63">
+	<p class="errorMessage" flexy:if="error[name]">{translate(error[name])}</p>
+</div>
+
+<!-- DATE SELECTION -->
+<div class="form_section">
+<div id="select_dates">
+	<div class="a_column">
+
+		<label for="frmStartDate">{translate(#Start Date#)}</label>
+		<input type="hidden" name="event[start_date]" id="event[start_date]" value="{event.start_date}" />
+
+		<span name="frmStartDateToShow" id="frmStartDateToShow">{formatDatePretty(event.start_date)}</span>
+		<img id="startDateTrigger" src="{webRoot}/themes/{theme}/images/icons/event_select_date.png" alt="click to select start date" />
+		<p class="errorMessage" flexy:if="error[start_date]">{translate(error[start_date])}</p>
+	</div>
+	<div class="a_column">
+
+		<label>{translate(#End Date#)}</label>
+		<input type="hidden" name="event[end_date]" id="event[end_date]" value="{event.end_date}" />
+
+		<span name="frmExpiryDateToShow" id="frmExpiryDateToShow">{formatDatePretty(event.end_date)}</span>
+		<img id="expiryDateTrigger" src="{webRoot}/themes/{theme}/images/icons/event_select_date.png" alt="click to select start date" />
+		<p class="errorMessage" flexy:if="error[end_date]">{translate(error[end_date])}</p>
+
+	</div>
+</div>
+</div>
+
+<!-- DESCRIPTION -->
+<div class="form_section">
+	<div class="label_div"><label for="frmEventDesc">{translate(#Event description#)}</label></div>
+	<textarea cols="63" rows="10" name="frmEventDesc" class="wysiwyg">{event.description:h}</textarea>
+	<p class="errorMessage" flexy:if="error[description]">{translate(error[description])}</p>
+</div>
+
+<!-- EVENT TYPE -->
+<div class="form_section">
+	<div class="label_div"><label for="event[type_id]">Event Type</label></div>
+	<select name="event[type_id]">
+		{generateSelect(aEventTypes,event.type_id):h}
+	</select>
+</div>
+
+<!-- EVENT LOCATIONS -->
+<div class="form_section">
+	<div class="label_div"><label for="event[location_id]">Event Location</label></div>
+	<select name="event[location_id]">
+		{generateSelect(aMyLocations,event.location_id):h}
+	</select>
+	<!--<div class="form_link"><a href="#" title="click here to add a new venue">Add New Venue...</a></div>-->
+</div>
+
+
+<!-- EVENT PRICE -->
+<div class="form_section">
+	<div class="label_div"><label for="event[ticket_cost]">Admission Price</label></div>
+	<input type="text" name="event[ticket_cost]" value="" size="63" value="{event.ticket_cost}" />
+</div>
+
+<!-- PUBLIC / PRIVATE EVENT -->
+<div class="form_section">
+	<div class="label_div"><label for="event[status]">{translate(#Private Event?#)}</label></div>
+
+	{if:event.status}
+		{translate(#Yes#)} <input type="radio" name="event[status]" value="1" checked="checked" />
+		{translate(#No#)}  <input type="radio" name="event[status]" value="0" />
+	{else:}
+		{translate(#Yes#)} <input type="radio" name="event[status]" value="1" />
+		{translate(#No#)}  <input type="radio" name="event[status]" value="0" checked="checked" />
+	{end:}
+
+	<p class="errorMessage" flexy:if="error[status]">{translate(error[hide_event])}</p>
+</div>
+
+<!-- SUBMIT BUTTON -->
+	<div class="form_section">
+		<input type="submit" name="submitted" value="Save Event" />
+	</div>
+</form>
+
+</div>
+<style type="text/css">
+@import url("{webRoot}/js/jscalendar/calendar-blue2.css");
+</style>
+<script type="text/javascript">
+Calendar.setup(
+    {
+        inputField  : "event[start_date]",         // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmStartDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "startDateTrigger"      // ID of the button
+    }
+);
+Calendar.setup(
+    {
+        inputField  : "event[end_date]",        // ID of the input field
+        ifFormat    : "%Y-%m-%d %H:%M:%S",    // the date format
+        displayArea : "frmExpiryDateToShow",
+        daFormat    : SGL_JS_DATETEMPLATE,
+        button      : "expiryDateTrigger"     // ID of the button
+    }
+);
+</script>

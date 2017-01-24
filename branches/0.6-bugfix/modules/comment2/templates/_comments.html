@@ -1,0 +1,12 @@
+<h3>comments</h3>
+
+<form method="post" id="my_comments" action="{makeUrl(#addComment#,#comment2#,#comment2#)}" flexy:ignore >
+
+    <input type="hidden" name="comment[fk]" id="comment_fk" value="23" />
+    <textarea name="comment[body]" id="comment_body">write something ...</textarea>
+
+    <input type="submit" class="action save" id="comment_submit" value="leave comment" />
+    <span class="ajax_loader" style="display:none;"><img src="{webRoot}/comment2/images/ajax-loader.gif" alt="loading ..." /></span>
+</form>
+
+<div id="existing_comments"></div>

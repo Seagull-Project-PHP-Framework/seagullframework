@@ -1,0 +1,73 @@
+<script type="text/javascript">
+<!--
+function clearRadios()
+{
+    for (var i = 0; i < document.narrowResults.fileType.length; i++) {
+        document.narrowResults.fileType[i].checked = false;
+    }
+    remoteHW.getMediaByFileType();
+}
+-->
+</script>
+
+<div id="view_type" style="display:none;">
+<form name="narrowResults" action="">
+	<span>Narrow Results:</span>
+
+    <span><a href="#" onClick="clearRadios();">(show all)</a></span>
+
+	   <!--IMAGES-->
+		<div class="file_type_icon">
+			<div class="doc_icon">
+				<img src="{webRoot}/themes/{theme}/images/icons/document_img.png" alt="Image File" border="0" />
+				<input type="radio" name="fileType" id="imageToggle"  onClick="do_getMediaWithConstraint('imageToggle')" />
+			</div>
+			<div class="doc_name">
+				<label for="img">Image Files</label>
+			</div>
+		</div>
+
+		<!--PDFS-->
+		<div class="file_type_icon">
+			<div class="doc_icon">
+				<img src="{webRoot}/themes/{theme}/images/icons/document_pdf.png" alt="PDF File" border="0" />
+				<input type="radio" name="fileType" id="pdfToggle" onClick="do_getMediaWithConstraint('pdfToggle')" />
+			</div>
+			<div class="doc_name">
+				<label for="pdf">PDF Files</label>
+			</div>
+		</div>
+
+		<!--WORD FILES-->
+		<div class="file_type_icon">
+			<div class="doc_icon">
+				<img src="{webRoot}/themes/{theme}/images/icons/document_ms_word.png" alt="MS Word File" border="0" />
+				<input type="radio" name="fileType" id="wordToggle" onClick="do_getMediaWithConstraint('wordToggle')" />
+			</div>
+			<div class="doc_name">
+				<label for="word">MS Word Files</label>
+			</div>
+		</div>
+
+		<!--EXCEL FILES-->
+		<div class="file_type_icon">
+			<div class="doc_icon">
+				<img src="{webRoot}/themes/{theme}/images/icons/document_ms_excel.png" alt="Excel File" border="0" />
+				<input type="radio" name="fileType" id="excelToggle" onClick="do_getMediaWithConstraint('excelToggle')" />
+			</div>
+			<div class="doc_name">
+				<label for="excel">Excel Files</label>
+			</div>
+		</div>
+
+		<!--KEYWORDS-->
+    	<div id="keyword_div">
+    		<label for="keyword_field">Keywords: </label>
+    		<input type="text" value="" id="keyword_field" size="30" />
+    	</div>
+
+    	<div id="submit_div">
+    		<input type="submit" value="Search" />
+    	</div>
+</form>
+</div>

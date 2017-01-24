@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="{sitemap.xmlns} {sitemap.xmlns}/sitemap.xsd"
+        xmlns="{sitemap.xmlns}">
+    {foreach:sitemap.aUrls,key,aUrlDetails}
+    <url>
+        <loc>{aUrlDetails[loc]}</loc>
+        <lastmod flexy:if="aUrlDetails[lastmod]">{aUrlDetails[lastmod]}</lastmod>
+        <changefreq flexy:if="aUrlDetails[changefreq]">{aUrlDetails[changefreq]}</changefreq>
+        <priority flexy:if="aUrlDetails[priority]">{aUrlDetails[priority]}</priority>
+    </url>
+{end:}
+</urlset>

@@ -1,0 +1,75 @@
+<form id="mediaEdit" method="post" flexy:ignore
+      action="{makeUrl(#updateMedia#,#media2#,#media2#)}">
+    <h2>Edit media</h2>
+    <fieldset>
+        <input type="hidden" name="aMedia[media_id]" value="{oMedia.media_id}" />
+        <ol class="clearfix">
+            <li>
+                <label for="media_name"><em>*</em> Name</label>
+                <div>
+                    <input id="media_name" class="text" type="text" name="aMedia[name]" value="{oMedia.name}" />
+                </div>
+            </li>
+            <li>
+                <label for="media_description">Description</label>
+                <div>
+                    <textarea id="media_description" name="aMedia[description]"
+                              cols="60" rows="10">{oMedia.description}</textarea>
+                </div>
+            </li>
+            <li>
+                <label>Icon</label>
+                <div>
+                    <img src="{this.plugin(#getIconByMimeType#,oMedia.mime_type)}"
+                         alt="{oMedia.mime_type}" />
+                </div>
+            </li>
+            <li>
+                <label>File size</label>
+                <div>
+                    {this.plugin(#formatFileSize#,oMedia.file_size)}
+                </div>
+            </li>
+            <li>
+                <label>Mime type</label>
+                <div>
+                    {oMedia.mime_type}
+                </div>
+            </li>
+            <li>
+                <label>Date created</label>
+                <div>
+                    {formatDatePretty(oMedia.date_created)}
+                </div>
+            </li>
+            <li>
+                <label>Last updated</label>
+                <div>
+                    {formatDatePretty(oMedia.last_updated)}
+                </div>
+            </li>
+            <li>
+                <label>Created by</label>
+                <div>
+                    {this.plugin(#getUserFullName#,oMedia.created_by)}
+                </div>
+            </li>
+            <li>
+                <label>Updated by</label>
+                <div>
+                    {this.plugin(#getUserFullName#,oMedia.updated_by)}
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    <p class="fieldIndent">
+        <span class="triggers">
+            <input class="button" type="submit" name="submitted" value="Save" />
+            or
+            <a href="{makeUrl(##,#media2#,#media2#)}">Cancel</a>
+        </span>
+        <img class="ajaxLoader" src="{imagesDir}/ajax-loader.gif" alt=""
+             style="display: none;" />
+    </p>
+    <p><em>*</em> {translate(#denotes required field#)}</p>
+</form>

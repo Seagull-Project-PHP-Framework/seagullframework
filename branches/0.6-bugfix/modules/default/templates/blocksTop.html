@@ -1,0 +1,29 @@
+        <div id="nav-main">
+
+            <!-- top navigation -->
+            <div class="inner clearfix">
+                <h2 class="accessibility">Main navigation</h2>
+                {foreach:blocksMainNav,key,valueObj}
+                   {valueObj.content:h}
+                {end:}
+            </div>
+            <!-- end top navigation -->
+
+            <div id="toolbar" class="clearfix">
+                <p id="breadcrumbs">
+                {foreach:blocksMainBreadcrumb,key,valueObj}
+                    {valueObj.content:h}
+                {end:}
+                </p>
+
+                <!-- Lang switcher -->
+                <h2 class="accessibility">Language switcher</h2>
+                <div id="langSwitcher">
+                {foreach:blocksBodyTop,key,valueObj}
+                    {valueObj.content:h}
+                {end:}
+                </div>
+            </div>
+
+            <hr />
+        </div>

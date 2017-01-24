@@ -1,0 +1,52 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Personal Details#)}</h3>
+    <dl>
+        <dt>{translate(#Username#)}</dt>
+        <dd>{user.username}</dd>
+        <dt>{translate(#First Name#)}</dt>
+        <dd>{user.first_name}&nbsp;</dd>
+        <dt>{translate(#Last Name#)}</dt>
+        <dd>{user.last_name}&nbsp;</dd>
+    </dl>
+</div>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Contact#)}</h3>
+    <dl>
+        <dt>{translate(#Email#)}</dt>
+        <dd>{user.email}</dd>
+        <dt>{translate(#Telephone#)}</dt>
+        <dd>{user.telephone}&nbsp;</dd>
+        <dt>{translate(#Mobile#)}</dt>
+        <dd>{user.mobile}&nbsp;</dd>
+    </dl>
+</div>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Location#)}</h3>
+    <dl>
+        <dt>{translate(#Address 1#)}</dt>
+        <dd>{user.addr_1}&nbsp;</dd>
+        <dt>{translate(#Address 2#)}</dt>
+        <dd>{user.addr_2}&nbsp;</dd>
+        <dt>{translate(#Address 3#)}</dt>
+        <dd>{user.addr_3}&nbsp;</dd>
+        <dt>{translate(#City#)}</dt>
+        <dd>{user.city}&nbsp;</dd>
+        <dt>{translate(#County/State/Province#)}</dt>
+        <dd>{user.region}&nbsp;</dd>
+        <dt>{translate(#ZIP/Postal Code#)}</dt>
+        <dd>{user.post_code}&nbsp;</dd>
+        <dt>{translate(#Country#)}</dt>
+        <dd>{user.country}&nbsp;</dd>
+    </dl>
+</div>
+
+<p>
+    <a href="{makeUrl(#edit#,#account#,#user#)}">{translate(#edit these values#)}</a>
+    &nbsp;&nbsp;&nbsp;
+    <a href="{makeUrl(#summary#,#account#,#user#)}">{translate(#back#,#ucfirst#)}</a>
+</p>

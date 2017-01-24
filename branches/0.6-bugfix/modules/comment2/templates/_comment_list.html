@@ -1,0 +1,20 @@
+<div id="comment_wrapper">
+    {foreach:comments,key,comment}
+      <div class="comment_list">
+<!--        <div class="message_img_c float_left">
+            <a href="{makeUrl(#view#,#myprofile#,#user#)}userId/{comment.created_by}">
+                <img class="m_profile_img" src="{this.plugin(#getUserPhoto#,comment.created_by,#xsmall#)}" alt="{comment.fullName}" />
+            </a>
+        </div>-->
+
+        <strong>by</strong> <a href="{makeUrl(#view#,#profile#,#user#)}frmUserID/{comment.created_by}">{comment.full_name}</a>
+        on {formatDatePretty(comment.date_created)}
+        <p>{GLOBALS.nl2br(comment.body):h}</p>
+
+        <span><a id="deleteCommentTrigger_{comment.comment_id}" class="delete" href="#{comment.comment_id}">{delete}</a></span>
+
+      </div>
+    {end:}
+</div>
+
+<div class="clear"></div>

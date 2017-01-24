@@ -1,0 +1,22 @@
+<div id="mediaList">
+    <h2>{pageTitle}</h2>
+
+    <p>
+        <a href="{makeUrl(#upload#,#media2#,#media2#)}">Upload media</a>
+    </p>
+
+    {if:aMedias}
+    <div id="mediaListContainer" class="clearfix">
+    {foreach:aMedias,k,oMedia}
+        <flexy:include src="media2_item.html" />
+    {end:}
+    </div>
+    {end:}
+
+    {if:!aMedias}
+    <p>
+        No files have been uploaded.
+        <a href="{makeUrl(#upload#,#media2#,#media2#)}">Upload</a> your first file.
+    </p>
+    {end:}
+</div>

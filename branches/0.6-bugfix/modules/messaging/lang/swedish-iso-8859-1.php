@@ -1,0 +1,33 @@
+<?php
+$words['Group'] = 'Grupp';
+$words['Subject'] = 'Ämnde';
+$words['Message'] = 'Meddelande';
+$words['Messages'] = 'Meddelanden';
+$words['contacts successfully deleted'] = 'Kontakter har raderats';
+$words['contacts successfully added'] = 'Kontakter har lagts till';
+$words['admin cannot save contacts'] = 'Admin får inte spara kontakter';
+$words['Message sent successfully'] = 'Meddelandet har skickats';
+$words['message deleted successfully'] = 'Meddelandet har raderats';
+$words['Messages did not reach all recipients'] = 'Meddelandet nådde inte alla mottagare';
+$words['Inbox'] = 'Inkorg';
+$words['In order to send an instant message, you must select recipients from the contacts tab'] = 'För att skicka ett direktmeddelande måste du välja mottagare från kontakt-fliken';
+$words['Sender'] = 'Avsändare';
+$words['Date'] = 'Datum';
+$words['Reply'] = 'Svara';
+$words['No messages in inbox'] = 'Inga meddelanden i inkorgen';
+$words['check for new messages'] = 'Kolla efter nya meddelanden';
+$words['go to outbox'] = 'gå till utkorgen';
+$words['contacts'] = 'kontakter';
+$words['Full Name'] = 'Fullt namn';
+$words['Contacts'] = 'Kontakter';
+$words['Contact Manager'] = 'Kontakthantering';
+$words['send message to selected user(s)'] = 'skicka meddelande till valda användare';
+$words['go to inbox'] = 'gå till inkorgen';
+$words['Sent Messages'] = 'Skickade meddelanden';
+$words['No messages in outbox'] = 'Inga meddelanden i utkorgen';
+$words['To'] = 'Till';
+$words['From'] = 'Från';
+$words['cancel'] = 'avbryt';
+$words['Read'] = 'Läs';
+$words['Compose Message'] = 'Skriv meddelande';
+?>

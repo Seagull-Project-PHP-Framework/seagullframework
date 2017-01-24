@@ -1,0 +1,7 @@
+<p>{leadArticle[bodyHtml]:h}</p>
+<p flexy:if=hasPerms(#ARTICLEMGR_CMD_UPDATE#)> 
+    <a href="{makeUrl(#edit#,#article#,#publisher#,##,#frmArticleID|articleID#)}redir/{redir}" />
+        [{translate(#edit#)}]
+        <img src="{webRoot}/themes/default_admin/images/16/action_edit.gif" alt="edit" />
+    </a>
+</p>

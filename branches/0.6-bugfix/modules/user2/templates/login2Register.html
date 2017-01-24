@@ -1,0 +1,102 @@
+<form id="registerUser" action="{makeUrl(#register#,#user2#,#user2#)}"
+      method="post" flexy:ignore>
+
+    <!-- Intro text -->
+    <p><strong>{tr(#enter your data#)}</strong></p>
+
+    <fieldset>
+        <h2>{tr(#registration#)}</h2>
+        <ol class="clearfix">
+            <li>
+                <label for="user_username">
+                    <em>*</em> {tr(#username#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[username]">
+                        {tr(error[username])}
+                    </p>
+                    <input id="user_username" class="text" type="text"
+                           name="user[username]" value="{username}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_email">
+                    <em>*</em> {tr(#email#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[email]">
+                        {tr(error[password])}
+                    </p>
+                    <input id="user_email" class="text" type="text"
+                           name="user[email]" value="{email}" />
+                </div>
+            </li>
+            <!--li>
+                <label for="user_first-name">
+                    {tr(#first name#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[first_name]">
+                        {tr(error[first_name])}
+                    </p>
+                    <input id="user_first-name" class="text" type="text"
+                           name="user[first_name]" value="{first_name}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_last-name">
+                    {tr(#last name#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[last_name]">
+                        {tr(error[last_name])}
+                    </p>
+                    <input id="user_last-name" class="text" type="text"
+                           name="user[last_name]" value="{last_name}" />
+                </div>
+            </li-->
+            <li>
+                <label for="user_password">
+                    <em>*</em> {tr(#password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password]">
+                        {tr(error[password])}
+                    </p>
+                    <input id="user_password" class="text" type="password"
+                           name="user[password]" value="{password}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_password-repeat">
+                    <em>*</em> {tr(#repeat password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password_repeat]">
+                        {tr(error[password_repeat])}
+                    </p>
+                    <input id="user_password-repeat"
+                           class="text" type="password"
+                           name="user[password_repeat]" value="{password_repeat}" />
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    <fieldset class="hide">
+        <input type="hidden" name="redir" value="{redir}" />
+    </fieldset>
+
+    <div class="fieldIndent">
+        <p>
+            <input class="button" type="submit" name="submitted"
+                   value="{tr(#register#)}" />
+            <img class="ajaxLoader" src="{imagesDir}/ajax-loader.gif"
+                 alt="" style="display: none;" />
+        </p>
+        <p>
+            <a href="{makeUrl(#login#,#login2#,#user2#)}">{tr(#account exists, log in#)}</a>
+        </p>
+    </div>
+    <p class="required"><em>*</em> {tr(#denotes required field#)}</p>
+
+</form><!-- END loginUser -->

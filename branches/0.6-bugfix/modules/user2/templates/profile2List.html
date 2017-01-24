@@ -1,0 +1,33 @@
+<div id="profileContainer" flexy:ignore>
+    <h2>{pageTitle}</h2>
+
+    <p>
+        {tr(#date registered %date_created%#,#vprintf#,oUser)}
+    </p>
+    <p>
+        {if:oMedia}
+        <img src="{webRoot}/media2/img.php?path={this.plugin(#getImagePath#,oMedia,#small#)}"
+             alt="" />
+        {else:}
+        <img src="{imagesDir}/no_image.gif" alt="" />
+        {end:}
+    </p>
+    <p flexy:if="oUser.first_name">
+        <strong>{tr(#first name#)}</strong>: {oUser.first_name}
+    </p>
+    <p flexy:if="oUser.last_name">
+        <strong>{tr(#last name#)}</strong>: {oUser.last_name}
+    </p>
+    <p flexy:if="oUser.about">
+        <strong>{tr(#about me#)}</strong>:<br />
+        {nl2br(oUser.about)}
+    </p>
+    <!--p>
+        <strong>{tr(#username#)}</strong>:
+        <span>{oUser.username}</span>
+    </p>
+    <p>
+        <strong>{tr(#email#)}</strong>:
+        <span>{oUser.email}</span>
+    </p-->
+</div>
