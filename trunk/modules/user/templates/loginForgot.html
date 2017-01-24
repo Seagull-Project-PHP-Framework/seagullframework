@@ -1,0 +1,52 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<form id="forgotPasswd" method="post" action="" flexy:ignore>
+    <p>{translate(#Enter the email address you registered with#)}.</p>
+    <fieldset class="hide">
+        <input type="hidden" name="action" value="retrieve" />
+    </fieldset>
+    <fieldset class="lastChild">
+        <legend>{translate(pageTitle)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="frmEmail"><em>*</em> {translate(#Email#)}</label>
+                <div>
+                    <p class="error" flexy:if="error[frmEmail]">
+                        {translate(error[frmEmail])}
+                    </p>
+                    <input id="frmEmail" class="text" type="text"
+                           name="frmEmail" value="{forgotEmail}" />
+                </div>
+            </li>
+            <li>
+                <label for="frmQuestion">
+                    <em>*</em> {translate(#Security question#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[frmQuestion]">
+                        {translate(error[frmQuestion])}
+                    </p>
+                    <select id="frmQuestion" name="frmQuestion">
+                        {generateSelect(aSecurityQuestions,question):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="frmAnswer"><em>*</em> {translate(#Answer#)}</label>
+                <div>
+                    <p class="error" flexy:if="error[frmAnswer]">
+                        {translate(error[frmAnswer])}
+                    </p>
+                    <input id="frmAnswer" class="text" type="password"
+                           name="frmAnswer" value="{answer}" />
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+    <p class="fieldIndent">
+        <input class="button" type="submit" name="submitted"
+               value="{translate(#retrieve#)}" />
+    </p>
+    <p><em>*</em> {translate(#denotes required field#)}</p>
+</form>

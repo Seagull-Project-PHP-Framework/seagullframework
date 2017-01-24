@@ -1,0 +1,11 @@
+        $%mgrName% = DB_DataObject::factory($this->conf['table']['%mgrName%']);
+        $%mgrName%->setFrom($input->%mgrName%);
+        $%mgrName%->%mgrName%_id = $this->dbh->nextId($this->conf['table']['%mgrName%']);
+        $success = $%mgrName%->insert();
+
+        if ($success !== false) {
+            SGL::raiseMsg('%mgrName% insert successfull', false, SGL_MESSAGE_INFO);
+        } else {
+            SGL::raiseError('%mgrName% insert NOT successfull',
+                SGL_ERROR_NOAFFECTEDROWS);
+        }

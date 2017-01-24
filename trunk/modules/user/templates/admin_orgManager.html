@@ -1,0 +1,64 @@
+<div id="manager-actions">
+    <span>{translate(#Action#)}: &nbsp;</span>
+    <a class="action add" href="{makeUrl(#add#,#org#,#user#)}">{translate(#New organisation#)}</a>
+{if:conf[OrgMgr][typeEnabled]}
+    <a class="action add" href="{makeUrl(#add#,#orgtype#,#user#)}">{translate(#New organisation type#)}</a>
+{end:}
+</div>
+<div id="content">
+    <div id="content-header">
+        <h2>{translate(pageTitle)}</h2>
+        <div class="message">{msgGet()}</div>
+    </div>
+    {if:results}
+    <form method="post" action="" id="organisations" flexy:ignore>
+        <h3>{translate(#Organisation list#)}</h3>
+        <fieldset class="noBorder">
+            <input type="hidden" name="action" value="delete" />
+            <table class="full">
+                <thead>
+                    <tr>
+                        <th width="3%">
+                            <span class="tipOwner">
+                                <span class="tipText" id="becareful">{translate(#Be Careful!#)}</span>
+                                <input type="checkbox" name="checkAll" id="checkAll" onclick="javascript:applyToAllCheckboxes('organisations', 'frmDelete[]', this.checked)" />
+                            </span>
+                        </th>
+                        <th width="3%"><a href="{makeUrl(##,#org#,#user#,##,#frmSortBy|id||frmSortOrder|sortOrder#)}">{translate(#ID#)}</a></th>
+                        <th width="24%" class="left"><a href="{makeUrl(##,#org#,#user#,##,#frmSortBy|name||frmSortOrder|sortOrder#)}">{translate(#Name#)}</a></th>
+                        <th width="10%">{translate(#Role#)}</th>
+                        {if:conf[OrgMgr][typeEnabled]}
+                        <th width="10%">{translate(#Type#)}</th>
+                        {end:}
+                        <th width="15%" class="left">{translate(#Website#)}</th>
+                        <th width="15%" class="left">{translate(#Telephone#)}</th>
+                        <th width="10%">{translate(#Preferences#)}</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody>
+                    <tr class="{switchRowClass()}" flexy:foreach="results,k,org">
+                        <td><input type="checkbox" name="frmDelete[]" value="{org[organisation_id]}" /></td>
+                        <td>{org[organisation_id]}</td>
+                        <td class="left">{foreach:org[images][treePad],image}<img src="{webRoot}/themes/{theme}/{image:h}" alt="" />{end:}<a href="{makeUrl(#edit#,#org#,#user#,results,#frmOrgId|organisation_id#,k)}">{org[name]}</a></td>
+                        <td>{org[role_id]}</td>
+                        {if:conf[OrgMgr][typeEnabled]}
+                        <td>{org[organisation_type_id]}</td>
+                        {end:}
+                        <td class="left">{org[website]}</td>
+                        <td class="left">{org[telephone]}</td>
+                        <td>
+                            <a class="sgl-button" href="{makeUrl(#editAll#,#orgpreference#,#user#,results,#frmOrgId|organisation_id#,k)}">{translate(#change#)}</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit" class="sgl-button" name="delete" value="{translate(#delete selected#)}" onClick="return confirmSubmit('{translate(#organisation#)}', 'orgs')" />
+        </fieldset>
+    </form>
+    {else:}
+    {translate(#No organisations found#)}
+    {end:}
+    <div class="spacer"></div>
+</div>
