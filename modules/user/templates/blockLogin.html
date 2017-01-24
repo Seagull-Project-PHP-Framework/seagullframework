@@ -1,0 +1,29 @@
+<form id="block-login" method="post"
+      action="{makeUrl(#login#,#login#,#user#)}" flexy:ignore>
+    <fieldset class="lastChild noLegend">
+        <ol class="onTop">
+            <li>
+                <label for="frm_username_block">
+                    {translate(#Username#)}
+                </label>
+                <input id="frm_username_block" class="text" type="text"
+                       name="frmUsername" value="{username}" />
+            </li>
+            <li>
+                <label for="frm_password_block">{translate(#Password#)}</label>
+                <input id="frm_password_block" class="text" type="password"
+                       name="frmPassword" value="{password}" />
+            </li>
+        </ol>
+    </fieldset>
+    <p>
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#login#)}" />
+    </p>
+    <p flexy:if="conf[RegisterMgr][enabled]">
+        <a href="{makeUrl(##,#register#,#user#)}">{translate(#Not Registered#)}</a>
+    </p>
+    <p>
+        <a href="{makeUrl(##,#password#,#user#)}">{translate(#Forgot Password#)}</a>
+    </p>
+</form>

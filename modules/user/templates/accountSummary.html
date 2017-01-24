@@ -1,0 +1,49 @@
+<h1>{translate(pageTitle)}</h1>
+<div class="message">{msgGet():h}</div>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Status#)}</h3>
+    <dl>
+        <dt>{translate(#Role#)}</dt>
+        <dd>{user.role_name}</dd>
+        <dt>{translate(#Date Registered#)}</dt>
+        <dd>{formatDatePretty(user.date_created)}</dd>
+        {if:conf[LoginMgr][recordLogin]}
+        <dt>{translate(#Last Login#)}</dt>
+        <dd>
+            {if:login.last_login}
+            {formatDatePretty(login.last_login)}
+            {else:}
+            {translate(#first login in progress#)}
+            {end:}
+        </dd>
+        {end:}
+        <dt>{translate(#Current IP Address#)}</dt>
+        <dd>{remote_ip}</dd>
+    </dl>
+</div>
+
+<div class="fieldsetlike">
+    <h3>{translate(#Action#)}</h3>
+    <dl>
+        <dt>{translate(#My Profile#)}</dt>
+        <dd>
+            <a href="{makeUrl(#viewProfile#,#account#,#user#)}">{translate(#view profile#)}</a>
+        </dd>
+        <dt>{translate(#Preferences#)}</dt>
+        <dd>
+            <a href="{makeUrl(##,#userpreference#,#user#)}">{translate(#edit preferences#)}</a>
+        </dd>
+        <dt>{translate(#Password#)}</dt>
+        <dd>
+            <a href="{makeUrl(#edit#,#userpassword#,#user#)}">{translate(#change password#)}</a>
+        </dd>
+        {if:conf[cookie][rememberMeEnabled]}
+        <dt>{translate(#Manage Cookies#)}</dt>
+        <dd>
+            <a href="{makeUrl(#removeCookies#,#login#,#user#)}">{translate(#remove persistent cookies#)}</a>
+        </dd>
+        {end:}
+    </dl>
+    </dl>
+</div>

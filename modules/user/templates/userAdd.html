@@ -1,0 +1,316 @@
+<div id="content-header">
+	<h2>{translate(pageTitle)}</h2>
+	<div id="ajaxMessage" class="message">{msgGet():h}</div>
+</div>
+
+<form id="frmUser" method="post" action="" flexy:ignore>
+    <fieldset class="hide">
+        <input id="usernameWrongFormatMsg" type="hidden"
+               name="usernameWrongFormatMsg"
+               value="{translate(#username min length#)}" />
+        <input id="ajaxProviderIsUniqueUsernameUrl" type="hidden"
+               name="usernameWrongFormatMsg"
+               value="{makeUrl(#isUniqueUsername#,##,#user#)}" />
+    {if:isAdd}
+        <input type="hidden" name="action"value="insert" />
+        {if:redir}
+        <input type="hidden" name="redir" value="{redir}" />
+        {end:}
+    {else:}
+        <input type="hidden" name="action" value="update" />
+        <input type="hidden" name="user[usr_id]" value="{user.usr_id}" />
+        <input type="hidden" name="user[role_id_orig]" value="{user.role_id}" />
+        <input type="hidden" name="user[organisation_id_orig]"
+               value="{user.organisation_id}" />
+        <input type="hidden" name="user[username_orig]"
+               value="{user.username_orig}" />
+        <input type="hidden" name="user[email_orig]"
+               value="{user.email_orig}" />
+    {end:}
+    </fieldset>
+
+    <fieldset>
+        <legend>{translate(#Personal Details#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="user_username">
+                    <em>*</em> {translate(#Username#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[username]">
+                        {translate(error[username])}
+                    </p>
+                    <input id="user_username" class="text" type="text"
+                           name="user[username]" value="{user.username}" />
+                    &nbsp;
+                    <input type="button" name="availabilityCheck"
+                           value="Check Availability"
+                           onclick="UserRegister.isUniqueUsername('user_username')" />
+                </div>
+            </li>
+            <li>
+                <label for="user_first-name">{translate(#First Name#)}</label>
+                <div>
+                    <input id="user_first-name" class="text" type="text"
+                           name="user[first_name]" value="{user.first_name}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_last-name">{translate(#Last Name#)}</label>
+                <div>
+                    <input id="user_last-name" class="text" type="text"
+                           name="user[last_name]" value="{user.last_name}" />
+                </div>
+            </li>
+            {if:isAdd}
+            <li>
+                <label for="user_passwd">
+                    <em>*</em> {translate(#Password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[passwd]">
+                        {translate(error[passwd])}
+                    </p>
+                    <input id="user_passwd" class="text" type="password"
+                           name="user[passwd]" value="{user.passwd}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_password-confirm">
+                    <em>*</em> {translate(#Confirm Password#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[password_confirm]">
+                        {translate(error[password_confirm])}
+                    </p>
+                    <input id="user_password-confirm" class="text"
+                           type="password" name="user[password_confirm]"
+                           value="{user.password_confirm}" />
+                </div>
+            </li>
+            {end:}
+        </ol>
+    </fieldset>
+
+    <fieldset class="hr">
+        <legend>{translate(#Contact#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="user_email"><em>*</em> {translate(#Email#)}</label>
+                <div>
+                    <p class="error" flexy:if="error[email]">
+                        {translate(error[email])}
+                    </p>
+                    <input id="user_email" class="text" type="text"
+                           name="user[email]" value="{user.email}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_telephone">{translate(#Telephone#)}</label>
+                <div>
+                    <input id="user_telephone" class="text" type="text"
+                           name="user[telephone]" value="{user.telephone}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_mobile">{translate(#Mobile#)}</label>
+                <div>
+                    <input id="user_mobile" class="text" type="text"
+                           name="user[mobile]" value="{user.mobile}" />
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+
+    <fieldset class="hr">
+        <legend>{translate(#Location#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="user_addr-1">
+                    <em>*</em> {translate(#Address 1#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[addr_1]">
+                        {translate(error[addr_1])}
+                    </p>
+                    <input id="user_addr-1" class="text" type="text"
+                           name="user[addr_1]" value="{user.addr_1}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_addr-2">{translate(#Address 2#)}</label>
+                <div>
+                    <input id="user_addr-2" class="text" type="text"
+                           name="user[addr_2]" value="{user.addr_2}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_addr-3">{translate(#Address 3#)}</label>
+                <div>
+                    <input id="user_addr-3" class="text" type="text"
+                           name="user[addr_3]" value="{user.addr_3}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_city"><em>*</em> {translate(#City#)}</label>
+                <div>
+                    <p class="error" flexy:if="error[city]">
+                        {translate(error[city])}
+                    </p>
+                    <input id="user_city" class="text" type="text"
+                           name="user[city]" value="{user.city}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_region">
+                    {translate(#County/State/Province#)}
+                </label>
+                <div>
+                    <select id="user_region" name="user[region]">
+                        {generateSelect(states,user.region):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="user_post-code">
+                    <em>*</em> {translate(#ZIP/Postal Code#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[post_code]">
+                        {translate(error[post_code])}
+                    </p>
+                    <input id="user_post-code" class="text" type="text"
+                           name="user[post_code]" value="{user.post_code}" />
+                </div>
+            </li>
+            <li>
+                <label for="user_country">
+                    <em>*</em> {translate(#Country#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[country]">
+                        {translate(error[country])}
+                    </p>
+                    <select id="user_country" name="user[country]">
+                        {generateSelect(countries,user.country):h}
+                    </select>
+                </div>
+            </li>
+        </ol>
+    </fieldset>
+
+    <fieldset class="lastChild hr">
+        <legend>{translate(#Security#)}</legend>
+        <ol class="clearfix">
+            <li>
+                <label for="user_security-question">
+                    <em>*</em> {translate(#Security question#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[security_question]">
+                        {translate(error[security_question])}
+                    </p>
+                    <select id="user_security-question"
+                            name="user[security_question]">
+                        {generateSelect(aSecurityQuestions,user.security_question):h}
+                    </select>
+                </div>
+            </li>
+            <li>
+                <label for="user_security-answer">
+                    <em>*</em> {translate(#Answer#)}
+                </label>
+                <div>
+                    <p class="error" flexy:if="error[security_answer]">
+                        {translate(error[security_answer])}
+                    </p>
+                    <input id="user_security-answer" class="text" type="text"
+                           name="user[security_answer]"
+                           value="{user.security_answer}" />
+                </div>
+            </li>
+			{if:isAdmin()} 
+			<li> 
+				<label for="user_role-id">{translate(#Role#)}</label> 
+				<div>
+					<select id="user_role-id" name="user[role_id]">
+						{generateSelect(aRoles,user.role_id):h}
+					</select>
+				</div>
+			</li>
+			<li> 
+				<label for="user_is-acct-active">{translate(#Is Active?#)}</label>
+				<div>
+					<input id="user_is-acct-active" type="checkbox" name="user[is_acct_active]" value="1" flexy:raw="{isAcctActive}" /> {translate(#check if active#)}
+				</div>
+			</li>
+			{end:}
+        </ol>
+    </fieldset>
+
+    <div class="fieldIndent">
+    {if:isAdd}
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#Register#)}" />
+    {else:}
+        <input class="submit" type="submit" name="submitted"
+               value="{translate(#Save#)}" />
+        <input class="button" type="button" name="cancelled"
+               value="{translate(#Cancel#)}"
+               onclick="document.location.href='{makeUrl(#summary#,#account#,#user#)}'" />
+    {end:}
+    </div>
+    <p><em>*</em> {translate(#denotes required field#)}</p>
+</form>
+
+<script type="text/javascript">
+/**
+ * @todo factor out
+ */
+UserRegister = {
+
+    // predefined containers
+    messageContainer: 'ajaxMessage',
+    messageWrongUserFormat: $F('usernameWrongFormatMsg'),
+    urlIsUniqueUsername: $F('ajaxProviderIsUniqueUsernameUrl'),
+
+    isUniqueUsername: function(username) {
+        if (!UserValidator.isValidUsername($F(username))) {
+            this._showMessage('error', this.messageWrongUserFormat);
+        } else {
+            new Ajax.Request(this.urlIsUniqueUsername, {
+                    method: 'post',
+                    parameters: {username: $F(username)},
+                    onSuccess: this._showResults
+                });
+        }
+        return false;
+    },
+
+    _showMessage: function(messageType, messageText) {
+        var innerDiv = document.createElement('div');
+        $(innerDiv).toggleClassName(messageType + 'Message').update(messageText);
+        $(this.messageContainer).show().update('').appendChild(innerDiv)
+        // Opacity effect is used, because we don't want screen to jump
+        new Effect.Opacity(this.messageContainer, {
+                duration: 3,
+                from: 1.0,
+                to: 0
+            });
+    },
+
+    _showResults: function(transport) {
+        var result = eval('(' + transport.responseText + ')');
+        UserRegister._showMessage(result.type, result.message);
+    }
+}
+
+UserValidator = {
+    isValidUsername: function(value) {
+        if (value == '') {
+            return false;
+        }
+        return value.match('^[a-zA-Z0-9]{5,}$');
+    }
+}
+</script>
