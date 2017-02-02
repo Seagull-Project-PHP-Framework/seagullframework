@@ -101,9 +101,9 @@ class WizardTestDbConnection extends HTML_QuickForm_Page
 
         //  FIXME: use env.php info to supply sensible defaults
         $this->setDefaults(array(
-            'host' => 'localhost',
-            'dbProtocol'  => array('protocol' => 'unix'),
-            'dbType'  => array('type' => 'mysql_SGL'),
+            'host' => '127.0.0.1',
+            'dbProtocol'  => array('protocol' => 'tcp'),
+            'dbType'  => array('type' => 'mysqli_SGL'),
             'dbPortChoices'  => array('portOption' => 3306),
             'dbPort'  => array('port' => 3306),
             'dbName'  => 'not required for MySQL login',
