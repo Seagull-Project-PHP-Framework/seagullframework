@@ -2,9 +2,7 @@ INSTALL INSTRUCTIONS FOR SEAGULL FRAMEWORK
 ==========================================
 
 Seagull is organised so there's minimum fuss involved setting it up for the
-first time.  The main thing you need to do is:
-
-** MAKE THE seagull/var DIRECTORY WRITABLE BY THE WEBSERVER **
+first time.
 
 This document makes reference to an [web-doc-root] which typically is
 
@@ -14,28 +12,22 @@ This document makes reference to an [web-doc-root] which typically is
 QUICKSTART
 ==========
 
-1.  Download the archive called 'Seagull: whole package' from Sourceforge and
-    uncompress it.  You will get a folder called seagull-<version_no>, rename
-    this to seagull and place it in your web document root.
+1.  Download the project from Github and uncompress it. 
+		https://github.com/demianturner/seagullframework
 
-2.  Make the following directory writable by the webserver
-
-        [web-doc-root]/seagull/var
-
-3.  Navigate to [web-doc-root]/seagull/www in a browser, depending on how you've
+2.  Navigate to [web-doc-root]/seagull/www in a browser, depending on how you've
     set your document root this could be
 
         http://localhost/seagull/www
 
-4.  Follow the steps set out by the interactive installer
+3.  Follow the steps set out in the installer
 
 
 DETAILED INSTRUCTIONS
 =====================
 
-1.  Download the archive called 'Seagull: whole package' from Sourceforge and
-    uncompress it.  You will get a folder called seagull-<version_no>, rename
-    this to seagull
+1.  Download the project from Github and uncompress it. 
+		https://github.com/demianturner/seagullframework
 
 2.  Make the [web-doc-root]/seagull/var directory writable by the webserver.  If
     *nix, you can achieve this by making the user the webserver runs under
@@ -73,8 +65,8 @@ DETAILED INSTRUCTIONS
 
 4.  Once you launch Seagull by requesting http://<seagull-domain>/index.php in
     a web browser, an installer routine will create the schema and populate the
-    database with the required default data.  Currently MySQL, PostgreSQL and Oracle
-    schemas are provided.
+    database with the required default data.  Currently a MySQL
+    schema is provided.
 
     If you have any problems during the install routine, delete the config file
     created by the system in the var directory, and the file called
@@ -90,11 +82,10 @@ DETAILED INSTRUCTIONS
     admin section you can begin to put Seagull to work.
 
 
-See the project homepage for more info: http://seagullproject.org/ or check
-out the wiki for Seagull resources/info: http://trac.seagullproject.org/
+	See the project homepage for more info: http://seagullproject.org/ 
 
 To become familiar with Seagull try some of the tutorials:
 
-http://trac.seagullproject.org/wiki/WikiStart#Tutorials
+http://seagullproject.org/Tutorials.html
 
 Thanks for using Seagull!

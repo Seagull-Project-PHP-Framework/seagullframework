@@ -61,7 +61,7 @@ Credits
 Meet the community of developers, translators and maintainers, find out
 more about mailing list etiquette and see a list of sites powered by Seagull
 
-    http://trac.seagullproject.org/wiki/Community
+    http://seagullproject.org/Community.html
 
 Thanks,
 
