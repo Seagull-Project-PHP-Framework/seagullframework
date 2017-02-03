@@ -30,9 +30,9 @@ Requirements
 Running Seagull requires no extra extensions or configuration options, just
 the following or greater:
 
-PHP     5.x
-MySQL   4.x
-Apache  1.3.x
+PHP     5.6
+MySQL   5.x
+Apache  2.4.x
 
 
 Documentation
@@ -40,12 +40,8 @@ Documentation
 
 The API documentation is available at
 
-    http://api.seagullproject.org/
-
-and a wiki with end-user documentation at
-
-    http://trac.seagullproject.org/
-
+    http://api.seagullproject.org/ (being restored)
+	
 
 Installation instructions
 -------------------------
