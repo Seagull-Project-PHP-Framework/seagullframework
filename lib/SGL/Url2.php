@@ -129,7 +129,9 @@ class SGL_URL2
             if (in_array($k, $aKeywords)) { // skip "keywords"
                 continue;
             }
-            $aVars[] = $k . '/' . $v;
+            if (is_string($k) && is_string($v)) {
+                $aVars[] = $k . '/' . $v;
+            }
             unset($aParams[$k]);
         }
         if (!empty($aVars)) {
